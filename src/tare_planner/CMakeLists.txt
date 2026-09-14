@@ -16,6 +16,13 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 find_package(ament_cmake REQUIRED)
+# Resolve ROS/PCL's system Eigen before exposing the OR-Tools prefix. The
+# bundled Eigen config exports an incompatible legacy EIGEN3_DEFINITIONS value.
+find_package(Eigen3 REQUIRED)
+# Load the complete, matching dependency graph (including Protobuf/Abseil).
+# Linking only libortools.so omits symbols used by the HT solver time limit.
+list(PREPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_SOURCE_DIR}/or-tools")
+find_package(ortools 9.8 CONFIG REQUIRED PATHS "${CMAKE_CURRENT_SOURCE_DIR}/or-tools" NO_DEFAULT_PATH)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
@@ -28,24 +35,32 @@ find_package(tf2 REQUIRED)
 find_package(PCL REQUIRED)
 find_package(pcl_conversions REQUIRED)
 find_package(pcl_ros REQUIRED)
-find_package(Eigen3 REQUIRED)
 find_package(grid_map_core REQUIRED)
 find_package(grid_map_ros REQUIRED)
 find_package(grid_map_msgs REQUIRED)
 
-add_library(ht_cost src/ht_cost/ht_cost_map.cpp)
-ament_target_dependencies(ht_cost rclcpp std_msgs grid_map_core grid_map_ros grid_map_msgs tf2 tf2_ros tf2_geometry_msgs)
+# grid_map_core defines Eigen plugins at directory scope. Every Eigen user
+# therefore needs its include path, including targets that do not link ht_cost.
+if(TARGET grid_map_core::grid_map_core)
+  get_target_property(GRID_MAP_EIGEN_INCLUDE_DIRS grid_map_core::grid_map_core INTERFACE_INCLUDE_DIRECTORIES)
+else()
+  set(GRID_MAP_EIGEN_INCLUDE_DIRS ${grid_map_core_INCLUDE_DIRS})
+endif()
+include_directories(SYSTEM ${GRID_MAP_EIGEN_INCLUDE_DIRS})
 
  include_directories(
   ${catkin_INCLUDE_DIRS}
   ${PCL_INCLUDE_DIRS}
+  ${grid_map_core_INCLUDE_DIRS}
   include
-  or-tools/include
   ${EIGEN3_INCLUDE_DIR}
-  /opt/ros/humble/include
   # /usr/local/include
   # /usr/include
 )
+include_directories(SYSTEM or-tools/include)
+
+add_library(ht_cost src/ht_cost/ht_cost_map.cpp)
+ament_target_dependencies(ht_cost rclcpp std_msgs grid_map_core grid_map_ros grid_map_msgs tf2 tf2_ros tf2_geometry_msgs)
 
 get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
 foreach(dir ${dirs})
@@ -77,7 +92,7 @@ ament_target_dependencies(pointcloud_utils rclcpp std_msgs nav_msgs geometry_msg
 
 add_library(tsp_solver src/tsp_solver/tsp_solver.cpp)
 ament_target_dependencies(tsp_solver rclcpp std_msgs nav_msgs geometry_msgs sensor_msgs tf2_ros tf2_geometry_msgs tf2)
-target_link_libraries(tsp_solver ${catkin_LIBRARIES} ${CMAKE_CURRENT_SOURCE_DIR}/or-tools/lib/libortools.so)
+target_link_libraries(tsp_solver ortools::ortools)
 
 add_library(viewpoint src/viewpoint/viewpoint.cpp)
 ament_target_dependencies(viewpoint rclcpp std_msgs nav_msgs geometry_msgs sensor_msgs tf2_ros tf2_geometry_msgs tf2)
@@ -113,7 +128,7 @@ target_link_libraries(rolling_occupancy_grid ${catkin_LIBRARIES})
 
 add_library(planning_env src/planning_env/planning_env.cpp)
 ament_target_dependencies(planning_env rclcpp std_msgs nav_msgs geometry_msgs sensor_msgs tf2_ros tf2_geometry_msgs tf2)
-target_link_libraries(planning_env ${catkin_LIBRARIES} ${PCL_LIBRARIES} rolling_occupancy_grid)
+target_link_libraries(planning_env ${catkin_LIBRARIES} ${PCL_LIBRARIES} rolling_occupancy_grid ht_cost)
 
 add_library(exploration_path src/exploration_path/exploration_path.cpp)
 ament_target_dependencies(exploration_path rclcpp std_msgs nav_msgs geometry_msgs sensor_msgs tf2_ros tf2_geometry_msgs tf2 pcl_ros pcl_conversions visualization_msgs)
@@ -144,6 +159,13 @@ install(TARGETS
   tare_planner_node
   DESTINATION lib/${PROJECT_NAME})
 
+# A regular (non-symlink) colcon install must also find OR-Tools at runtime.
+set_target_properties(tare_planner_node PROPERTIES INSTALL_RPATH "$ORIGIN")
+install(FILES
+  or-tools/lib/libortools.so.9
+  or-tools/lib/libortools.so.9.8.3296
+  DESTINATION lib/${PROJECT_NAME})
+
 install(DIRECTORY launch/
         DESTINATION share/${PROJECT_NAME}/
         )
@@ -161,5 +183,8 @@ if(BUILD_TESTING)
   enable_testing()
   add_executable(ht_core_test tests/ht_core_test.cpp)
   add_test(NAME ht_core_test COMMAND ht_core_test)
+  find_package(ament_cmake_gtest REQUIRED)
+  ament_add_gtest(ht_ros_test tests/ht_ros_test.cpp TIMEOUT 60)
+  target_link_libraries(ht_ros_test ht_cost)
 endif()
 ament_package()

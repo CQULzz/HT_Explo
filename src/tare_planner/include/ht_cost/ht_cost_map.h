@@ -19,6 +19,7 @@ class HtCostMap {
   bool knownSegment(const Point& a, const Point& b) const;
   void publishPermission(bool allowed);
   double lookahead() const { return lookahead_; }
+  double reachedDistance() const { return reached_distance_; }
   double step() const { return step_; }
  private:
   void receive(grid_map_msgs::msg::GridMap::ConstSharedPtr msg);
@@ -27,6 +28,7 @@ class HtCostMap {
   bool enabled_=false, calibrated_=false;
   double weight_=1, unknown_penalty_=2, timeout_=1, step_=0.02, lookahead_=2;
   double footprint_radius_=0.6, heading_offset_=0;
+  double reached_distance_=0.3;
   std::array<int,8> channel_order_{{0,1,2,3,4,5,6,7}};
   std::string frame_;
   std::mutex mutex_;

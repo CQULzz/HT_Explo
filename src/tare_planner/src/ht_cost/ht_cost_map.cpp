@@ -16,6 +16,7 @@ HtCostMap::HtCostMap(rclcpp::Node::SharedPtr node)
   timeout_=node->declare_parameter<double>("ht_map_timeout",1.0);
   step_=node->declare_parameter<double>("ht_sample_step",0.02);
   lookahead_=node->declare_parameter<double>("ht_lookahead_distance",2.0);
+  reached_distance_=node->declare_parameter<double>("ht_waypoint_reached_distance",0.3);
   footprint_radius_=node->declare_parameter<double>("ht_validity_radius",0.6);
   heading_offset_=node->declare_parameter<double>("ht_heading_offset",0.0);
   frame_="map";  // TARE's existing world frame.
@@ -30,10 +31,12 @@ HtCostMap::HtCostMap(rclcpp::Node::SharedPtr node)
   for (int i=0;i<8;++i) channel_order_[i]=static_cast<int>(order[i]);
   for (double v : {weight_,unknown_penalty_,footprint_radius_})
     if (!std::isfinite(v) || v<0) throw std::invalid_argument("Negative/non-finite HT parameter");
-  for (double v : {timeout_,step_,lookahead_})
+  for (double v : {timeout_,step_,lookahead_,reached_distance_})
     if (!std::isfinite(v) || v<=0) throw std::invalid_argument("Non-positive HT parameter");
   if (!std::isfinite(heading_offset_) || step_<0.001 || footprint_radius_>3)
     throw std::invalid_argument("HT sampling parameters outside supported range");
+  if (reached_distance_>=lookahead_)
+    throw std::invalid_argument("HT waypoint reached distance must be smaller than lookahead");
   if (enabled_) {
     permission_=node->create_publisher<std_msgs::msg::Bool>("/ht_navigation_allowed",1);
     subscription_=node->create_subscription<grid_map_msgs::msg::GridMap>(
@@ -46,10 +49,33 @@ HtCostMap::HtCostMap(rclcpp::Node::SharedPtr node)
 
 void HtCostMap::receive(grid_map_msgs::msg::GridMap::ConstSharedPtr msg) {
   try {
+    // The upstream converter indexes layout.dim and maps the raw buffer
+    // without checking its length. Validate before entering Eigen/GridMap.
+    const auto& info=msg->info;
+    for (double v : {info.resolution,info.length_x,info.length_y})
+      if (!std::isfinite(v) || v<=0) throw std::runtime_error("Invalid GridMap geometry");
+    for (double v : {info.pose.position.x,info.pose.position.y,info.pose.position.z})
+      if (!std::isfinite(v)) throw std::runtime_error("Invalid GridMap position");
+    const double rows=std::round(info.length_x/info.resolution);
+    const double cols=std::round(info.length_y/info.resolution);
+    if (!std::isfinite(rows) || !std::isfinite(cols) || rows<1 || cols<1 ||
+        rows>std::numeric_limits<int>::max() || cols>std::numeric_limits<int>::max() ||
+        msg->header.frame_id.empty() || msg->layers.size()!=msg->data.size() ||
+        msg->data.empty() || msg->outer_start_index>=rows || msg->inner_start_index>=cols)
+      throw std::runtime_error("Invalid GridMap dimensions/frame/buffer index");
+    for (const auto& data : msg->data) {
+      const auto& dim=data.layout.dim;
+      if (dim.size()!=2 || dim[0].label!="column_index" || dim[1].label!="row_index" ||
+          dim[0].size!=cols || dim[1].size!=rows || data.layout.data_offset!=0 ||
+          data.data.size()!=static_cast<size_t>(rows)*static_cast<size_t>(cols) ||
+          dim[0].stride!=data.data.size() || dim[1].stride!=rows)
+        throw std::runtime_error("Invalid GridMap array layout/data length");
+    }
     // grid_map's geometry is axis-aligned within its frame; reject tilted/rotated
     // message poses rather than silently dropping an unsupported orientation.
     const auto& q=msg->info.pose.orientation;
-    if (std::abs(q.x)>1e-6 || std::abs(q.y)>1e-6 || std::abs(q.z)>1e-6 ||
+    if (!std::isfinite(q.x) || !std::isfinite(q.y) || !std::isfinite(q.z) || !std::isfinite(q.w) ||
+        std::abs(q.x)>1e-6 || std::abs(q.y)>1e-6 || std::abs(q.z)>1e-6 ||
         std::abs(std::abs(q.w)-1)>1e-6)
       throw std::runtime_error("Unsupported GridMap pose orientation");
     grid_map::GridMap grid;

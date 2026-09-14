@@ -10,6 +10,11 @@
 namespace ht_cost_ns {
 constexpr double kPi = 3.14159265358979323846;
 struct Point { double x = 0, y = 0, z = 0; };
+// The CMU ground controller uses planar goal distance (stopDisThre=0.2 m).
+// Consume nearby route vertices before that controller stops at them.
+inline bool waypointReached(const Point& robot, const Point& target, double tolerance) {
+  return std::hypot(target.x-robot.x,target.y-robot.y)<=tolerance;
+}
 struct Cost {
   double length = 0, risk = 0, unknown_length = 0;
   bool fully_known = true;

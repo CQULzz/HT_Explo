@@ -1,0 +1,19 @@
+diff --git a/src/vehicle_simulator/launch/vehicle_simulator.launch b/src/vehicle_simulator/launch/vehicle_simulator.launch
+index fa2bffe..a63e9a1 100644
+--- a/src/vehicle_simulator/launch/vehicle_simulator.launch
++++ b/src/vehicle_simulator/launch/vehicle_simulator.launch
+@@ -1,4 +1,5 @@
+ import os
++import shlex
+ 
+ from ament_index_python.packages import get_package_share_directory
+ from launch import LaunchDescription
+@@ -18,7 +19,7 @@ def start_gzserver(context, world_name):
+   gzserver_cmd = IncludeLaunchDescription(
+     PythonLaunchDescriptionSource(
+       os.path.join(get_package_share_directory('ros_gz_sim'), 'launch', 'gz_sim.launch.py')),
+-      launch_arguments={'gz_args': ['-r -s -v4 --physics-engine libgz-physics-tpe-plugin ', world], 'on_exit_shutdown': 'true'}.items()
++      launch_arguments={'gz_args': ['-r -s -v4 --physics-engine libgz-physics-tpe-plugin ', shlex.quote(world)], 'on_exit_shutdown': 'true'}.items()
+   )
+   return [gzserver_cmd]
+ 

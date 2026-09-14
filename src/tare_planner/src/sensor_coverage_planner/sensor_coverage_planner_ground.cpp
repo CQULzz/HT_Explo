@@ -1037,11 +1037,16 @@ bool SensorCoveragePlanner3D::GetLookAheadPoint(
     lookahead_point=robot;
     lookahead_point_in_line_of_sight_=false;
     if (!ht->ready()) return false;
-    // Follow only the first nontrivial segment; never shortcut a later bend.
-    for (const auto& node:local_path.nodes_) {
+    // The first ROBOT vertex is a snapped graph anchor, not a motion goal.
+    // Targeting it can pull the vehicle backwards whenever it leaves a cell.
+    // Follow the first unreached route vertex and validate the entire segment.
+    for (size_t i=0;i<local_path.nodes_.size();++i) {
+      const auto& node=local_path.nodes_[i];
+      if (i==0 && node.type_==exploration_path_ns::NodeType::ROBOT) continue;
       const Eigen::Vector3d delta=node.position_-robot;
       const double length=delta.norm();
-      if (length<0.15) continue;
+      if (ht_cost_ns::waypointReached({robot.x(),robot.y(),robot.z()},
+          {node.position_.x(),node.position_.y(),node.position_.z()},ht->reachedDistance())) continue;
       const double limit=std::min(length,ht->lookahead());
       for (double d=std::min(0.1,limit);;d=std::min(d+0.1,limit)) {
         const Eigen::Vector3d point=robot+delta*(d/length);
@@ -1054,7 +1059,9 @@ bool SensorCoveragePlanner3D::GetLookAheadPoint(
       }
       break;
     }
-    lookahead_point_in_line_of_sight_=(lookahead_point-robot).norm()>0.1;
+    lookahead_point_in_line_of_sight_=!ht_cost_ns::waypointReached(
+        {robot.x(),robot.y(),robot.z()},
+        {lookahead_point.x(),lookahead_point.y(),lookahead_point.z()},ht->reachedDistance());
     return lookahead_point_in_line_of_sight_;
   }
   Eigen::Vector3d robot_position(robot_position_.x, robot_position_.y,

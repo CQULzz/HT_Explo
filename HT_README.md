@@ -1,5 +1,7 @@
 # TARE + HT 8dir 第一版
 
+2026-09-15 更新：已在 Ubuntu 24.04 / ROS 2 Jazzy / CMU Garage 完成编译与运动、故障注入验证。修复和复现步骤见 [VALIDATION.md](VALIDATION.md)。下面的模型范围限制仍适用。
+
 这是一个供仿真和离线联调的源码原型，不是已经通过实车验证的导航软件。
 
 ## 这一版做了什么
@@ -73,6 +75,7 @@ ht_channel_order 的第 k 个值表示：几何方向 offset+k*45 度使用哪�
 - 保留一个全局路线边界候选点作为末端；优先原 start 边界，否则使用 end 边界。
 - 局部 TSP 的距离矩阵逐方向计算，求解时间上限 200 ms；不可达或无解则返回空路线。
 - 只跟随首个非近邻路径节点，目标距离最多 ht_lookahead_distance；不会跨越后续转角。
+- 跳过首个 ROBOT 网格锚点；按水平距离判定路径节点到达。默认 ht_waypoint_reached_distance=0.3 米，必须大于控制器的停车距离（CMU 默认 stopDisThre=0.2 米），且小于 ht_lookahead_distance，避免双方对“已到达”的判断不一致而停滞。
 - 沿机器人到目标采样，要求在 TARE 局部范围、当前视线内且无几何碰撞。
 - 同时要求 ht_validity_radius 范围内有有效 HT 数据，未知路径可参与排序，但不会作为本次实际执行目标。
 - 禁用原版初始 12 米前推、waypoint 外推和直接 rush-home 捷径。
@@ -98,8 +101,8 @@ colcon test-result --verbose
 ros2 launch tare_planner explore_ht.launch.py scenario:=garage
 ```
 
-Jazzy 环境改用对应 setup.bash；本版没有验证 Jazzy 兼容性。
-上游自带 OR-Tools 的 libortools.so，须另外确认其与你的 Linux 架构及系统依赖兼容。
+Jazzy 环境改用对应 setup.bash；已验证 Ubuntu 24.04 / Jazzy / x86_64。
+已替换为官方 OR-Tools 9.8.3296 Ubuntu 22.04 x86_64 完整依赖集，并在 Jazzy 下验证。来源与校验和见 or-tools/SOURCE.md。
 新增依赖 grid_map_core、grid_map_ros、grid_map_msgs、tf2_geometry_msgs。
 
 默认配置 src/tare_planner/config/ht.yaml。
@@ -125,12 +128,10 @@ Jazzy 环境改用对应 setup.bash；本版没有验证 Jazzy 兼容性。
 
 ## 当前验证结果与边界
 
-Windows 上已实际编译运行独立 C++17 核心测试：37 项通过。
+初版在 Windows 上运行了 37 项独立 C++17 核心检查。当前 Linux 修订版为 41 项核心检查和 9 项 ROS 集成测试，全部通过。
 覆盖方向索引、旋转、坐标偏移、无效数据、时间有效性、积分采样一致性、
 未知代价、不可达图、正反有向路径和权重改变偏好。
-这些不是 ROS 消息集成测试，也不能证明 OR-Tools 接线或实车行为正确。
-本机未安装 ROS2，未执行完整 colcon 构建、TF/GridMap 回放及实车测试。
-首轮必须验证 GridMap 循环缓冲区转换、局部 TSP 起终点和传感器刷新频率。
+新增 ROS 测试覆盖 GridMap 循环缓冲区转换、旋转平移 TF、无效概率、过期/未来时间、缺层/缺 TF、NaN 姿态与畸形数组。已完成完整 colcon 构建和 CMU 车库运动测试；没有进行实车测试，也没有真实 HT 模型推理输入。详细结果见 VALIDATION.md。
 全对最短路和有效性圆盘检查尚未做大地图性能优化；新增 TSP 未计入上游细分运行时间统计。
 
 独立测试可在 Linux 运行：

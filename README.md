@@ -1,5 +1,7 @@
 TARE planner involves a hierarchical framework for highly efficient exploration - one level in the framework maintains data densely and computes a detailed path within a local planning horizon, another level maintains data sparsely and computes a coarse path at the global scale. The paths at both levels are joined together to form the exploration path. The framework draws the insight that detailed processing is most effective close to the vehicle, while coarse processing provides sufficient utility far away from the vehicle. The framework trades-off details at the global scale for computational speed. In practice, the framework prioritizes the exploration in the surroundings of the vehicle while keeping the global picture in mind.
 
+本仓库的 HT 8dir 修复及 CMU Jazzy 车库实测说明见 [VALIDATION.md](VALIDATION.md)。其中包含 OR-Tools 依赖修复、运动停滞修复、复现命令及测试记录。HT 的模型接口和限制见 [HT_README.md](HT_README.md)。
+
 Please use instructions on our [project page](https://www.cmu-exploration.com/tare-planner).
 
 <p align="center">

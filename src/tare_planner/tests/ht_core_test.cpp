@@ -10,6 +10,11 @@ void check(bool condition) {
 }
 void near(double a,double b) { check(std::abs(a-b)<1e-5); }
 int main() {
+  // Regression: CMU stopped 0.163 m from a vertex while HT kept targeting it.
+  check(waypointReached({0.50818896,0.46558198,0.75},{0.6,0.6,0.76019478},0.3));
+  check(waypointReached({0,0,0},{0.3,0,0},0.3));
+  check(waypointReached({0,0,0},{0.1,0,1.0},0.3));
+  check(!waypointReached({0,0,0},{0.4,0,0},0.3));
   Map m; m.rows=20;m.cols=20;m.resolution=0.5;m.stamp=10;
   m.valid.assign(400,1);
   for (int k=0;k<8;++k) m.probabilities[k].assign(400,(k+1)*0.1f);
