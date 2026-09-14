@@ -1,0 +1,978 @@
+--- /dev/null
++++ b/HT_README.md
+@@ -0,0 +1,154 @@
++# TARE + HT 8dir 第一版
++
++这是一个供仿真和离线联调的源码原型，不是已经通过实车验证的导航软件。
++
++## 这一版做了什么
++
++HT 不是直接调整车辆速度，而是改变 TARE 对局部路线的评价：
++
++```
++HT 8 个方向概率
++  -> 候选点之间的有向边代价
++  -> 有向最短路
++  -> 局部 TSP 排序及候选路线比较
++  -> 沿选中路线输出短 waypoint
++```
++
++保留原来的覆盖增益候选点采样、全局规划、几何碰撞检查。没有修改 HT 模型或全局 TSP。
++这不是完整的 (x,y,theta) 状态格规划：方向取每条边的运动方向，尚未加入车辆转弯半径、原地转向风险或姿态连续性约束。
++
++## HT 权重到底怎么用
++
++每条边的代价为：
++
++```
++J = L + ht_weight * R + ht_unknown_penalty * U
++R = sum(ds * [-ln(max(P(x,y,heading), 0.001))])
++```
++
++- L 是路径长度，单位米。
++- R 是已知区域的方向风险积分；乘以采样间距 ds，避免仅因采样更密就增加惩罚。
++- U 是 HT 未知或无效部分的长度，单位米。
++- P 根据每段的行驶方向查询最近的一个原始 ht_dir_k，不平均正反方向。
++- 这只是相对风险代价，不宣称是整条路径的实际失败概率。
++
++例：A 路长 2 米、P=0.2；B 路长 3 米、P=0.9。
++ht_weight=0 时 A 的代价 2、小于 B 的 3；ht_weight=1 时 A 约 5.22、B 约 3.32，选择 B。
++未知区域代价独立于 HT 权重。
++
++建议先对比 0、0.5、1、2，不把这些初始值当成已标定参数。
++参数在启动时读取，改 YAML 后重启节点，暂不支持运行中热更新。
++
++## 两种运行模式
++
++- ht_enabled=false：使用原版局部规划和 waypoint 逻辑，适合原版对照实验。
++- ht_enabled=true：使用新增有向代价和保守 waypoint 逻辑。
++
++ht_weight=0 不等于完全恢复原版，因为未知惩罚、有向路线起终点和 waypoint 限制仍然生效。
++要做严格消融，请区分“原版 TARE”“融合逻辑但权重为零”“融合逻辑且权重非零”。
++
++## 地图接口与方向标定
++
++默认输入 /ht_traversability/global_local，类型 grid_map_msgs/msg/GridMap。
++必须包含 ht_dir_0 到 ht_dir_7 和 ht_valid；ELE 端需要关闭 aggregate_only。
++本交付不包含 ELE，不会自动改动其配置。
++
++地图有效条件：ht_valid>=0.5，八个概率均有限且在 [0,1]。
++GridMap 循环缓冲区通过 grid_map 官方转换和位置索引展开，不能直接假设消息数组按普通二维图排列。
++在消息时间戳查询地图坐标系到 map 的 TF；要求重力对齐，只接受平面旋转。
++拒绝非单位 GridMap pose 旋转、缺失层、错误概率、缺失 TF 和过期数据。
++
++ht_channel_order 的第 k 个值表示：几何方向 offset+k*45 度使用哪个原始 ht_dir 层。
++方向角相对于 HT 地图坐标系 +X 轴，逆时针增加；offset 单位弧度。
++默认 identity 只是占位，不意味着模型的方向已经核对过。
++
++首次接入先做离线标定：用方向性明显的坡面，核对 +X、+Y、-X、-Y 及四个斜向，
++再旋转输入地图核对通道随几何方向的对应关系，并用实际行驶记录交叉验证。
++确认顺序和偏移后才将 ht_directions_calibrated 改为 true。
++默认 false 时节点只输出当前位置，不会给出前进目标。
++
++## Waypoint 的限制
++
++- 有向局部路线始终从机器人附近的候选点开始，不事后倒序。
++- 保留一个全局路线边界候选点作为末端；优先原 start 边界，否则使用 end 边界。
++- 局部 TSP 的距离矩阵逐方向计算，求解时间上限 200 ms；不可达或无解则返回空路线。
++- 只跟随首个非近邻路径节点，目标距离最多 ht_lookahead_distance；不会跨越后续转角。
++- 沿机器人到目标采样，要求在 TARE 局部范围、当前视线内且无几何碰撞。
++- 同时要求 ht_validity_radius 范围内有有效 HT 数据，未知路径可参与排序，但不会作为本次实际执行目标。
++- 禁用原版初始 12 米前推、waypoint 外推和直接 rush-home 捷径。
++- 无新关键帧、地图过期、方向未标定、无候选点或无有效路线时输出当前位置。
++
++注意：有效性圆盘只是数据支持范围检查，不是精确车身碰撞检测。
++风险积分目前查询中心线；尚未实现 footprint 最低概率惩罚，也没有启用 p_block 硬阈值。
++因此很低的 P 仍可能被选择，不能据此宣称车辆安全。
++此保守版本在有效地图边缘可能停住；没有实现自动试探未知地形或脱困策略。
++
++## 编译与启动
++
++在已有 TARE 所需传感器/仿真链路的 Ubuntu ROS2 工作空间中使用本源码。
++不要同时放入两个同名 tare_planner 包。保留你自己的旧版本备份。
++
++```bash
++source /opt/ros/humble/setup.bash
++rosdep install --from-paths src --ignore-src -r -y
++colcon build --packages-select tare_planner --symlink-install
++source install/setup.bash
++colcon test --packages-select tare_planner
++colcon test-result --verbose
++ros2 launch tare_planner explore_ht.launch.py scenario:=garage
++```
++
++Jazzy 环境改用对应 setup.bash；本版没有验证 Jazzy 兼容性。
++上游自带 OR-Tools 的 libortools.so，须另外确认其与你的 Linux 架构及系统依赖兼容。
++新增依赖 grid_map_core、grid_map_ros、grid_map_msgs、tf2_geometry_msgs。
++
++默认配置 src/tare_planner/config/ht.yaml。
++自定义配置可用 ht_config:=/absolute/path/ht.yaml 传入。
++仿真回放使用 use_sim_time:=true，并确保 HT、TF、TARE 共用同一时钟。
++新 launch 只启动 TARE；不启动 ELE、传感器、RViz 或车辆控制器。
++
++## 联调验收
++
++1. 首先断开车辆运动执行端，仅查看 waypoint 和 /ht_navigation_allowed。
++2. 标定开关为 false：应输出当前位置且 allowed=false。
++3. 配置正确的方向与 TF，持续发布有效地图：有效路径才允许 allowed=true。
++4. 停发 HT 超过 timeout、移除 ht_dir 层、制造 NaN、断开 TF：应撤销前进目标。
++5. 在相同场景、相同候选采样条件下比较权重 0 与 1：低概率方向的路线总成本应增大。
++6. 交换正反方向概率：验证去程、回程路径不被强制对称。
++7. 在地图边缘和狭窄通道验证不外推目标、不跨角。
++8. 最后才在具备独立急停、低速限制和人工监护的仿真/实车链路验证。
++
++/ht_navigation_allowed 是规划状态 Bool，不是电机使能信号。
++目前由规划周期发布，没有独立高频看门狗；规划卡住时也可能不及时更新。
++输出当前位置并不保证底层控制器刹车。控制端必须独立处理消息超时、急停、LiDAR 近障、
++侧翻、碰撞与卡住检测。本交付不发布 /cmd_vel。
++
++## 当前验证结果与边界
++
++Windows 上已实际编译运行独立 C++17 核心测试：37 项通过。
++覆盖方向索引、旋转、坐标偏移、无效数据、时间有效性、积分采样一致性、
++未知代价、不可达图、正反有向路径和权重改变偏好。
++这些不是 ROS 消息集成测试，也不能证明 OR-Tools 接线或实车行为正确。
++本机未安装 ROS2，未执行完整 colcon 构建、TF/GridMap 回放及实车测试。
++首轮必须验证 GridMap 循环缓冲区转换、局部 TSP 起终点和传感器刷新频率。
++全对最短路和有效性圆盘检查尚未做大地图性能优化；新增 TSP 未计入上游细分运行时间统计。
++
++独立测试可在 Linux 运行：
++```bash
++c++ -std=c++17 -I src/tare_planner/include src/tare_planner/tests/ht_core_test.cpp -o /tmp/ht_core_test
++/tmp/ht_core_test
++```
++
++## 源码来源
++
++原上传压缩包在制作时已无法从原路径读取，因此此版基于官方 humble-jazzy 分支，
++不是对你原压缩包的逐文件修改。下载日期：2026-09-14。
++
++- [TARE 官方源码](https://github.com/caochao39/tare_planner/tree/humble-jazzy)
++- [GridMap ROS2 消息定义](https://github.com/ANYbotics/grid_map/blob/humble/grid_map_msgs/msg/GridMap.msg)
++- [GridMap ROS2 转换接口](https://github.com/ANYbotics/grid_map/blob/humble/grid_map_ros/include/grid_map_ros/GridMapRosConverter.hpp)
++
++上游下载 ZIP SHA256:
++DD420C93C802D1AD335D5E264238E3F9436A8CA2A5A444CFC961AD6FAD24633D
++
++release_manifest.json 记录修改文件及上游 ZIP 标识，ht_v1.patch 可用于审查本版差异。
+--- a/src/tare_planner/CMakeLists.txt
++++ b/src/tare_planner/CMakeLists.txt
+@@ -29,6 +29,12 @@
+ find_package(pcl_conversions REQUIRED)
+ find_package(pcl_ros REQUIRED)
+ find_package(Eigen3 REQUIRED)
++find_package(grid_map_core REQUIRED)
++find_package(grid_map_ros REQUIRED)
++find_package(grid_map_msgs REQUIRED)
++
++add_library(ht_cost src/ht_cost/ht_cost_map.cpp)
++ament_target_dependencies(ht_cost rclcpp std_msgs grid_map_core grid_map_ros grid_map_msgs tf2 tf2_ros tf2_geometry_msgs)
+ 
+  include_directories(
+   ${catkin_INCLUDE_DIRS}
+@@ -83,11 +89,11 @@
+ 
+ add_library(viewpoint_manager src/viewpoint_manager/viewpoint_manager.cpp)
+ ament_target_dependencies(viewpoint_manager rclcpp std_msgs nav_msgs geometry_msgs sensor_msgs tf2_ros tf2_geometry_msgs tf2)
+-target_link_libraries(viewpoint_manager ${catkin_LIBRARIES} rolling_grid viewpoint grid_world)
++target_link_libraries(viewpoint_manager ${catkin_LIBRARIES} rolling_grid viewpoint grid_world ht_cost)
+ 
+-add_library(local_coverage_planner src/local_coverage_planner/local_coverage_planner.cpp)
++add_library(local_coverage_planner src/local_coverage_planner/local_coverage_planner.cpp src/local_coverage_planner/ht_route.cpp)
+ ament_target_dependencies(local_coverage_planner rclcpp std_msgs nav_msgs geometry_msgs sensor_msgs tf2_ros tf2_geometry_msgs tf2)
+-target_link_libraries(local_coverage_planner ${catkin_LIBRARIES} viewpoint_manager)
++target_link_libraries(local_coverage_planner ${catkin_LIBRARIES} viewpoint_manager tsp_solver)
+ 
+ add_library(grid_world src/grid_world/grid_world.cpp)
+ ament_target_dependencies(grid_world rclcpp std_msgs nav_msgs geometry_msgs sensor_msgs tf2_ros tf2_geometry_msgs tf2)
+@@ -151,6 +157,9 @@
+         DESTINATION share/${PROJECT_NAME}
+       )
+ 
++if(BUILD_TESTING)
++  enable_testing()
++  add_executable(ht_core_test tests/ht_core_test.cpp)
++  add_test(NAME ht_core_test COMMAND ht_core_test)
++endif()
+ ament_package()
+-
+-
+--- /dev/null
++++ b/src/tare_planner/config/ht.yaml
+@@ -0,0 +1,13 @@
++/**:
++  ros__parameters:
++    ht_enabled: true
++    ht_directions_calibrated: false
++    ht_topic: /ht_traversability/global_local
++    ht_weight: 1.0
++    ht_unknown_penalty: 2.0
++    ht_map_timeout: 1.0
++    ht_sample_step: 0.02
++    ht_lookahead_distance: 2.0
++    ht_validity_radius: 0.6
++    ht_heading_offset: 0.0
++    ht_channel_order: [0, 1, 2, 3, 4, 5, 6, 7]
+--- /dev/null
++++ b/src/tare_planner/include/ht_cost/directed_graph.h
+@@ -0,0 +1,40 @@
++#pragma once
++#include <algorithm>
++#include <cmath>
++#include <functional>
++#include <limits>
++#include <queue>
++#include <vector>
++
++namespace ht_cost_ns {
++inline double shortestPath(const std::vector<std::vector<int>>& graph,
++                           const std::vector<std::vector<double>>& weights,
++                           int start, int goal, std::vector<int>& path) {
++  path.clear();
++  const double inf=std::numeric_limits<double>::infinity();
++  if (start<0 || goal<0 || start>=static_cast<int>(graph.size()) ||
++      goal>=static_cast<int>(graph.size()) || weights.size()!=graph.size()) return inf;
++  std::vector<double> distance(graph.size(),inf);
++  std::vector<int> parent(graph.size(),-1);
++  using Item=std::pair<double,int>;
++  std::priority_queue<Item,std::vector<Item>,std::greater<Item>> queue;
++  distance[start]=0; queue.emplace(0,start);
++  while (!queue.empty()) {
++    auto [d,u]=queue.top(); queue.pop();
++    if (d!=distance[u]) continue;
++    if (u==goal) break;
++    if (graph[u].size()!=weights[u].size()) return inf;
++    for (size_t i=0;i<graph[u].size();++i) {
++      const int v=graph[u][i]; const double w=weights[u][i];
++      if (v<0 || v>=static_cast<int>(graph.size()) || !std::isfinite(w) || w<0) continue;
++      if (d+w<distance[v]) {
++        distance[v]=d+w; parent[v]=u; queue.emplace(distance[v],v);
++      }
++    }
++  }
++  if (!std::isfinite(distance[goal])) return inf;
++  for (int u=goal;u!=-1;u=parent[u]) path.push_back(u);
++  std::reverse(path.begin(),path.end());
++  return distance[goal];
++}
++}
+--- /dev/null
++++ b/src/tare_planner/include/ht_cost/ht_cost_core.h
+@@ -0,0 +1,96 @@
++#pragma once
++
++#include <algorithm>
++#include <array>
++#include <cmath>
++#include <limits>
++#include <stdexcept>
++#include <vector>
++
++namespace ht_cost_ns {
++constexpr double kPi = 3.14159265358979323846;
++struct Point { double x = 0, y = 0, z = 0; };
++struct Cost {
++  double length = 0, risk = 0, unknown_length = 0;
++  bool fully_known = true;
++  double total(double weight, double unknown_penalty) const {
++    return length + weight * risk + unknown_penalty * unknown_length;
++  }
++};
++
++// Canonical storage: row increases along -map X, column along -map Y.
++// The ROS decoder removes the GridMap circular buffer before constructing this.
++struct Map {
++  int rows = 0, cols = 0;
++  double resolution = 0, center_x = 0, center_y = 0, yaw = 0, stamp = 0;
++  double heading_offset = 0;
++  std::array<int, 8> channel_order{{0,1,2,3,4,5,6,7}};
++  std::array<std::vector<float>, 8> probabilities;
++  std::vector<unsigned char> valid;
++
++  bool wellFormed() const {
++    if (rows <= 0 || cols <= 0 || !std::isfinite(resolution) || resolution <= 0 ||
++        !std::isfinite(center_x) || !std::isfinite(center_y) ||
++        !std::isfinite(yaw) || !std::isfinite(stamp) || !std::isfinite(heading_offset))
++      return false;
++    const auto size = static_cast<size_t>(rows) * cols;
++    if (valid.size() != size) return false;
++    auto order = channel_order;
++    std::sort(order.begin(), order.end());
++    for (int k = 0; k < 8; ++k)
++      if (order[k] != k || probabilities[k].size() != size) return false;
++    return true;
++  }
++  bool fresh(double now, double timeout) const {
++    return std::isfinite(now) && now >= stamp && now - stamp <= timeout;
++  }
++  double sample(double x, double y, double heading) const {
++    if (!std::isfinite(x) || !std::isfinite(y) || !std::isfinite(heading))
++      return std::numeric_limits<double>::quiet_NaN();
++    const double dx = x-center_x, dy = y-center_y;
++    const double mx = std::cos(yaw)*dx + std::sin(yaw)*dy;
++    const double my = -std::sin(yaw)*dx + std::cos(yaw)*dy;
++    const double rx = rows*0.5-mx/resolution, cy = cols*0.5-my/resolution;
++    if (rx < 0 || cy < 0 || rx >= rows || cy >= cols)
++      return std::numeric_limits<double>::quiet_NaN();
++    const auto index = static_cast<size_t>(std::floor(rx))*cols +
++                       static_cast<size_t>(std::floor(cy));
++    if (!valid[index]) return std::numeric_limits<double>::quiet_NaN();
++    double angle = std::fmod(heading-yaw-heading_offset, 2*kPi);
++    if (angle < 0) angle += 2*kPi;
++    const int channel = channel_order[static_cast<int>(std::floor(angle/(kPi/4)+0.5))%8];
++    const double p = probabilities[channel][index];
++    return std::isfinite(p) && p >= 0 && p <= 1 ? p :
++           std::numeric_limits<double>::quiet_NaN();
++  }
++};
++
++inline Cost segment(const Map* map, const Point& a, const Point& b, double step) {
++  if (!std::isfinite(step) || step <= 0) throw std::invalid_argument("Invalid HT sample step");
++  Cost result;
++  const double dx=b.x-a.x, dy=b.y-a.y, dz=b.z-a.z;
++  result.length=std::hypot(std::hypot(dx,dy),dz);
++  if (!std::isfinite(result.length)) throw std::invalid_argument("Non-finite path");
++  if (result.length == 0) return result;
++  if (map == nullptr) {
++    result.unknown_length=result.length;
++    result.fully_known=false;
++    return result;
++  }
++  const double actual_step=std::min(step, map->resolution/2);
++  const double count=std::ceil(result.length/actual_step);
++  if (count > 1000000) throw std::invalid_argument("HT segment sampling budget exceeded");
++  const int n=std::max(1, static_cast<int>(count));
++  const double ds=result.length/n, heading=std::atan2(dy,dx);
++  // Midpoint quadrature makes constant-terrain cost independent of sample count.
++  for (int i=0;i<n;++i) {
++    const double t=(i+0.5)/n;
++    const double p=map->sample(a.x+t*dx,a.y+t*dy,heading);
++    if (!std::isfinite(p)) {
++      result.unknown_length+=ds;
++      result.fully_known=false;
++    } else result.risk+=ds*(-std::log(std::max(p,0.001)));
++  }
++  return result;
++}
++}  // namespace ht_cost_ns
+--- /dev/null
++++ b/src/tare_planner/include/ht_cost/ht_cost_map.h
+@@ -0,0 +1,39 @@
++#pragma once
++#include "ht_cost/ht_cost_core.h"
++#include <rclcpp/rclcpp.hpp>
++#include <grid_map_msgs/msg/grid_map.hpp>
++#include <std_msgs/msg/bool.hpp>
++#include <tf2_ros/buffer.h>
++#include <tf2_ros/transform_listener.h>
++#include <mutex>
++#include <memory>
++
++namespace ht_cost_ns {
++class HtCostMap {
++ public:
++  explicit HtCostMap(rclcpp::Node::SharedPtr node);
++  bool enabled() const { return enabled_; }
++  void beginCycle();
++  bool ready() const;
++  double cost(const Point& a, const Point& b) const;
++  bool knownSegment(const Point& a, const Point& b) const;
++  void publishPermission(bool allowed);
++  double lookahead() const { return lookahead_; }
++  double step() const { return step_; }
++ private:
++  void receive(grid_map_msgs::msg::GridMap::ConstSharedPtr msg);
++  rclcpp::Clock::SharedPtr clock_;
++  rclcpp::Logger logger_;
++  bool enabled_=false, calibrated_=false;
++  double weight_=1, unknown_penalty_=2, timeout_=1, step_=0.02, lookahead_=2;
++  double footprint_radius_=0.6, heading_offset_=0;
++  std::array<int,8> channel_order_{{0,1,2,3,4,5,6,7}};
++  std::string frame_;
++  std::mutex mutex_;
++  std::shared_ptr<Map> latest_, cycle_;
++  tf2_ros::Buffer buffer_;
++  tf2_ros::TransformListener listener_;
++  rclcpp::Subscription<grid_map_msgs::msg::GridMap>::SharedPtr subscription_;
++  rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr permission_;
++};
++}
+--- a/src/tare_planner/include/local_coverage_planner/local_coverage_planner.h
++++ b/src/tare_planner/include/local_coverage_planner/local_coverage_planner.h
+@@ -102,6 +102,9 @@
+   exploration_path_ns::ExplorationPath SolveTSP(const std::vector<int>& selected_viewpoint_indices,
+                                                 std::vector<int>& ordered_viewpoint_indices);
+ 
++  exploration_path_ns::ExplorationPath SolveHTTSP(const std::vector<int>& selected,
++                                                  std::vector<int>& ordered);
++  double ht_last_cost_ = 0;
+   // viewpoint_manager_ns::ViewPointManager::Ptr viewpoint_manager_;
+   static bool SortPairInRev(const std::pair<int, int>& a, const std::pair<int, int>& b)
+   {
+@@ -133,4 +136,4 @@
+   std::vector<int> last_selected_viewpoint_indices_;
+   std::vector<int> last_selected_viewpoint_array_indices_;
+ };
+-}  // namespace local_coverage_planner_ns+}  // namespace local_coverage_planner_ns
+--- a/src/tare_planner/include/viewpoint_manager/viewpoint_manager.h
++++ b/src/tare_planner/include/viewpoint_manager/viewpoint_manager.h
+@@ -11,6 +11,7 @@
+ #pragma once
+ 
+ #include <memory>
++#include "ht_cost/ht_cost_map.h"
+ #include <cmath>
+ 
+ #include <Eigen/Core>
+@@ -313,6 +314,8 @@
+     return candidate_indices_;
+   }
+   nav_msgs::msg::Path GetViewPointShortestPath(int start_viewpoint_ind, int target_viewpoint_ind);
++  std::shared_ptr<ht_cost_ns::HtCostMap> HT() const { return ht_map_; }
++  double GetHTShortestPath(int start, int target, nav_msgs::msg::Path& path);
+   nav_msgs::msg::Path GetViewPointShortestPath(const Eigen::Vector3d& start_position,
+                                                const Eigen::Vector3d& target_position);
+   bool GetViewPointShortestPathWithMaxLength(const Eigen::Vector3d& start_position,
+@@ -361,6 +364,8 @@
+   std::vector<int> collision_point_count_;
+   std::vector<std::vector<int>> candidate_viewpoint_graph_;
+   std::vector<std::vector<double>> candidate_viewpoint_dist_;
++  std::vector<std::vector<double>> candidate_ht_dist_;
++  std::shared_ptr<ht_cost_ns::HtCostMap> ht_map_;
+   std::vector<geometry_msgs::msg::Point> candidate_viewpoint_position_;
+   pcl::KdTreeFLANN<pcl::PointXYZI>::Ptr kdtree_viewpoint_candidate_;
+   pcl::KdTreeFLANN<pcl::PointXYZI>::Ptr kdtree_viewpoint_in_collision_;
+@@ -371,4 +376,4 @@
+   std::vector<geometry_msgs::msg::Polygon> nogo_boundary_;
+ };
+ 
+-}  // namespace viewpoint_manager_ns+}  // namespace viewpoint_manager_ns
+--- /dev/null
++++ b/src/tare_planner/launch/explore_ht.launch.py
+@@ -0,0 +1,29 @@
++import os
++from ament_index_python.packages import get_package_share_directory
++from launch import LaunchDescription
++from launch.actions import DeclareLaunchArgument, OpaqueFunction
++from launch.substitutions import LaunchConfiguration
++from launch_ros.actions import Node
++
++
++def start(context):
++    share = get_package_share_directory("tare_planner")
++    scenario = LaunchConfiguration("scenario").perform(context)
++    if scenario not in ("campus", "forest", "garage", "indoor", "matterport", "tunnel"):
++        raise ValueError("Unsupported scenario")
++    return [Node(
++        package="tare_planner", executable="tare_planner_node",
++        name="tare_planner_node", output="screen",
++        parameters=[os.path.join(share, scenario + ".yaml"),
++                    LaunchConfiguration("ht_config").perform(context),
++                    {"use_sim_time": LaunchConfiguration("use_sim_time").perform(context).lower() == "true"}])]
++
++
++def generate_launch_description():
++    share = get_package_share_directory("tare_planner")
++    return LaunchDescription([
++        DeclareLaunchArgument("scenario", default_value="garage"),
++        DeclareLaunchArgument("use_sim_time", default_value="false"),
++        DeclareLaunchArgument("ht_config", default_value=os.path.join(share, "ht.yaml")),
++        OpaqueFunction(function=start),
++    ])
+--- a/src/tare_planner/package.xml
++++ b/src/tare_planner/package.xml
+@@ -16,6 +16,10 @@
+   <depend>visualization_msgs</depend>
+   <depend>tf2</depend>
+   <depend>tf2_ros</depend>
++  <depend>tf2_geometry_msgs</depend>
++  <depend>grid_map_core</depend>
++  <depend>grid_map_ros</depend>
++  <depend>grid_map_msgs</depend>
+   <depend>pcl_ros</depend>
+   <depend>pcl_conversions</depend>
+   <depend>libgoogle-glog-dev</depend>
+--- /dev/null
++++ b/src/tare_planner/src/ht_cost/ht_cost_map.cpp
+@@ -0,0 +1,155 @@
++#include "ht_cost/ht_cost_map.h"
++#include <grid_map_ros/GridMapRosConverter.hpp>
++#include <grid_map_core/iterators/GridMapIterator.hpp>
++#include <tf2/LinearMath/Matrix3x3.h>
++#include <tf2/LinearMath/Transform.h>
++#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
++
++namespace ht_cost_ns {
++HtCostMap::HtCostMap(rclcpp::Node::SharedPtr node)
++  : clock_(node->get_clock()), logger_(node->get_logger()),
++    buffer_(clock_), listener_(buffer_) {
++  enabled_=node->declare_parameter<bool>("ht_enabled",false);
++  calibrated_=node->declare_parameter<bool>("ht_directions_calibrated",false);
++  weight_=node->declare_parameter<double>("ht_weight",1.0);
++  unknown_penalty_=node->declare_parameter<double>("ht_unknown_penalty",2.0);
++  timeout_=node->declare_parameter<double>("ht_map_timeout",1.0);
++  step_=node->declare_parameter<double>("ht_sample_step",0.02);
++  lookahead_=node->declare_parameter<double>("ht_lookahead_distance",2.0);
++  footprint_radius_=node->declare_parameter<double>("ht_validity_radius",0.6);
++  heading_offset_=node->declare_parameter<double>("ht_heading_offset",0.0);
++  frame_="map";  // TARE's existing world frame.
++  const auto order=node->declare_parameter<std::vector<int64_t>>(
++    "ht_channel_order",{0,1,2,3,4,5,6,7});
++  const auto topic=node->declare_parameter<std::string>(
++    "ht_topic","/ht_traversability/global_local");
++  auto sorted=order;
++  std::sort(sorted.begin(),sorted.end());
++  if (sorted != std::vector<int64_t>({0,1,2,3,4,5,6,7}))
++    throw std::invalid_argument("ht_channel_order must be a permutation of 0..7");
++  for (int i=0;i<8;++i) channel_order_[i]=static_cast<int>(order[i]);
++  for (double v : {weight_,unknown_penalty_,footprint_radius_})
++    if (!std::isfinite(v) || v<0) throw std::invalid_argument("Negative/non-finite HT parameter");
++  for (double v : {timeout_,step_,lookahead_})
++    if (!std::isfinite(v) || v<=0) throw std::invalid_argument("Non-positive HT parameter");
++  if (!std::isfinite(heading_offset_) || step_<0.001 || footprint_radius_>3)
++    throw std::invalid_argument("HT sampling parameters outside supported range");
++  if (enabled_) {
++    permission_=node->create_publisher<std_msgs::msg::Bool>("/ht_navigation_allowed",1);
++    subscription_=node->create_subscription<grid_map_msgs::msg::GridMap>(
++      topic,rclcpp::QoS(1).best_effort(),
++      [this](grid_map_msgs::msg::GridMap::ConstSharedPtr msg){receive(msg);});
++    RCLCPP_INFO(logger_,"HT enabled: weight=%.3f unknown=%.3f calibrated=%d",
++                weight_,unknown_penalty_,calibrated_);
++  }
++}
++
++void HtCostMap::receive(grid_map_msgs::msg::GridMap::ConstSharedPtr msg) {
++  try {
++    // grid_map's geometry is axis-aligned within its frame; reject tilted/rotated
++    // message poses rather than silently dropping an unsupported orientation.
++    const auto& q=msg->info.pose.orientation;
++    if (std::abs(q.x)>1e-6 || std::abs(q.y)>1e-6 || std::abs(q.z)>1e-6 ||
++        std::abs(std::abs(q.w)-1)>1e-6)
++      throw std::runtime_error("Unsupported GridMap pose orientation");
++    grid_map::GridMap grid;
++    if (!grid_map::GridMapRosConverter::fromMessage(*msg,grid))
++      throw std::runtime_error("Cannot decode GridMap");
++    for (int k=0;k<8;++k)
++      if (!grid.exists("ht_dir_"+std::to_string(k)))
++        throw std::runtime_error("Missing ht_dir layers; set aggregate_only=false");
++    if (!grid.exists("ht_valid")) throw std::runtime_error("Missing ht_valid");
++    tf2::Transform transform;
++    transform.setIdentity();
++    if (msg->header.frame_id != frame_) {
++      auto tf=buffer_.lookupTransform(frame_,msg->header.frame_id,
++          rclcpp::Time(msg->header.stamp),rclcpp::Duration::from_seconds(0.0));
++      tf2::fromMsg(tf.transform,transform);
++    }
++    double roll,pitch,yaw;
++    tf2::Matrix3x3(transform.getRotation()).getRPY(roll,pitch,yaw);
++    if (std::abs(roll)>1e-3 || std::abs(pitch)>1e-3)
++      throw std::runtime_error("HT requires gravity-aligned map frames");
++    auto out=std::make_shared<Map>();
++    out->rows=grid.getSize()(0); out->cols=grid.getSize()(1);
++    out->resolution=grid.getResolution();
++    out->stamp=rclcpp::Time(msg->header.stamp).seconds();
++    out->yaw=yaw; out->heading_offset=heading_offset_;
++    out->channel_order=channel_order_;
++    auto center=transform*tf2::Vector3(grid.getPosition().x(),grid.getPosition().y(),0);
++    out->center_x=center.x(); out->center_y=center.y();
++    const size_t size=static_cast<size_t>(out->rows)*out->cols;
++    out->valid.assign(size,0);
++    for (auto& layer : out->probabilities)
++      layer.assign(size,std::numeric_limits<float>::quiet_NaN());
++    for (grid_map::GridMapIterator it(grid); !it.isPastEnd(); ++it) {
++      grid_map::Position pos;
++      grid.getPosition(*it,pos);
++      const int row=static_cast<int>(std::floor(out->rows*0.5-
++                       (pos.x()-grid.getPosition().x())/out->resolution));
++      const int col=static_cast<int>(std::floor(out->cols*0.5-
++                       (pos.y()-grid.getPosition().y())/out->resolution));
++      if (row<0 || col<0 || row>=out->rows || col>=out->cols)
++        throw std::runtime_error("Invalid GridMap index");
++      const size_t index=static_cast<size_t>(row)*out->cols+col;
++      const float valid=grid.at("ht_valid",*it);
++      out->valid[index]=std::isfinite(valid) && valid>=0.5;
++      for (int k=0;k<8;++k) {
++        const float p=grid.at("ht_dir_"+std::to_string(k),*it);
++        out->probabilities[k][index]=p;
++        if (!std::isfinite(p) || p<0 || p>1) out->valid[index]=0;
++      }
++    }
++    if (!out->wellFormed()) throw std::runtime_error("Invalid HT map geometry");
++    std::lock_guard<std::mutex> lock(mutex_);
++    latest_=std::move(out);
++  } catch (const std::exception& e) {
++    std::lock_guard<std::mutex> lock(mutex_);
++    latest_.reset();
++    RCLCPP_WARN_THROTTLE(logger_,*clock_,2000,"HT map rejected: %s",e.what());
++  }
++}
++void HtCostMap::beginCycle() {
++  std::lock_guard<std::mutex> lock(mutex_);
++  cycle_=latest_;
++}
++bool HtCostMap::ready() const {
++  return !enabled_ || (calibrated_ && cycle_ && cycle_->fresh(clock_->now().seconds(),timeout_));
++}
++void HtCostMap::publishPermission(bool allowed) {
++  if (!permission_) return;
++  std_msgs::msg::Bool msg;
++  msg.data=allowed && ready();
++  permission_->publish(msg);
++  if (!msg.data)
++    RCLCPP_WARN_THROTTLE(logger_,*clock_,3000,
++      "HT waypoint held: check calibration, fresh map/TF, sensor updates and valid local route");
++}
++double HtCostMap::cost(const Point& a,const Point& b) const {
++  if (!enabled_) return std::hypot(std::hypot(b.x-a.x,b.y-a.y),b.z-a.z);
++  return segment(ready()?cycle_.get():nullptr,a,b,step_).total(weight_,unknown_penalty_);
++}
++bool HtCostMap::knownSegment(const Point& a,const Point& b) const {
++  if (!enabled_) return true;
++  if (!ready()) return false;
++  const double length=std::hypot(b.x-a.x,b.y-a.y);
++  const double count=std::ceil(length/std::min(step_,cycle_->resolution/2));
++  if (!std::isfinite(count) || count>10000) return false;
++  const int n=std::max(1,static_cast<int>(count));
++  const double heading=std::atan2(b.y-a.y,b.x-a.x);
++  // This checks HT support, NOT physical footprint collision or stopping safety.
++  const double cells=std::ceil(footprint_radius_/cycle_->resolution);
++  if (!std::isfinite(cells) || cells>100) return false;
++  const int radius=static_cast<int>(cells);
++  for (int i=0;i<=n;++i) {
++    const double t=static_cast<double>(i)/n;
++    for (int ix=-radius;ix<=radius;++ix) for (int iy=-radius;iy<=radius;++iy) {
++      const double dx=ix*cycle_->resolution,dy=iy*cycle_->resolution;
++      if (std::hypot(dx,dy)>footprint_radius_+cycle_->resolution/2) continue;
++      if (!std::isfinite(cycle_->sample(a.x+t*(b.x-a.x)+dx,a.y+t*(b.y-a.y)+dy,heading)))
++        return false;
++    }
++  }
++  return true;
++}
++}
+--- /dev/null
++++ b/src/tare_planner/src/local_coverage_planner/ht_route.cpp
+@@ -0,0 +1,72 @@
++#include "local_coverage_planner/local_coverage_planner.h"
++#include "tsp_solver/tsp_solver.h"
++#include <limits>
++
++namespace local_coverage_planner_ns {
++exploration_path_ns::ExplorationPath LocalCoveragePlanner::SolveHTTSP(
++    const std::vector<int>& selected,std::vector<int>& ordered) {
++  using namespace operations_research;
++  using namespace exploration_path_ns;
++  ExplorationPath result;
++  ordered.clear();
++  ht_last_cost_=std::numeric_limits<double>::infinity();
++  if (!viewpoint_manager_->HT()->ready()) return result;
++  std::vector<int> ids{robot_viewpoint_ind_};
++  for (int id:selected)
++    if (std::find(ids.begin(),ids.end(),id)==ids.end()) ids.push_back(id);
++  // Preserve a global-boundary endpoint, but always execute from the robot.
++  int end_id=start_viewpoint_ind_!=robot_viewpoint_ind_ ? start_viewpoint_ind_ : end_viewpoint_ind_;
++  if (end_id<0) end_id=robot_viewpoint_ind_;
++  if (std::find(ids.begin(),ids.end(),end_id)==ids.end()) ids.push_back(end_id);
++  const int n=static_cast<int>(ids.size());
++  const int end=static_cast<int>(std::find(ids.begin(),ids.end(),end_id)-ids.begin());
++  std::vector<std::vector<double>> cost(n,std::vector<double>(n,0));
++  std::vector<std::vector<nav_msgs::msg::Path>> paths(n,std::vector<nav_msgs::msg::Path>(n));
++  for (int i=0;i<n;++i) for (int j=0;j<n;++j) {
++    cost[i][j]=viewpoint_manager_->GetHTShortestPath(ids[i],ids[j],paths[i][j]);
++    // Do not turn missing graph connections into zero-length routes.
++    if (!std::isfinite(cost[i][j]) || cost[i][j]>1e9) return result;
++  }
++  RoutingIndexManager manager(n,1,
++    std::vector<RoutingIndexManager::NodeIndex>{RoutingIndexManager::NodeIndex(0)},
++    std::vector<RoutingIndexManager::NodeIndex>{RoutingIndexManager::NodeIndex(end)});
++  RoutingModel routing(manager);
++  const int callback=routing.RegisterTransitCallback([&](int64_t from,int64_t to)->int64_t {
++    return static_cast<int64_t>(std::llround(1000*cost[manager.IndexToNode(from).value()]
++                                                   [manager.IndexToNode(to).value()]));
++  });
++  routing.SetArcCostEvaluatorOfAllVehicles(callback);
++  auto parameters=DefaultRoutingSearchParameters();
++  parameters.set_first_solution_strategy(FirstSolutionStrategy::PATH_CHEAPEST_ARC);
++  parameters.mutable_time_limit()->set_nanos(200000000);
++  const Assignment* solution=routing.SolveWithParameters(parameters);
++  if (!solution) return result;
++  std::vector<int> route;
++  int64_t index=routing.Start(0);
++  while (!routing.IsEnd(index)) {
++    route.push_back(manager.IndexToNode(index).value());
++    index=solution->Value(routing.NextVar(index));
++  }
++  route.push_back(manager.IndexToNode(index).value());
++  Node first(viewpoint_manager_->GetViewPointPosition(ids[0]),NodeType::ROBOT);
++  first.local_viewpoint_ind_=ids[0];
++  result.Append(first);
++  ordered.push_back(ids[0]);
++  ht_last_cost_=0;
++  for (size_t i=1;i<route.size();++i) {
++    const int a=route[i-1],b=route[i];
++    ht_last_cost_+=cost[a][b];
++    const auto& path=paths[a][b];
++    for (size_t j=1;j<path.poses.size();++j) {
++      const bool endpoint=j+1==path.poses.size();
++      Node node(path.poses[j].pose.position,endpoint ? NodeType::LOCAL_VIEWPOINT : NodeType::LOCAL_VIA_POINT);
++      node.local_viewpoint_ind_=endpoint ? ids[b] : -1;
++      if (endpoint && i+1==route.size())
++        node.type_=ids[b]==robot_viewpoint_ind_ ? NodeType::ROBOT : NodeType::LOCAL_PATH_END;
++      result.Append(node);
++    }
++    ordered.push_back(ids[b]);
++  }
++  return result;
++}
++}
+--- a/src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp
++++ b/src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp
+@@ -303,6 +303,8 @@
+     std::vector<int> &ordered_viewpoint_indices)
+ 
+ {
++  if (viewpoint_manager_->HT()->enabled())
++    return SolveHTTSP(selected_viewpoint_indices, ordered_viewpoint_indices);
+   // nav_msgs::msg::Path tsp_path;
+   exploration_path_ns::ExplorationPath tsp_path;
+ 
+@@ -670,7 +672,7 @@
+       local_path_itr =
+           SolveTSP(selected_viewpoint_indices_itr, ordered_viewpoint_indices);
+ 
+-      double path_length = local_path_itr.GetLength();
++      double path_length = viewpoint_manager_->HT()->enabled() ? ht_last_cost_ : local_path_itr.GetLength();
+       if (!local_path_itr.nodes_.empty() && path_length < min_path_length)
+ 
+       {
+@@ -758,4 +760,4 @@
+   }
+ }
+ 
+-} // namespace local_coverage_planner_ns+} // namespace local_coverage_planner_ns
+--- a/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp
++++ b/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp
+@@ -673,6 +673,11 @@
+ }
+ 
+ void SensorCoveragePlanner3D::SendInitialWaypoint() {
++  if (viewpoint_manager_->HT()->enabled()) {
++    lookahead_point_update_=false;
++    PublishWaypoint();
++    return;
++  }
+   // send waypoint ahead
+   double lx = 12.0;
+   double ly = 0.0;
+@@ -980,6 +985,7 @@
+ SensorCoveragePlanner3D::ConcatenateGlobalLocalPath(
+     const exploration_path_ns::ExplorationPath &global_path,
+     const exploration_path_ns::ExplorationPath &local_path) {
++  if (viewpoint_manager_->HT()->enabled()) return local_path;
+   exploration_path_ns::ExplorationPath full_path;
+   if (exploration_finished_ && near_home_ && kRushHome) {
+     exploration_path_ns::Node node;
+@@ -1025,6 +1031,32 @@
+     const exploration_path_ns::ExplorationPath &local_path,
+     const exploration_path_ns::ExplorationPath &global_path,
+     Eigen::Vector3d &lookahead_point) {
++  if (viewpoint_manager_->HT()->enabled()) {
++    auto ht=viewpoint_manager_->HT();
++    const Eigen::Vector3d robot(robot_position_.x,robot_position_.y,robot_position_.z);
++    lookahead_point=robot;
++    lookahead_point_in_line_of_sight_=false;
++    if (!ht->ready()) return false;
++    // Follow only the first nontrivial segment; never shortcut a later bend.
++    for (const auto& node:local_path.nodes_) {
++      const Eigen::Vector3d delta=node.position_-robot;
++      const double length=delta.norm();
++      if (length<0.15) continue;
++      const double limit=std::min(length,ht->lookahead());
++      for (double d=std::min(0.1,limit);;d=std::min(d+0.1,limit)) {
++        const Eigen::Vector3d point=robot+delta*(d/length);
++        if (!viewpoint_manager_->InLocalPlanningHorizon(point) ||
++            viewpoint_manager_->InCollision(point) ||
++            !viewpoint_manager_->InCurrentFrameLineOfSight(point) ||
++            !ht->knownSegment({robot.x(),robot.y(),robot.z()},{point.x(),point.y(),point.z()})) break;
++        lookahead_point=point;
++        if (d>=limit) break;
++      }
++      break;
++    }
++    lookahead_point_in_line_of_sight_=(lookahead_point-robot).norm()>0.1;
++    return lookahead_point_in_line_of_sight_;
++  }
+   Eigen::Vector3d robot_position(robot_position_.x, robot_position_.y,
+                                  robot_position_.z);
+ 
+@@ -1348,6 +1380,17 @@
+ 
+ void SensorCoveragePlanner3D::PublishWaypoint() {
+   geometry_msgs::msg::PointStamped waypoint;
++  if (viewpoint_manager_->HT()->enabled()) {
++    waypoint.point=robot_position_;
++    viewpoint_manager_->HT()->publishPermission(lookahead_point_update_);
++    if (lookahead_point_update_ && viewpoint_manager_->HT()->ready()) {
++      waypoint.point.x=lookahead_point_.x();
++      waypoint.point.y=lookahead_point_.y();
++      waypoint.point.z=lookahead_point_.z();
++    }
++    misc_utils_ns::Publish(shared_from_this(),waypoint_pub_,waypoint,kWorldFrameID);
++    return;
++  }
+   if (exploration_finished_ && near_home_ && kRushHome) {
+     waypoint.point.x = initial_position_.x();
+     waypoint.point.y = initial_position_.y();
+@@ -1456,7 +1499,18 @@
+ }
+ 
+ void SensorCoveragePlanner3D::execute() {
++  viewpoint_manager_->HT()->beginCycle();
++  if (viewpoint_manager_->HT()->enabled() &&
++      (!viewpoint_manager_->HT()->ready() || !keypose_cloud_update_)) {
++    lookahead_point_update_=false;
++    PublishWaypoint();
++    if (!viewpoint_manager_->HT()->ready()) return;
++  }
+   if (!kAutoStart && !start_exploration_) {
++    if (viewpoint_manager_->HT()->enabled()) {
++      lookahead_point_update_=false;
++      PublishWaypoint();
++    }
+     RCLCPP_INFO(this->get_logger(), "Waiting for start signal");
+     return;
+   }
+@@ -1494,6 +1548,10 @@
+ 
+     int viewpoint_candidate_count = UpdateViewPoints();
+     if (viewpoint_candidate_count == 0) {
++      if (viewpoint_manager_->HT()->enabled()) {
++        lookahead_point_update_=false;
++        PublishWaypoint();
++      }
+       RCLCPP_WARN(rclcpp::get_logger("standalone_logger"),
+                   "Cannot get candidate viewpoints, skipping this round");
+       return;
+--- a/src/tare_planner/src/viewpoint_manager/viewpoint_manager.cpp
++++ b/src/tare_planner/src/viewpoint_manager/viewpoint_manager.cpp
+@@ -9,6 +9,7 @@
+  *
+  */
+ #include "viewpoint_manager/viewpoint_manager.h"
++#include "ht_cost/directed_graph.h"
+ 
+ namespace viewpoint_manager_ns
+ {
+@@ -69,6 +70,7 @@
+ ViewPointManager::ViewPointManager(rclcpp::Node::SharedPtr nh) : initialized_(false)
+ {
+   vp_.ReadParameters(nh);
++  ht_map_ = std::make_shared<ht_cost_ns::HtCostMap>(nh);
+ 
+   kdtree_viewpoint_candidate_ = pcl::KdTreeFLANN<pcl::PointXYZI>::Ptr(new pcl::KdTreeFLANN<pcl::PointXYZI>());
+   kdtree_viewpoint_in_collision_ = pcl::KdTreeFLANN<pcl::PointXYZI>::Ptr(new pcl::KdTreeFLANN<pcl::PointXYZI>());
+@@ -1252,8 +1254,36 @@
+ 
+   // Construct a graph of all the viewpoints
+   GetCandidateViewPointGraph(candidate_viewpoint_graph_, candidate_viewpoint_dist_, candidate_viewpoint_position_);
++  if (ht_map_->enabled()) {
++    candidate_ht_dist_ = candidate_viewpoint_dist_;
++    for (size_t i=0;i<candidate_viewpoint_graph_.size();++i) {
++      const auto& a=candidate_viewpoint_position_[i];
++      for (size_t j=0;j<candidate_viewpoint_graph_[i].size();++j) {
++        const auto& b=candidate_viewpoint_position_[candidate_viewpoint_graph_[i][j]];
++        candidate_ht_dist_[i][j]=ht_map_->cost({a.x,a.y,a.z},{b.x,b.y,b.z});
++      }
++    }
++  }
+ 
+   return candidate_indices_.size();
++}
++
++double ViewPointManager::GetHTShortestPath(int start,int target,nav_msgs::msg::Path& path)
++{
++  path.poses.clear();
++  if (!InRange(start) || !InRange(target) || !IsViewPointCandidate(start) ||
++      !IsViewPointCandidate(target)) return std::numeric_limits<double>::infinity();
++  std::vector<int> indices;
++  const double cost=ht_cost_ns::shortestPath(candidate_viewpoint_graph_,candidate_ht_dist_,
++                                           graph_index_map_[start],graph_index_map_[target],indices);
++  path.header.frame_id="map";
++  for (int i:indices) {
++    geometry_msgs::msg::PoseStamped pose;
++    pose.pose.position=candidate_viewpoint_position_[i];
++    pose.pose.orientation.w=1;
++    path.poses.push_back(pose);
++  }
++  return cost;
+ }
+ 
+ nav_msgs::msg::Path ViewPointManager::GetViewPointShortestPath(int start_viewpoint_ind, int target_viewpoint_ind)
+@@ -1491,4 +1521,4 @@
+   return false;
+ }
+ 
+-}  // namespace viewpoint_manager_ns+}  // namespace viewpoint_manager_ns
+--- /dev/null
++++ b/src/tare_planner/tests/ht_core_test.cpp
+@@ -0,0 +1,60 @@
++#include "ht_cost/ht_cost_core.h"
++#include "ht_cost/directed_graph.h"
++#include <iostream>
++#include <stdexcept>
++using namespace ht_cost_ns;
++int checks=0;
++void check(bool condition) {
++  ++checks;
++  if (!condition) throw std::runtime_error("Failed check "+std::to_string(checks));
++}
++void near(double a,double b) { check(std::abs(a-b)<1e-5); }
++int main() {
++  Map m; m.rows=20;m.cols=20;m.resolution=0.5;m.stamp=10;
++  m.valid.assign(400,1);
++  for (int k=0;k<8;++k) m.probabilities[k].assign(400,(k+1)*0.1f);
++  check(m.wellFormed());
++  for (int k=0;k<8;++k) near(m.sample(0,0,k*kPi/4),(k+1)*0.1);
++  near(m.sample(0,0,2*kPi),0.1);
++  near(m.sample(0,0,-kPi/4),0.8);
++  check(std::isnan(m.sample(6,0,0)));
++  check(m.fresh(10.5,1));check(!m.fresh(12,1));check(!m.fresh(9,1));
++  auto f=segment(&m,{-1,0,0},{1,0,0},0.1);
++  auto r=segment(&m,{1,0,0},{-1,0,0},0.1);
++  near(f.risk,2*-std::log(0.1));near(r.risk,2*-std::log(0.5));
++  near(f.risk,segment(&m,{-1,0,0},{1,0,0},0.02).risk);
++  near(segment(nullptr,{0,0,0},{2,0,0},0.1).total(1,2),6);
++  near(segment(&m,{0,0,0},{0,0,0},0.1).length,0);
++  m.yaw=kPi/2;
++  near(m.sample(0,0,kPi/2),0.1);
++  m.heading_offset=kPi/4;
++  near(m.sample(0,0,3*kPi/4),0.1);
++  m.channel_order={{7,6,5,4,3,2,1,0}};
++  near(m.sample(0,0,3*kPi/4),0.8);
++  m.yaw=0;m.heading_offset=0;m.channel_order={{0,1,2,3,4,5,6,7}};
++  m.probabilities[0][0]=0.99;
++  near(m.sample(4.75,4.75,0),0.99);
++  m.center_x=10;m.center_y=20;m.yaw=kPi/2;
++  near(m.sample(5.25,24.75,kPi/2),0.99);
++  m.valid[0]=0;check(std::isnan(m.sample(5.25,24.75,kPi/2)));
++  m.valid[0]=1;m.probabilities[0][0]=2;
++  check(std::isnan(m.sample(5.25,24.75,kPi/2)));
++  bool threw=false;
++  try {segment(&m,{},{1,0,0},0);} catch(const std::invalid_argument&) {threw=true;}
++  check(threw);
++  std::vector<std::vector<int>> graph{{1,2},{0,2},{0,1}};
++  std::vector<int> path;
++  near(shortestPath(graph,{{1,4},{9,1},{1,9}},0,2,path),2);
++  check(path==std::vector<int>({0,1,2}));
++  near(shortestPath(graph,{{1,4},{9,1},{1,9}},2,0,path),1);
++  check(path==std::vector<int>({2,0}));
++  check(std::isinf(shortestPath({{},{}},{{},{}},0,1,path)) && path.empty());
++  near(shortestPath(graph,{{1,4},{9,1},{1,9}},1,1,path),0);
++  check(path==std::vector<int>({1}));
++  // A: 2 m at P=.2; B: 3 m at P=.9. Higher HT weight selects B.
++  auto a=Cost{2,2*-std::log(.2),0,true};
++  auto b=Cost{3,3*-std::log(.9),0,true};
++  check(a.total(0,2)<b.total(0,2));
++  check(a.total(1,2)>b.total(1,2));
++  std::cout<<"PASS: "<<checks<<" HT core checks\n";
++}
