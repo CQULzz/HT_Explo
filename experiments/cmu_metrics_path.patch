@@ -1,0 +1,31 @@
+diff --git a/src/visualization_tools/src/visualizationTools.cpp b/src/visualization_tools/src/visualizationTools.cpp
+index 3de5efb..bea0696 100644
+--- a/src/visualization_tools/src/visualizationTools.cpp
++++ b/src/visualization_tools/src/visualizationTools.cpp
+@@ -245,8 +245,10 @@ int main(int argc, char** argv)
+   nh->get_parameter("exploredAreaDisplayInterval", exploredAreaDisplayInterval);
+ 
+   // No direct replacement present for $(find pkg) in ROS2. Edit file path.
+-  metricFile.replace(metricFile.find("/install/"), 8, "/src");
+-  trajFile.replace(trajFile.find("/install/"), 8, "/src");
++  const auto metricInstallPos = metricFile.find("/install/");
++  if (metricInstallPos != string::npos) metricFile.replace(metricInstallPos, 8, "/src");
++  const auto trajInstallPos = trajFile.find("/install/");
++  if (trajInstallPos != string::npos) trajFile.replace(trajInstallPos, 8, "/src");
+ 
+   auto subOdometry = nh->create_subscription<nav_msgs::msg::Odometry>("/state_estimation", 5, odometryHandler);
+ 
+@@ -291,6 +293,13 @@ int main(int argc, char** argv)
+   trajFile += "_" + timeString + ".txt";
+   metricFilePtr = fopen(metricFile.c_str(), "w");
+   trajFilePtr = fopen(trajFile.c_str(), "w");
++  if (!metricFilePtr || !trajFilePtr) {
++    RCLCPP_ERROR(nh->get_logger(), "Cannot open metric/trajectory output files");
++    if (metricFilePtr) fclose(metricFilePtr);
++    if (trajFilePtr) fclose(trajFilePtr);
++    rclcpp::shutdown();
++    return 1;
++  }
+ 
+   rclcpp::Rate rate(100);
+   bool status = rclcpp::ok();

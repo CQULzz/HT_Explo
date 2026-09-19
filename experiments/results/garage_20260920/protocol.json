@@ -1,0 +1,59 @@
+{
+  "planner_source_commit": "c4b7a41d3ae3466c8b5eb043c8f1f3f81b3c9e8d",
+  "cmu_commit": "8313dfed10533787582be8a6044483fe3299622f",
+  "created": "2026-09-20T02:18:19+0800",
+  "duration_s": 300.0,
+  "order": [
+    [
+      "baseline",
+      1
+    ],
+    [
+      "ht",
+      1
+    ],
+    [
+      "ht",
+      2
+    ],
+    [
+      "baseline",
+      2
+    ],
+    [
+      "baseline",
+      3
+    ],
+    [
+      "ht",
+      3
+    ]
+  ],
+  "scenario": "garage",
+  "speed_limit_m_s": 0.5,
+  "initial_sensor_position_m": [
+    0,
+    0,
+    0.75
+  ],
+  "voxel_resolution_m": 0.5,
+  "reference_voxels": 339912,
+  "reference_ply_sha256": "2d5de09c34c3f0846c1e5b75917fdaf72a408e8c61dae0292e99435079057d18",
+  "ht_map": {
+    "type": "synthetic_uniform",
+    "probability": 0.9,
+    "channels": 8,
+    "length_m": 80,
+    "resolution_m": 0.5,
+    "rate_hz": 5
+  },
+  "random_seed": "uncontrolled: upstream uses std::random_device",
+  "clock": "wall time; both navigation inputs and HT use use_sim_time=false",
+  "script_sha256": {
+    "run_exploration_suite.py": "fd5d3911b5d81a724e458cdfd11a92a7488a1b32b375c0320704368826783842",
+    "exploration_probe.py": "11dbe2783ad2b869b3e12a8fa2205a7e9eca93fe376e401aa64d8d2f06c41ce4",
+    "coverage_metrics.py": "1532268aae6a182f6777af1a6f6515165b32c9f92b34ed444d99703e8da773de",
+    "sim_probe.py": "580ab3b75b8d30c56684e4029bff5b5b270615d9cb532874900e3f67eb913958",
+    "cmu_sim.launch.py": "481a68f8c8b9f289e3e03368124797212854360a2fabf8d7249e92f9f3ee2381"
+  }
+}

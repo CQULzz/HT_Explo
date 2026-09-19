@@ -41,7 +41,7 @@ class Probe(Node):
         self.create_subscription(PointCloud2, '/registered_scan', self.scan, qos_profile_sensor_data)
         self.create_subscription(Float32, '/runtime', self.timing, 10)
         self.create_subscription(RosPath, '/local_path', self.path, 10)
-        self.create_timer(0.1, self.publish_map)
+        self.create_timer(1.0/getattr(args, 'map_rate', 10.0), self.publish_map)
         self.create_timer(0.2, self.record)
 
     def odom(self, msg):
@@ -91,19 +91,20 @@ class Probe(Node):
             stamp -= 5_000_000_000
         msg.header.stamp.sec, msg.header.stamp.nanosec = divmod(stamp, 1_000_000_000)
         msg.info.resolution = 0.5
-        msg.info.length_x = msg.info.length_y = 40.0
+        msg.info.length_x = msg.info.length_y = getattr(self.args, 'map_length', 40.0)
+        cells = round(msg.info.length_x / msg.info.resolution)
         msg.info.pose.position.x, msg.info.pose.position.y = self.position[:2]
         msg.info.pose.orientation.w = 1.0
         msg.layers = [f'ht_dir_{k}' for k in range(8)] + ['ht_valid']
         for k in range(9):
             data = Float32MultiArray()
             data.layout.dim = [
-                MultiArrayDimension(label='column_index', size=80, stride=6400),
-                MultiArrayDimension(label='row_index', size=80, stride=80)]
+                MultiArrayDimension(label='column_index', size=cells, stride=cells*cells),
+                MultiArrayDimension(label='row_index', size=cells, stride=cells)]
             probability = 1.0 if k == 8 else self.args.probabilities[k]
             if mode == 'nan' and k == 3:
                 probability = float('nan')
-            data.data = [probability] * 6400
+            data.data = [probability] * (cells*cells)
             msg.data.append(data)
         if mode == 'missing_layer':
             msg.layers.pop(7)
