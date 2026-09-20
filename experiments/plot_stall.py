@@ -14,6 +14,9 @@ import numpy as np
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('snapshot',type=Path)
+    parser.add_argument('--recovered-metrics',type=Path,
+                        help='Overlay one independent post-fix trial, not a deterministic replay')
+    parser.add_argument('--output',type=Path)
     args=parser.parse_args()
     data=json.loads(args.snapshot.read_text())
     robot=np.array(data['position'])
@@ -39,11 +42,16 @@ def main():
     ax.plot([robot[0],route[1,0]],[robot[1],route[1,1]],'--',color='#c53030',lw=2,
             label='Direct robot-to-next-node segment')
     ax.scatter(*robot[:2],c='black',marker='*',s=150,label='Stopped robot')
+    if args.recovered_metrics:
+        recovered=json.loads(args.recovered_metrics.read_text())
+        trajectory=np.array([r['position'] for r in recovered['samples']])
+        ax.plot(trajectory[:,0],trajectory[:,1],color='#17834a',lw=2,
+                label='Post-fix independent run 1')
     ax.set(xlim=(5.8,8.8),ylim=(25.1,28.6),xlabel='World X (m)',ylabel='World Y (m)',
            title='HT run 2: stalled route near a grid corner')
     ax.set_aspect('equal')
     ax.legend(fontsize=8,loc='upper left')
-    fig.savefig(args.snapshot.parent/'stall_geometry.png',dpi=180)
+    fig.savefig(args.output or args.snapshot.parent/'stall_geometry.png',dpi=180)
     plt.close(fig)
 
 

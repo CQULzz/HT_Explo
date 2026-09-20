@@ -1,0 +1,632 @@
+{
+  "protocol": {
+    "planner_source_commit": "df8815c61a22a76d0314d372e4c280ac233ee23c",
+    "cmu_commit": "8313dfed10533787582be8a6044483fe3299622f",
+    "created": "2026-09-20T13:04:43+0800",
+    "duration_s": 300.0,
+    "order": [
+      [
+        "ht",
+        1
+      ],
+      [
+        "ht",
+        2
+      ],
+      [
+        "ht",
+        3
+      ]
+    ],
+    "cohort": "ht_fix_followup",
+    "scenario": "garage",
+    "speed_limit_m_s": 0.5,
+    "initial_sensor_position_m": [
+      0,
+      0,
+      0.75
+    ],
+    "voxel_resolution_m": 0.5,
+    "reference_voxels": 339912,
+    "reference_ply_sha256": "2d5de09c34c3f0846c1e5b75917fdaf72a408e8c61dae0292e99435079057d18",
+    "ht_map": {
+      "type": "synthetic_uniform",
+      "probability": 0.9,
+      "channels": 8,
+      "length_m": 80,
+      "resolution_m": 0.5,
+      "rate_hz": 5
+    },
+    "random_seed": "uncontrolled: upstream uses std::random_device",
+    "clock": "wall time; both navigation inputs and HT use use_sim_time=false",
+    "script_sha256": {
+      "run_exploration_suite.py": "d03c92976322fe063faa3ecb96cd50637a2eaa19195bf17afa865a53783b5703",
+      "exploration_probe.py": "11dbe2783ad2b869b3e12a8fa2205a7e9eca93fe376e401aa64d8d2f06c41ce4",
+      "coverage_metrics.py": "1532268aae6a182f6777af1a6f6515165b32c9f92b34ed444d99703e8da773de",
+      "sim_probe.py": "580ab3b75b8d30c56684e4029bff5b5b270615d9cb532874900e3f67eb913958",
+      "cmu_sim.launch.py": "481a68f8c8b9f289e3e03368124797212854360a2fabf8d7249e92f9f3ee2381"
+    }
+  },
+  "trials": [
+    {
+      "condition": "baseline",
+      "repetition": 1,
+      "duration_s": 300.001,
+      "initial_reference_hits": 1367,
+      "reference_hits": 26113,
+      "new_reference_hits": 24746,
+      "reference_hit_pct": 7.682282473110687,
+      "mean_new_reference_hits_over_time": 16548.561434999996,
+      "new_hits_last_60s": 5617.0,
+      "observed_voxels": 27870,
+      "new_observed_voxels": 26423,
+      "cmu_hit_voxel_volume_m3": 3482.375,
+      "distance_m": 145.7253376099155,
+      "planar_distance_m": 145.69360224831485,
+      "new_reference_hits_per_planar_m": 169.84959955773365,
+      "low_motion_intervals": [],
+      "low_motion_total_s": 0,
+      "longest_low_motion_s": 0,
+      "ht_denied_time_s": null,
+      "planning_cycles": 286,
+      "runtime_median_ms": 227.0,
+      "runtime_p95_ms": 521.5,
+      "runtime_max_ms": 1194.0,
+      "scan_rate_hz": 4.973316755610815,
+      "scan_age_p95_s": 0.1930537223815918,
+      "max_sample_gap_s": 0.2330000000000041,
+      "sim_clock_rate": 0.9947231398484612,
+      "finished": false,
+      "finish_time_s": null,
+      "min_sensor_z_m": 0.75,
+      "max_sensor_z_m": 0.8808169364929199,
+      "final_position_m": [
+        14.272233963012695,
+        35.278385162353516,
+        0.8774205446243286
+      ]
+    },
+    {
+      "condition": "baseline",
+      "repetition": 2,
+      "duration_s": 300.0,
+      "initial_reference_hits": 1367,
+      "reference_hits": 32258,
+      "new_reference_hits": 30891,
+      "reference_hit_pct": 9.490103320859516,
+      "mean_new_reference_hits_over_time": 22018.36337,
+      "new_hits_last_60s": 642.3849999999984,
+      "observed_voxels": 33514,
+      "new_observed_voxels": 32067,
+      "cmu_hit_voxel_volume_m3": 4187.25,
+      "distance_m": 143.38837974744078,
+      "planar_distance_m": 143.35149354242807,
+      "new_reference_hits_per_planar_m": 215.49130208997173,
+      "low_motion_intervals": [],
+      "low_motion_total_s": 0,
+      "longest_low_motion_s": 0,
+      "ht_denied_time_s": null,
+      "planning_cycles": 299,
+      "runtime_median_ms": 247.0,
+      "runtime_p95_ms": 376.49999999999983,
+      "runtime_max_ms": 658.0,
+      "scan_rate_hz": 5.0,
+      "scan_age_p95_s": 0.156358003616333,
+      "max_sample_gap_s": 0.2109999999999843,
+      "sim_clock_rate": 0.9999366643443595,
+      "finished": false,
+      "finish_time_s": null,
+      "min_sensor_z_m": 0.75,
+      "max_sensor_z_m": 0.880561888217926,
+      "final_position_m": [
+        59.727134704589844,
+        1.6407723426818848,
+        0.8777379393577576
+      ]
+    },
+    {
+      "condition": "baseline",
+      "repetition": 3,
+      "duration_s": 300.0,
+      "initial_reference_hits": 1367,
+      "reference_hits": 33169,
+      "new_reference_hits": 31802,
+      "reference_hit_pct": 9.758113864764997,
+      "mean_new_reference_hits_over_time": 17652.14358,
+      "new_hits_last_60s": 8565.619999999999,
+      "observed_voxels": 35088,
+      "new_observed_voxels": 33641,
+      "cmu_hit_voxel_volume_m3": 4384.625,
+      "distance_m": 139.51201354359367,
+      "planar_distance_m": 139.4757207710233,
+      "new_reference_hits_per_planar_m": 228.01101026184483,
+      "low_motion_intervals": [],
+      "low_motion_total_s": 0,
+      "longest_low_motion_s": 0,
+      "ht_denied_time_s": null,
+      "planning_cycles": 298,
+      "runtime_median_ms": 231.5,
+      "runtime_p95_ms": 336.29999999999995,
+      "runtime_max_ms": 770.0,
+      "scan_rate_hz": 5.0,
+      "scan_age_p95_s": 0.19483733177185059,
+      "max_sample_gap_s": 0.21299999999999386,
+      "sim_clock_rate": 0.9999266639776793,
+      "finished": false,
+      "finish_time_s": null,
+      "min_sensor_z_m": 0.75,
+      "max_sensor_z_m": 0.8813571333885193,
+      "final_position_m": [
+        2.9738175868988037,
+        63.40730285644531,
+        0.8768317103385925
+      ]
+    },
+    {
+      "condition": "ht",
+      "repetition": 1,
+      "duration_s": 300.001,
+      "initial_reference_hits": 1367,
+      "reference_hits": 34385,
+      "new_reference_hits": 33018,
+      "reference_hit_pct": 10.11585351502742,
+      "mean_new_reference_hits_over_time": 20191.261528333333,
+      "new_hits_last_60s": 3592.454545454544,
+      "observed_voxels": 36443,
+      "new_observed_voxels": 34996,
+      "cmu_hit_voxel_volume_m3": 4552.75,
+      "distance_m": 125.66607265472236,
+      "planar_distance_m": 125.60422667354852,
+      "new_reference_hits_per_planar_m": 262.8733194290936,
+      "low_motion_intervals": [],
+      "low_motion_total_s": 0,
+      "longest_low_motion_s": 0,
+      "ht_denied_time_s": 1.8,
+      "planning_cycles": 299,
+      "runtime_median_ms": 227.0,
+      "runtime_p95_ms": 308.6999999999994,
+      "runtime_max_ms": 441.0,
+      "scan_rate_hz": 4.999983333388889,
+      "scan_age_p95_s": 0.19653749465942383,
+      "max_sample_gap_s": 0.20400000000000773,
+      "sim_clock_rate": 0.9998499914995183,
+      "finished": false,
+      "finish_time_s": null,
+      "min_sensor_z_m": 0.75,
+      "max_sensor_z_m": 0.8812915682792664,
+      "final_position_m": [
+        13.66102123260498,
+        95.38374328613281,
+        0.8795823454856873
+      ]
+    },
+    {
+      "condition": "ht",
+      "repetition": 2,
+      "duration_s": 300.001,
+      "initial_reference_hits": 1367,
+      "reference_hits": 30663,
+      "new_reference_hits": 29296,
+      "reference_hit_pct": 9.020864223681423,
+      "mean_new_reference_hits_over_time": 19764.816013333333,
+      "new_hits_last_60s": 1707.3199999999997,
+      "observed_voxels": 31804,
+      "new_observed_voxels": 30357,
+      "cmu_hit_voxel_volume_m3": 3972.875,
+      "distance_m": 123.6414858341597,
+      "planar_distance_m": 123.59327584396625,
+      "new_reference_hits_per_planar_m": 237.03554906162972,
+      "low_motion_intervals": [],
+      "low_motion_total_s": 0,
+      "longest_low_motion_s": 0,
+      "ht_denied_time_s": 7.576999999999998,
+      "planning_cycles": 297,
+      "runtime_median_ms": 243.0,
+      "runtime_p95_ms": 425.1999999999999,
+      "runtime_max_ms": 1142.0,
+      "scan_rate_hz": 4.993316688944371,
+      "scan_age_p95_s": 0.19154977798461914,
+      "max_sample_gap_s": 0.22800000000000864,
+      "sim_clock_rate": 0.9991962728403587,
+      "finished": false,
+      "finish_time_s": null,
+      "min_sensor_z_m": 0.75,
+      "max_sensor_z_m": 0.8807487487792969,
+      "final_position_m": [
+        67.90242767333984,
+        -17.5284481048584,
+        0.877327561378479
+      ]
+    },
+    {
+      "condition": "ht",
+      "repetition": 3,
+      "duration_s": 300.0,
+      "initial_reference_hits": 1367,
+      "reference_hits": 32796,
+      "new_reference_hits": 31429,
+      "reference_hit_pct": 9.64837958059733,
+      "mean_new_reference_hits_over_time": 19321.380731666664,
+      "new_hits_last_60s": 2391.8499999999985,
+      "observed_voxels": 34919,
+      "new_observed_voxels": 33472,
+      "cmu_hit_voxel_volume_m3": 4362.5,
+      "distance_m": 119.9418612417757,
+      "planar_distance_m": 119.87919599055017,
+      "new_reference_hits_per_planar_m": 262.1722621703059,
+      "low_motion_intervals": [],
+      "low_motion_total_s": 0,
+      "longest_low_motion_s": 0,
+      "ht_denied_time_s": 13.760999999999886,
+      "planning_cycles": 290,
+      "runtime_median_ms": 227.0,
+      "runtime_p95_ms": 352.8000000000002,
+      "runtime_max_ms": 538.0,
+      "scan_rate_hz": 5.0,
+      "scan_age_p95_s": 0.07208418846130371,
+      "max_sample_gap_s": 0.21999999999999886,
+      "sim_clock_rate": 0.9998999966665555,
+      "finished": false,
+      "finish_time_s": null,
+      "min_sensor_z_m": 0.75,
+      "max_sensor_z_m": 0.8809942007064819,
+      "final_position_m": [
+        5.429250717163086,
+        86.6045150756836,
+        0.8773068189620972
+      ]
+    }
+  ],
+  "groups": {
+    "baseline": {
+      "n": 3,
+      "new_reference_hits": {
+        "mean": 29146.333333333332,
+        "sample_sd": 3837.926566954263,
+        "min": 24746.0,
+        "max": 31802.0
+      },
+      "reference_hit_pct": {
+        "mean": 8.9768332195784,
+        "sample_sd": 1.1290941675946309,
+        "min": 7.682282473110687,
+        "max": 9.758113864764997
+      },
+      "mean_new_reference_hits_over_time": {
+        "mean": 18739.689461666665,
+        "sample_sd": 2892.533549603191,
+        "min": 16548.561434999996,
+        "max": 22018.36337
+      },
+      "new_hits_last_60s": {
+        "mean": 4941.668333333332,
+        "sample_sd": 4004.5558881489387,
+        "min": 642.3849999999984,
+        "max": 8565.619999999999
+      },
+      "new_observed_voxels": {
+        "mean": 30710.333333333332,
+        "sample_sd": 3795.4300590754315,
+        "min": 26423.0,
+        "max": 33641.0
+      },
+      "cmu_hit_voxel_volume_m3": {
+        "mean": 4018.0833333333335,
+        "sample_sd": 474.31717917268537,
+        "min": 3482.375,
+        "max": 4384.625
+      },
+      "planar_distance_m": {
+        "mean": 142.8402721872554,
+        "sample_sd": 3.1403061907877303,
+        "min": 139.4757207710233,
+        "max": 145.69360224831485
+      },
+      "new_reference_hits_per_planar_m": {
+        "mean": 204.45063730318338,
+        "sample_sd": 30.61224645421739,
+        "min": 169.84959955773365,
+        "max": 228.01101026184483
+      },
+      "low_motion_total_s": {
+        "mean": 0.0,
+        "sample_sd": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "longest_low_motion_s": {
+        "mean": 0.0,
+        "sample_sd": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "runtime_median_ms": {
+        "mean": 235.16666666666666,
+        "sample_sd": 10.492060490358094,
+        "min": 227.0,
+        "max": 247.0
+      },
+      "runtime_p95_ms": {
+        "mean": 411.4333333333332,
+        "sample_sd": 97.41669945822093,
+        "min": 336.29999999999995,
+        "max": 521.5
+      },
+      "scan_rate_hz": {
+        "mean": 4.991105585203605,
+        "sample_sd": 0.015405578330948345,
+        "min": 4.973316755610815,
+        "max": 5.0
+      },
+      "scan_age_p95_s": {
+        "mean": 0.18141635258992514,
+        "sample_sd": 0.02171948331742721,
+        "min": 0.156358003616333,
+        "max": 0.19483733177185059
+      },
+      "sim_clock_rate": {
+        "mean": 0.9981954893901667,
+        "sample_sd": 0.0030071470710076745,
+        "min": 0.9947231398484612,
+        "max": 0.9999366643443595
+      }
+    },
+    "ht": {
+      "n": 3,
+      "new_reference_hits": {
+        "mean": 31247.666666666668,
+        "sample_sd": 1867.6140750522666,
+        "min": 29296.0,
+        "max": 33018.0
+      },
+      "reference_hit_pct": {
+        "mean": 9.595032439768724,
+        "sample_sd": 0.5494404654887936,
+        "min": 9.020864223681423,
+        "max": 10.11585351502742
+      },
+      "mean_new_reference_hits_over_time": {
+        "mean": 19759.152757777778,
+        "sample_sd": 434.96804991858306,
+        "min": 19321.380731666664,
+        "max": 20191.261528333333
+      },
+      "new_hits_last_60s": {
+        "mean": 2563.8748484848475,
+        "sample_sd": 954.2680310000458,
+        "min": 1707.3199999999997,
+        "max": 3592.454545454544
+      },
+      "new_observed_voxels": {
+        "mean": 32941.666666666664,
+        "sample_sd": 2364.533851170952,
+        "min": 30357.0,
+        "max": 34996.0
+      },
+      "cmu_hit_voxel_volume_m3": {
+        "mean": 4296.041666666667,
+        "sample_sd": 295.59480113549586,
+        "min": 3972.875,
+        "max": 4552.75
+      },
+      "planar_distance_m": {
+        "mean": 123.02556616935499,
+        "sample_sd": 2.904430199936567,
+        "min": 119.87919599055017,
+        "max": 125.60422667354852
+      },
+      "new_reference_hits_per_planar_m": {
+        "mean": 254.0270435536764,
+        "sample_sd": 14.71924026996517,
+        "min": 237.03554906162972,
+        "max": 262.8733194290936
+      },
+      "low_motion_total_s": {
+        "mean": 0.0,
+        "sample_sd": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "longest_low_motion_s": {
+        "mean": 0.0,
+        "sample_sd": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "runtime_median_ms": {
+        "mean": 232.33333333333334,
+        "sample_sd": 9.237604307034012,
+        "min": 227.0,
+        "max": 243.0
+      },
+      "runtime_p95_ms": {
+        "mean": 362.2333333333331,
+        "sample_sd": 58.820092938836424,
+        "min": 308.6999999999994,
+        "max": 425.1999999999999
+      },
+      "scan_rate_hz": {
+        "mean": 4.997766674111086,
+        "sample_sd": 0.0038538092106348756,
+        "min": 4.993316688944371,
+        "max": 5.0
+      },
+      "scan_age_p95_s": {
+        "mean": 0.15339048703511557,
+        "sample_sd": 0.0704574692295814,
+        "min": 0.07208418846130371,
+        "max": 0.19653749465942383
+      },
+      "sim_clock_rate": {
+        "mean": 0.9996487536688109,
+        "sample_sd": 0.0003926567257416189,
+        "min": 0.9991962728403587,
+        "max": 0.9998999966665555
+      }
+    }
+  },
+  "ht_minus_baseline": {
+    "new_reference_hits": {
+      "absolute": 2101.3333333333358,
+      "percent": 7.209597548004898
+    },
+    "reference_hit_pct": {
+      "absolute": 0.6181992201903235,
+      "percent": 6.886606947782381
+    },
+    "mean_new_reference_hits_over_time": {
+      "absolute": 1019.4632961111129,
+      "percent": 5.440129081095479
+    },
+    "new_hits_last_60s": {
+      "absolute": -2377.7934848484847,
+      "percent": -48.11722123901784
+    },
+    "new_observed_voxels": {
+      "absolute": 2231.333333333332,
+      "percent": 7.265741172895113
+    },
+    "cmu_hit_voxel_volume_m3": {
+      "absolute": 277.9583333333335,
+      "percent": 6.917684634050225
+    },
+    "planar_distance_m": {
+      "absolute": -19.81470601790042,
+      "percent": -13.871932414077504
+    },
+    "new_reference_hits_per_planar_m": {
+      "absolute": 49.57640625049302,
+      "percent": 24.248594626279065
+    },
+    "low_motion_total_s": {
+      "absolute": 0.0,
+      "percent": null
+    },
+    "longest_low_motion_s": {
+      "absolute": 0.0,
+      "percent": null
+    },
+    "runtime_median_ms": {
+      "absolute": -2.8333333333333144,
+      "percent": -1.2048192771084265
+    },
+    "runtime_p95_ms": {
+      "absolute": -49.2000000000001,
+      "percent": -11.95819492829947
+    },
+    "scan_rate_hz": {
+      "absolute": 0.006661088907481627,
+      "percent": 0.13345918642211352
+    },
+    "scan_age_p95_s": {
+      "absolute": -0.02802586555480957,
+      "percent": -15.448367886746928
+    },
+    "sim_clock_rate": {
+      "absolute": 0.0014532642786442285,
+      "percent": 0.1455891450212965
+    }
+  },
+  "audit": {
+    "baseline_1": {
+      "archived_observed_voxels": 27870,
+      "archived_reference_hits": 26113,
+      "coverage_counters_match": true,
+      "monotonic_samples": true
+    },
+    "baseline_2": {
+      "archived_observed_voxels": 33514,
+      "archived_reference_hits": 32258,
+      "coverage_counters_match": true,
+      "monotonic_samples": true
+    },
+    "baseline_3": {
+      "archived_observed_voxels": 35088,
+      "archived_reference_hits": 33169,
+      "coverage_counters_match": true,
+      "monotonic_samples": true
+    },
+    "ht_1": {
+      "archived_observed_voxels": 36443,
+      "archived_reference_hits": 34385,
+      "coverage_counters_match": true,
+      "monotonic_samples": true
+    },
+    "ht_2": {
+      "archived_observed_voxels": 31804,
+      "archived_reference_hits": 30663,
+      "coverage_counters_match": true,
+      "monotonic_samples": true
+    },
+    "ht_3": {
+      "archived_observed_voxels": 34919,
+      "archived_reference_hits": 32796,
+      "coverage_counters_match": true,
+      "monotonic_samples": true
+    }
+  },
+  "historical_baseline": {
+    "path": "/home/lzz/my test/HT_Explo-codex-ht8dir-v1/experiments/results/garage_20260920",
+    "protocol": {
+      "planner_source_commit": "c4b7a41d3ae3466c8b5eb043c8f1f3f81b3c9e8d",
+      "cmu_commit": "8313dfed10533787582be8a6044483fe3299622f",
+      "created": "2026-09-20T02:18:19+0800",
+      "duration_s": 300.0,
+      "order": [
+        [
+          "baseline",
+          1
+        ],
+        [
+          "ht",
+          1
+        ],
+        [
+          "ht",
+          2
+        ],
+        [
+          "baseline",
+          2
+        ],
+        [
+          "baseline",
+          3
+        ],
+        [
+          "ht",
+          3
+        ]
+      ],
+      "scenario": "garage",
+      "speed_limit_m_s": 0.5,
+      "initial_sensor_position_m": [
+        0,
+        0,
+        0.75
+      ],
+      "voxel_resolution_m": 0.5,
+      "reference_voxels": 339912,
+      "reference_ply_sha256": "2d5de09c34c3f0846c1e5b75917fdaf72a408e8c61dae0292e99435079057d18",
+      "ht_map": {
+        "type": "synthetic_uniform",
+        "probability": 0.9,
+        "channels": 8,
+        "length_m": 80,
+        "resolution_m": 0.5,
+        "rate_hz": 5
+      },
+      "random_seed": "uncontrolled: upstream uses std::random_device",
+      "clock": "wall time; both navigation inputs and HT use use_sim_time=false",
+      "script_sha256": {
+        "run_exploration_suite.py": "fd5d3911b5d81a724e458cdfd11a92a7488a1b32b375c0320704368826783842",
+        "exploration_probe.py": "11dbe2783ad2b869b3e12a8fa2205a7e9eca93fe376e401aa64d8d2f06c41ce4",
+        "coverage_metrics.py": "1532268aae6a182f6777af1a6f6515165b32c9f92b34ed444d99703e8da773de",
+        "sim_probe.py": "580ab3b75b8d30c56684e4029bff5b5b270615d9cb532874900e3f67eb913958",
+        "cmu_sim.launch.py": "481a68f8c8b9f289e3e03368124797212854360a2fabf8d7249e92f9f3ee2381"
+      }
+    },
+    "note": "Reused historical baseline; follow-up trials were not interleaved with it."
+  },
+  "interpretation": "Reference surface voxel hits, not accessible free-space coverage. Independent stochastic runs; group n is explicit; no significance inference."
+}

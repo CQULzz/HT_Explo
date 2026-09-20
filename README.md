@@ -2,6 +2,8 @@ TARE planner involves a hierarchical framework for highly efficient exploration 
 
 本仓库的 HT 8dir 修复及 CMU Jazzy 车库实测说明见 [VALIDATION.md](VALIDATION.md)。其中包含 OR-Tools 依赖修复、运动停滞修复、复现命令及测试记录。HT 的模型接口和限制见 [HT_README.md](HT_README.md)。
 
+后续探索效率实验、重复运行中发现的拐角停滞及修复复测见 [EXPERIMENT_REPORT.md](EXPERIMENT_REPORT.md)；实验协议和运行工具见 [experiments/README.md](experiments/README.md)。
+
 Please use instructions on our [project page](https://www.cmu-exploration.com/tare-planner).
 
 <p align="center">
