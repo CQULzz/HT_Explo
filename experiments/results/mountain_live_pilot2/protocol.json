@@ -1,0 +1,45 @@
+{
+  "duration_s": 25.0,
+  "order": [
+    [
+      "baseline",
+      1
+    ],
+    [
+      "ht",
+      1
+    ]
+  ],
+  "ht_weight": 1,
+  "ht_map_timeout_s": 3,
+  "speed_m_s": 0.5,
+  "clock": "wall",
+  "ht_elevation_source": "online registered lidar only, no ground-truth elevation input",
+  "terrain": {
+    "source": "/home/lzz/\u4e0b\u8f7d/data_scout/traversability_sim_data_train_height/version2_mountain_z12_use_n47_height_200_distancex_2050_distancey_2050.png",
+    "sha256": "0bdb42c8f9afc4a9ca5dbf54022c97c2099789acc63a9502c4994ebbe908d521",
+    "extent_m": 21,
+    "spawn_ground_xyz": [
+      -5.00390625,
+      -6.97265625,
+      0.35294117647058826
+    ],
+    "slope_degrees_percentiles": [
+      16.82271054035775,
+      31.475502177811716,
+      58.038694747456006
+    ],
+    "model_resolution_m": 0.04093567251461988,
+    "mesh_resolution_m": 0.08203125,
+    "note": "Supplied training-domain mountain; simplified CMU kinematic robot, not Scout dynamics."
+  },
+  "git_commit": "f4577e8ea0661b4eb2861ecc4751bbdeb150a618",
+  "scripts_sha256": {
+    "prepare.py": "c3f2a3583e03f6b96f54bbeb720689bf029229ebb580dcfaf05fbe5f8ebda111",
+    "live_ht.py": "c4d7ec210e531118d54c3f347193d0f7149f655df23ac7d6da429e067870ddd5",
+    "sim.launch.py": "3934342ac36e50eb5b1a6cc7606963df9a5751bcf778136a95abf54027ef3eec",
+    "run.py": "a566411692cc0ba12cd646acf1318b11e4f996fcb10dedf5ed045ef31591b833",
+    "probe.py": "903f117853ebb3c90acf4bc57488761bcaae9086f33e9de9cc8abe3ef5524e03"
+  },
+  "note": "Pilot; simplified kinematic vehicle, geometric exposure proxy, no collision or roll-over truth. Both arms run identical HT inference load."
+}
