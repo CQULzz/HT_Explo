@@ -1,0 +1,284 @@
+{
+  "protocol": {
+    "seed": 20260921,
+    "sampling": "uniform without replacement from test; no selection by outcome",
+    "manifest_sha256": "671fecdec28c25c9d0adfaf157f9cc17d00072cd7dd3d4377def6b293ae4dfd8",
+    "samples_sha256": "11974d474a39ae3cd11ad47839bac140939bfbb72ff3af264baeff12e4bb0171",
+    "source_sha256": "898e3a2b29d28bc299f48316af826f44cc5b784fb13b7f1bd5fa951f1e6805ae",
+    "runner_sha256": "fbafbf7ec8f390a91b853121775399218187ded940462bc08895398cb2bc2a2a",
+    "torch": "2.11.0+cpu",
+    "device": "cpu",
+    "threshold": 0.5,
+    "offsets_m": [
+      -1,
+      0,
+      1
+    ],
+    "note": "Existing best-validation checkpoints. Same samples, full batches including remainder. Shared-terrain test, not unseen-terrain generalization or closed-loop driving."
+  },
+  "weights": {
+    "gradient_ht": {
+      "path": "/home/lzz/\u4e0b\u8f7d/train_data/sum_train_scout/last/train_scout_backbone_nonoiseht_vit_b_16_grad_1_scout_optimizer_type_adam_lr_decay_type_cos_UnFreeze_Epoch_80_time_2025-01-31-13-15-56-Friday/best_epoch_weights.pth",
+      "sha256": "fa285d83a33950a0c14be6151b08a222a8a62a4ebd80470eb06bdbc0fde3f49c"
+    },
+    "raw_height_vit": {
+      "path": "/home/lzz/\u4e0b\u8f7d/train_data/sum_train_scout/last/train_scout_backbone_nonoiseht_vit_b_16_optimizer_type_adam_lr_decay_type_cos_UnFreeze_Epoch_80_time_2025-01-31-14-05-38-Friday/best_epoch_weights.pth",
+      "sha256": "1ffbbfdf573515830677c2a12c10f6797ec9767bcc429c15b78df5f98a7d063e"
+    }
+  },
+  "metrics": {
+    "gradient_ht:-1": {
+      "all": {
+        "n": 2048,
+        "tn": 940,
+        "fp": 100,
+        "fn": 128,
+        "tp": 880,
+        "accuracy": 0.888671875,
+        "unsafe_accepted_rate": 0.09615384615384616,
+        "safe_rejected_rate": 0.12698412698412698
+      },
+      "height_range_gt_0.2m": {
+        "n": 1443,
+        "tn": 689,
+        "fp": 79,
+        "fn": 128,
+        "tp": 547,
+        "accuracy": 0.8565488565488566,
+        "unsafe_accepted_rate": 0.10286458333333333,
+        "safe_rejected_rate": 0.18962962962962962
+      },
+      "height_range_le_0.2m": {
+        "n": 352,
+        "tn": 6,
+        "fp": 13,
+        "fn": 0,
+        "tp": 333,
+        "accuracy": 0.9630681818181818,
+        "unsafe_accepted_rate": 0.6842105263157895,
+        "safe_rejected_rate": 0.0
+      },
+      "static_marker": {
+        "n": 253,
+        "tn": 245,
+        "fp": 8,
+        "fn": 0,
+        "tp": 0,
+        "accuracy": 0.9683794466403162,
+        "unsafe_accepted_rate": 0.03162055335968379,
+        "safe_rejected_rate": null
+      }
+    },
+    "raw_height_vit:-1": {
+      "all": {
+        "n": 2048,
+        "tn": 673,
+        "fp": 367,
+        "fn": 158,
+        "tp": 850,
+        "accuracy": 0.74365234375,
+        "unsafe_accepted_rate": 0.3528846153846154,
+        "safe_rejected_rate": 0.15674603174603174
+      },
+      "height_range_gt_0.2m": {
+        "n": 1443,
+        "tn": 463,
+        "fp": 305,
+        "fn": 157,
+        "tp": 518,
+        "accuracy": 0.6798336798336798,
+        "unsafe_accepted_rate": 0.3971354166666667,
+        "safe_rejected_rate": 0.2325925925925926
+      },
+      "height_range_le_0.2m": {
+        "n": 352,
+        "tn": 1,
+        "fp": 18,
+        "fn": 1,
+        "tp": 332,
+        "accuracy": 0.9460227272727273,
+        "unsafe_accepted_rate": 0.9473684210526315,
+        "safe_rejected_rate": 0.003003003003003003
+      },
+      "static_marker": {
+        "n": 253,
+        "tn": 209,
+        "fp": 44,
+        "fn": 0,
+        "tp": 0,
+        "accuracy": 0.8260869565217391,
+        "unsafe_accepted_rate": 0.17391304347826086,
+        "safe_rejected_rate": null
+      }
+    },
+    "gradient_ht:0": {
+      "all": {
+        "n": 2048,
+        "tn": 940,
+        "fp": 100,
+        "fn": 128,
+        "tp": 880,
+        "accuracy": 0.888671875,
+        "unsafe_accepted_rate": 0.09615384615384616,
+        "safe_rejected_rate": 0.12698412698412698
+      },
+      "height_range_gt_0.2m": {
+        "n": 1443,
+        "tn": 689,
+        "fp": 79,
+        "fn": 128,
+        "tp": 547,
+        "accuracy": 0.8565488565488566,
+        "unsafe_accepted_rate": 0.10286458333333333,
+        "safe_rejected_rate": 0.18962962962962962
+      },
+      "height_range_le_0.2m": {
+        "n": 352,
+        "tn": 6,
+        "fp": 13,
+        "fn": 0,
+        "tp": 333,
+        "accuracy": 0.9630681818181818,
+        "unsafe_accepted_rate": 0.6842105263157895,
+        "safe_rejected_rate": 0.0
+      },
+      "static_marker": {
+        "n": 253,
+        "tn": 245,
+        "fp": 8,
+        "fn": 0,
+        "tp": 0,
+        "accuracy": 0.9683794466403162,
+        "unsafe_accepted_rate": 0.03162055335968379,
+        "safe_rejected_rate": null
+      }
+    },
+    "raw_height_vit:0": {
+      "all": {
+        "n": 2048,
+        "tn": 926,
+        "fp": 114,
+        "fn": 133,
+        "tp": 875,
+        "accuracy": 0.87939453125,
+        "unsafe_accepted_rate": 0.10961538461538461,
+        "safe_rejected_rate": 0.13194444444444445
+      },
+      "height_range_gt_0.2m": {
+        "n": 1443,
+        "tn": 678,
+        "fp": 90,
+        "fn": 133,
+        "tp": 542,
+        "accuracy": 0.8454608454608454,
+        "unsafe_accepted_rate": 0.1171875,
+        "safe_rejected_rate": 0.19703703703703704
+      },
+      "height_range_le_0.2m": {
+        "n": 352,
+        "tn": 4,
+        "fp": 15,
+        "fn": 0,
+        "tp": 333,
+        "accuracy": 0.9573863636363636,
+        "unsafe_accepted_rate": 0.7894736842105263,
+        "safe_rejected_rate": 0.0
+      },
+      "static_marker": {
+        "n": 253,
+        "tn": 244,
+        "fp": 9,
+        "fn": 0,
+        "tp": 0,
+        "accuracy": 0.9644268774703557,
+        "unsafe_accepted_rate": 0.03557312252964427,
+        "safe_rejected_rate": null
+      }
+    },
+    "gradient_ht:1": {
+      "all": {
+        "n": 2048,
+        "tn": 940,
+        "fp": 100,
+        "fn": 128,
+        "tp": 880,
+        "accuracy": 0.888671875,
+        "unsafe_accepted_rate": 0.09615384615384616,
+        "safe_rejected_rate": 0.12698412698412698
+      },
+      "height_range_gt_0.2m": {
+        "n": 1443,
+        "tn": 689,
+        "fp": 79,
+        "fn": 128,
+        "tp": 547,
+        "accuracy": 0.8565488565488566,
+        "unsafe_accepted_rate": 0.10286458333333333,
+        "safe_rejected_rate": 0.18962962962962962
+      },
+      "height_range_le_0.2m": {
+        "n": 352,
+        "tn": 6,
+        "fp": 13,
+        "fn": 0,
+        "tp": 333,
+        "accuracy": 0.9630681818181818,
+        "unsafe_accepted_rate": 0.6842105263157895,
+        "safe_rejected_rate": 0.0
+      },
+      "static_marker": {
+        "n": 253,
+        "tn": 245,
+        "fp": 8,
+        "fn": 0,
+        "tp": 0,
+        "accuracy": 0.9683794466403162,
+        "unsafe_accepted_rate": 0.03162055335968379,
+        "safe_rejected_rate": null
+      }
+    },
+    "raw_height_vit:1": {
+      "all": {
+        "n": 2048,
+        "tn": 842,
+        "fp": 198,
+        "fn": 119,
+        "tp": 889,
+        "accuracy": 0.84521484375,
+        "unsafe_accepted_rate": 0.19038461538461537,
+        "safe_rejected_rate": 0.11805555555555555
+      },
+      "height_range_gt_0.2m": {
+        "n": 1443,
+        "tn": 610,
+        "fp": 158,
+        "fn": 119,
+        "tp": 556,
+        "accuracy": 0.808038808038808,
+        "unsafe_accepted_rate": 0.20572916666666666,
+        "safe_rejected_rate": 0.17629629629629628
+      },
+      "height_range_le_0.2m": {
+        "n": 352,
+        "tn": 2,
+        "fp": 17,
+        "fn": 0,
+        "tp": 333,
+        "accuracy": 0.9517045454545454,
+        "unsafe_accepted_rate": 0.8947368421052632,
+        "safe_rejected_rate": 0.0
+      },
+      "static_marker": {
+        "n": 253,
+        "tn": 230,
+        "fp": 23,
+        "fn": 0,
+        "tp": 0,
+        "accuracy": 0.9090909090909091,
+        "unsafe_accepted_rate": 0.09090909090909091,
+        "safe_rejected_rate": null
+      }
+    }
+  },
+  "elapsed_seconds": 153.96740198135376
+}
