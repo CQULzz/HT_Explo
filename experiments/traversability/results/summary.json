@@ -1,0 +1,273 @@
+{
+  "kind": "synthetic_road_section_core_benchmark",
+  "config": {
+    "label": "synthetic_road_section_core_benchmark",
+    "weights": [
+      0,
+      0.5,
+      1,
+      2,
+      5
+    ],
+    "classification_threshold": 0.5,
+    "threshold_sweep": [
+      0.1,
+      0.3,
+      0.5,
+      0.7,
+      0.9
+    ],
+    "limits": {
+      "uphill_deg": 15,
+      "downhill_deg": 25,
+      "cross_slope_deg": 12,
+      "step_m": 0.2,
+      "roughness_m": 0.15
+    },
+    "note": "Illustrative fixture limits, NOT measured vehicle limits. Synthetic probabilities are supplied inputs, NOT HT model inference."
+  },
+  "core_sha256": "fd798a768639c8c5ae33743d3c25b297b16aa0789eb3d6d909b7be676aa09501",
+  "runner_sha256": "b60e3a00312438fb50e44d562c1f42d6f573891e203c82aaf513dbd88afcedf4",
+  "config_sha256": "10e8f07afed05077ed1f1185f2a486b2e3711e253a1b23ebd5cae873b124d8e9",
+  "prediction_source": "synthetic_fixture_inputs",
+  "real_prediction_csv_sha256": null,
+  "routing_source": "synthetic_road_sections_only",
+  "groups": {
+    "baseline": {
+      "tasks": 144,
+      "hazardous_route_permitted": 88,
+      "safe_task_rejected": 0,
+      "hazardous_exposure_m": 332.41394622195475
+    },
+    "ht_w0": {
+      "tasks": 144,
+      "hazardous_route_permitted": 88,
+      "safe_task_rejected": 0,
+      "hazardous_exposure_m": 332.41394622195475
+    },
+    "ht_w0.5": {
+      "tasks": 144,
+      "hazardous_route_permitted": 80,
+      "safe_task_rejected": 0,
+      "hazardous_exposure_m": 297.9008344562721
+    },
+    "ht_w1": {
+      "tasks": 144,
+      "hazardous_route_permitted": 48,
+      "safe_task_rejected": 0,
+      "hazardous_exposure_m": 169.9008344562721
+    },
+    "ht_w2": {
+      "tasks": 144,
+      "hazardous_route_permitted": 32,
+      "safe_task_rejected": 0,
+      "hazardous_exposure_m": 137.9008344562721
+    },
+    "ht_w5": {
+      "tasks": 144,
+      "hazardous_route_permitted": 32,
+      "safe_task_rejected": 16,
+      "hazardous_exposure_m": 137.9008344562721
+    }
+  },
+  "classification": {
+    "0.1": {
+      "n": 560,
+      "unknown": 16,
+      "known_fraction": 0.9714285714285714,
+      "tp": 440,
+      "tn": 72,
+      "fp": 16,
+      "fn": 16,
+      "unsafe_false_accept_rate": 0.18181818181818182,
+      "safe_false_reject_rate": 0.03508771929824561,
+      "precision": 0.9649122807017544,
+      "recall": 0.9649122807017544,
+      "f1": 0.9649122807017544
+    },
+    "0.3": {
+      "n": 560,
+      "unknown": 16,
+      "known_fraction": 0.9714285714285714,
+      "tp": 440,
+      "tn": 72,
+      "fp": 16,
+      "fn": 16,
+      "unsafe_false_accept_rate": 0.18181818181818182,
+      "safe_false_reject_rate": 0.03508771929824561,
+      "precision": 0.9649122807017544,
+      "recall": 0.9649122807017544,
+      "f1": 0.9649122807017544
+    },
+    "0.5": {
+      "n": 560,
+      "unknown": 16,
+      "known_fraction": 0.9714285714285714,
+      "tp": 440,
+      "tn": 72,
+      "fp": 16,
+      "fn": 16,
+      "unsafe_false_accept_rate": 0.18181818181818182,
+      "safe_false_reject_rate": 0.03508771929824561,
+      "precision": 0.9649122807017544,
+      "recall": 0.9649122807017544,
+      "f1": 0.9649122807017544
+    },
+    "0.7": {
+      "n": 560,
+      "unknown": 16,
+      "known_fraction": 0.9714285714285714,
+      "tp": 440,
+      "tn": 72,
+      "fp": 16,
+      "fn": 16,
+      "unsafe_false_accept_rate": 0.18181818181818182,
+      "safe_false_reject_rate": 0.03508771929824561,
+      "precision": 0.9649122807017544,
+      "recall": 0.9649122807017544,
+      "f1": 0.9649122807017544
+    },
+    "0.9": {
+      "n": 560,
+      "unknown": 16,
+      "known_fraction": 0.9714285714285714,
+      "tp": 432,
+      "tn": 72,
+      "fp": 16,
+      "fn": 24,
+      "unsafe_false_accept_rate": 0.18181818181818182,
+      "safe_false_reject_rate": 0.05263157894736842,
+      "precision": 0.9642857142857143,
+      "recall": 0.9473684210526315,
+      "f1": 0.9557522123893806
+    }
+  },
+  "classification_per_scenario": {
+    "cross_slope": {
+      "n": 64,
+      "unknown": 0,
+      "known_fraction": 1.0,
+      "tp": 48,
+      "tn": 16,
+      "fp": 0,
+      "fn": 0,
+      "unsafe_false_accept_rate": 0.0,
+      "safe_false_reject_rate": 0.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "danger_only": {
+      "n": 48,
+      "unknown": 0,
+      "known_fraction": 1.0,
+      "tp": 32,
+      "tn": 16,
+      "fp": 0,
+      "fn": 0,
+      "unsafe_false_accept_rate": 0.0,
+      "safe_false_reject_rate": 0.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "directional_ramp": {
+      "n": 64,
+      "unknown": 0,
+      "known_fraction": 1.0,
+      "tp": 56,
+      "tn": 8,
+      "fp": 0,
+      "fn": 0,
+      "unsafe_false_accept_rate": 0.0,
+      "safe_false_reject_rate": 0.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "false_alarm_input": {
+      "n": 64,
+      "unknown": 0,
+      "known_fraction": 1.0,
+      "tp": 48,
+      "tn": 0,
+      "fp": 0,
+      "fn": 16,
+      "unsafe_false_accept_rate": null,
+      "safe_false_reject_rate": 0.25,
+      "precision": 1.0,
+      "recall": 0.75,
+      "f1": 0.8571428571428571
+    },
+    "false_safe_input": {
+      "n": 64,
+      "unknown": 0,
+      "known_fraction": 1.0,
+      "tp": 48,
+      "tn": 0,
+      "fp": 16,
+      "fn": 0,
+      "unsafe_false_accept_rate": 1.0,
+      "safe_false_reject_rate": 0.0,
+      "precision": 0.75,
+      "recall": 1.0,
+      "f1": 0.8571428571428571
+    },
+    "flat_control": {
+      "n": 64,
+      "unknown": 0,
+      "known_fraction": 1.0,
+      "tp": 64,
+      "tn": 0,
+      "fp": 0,
+      "fn": 0,
+      "unsafe_false_accept_rate": null,
+      "safe_false_reject_rate": 0.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "high_step": {
+      "n": 64,
+      "unknown": 0,
+      "known_fraction": 1.0,
+      "tp": 48,
+      "tn": 16,
+      "fp": 0,
+      "fn": 0,
+      "unsafe_false_accept_rate": 0.0,
+      "safe_false_reject_rate": 0.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "rough_ground": {
+      "n": 64,
+      "unknown": 0,
+      "known_fraction": 1.0,
+      "tp": 48,
+      "tn": 16,
+      "fp": 0,
+      "fn": 0,
+      "unsafe_false_accept_rate": 0.0,
+      "safe_false_reject_rate": 0.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "unknown_patch": {
+      "n": 64,
+      "unknown": 16,
+      "known_fraction": 0.75,
+      "tp": 48,
+      "tn": 0,
+      "fp": 0,
+      "fn": 0,
+      "unsafe_false_accept_rate": null,
+      "safe_false_reject_rate": 0.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    }
+  }
+}

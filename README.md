@@ -4,6 +4,8 @@ TARE planner involves a hierarchical framework for highly efficient exploration 
 
 后续探索效率实验、重复运行中发现的拐角停滞及修复复测见 [EXPERIMENT_REPORT.md](EXPERIMENT_REPORT.md)；实验协议和运行工具见 [experiments/README.md](experiments/README.md)。
 
+道路通过性筛选应使用误放行、误拒绝、危险暴露和绕行代价评价；[固定通过性评测脚本](experiments/traversability/README.md)支持一条命令出报告及真实标注 CSV 接入。平坦车库覆盖率不能证明这一能力。
+
 Please use instructions on our [project page](https://www.cmu-exploration.com/tare-planner).
 
 <p align="center">
