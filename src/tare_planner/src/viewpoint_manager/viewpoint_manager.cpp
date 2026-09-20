@@ -9,6 +9,7 @@
  *
  */
 #include "viewpoint_manager/viewpoint_manager.h"
+#include "ht_cost/grid_edge_support.h"
 #include "ht_cost/directed_graph.h"
 
 namespace viewpoint_manager_ns
@@ -816,6 +817,9 @@ void ViewPointManager::CheckViewPointConnectivity()
         std::cout << "ViewPointManager::CheckViewPointConnectivity: neighbor ind out of bound" << std::endl;
         continue;
       }
+      // A blocked diagonal is an edge failure: another parent may still
+      // reach this neighbor, so do not mark it checked on this attempt.
+      if (ht_map_->enabled() && !HTConnectionSupported(cur_ind, neighbor_ind)) continue;
       if (!checked[neighbor_ind] && !ViewPointInCollision(neighbor_ind) && ViewPointInLineOfSight(neighbor_ind))
       {
         if (std::abs(GetViewPointHeight(cur_ind) - GetViewPointHeight(neighbor_ind)) < vp_.kConnectivityHeightDiffThr)
@@ -1418,6 +1422,21 @@ void ViewPointManager::UpdateCandidateViewPointCellStatus(std::shared_ptr<grid_w
   }
 }
 
+bool ViewPointManager::HTConnectionSupported(int from, int to)
+{
+  if (std::abs(GetViewPointHeight(from) - GetViewPointHeight(to)) >= vp_.kConnectivityHeightDiffThr)
+    return false;
+  const auto a = grid_->Ind2Sub(from);
+  const auto b = grid_->Ind2Sub(to);
+  return ht_cost_ns::gridEdgeSupported({a.x(), a.y(), a.z()}, {b.x(), b.y(), b.z()},
+      [this](const std::array<int, 3>& cell) {
+        const Eigen::Vector3i sub(cell[0], cell[1], cell[2]);
+        if (!grid_->InRange(sub)) return false;
+        const int ind = grid_->Sub2Ind(sub);
+        return !ViewPointInCollision(ind) && ViewPointInLineOfSight(ind);
+      });
+}
+
 void ViewPointManager::GetCandidateViewPointGraph(std::vector<std::vector<int>>& graph,
                                                   std::vector<std::vector<double>>& dist,
                                                   std::vector<geometry_msgs::msg::Point>& positions)
@@ -1447,7 +1466,8 @@ void ViewPointManager::GetCandidateViewPointGraph(std::vector<std::vector<int>>&
     {
       int neighbor_ind = connected_neighbor_indices_[cur_ind][j];
       double neighbor_dist = connected_neighbor_dist_[cur_ind][j];
-      if (IsViewPointCandidate(neighbor_ind))
+      if (IsViewPointCandidate(neighbor_ind) &&
+          (!ht_map_->enabled() || HTConnectionSupported(cur_ind, neighbor_ind)))
       {
         graph[i].push_back(graph_index_map_[neighbor_ind]);
         dist[i].push_back(neighbor_dist);

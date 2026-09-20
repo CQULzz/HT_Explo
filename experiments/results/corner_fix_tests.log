@@ -1,0 +1,93 @@
+Starting >>> tare_planner
+UpdateCTestConfiguration  from :/home/lzz/my test/HT_Explo-codex-ht8dir-v1/build/tare_planner/CTestConfiguration.ini
+Parse Config file:/home/lzz/my test/HT_Explo-codex-ht8dir-v1/build/tare_planner/CTestConfiguration.ini
+   Site: lzz
+   Build name: (empty)
+ Add coverage exclude regular expressions.
+Create new tag: 20260920-0504 - Experimental
+UpdateCTestConfiguration  from :/home/lzz/my test/HT_Explo-codex-ht8dir-v1/build/tare_planner/CTestConfiguration.ini
+Parse Config file:/home/lzz/my test/HT_Explo-codex-ht8dir-v1/build/tare_planner/CTestConfiguration.ini
+Test project /home/lzz/my test/HT_Explo-codex-ht8dir-v1/build/tare_planner
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 1
+    Start 1: ht_core_test
+
+1: Test command: /home/lzz/my\ test/HT_Explo-codex-ht8dir-v1/build/tare_planner/ht_core_test
+1: Working Directory: /home/lzz/my test/HT_Explo-codex-ht8dir-v1/build/tare_planner
+1: Test timeout computed to be: 10000000
+1: PASS: 52 HT core checks
+1/2 Test #1: ht_core_test .....................   Passed    0.00 sec
+test 2
+    Start 2: ht_ros_test
+
+2: Test command: /usr/bin/python3 "-u" "/opt/ros/jazzy/share/ament_cmake_test/cmake/run_test.py" "/home/lzz/my test/HT_Explo-codex-ht8dir-v1/build/tare_planner/test_results/tare_planner/ht_ros_test.gtest.xml" "--package-name" "tare_planner" "--output-file" "/home/lzz/my test/HT_Explo-codex-ht8dir-v1/build/tare_planner/ament_cmake_gtest/ht_ros_test.txt" "--command" "/home/lzz/my test/HT_Explo-codex-ht8dir-v1/build/tare_planner/ht_ros_test" "--gtest_output=xml:/home/lzz/my test/HT_Explo-codex-ht8dir-v1/build/tare_planner/test_results/tare_planner/ht_ros_test.gtest.xml"
+2: Working Directory: /home/lzz/my test/HT_Explo-codex-ht8dir-v1/build/tare_planner
+2: Test timeout computed to be: 60
+2: -- run_test.py: invoking following command in '/home/lzz/my test/HT_Explo-codex-ht8dir-v1/build/tare_planner':
+2:  - /home/lzz/my test/HT_Explo-codex-ht8dir-v1/build/tare_planner/ht_ros_test --gtest_output=xml:/home/lzz/my test/HT_Explo-codex-ht8dir-v1/build/tare_planner/test_results/tare_planner/ht_ros_test.gtest.xml
+2: Running main() from /opt/ros/jazzy/src/gtest_vendor/src/gtest_main.cc
+2: [==========] Running 9 tests from 1 test suite.
+2: [----------] Global test environment set-up.
+2: [----------] 9 tests from HtRosTest
+2: [ RUN      ] HtRosTest.DirectionalCostsAndValidSupport
+2: [INFO] [1789880652.521203847] [ht_ros_test]: HT enabled: weight=1.000 unknown=2.000 calibrated=1
+2: [       OK ] HtRosTest.DirectionalCostsAndValidSupport (308 ms)
+2: [ RUN      ] HtRosTest.CircularBufferPreservesSpatialCells
+2: [INFO] [1789880652.786590841] [ht_ros_test]: HT enabled: weight=1.000 unknown=2.000 calibrated=1
+2: [       OK ] HtRosTest.CircularBufferPreservesSpatialCells (261 ms)
+2: [ RUN      ] HtRosTest.RotatedTranslatedFrameRotatesChannels
+2: [INFO] [1789880653.047897095] [ht_ros_test]: HT enabled: weight=1.000 unknown=2.000 calibrated=1
+2: [       OK ] HtRosTest.RotatedTranslatedFrameRotatesChannels (514 ms)
+2: [ RUN      ] HtRosTest.MissingLayerRevokesPreviousMap
+2: [INFO] [1789880653.562227905] [ht_ros_test]: HT enabled: weight=1.000 unknown=2.000 calibrated=1
+2: [WARN] [1789880653.821112907] [ht_ros_test]: HT map rejected: Missing ht_dir layers; set aggregate_only=false
+2: [       OK ] HtRosTest.MissingLayerRevokesPreviousMap (366 ms)
+2: [ RUN      ] HtRosTest.InvalidProbabilityPreventsExecution
+2: [INFO] [1789880653.928445299] [ht_ros_test]: HT enabled: weight=1.000 unknown=2.000 calibrated=1
+2: [       OK ] HtRosTest.InvalidProbabilityPreventsExecution (364 ms)
+2: [ RUN      ] HtRosTest.StaleFutureAndMissingTransformHold
+2: [INFO] [1789880654.292757261] [ht_ros_test]: HT enabled: weight=1.000 unknown=2.000 calibrated=1
+2: [       OK ] HtRosTest.StaleFutureAndMissingTransformHold (467 ms)
+2: [ RUN      ] HtRosTest.NonFinitePoseRejected
+2: [INFO] [1789880654.760178752] [ht_ros_test]: HT enabled: weight=1.000 unknown=2.000 calibrated=1
+2: [       OK ] HtRosTest.NonFinitePoseRejected (261 ms)
+2: [ RUN      ] HtRosTest.MalformedMessagesDoNotEnterUnsafeConverter
+2: [INFO] [1789880655.021860641] [ht_ros_test]: HT enabled: weight=1.000 unknown=2.000 calibrated=1
+2: [       OK ] HtRosTest.MalformedMessagesDoNotEnterUnsafeConverter (778 ms)
+2: [ RUN      ] HtRosTest.CalibrationRequiredAndParametersChecked
+2: [INFO] [1789880655.800051630] [ht_ros_test]: HT enabled: weight=1.000 unknown=2.000 calibrated=1
+2: [INFO] [1789880655.955951341] [ht_uncalibrated]: HT enabled: weight=1.000 unknown=2.000 calibrated=0
+2: [       OK ] HtRosTest.CalibrationRequiredAndParametersChecked (165 ms)
+2: [----------] 9 tests from HtRosTest (3488 ms total)
+2: 
+2: [----------] Global test environment tear-down
+2: [==========] 9 tests from 1 test suite ran. (3488 ms total)
+2: [  PASSED  ] 9 tests.
+2: -- run_test.py: return code 0
+2: -- run_test.py: inject classname prefix into gtest result file '/home/lzz/my test/HT_Explo-codex-ht8dir-v1/build/tare_planner/test_results/tare_planner/ht_ros_test.gtest.xml'
+2: -- run_test.py: verify result file '/home/lzz/my test/HT_Explo-codex-ht8dir-v1/build/tare_planner/test_results/tare_planner/ht_ros_test.gtest.xml'
+2/2 Test #2: ht_ros_test ......................   Passed    3.81 sec
+
+100% tests passed, 0 tests failed out of 2
+
+Label Time Summary:
+gtest    =   3.81 sec*proc (1 test)
+
+Total Test time (real) =   3.82 sec
+Finished <<< tare_planner [3.87s]
+
+Summary: 1 package finished [4.04s]
+Summary: 11 tests, 0 errors, 0 failures, 0 skipped
+test_low_motion_threshold_and_finish (test_metrics.MetricsTest.test_low_motion_threshold_and_finish) ... ok
+test_summary_uses_added_coverage_and_overall_runtime (test_metrics.MetricsTest.test_summary_uses_added_coverage_and_overall_runtime) ... ok
+test_world_voxels_and_reference_matching (test_metrics.MetricsTest.test_world_voxels_and_reference_matching) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.002s
+
+OK

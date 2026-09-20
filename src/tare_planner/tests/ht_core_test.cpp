@@ -1,5 +1,6 @@
 #include "ht_cost/ht_cost_core.h"
 #include "ht_cost/directed_graph.h"
+#include "ht_cost/grid_edge_support.h"
 #include <iostream>
 #include <stdexcept>
 using namespace ht_cost_ns;
@@ -10,6 +11,38 @@ void check(bool condition) {
 }
 void near(double a,double b) { check(std::abs(a-b)<1e-5); }
 int main() {
+  // Garage run 2: the robot at (6.8218, 26.2809) cannot cut through
+  // cell (5,22) on its way from center (6.6,25.8) to (7.8,27.0).
+  using Cell = std::array<int,3>;
+  const Cell anchor{5,21,0}, turn{6,21,0}, next{6,22,0};
+  auto supported = [](const Cell& c) {
+    return c[0]>=5 && c[0]<=6 && c[1]>=21 && c[1]<=22 && c[2]==0 &&
+           c!=Cell{5,22,0};
+  };
+  check(!gridEdgeSupported(anchor,next,supported));
+  check(!gridEdgeSupported(next,anchor,supported));
+  check(gridEdgeSupported(anchor,turn,supported));
+  check(gridEdgeSupported(turn,next,supported));
+  check(!gridEdgeSupported(anchor,Cell{7,21,0},supported));
+  auto open = [](const Cell&) { return true; };
+  check(gridEdgeSupported(anchor,next,open));
+  check(gridEdgeSupported(Cell{0,0,0},Cell{1,1,1},open));
+  check(!gridEdgeSupported(Cell{0,0,0},Cell{1,1,1},
+                          [](const Cell& c) { return c!=Cell{1,0,1}; }));
+  check(!gridEdgeSupported(anchor,turn,[](const Cell&) { return false; }));
+  std::vector<Cell> cells{anchor,turn,next};
+  std::vector<std::vector<int>> supported_graph(3);
+  std::vector<std::vector<double>> supported_weights(3);
+  for (int i=0;i<3;++i) for (int j=0;j<3;++j) {
+    if (i!=j && gridEdgeSupported(cells[i],cells[j],supported)) {
+      supported_graph[i].push_back(j);
+      supported_weights[i].push_back(std::hypot(cells[i][0]-cells[j][0],cells[i][1]-cells[j][1]));
+    }
+  }
+  std::vector<int> safe_path;
+  near(shortestPath(supported_graph,supported_weights,0,2,safe_path),2);
+  check(safe_path==std::vector<int>({0,1,2}));
+
   // Regression: CMU stopped 0.163 m from a vertex while HT kept targeting it.
   check(waypointReached({0.50818896,0.46558198,0.75},{0.6,0.6,0.76019478},0.3));
   check(waypointReached({0,0,0},{0.3,0,0},0.3));

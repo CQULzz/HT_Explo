@@ -343,6 +343,7 @@ public:
 private:
   void ComputeConnectedNeighborIndices();
   void ComputeInRangeNeighborIndices();
+  bool HTConnectionSupported(int from, int to);
   void GetCandidateViewPointGraph(std::vector<std::vector<int>>& graph, std::vector<std::vector<double>>& dist,
                                   std::vector<geometry_msgs::msg::Point>& positions);
   void GetCollisionCorrespondence();

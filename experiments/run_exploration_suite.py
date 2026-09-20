@@ -107,7 +107,9 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output',required=True)
     parser.add_argument('--duration',type=float,default=300)
-    parser.add_argument('--pilot',action='store_true')
+    mode=parser.add_mutually_exclusive_group()
+    mode.add_argument('--pilot',action='store_true')
+    mode.add_argument('--ht-only',action='store_true',help='Three HT trials for a separately recorded fix follow-up')
     parser.add_argument('--domain',type=int,default=75)
     args=parser.parse_args()
     output=Path(args.output).resolve()
@@ -118,10 +120,17 @@ def main():
     np.savez_compressed(reference,keys=keys)
     order=[('baseline',1),('ht',1)] if args.pilot else [
         ('baseline',1),('ht',1),('ht',2),('baseline',2),('baseline',3),('ht',3)]
-    protocol=dict(planner_source_commit='c4b7a41d3ae3466c8b5eb043c8f1f3f81b3c9e8d',
+    if args.ht_only:
+        order=[('ht',1),('ht',2),('ht',3)]
+    planner_commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()
+    source_diff=subprocess.check_output(['git','diff','HEAD','--','src'],cwd=ROOT,text=True)
+    if source_diff:
+        raise RuntimeError('Commit planner source changes before starting a recorded experiment')
+    protocol=dict(planner_source_commit=planner_commit,
                   cmu_commit='8313dfed10533787582be8a6044483fe3299622f',
                   created=time.strftime('%Y-%m-%dT%H:%M:%S%z'),duration_s=args.duration,
-                  order=order,scenario='garage',speed_limit_m_s=0.5,
+                  order=order,cohort='ht_fix_followup' if args.ht_only else 'interleaved_comparison',
+                  scenario='garage',speed_limit_m_s=0.5,
                   initial_sensor_position_m=[0,0,0.75],voxel_resolution_m=0.5,
                   reference_voxels=int(len(keys)),reference_ply_sha256=hashlib.sha256(map_file.read_bytes()).hexdigest(),
                   ht_map=dict(type='synthetic_uniform',probability=0.9,channels=8,

@@ -6,7 +6,7 @@
 
 ## 固定协议
 
-- 规划器源码：`c4b7a41d3ae3466c8b5eb043c8f1f3f81b3c9e8d`。
+- 初始对比的规划器源码：`c4b7a41d3ae3466c8b5eb043c8f1f3f81b3c9e8d`。初始实验工具和数据归档提交为 `e1afe89`。
 - CMU Jazzy 环境：`8313dfed10533787582be8a6044483fe3299622f`，Garage 场景。
 - 每次重新启动仿真，从相同原点出发，速度上限 0.5 m/s。
 - `baseline`（HT 关闭）和 `ht`（HT 开启）各 3 次，各记录 300 秒。
@@ -59,9 +59,25 @@ python3 experiments/analyze_exploration.py experiments/results/new_garage_run
 
 `--pilot --duration 20` 只用于检查采集链路，不纳入正式对比。每次完成后检查记录时长、激光频率、规划计时和 CMU 统计是否存在；不以“必须有位移”为有效性条件，以免排除规划失败或长期停滞的真实结果。
 
+## 拐角修复后的复测
+
+初始 6 次实验发现 HT 第 2 次在约 81 秒后持续停滞。原始失败、路径/几何快照及统计均保留在 `results/garage_20260920/`。在这组实验全部结束后，才修改规划器，使 HT 连通搜索和路径图一致地拒绝穿过不可用网格角点的对角连接；保留其他合法斜向连接和方向代价，也保留执行阶段检查。
+
+修复后另跑 3 次 HT，各 300 秒，使用相同输入和指标；基线复用初始实验的 3 次 HT-off 记录。它们不是与复测交替运行的新基线，不能把两个阶段当成同随机种子的配对试验。当前启动脚本记录实际 Git 提交，并要求规划器源码已提交，避免版本不明确。
+
+```bash
+python3 experiments/run_exploration_suite.py --ht-only --duration 300 \
+  --output experiments/results/new_corner_fix_run
+python3 experiments/analyze_exploration.py experiments/results/new_corner_fix_run \
+  --baseline-results experiments/results/garage_20260920
+python3 -m unittest discover -s experiments -p 'test_*.py' -v
+```
+
+分析工具会验证两阶段的时长、速度、参考地图和 HT 输入协议一致，并从保存的体素集合独立重算覆盖计数。
+
 ## 本次新增的工程修改
 
 - `cmu_metrics_path.patch`：CMU 统计器原先直接替换路径中的 `/install/`，遇到自定义绝对输出路径会越界异常。现在仅在找到该片段时替换，并检查输出文件能否打开。
 - `validation/sim_probe.py`：允许实验设置 HT 图大小和频率，原有验证默认值保持不变。
 - `experiments/`：增加启动、采集、体素匹配、统计和绘图工具。
-- 本轮正式实验不改变规划算法；之前的移动、依赖和接口修复见 `VALIDATION.md`。
+- 初始 6 次实验期间不改变规划算法；之后的拐角修复使用独立复测目录。之前的移动、依赖和接口修复见 `VALIDATION.md`。
