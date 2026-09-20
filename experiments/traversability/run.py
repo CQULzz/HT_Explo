@@ -194,7 +194,7 @@ def main():
         (output/name).write_text(json.dumps(value,indent=2,ensure_ascii=False)+'\n')
     for name, rows in [('decisions.csv',decisions),('classification_samples.csv',pred_rows)]:
         with (output/name).open('w',newline='') as stream:
-            writer=csv.DictWriter(stream,fieldnames=list(rows[0]));writer.writeheader();writer.writerows(rows)
+            writer=csv.DictWriter(stream,fieldnames=list(rows[0]),lineterminator='\n');writer.writeheader();writer.writerows(rows)
     report = ['# 道路通过性固定评测','',
         '**本次路线测试为合成路段上的真实 C++ 代价核心测试，不是车辆物理仿真，也不是实际通过成功率。**',
         '坡度、横坡、台阶与粗糙度定义独立的几何标签；车辆阈值仅为测试假设，见 config.json。',
