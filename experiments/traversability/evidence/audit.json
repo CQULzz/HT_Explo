@@ -1,0 +1,222 @@
+{
+  "sources_root": "/home/lzz/下载",
+  "splits": {
+    "train": {
+      "rows": 1351296,
+      "labels": {
+        "1": 675648,
+        "0": 675648
+      },
+      "height_strata": {
+        "height_range_gt_0.2m": 950110,
+        "static_marker": 153718,
+        "height_range_le_0.2m": 247468
+      },
+      "terrain_names": 1566,
+      "sha256": "59334eba7fbe9b038b47be517046c849a7079efaaedb1985c1e9fb440385c03a",
+      "matches_archived_protocol": true
+    },
+    "val": {
+      "rows": 288458,
+      "labels": {
+        "1": 144229,
+        "0": 144229
+      },
+      "height_strata": {
+        "height_range_gt_0.2m": 202989,
+        "height_range_le_0.2m": 52568,
+        "static_marker": 32901
+      },
+      "terrain_names": 1566,
+      "sha256": "f189084fde54a5ed98636b147f6ba5e9e5eb886ddc23bfe5e224449a922379cf",
+      "matches_archived_protocol": true
+    },
+    "test": {
+      "rows": 290054,
+      "labels": {
+        "0": 145027,
+        "1": 145027
+      },
+      "height_strata": {
+        "height_range_gt_0.2m": 203983,
+        "height_range_le_0.2m": 53113,
+        "static_marker": 32958
+      },
+      "terrain_names": 1566,
+      "sha256": "671fecdec28c25c9d0adfaf157f9cc17d00072cd7dd3d4377def6b293ae4dfd8",
+      "matches_archived_protocol": true
+    }
+  },
+  "historical_curves": [
+    {
+      "source": "train_data/sum_train_hunter_se_infer/height_bias-train_backbone_no_noise_noaddCEloss_ht_traversability_new_F_student_grad_res_c_16_reduce_optimizer_type_adam_lr_decay_type__UnFreeze_Epoch_1_time_2025-02-16-17-15-56-Sunday/ht_result_dict.txt",
+      "sha256": "22ddd29723cff2ada4dde39a406abe5c38f2ef18ca8f194c6407c992ba7d4b7f",
+      "points": 1,
+      "min_accuracy": 0.8752766816674594,
+      "max_accuracy": 0.8752766816674594
+    },
+    {
+      "source": "train_data/sum_train_hunter_se_infer/height_bias-train_backbone_no_noise_noaddCEloss_ht_traversability_new_F_student_grad_res_c_16_reduce_optimizer_type_adam_lr_decay_type__UnFreeze_Epoch_1_time_2025-02-16-17-31-42-Sunday/ht_result_dict.txt",
+      "sha256": "2d97754646909c086bee72b469e74c39fbea8da2474a9e9d0837f6e16ef12013",
+      "points": 41,
+      "min_accuracy": 0.8752756215903977,
+      "max_accuracy": 0.8752856925082501
+    },
+    {
+      "source": "train_data/sum_train_hunter_se_infer/height_bias-train_backbone_nonoiseht_vit_b_16_grad_1_optimizer_type_adam_lr_decay_type_cos_UnFreeze_Epoch_1_time_2025-02-16-15-45-01-Sunday/ht_result_dict.txt",
+      "sha256": "c1486c184d7e5b70937821285fc38fb93bfdb0637aa3245f38d6734ad9d313a4",
+      "points": 1,
+      "min_accuracy": 0.8929153094462541,
+      "max_accuracy": 0.8929153094462541
+    },
+    {
+      "source": "train_data/sum_train_hunter_se_infer/height_bias-train_backbone_nonoiseht_vit_b_16_grad_1_optimizer_type_adam_lr_decay_type_cos_UnFreeze_Epoch_1_time_2025-02-16-16-00-23-Sunday/ht_result_dict.txt",
+      "sha256": "414c130a3a73c2459b55e36ef9f8eedf83631ad7c62bf06dd160c3fe13fbfbec",
+      "points": 41,
+      "min_accuracy": 0.8928644136807817,
+      "max_accuracy": 0.8929110681324647
+    },
+    {
+      "source": "train_data/sum_train_hunter_se_infer/height_bias-train_backbone_nonoiseht_vit_b_16_optimizer_type_adam_lr_decay_type_cos_UnFreeze_Epoch_1_time_2025-02-16-15-51-25-Sunday/ht_result_dict.txt",
+      "sha256": "df25f77ffba4a245c1ecfac50bfd7b21b53c9be24293836fedeeff6047ff6571",
+      "points": 1,
+      "min_accuracy": 0.8898530808903365,
+      "max_accuracy": 0.8898530808903365
+    },
+    {
+      "source": "train_data/sum_train_hunter_se_infer/height_bias-train_backbone_nonoiseht_vit_b_16_optimizer_type_adam_lr_decay_type_cos_UnFreeze_Epoch_1_time_2025-02-16-15-56-16-Sunday/ht_result_dict.txt",
+      "sha256": "df25f77ffba4a245c1ecfac50bfd7b21b53c9be24293836fedeeff6047ff6571",
+      "points": 1,
+      "min_accuracy": 0.8898530808903365,
+      "max_accuracy": 0.8898530808903365
+    },
+    {
+      "source": "train_data/sum_train_hunter_se_infer/height_bias-train_backbone_nonoiseht_vit_b_16_optimizer_type_adam_lr_decay_type_cos_UnFreeze_Epoch_1_time_2025-02-16-15-59-29-Sunday/ht_result_dict.txt",
+      "sha256": "b2b3933b176307dded77c6dc1894d98e945d73dd73119f6d33d869bba3c9c569",
+      "points": 41,
+      "min_accuracy": 0.4999872760586319,
+      "max_accuracy": 0.8898615635179153
+    },
+    {
+      "source": "train_data/sum_train_hunter_se_infer/height_bias-train_backbone_nonoiseht_vit_b_16_optimizer_type_adam_lr_decay_type_cos_UnFreeze_Epoch_1_time_2025-02-17-12-01-54-Monday/ht_result_dict.txt",
+      "sha256": "eeaae5c7794cfd1f29ac37f9bb22bd1397e316156c2e482d892c9238bf507152",
+      "points": 1,
+      "min_accuracy": 0.8896386480628556,
+      "max_accuracy": 0.8896386480628556
+    },
+    {
+      "source": "train_data/sum_train_hunter_se_infer/height_bias-train_backbone_nonoiseref_traversability_optimizer_type_adam_lr_decay_type_cos_UnFreeze_Epoch_1_time_2025-02-16-15-38-27-Sunday/ht_result_dict.txt",
+      "sha256": "79d69df4a1c6d2e75fc344f4562a427fab7d9277e45f0ea778e5be8375ce34d7",
+      "points": 41,
+      "min_accuracy": 0.5171009771986971,
+      "max_accuracy": 0.8825961929967426
+    },
+    {
+      "source": "train_data/sum_train_hunter_se_infer/height_bias-train_backbone_nonoiseref_traversability_optimizer_type_adam_lr_decay_type_cos_UnFreeze_Epoch_1_time_2025-02-17-12-01-09-Monday/ht_result_dict.txt",
+      "sha256": "1659fd704fe49f9a58c1f8b53b3b06ce265c4c1a1a2d6957c2bf3d4764ecdbf4",
+      "points": 1,
+      "min_accuracy": 0.8823404903820103,
+      "max_accuracy": 0.8823404903820103
+    },
+    {
+      "source": "train_data/sum_train_scout_infer/height_bias-train_backbone_no_noise_noaddCEloss_ht_traversability_new_F_student_grad_res_c_16_reduce_scout_optimizer_type_adam_lr_decay_type__UnFreeze_Epoch_1_time_2025-02-21-17-22-14-Friday/ht_result_dict.txt",
+      "sha256": "6420511974268065b6c9321333331c507de04658e7b48304674d2b0a06f0949d",
+      "points": 1,
+      "min_accuracy": 0.8833720521358114,
+      "max_accuracy": 0.8833720521358114
+    },
+    {
+      "source": "train_data/sum_train_scout_infer/height_bias-train_backbone_no_noise_noaddCEloss_ht_traversability_new_F_student_grad_res_c_16_reduce_scout_optimizer_type_adam_lr_decay_type__UnFreeze_Epoch_1_time_2025-02-21-17-40-10-Friday/ht_result_dict.txt",
+      "sha256": "5153184971ce77f7ba608055448752d7c7d38d7f3454221e0c4d20a1d15c0d04",
+      "points": 11,
+      "min_accuracy": 0.8831176724105045,
+      "max_accuracy": 0.88312672434182
+    },
+    {
+      "source": "train_data/sum_train_scout_infer_new/train_scout_backbone_nonoiseht_vit_b_16_grad_1_scout_optimizer_type_adam_lr_decay_type_cos_UnFreeze_Epoch_1_time_2025-02-17-13-38-34-Monday/ht_result_dict.txt",
+      "sha256": "9dedf00941afc8cb2e2ee4551327e79bd3079768b57cb102bc4c8faf6ea82da3",
+      "points": 1,
+      "min_accuracy": 0.8899975038828489,
+      "max_accuracy": 0.8899975038828489
+    },
+    {
+      "source": "train_data/sum_train_scout_infer_new/train_scout_backbone_nonoiseht_vit_b_16_optimizer_type_adam_lr_decay_type_cos_UnFreeze_Epoch_1_time_2025-02-17-12-32-21-Monday/ht_result_dict.txt",
+      "sha256": "0a19d142dc2074946550c4b0c3d3e04bb8e28e2f2b828933075abfc9474840f5",
+      "points": 1,
+      "min_accuracy": 0.5000034668293766,
+      "max_accuracy": 0.5000034668293766
+    },
+    {
+      "source": "train_data/sum_train_scout_infer_new/train_scout_backbone_nonoiseht_vit_b_16_optimizer_type_adam_lr_decay_type_cos_UnFreeze_Epoch_1_time_2025-02-17-13-22-47-Monday/ht_result_dict.txt",
+      "sha256": "6b915074558b37993072b5ffe6928014835648accff788c9e0376cb5851a8a69",
+      "points": 1,
+      "min_accuracy": 0.886263728644331,
+      "max_accuracy": 0.886263728644331
+    },
+    {
+      "source": "train_data/sum_train_scout_infer_new/train_scout_backbone_nonoiseref_traversability_optimizer_type_adam_lr_decay_type_cos_UnFreeze_Epoch_1_time_2025-02-17-14-32-05-Monday/ht_result_dict.txt",
+      "sha256": "e175659d64eebe91d7aae181b453793d25bb5906472c006d8424f37042c8e362",
+      "points": 1,
+      "min_accuracy": 0.8701256378966052,
+      "max_accuracy": 0.8701256378966052
+    },
+    {
+      "source": "train_data/sum_train_scout_infer_new1/train_scout_backbone_nonoiseht_vit_b_16_grad_1_scout_optimizer_type_adam_lr_decay_type_cos_UnFreeze_Epoch_1_time_2025-02-17-14-53-12-Monday/ht_result_dict.txt",
+      "sha256": "548d42aac8dfd784056b1046184d2a6710f253bc34ea54dc3891536dd4b0a167",
+      "points": 41,
+      "min_accuracy": 0.8896803287731686,
+      "max_accuracy": 0.8896872241835834
+    },
+    {
+      "source": "train_data/sum_train_scout_infer_new1/train_scout_backbone_nonoiseht_vit_b_16_optimizer_type_adam_lr_decay_type_cos_UnFreeze_Epoch_1_time_2025-02-17-14-54-35-Monday/ht_result_dict.txt",
+      "sha256": "a682fca414bba8b7af9f9b8216b4de4a4c3f762073f7c400d2fe845e942ee070",
+      "points": 41,
+      "min_accuracy": 0.49998965688437774,
+      "max_accuracy": 0.886501544571933
+    },
+    {
+      "source": "train_data/sum_train_scout_infer_new1/train_scout_backbone_nonoiseref_traversability_optimizer_type_adam_lr_decay_type_cos_UnFreeze_Epoch_1_time_2025-02-17-15-03-43-Monday/ht_result_dict.txt",
+      "sha256": "d29a7b0aac59f71063a27a9bd4cfbaa07d2262a32a674df4fcb7ef071b59cac9",
+      "points": 41,
+      "min_accuracy": 0.49294944285083847,
+      "max_accuracy": 0.869511253309797
+    }
+  ],
+  "terrain_intersection_all_splits": 1566,
+  "png_count": 1591,
+  "missing_png_references": [],
+  "models": {
+    "teacher": {
+      "source": "/home/lzz/下载/original_scout/mini_25_training/runs/formal/teacher/test_metrics.json",
+      "source_sha256": "7a01fee0d8e23c7a06330c107dee5652d1d6c5428861acb9f7bbba27176e1a21",
+      "weights_sha256": "8bf28779b5a0303fff9fd92d747de64537b509092c1693cfccbf4e9b2107405f",
+      "n": 290054,
+      "accuracy": 0.8895378102008592,
+      "unsafe_accepted_rate": 0.08833527550042405,
+      "safe_rejected_rate": 0.13258910409785765,
+      "tn": 132216,
+      "fp": 12811,
+      "fn": 19229,
+      "tp": 125798
+    },
+    "student": {
+      "source": "/home/lzz/下载/original_scout/mini_25_training/runs/formal/student/test_metrics.json",
+      "source_sha256": "719142fb9f1755f1ce24a9a1bc651dd944dde0f2a8c43da6e7c1f68539232df2",
+      "weights_sha256": "0a79b865d012aa633fbb9913fc4031908dfe188ec9e161ef5a3fbb34a3f8c4d4",
+      "n": 290054,
+      "accuracy": 0.7945658394643756,
+      "unsafe_accepted_rate": 0.20172795410509767,
+      "safe_rejected_rate": 0.20914036696615113,
+      "tn": 115771,
+      "fp": 29256,
+      "fn": 30331,
+      "tp": 114696
+    }
+  },
+  "unusable_curve_files": [
+    {
+      "source": "train_data/sum_train_scout_infer_new/train_scout_backbone_nonoiseht_vit_b_16_grad_1_scout_optimizer_type_adam_lr_decay_type_cos_UnFreeze_Epoch_1_time_2025-02-17-13-20-17-Monday/ht_result_dict.txt",
+      "reason": "Expecting value: line 1 column 1 (char 0)"
+    }
+  ]
+}
