@@ -451,6 +451,16 @@ bool SensorCoveragePlanner3D::initialize() {
       pub_waypoint_topic_, 2);
   exploration_finish_pub_ = this->create_publisher<std_msgs::msg::Bool>(
       pub_exploration_finish_topic_, 2);
+  mission_state_pub_=create_publisher<std_msgs::msg::String>("/mission_state",1);
+  execution_status_pub_=create_publisher<std_msgs::msg::String>("/ht_execution_status",1);
+  mission_completed_pub_=create_publisher<std_msgs::msg::Bool>("/mission_completed",1);
+  speed_pub_=create_publisher<std_msgs::msg::Float32>("/speed",1);
+  normal_speed_=declare_parameter<double>("mission_normal_speed",0.5);
+  sensor_timeout_=declare_parameter<double>("mission_sensor_timeout",3.0);
+  home_completion_.radius=declare_parameter<double>("mission_home_radius",0.5);
+  home_completion_.dwell=declare_parameter<double>("mission_home_dwell",1.0);
+  for (double v : {normal_speed_,sensor_timeout_,home_completion_.radius,home_completion_.dwell})
+    if (!std::isfinite(v) || v<=0) throw std::invalid_argument("Invalid mission parameter");
   runtime_breakdown_pub_ =
       this->create_publisher<std_msgs::msg::Int32MultiArray>(
           pub_runtime_breakdown_topic_, 2);
@@ -476,15 +486,20 @@ void SensorCoveragePlanner3D::ExplorationStartCallback(
 
 void SensorCoveragePlanner3D::StateEstimationCallback(
     const nav_msgs::msg::Odometry::ConstSharedPtr state_estimation_msg) {
-  robot_position_ = state_estimation_msg->pose.pose.position;
-  // Todo: use a boolean
-  if (std::abs(initial_position_.x()) < 0.01 &&
-      std::abs(initial_position_.y()) < 0.01 &&
-      std::abs(initial_position_.z()) < 0.01) {
-    initial_position_.x() = robot_position_.x;
-    initial_position_.y() = robot_position_.y;
-    initial_position_.z() = robot_position_.z;
-  }
+  const auto& position=state_estimation_msg->pose.pose.position;
+  const auto& q=state_estimation_msg->pose.pose.orientation;
+  const double stamp=rclcpp::Time(state_estimation_msg->header.stamp).seconds();
+  const double now=this->now().seconds();
+  const auto& frame=state_estimation_msg->header.frame_id;
+  if ((frame!="map" && frame!="/map") || !std::isfinite(position.x) ||
+      !std::isfinite(position.y) || !std::isfinite(position.z) ||
+      !std::isfinite(q.x+q.y+q.z+q.w) ||
+      std::abs(q.x*q.x+q.y*q.y+q.z*q.z+q.w*q.w-1)>0.01 || stamp>now+0.1 ||
+      now-stamp>sensor_timeout_) {odom_received_=-1;return;}
+  // Measure motion from poses: the CMU simulator may publish zero odometry twist.
+  if (odom_stamp_>=0 && stamp>odom_stamp_)
+    measured_speed_=std::hypot(position.x-robot_position_.x,position.y-robot_position_.y)/(stamp-odom_stamp_);
+  robot_position_=position;odom_received_=now;odom_stamp_=stamp;
   double roll, pitch, yaw;
   geometry_msgs::msg::Quaternion geo_quat =
       state_estimation_msg->pose.pose.orientation;
@@ -504,6 +519,12 @@ void SensorCoveragePlanner3D::StateEstimationCallback(
 
 void SensorCoveragePlanner3D::RegisteredScanCallback(
     const sensor_msgs::msg::PointCloud2::ConstSharedPtr registered_scan_msg) {
+  const double stamp=rclcpp::Time(registered_scan_msg->header.stamp).seconds();
+  const double now=this->now().seconds();
+  const auto& frame=registered_scan_msg->header.frame_id;
+  if ((frame!="map" && frame!="/map") || registered_scan_msg->width*registered_scan_msg->height==0 ||
+      stamp>now+0.1 || now-stamp>sensor_timeout_) {scan_received_=-1;return;}
+  scan_received_=now;scan_stamp_=stamp;
   if (!initialized_) {
     return;
   }
@@ -673,24 +694,8 @@ void SensorCoveragePlanner3D::ResetWaypointCallback(
 }
 
 void SensorCoveragePlanner3D::SendInitialWaypoint() {
-  if (viewpoint_manager_->HT()->enabled()) {
-    lookahead_point_update_=false;
-    PublishWaypoint();
-    return;
-  }
-  // send waypoint ahead
-  double lx = 12.0;
-  double ly = 0.0;
-  double dx = cos(robot_yaw_) * lx - sin(robot_yaw_) * ly;
-  double dy = sin(robot_yaw_) * lx + cos(robot_yaw_) * ly;
-
-  geometry_msgs::msg::PointStamped waypoint;
-  waypoint.header.frame_id = "map";
-  waypoint.header.stamp = this->now();
-  waypoint.point.x = robot_position_.x + dx;
-  waypoint.point.y = robot_position_.y + dy;
-  waypoint.point.z = robot_position_.z;
-  waypoint_pub_->publish(waypoint);
+  lookahead_point_update_=false;
+  PublishWaypoint();
 }
 
 void SensorCoveragePlanner3D::UpdateKeyposeGraph() {
@@ -985,20 +990,55 @@ exploration_path_ns::ExplorationPath
 SensorCoveragePlanner3D::ConcatenateGlobalLocalPath(
     const exploration_path_ns::ExplorationPath &global_path,
     const exploration_path_ns::ExplorationPath &local_path) {
-  if (viewpoint_manager_->HT()->enabled()) return local_path;
   exploration_path_ns::ExplorationPath full_path;
-  if (exploration_finished_ && near_home_ && kRushHome) {
+  if (exploration_finished_) {
+    geometry_msgs::msg::Point home;
+    home.x=initial_position_.x();home.y=initial_position_.y();home.z=initial_position_.z();
+    nav_msgs::msg::Path route;
+    const double distance=keypose_graph_->GetShortestPath(robot_position_,home,true,route,true);
+    if (!std::isfinite(distance) || distance>=1e9 || route.poses.empty()) return full_path;
     exploration_path_ns::Node node;
-    node.position_.x() = robot_position_.x;
-    node.position_.y() = robot_position_.y;
-    node.position_.z() = robot_position_.z;
-    node.type_ = exploration_path_ns::NodeType::ROBOT;
+    node.position_=Eigen::Vector3d(robot_position_.x,robot_position_.y,robot_position_.z);
+    node.type_=exploration_path_ns::NodeType::ROBOT;full_path.nodes_.push_back(node);
+    // The first graph pose anchors the robot to its nearest keypose. Re-targeting
+    // that anchor on every cycle causes backtracking near home as nearest nodes change.
+    // The next leg still has to pass the current geometric prefix checks below.
+    for (size_t route_i=1;route_i<route.poses.size();++route_i) {
+      const auto& pose=route.poses[route_i];
+      node.position_=Eigen::Vector3d(pose.pose.position.x,pose.pose.position.y,pose.pose.position.z);
+      node.type_=exploration_path_ns::NodeType::LOCAL_VIA_POINT;
+      full_path.nodes_.push_back(node);
+    }
+    node.position_=initial_position_;node.type_=exploration_path_ns::NodeType::HOME;
     full_path.nodes_.push_back(node);
-    node.position_ = initial_position_;
-    node.type_ = exploration_path_ns::NodeType::HOME;
-    full_path.nodes_.push_back(node);
+    // Replan the next return leg on the current directed HT graph. An outbound
+    // edge's probability is not evidence for travelling it in reverse.
+    if (viewpoint_manager_->HT()->enabled()) {
+      for (size_t i=1;i<full_path.nodes_.size();++i) {
+        const auto target=full_path.nodes_[i].position_;
+        if ((target-full_path.nodes_.front().position_).head<2>().norm()<=viewpoint_manager_->HT()->reachedDistance()) continue;
+        if (!viewpoint_manager_->InLocalPlanningHorizon(target)) return {};
+        const int start=viewpoint_manager_->GetNearestCandidateViewPointInd(full_path.nodes_.front().position_);
+        const int end=viewpoint_manager_->GetNearestCandidateViewPointInd(target);
+        nav_msgs::msg::Path local_return;
+        const double cost=viewpoint_manager_->GetHTShortestPath(start,end,local_return);
+        if (!std::isfinite(cost) || local_return.poses.empty()) return {};
+        exploration_path_ns::ExplorationPath directed;
+        directed.nodes_.push_back(full_path.nodes_.front());
+        for (size_t j=1;j<local_return.poses.size();++j) {
+          const auto& p=local_return.poses[j].pose.position;
+          node.position_=Eigen::Vector3d(p.x,p.y,p.z);
+          node.type_=exploration_path_ns::NodeType::LOCAL_VIA_POINT;directed.nodes_.push_back(node);
+        }
+        directed.nodes_.push_back(full_path.nodes_[i]);
+        return directed;
+      }
+    }
+    // This is only a candidate. Execute a currently visible, collision-checked prefix.
     return full_path;
   }
+  if (viewpoint_manager_->HT()->enabled()) return local_path;
+  if (local_path.nodes_.empty()) return full_path;
 
   double global_path_length = global_path.GetLength();
   double local_path_length = local_path.GetLength();
@@ -1031,37 +1071,31 @@ bool SensorCoveragePlanner3D::GetLookAheadPoint(
     const exploration_path_ns::ExplorationPath &local_path,
     const exploration_path_ns::ExplorationPath &global_path,
     Eigen::Vector3d &lookahead_point) {
-  if (viewpoint_manager_->HT()->enabled()) {
+  fallback_commanded_=false;startup_commanded_=false;
+  if (viewpoint_manager_->HT()->enabled() || exploration_finished_) {
     auto ht=viewpoint_manager_->HT();
     const Eigen::Vector3d robot(robot_position_.x,robot_position_.y,robot_position_.z);
     lookahead_point=robot;
     lookahead_point_in_line_of_sight_=false;
     if (!ht->ready()) return false;
-    // The first ROBOT vertex is a snapped graph anchor, not a motion goal.
-    // Targeting it can pull the vehicle backwards whenever it leaves a cell.
-    // Follow the first unreached route vertex and validate the entire segment.
+    std::vector<ht_cost_ns::Point> route;
     for (size_t i=0;i<local_path.nodes_.size();++i) {
       const auto& node=local_path.nodes_[i];
       if (i==0 && node.type_==exploration_path_ns::NodeType::ROBOT) continue;
-      const Eigen::Vector3d delta=node.position_-robot;
-      const double length=delta.norm();
-      if (ht_cost_ns::waypointReached({robot.x(),robot.y(),robot.z()},
-          {node.position_.x(),node.position_.y(),node.position_.z()},ht->reachedDistance())) continue;
-      const double limit=std::min(length,ht->lookahead());
-      for (double d=std::min(0.1,limit);;d=std::min(d+0.1,limit)) {
-        const Eigen::Vector3d point=robot+delta*(d/length);
-        if (!viewpoint_manager_->InLocalPlanningHorizon(point) ||
-            viewpoint_manager_->InCollision(point) ||
-            !viewpoint_manager_->InCurrentFrameLineOfSight(point) ||
-            !ht->knownSegment({robot.x(),robot.y(),robot.z()},{point.x(),point.y(),point.z()})) break;
-        lookahead_point=point;
-        if (d>=limit) break;
-      }
-      break;
+      route.push_back({node.position_.x(),node.position_.y(),node.position_.z()});
     }
-    lookahead_point_in_line_of_sight_=!ht_cost_ns::waypointReached(
-        {robot.x(),robot.y(),robot.z()},
-        {lookahead_point.x(),lookahead_point.y(),lookahead_point.z()},ht->reachedDistance());
+    const auto target=ht_cost_ns::checkedLookahead(
+      ht_cost_ns::Point{robot.x(),robot.y(),robot.z()},route,ht->reachedDistance(),ht->lookahead(),ht->fallbackLookahead(),
+      [&](ht_cost_ns::Point p) {
+        const Eigen::Vector3d point(p.x,p.y,p.z);
+        return viewpoint_manager_->InLocalPlanningHorizon(point) &&
+          !viewpoint_manager_->InCollision(point) && viewpoint_manager_->InCurrentFrameLineOfSight(point);
+      },[&](ht_cost_ns::Point a,ht_cost_ns::Point b) {return ht->support(a,b);},
+      [&](ht_cost_ns::Support support) {return ht->permits(support);});
+    lookahead_point=Eigen::Vector3d(target.point.x,target.point.y,target.point.z);
+    fallback_commanded_=target.valid && target.support==ht_cost_ns::Support::UNKNOWN;
+    startup_commanded_=target.valid && target.support==ht_cost_ns::Support::STARTUP_PRIOR;
+    lookahead_point_in_line_of_sight_=target.valid;
     return lookahead_point_in_line_of_sight_;
   }
   Eigen::Vector3d robot_position(robot_position_.x, robot_position_.y,
@@ -1387,21 +1421,23 @@ bool SensorCoveragePlanner3D::GetLookAheadPoint(
 
 void SensorCoveragePlanner3D::PublishWaypoint() {
   geometry_msgs::msg::PointStamped waypoint;
-  if (viewpoint_manager_->HT()->enabled()) {
-    waypoint.point=robot_position_;
-    viewpoint_manager_->HT()->publishPermission(lookahead_point_update_);
-    if (lookahead_point_update_ && viewpoint_manager_->HT()->ready()) {
-      waypoint.point.x=lookahead_point_.x();
-      waypoint.point.y=lookahead_point_.y();
-      waypoint.point.z=lookahead_point_.z();
-    }
-    misc_utils_ns::Publish(shared_from_this(),waypoint_pub_,waypoint,kWorldFrameID);
-    return;
+  auto ht=viewpoint_manager_->HT();
+  if (ht->enabled() && lookahead_point_update_ && !force_hold_) {
+    const auto support=ht->support({robot_position_.x,robot_position_.y,robot_position_.z},
+      {lookahead_point_.x(),lookahead_point_.y(),lookahead_point_.z()});
+    if (!ht->permits(support) || (support==ht_cost_ns::Support::UNKNOWN &&
+        std::hypot(lookahead_point_.x()-robot_position_.x,lookahead_point_.y()-robot_position_.y)>ht->fallbackLookahead()+1e-6))
+      lookahead_point_update_=false;
+    fallback_commanded_=support==ht_cost_ns::Support::UNKNOWN && lookahead_point_update_;
+    startup_commanded_=support==ht_cost_ns::Support::STARTUP_PRIOR && lookahead_point_update_;
   }
-  if (exploration_finished_ && near_home_ && kRushHome) {
-    waypoint.point.x = initial_position_.x();
-    waypoint.point.y = initial_position_.y();
-    waypoint.point.z = initial_position_.z();
+  const bool at_return_goal=exploration_finished_ && home_initialized_ &&
+    GetRobotToHomeDistance()<=home_completion_.radius;
+  if (force_hold_ || stopped_ || at_return_goal || !lookahead_point_update_) {
+    waypoint.point=robot_position_;
+    fallback_commanded_=false;startup_commanded_=false;
+  } else if (viewpoint_manager_->HT()->enabled() || exploration_finished_) {
+    waypoint.point.x=lookahead_point_.x();waypoint.point.y=lookahead_point_.y();waypoint.point.z=lookahead_point_.z();
   } else {
     double dx = lookahead_point_.x() - robot_position_.x;
     double dy = lookahead_point_.y() - robot_position_.y;
@@ -1409,7 +1445,7 @@ void SensorCoveragePlanner3D::PublishWaypoint() {
     double extend_dist = lookahead_point_in_line_of_sight_
                              ? kExtendWayPointDistanceBig
                              : kExtendWayPointDistanceSmall;
-    if (r < extend_dist && kExtendWayPoint) {
+    if (r > 1e-6 && r < extend_dist && kExtendWayPoint) {
       dx = dx / r * extend_dist;
       dy = dy / r * extend_dist;
     }
@@ -1417,8 +1453,13 @@ void SensorCoveragePlanner3D::PublishWaypoint() {
     waypoint.point.y = dy + robot_position_.y;
     waypoint.point.z = lookahead_point_.z();
   }
-  misc_utils_ns::Publish(shared_from_this(), waypoint_pub_, waypoint,
-                         kWorldFrameID);
+  const bool moving=!force_hold_ && !stopped_ && !at_return_goal && lookahead_point_update_;
+  viewpoint_manager_->HT()->publishPermission(moving);
+  std_msgs::msg::Float32 speed;
+  speed.data=moving ? (fallback_commanded_ ? std::min(normal_speed_,viewpoint_manager_->HT()->fallbackSpeed()) : normal_speed_) : 0.0;
+  speed_pub_->publish(speed);
+  misc_utils_ns::Publish(shared_from_this(), waypoint_pub_, waypoint, kWorldFrameID);
+  PublishExplorationState();
 }
 
 void SensorCoveragePlanner3D::PublishRuntime() {
@@ -1453,13 +1494,24 @@ void SensorCoveragePlanner3D::PublishRuntime() {
 double SensorCoveragePlanner3D::GetRobotToHomeDistance() {
   Eigen::Vector3d robot_position(robot_position_.x, robot_position_.y,
                                  robot_position_.z);
-  return (robot_position - initial_position_).norm();
+  return (robot_position - initial_position_).head<2>().norm();
 }
 
 void SensorCoveragePlanner3D::PublishExplorationState() {
   std_msgs::msg::Bool exploration_finished_msg;
   exploration_finished_msg.data = exploration_finished_;
   exploration_finish_pub_->publish(exploration_finished_msg);
+  std_msgs::msg::Bool completed;completed.data=stopped_;mission_completed_pub_->publish(completed);
+  std_msgs::msg::String state,status;
+  const bool at_return_goal=exploration_finished_ && GetRobotToHomeDistance()<=home_completion_.radius;
+  state.data=stopped_ ? "COMPLETED" : !initialized_ ? "WAIT_START" :
+    (force_hold_ || (!lookahead_point_update_ && !at_return_goal)) ? "BLOCKED" :
+    exploration_finished_ ? "RETURNING_HOME" : "EXPLORING";
+  status.data=force_hold_ ? hold_reason_ : stopped_ ? "COMPLETED" : at_return_goal ? "HOME_SETTLING" :
+    !lookahead_point_update_ ? (viewpoint_manager_->HT()->budget().exhausted() ? "FALLBACK_BUDGET_EXHAUSTED" : "NO_EXECUTABLE_ROUTE") :
+    fallback_commanded_ ? "GEOMETRIC_FALLBACK" : startup_commanded_ ? "STARTUP_PRIOR" :
+    viewpoint_manager_->HT()->enabled() ? "HT_ASSISTED" : "GEOMETRIC";
+  mission_state_pub_->publish(state);execution_status_pub_->publish(status);
 }
 
 void SensorCoveragePlanner3D::PrintExplorationStatus(std::string status,
@@ -1506,20 +1558,31 @@ void SensorCoveragePlanner3D::CountDirectionChange() {
 }
 
 void SensorCoveragePlanner3D::execute() {
-  viewpoint_manager_->HT()->beginCycle();
-  if (viewpoint_manager_->HT()->enabled() &&
-      (!viewpoint_manager_->HT()->ready() || !keypose_cloud_update_)) {
-    lookahead_point_update_=false;
-    PublishWaypoint();
-    if (!viewpoint_manager_->HT()->ready()) return;
-  }
+  auto ht=viewpoint_manager_->HT();
+  ht->updateExecution({robot_position_.x,robot_position_.y,robot_position_.z},fallback_commanded_);
+  ht->beginCycle();
+  const double now=this->now().seconds();
+  auto fresh=[&](double time) {return time>=0 && now>=time && now-time<=sensor_timeout_;};
+  base_healthy_=fresh(odom_received_) && fresh(scan_received_) && fresh(odom_stamp_) && fresh(scan_stamp_);
+  force_hold_=true;
   if (!kAutoStart && !start_exploration_) {
-    if (viewpoint_manager_->HT()->enabled()) {
-      lookahead_point_update_=false;
-      PublishWaypoint();
-    }
-    RCLCPP_INFO(this->get_logger(), "Waiting for start signal");
-    return;
+    hold_reason_="WAIT_START";lookahead_point_update_=false;PublishWaypoint();return;
+  }
+  if (!base_healthy_ || !ht->ready()) {
+    hold_reason_=!base_healthy_ ? "BASE_SENSOR_FAULT" : ht->status();
+    home_completion_.update(now,exploration_finished_,false,0,0);
+    lookahead_point_update_=false;PublishWaypoint();return;
+  }
+  force_hold_=false;
+  if (!home_initialized_) {
+    initial_position_=Eigen::Vector3d(robot_position_.x,robot_position_.y,robot_position_.z);
+    home_initialized_=true;ht->start({robot_position_.x,robot_position_.y,robot_position_.z});
+  }
+  stopped_=home_completion_.update(now,exploration_finished_,base_healthy_,GetRobotToHomeDistance(),measured_speed_);
+  if (stopped_) {lookahead_point_update_=false;PublishWaypoint();return;}
+  if (initialized_ && !keypose_cloud_update_) {
+    if (!fresh(last_plan_)) {force_hold_=true;hold_reason_="PLANNER_STALE";lookahead_point_update_=false;}
+    PublishWaypoint();return;
   }
   Timer overall_processing_timer("overall processing");
   update_representation_runtime_ = 0;
@@ -1555,10 +1618,9 @@ void SensorCoveragePlanner3D::execute() {
 
     int viewpoint_candidate_count = UpdateViewPoints();
     if (viewpoint_candidate_count == 0) {
-      if (viewpoint_manager_->HT()->enabled()) {
-        lookahead_point_update_=false;
-        PublishWaypoint();
-      }
+      lookahead_point_update_=false;
+      hold_reason_="NO_GEOMETRIC_VIEWPOINTS";force_hold_=true;
+      PublishWaypoint();
       RCLCPP_WARN(rclcpp::get_logger("standalone_logger"),
                   "Cannot get candidate viewpoints, skipping this round");
       return;
@@ -1604,17 +1666,13 @@ void SensorCoveragePlanner3D::execute() {
       exploration_finished_ = true;
     }
 
-    if (exploration_finished_ && at_home_ && !stopped_) {
-      PrintExplorationStatus("Return home completed", false);
-      stopped_ = true;
-    }
-
     exploration_path_ = ConcatenateGlobalLocalPath(global_path, local_path);
 
     PublishExplorationState();
 
     lookahead_point_update_ =
         GetLookAheadPoint(exploration_path_, global_path, lookahead_point_);
+    last_plan_=this->now().seconds();
     PublishWaypoint();
 
     overall_processing_timer.Stop(false);

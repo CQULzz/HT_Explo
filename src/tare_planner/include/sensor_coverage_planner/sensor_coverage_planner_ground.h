@@ -26,6 +26,8 @@
 #include <sensor_msgs/msg/joy.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
 #include <std_msgs/msg/bool.hpp>
+#include <std_msgs/msg/string.hpp>
+#include "ht_cost/execution_policy.h"
 #include <std_msgs/msg/empty.hpp>
 #include <std_msgs/msg/float32.hpp>
 #include <std_msgs/msg/int32.hpp>
@@ -207,6 +209,15 @@ private:
   int direction_no_change_count_;
   int momentum_activation_count_;
 
+  bool home_initialized_=false, base_healthy_=false, force_hold_=true;
+  bool fallback_commanded_=false, startup_commanded_=false;
+  double odom_received_=-1, scan_received_=-1, odom_stamp_=-1, scan_stamp_=-1;
+  double measured_speed_=0, normal_speed_=0.5, sensor_timeout_=3.0, last_plan_=-1;
+  std::string hold_reason_="WAIT_START";
+  ht_cost_ns::HomeCompletion home_completion_;
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr mission_state_pub_, execution_status_pub_;
+  rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr mission_completed_pub_;
+  rclcpp::Publisher<std_msgs::msg::Float32>::SharedPtr speed_pub_;
   double start_time_;
   double global_direction_switch_time_;
   double reset_waypoint_joystick_axis_value_;

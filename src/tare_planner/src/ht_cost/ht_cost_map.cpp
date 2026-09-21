@@ -19,6 +19,20 @@ HtCostMap::HtCostMap(rclcpp::Node::SharedPtr node)
   reached_distance_=node->declare_parameter<double>("ht_waypoint_reached_distance",0.3);
   footprint_radius_=node->declare_parameter<double>("ht_validity_radius",0.6);
   heading_offset_=node->declare_parameter<double>("ht_heading_offset",0.0);
+  const auto policy=node->declare_parameter<std::string>("ht_unknown_policy","geometric_fallback");
+  if (policy!="strict" && policy!="geometric_fallback") throw std::invalid_argument("Invalid ht_unknown_policy");
+  geometric_fallback_=policy=="geometric_fallback";
+  prior_.radius=node->declare_parameter<double>("ht_startup_radius",1.2);
+  prior_.lifetime=node->declare_parameter<double>("ht_startup_duration",30.0);
+  fallback_lookahead_=node->declare_parameter<double>("ht_fallback_lookahead",0.5);
+  fallback_speed_=node->declare_parameter<double>("ht_fallback_speed",0.2);
+  budget_.max_seconds=node->declare_parameter<double>("ht_fallback_max_seconds",60.0);
+  budget_.max_distance=node->declare_parameter<double>("ht_fallback_max_distance",10.0);
+  for (double v : {prior_.lifetime,fallback_lookahead_,fallback_speed_,budget_.max_seconds,budget_.max_distance})
+    if (!std::isfinite(v) || v<=0) throw std::invalid_argument("Invalid HT execution parameter");
+  if (!std::isfinite(prior_.radius) || prior_.radius<0 || prior_.radius>3 ||
+      fallback_lookahead_<=reached_distance_ || fallback_lookahead_>lookahead_)
+    throw std::invalid_argument("Invalid HT startup radius/fallback lookahead");
   frame_="map";  // TARE's existing world frame.
   const auto order=node->declare_parameter<std::vector<int64_t>>(
     "ht_channel_order",{0,1,2,3,4,5,6,7});
@@ -123,24 +137,37 @@ void HtCostMap::receive(grid_map_msgs::msg::GridMap::ConstSharedPtr msg) {
       for (int k=0;k<8;++k) {
         const float p=grid.at("ht_dir_"+std::to_string(k),*it);
         out->probabilities[k][index]=p;
-        if (!std::isfinite(p) || p<0 || p>1) out->valid[index]=0;
+        if (!std::isfinite(p) || p<0 || p>1) {
+          if (std::isfinite(valid) && valid>=0.5)
+            throw std::runtime_error("Invalid probability in claimed-valid HT cell");
+          out->valid[index]=0;
+        }
       }
     }
     if (!out->wellFormed()) throw std::runtime_error("Invalid HT map geometry");
     std::lock_guard<std::mutex> lock(mutex_);
-    latest_=std::move(out);
+    latest_=std::move(out);latest_error_.clear();
   } catch (const std::exception& e) {
     std::lock_guard<std::mutex> lock(mutex_);
-    latest_.reset();
+    latest_.reset();latest_error_=std::string("HT_MAP_REJECTED: ")+e.what();
     RCLCPP_WARN_THROTTLE(logger_,*clock_,2000,"HT map rejected: %s",e.what());
   }
 }
 void HtCostMap::beginCycle() {
   std::lock_guard<std::mutex> lock(mutex_);
-  cycle_=latest_;
+  cycle_=latest_;cycle_error_=latest_error_;
 }
 bool HtCostMap::ready() const {
   return !enabled_ || (calibrated_ && cycle_ && cycle_->fresh(clock_->now().seconds(),timeout_));
+}
+std::string HtCostMap::status() const {
+  if (!enabled_) return "HT_DISABLED";
+  if (!calibrated_) return "HT_UNCALIBRATED";
+  if (!cycle_) return cycle_error_;
+  const double now=clock_->now().seconds();
+  if (now<cycle_->stamp) return "HT_MAP_FUTURE_STAMP";
+  if (!cycle_->fresh(now,timeout_)) return "HT_MAP_STALE";
+  return "HT_MAP_FRESH";
 }
 void HtCostMap::publishPermission(bool allowed) {
   if (!permission_) return;
@@ -153,29 +180,47 @@ void HtCostMap::publishPermission(bool allowed) {
 }
 double HtCostMap::cost(const Point& a,const Point& b) const {
   if (!enabled_) return std::hypot(std::hypot(b.x-a.x,b.y-a.y),b.z-a.z);
-  return segment(ready()?cycle_.get():nullptr,a,b,step_).total(weight_,unknown_penalty_);
+  if (!ready()) return std::numeric_limits<double>::infinity();
+  auto result=segment(cycle_.get(),a,b,step_);
+  if (result.unknown_length>0 && prior_.initialized && !prior_.retired) {
+    const int n=std::max(1,static_cast<int>(std::ceil(result.length/std::min(step_,cycle_->resolution/2))));
+    const double heading=std::atan2(b.y-a.y,b.x-a.x),ds=result.length/n;
+    for (int i=0;i<n;++i) {
+      const double t=(i+0.5)/n,x=a.x+t*(b.x-a.x),y=a.y+t*(b.y-a.y);
+      if (!std::isfinite(cycle_->sample(x,y,heading)) && prior_.contains(x,y))
+        result.unknown_length=std::max(0.0,result.unknown_length-ds);
+    }
+  }
+  return result.total(weight_,unknown_penalty_);
 }
-bool HtCostMap::knownSegment(const Point& a,const Point& b) const {
-  if (!enabled_) return true;
-  if (!ready()) return false;
+Support HtCostMap::support(const Point& a,const Point& b) const {
+  if (!enabled_) return Support::KNOWN;
+  if (!ready()) return Support::FAULT;
   const double length=std::hypot(b.x-a.x,b.y-a.y);
   const double count=std::ceil(length/std::min(step_,cycle_->resolution/2));
-  if (!std::isfinite(count) || count>10000) return false;
+  if (!std::isfinite(count) || count>10000) return Support::FAULT;
   const int n=std::max(1,static_cast<int>(count));
   const double heading=std::atan2(b.y-a.y,b.x-a.x);
   // This checks HT support, NOT physical footprint collision or stopping safety.
   const double cells=std::ceil(footprint_radius_/cycle_->resolution);
-  if (!std::isfinite(cells) || cells>100) return false;
+  if (!std::isfinite(cells) || cells>100) return Support::FAULT;
   const int radius=static_cast<int>(cells);
+  Support result=Support::KNOWN;
   for (int i=0;i<=n;++i) {
     const double t=static_cast<double>(i)/n;
     for (int ix=-radius;ix<=radius;++ix) for (int iy=-radius;iy<=radius;++iy) {
       const double dx=ix*cycle_->resolution,dy=iy*cycle_->resolution;
       if (std::hypot(dx,dy)>footprint_radius_+cycle_->resolution/2) continue;
-      if (!std::isfinite(cycle_->sample(a.x+t*(b.x-a.x)+dx,a.y+t*(b.y-a.y)+dy,heading)))
-        return false;
+      const double x=a.x+t*(b.x-a.x)+dx,y=a.y+t*(b.y-a.y)+dy;
+      if (!std::isfinite(cycle_->sample(x,y,heading))) {
+        if (!prior_.contains(x,y)) return Support::UNKNOWN;
+        result=Support::STARTUP_PRIOR;
+      }
     }
   }
-  return true;
+  return result;
+}
+bool HtCostMap::knownSegment(const Point& a,const Point& b) const {
+  return support(a,b)==Support::KNOWN;
 }
 }

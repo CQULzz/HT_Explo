@@ -13,7 +13,7 @@ python3 experiments/closed_loop/analyze.py experiments/results/mountain_repeat
 
 需要现有 CMU Jazzy 和 TARE 构建、Python torch/numpy/scipy/opencv/matplotlib，以及当前机器 `/home/lzz/下载/data_scout`、`original_scout` 和相邻 `eletranskit_scout` 模型源码。CPU 推理，无需 CUDA。默认独立 ROS_DOMAIN_ID=86；同一时刻只运行一个套件。
 
-恢复原始雷达条件：
+默认使用原始雷达；显式运行命令：
 
 ```bash
 HT_DOWNWARD_LIDAR=0 experiments/closed_loop/run.sh --duration 30 --pairs 1 --output experiments/results/mountain_stock_sensor
@@ -23,8 +23,8 @@ HT_DOWNWARD_LIDAR=0 experiments/closed_loop/run.sh --duration 30 --pairs 1 --out
 
 ## 条件与公平性
 
-- 两组同一地形、起点、车速 0.5 m/s、模型推理负载和 15 秒预热，只改变 `ht_enabled`。
-- HT 权重固定 1；地图新鲜度 3 秒；保留原来的低概率软代价与未知区域门控，没有为结果临时加硬阈值。
+- 两组同一地形、起点、正常车速 0.5 m/s、模型推理负载和 15 秒预热。HT 局部缺测时以 0.2 m/s、0.5 m 短航点降级；这是集成策略的一部分。
+- HT 权重固定 1；地图新鲜度 3 秒；保留低概率软代价，局部未知区域按可配置策略处理，没有为结果临时加硬阈值。
 - 八方向顺序按训练坐标核对：yaw=0 的 patch 行指向 -X，列指向 -Y，通道 k 对应世界方向 k×45°。`test_bridge.py` 检查坐标旋转、FCN/单 patch 对应与列主序存储。
 - 高程只累积激光观测：0.1 m 栅格最低高度，推理分辨率 21/513 m，51×51 感受野，最近观测距离不超过 0.25 m 才计已知，窗口至少 90% 已知才输出有效概率。
 - 默认 CMU 雷达垂直范围 ±15°，0.75 m 安装高度形成约 2.8 m 近地面盲区，起点高程无法支持 HT。第二个实验条件将两组雷达同样扩展到 −75°～15°、64 垂直采样，并屏蔽机器人视觉几何的雷达回波。这属于理想化传感器适配，不等于默认 CMU/实车直接部署有效。原始 horizontal/vertical resolution 字段保持 0.2/2.0，64 指 SDF samples，不声称硬件 64 线雷达。
@@ -47,9 +47,24 @@ HT_DOWNWARD_LIDAR=0 experiments/closed_loop/run.sh --duration 30 --pairs 1 --out
 
 当前集成的 HT 开关同时影响图代价、路径和航点执行逻辑；试验比较整体集成效果，不是单独学习网络的因果消融。地形属于模型训练域，TARE 内部随机源未固定，两次重复只适合初步判断，不用于显著性/泛化声明。
 
-## 本轮发现的返航问题
+## 修复前发现的返航问题（历史记录）
 
 `src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp:988`
 在 HT 开启时直接 `return local_path`，位于 `exploration_finished_ && near_home_ && kRushHome` 的返航拼接之前。两次正式 HT 试验均出现 `finished=true`、局部路径仅一个点、停止位置仍距起点约 2 m 的现象。这是集成逻辑问题的具体证据；本轮保持被测算法版本不变并记录问题，不能把少走返航段称作效率收益。
 
 车辆仍是 CMU 简化平台，其几何尺寸和动力学并未变成标签采集时的 Scout。因而即使分类输出接通，也不能把坡度暴露或覆盖变化直接解释为真实 Scout 通过成功率。
+
+## 整改版复现与消融
+
+`run.sh` 现在默认原始雷达（`HT_DOWNWARD_LIDAR=0`）。起点 1.2 m 先验只对缺测有效，最长 30 秒，离开后永久失效；缺测几何降级累计不超过 60 秒或 10 m。调参会记录在协议中。
+
+```bash
+# 包含构建、测试、两组各两次闭环和自动出图；无需模型 API。
+bash experiments/closed_loop/verify_remediation.sh experiments/results/my_remediation
+# 相同 HT 图与执行分支，移除学习风险权重：
+experiments/closed_loop/run.sh --condition ht --weight 0 --pairs 2 --duration 90 --output experiments/results/no_risk
+# 原严格缺测门控，无启动先验：
+experiments/closed_loop/run.sh --condition ht --policy strict --startup-radius 0 --pairs 1 --duration 30 --output experiments/results/strict
+```
+
+`metrics.json` 新增 `mission_completed`、完成时刻、状态事件和每个采样的执行模式。`finished` 保留旧探索阶段语义。详见 `docs/HT_TARE_REMEDIATION_IMPLEMENTED.md`。

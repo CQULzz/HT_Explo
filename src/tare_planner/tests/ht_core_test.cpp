@@ -1,4 +1,5 @@
 #include "ht_cost/ht_cost_core.h"
+#include "ht_cost/execution_policy.h"
 #include "ht_cost/directed_graph.h"
 #include "ht_cost/grid_edge_support.h"
 #include <iostream>
@@ -94,5 +95,40 @@ int main() {
   auto b=Cost{3,3*-std::log(.9),0,true};
   check(a.total(0,2)<b.total(0,2));
   check(a.total(1,2)>b.total(1,2));
+  StartupPrior prior;
+  check(!prior.contains(0,0));prior.initialize({0,0,0},10);
+  check(prior.contains(1,0));prior.initialize({10,0,0},11);
+  check(!prior.contains(10,0)); // Starting at the origin must not reset the anchor.
+  prior.update({1.3,0,0},11);check(!prior.contains(0,0));
+  prior.update({0,0,0},12);check(!prior.contains(0,0));
+  StartupPrior expired;expired.initialize({},10);expired.update({},40);check(!expired.contains(0,0));
+  FallbackBudget budget;budget.max_seconds=2;budget.max_distance=1;
+  budget.update(0,{},false);budget.update(1,{0.6,0,0},true);check(!budget.exhausted());
+  budget.update(10,{5,0,0},false);near(budget.seconds,1);near(budget.distance,0.6);
+  budget.update(11,{5.5,0,0},true);check(budget.exhausted());
+  budget.update(12,{5.5,0,0},false);check(budget.exhausted());
+  HomeCompletion home;
+  check(!home.update(0,true,true,2,0)); // Stopping away from home is not completion.
+  check(!home.update(1,false,true,0,0));
+  check(!home.update(2,true,true,0.2,0.1)); // Must actually stop.
+  check(!home.update(3,true,true,0.2,0));
+  check(!home.update(4,true,false,0.2,0)); // Sensor failure resets dwell.
+  check(!home.update(5,true,true,0.2,0));
+  check(home.update(6,true,true,0.2,0));
+  auto known=[](Point,Point) {return Support::KNOWN;};
+  auto allow=[](Support s) {return s!=Support::FAULT;};
+  auto free=[](Point) {return true;};
+  check(!checkedLookahead({},std::vector<Point>{},.3,2,.5,free,known,allow).valid);
+  check(!checkedLookahead({},std::vector<Point>{{0,0,0}},.3,2,.5,free,known,allow).valid);
+  const std::vector<Point> bent{{1,0,0},{1,1,0},{0,1,0}};
+  auto turn_target=checkedLookahead({},bent,.3,2,.5,free,known,allow);
+  check(turn_target.valid);near(turn_target.point.x,1);near(turn_target.point.y,0);
+  auto wall=[](Point p) {return p.x<.2;};
+  check(!checkedLookahead({},bent,.3,2,.5,wall,known,allow).valid);
+  auto unknown=[](Point,Point) {return Support::UNKNOWN;};
+  auto degraded=checkedLookahead({},bent,.3,2,.5,free,unknown,allow);
+  check(degraded.valid);near(degraded.point.x,.5);
+  auto strict=[](Support s) {return s==Support::KNOWN || s==Support::STARTUP_PRIOR;};
+  check(!checkedLookahead({},bent,.3,2,.5,free,unknown,strict).valid);
   std::cout<<"PASS: "<<checks<<" HT core checks\n";
 }

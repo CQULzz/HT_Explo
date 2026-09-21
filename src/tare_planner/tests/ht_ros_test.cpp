@@ -149,3 +149,43 @@ TEST_F(HtRosTest, CalibrationRequiredAndParametersChecked) {
     rclcpp::NodeOptions().parameter_overrides({rclcpp::Parameter("ht_channel_order",std::vector<int64_t>{0,0})}));
   EXPECT_THROW(ht_cost_ns::HtCostMap rejected(invalid),std::invalid_argument);
 }
+
+TEST_F(HtRosTest, StartupPriorIsBoundedAndDoesNotOverwriteObservedRisk) {
+  auto map=grid();map["ht_valid"].setZero();send(map);
+  ht->start({0,0,0});
+  EXPECT_EQ(ht->support({}, {.3,0,0}),ht_cost_ns::Support::STARTUP_PRIOR);
+  EXPECT_FALSE(ht->knownSegment({}, {.3,0,0}));
+  EXPECT_NEAR(ht->cost({}, {.3,0,0}),.3,1e-5);
+  EXPECT_EQ(ht->support({}, {1,0,0}),ht_cost_ns::Support::UNKNOWN); // Whole footprint matters.
+  EXPECT_TRUE(ht->permits(ht->support({}, {1,0,0})));
+  map["ht_valid"].setOnes();send(map);
+  EXPECT_NEAR(ht->cost({}, {.3,0,0}),.3-.3*std::log(.1),1e-5);
+  ht->updateExecution({2,0,0},false);map["ht_valid"].setZero();send(map);
+  EXPECT_EQ(ht->support({}, {.3,0,0}),ht_cost_ns::Support::UNKNOWN);
+  auto broken=map;broken.erase("ht_dir_7");send(broken);
+  EXPECT_EQ(ht->support({}, {.3,0,0}),ht_cost_ns::Support::FAULT);
+  EXPECT_FALSE(ht->permits(ht->support({}, {.3,0,0})));
+}
+TEST_F(HtRosTest, FallbackRetainsKnownRiskAndUnknownPenalty) {
+  auto map=grid();
+  for (grid_map::GridMapIterator it(map); !it.isPastEnd(); ++it) {
+    grid_map::Position p;map.getPosition(*it,p);
+    if (p.x()>0) map.at("ht_valid",*it)=0;
+  }
+  send(map);
+  EXPECT_EQ(ht->support({-1,0,0},{1,0,0}),ht_cost_ns::Support::UNKNOWN);
+  EXPECT_NEAR(ht->cost({-1,0,0},{1,0,0}),2-std::log(.1)+2,1e-5);
+  EXPECT_NEAR(ht->cost({1,0,0},{-1,0,0}),2-std::log(.5)+2,1e-5);
+}
+TEST_F(HtRosTest, StrictPolicyAllowsOnlyKnownOrBoundedStartup) {
+  ht.reset();node.reset();
+  rclcpp::NodeOptions options;
+  options.parameter_overrides({rclcpp::Parameter("ht_enabled",true),
+    rclcpp::Parameter("ht_directions_calibrated",true),rclcpp::Parameter("ht_unknown_policy","strict"),
+    rclcpp::Parameter("ht_topic","/ht_test_map")});
+  node=std::make_shared<rclcpp::Node>("ht_strict_test",options);
+  ht=std::make_unique<ht_cost_ns::HtCostMap>(node);spin(150ms);
+  auto map=grid();map["ht_valid"].setZero();send(map);ht->start({});
+  EXPECT_TRUE(ht->permits(ht->support({}, {.3,0,0})));
+  EXPECT_FALSE(ht->permits(ht->support({}, {1,0,0})));
+}

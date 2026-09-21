@@ -956,6 +956,10 @@ double KeyposeGraph::GetShortestPath(const geometry_msgs::msg::Point& start_poin
     }
   }
 
+  if (min_dist_to_start==DBL_MAX || min_dist_to_target==DBL_MAX) {
+    if (get_path) path.poses.clear();
+    return std::numeric_limits<double>::infinity();
+  }
   std::vector<geometry_msgs::msg::Point> node_positions;
   for (int i = 0; i < nodes_.size(); i++)
   {
