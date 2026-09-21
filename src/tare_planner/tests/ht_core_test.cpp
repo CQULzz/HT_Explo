@@ -130,5 +130,9 @@ int main() {
   check(degraded.valid);near(degraded.point.x,.5);
   auto strict=[](Support s) {return s==Support::KNOWN || s==Support::STARTUP_PRIOR;};
   check(!checkedLookahead({},bent,.3,2,.5,free,unknown,strict).valid);
+  ReturnProgress back;back.checkpoints={{1,0,0},{0,0,0}};
+  back.advance({1.2,0,0},.3);check(back.next==1);
+  back.advance({.6,0,0},.3);check(back.next==1); // Must not resurrect the passed x=1 anchor.
+  back.advance({.2,0,0},.3);check(back.next==2);
   std::cout<<"PASS: "<<checks<<" HT core checks\n";
 }

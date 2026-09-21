@@ -2,16 +2,17 @@
 import sys,argparse,json,math
 from pathlib import Path
 import numpy as np,rclpy
-from std_msgs.msg import String, Bool
+from std_msgs.msg import String, Bool, Float32
 HERE=Path(__file__).resolve().parent;sys.path.insert(0,str(HERE.parent))
 from exploration_probe import ExplorationProbe
 class RealProbe(ExplorationProbe):
  def __init__(self,args):
-  self.mission_state='WAIT_START';self.execution_status='WAIT_START';self.mission_completed=False;self.completion_time=None;self.state_events=[]
+  self.requested_speed=None;self.mission_state='WAIT_START';self.execution_status='WAIT_START';self.mission_completed=False;self.completion_time=None;self.state_events=[]
   super().__init__(args)
   self.create_subscription(String,'/mission_state',lambda m:self.state('mission_state',m.data),10)
   self.create_subscription(String,'/ht_execution_status',lambda m:self.state('execution_status',m.data),10)
   self.create_subscription(Bool,'/mission_completed',self.complete,10)
+  self.create_subscription(Float32,'/speed',lambda m:setattr(self,'requested_speed',m.data),10)
  def state(self,key,value):
   if getattr(self,key)!=value:
    self.state_events.append(dict(t=self.elapsed(),kind=key,value=value))
@@ -21,7 +22,7 @@ class RealProbe(ExplorationProbe):
   if msg.data and self.completion_time is None:self.completion_time=self.elapsed()
  def record(self):
   n=len(self.rows);super().record()
-  if len(self.rows)>n:self.rows[-1].update(mission_state=self.mission_state,execution_status=self.execution_status,mission_completed=self.mission_completed)
+  if len(self.rows)>n:self.rows[-1].update(mission_state=self.mission_state,execution_status=self.execution_status,mission_completed=self.mission_completed,requested_speed_m_s=self.requested_speed)
  def publish_map(self):pass
  def save(self,final=False):
   super().save(final)

@@ -42,6 +42,15 @@ struct HomeCompletion {
   }
 };
 enum class Support { KNOWN, STARTUP_PRIOR, UNKNOWN, FAULT };
+// Return checkpoints are consumed monotonically. Re-snapping a graph start every
+// cycle can resurrect a checkpoint already passed and make the vehicle oscillate.
+struct ReturnProgress {
+  std::vector<Point> checkpoints;
+  size_t next=0;
+  void advance(Point robot,double reached) {
+    while (next<checkpoints.size() && waypointReached(robot,checkpoints[next],reached)) ++next;
+  }
+};
 struct ExecutionTarget { Point point; Support support=Support::KNOWN; bool valid=false; };
 // Nodes are ordered travel targets (the synthetic initial ROBOT anchor is omitted).
 // Never skip a blocked turn to reach a later vertex or an unchecked home shortcut.

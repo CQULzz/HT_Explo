@@ -215,6 +215,7 @@ private:
   double measured_speed_=0, normal_speed_=0.5, sensor_timeout_=3.0, last_plan_=-1;
   std::string hold_reason_="WAIT_START";
   ht_cost_ns::HomeCompletion home_completion_;
+  ht_cost_ns::ReturnProgress return_progress_;
   rclcpp::Publisher<std_msgs::msg::String>::SharedPtr mission_state_pub_, execution_status_pub_;
   rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr mission_completed_pub_;
   rclcpp::Publisher<std_msgs::msg::Float32>::SharedPtr speed_pub_;

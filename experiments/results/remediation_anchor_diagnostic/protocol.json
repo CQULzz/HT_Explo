@@ -1,0 +1,72 @@
+{
+  "downward_lidar": false,
+  "duration_s": 90.0,
+  "order": [
+    [
+      "baseline",
+      1
+    ],
+    [
+      "ht",
+      1
+    ]
+  ],
+  "ht_weight": 1.0,
+  "ht_unknown_policy": "geometric_fallback",
+  "ht_startup_radius_m": 1.2,
+  "ht_startup_duration_s": 30,
+  "fallback_speed_m_s": 0.2,
+  "fallback_lookahead_m": 0.5,
+  "fallback_max_seconds": 60,
+  "fallback_max_distance_m": 10,
+  "ht_map_timeout_s": 3,
+  "student_weights_sha256": "0a79b865d012aa633fbb9913fc4031908dfe188ec9e161ef5a3fbb34a3f8c4d4",
+  "lidar_profile": {
+    "vertical_degrees": [
+      -15,
+      15
+    ],
+    "vertical_samples": 16
+  },
+  "elevation": {
+    "bin_m": 0.1,
+    "nearest_support_m": 0.25,
+    "patch_observed_ratio": 0.9,
+    "resolution_m": 0.04093567251461988,
+    "rows": 291,
+    "columns": 291
+  },
+  "speed_m_s": 0.5,
+  "clock": "wall",
+  "ht_elevation_source": "online registered lidar only, no ground-truth elevation input",
+  "terrain": {
+    "source": "/home/lzz/\u4e0b\u8f7d/data_scout/traversability_sim_data_train_height/version2_mountain_z12_use_n47_height_200_distancex_2050_distancey_2050.png",
+    "sha256": "0bdb42c8f9afc4a9ca5dbf54022c97c2099789acc63a9502c4994ebbe908d521",
+    "extent_m": 21,
+    "spawn_ground_xyz": [
+      -5.00390625,
+      -6.97265625,
+      0.35294117647058826
+    ],
+    "slope_degrees_percentiles": [
+      16.82271054035775,
+      31.475502177811716,
+      58.038694747456006
+    ],
+    "model_resolution_m": 0.04093567251461988,
+    "mesh_resolution_m": 0.08203125,
+    "note": "Supplied training-domain mountain; simplified CMU kinematic robot, not Scout dynamics."
+  },
+  "working_tree_diff": "",
+  "git_commit": "3912524be6184d9cd860ae28c24b3ee622dae346",
+  "scripts_sha256": {
+    "prepare.py": "e00466891304c0bc38f941b13f6695c226bd452a251c8856027963210229619f",
+    "test_bridge.py": "686bb45aca1f6d62afff2e540c6b7ca1aaedd3f0d271e27f9553d795e093764d",
+    "live_ht.py": "318067dfa687e7dae4e47353f210c3eafec7d9d487c1eab916a4b597c943f39f",
+    "analyze.py": "7f1fbc3b9d437d57d27d28193096a339a678ccfdb645d17f2dfa67437ae77753",
+    "sim.launch.py": "f2812085b382c89b1a04dc2be1b2081fc6ae04d508c4014cc9d0137800df3e42",
+    "run.py": "8550da0f3b0ba44f6917b99dea697f901d98933f819c996c6047ef1f58d0dfa7",
+    "probe.py": "193edf18cd3be983e71dcb7c8cca6187a066e11550c8a6836183267f015d8faa"
+  },
+  "note": "Pilot; simplified kinematic vehicle, geometric exposure proxy, no collision or roll-over truth. Both arms run identical HT inference load."
+}

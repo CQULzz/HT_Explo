@@ -994,23 +994,28 @@ SensorCoveragePlanner3D::ConcatenateGlobalLocalPath(
   if (exploration_finished_) {
     geometry_msgs::msg::Point home;
     home.x=initial_position_.x();home.y=initial_position_.y();home.z=initial_position_.z();
-    nav_msgs::msg::Path route;
-    const double distance=keypose_graph_->GetShortestPath(robot_position_,home,true,route,true);
-    if (!std::isfinite(distance) || distance>=1e9 || route.poses.empty()) return full_path;
+    if (return_progress_.checkpoints.empty()) {
+      nav_msgs::msg::Path route;
+      const double distance=keypose_graph_->GetShortestPath(robot_position_,home,true,route,true);
+      if (!std::isfinite(distance) || distance>=1e9 || route.poses.empty()) return full_path;
+      // Ignore the start anchor and persist the remaining ordered checkpoints.
+      for (size_t i=1;i<route.poses.size();++i) {
+        const auto& p=route.poses[i].pose.position;
+        return_progress_.checkpoints.push_back({p.x,p.y,p.z});
+      }
+      return_progress_.checkpoints.push_back({home.x,home.y,home.z});
+    }
+    return_progress_.advance({robot_position_.x,robot_position_.y,robot_position_.z},
+      viewpoint_manager_->HT()->reachedDistance());
     exploration_path_ns::Node node;
     node.position_=Eigen::Vector3d(robot_position_.x,robot_position_.y,robot_position_.z);
     node.type_=exploration_path_ns::NodeType::ROBOT;full_path.nodes_.push_back(node);
-    // The first graph pose anchors the robot to its nearest keypose. Re-targeting
-    // that anchor on every cycle causes backtracking near home as nearest nodes change.
-    // The next leg still has to pass the current geometric prefix checks below.
-    for (size_t route_i=1;route_i<route.poses.size();++route_i) {
-      const auto& pose=route.poses[route_i];
-      node.position_=Eigen::Vector3d(pose.pose.position.x,pose.pose.position.y,pose.pose.position.z);
-      node.type_=exploration_path_ns::NodeType::LOCAL_VIA_POINT;
+    for (size_t i=return_progress_.next;i<return_progress_.checkpoints.size();++i) {
+      const auto& p=return_progress_.checkpoints[i];node.position_=Eigen::Vector3d(p.x,p.y,p.z);
+      node.type_=i+1==return_progress_.checkpoints.size() ? exploration_path_ns::NodeType::HOME :
+        exploration_path_ns::NodeType::LOCAL_VIA_POINT;
       full_path.nodes_.push_back(node);
     }
-    node.position_=initial_position_;node.type_=exploration_path_ns::NodeType::HOME;
-    full_path.nodes_.push_back(node);
     // Replan the next return leg on the current directed HT graph. An outbound
     // edge's probability is not evidence for travelling it in reverse.
     if (viewpoint_manager_->HT()->enabled()) {
