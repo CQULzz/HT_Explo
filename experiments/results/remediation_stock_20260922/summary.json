@@ -1,0 +1,86 @@
+{
+  "runs": [
+    {
+      "condition": "baseline",
+      "rep": 1,
+      "planning_median_ms": 97.0,
+      "final": true,
+      "duration_s": 90.0,
+      "initial_xy": [
+        -5.00390625,
+        -6.97265625
+      ],
+      "new_surface_voxels": 663,
+      "total_surface_voxels": 1162,
+      "surface_coverage_pct": 45.55076440611525,
+      "distance_m": 5.975548098705861,
+      "steep_distance_m": 0.0,
+      "steep_distance_fraction": 0.0,
+      "stationary_window_fraction": 0.729490022172949,
+      "active_stationary_s": 0.0,
+      "outside_samples": 0,
+      "final_home_distance_m": 0.27163463087190676,
+      "mission_completed": true,
+      "mission_completion_time_s": 16.60458570799983,
+      "fallback_s": 0.0,
+      "startup_prior_s": 0.0,
+      "final_execution_status": "COMPLETED",
+      "finished": true,
+      "finish_time_s": 8.718823101999988,
+      "scans": 450,
+      "ht_allowed_fraction": null
+    },
+    {
+      "condition": "ht",
+      "rep": 1,
+      "planning_median_ms": 59.0,
+      "final": true,
+      "duration_s": 90.001,
+      "initial_xy": [
+        -5.00390625,
+        -6.97265625
+      ],
+      "new_surface_voxels": 836,
+      "total_surface_voxels": 1335,
+      "surface_coverage_pct": 52.33241865934927,
+      "distance_m": 11.549519706379247,
+      "steep_distance_m": 0.6399702426598726,
+      "steep_distance_fraction": 0.055410983220920626,
+      "stationary_window_fraction": 0.21951219512195122,
+      "active_stationary_s": 0.0,
+      "outside_samples": 0,
+      "final_home_distance_m": 0.16089086225305735,
+      "mission_completed": true,
+      "mission_completion_time_s": 62.89261268400014,
+      "fallback_s": 52.0,
+      "startup_prior_s": 1.7999999999999998,
+      "final_execution_status": "HT_MAP_STALE",
+      "finished": true,
+      "finish_time_s": 30.999467040000127,
+      "scans": 450,
+      "ht_allowed_fraction": 0.6518847006651884
+    }
+  ],
+  "means": {
+    "baseline": {
+      "new_surface_voxels": 663.0,
+      "total_surface_voxels": 1162.0,
+      "surface_coverage_pct": 45.55076440611525,
+      "distance_m": 5.975548098705861,
+      "steep_distance_m": 0.0,
+      "stationary_window_fraction": 0.729490022172949,
+      "active_stationary_s": 0.0,
+      "final_home_distance_m": 0.27163463087190676
+    },
+    "ht": {
+      "new_surface_voxels": 836.0,
+      "total_surface_voxels": 1335.0,
+      "surface_coverage_pct": 52.33241865934927,
+      "distance_m": 11.549519706379247,
+      "steep_distance_m": 0.6399702426598726,
+      "stationary_window_fraction": 0.21951219512195122,
+      "active_stationary_s": 0.0,
+      "final_home_distance_m": 0.16089086225305735
+    }
+  }
+}

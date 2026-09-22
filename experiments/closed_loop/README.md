@@ -68,3 +68,11 @@ experiments/closed_loop/run.sh --condition ht --policy strict --startup-radius 0
 ```
 
 `metrics.json` 新增 `mission_completed`、完成时刻、状态事件和每个采样的执行模式。`finished` 保留旧探索阶段语义。详见 `docs/HT_TARE_REMEDIATION_IMPLEMENTED.md`。
+
+整改版本 `b847710` 的实测归档：`experiments/results/remediation_stock_20260922/VALIDATION.md`。
+自动检查脚本 `check_regression.py` 可单独读取既有结果，避免重复跑仿真：
+
+```bash
+python3 experiments/closed_loop/check_regression.py experiments/results/remediation_stock_20260922 --require-completion
+python3 experiments/closed_loop/check_regression.py experiments/results/remediation_map_outage_20260922 --require-outage
+```

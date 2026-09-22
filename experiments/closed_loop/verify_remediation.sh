@@ -13,3 +13,4 @@ ROS_DOMAIN_ID=72 colcon test --packages-select tare_planner
 colcon test-result --verbose
 HT_DOWNWARD_LIDAR=0 bash experiments/closed_loop/run.sh --duration "$duration" --pairs "$pairs" --output "$output"
 python3 experiments/closed_loop/analyze.py "$output"
+python3 experiments/closed_loop/check_regression.py "$output" --require-completion
