@@ -156,3 +156,30 @@ c++ -std=c++17 -I src/tare_planner/include src/tare_planner/tests/ht_core_test.c
 DD420C93C802D1AD335D5E264238E3F9436A8CA2A5A444CFC961AD6FAD24633D
 
 release_manifest.json 记录修改文件及上游 ZIP 标识，ht_v1.patch 可用于审查本版差异。
+
+## 独立工作区与实车驱动
+
+本工作区的 `src/` 同时包含 `tare_planner`、Fixposition ROS 2 驱动及其 SDK、
+RoboSense `rslidar_sdk`、`rslidar_msg`。不需要 source 其他工作区。
+在 Ubuntu 24.04 / ROS 2 Jazzy 上从工作区根目录执行：
+
+```bash
+bash scripts/build_standalone.sh
+source scripts/source_standalone.sh
+ros2 launch tare_planner explore_ht_fixposition.launch.py
+```
+
+构建脚本只 source `/opt/ros/jazzy`；若系统未安装 `nlohmann-json3-dev`，
+会把该开发包下载并解压到本工作区的 `.local_deps/`。驱动源码来自各自官方仓库，
+固定版本与许可证见 `THIRD_PARTY.md`。默认 Fixposition 连接地址写在
+`src/tare_planner/config/fixposition.yaml`，当前为 `192.168.1.103:21000`；
+需要按实车设备地址核对。`rslidar_helios32.yaml` 使用 `RSHELIOS`、
+UDP 3344/5566，并在 `rslidar` 坐标系发布 `/rslidar_points`。
+启动文件同时运行两套驱动和 TARE，TARE 从 `/fixposition/odometry_enu` 定位，
+驱动的 `nav2_mode` 会将其父坐标系设为 `map`。
+
+驱动启动不等于探索闭环完成：还必须把点云正确配准后发布为同一 `map`
+坐标系的 `/registered_scan`，提供 `/terrain_map`、`/terrain_map_ext` 与
+八方向 HT GridMap，并将 `/way_point` 接到底盘控制器。原始点云不能只改
+`frame_id` 当作配准点云。默认 `ht_directions_calibrated: false` 会保持停车，
+需完成方向标定后再启用运动。
