@@ -10,6 +10,6 @@ python3 validation/campus_long_run/path_stutter_probe.py --output validation/res
 python3 validation/campus_long_run/plot_long_run.py --run validation/results/new_run
 ```
 
-`long_run_diagnostics.py` 写出地图年龄、里程计、速度指令和状态的 `timing.csv`、`summary.json`。`path_stutter_probe.py` 记录 CMU `/path` 长度与底层速度。绘图脚本需要 `matplotlib` 和 `numpy`。
+`long_run_diagnostics.py` 写出地图年龄、里程计位置、正行/倒行速度指令和状态的 `timing.csv`、`summary.json`。新增的 XY 位置只对后续记录生效，旧数据无法补出轨迹。`path_stutter_probe.py` 记录 CMU `/path` 长度与底层速度。绘图脚本需要 `matplotlib` 和 `numpy`。
 
 2026-10-11 的记录、图和视频见 [测试报告](../results/HT_long_run_report_2026-10-11.md)。

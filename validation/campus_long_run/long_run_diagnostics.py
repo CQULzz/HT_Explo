@@ -101,6 +101,8 @@ class Probe(Node):
         return [round(t, 3), self.mission, self.status,
                 round(age, 3) if math.isfinite(age) else "",
                 self.map_count, self.path_count, round(self.distance, 3),
+                round(self.robot_xy[0], 3) if self.robot_xy is not None else "",
+                round(self.robot_xy[1], 3) if self.robot_xy is not None else "",
                 round(self.odom_speed, 3) if math.isfinite(self.odom_speed) else "",
                 round(self.cmd_speed, 3) if math.isfinite(self.cmd_speed) else "",
                 round(self.cmd_yaw_rate, 3) if math.isfinite(self.cmd_yaw_rate) else "",
@@ -112,7 +114,7 @@ class Probe(Node):
 
 
 HEADER = ["t_s", "mission", "ht_status", "ht_map_age_s", "map_count", "path_count",
-          "distance_m", "odom_speed_mps", "cmd_speed_mps", "cmd_yaw_rate_rps",
+          "distance_m", "robot_x_m", "robot_y_m", "odom_speed_mps", "cmd_speed_mps", "cmd_yaw_rate_rps",
           "tare_speed_mps", "waypoint_distance_m", "odom_callback_age_s",
           "cmd_callback_age_s", "path_callback_age_s"]
 
@@ -160,9 +162,9 @@ def main():
                     next_progress += 60
             file.flush()
         counts = Counter(row[2] for row in rows)
-        ages = [float(row[3]) for row in rows if row[3] != ""]
-        speed = [float(row[7]) for row in rows if row[7] != ""]
-        cmd = [float(row[8]) for row in rows if row[8] != ""]
+        ages = [float(row[HEADER.index("ht_map_age_s")]) for row in rows if row[HEADER.index("ht_map_age_s")] != ""]
+        speed = [float(row[HEADER.index("odom_speed_mps")]) for row in rows if row[HEADER.index("odom_speed_mps")] != ""]
+        cmd = [float(row[HEADER.index("cmd_speed_mps")]) for row in rows if row[HEADER.index("cmd_speed_mps")] != ""]
         summary = {
             "duration_s": round(time.monotonic() - started, 2),
             "sample_period_s": args.sample_period,
@@ -177,6 +179,8 @@ def main():
             "cmd_speed_mean_mps": statistics.mean(cmd) if cmd else None,
             "moving_fraction": sum(v > .05 for v in speed) / len(speed) if speed else None,
             "zero_cmd_fraction": sum(abs(v) < .01 for v in cmd) / len(cmd) if cmd else None,
+            "forward_cmd_fraction": sum(v > .05 for v in cmd) / len(cmd) if cmd else None,
+            "reverse_cmd_fraction": sum(v < -.05 for v in cmd) / len(cmd) if cmd else None,
             "ending_mission": node.mission,
             "ending_status": node.status,
         }
