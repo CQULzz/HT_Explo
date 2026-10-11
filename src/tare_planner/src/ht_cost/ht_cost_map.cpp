@@ -54,7 +54,7 @@ HtCostMap::HtCostMap(rclcpp::Node::SharedPtr node)
   if (enabled_) {
     permission_=node->create_publisher<std_msgs::msg::Bool>("/ht_navigation_allowed",1);
     subscription_=node->create_subscription<grid_map_msgs::msg::GridMap>(
-      topic,rclcpp::QoS(1).best_effort(),
+      topic,rclcpp::QoS(1).reliable(),
       [this](grid_map_msgs::msg::GridMap::ConstSharedPtr msg){receive(msg);});
     RCLCPP_INFO(logger_,"HT enabled: weight=%.3f unknown=%.3f calibrated=%d",
                 weight_,unknown_penalty_,calibrated_);

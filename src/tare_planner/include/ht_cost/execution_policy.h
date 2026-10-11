@@ -53,29 +53,49 @@ struct ReturnProgress {
 };
 struct ExecutionTarget { Point point; Support support=Support::KNOWN; bool valid=false; };
 // Nodes are ordered travel targets (the synthetic initial ROBOT anchor is omitted).
-// Never skip a blocked turn to reach a later vertex or an unchecked home shortcut.
+// Continue past a nearby node only along a nearly straight, checked route.
+// This avoids repeatedly commanding a 0.3-0.5 m endpoint to a controller
+// that brakes near every endpoint, while preserving bends as mandatory turns.
 template<class Geometry,class Assess,class Permit>
 ExecutionTarget checkedLookahead(Point robot,const std::vector<Point>& route,
     double reached,double lookahead,double fallback_lookahead,
     Geometry geometry,Assess assess,Permit permit) {
   ExecutionTarget result{robot};
+  Point previous=robot;
+  double used=0,previous_dx=0,previous_dy=0;
+  bool have_direction=false;
   for (const auto& target:route) {
     if (waypointReached(robot,target,reached)) continue;
-    const double dx=target.x-robot.x,dy=target.y-robot.y,dz=target.z-robot.z;
+    const double dx=target.x-previous.x,dy=target.y-previous.y,dz=target.z-previous.z;
     const double length=std::hypot(std::hypot(dx,dy),dz);
-    if (!std::isfinite(length) || length<=0) return result;
-    auto at=[&](double d) {return Point{robot.x+dx*d/length,robot.y+dy*d/length,robot.z+dz*d/length};};
-    double limit=std::min(length,lookahead);
-    if (assess(robot,at(limit))==Support::UNKNOWN) limit=std::min(limit,fallback_lookahead);
+    if (!std::isfinite(length) || length<=0) break;
+    if (have_direction) {
+      const double prev_norm=std::hypot(previous_dx,previous_dy);
+      const double next_norm=std::hypot(dx,dy);
+      if (prev_norm<=1e-9 || next_norm<=1e-9 ||
+          (previous_dx*dx+previous_dy*dy)/(prev_norm*next_norm)<std::cos(20.0*3.14159265358979323846/180.0))
+        break;
+    }
+    auto at=[&](double d) {return Point{previous.x+dx*d/length,previous.y+dy*d/length,previous.z+dz*d/length};};
+    const double limit=std::min(length,lookahead-used);
+    if (limit<=0) break;
+    bool checked_to_end=true;
     for (double d=std::min(0.1,limit);;d=std::min(d+0.1,limit)) {
       const auto point=at(d);
-      if (!geometry(point)) break;
+      if (!geometry(point)) {checked_to_end=false;break;}
       const auto support=assess(robot,point);
-      if (!permit(support)) break;
+      if (!permit(support) || (support==Support::UNKNOWN && used+d>fallback_lookahead+1e-9)) {
+        checked_to_end=false;break;
+      }
       result.point=point;result.support=support;
       if (d>=limit) break;
     }
-    break;
+    if (!checked_to_end || limit<length) break;
+    used+=length;
+    previous=target;
+    previous_dx=dx;previous_dy=dy;
+    have_direction=true;
+    if (used>=lookahead) break;
   }
   result.valid=!waypointReached(robot,result.point,reached);
   return result;
