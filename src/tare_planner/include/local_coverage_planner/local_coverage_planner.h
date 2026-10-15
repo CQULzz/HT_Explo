@@ -18,6 +18,7 @@
 #include "grid_world/grid_world.h"
 #include "exploration_path/exploration_path.h"
 #include "viewpoint_manager/viewpoint_manager.h"
+#include "ht_cost/xytheta_planner.h"
 
 namespace local_coverage_planner_ns
 {
@@ -41,6 +42,7 @@ public:
   {
     robot_position_ = robot_position;
   }
+  void SetRobotYaw(double yaw) { robot_yaw_=yaw; }
   void SetViewPointManager(std::shared_ptr<viewpoint_manager_ns::ViewPointManager> const& viewpoint_manager)
   {
     viewpoint_manager_ = viewpoint_manager;
@@ -56,6 +58,10 @@ public:
   exploration_path_ns::ExplorationPath
   SolveLocalCoverageProblem(const exploration_path_ns::ExplorationPath& global_path, int uncovered_point_num,
                             int uncovered_frontier_point_num = 0);
+  exploration_path_ns::ExplorationPath PlanHTReturn(const Eigen::Vector3d& target);
+  void PublishHTPath();
+  const nav_msgs::msg::Path& GetHTPath() const { return ht_output_path_; }
+  void ClearHTPath() { ht_output_path_.poses.clear(); }
 
   // Runtime
   int GetFindPathRuntime()
@@ -105,6 +111,13 @@ private:
   exploration_path_ns::ExplorationPath SolveHTTSP(const std::vector<int>& selected,
                                                   std::vector<int>& ordered);
   double ht_last_cost_ = 0;
+  double robot_yaw_=0;
+  int ht_previous_target_=-1;
+  int ht_candidate_target_=-1,ht_output_target_=-1;
+  ht_cost_ns::XYThetaConfig xytheta_config_;
+  rclcpp::Node::SharedPtr node_;
+  rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr ht_path_pub_;
+  nav_msgs::msg::Path ht_candidate_path_,ht_output_path_;
   // viewpoint_manager_ns::ViewPointManager::Ptr viewpoint_manager_;
   static bool SortPairInRev(const std::pair<int, int>& a, const std::pair<int, int>& b)
   {

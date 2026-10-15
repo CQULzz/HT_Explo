@@ -57,9 +57,11 @@ class HtRosTest : public ::testing::Test {
 TEST_F(HtRosTest, DirectionalCostsAndValidSupport) {
   send(grid());
   ASSERT_TRUE(ht->ready());
-  EXPECT_NEAR(ht->cost({-1,0,0}, {1,0,0}), 2-2*std::log(0.1), 1e-5);
-  EXPECT_NEAR(ht->cost({1,0,0}, {-1,0,0}), 2-2*std::log(0.5), 1e-5);
-  EXPECT_TRUE(ht->knownSegment({-1,0,0}, {1,0,0}));
+  EXPECT_TRUE(std::isinf(ht->cost({-1,0,0}, {1,0,0})));
+  EXPECT_NEAR(ht->cost({1,0,0}, {-1,0,0}), 2, 1e-5);
+  EXPECT_EQ(ht->support({-1,0,0}, {1,0,0}),ht_cost_ns::Support::BLOCKED);
+  EXPECT_FALSE(ht->permits(ht->support({-1,0,0}, {1,0,0})));
+  EXPECT_TRUE(ht->knownSegment({1,0,0}, {-1,0,0}));
   EXPECT_FALSE(ht->knownSegment({3.5,0,0}, {3.9,0,0}));
 }
 
@@ -75,8 +77,22 @@ TEST_F(HtRosTest, CircularBufferPreservesSpatialCells) {
   }
   send(map);
   ASSERT_TRUE(ht->ready());
-  EXPECT_NEAR(ht->cost({1,0,0}, {2,0,0}), 1-std::log(0.8), 1e-5);
-  EXPECT_NEAR(ht->cost({-2,0,0}, {-1,0,0}), 1-std::log(0.2), 1e-5);
+  EXPECT_NEAR(ht->cost({1,0,0}, {2,0,0}), 1, 1e-5);
+  EXPECT_TRUE(std::isinf(ht->cost({-2,0,0}, {-1,0,0})));
+}
+
+TEST_F(HtRosTest, OffCenterHazardIsHardBlockedAtPlanningAndExecution) {
+  auto map=grid();
+  for (int k=0;k<8;++k) map["ht_dir_"+std::to_string(k)].setConstant(0.8f);
+  grid_map::Index hazard;
+  ASSERT_TRUE(map.getIndex(grid_map::Position(0,0.5),hazard));
+  map.at("ht_dir_0",hazard)=0.2f;
+  send(map);
+  ASSERT_TRUE(ht->ready());
+  EXPECT_EQ(ht->support({-1,0,0},{1,0,0}),ht_cost_ns::Support::BLOCKED);
+  EXPECT_TRUE(std::isinf(ht->cost({-1,0,0},{1,0,0})));
+  EXPECT_FALSE(ht->permits(ht->support({-1,0,0},{1,0,0})));
+  EXPECT_NEAR(ht->cost({1,0,0},{-1,0,0}),2,1e-5);
 }
 
 TEST_F(HtRosTest, RotatedTranslatedFrameRotatesChannels) {
@@ -95,8 +111,8 @@ TEST_F(HtRosTest, RotatedTranslatedFrameRotatesChannels) {
   map.setFrameId("ht_rotated");
   send(map);
   ASSERT_TRUE(ht->ready());
-  EXPECT_NEAR(ht->cost({10,19,0}, {10,21,0}), 2-2*std::log(0.1), 1e-5);
-  EXPECT_NEAR(ht->cost({10,21,0}, {10,19,0}), 2-2*std::log(0.5), 1e-5);
+  EXPECT_TRUE(std::isinf(ht->cost({10,19,0}, {10,21,0})));
+  EXPECT_NEAR(ht->cost({10,21,0}, {10,19,0}), 2, 1e-5);
 }
 
 TEST_F(HtRosTest, MissingLayerRevokesPreviousMap) {
@@ -148,6 +164,9 @@ TEST_F(HtRosTest, CalibrationRequiredAndParametersChecked) {
   auto invalid=std::make_shared<rclcpp::Node>("ht_invalid",
     rclcpp::NodeOptions().parameter_overrides({rclcpp::Parameter("ht_channel_order",std::vector<int64_t>{0,0})}));
   EXPECT_THROW(ht_cost_ns::HtCostMap rejected(invalid),std::invalid_argument);
+  auto bad_threshold=std::make_shared<rclcpp::Node>("ht_bad_threshold",
+    rclcpp::NodeOptions().parameter_overrides({rclcpp::Parameter("ht_min_probability",1.1)}));
+  EXPECT_THROW(ht_cost_ns::HtCostMap rejected(bad_threshold),std::invalid_argument);
 }
 
 TEST_F(HtRosTest, StartupPriorIsBoundedAndDoesNotOverwriteObservedRisk) {
@@ -157,25 +176,26 @@ TEST_F(HtRosTest, StartupPriorIsBoundedAndDoesNotOverwriteObservedRisk) {
   EXPECT_FALSE(ht->knownSegment({}, {.3,0,0}));
   EXPECT_NEAR(ht->cost({}, {.3,0,0}),.3,1e-5);
   EXPECT_EQ(ht->support({}, {1,0,0}),ht_cost_ns::Support::UNKNOWN); // Whole footprint matters.
-  EXPECT_TRUE(ht->permits(ht->support({}, {1,0,0})));
+  EXPECT_FALSE(ht->permits(ht->support({}, {1,0,0})));
   map["ht_valid"].setOnes();send(map);
-  EXPECT_NEAR(ht->cost({}, {.3,0,0}),.3-.3*std::log(.1),1e-5);
+  EXPECT_EQ(ht->support({}, {.3,0,0}),ht_cost_ns::Support::BLOCKED);
+  EXPECT_TRUE(std::isinf(ht->cost({}, {.3,0,0})));
   ht->updateExecution({2,0,0},false);map["ht_valid"].setZero();send(map);
   EXPECT_EQ(ht->support({}, {.3,0,0}),ht_cost_ns::Support::UNKNOWN);
   auto broken=map;broken.erase("ht_dir_7");send(broken);
   EXPECT_EQ(ht->support({}, {.3,0,0}),ht_cost_ns::Support::FAULT);
   EXPECT_FALSE(ht->permits(ht->support({}, {.3,0,0})));
 }
-TEST_F(HtRosTest, FallbackRetainsKnownRiskAndUnknownPenalty) {
+TEST_F(HtRosTest, UnknownAndObservedRiskBothBlockEdges) {
   auto map=grid();
   for (grid_map::GridMapIterator it(map); !it.isPastEnd(); ++it) {
     grid_map::Position p;map.getPosition(*it,p);
     if (p.x()>0) map.at("ht_valid",*it)=0;
   }
   send(map);
-  EXPECT_EQ(ht->support({-1,0,0},{1,0,0}),ht_cost_ns::Support::UNKNOWN);
-  EXPECT_NEAR(ht->cost({-1,0,0},{1,0,0}),2-std::log(.1)+2,1e-5);
-  EXPECT_NEAR(ht->cost({1,0,0},{-1,0,0}),2-std::log(.5)+2,1e-5);
+  EXPECT_EQ(ht->support({-1,0,0},{1,0,0}),ht_cost_ns::Support::BLOCKED);
+  EXPECT_TRUE(std::isinf(ht->cost({-1,0,0},{1,0,0})));
+  EXPECT_TRUE(std::isinf(ht->cost({1,0,0},{-1,0,0})));
 }
 TEST_F(HtRosTest, StrictPolicyAllowsOnlyKnownOrBoundedStartup) {
   ht.reset();node.reset();

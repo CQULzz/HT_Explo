@@ -24,9 +24,16 @@ bool LocalCoveragePlannerParameter::ReadParameters(rclcpp::Node::SharedPtr nh) {
   return true;
 }
 LocalCoveragePlanner::LocalCoveragePlanner(rclcpp::Node::SharedPtr nh)
-    : lookahead_point_update_(false), use_frontier_(true),
+    : node_(nh),lookahead_point_update_(false), use_frontier_(true),
       local_coverage_complete_(false) {
   parameters_.ReadParameters(nh);
+  ht_path_pub_=nh->create_publisher<nav_msgs::msg::Path>("/ht_xytheta_path",rclcpp::QoS(1).reliable());
+  xytheta_config_.cell=nh->declare_parameter<double>("xytheta_cell",0.3);
+  xytheta_config_.drive_step=nh->declare_parameter<double>("xytheta_drive_step",0.4);
+  xytheta_config_.goal_radius=nh->declare_parameter<double>("xytheta_goal_radius",0.35);
+  xytheta_config_.max_radius=nh->declare_parameter<double>("xytheta_max_radius",7.0);
+  xytheta_config_.max_search_seconds=nh->declare_parameter<double>("xytheta_search_seconds",0.15);
+  xytheta_config_.max_expansions=nh->declare_parameter<int>("xytheta_max_expansions",8000);
 }
 
 int LocalCoveragePlanner::GetBoundaryViewpointIndex(
@@ -570,6 +577,8 @@ LocalCoveragePlanner::SolveLocalCoverageProblem(
   tsp_runtime_ = 0;
 
   local_coverage_complete_ = false;
+  ht_output_path_.poses.clear();
+  ht_output_target_=-1;
 
   misc_utils_ns::Timer find_path_timer("find path");
   find_path_timer.Start();
@@ -679,6 +688,10 @@ LocalCoveragePlanner::SolveLocalCoverageProblem(
         min_path_length = path_length;
         local_path = local_path_itr;
         last_selected_viewpoint_indices_ = ordered_viewpoint_indices;
+        if (viewpoint_manager_->HT()->enabled()) {
+          ht_output_path_=ht_candidate_path_;
+          ht_output_target_=ht_candidate_target_;
+        }
       }
     }
   } else {
@@ -712,6 +725,10 @@ LocalCoveragePlanner::SolveLocalCoverageProblem(
 
     local_path =
         SolveTSP(selected_viewpoint_indices_itr, ordered_viewpoint_indices);
+    if (viewpoint_manager_->HT()->enabled()) {
+      ht_output_path_=ht_candidate_path_;
+      ht_output_target_=ht_candidate_target_;
+    }
 
     last_selected_viewpoint_indices_ = ordered_viewpoint_indices;
   }
@@ -734,7 +751,15 @@ LocalCoveragePlanner::SolveLocalCoverageProblem(
       viewpoint_manager_->SetViewPointSelected(viewpoint_index, true);
     }
   }
+  if (ht_output_target_>=0) ht_previous_target_=ht_output_target_;
   return local_path;
+}
+
+void LocalCoveragePlanner::PublishHTPath() {
+  if (!viewpoint_manager_->HT()->enabled()) return;
+  ht_output_path_.header.frame_id="map";
+  ht_output_path_.header.stamp=node_->now();
+  ht_path_pub_->publish(ht_output_path_);
 }
 
 void LocalCoveragePlanner::GetSelectedViewPointVisCloud(

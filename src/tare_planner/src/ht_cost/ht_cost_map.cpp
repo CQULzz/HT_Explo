@@ -1,6 +1,7 @@
 #include "ht_cost/ht_cost_map.h"
 #include <grid_map_ros/GridMapRosConverter.hpp>
 #include <grid_map_core/iterators/GridMapIterator.hpp>
+#include <opencv2/imgproc.hpp>
 #include <tf2/LinearMath/Matrix3x3.h>
 #include <tf2/LinearMath/Transform.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
@@ -11,15 +12,14 @@ HtCostMap::HtCostMap(rclcpp::Node::SharedPtr node)
     buffer_(clock_), listener_(buffer_) {
   enabled_=node->declare_parameter<bool>("ht_enabled",false);
   calibrated_=node->declare_parameter<bool>("ht_directions_calibrated",false);
-  weight_=node->declare_parameter<double>("ht_weight",1.0);
-  unknown_penalty_=node->declare_parameter<double>("ht_unknown_penalty",2.0);
+  min_probability_=node->declare_parameter<double>("ht_min_probability",0.5);
   timeout_=node->declare_parameter<double>("ht_map_timeout",1.0);
   step_=node->declare_parameter<double>("ht_sample_step",0.02);
   lookahead_=node->declare_parameter<double>("ht_lookahead_distance",2.0);
   reached_distance_=node->declare_parameter<double>("ht_waypoint_reached_distance",0.3);
   footprint_radius_=node->declare_parameter<double>("ht_validity_radius",0.6);
   heading_offset_=node->declare_parameter<double>("ht_heading_offset",0.0);
-  const auto policy=node->declare_parameter<std::string>("ht_unknown_policy","geometric_fallback");
+  const auto policy=node->declare_parameter<std::string>("ht_unknown_policy","strict");
   if (policy!="strict" && policy!="geometric_fallback") throw std::invalid_argument("Invalid ht_unknown_policy");
   geometric_fallback_=policy=="geometric_fallback";
   prior_.radius=node->declare_parameter<double>("ht_startup_radius",1.2);
@@ -43,8 +43,9 @@ HtCostMap::HtCostMap(rclcpp::Node::SharedPtr node)
   if (sorted != std::vector<int64_t>({0,1,2,3,4,5,6,7}))
     throw std::invalid_argument("ht_channel_order must be a permutation of 0..7");
   for (int i=0;i<8;++i) channel_order_[i]=static_cast<int>(order[i]);
-  for (double v : {weight_,unknown_penalty_,footprint_radius_})
+  for (double v : {min_probability_,footprint_radius_})
     if (!std::isfinite(v) || v<0) throw std::invalid_argument("Negative/non-finite HT parameter");
+  if (min_probability_>1) throw std::invalid_argument("ht_min_probability must be in [0,1]");
   for (double v : {timeout_,step_,lookahead_,reached_distance_})
     if (!std::isfinite(v) || v<=0) throw std::invalid_argument("Non-positive HT parameter");
   if (!std::isfinite(heading_offset_) || step_<0.001 || footprint_radius_>3)
@@ -53,11 +54,16 @@ HtCostMap::HtCostMap(rclcpp::Node::SharedPtr node)
     throw std::invalid_argument("HT waypoint reached distance must be smaller than lookahead");
   if (enabled_) {
     permission_=node->create_publisher<std_msgs::msg::Bool>("/ht_navigation_allowed",1);
+    // Map decoding and footprint dilation must be serviced while the default
+    // planner callback group is spending seconds evaluating XYtheta routes.
+    map_callback_group_=node->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
+    rclcpp::SubscriptionOptions options;
+    options.callback_group=map_callback_group_;
     subscription_=node->create_subscription<grid_map_msgs::msg::GridMap>(
       topic,rclcpp::QoS(1).reliable(),
-      [this](grid_map_msgs::msg::GridMap::ConstSharedPtr msg){receive(msg);});
-    RCLCPP_INFO(logger_,"HT enabled: weight=%.3f unknown=%.3f calibrated=%d",
-                weight_,unknown_penalty_,calibrated_);
+      [this](grid_map_msgs::msg::GridMap::ConstSharedPtr msg){receive(msg);},options);
+    RCLCPP_INFO(logger_,"HT hard gate: min_probability=%.3f unknown_policy=%s calibrated=%d",
+                min_probability_,policy.c_str(),calibrated_);
   }
 }
 
@@ -144,6 +150,30 @@ void HtCostMap::receive(grid_map_msgs::msg::GridMap::ConstSharedPtr msg) {
         }
       }
     }
+    // Dilate known-unsafe and unknown cells by the robot support radius once
+    // per map. This avoids scanning hundreds of footprint cells for every graph
+    // edge, while retaining the same directional test at planning and execution.
+    const double radius_cells=std::ceil(footprint_radius_/out->resolution)+1;
+    if (!std::isfinite(radius_cells) || radius_cells>101)
+      throw std::runtime_error("HT footprint/map resolution outside supported range");
+    const int radius=static_cast<int>(radius_cells);
+    cv::Mat kernel(2*radius+1,2*radius+1,CV_8UC1,cv::Scalar(0));
+    for (int ix=-radius;ix<=radius;++ix) for (int iy=-radius;iy<=radius;++iy)
+      if (std::hypot(ix*out->resolution,iy*out->resolution) <=
+          footprint_radius_+std::sqrt(2.0)*out->resolution)
+        kernel.at<unsigned char>(ix+radius,iy+radius)=1;
+    std::vector<unsigned char> source(size);
+    cv::Mat src(out->rows,out->cols,CV_8UC1,source.data());
+    cv::Mat dst;
+    for (size_t i=0;i<size;++i) source[i]=out->valid[i] ? 0 : 1;
+    cv::dilate(src,dst,kernel,cv::Point(-1,-1),1,cv::BORDER_CONSTANT,cv::Scalar(1));
+    out->unknown_footprint.assign(dst.datastart,dst.dataend);
+    for (int k=0;k<8;++k) {
+      for (size_t i=0;i<size;++i)
+        source[i]=out->valid[i] && out->probabilities[k][i]<min_probability_ ? 1 : 0;
+      cv::dilate(src,dst,kernel,cv::Point(-1,-1),1,cv::BORDER_CONSTANT,cv::Scalar(0));
+      out->blocked_footprint[k].assign(dst.datastart,dst.dataend);
+    }
     if (!out->wellFormed()) throw std::runtime_error("Invalid HT map geometry");
     std::lock_guard<std::mutex> lock(mutex_);
     latest_=std::move(out);latest_error_.clear();
@@ -180,27 +210,25 @@ void HtCostMap::publishPermission(bool allowed) {
 }
 double HtCostMap::cost(const Point& a,const Point& b) const {
   if (!enabled_) return std::hypot(std::hypot(b.x-a.x,b.y-a.y),b.z-a.z);
-  if (!ready()) return std::numeric_limits<double>::infinity();
-  auto result=segment(cycle_.get(),a,b,step_);
-  if (result.unknown_length>0 && prior_.initialized && !prior_.retired) {
-    const int n=std::max(1,static_cast<int>(std::ceil(result.length/std::min(step_,cycle_->resolution/2))));
-    const double heading=std::atan2(b.y-a.y,b.x-a.x),ds=result.length/n;
-    for (int i=0;i<n;++i) {
-      const double t=(i+0.5)/n,x=a.x+t*(b.x-a.x),y=a.y+t*(b.y-a.y);
-      if (!std::isfinite(cycle_->sample(x,y,heading)) && prior_.contains(x,y))
-        result.unknown_length=std::max(0.0,result.unknown_length-ds);
-    }
-  }
-  return result.total(weight_,unknown_penalty_);
+  // Planning and execution use exactly the same HT footprint gate. A rejected
+  // edge never enters the shortest-path graph; accepted edges use distance only.
+  if (!permits(support(a,b))) return std::numeric_limits<double>::infinity();
+  return std::hypot(std::hypot(b.x-a.x,b.y-a.y),b.z-a.z);
 }
 Support HtCostMap::support(const Point& a,const Point& b) const {
+  return supportDirected(a,b,std::atan2(b.y-a.y,b.x-a.x));
+}
+Support HtCostMap::poseSupport(double x,double y,double yaw) const {
+  const Point p{x,y,0};
+  return supportDirected(p,p,yaw);
+}
+Support HtCostMap::supportDirected(const Point& a,const Point& b,double heading) const {
   if (!enabled_) return Support::KNOWN;
   if (!ready()) return Support::FAULT;
   const double length=std::hypot(b.x-a.x,b.y-a.y);
   const double count=std::ceil(length/std::min(step_,cycle_->resolution/2));
   if (!std::isfinite(count) || count>10000) return Support::FAULT;
   const int n=std::max(1,static_cast<int>(count));
-  const double heading=std::atan2(b.y-a.y,b.x-a.x);
   // This checks HT support, NOT physical footprint collision or stopping safety.
   const double cells=std::ceil(footprint_radius_/cycle_->resolution);
   if (!std::isfinite(cells) || cells>100) return Support::FAULT;
@@ -208,12 +236,21 @@ Support HtCostMap::support(const Point& a,const Point& b) const {
   Support result=Support::KNOWN;
   for (int i=0;i<=n;++i) {
     const double t=static_cast<double>(i)/n;
+    const double cx=a.x+t*(b.x-a.x),cy=a.y+t*(b.y-a.y);
+    size_t index=0; int channel=0;
+    if (!cycle_->cellAndChannel(cx,cy,heading,index,channel)) return Support::UNKNOWN;
+    if (cycle_->blocked_footprint[channel][index]) return Support::BLOCKED;
+    if (!cycle_->unknown_footprint[index]) continue;
+    // Startup prior is the only strict-policy exception. Only these uncommon
+    // samples need the exact per-cell footprint scan.
     for (int ix=-radius;ix<=radius;++ix) for (int iy=-radius;iy<=radius;++iy) {
       const double dx=ix*cycle_->resolution,dy=iy*cycle_->resolution;
       if (std::hypot(dx,dy)>footprint_radius_+cycle_->resolution/2) continue;
-      const double x=a.x+t*(b.x-a.x)+dx,y=a.y+t*(b.y-a.y)+dy;
-      if (!std::isfinite(cycle_->sample(x,y,heading))) {
-        if (!prior_.contains(x,y)) return Support::UNKNOWN;
+      const double x=cx+dx,y=cy+dy;
+      const double p=cycle_->sample(x,y,heading);
+      if (!std::isfinite(p) && !prior_.contains(x,y)) {
+        result=Support::UNKNOWN;
+      } else if (!std::isfinite(p) && result==Support::KNOWN) {
         result=Support::STARTUP_PRIOR;
       }
     }

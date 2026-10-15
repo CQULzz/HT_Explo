@@ -56,13 +56,13 @@ HT_DOWNWARD_LIDAR=0 experiments/closed_loop/run.sh --duration 30 --pairs 1 --out
 
 ## 整改版复现与消融
 
-`run.sh` 现在默认原始雷达（`HT_DOWNWARD_LIDAR=0`）。起点 1.2 m 先验只对缺测有效，最长 30 秒，离开后永久失效；缺测几何降级累计不超过 60 秒或 10 m。调参会记录在协议中。
+`run.sh` 现在默认原始雷达（`HT_DOWNWARD_LIDAR=0`）。当前代码使用 HT 硬门槛，默认 `--min-probability 0.5 --policy strict`；上文历史归档使用的是当时的软代价实现，结果不能与新运行直接合并。起点 1.2 m 先验只对缺测有效，最长 30 秒，离开后永久失效；调参会记录在协议中。
 
 ```bash
 # 包含构建、测试、两组各两次闭环和自动出图；无需模型 API。
 bash experiments/closed_loop/verify_remediation.sh experiments/results/my_remediation
-# 相同 HT 图与执行分支，移除学习风险权重：
-experiments/closed_loop/run.sh --condition ht --weight 0 --pairs 2 --duration 90 --output experiments/results/no_risk
+# 改变 HT 硬门槛，比较通行范围与停滞时间：
+experiments/closed_loop/run.sh --condition ht --min-probability 0.3 --pairs 2 --duration 90 --output experiments/results/threshold_03
 # 原严格缺测门控，无启动先验：
 experiments/closed_loop/run.sh --condition ht --policy strict --startup-radius 0 --pairs 1 --duration 30 --output experiments/results/strict
 ```

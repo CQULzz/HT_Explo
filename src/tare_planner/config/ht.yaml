@@ -3,8 +3,7 @@
     ht_enabled: true
     ht_directions_calibrated: false
     ht_topic: /ht_traversability/global_local
-    ht_weight: 1.0
-    ht_unknown_penalty: 2.0
+    ht_min_probability: 0.5  # Every footprint sample must meet this threshold.
     ht_map_timeout: 1.0
     ht_sample_step: 0.02
     ht_lookahead_distance: 2.0
@@ -15,7 +14,13 @@
     # Startup assumption is fixed at the mission's initial pose, never recentered.
     ht_startup_radius: 1.2
     ht_startup_duration: 30.0
-    ht_unknown_policy: geometric_fallback  # strict is available for ablation.
+    ht_unknown_policy: strict  # Unknown is blocked except inside the bounded startup prior.
+    xytheta_cell: 0.3
+    xytheta_drive_step: 0.4
+    xytheta_goal_radius: 0.35
+    xytheta_max_radius: 7.0
+    xytheta_search_seconds: 0.15
+    xytheta_max_expansions: 8000
     ht_fallback_speed: 0.2
     ht_fallback_lookahead: 0.5
     ht_fallback_max_seconds: 60.0

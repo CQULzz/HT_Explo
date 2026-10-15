@@ -19,6 +19,7 @@ class HtCostMap {
   double cost(const Point& a, const Point& b) const;
   bool knownSegment(const Point& a, const Point& b) const;
   Support support(const Point& a, const Point& b) const;
+  Support poseSupport(double x,double y,double yaw) const;
   bool permits(Support s) const { return s==Support::KNOWN || s==Support::STARTUP_PRIOR ||
     (s==Support::UNKNOWN && geometric_fallback_ && !budget_.exhausted()); }
   void start(Point p) { prior_.initialize(p,clock_->now().seconds()); }
@@ -33,15 +34,16 @@ class HtCostMap {
   double reachedDistance() const { return reached_distance_; }
   double step() const { return step_; }
  private:
+  Support supportDirected(const Point& a,const Point& b,double heading) const;
   void receive(grid_map_msgs::msg::GridMap::ConstSharedPtr msg);
   rclcpp::Clock::SharedPtr clock_;
   rclcpp::Logger logger_;
   StartupPrior prior_;
   FallbackBudget budget_;
-  bool geometric_fallback_=true;
+  bool geometric_fallback_=false;
   double fallback_lookahead_=0.5, fallback_speed_=0.2;
   bool enabled_=false, calibrated_=false;
-  double weight_=1, unknown_penalty_=2, timeout_=1, step_=0.02, lookahead_=2;
+  double min_probability_=0.5, timeout_=1, step_=0.02, lookahead_=2;
   double footprint_radius_=0.6, heading_offset_=0;
   double reached_distance_=0.3;
   std::array<int,8> channel_order_{{0,1,2,3,4,5,6,7}};
@@ -51,6 +53,7 @@ class HtCostMap {
   std::shared_ptr<Map> latest_, cycle_;
   tf2_ros::Buffer buffer_;
   tf2_ros::TransformListener listener_;
+  rclcpp::CallbackGroup::SharedPtr map_callback_group_;
   rclcpp::Subscription<grid_map_msgs::msg::GridMap>::SharedPtr subscription_;
   rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr permission_;
 };

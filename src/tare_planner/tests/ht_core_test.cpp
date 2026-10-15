@@ -2,6 +2,7 @@
 #include "ht_cost/execution_policy.h"
 #include "ht_cost/directed_graph.h"
 #include "ht_cost/grid_edge_support.h"
+#include "ht_cost/xytheta_planner.h"
 #include <iostream>
 #include <stdexcept>
 using namespace ht_cost_ns;
@@ -58,12 +59,6 @@ int main() {
   near(m.sample(0,0,-kPi/4),0.8);
   check(std::isnan(m.sample(6,0,0)));
   check(m.fresh(10.5,1));check(!m.fresh(12,1));check(!m.fresh(9,1));
-  auto f=segment(&m,{-1,0,0},{1,0,0},0.1);
-  auto r=segment(&m,{1,0,0},{-1,0,0},0.1);
-  near(f.risk,2*-std::log(0.1));near(r.risk,2*-std::log(0.5));
-  near(f.risk,segment(&m,{-1,0,0},{1,0,0},0.02).risk);
-  near(segment(nullptr,{0,0,0},{2,0,0},0.1).total(1,2),6);
-  near(segment(&m,{0,0,0},{0,0,0},0.1).length,0);
   m.yaw=kPi/2;
   near(m.sample(0,0,kPi/2),0.1);
   m.heading_offset=kPi/4;
@@ -78,9 +73,6 @@ int main() {
   m.valid[0]=0;check(std::isnan(m.sample(5.25,24.75,kPi/2)));
   m.valid[0]=1;m.probabilities[0][0]=2;
   check(std::isnan(m.sample(5.25,24.75,kPi/2)));
-  bool threw=false;
-  try {segment(&m,{},{1,0,0},0);} catch(const std::invalid_argument&) {threw=true;}
-  check(threw);
   std::vector<std::vector<int>> graph{{1,2},{0,2},{0,1}};
   std::vector<int> path;
   near(shortestPath(graph,{{1,4},{9,1},{1,9}},0,2,path),2);
@@ -90,11 +82,6 @@ int main() {
   check(std::isinf(shortestPath({{},{}},{{},{}},0,1,path)) && path.empty());
   near(shortestPath(graph,{{1,4},{9,1},{1,9}},1,1,path),0);
   check(path==std::vector<int>({1}));
-  // A: 2 m at P=.2; B: 3 m at P=.9. Higher HT weight selects B.
-  auto a=Cost{2,2*-std::log(.2),0,true};
-  auto b=Cost{3,3*-std::log(.9),0,true};
-  check(a.total(0,2)<b.total(0,2));
-  check(a.total(1,2)>b.total(1,2));
   StartupPrior prior;
   check(!prior.contains(0,0));prior.initialize({0,0,0},10);
   check(prior.contains(1,0));prior.initialize({10,0,0},11);
@@ -142,5 +129,19 @@ int main() {
   back.advance({1.2,0,0},.3);check(back.next==1);
   back.advance({.6,0,0},.3);check(back.next==1); // Must not resurrect the passed x=1 anchor.
   back.advance({.2,0,0},.3);check(back.next==2);
+  XYThetaConfig cfg;cfg.max_search_seconds=1.0;
+  auto all_valid=[](Pose2,Pose2,double) {return true;};
+  auto xy_straight=planXYTheta({0,0,0},{2,0,0},cfg,all_valid);
+  check(xy_straight.reached);check(xy_straight.poses.size()>2);
+  check(std::hypot(xy_straight.poses.back().x-2,xy_straight.poses.back().y)<cfg.goal_radius);
+  for (size_t i=1;i<xy_straight.poses.size();++i)
+    check(std::hypot(xy_straight.poses[i].x-xy_straight.poses[i-1].x,
+                     xy_straight.poses[i].y-xy_straight.poses[i-1].y)<=0.101);
+  auto xy_reverse=planXYTheta({0,0,0},{-1,0,0},cfg,all_valid);
+  check(xy_reverse.reached);check(xy_reverse.poses.back().x<-.6);
+  auto blocked=[](Pose2,Pose2 p,double) {return !(p.x>.6 && p.x<1.4 && std::abs(p.y)<.55);};
+  auto detour=planXYTheta({0,0,0},{2,0,0},cfg,blocked);
+  check(detour.reached);
+  for (const auto& p:detour.poses) check(!(p.x>.6 && p.x<1.4 && std::abs(p.y)<.55));
   std::cout<<"PASS: "<<checks<<" HT core checks\n";
 }

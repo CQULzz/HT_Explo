@@ -1,0 +1,13 @@
+[Unit]
+Description=Garage original TARE vs current XYtheta paired experiment and PPT update
+After=network.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/home/lzz/my test/HT_Explo-fixposition
+Environment=PYTHONUNBUFFERED=1
+ExecStartPre=/usr/bin/python3 "/home/lzz/my test/HT_Explo-fixposition/presentations/run_scheduled_comparison.py" --check
+ExecStart=/usr/bin/python3 "/home/lzz/my test/HT_Explo-fixposition/presentations/run_scheduled_comparison.py" --duration 180
+TimeoutStartSec=7200
+StandardOutput=journal
+StandardError=journal

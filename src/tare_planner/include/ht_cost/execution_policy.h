@@ -41,7 +41,7 @@ struct HomeCompletion {
     return completed;
   }
 };
-enum class Support { KNOWN, STARTUP_PRIOR, UNKNOWN, FAULT };
+enum class Support { KNOWN, STARTUP_PRIOR, UNKNOWN, BLOCKED, FAULT };
 // Return checkpoints are consumed monotonically. Re-snapping a graph start every
 // cycle can resurrect a checkpoint already passed and make the vehicle oscillate.
 struct ReturnProgress {

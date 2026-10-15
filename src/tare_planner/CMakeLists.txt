@@ -38,6 +38,7 @@ find_package(pcl_ros REQUIRED)
 find_package(grid_map_core REQUIRED)
 find_package(grid_map_ros REQUIRED)
 find_package(grid_map_msgs REQUIRED)
+find_package(OpenCV REQUIRED COMPONENTS imgproc)
 
 # grid_map_core defines Eigen plugins at directory scope. Every Eigen user
 # therefore needs its include path, including targets that do not link ht_cost.
@@ -61,6 +62,7 @@ include_directories(SYSTEM or-tools/include)
 
 add_library(ht_cost src/ht_cost/ht_cost_map.cpp)
 ament_target_dependencies(ht_cost rclcpp std_msgs grid_map_core grid_map_ros grid_map_msgs tf2 tf2_ros tf2_geometry_msgs)
+target_link_libraries(ht_cost ${OpenCV_LIBS})
 
 get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
 foreach(dir ${dirs})
@@ -150,6 +152,9 @@ add_executable(tare_planner_node src/tare_planner_node/tare_planner_node.cpp)
 ament_target_dependencies(tare_planner_node rclcpp std_msgs nav_msgs geometry_msgs sensor_msgs tf2_ros tf2_geometry_msgs tf2)
 target_link_libraries(tare_planner_node ${catkin_LIBRARIES} sensor_coverage_planner_ground)
 
+add_executable(xytheta_follower src/ht_cost/xytheta_follower.cpp)
+ament_target_dependencies(xytheta_follower rclcpp std_msgs nav_msgs geometry_msgs)
+
 #############
 ## Install ##
 #############
@@ -157,6 +162,7 @@ target_link_libraries(tare_planner_node ${catkin_LIBRARIES} sensor_coverage_plan
 install(TARGETS
   navigationBoundary
   tare_planner_node
+  xytheta_follower
   DESTINATION lib/${PROJECT_NAME})
 
 # A regular (non-symlink) colcon install must also find OR-Tools at runtime.
