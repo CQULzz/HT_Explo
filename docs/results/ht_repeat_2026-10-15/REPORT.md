@@ -54,3 +54,5 @@ python3 presentations/run_ht_validation.py --duration 180
 [本轮指标](summary.json) · [执行及接收审计](delivery_and_pause_audit.json) · [对比指标](comparison.json)
 
 发布校验：H.264转码前后均为1920×1080、10fps、1800帧；已检查开头、中段、结尾可解码。数据ZIP全部成员CRC检查通过；222组同步高程/历史/HT快照时间戳偏差均为0。
+
+GitHub发布已完成，4个附件的服务器SHA-256及大小均与本机一致；另从GitHub下载完整视频，确认SHA-256一致且首、中、末帧可解码。[上传校验记录](github_upload_verification.json)。
