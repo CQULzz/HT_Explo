@@ -74,6 +74,7 @@ class XYThetaFollower : public rclcpp::Node {
         }
         path_received_=now().seconds();
         path_stamp_=rclcpp::Time(msg->header.stamp).seconds();
+        path_header_=msg->header;
       });
     odom_sub_=create_subscription<nav_msgs::msg::Odometry>("/state_estimation",5,
       [this](nav_msgs::msg::Odometry::ConstSharedPtr msg) {
@@ -96,6 +97,7 @@ class XYThetaFollower : public rclcpp::Node {
       [this](std_msgs::msg::Int8::ConstSharedPtr msg) {stop_=msg->data;});
     cmd_pub_=create_publisher<geometry_msgs::msg::TwistStamped>("/cmd_vel",5);
     status_pub_=create_publisher<std_msgs::msg::String>("/ht_follower_status",5);
+    rejection_pub_=create_publisher<nav_msgs::msg::Path>("/ht_execution_rejected_edge",5);
     timer_=create_wall_timer(std::chrono::milliseconds(50),[this]() {tick();});
   }
   void initialize() {ht_=std::make_unique<ht_cost_ns::HtCostMap>(shared_from_this(),false);}
@@ -109,6 +111,7 @@ class XYThetaFollower : public rclcpp::Node {
       std_msgs::msg::String s;s.data=reason;status_pub_->publish(s);
     };
     auto hold=[&](const std::string& reason) {
+      if (reason!="HT_COMMAND_BLOCKED") command_blocked_since_=-1;
       linear_=0;angular_=0;cmd_pub_->publish(cmd);status(reason);
     };
     if (!fresh(odom_received_,odom_timeout_) || !fresh(odom_stamp_,odom_timeout_)) {hold("ODOM_STALE");return;}
@@ -142,15 +145,8 @@ class XYThetaFollower : public rclcpp::Node {
         const double angle=wrapYaw(p.yaw-previous.yaw);
         const int samples=std::max(1,static_cast<int>(std::ceil(std::max(length/.05,std::abs(angle)/.1))));
         if (length>1.0 || samples>100) {hold("PATH_DISCONTINUITY");return;}
-        auto last=previous;
-        for (int j=1;j<=samples;++j) {
-          const double t=double(j)/samples;
-          Pose2 next{previous.x+t*(p.x-previous.x),previous.y+t*(p.y-previous.y),wrapYaw(previous.yaw+t*angle)};
-          if (!ht_->permits(ht_->poseSupport(next.x,next.y,next.yaw)) ||
-              (length>1e-6 && !ht_->permits(ht_->support({last.x,last.y,0},{next.x,next.y,0})))) {
-            hold("HT_PATH_BLOCKED");return;
-          }
-          last=next;
+        if (!ht_->permits(ht_->motionSupport(previous,p))) {
+          rejectEdge(previous,p);hold("HT_PATH_BLOCKED");return;
         }
         distance+=length;previous=p;
         if (distance>=1.0) break;
@@ -193,15 +189,31 @@ class XYThetaFollower : public rclcpp::Node {
         Pose2 next=p;
         next.x+=linear_*.05*std::cos(p.yaw+angular_*.025);
         next.y+=linear_*.05*std::sin(p.yaw+angular_*.025);next.yaw=wrapYaw(p.yaw+angular_*.05);
-        if (!ht_->permits(ht_->poseSupport(next.x,next.y,next.yaw)) ||
-            (std::abs(linear_)>1e-6 && !ht_->permits(ht_->support({p.x,p.y,0},{next.x,next.y,0})))) {
+        if (!ht_->permits(ht_->motionSupport(p,next))) {
+          if (command_blocked_since_<0) command_blocked_since_=now_s;
+          if (now_s-command_blocked_since_>=.5) rejectEdge(p,next);
           hold("HT_COMMAND_BLOCKED");return;
         }
         p=next;
       }
     }
+    command_blocked_since_=-1;
     status(std::abs(linear_)>.01 ? "DRIVING" : std::abs(angular_)>.05 ? "TURNING" : "ALIGNING");
     cmd_pub_->publish(cmd);
+  }
+  void rejectEdge(Pose2 a,Pose2 b) {
+    // Header identifies the rejected plan, not the observation time. Delayed
+    // feedback must never invalidate a newer plan. Emit once per publication.
+    if (last_rejected_stamp_==path_stamp_) return;
+    last_rejected_stamp_=path_stamp_;
+    nav_msgs::msg::Path edge;edge.header=path_header_;
+    for (const auto p:{a,b}) {
+      geometry_msgs::msg::PoseStamped pose;pose.header=edge.header;
+      pose.pose.position.x=p.x;pose.pose.position.y=p.y;
+      pose.pose.orientation.z=std::sin(p.yaw/2);pose.pose.orientation.w=std::cos(p.yaw/2);
+      edge.poses.push_back(pose);
+    }
+    rejection_pub_->publish(edge);
   }
   std::vector<Pose2> path_;
   size_t index_=1;
@@ -211,6 +223,9 @@ class XYThetaFollower : public rclcpp::Node {
   double max_speed_,max_reverse_,max_yaw_rate_,max_accel_,max_yaw_accel_;
   double path_timeout_,odom_timeout_,permission_timeout_;
   double linear_=0,angular_=0;
+  double last_rejected_stamp_=-1;
+  double command_blocked_since_=-1;
+  std_msgs::msg::Header path_header_;
   bool permitted_=false;
   bool prior_started_=false;
   std::unique_ptr<ht_cost_ns::HtCostMap> ht_;
@@ -222,6 +237,7 @@ class XYThetaFollower : public rclcpp::Node {
   rclcpp::Subscription<sensor_msgs::msg::PointCloud2>::SharedPtr scan_sub_;
   rclcpp::Publisher<geometry_msgs::msg::TwistStamped>::SharedPtr cmd_pub_;
   rclcpp::Publisher<std_msgs::msg::String>::SharedPtr status_pub_;
+  rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr rejection_pub_;
   rclcpp::TimerBase::SharedPtr timer_;
 };
 

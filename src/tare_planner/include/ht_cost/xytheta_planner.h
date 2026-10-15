@@ -19,6 +19,36 @@ inline double wrapYaw(double yaw) {
   return yaw;
 }
 
+// Short-lived execution failures constrain motions, rather than marking a
+// whole position or every possible heading impassable. A new observation can
+// restore an edge after the cooldown; HT remains the authoritative hard gate.
+struct ExecutionFailureMemory {
+  struct Failure {Pose2 a,b;double expires;};
+  std::vector<Failure> edges;
+  void add(Pose2 a,Pose2 b,double now) {
+    edges.erase(std::remove_if(edges.begin(),edges.end(),
+      [&](const Failure& f){return f.expires<=now;}),edges.end());
+    if (edges.size()>=32) edges.erase(edges.begin());
+    edges.push_back({a,b,now+6});
+  }
+  bool permits(Pose2 a,Pose2 b,double now) const {
+    const double dx=b.x-a.x,dy=b.y-a.y,l2=dx*dx+dy*dy;
+    for (const auto& f:edges) {
+      if (now>=f.expires || now<f.expires-6) continue;
+      const double fx=f.b.x-f.a.x,fy=f.b.y-f.a.y;
+      if ((l2>1e-8)!=(fx*fx+fy*fy>1e-8)) continue;
+      const double x=(f.a.x+f.b.x)*.5,y=(f.a.y+f.b.y)*.5;
+      const double t=l2>1e-8 ? std::clamp(((x-a.x)*dx+(y-a.y)*dy)/l2,0.,1.):0.;
+      if (std::hypot(a.x+t*dx-x,a.y+t*dy-y)>.08) continue;
+      if (std::abs(wrapYaw(a.yaw+wrapYaw(b.yaw-a.yaw)*.5-
+                           f.a.yaw-wrapYaw(f.b.yaw-f.a.yaw)*.5))>kPi/8) continue;
+      if (l2>1e-8 && std::abs(wrapYaw(std::atan2(dy,dx)-std::atan2(fy,fx)))>kPi/8) continue;
+      return false;
+    }
+    return true;
+  }
+};
+
 struct XYThetaPlan {
   std::vector<Pose2> poses;
   double seconds=std::numeric_limits<double>::infinity();

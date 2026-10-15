@@ -18,6 +18,10 @@ class FollowerTest : public ::testing::Test {
   rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr permit;
   rclcpp::Subscription<geometry_msgs::msg::TwistStamped>::SharedPtr commands;
   rclcpp::Subscription<std_msgs::msg::String>::SharedPtr statuses;
+  rclcpp::Subscription<nav_msgs::msg::Path>::SharedPtr rejections;
+  nav_msgs::msg::Path last_rejection,last_path;
+  int rejection_count=0;
+  bool future_unknown=false;
   double speed=0;std::string reason;bool blocked=false,unknown=false,send_odom=true;
   void SetUp() override {
     if (!rclcpp::ok()) rclcpp::init(0,nullptr);
@@ -34,6 +38,8 @@ class FollowerTest : public ::testing::Test {
       [&](geometry_msgs::msg::TwistStamped::ConstSharedPtr p){speed=p->twist.linear.x;});
     statuses=source->create_subscription<std_msgs::msg::String>("/ht_follower_status",5,
       [&](std_msgs::msg::String::ConstSharedPtr p){reason=p->data;});
+    rejections=source->create_subscription<nav_msgs::msg::Path>("/ht_execution_rejected_edge",5,
+      [&](nav_msgs::msg::Path::ConstSharedPtr p){last_rejection=*p;++rejection_count;});
     executor.add_node(source);executor.add_node(follower);spin(250ms);
     sendPath();allow(true);spin(300ms);
   }
@@ -45,7 +51,7 @@ class FollowerTest : public ::testing::Test {
       geometry_msgs::msg::PoseStamped pose;pose.header=p.header;pose.pose.position.x=i*.1;pose.pose.orientation.w=1;
       p.poses.push_back(pose);
     }
-    path->publish(p);
+    last_path=p;path->publish(p);
   }
   void spin(std::chrono::milliseconds duration) {
     const auto end=std::chrono::steady_clock::now()+duration;
@@ -56,6 +62,9 @@ class FollowerTest : public ::testing::Test {
       grid_map::GridMap g;g.setGeometry(grid_map::Length(10,10),.2);g.setFrameId("map");
       g.setTimestamp(source->now().nanoseconds());g.add("ht_valid",unknown ? 0.f:1.f);
       for (int k=0;k<8;++k) g.add("ht_dir_"+std::to_string(k),blocked ? 0.f:1.f);
+      if (future_unknown) {
+        grid_map::Index cell;g.getIndex(grid_map::Position(1.3,0),cell);g.at("ht_valid",cell)=0;
+      }
       map->publish(*grid_map::GridMapRosConverter::toMessage(g));
       executor.spin_some();std::this_thread::sleep_for(20ms);
     }
@@ -75,4 +84,12 @@ TEST_F(FollowerTest, NewObstacleAndUnknownRevokeExecution) {
 TEST_F(FollowerTest, ExplicitHoldAndMissingOdometryStillStop) {
   allow(false);spin(150ms);EXPECT_DOUBLE_EQ(speed,0);EXPECT_EQ(reason,"PLANNER_HOLD");
   allow(true);send_odom=false;spin(650ms);EXPECT_DOUBLE_EQ(speed,0);EXPECT_EQ(reason,"ODOM_STALE");
+}
+TEST_F(FollowerTest, PathFailureReportsItsEdgeAndPlanIdentityOnce) {
+  future_unknown=true;spin(200ms);
+  EXPECT_DOUBLE_EQ(speed,0);EXPECT_EQ(reason,"HT_PATH_BLOCKED");
+  ASSERT_EQ(rejection_count,1);ASSERT_EQ(last_rejection.poses.size(),2u);
+  EXPECT_EQ(last_rejection.header.stamp,last_path.header.stamp);
+  spin(200ms);EXPECT_EQ(rejection_count,1);
+  sendPath();spin(200ms);EXPECT_EQ(rejection_count,2);
 }

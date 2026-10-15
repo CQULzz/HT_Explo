@@ -28,6 +28,27 @@ LocalCoveragePlanner::LocalCoveragePlanner(rclcpp::Node::SharedPtr nh)
       local_coverage_complete_(false) {
   parameters_.ReadParameters(nh);
   ht_path_pub_=nh->create_publisher<nav_msgs::msg::Path>("/ht_xytheta_path",rclcpp::QoS(1).reliable());
+  ht_rejection_sub_=nh->create_subscription<nav_msgs::msg::Path>("/ht_execution_rejected_edge",5,
+    [this](nav_msgs::msg::Path::ConstSharedPtr msg) {
+      if (msg->header.frame_id!="map" || msg->poses.size()!=2 ||
+          msg->header.stamp!=ht_output_path_.header.stamp || ht_output_path_.poses.empty()) return;
+      auto decode=[](const geometry_msgs::msg::Pose& p) {
+        const auto& q=p.orientation;
+        return ht_cost_ns::Pose2{p.position.x,p.position.y,
+          std::atan2(2*(q.w*q.z+q.x*q.y),1-2*(q.y*q.y+q.z*q.z))};
+      };
+      const auto a=decode(msg->poses[0].pose),b=decode(msg->poses[1].pose);
+      for (double v:{a.x,a.y,a.yaw,b.x,b.y,b.yaw}) if (!std::isfinite(v)) return;
+      const double now=node_->now().seconds();
+      ht_execution_failures_.add(a,b,now);ht_commitment_.reject(now);
+      ht_previous_target_=-1;ht_output_target_=-1;
+      ht_output_path_.poses.clear();ht_candidate_path_.poses.clear();
+      // Same mutually exclusive callback group as planning: invalidation and
+      // the next search cannot race. Revoke the old path immediately.
+      PublishHTPath();
+      RCLCPP_WARN(node_->get_logger(),"Execution rejected HT edge (%.2f,%.2f)->(%.2f,%.2f); replan with 6s edge cooldown",
+                  a.x,a.y,b.x,b.y);
+    });
   xytheta_config_.cell=nh->declare_parameter<double>("xytheta_cell",0.3);
   xytheta_config_.drive_step=nh->declare_parameter<double>("xytheta_drive_step",0.4);
   xytheta_config_.goal_radius=nh->declare_parameter<double>("xytheta_goal_radius",0.35);

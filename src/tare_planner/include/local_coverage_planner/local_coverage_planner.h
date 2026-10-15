@@ -117,6 +117,7 @@ private:
   int ht_previous_target_=-1;
   int ht_candidate_target_=-1,ht_output_target_=-1;
   ht_cost_ns::TargetCommitment ht_commitment_;
+  ht_cost_ns::ExecutionFailureMemory ht_execution_failures_;
   Eigen::Vector3d ht_global_guide_=Eigen::Vector3d::Zero();
   bool ht_has_global_guide_=false;
   bool ht_guide_is_global_=false;
@@ -124,6 +125,7 @@ private:
   ht_cost_ns::XYThetaConfig xytheta_config_;
   rclcpp::Node::SharedPtr node_;
   rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr ht_path_pub_;
+  rclcpp::Subscription<nav_msgs::msg::Path>::SharedPtr ht_rejection_sub_;
   nav_msgs::msg::Path ht_candidate_path_,ht_output_path_;
   // viewpoint_manager_ns::ViewPointManager::Ptr viewpoint_manager_;
   static bool SortPairInRev(const std::pair<int, int>& a, const std::pair<int, int>& b)

@@ -209,3 +209,38 @@ TEST_F(HtRosTest, StrictPolicyAllowsOnlyKnownOrBoundedStartup) {
   EXPECT_TRUE(ht->permits(ht->support({}, {.3,0,0})));
   EXPECT_FALSE(ht->permits(ht->support({}, {1,0,0})));
 }
+
+TEST_F(HtRosTest, RecordedGarageUnknownCornerCannotPassAsAnUnsplitEdge) {
+  // Geometry and invalid receptive-field corner from the recorded 102s stop.
+  // The old 2cm samples passed a ~10cm edge, while two ~5cm subedges failed.
+  constexpr double res=0.04093567251461988;
+  grid_map::GridMap map;map.setFrameId("map");
+  map.setGeometry(grid_map::Length(241*res,241*res),res,
+                  grid_map::Position(1.4327485380116958,11.584795321637427));
+  map.setTimestamp(node->now().nanoseconds());map.add("ht_valid",1.f);
+  for (int k=0;k<8;++k) map.add("ht_dir_"+std::to_string(k),1.f);
+  for (int r=62;r<=112;++r) for (int c=134;c<=184;++c) map["ht_valid"](r,c)=0;
+  send(map);ASSERT_TRUE(ht->ready());
+  const ht_cost_ns::Pose2 a{1.4449336528778076,11.569907188415527,-2.5809493849671568};
+  const ht_cost_ns::Pose2 b{1.3629863430039204,11.51266551583492,-2.4827746145424756};
+  EXPECT_EQ(ht->motionSupport(a,b),ht_cost_ns::Support::UNKNOWN);
+  for (int pieces:{2,3,5,7}) {
+    bool allowed=true;
+    for (int i=0;i<pieces;++i) {
+      auto interpolate=[&](double t){return ht_cost_ns::Pose2{
+        a.x+t*(b.x-a.x),a.y+t*(b.y-a.y),a.yaw+t*(b.yaw-a.yaw)};};
+      allowed &= ht->permits(ht->motionSupport(interpolate(double(i)/pieces),interpolate(double(i+1)/pieces)));
+    }
+    EXPECT_FALSE(allowed) << "pieces=" << pieces;
+  }
+}
+
+TEST_F(HtRosTest, HeadingSweepChecksIntermediateDirectionsAndWrapsAtPi) {
+  auto map=grid();
+  for (int k=0;k<8;++k) map["ht_dir_"+std::to_string(k)].setConstant(1.f);
+  map["ht_dir_1"].setConstant(.1f);send(map);
+  EXPECT_EQ(ht->poseSupport(0,0,0),ht_cost_ns::Support::KNOWN);
+  EXPECT_EQ(ht->poseSupport(0,0,ht_cost_ns::kPi/2),ht_cost_ns::Support::KNOWN);
+  EXPECT_EQ(ht->motionSupport({0,0,0},{0,0,ht_cost_ns::kPi/2}),ht_cost_ns::Support::BLOCKED);
+  EXPECT_EQ(ht->motionSupport({0,0,3.1},{0,0,-3.1}),ht_cost_ns::Support::KNOWN);
+}

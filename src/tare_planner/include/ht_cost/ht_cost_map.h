@@ -1,5 +1,6 @@
 #pragma once
 #include "ht_cost/execution_policy.h"
+#include "ht_cost/xytheta_planner.h"
 #include <rclcpp/rclcpp.hpp>
 #include <grid_map_msgs/msg/grid_map.hpp>
 #include <std_msgs/msg/bool.hpp>
@@ -20,6 +21,9 @@ class HtCostMap {
   bool knownSegment(const Point& a, const Point& b) const;
   Support support(const Point& a, const Point& b) const;
   Support poseSupport(double x,double y,double yaw) const;
+  // Shared swept gate for search, publication and tracking. Includes body
+  // heading changes and travel direction, including reverse motion.
+  Support motionSupport(Pose2 a,Pose2 b) const;
   bool permits(Support s) const { return s==Support::KNOWN || s==Support::STARTUP_PRIOR ||
     (s==Support::UNKNOWN && geometric_fallback_ && !budget_.exhausted()); }
   void start(Point p) { prior_.initialize(p,clock_->now().seconds()); }

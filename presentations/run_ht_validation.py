@@ -52,7 +52,7 @@ def main():
     (folder/'manifest.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+'\n')
     topics=['/registered_scan','/state_estimation','/tf','/tf_static','/camera/image_raw',
             '/cmd_vel','/way_point','/local_path','/ht_xytheta_path','/ht_execution_status',
-            '/ht_navigation_allowed','/ht_follower_status','/mission_state','/runtime','/exploration_finish',
+            '/ht_navigation_allowed','/ht_follower_status','/ht_execution_rejected_edge','/mission_state','/runtime','/exploration_finish',
             '/elevation_mapping/elevation_map_raw','/elevation_mapping/historical_local',
             '/ht_traversability/global_local']
     try:

@@ -14,6 +14,15 @@ void check(bool condition) {
 }
 void near(double a,double b) { check(std::abs(a-b)<1e-5); }
 int main() {
+  ExecutionFailureMemory failures;
+  failures.add({0,0,0},{.1,0,0},10);
+  check(!failures.permits({-.1,0,0},{.2,0,0},11));
+  check(failures.permits({.2,0,kPi},{-.1,0,kPi},11)); // Reverse direction is distinct.
+  check(failures.permits({0,.3,0},{.1,.3,0},11));
+  check(failures.permits({0,0,0},{.1,0,0},16)); // New data can restore the edge.
+  failures.add({0,0,0},{0,0,.2},20);
+  check(!failures.permits({0,0,0},{0,0,.2},21));
+  check(failures.permits({0,0,kPi},{0,0,kPi-.2},21));
   TargetCommitment commitment;
   commitment.commit({4,0,0},{0,0,0},1);
   commitment.observe({0,0,0},5);check(commitment.active);

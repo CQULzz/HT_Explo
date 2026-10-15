@@ -1084,6 +1084,7 @@ bool SensorCoveragePlanner3D::GetLookAheadPoint(
       const auto& anchor=path.poses.front().pose.position;
       if (std::hypot(anchor.x-robot.x(),anchor.y-robot.y())>0.5) return false;
       ht_cost_ns::Point previous{robot.x(),robot.y(),robot.z()};
+      ht_cost_ns::Pose2 previous_pose{robot.x(),robot.y(),robot_yaw_};
       if (!ht->permits(ht->poseSupport(previous.x,previous.y,robot_yaw_))) return false;
       double distance=0;
       for (size_t i=1;i<path.poses.size();++i) {
@@ -1093,12 +1094,11 @@ bool SensorCoveragePlanner3D::GetLookAheadPoint(
         const ht_cost_ns::Point point{pose.position.x,pose.position.y,robot.z()};
         if (!viewpoint_manager_->InLocalPlanningHorizon(Eigen::Vector3d(point.x,point.y,point.z)) ||
             viewpoint_manager_->InCollision(Eigen::Vector3d(point.x,point.y,point.z)) ||
-            !ht->permits(ht->poseSupport(point.x,point.y,yaw))) return false;
+            !ht->permits(ht->motionSupport(previous_pose,{point.x,point.y,yaw}))) return false;
         const double step=std::hypot(point.x-previous.x,point.y-previous.y);
-        if (step>1e-6 && !ht->permits(ht->support(previous,point))) return false;
-        distance+=step;previous=point;
+        distance+=step;previous=point;previous_pose={point.x,point.y,yaw};
         lookahead_point=Eigen::Vector3d(point.x,point.y,point.z);
-        if (distance>=0.5) break;
+        if (distance>=1.0) break;
       }
       lookahead_point_in_line_of_sight_=true;
       return true;

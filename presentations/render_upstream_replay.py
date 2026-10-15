@@ -119,7 +119,9 @@ def main():
                     valid=d['ht_ht_valid']>=.5
                     ht_geometry=d['ht_geometry'].copy();ht_shape=valid.shape
                     for k in range(8):
-                        z=d[f'ht_ht_dir_{k}'][::-1,::-1].T;colors=palette[np.clip(np.nan_to_num(z)*255,0,255).astype(np.uint8)];colors[~valid[::-1,::-1].T]=180
+                        # Canonical rows run along -X, columns along -Y.
+                        # OpenCV row zero is the top (+Y): reverse X only.
+                        z=d[f'ht_ht_dir_{k}'][::-1,:].T;colors=palette[np.clip(np.nan_to_num(z)*255,0,255).astype(np.uint8)];colors[~valid[::-1,:].T]=180
                         x=650+(k%4)*315;y=90+(k//4)*375;side=300
                         base[y:y+side,x:x+side]=cv2.resize(colors,(side,side),interpolation=cv2.INTER_NEAREST)
                         cx,cy,res=d['ht_geometry'];n,m=valid.shape
@@ -136,7 +138,7 @@ def main():
                             target=(int(px+side*direction[0]/(n*res)),int(py-side*direction[1]/(m*res)))
                             cv2.arrowedLine(base,(px,py),target,(230,220,10),2,tipLength=.3)
                         cv2.putText(base,f'HT channel {k}',(x,y-15),cv2.FONT_HERSHEY_SIMPLEX,.7,(230,230,230),1)
-                    z=d['history_elevation'][::-1,::-1].T;good=np.isfinite(z);lo,hi=np.percentile(z[good],[2,98]) if good.any() else (0,1);norm=np.clip((z-lo)/max(hi-lo,.001),0,1);colors=(plt.get_cmap('terrain')(np.nan_to_num(norm))[:,:,:3][:,:,::-1]*255).astype(np.uint8);colors[~good]=170
+                    z=d['history_elevation'][::-1,:].T;good=np.isfinite(z);lo,hi=np.percentile(z[good],[2,98]) if good.any() else (0,1);norm=np.clip((z-lo)/max(hi-lo,.001),0,1);colors=(plt.get_cmap('terrain')(np.nan_to_num(norm))[:,:,:3][:,:,::-1]*255).astype(np.uint8);colors[~good]=170
                     base[440:1040,20:620]=cv2.resize(colors,(600,600),interpolation=cv2.INTER_NEAREST)
                     if len(trail)>1:
                         cx,cy,res=d['history_geometry'];n,m=z.shape;uv=np.c_[600*((trail[:,0]-cx)/(n*res)+.5),600*(.5-(trail[:,1]-cy)/(m*res))].astype(np.int32)

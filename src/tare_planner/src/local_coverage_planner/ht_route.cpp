@@ -176,12 +176,9 @@ exploration_path_ns::ExplorationPath LocalCoveragePlanner::SolveHTTSP(
       const Eigen::Vector3d point(next.x,next.y,robot_position_.z());
       if (!viewpoint_manager_->InLocalPlanningHorizon(point) ||
           viewpoint_manager_->InCollision(point)) {++geometry_rejections;return false;}
-      if (!ht->permits(ht->poseSupport(next.x,next.y,next.yaw))) {++ht_rejections;return false;}
-      if (std::abs(v)>1e-9) {
-        const ht_cost_ns::Point a{previous.x,previous.y,robot_position_.z()};
-        const ht_cost_ns::Point b{next.x,next.y,robot_position_.z()};
-        if (!ht->permits(ht->support(a,b))) {++ht_rejections;return false;}
-      }
+      (void)v;
+      if (!ht->permits(ht->motionSupport(previous,next)) ||
+          !ht_execution_failures_.permits(previous,next,now)) {++ht_rejections;return false;}
       return true;
     };
     const auto plan=ht_cost_ns::planXYTheta(start,{goal.x,goal.y,goal.z},
@@ -252,12 +249,9 @@ exploration_path_ns::ExplorationPath LocalCoveragePlanner::PlanHTReturn(const Ei
     const Eigen::Vector3d point(next.x,next.y,robot_position_.z());
     if (!viewpoint_manager_->InLocalPlanningHorizon(point) ||
         viewpoint_manager_->InCollision(point) ||
-        !ht->permits(ht->poseSupport(next.x,next.y,next.yaw))) return false;
-    if (std::abs(v)>1e-9) {
-      const ht_cost_ns::Point a{previous.x,previous.y,robot_position_.z()};
-      const ht_cost_ns::Point b{next.x,next.y,robot_position_.z()};
-      if (!ht->permits(ht->support(a,b))) return false;
-    }
+        !ht->permits(ht->motionSupport(previous,next)) ||
+        !ht_execution_failures_.permits(previous,next,node_->now().seconds())) return false;
+    (void)v;
     return true;
   };
   const auto plan=ht_cost_ns::planXYTheta(start,{target.x(),target.y(),target.z()},

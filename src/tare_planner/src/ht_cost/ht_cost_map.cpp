@@ -223,40 +223,100 @@ Support HtCostMap::poseSupport(double x,double y,double yaw) const {
   const Point p{x,y,0};
   return supportDirected(p,p,yaw);
 }
+Support HtCostMap::motionSupport(Pose2 a,Pose2 b) const {
+  if (!enabled_) return Support::KNOWN;
+  if (!ready() || !std::isfinite(a.yaw) || !std::isfinite(b.yaw)) return Support::FAULT;
+  const double angle=wrapYaw(b.yaw-a.yaw);
+  std::vector<double> cuts{0,1};
+  // Split at the actual eight-channel boundaries, rather than selecting
+  // headings at arbitrary angular sample offsets.
+  if (std::abs(angle)>1e-10) {
+    const double offset=cycle_->yaw+cycle_->heading_offset;
+    const double low=std::min(a.yaw,a.yaw+angle)-offset;
+    const double high=std::max(a.yaw,a.yaw+angle)-offset;
+    for (int k=static_cast<int>(std::floor(low/(kPi/4)-.5));
+         k<=static_cast<int>(std::ceil(high/(kPi/4)-.5));++k) {
+      const double t=(offset+(k+.5)*(kPi/4)-a.yaw)/angle;
+      if (t>1e-10 && t<1-1e-10) cuts.push_back(t);
+    }
+  }
+  std::sort(cuts.begin(),cuts.end());
+  auto point=[&](double t) {return Point{a.x+t*(b.x-a.x),a.y+t*(b.y-a.y),0};};
+  Support result=Support::KNOWN;
+  auto merge=[&](Support s) {
+    if (s==Support::FAULT || s==Support::BLOCKED) {result=s;return false;}
+    if (s==Support::UNKNOWN || (s==Support::STARTUP_PRIOR && result==Support::KNOWN)) result=s;
+    return true;
+  };
+  if (!merge(poseSupport(a.x,a.y,a.yaw)) || !merge(poseSupport(b.x,b.y,b.yaw))) return result;
+  for (size_t i=1;i<cuts.size();++i)
+    if (!merge(supportDirected(point(cuts[i-1]),point(cuts[i]),
+             a.yaw+angle*(cuts[i-1]+cuts[i])*.5))) return result;
+  if (std::hypot(b.x-a.x,b.y-a.y)>1e-6)
+    merge(support(point(0),point(1)));
+  return result;
+}
 Support HtCostMap::supportDirected(const Point& a,const Point& b,double heading) const {
   if (!enabled_) return Support::KNOWN;
   if (!ready()) return Support::FAULT;
-  const double length=std::hypot(b.x-a.x,b.y-a.y);
-  const double count=std::ceil(length/std::min(step_,cycle_->resolution/2));
-  if (!std::isfinite(count) || count>10000) return Support::FAULT;
-  const int n=std::max(1,static_cast<int>(count));
-  // This checks HT support, NOT physical footprint collision or stopping safety.
-  const double cells=std::ceil(footprint_radius_/cycle_->resolution);
-  if (!std::isfinite(cells) || cells>100) return Support::FAULT;
-  const int radius=static_cast<int>(cells);
+  size_t first,last;int channel,last_channel;
+  if (!cycle_->cellAndChannel(a.x,a.y,heading,first,channel) ||
+      !cycle_->cellAndChannel(b.x,b.y,heading,last,last_channel)) return Support::UNKNOWN;
+  const double co=std::cos(cycle_->yaw),si=std::sin(cycle_->yaw),res=cycle_->resolution;
+  auto gridPosition=[&](Point p) {
+    const double dx=p.x-cycle_->center_x,dy=p.y-cycle_->center_y;
+    return std::pair<double,double>{cycle_->rows*.5-(co*dx+si*dy)/res,
+                                  cycle_->cols*.5-(-si*dx+co*dy)/res};
+  };
+  const auto start=gridPosition(a),end=gridPosition(b);
+  const double dr=end.first-start.first,dc=end.second-start.second;
+  int row=first/cycle_->cols,col=first%cycle_->cols;
+  const int end_row=last/cycle_->cols,end_col=last%cycle_->cols;
+  const int sr=(dr>0)-(dr<0),sc=(dc>0)-(dc<0);
+  const double inf=std::numeric_limits<double>::infinity();
+  const double delta_r=sr ? 1/std::abs(dr):inf,delta_c=sc ? 1/std::abs(dc):inf;
+  double tr=sr ? ((sr>0 ? row+1:row)-start.first)/dr:inf;
+  double tc=sc ? ((sc>0 ? col+1:col)-start.second)/dc:inf;
   Support result=Support::KNOWN;
-  for (int i=0;i<=n;++i) {
-    const double t=static_cast<double>(i)/n;
-    const double cx=a.x+t*(b.x-a.x),cy=a.y+t*(b.y-a.y);
-    size_t index=0; int channel=0;
-    if (!cycle_->cellAndChannel(cx,cy,heading,index,channel)) return Support::UNKNOWN;
+  auto inspect=[&](int r,int c) {
+    if (r<0 || c<0 || r>=cycle_->rows || c>=cycle_->cols) return Support::UNKNOWN;
+    const size_t index=static_cast<size_t>(r)*cycle_->cols+c;
     if (cycle_->blocked_footprint[channel][index]) return Support::BLOCKED;
-    if (!cycle_->unknown_footprint[index]) continue;
-    // Startup prior is the only strict-policy exception. Only these uncommon
-    // samples need the exact per-cell footprint scan.
+    if (!cycle_->unknown_footprint[index]) return Support::KNOWN;
+    // Unknown uses the same rasterized support mask as known-unsafe terrain.
+    // Re-scanning at arbitrary sub-cell offsets made split edges disagree.
+    if (!prior_.initialized || prior_.retired) return Support::UNKNOWN;
+    const double mx=(cycle_->rows*.5-r-.5)*res,my=(cycle_->cols*.5-c-.5)*res;
+    const double cx=cycle_->center_x+co*mx-si*my,cy=cycle_->center_y+si*mx+co*my;
+    const int radius=static_cast<int>(std::ceil(footprint_radius_/res));
+    Support s=Support::STARTUP_PRIOR;
     for (int ix=-radius;ix<=radius;++ix) for (int iy=-radius;iy<=radius;++iy) {
-      const double dx=ix*cycle_->resolution,dy=iy*cycle_->resolution;
-      if (std::hypot(dx,dy)>footprint_radius_+cycle_->resolution/2) continue;
+      const double dx=ix*res,dy=iy*res;
+      if (std::hypot(dx,dy)>footprint_radius_+res/2) continue;
       const double x=cx+dx,y=cy+dy;
       const double p=cycle_->sample(x,y,heading);
-      if (!std::isfinite(p) && !prior_.contains(x,y)) {
-        result=Support::UNKNOWN;
-      } else if (!std::isfinite(p) && result==Support::KNOWN) {
-        result=Support::STARTUP_PRIOR;
-      }
+      if (!std::isfinite(p) && !prior_.contains(x,y)) s=Support::UNKNOWN;
     }
+    return s;
+  };
+  auto visit=[&](int r,int c) {
+    const auto s=inspect(r,c);
+    if (s==Support::BLOCKED || s==Support::FAULT) {result=s;return false;}
+    if (s==Support::UNKNOWN || (s==Support::STARTUP_PRIOR && result==Support::KNOWN)) result=s;
+    return true;
+  };
+  // Supercover DDA: every crossed cell is visited, including both neighbours
+  // of an exact grid corner. Splitting a segment cannot hide a touched cell.
+  for (int count=0;count<=cycle_->rows+cycle_->cols+4;++count) {
+    if (!visit(row,col)) return result;
+    if (row==end_row && col==end_col) return result;
+    if (std::abs(tr-tc)<1e-12) {
+      if (!visit(row+sr,col) || !visit(row,col+sc)) return result;
+      row+=sr;col+=sc;tr+=delta_r;tc+=delta_c;
+    } else if (tr<tc) {row+=sr;tr+=delta_r;}
+    else {col+=sc;tc+=delta_c;}
   }
-  return result;
+  return Support::FAULT;
 }
 bool HtCostMap::knownSegment(const Point& a,const Point& b) const {
   return support(a,b)==Support::KNOWN;
