@@ -166,19 +166,21 @@ def main():
                 # planner or an assumed correspondence of HT channel angles.
                 inset=frame[795:1030,1290:1900];inset[:]=(30,30,30)
                 cv2.putText(inset,'ACTUAL XY-theta PLAN',(10,22),cv2.FONT_HERSHEY_SIMPLEX,.5,(230,230,230),1)
+                span=float(np.max(np.abs(active_path[:,:2]-robot[:2]))) if len(active_path) else 1.
+                half=min(4.,max(1.,span+.25))
                 def project(px,py,theta):
                     dx=px-robot[0];dy=py-robot[1]
-                    return (int(300+24*dx+14*dy),int(210-4*dx-8*dy-100*(theta+np.pi)/(2*np.pi)))
+                    return (int(300+96*dx/half+56*dy/half),int(210-16*dx/half-32*dy/half-100*(theta+np.pi)/(2*np.pi)))
                 for angle in np.linspace(-np.pi,np.pi,9):
-                    for axis in [-4,0,4]:
-                        aa=project(robot[0]+axis,robot[1]-4,angle);bb=project(robot[0]+axis,robot[1]+4,angle);cv2.line(inset,aa,bb,(60,60,60),1)
-                        aa=project(robot[0]-4,robot[1]+axis,angle);bb=project(robot[0]+4,robot[1]+axis,angle);cv2.line(inset,aa,bb,(60,60,60),1)
+                    for axis in [-half,0,half]:
+                        aa=project(robot[0]+axis,robot[1]-half,angle);bb=project(robot[0]+axis,robot[1]+half,angle);cv2.line(inset,aa,bb,(60,60,60),1)
+                        aa=project(robot[0]-half,robot[1]+axis,angle);bb=project(robot[0]+half,robot[1]+axis,angle);cv2.line(inset,aa,bb,(60,60,60),1)
                 if len(active_path)>1:
                     pp=[project(*pose) for pose in active_path]
                     for j in range(len(pp)-1):
                         if abs(active_path[j+1,2]-active_path[j,2])<np.pi:cv2.line(inset,pp[j],pp[j+1],(210,50,230),2)
                 cv2.circle(inset,project(robot[0],robot[1],(robot[2]+np.pi)%(2*np.pi)-np.pi),4,(60,220,100),-1)
-                cv2.putText(inset,'Local XY +/-4m; theta -180..180 (periodic)',(10,230),cv2.FONT_HERSHEY_SIMPLEX,.4,(190,190,190),1)
+                cv2.putText(inset,f'Local XY +/-{half:.1f}m; theta -180..180 (periodic)',(10,230),cv2.FONT_HERSHEY_SIMPLEX,.4,(190,190,190),1)
             cv2.putText(frame,'Green: high probability  Red: low  Gray: unsupported',(650,1040),cv2.FONT_HERSHEY_SIMPLEX,.65,(230,230,230),1)
             writer.write(frame);count+=1;next_time+=.1
         writer.release();(out/'video_metadata.json').write_text(json.dumps({'fps':10,'frames':count,'duration_s':count/10,'resolution':[1920,1080],'HT_panel_pixels':[300,300],'HT_resampling':'nearest; each panel larger than native 241x241','camera_alignment':'original bag receive timestamp; latest preceding replay HT snapshot','HT_snapshot_interval_median_s':float(np.median(np.diff(times)))},indent=2)+'\n')

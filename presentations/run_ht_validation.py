@@ -61,6 +61,9 @@ def main():
         command=source(ros)+f' exec python3 {q(Path(__file__).with_name("render_upstream_replay.py"))} {q(folder)} --driver current'
         with (folder/'render.log').open('w') as log:
             subprocess.run(['bash','-lc',command],stdout=log,stderr=subprocess.STDOUT,check=True,timeout=900)
+    audit=source(ros)+f' exec python3 {q(Path(__file__).with_name("summarize_ht_validation.py"))} {q(folder)}'
+    with (folder/'audit.log').open('w') as log:
+        subprocess.run(['bash','-lc',audit],stdout=log,stderr=subprocess.STDOUT,check=True,timeout=180)
     print(folder,flush=True)
 
 
