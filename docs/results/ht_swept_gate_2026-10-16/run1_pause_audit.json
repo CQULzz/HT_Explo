@@ -1,0 +1,29 @@
+{
+  "bag_frames_in_callback_source_span": 982,
+  "received_callbacks": 982,
+  "bag_frames_in_successful_processing_source_span": 982,
+  "processed_clouds": 982,
+  "commands": 3600,
+  "fully_zero_commands": 406,
+  "stationary_turn_commands": 479,
+  "zero_with_expired_permission": 2,
+  "zero_with_false_permission": 14,
+  "zero_with_expired_path": 0,
+  "zero_by_follower_reason": {
+    "DRIVING": 28,
+    "GOAL_REACHED": 292,
+    "ALIGNING": 73,
+    "PLANNER_HOLD": 13
+  },
+  "notes": [
+    "Delivery counts refer to recorded source-stamp intervals. Shutdown may interrupt a final callback.",
+    "Permission age >1.5s is a legacy diagnostic, not a stop condition when the follower independently validates HT. Path expiry remains3s.",
+    "Follower reasons are matched by receive order; counts near reason transitions can differ by one control sample."
+  ],
+  "video": {
+    "frames": 1800,
+    "fps": 10.0,
+    "width": 1920,
+    "height": 1080
+  }
+}
