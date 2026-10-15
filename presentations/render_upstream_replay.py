@@ -83,15 +83,15 @@ def main():
         from std_msgs.msg import String, Bool
         events=[]
         if a.driver=='current':
-            control=rosbag2_py.SequentialReader();control.open(rosbag2_py.StorageOptions(uri=str(folder/'original_bag'),storage_id='mcap'),rosbag2_py.ConverterOptions('',''));control.set_filter(rosbag2_py.StorageFilter(topics=['/ht_xytheta_path','/ht_execution_status','/ht_navigation_allowed']))
+            control=rosbag2_py.SequentialReader();control.open(rosbag2_py.StorageOptions(uri=str(folder/'original_bag'),storage_id='mcap'),rosbag2_py.ConverterOptions('',''));control.set_filter(rosbag2_py.StorageFilter(topics=['/ht_xytheta_path','/ht_execution_status','/ht_navigation_allowed','/ht_follower_status']))
             while control.has_next():
                 topic,payload,ns=control.read_next()
                 if topic=='/ht_xytheta_path':
                     msg=deserialize_message(payload,RosPath);value=np.array([[p.pose.position.x,p.pose.position.y,np.arctan2(2*(p.pose.orientation.w*p.pose.orientation.z+p.pose.orientation.x*p.pose.orientation.y),1-2*(p.pose.orientation.y**2+p.pose.orientation.z**2))] for p in msg.poses])
-                elif topic=='/ht_execution_status':value=deserialize_message(payload,String).data
+                elif topic in ('/ht_execution_status','/ht_follower_status'):value=deserialize_message(payload,String).data
                 else:value=deserialize_message(payload,Bool).data
                 events.append((ns/1e9,topic,value))
-        event_i=0;active_path=np.empty((0,3));execution_status='WAITING';allowed=False;permission_time=-1e20
+        event_i=0;active_path=np.empty((0,3));execution_status='WAITING';follower_status=None;allowed=False;permission_time=-1e20
         reader=rosbag2_py.SequentialReader();reader.open(rosbag2_py.StorageOptions(uri=str(folder/'original_bag'),storage_id='mcap'),rosbag2_py.ConverterOptions('',''));reader.set_filter(rosbag2_py.StorageFilter(topics=['/camera/image_raw']))
         video_name='current_ht_exploration.mp4' if a.driver=='current' else 'original_tare_cupy_ht_sync.mp4'
         writer=cv2.VideoWriter(str(out/video_name),cv2.VideoWriter_fourcc(*'mp4v'),10,(1920,1080));bridge=CvBridge();next_time=origin;cached=-1;base=None;count=0
@@ -106,6 +106,7 @@ def main():
                 et,topic,value=events[event_i]
                 if topic=='/ht_xytheta_path':active_path=value
                 elif topic=='/ht_execution_status':execution_status=value
+                elif topic=='/ht_follower_status':follower_status=value
                 else:allowed=value;permission_time=et
                 event_i+=1
             i=max(0,int(np.searchsorted(times,t,side='right')-1))
@@ -160,7 +161,8 @@ def main():
                 cv2.putText(frame,f'Status: {execution_status}',(650,970),cv2.FONT_HERSHEY_SIMPLEX,.53,(235,235,235),1)
                 age_label=f'{t-permission_time:.2f}s' if permission_time>0 else 'N/A'
                 expired=' EXPIRED' if permission_time>0 and t-permission_time>1.5 else ''
-                cv2.putText(frame,f'Allowed={allowed}  Age={age_label}{expired}',(650,1000),cv2.FONT_HERSHEY_SIMPLEX,.5,(235,235,235),1)
+                control_label=f'Follower: {follower_status}' if follower_status is not None else f'Allowed={allowed}  Age={age_label}{expired}'
+                cv2.putText(frame,control_label,(650,1000),cv2.FONT_HERSHEY_SIMPLEX,.5,(235,235,235),1)
                 cv2.putText(frame,'Magenta: XY projection of actual published plan',(650,1025),cv2.FONT_HERSHEY_SIMPLEX,.46,(210,50,230),1)
                 # This inset uses actual path pose orientations, not a shadow
                 # planner or an assumed correspondence of HT channel angles.

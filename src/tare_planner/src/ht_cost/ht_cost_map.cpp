@@ -7,7 +7,7 @@
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 
 namespace ht_cost_ns {
-HtCostMap::HtCostMap(rclcpp::Node::SharedPtr node)
+HtCostMap::HtCostMap(rclcpp::Node::SharedPtr node,bool publish_permission)
   : clock_(node->get_clock()), logger_(node->get_logger()),
     buffer_(clock_), listener_(buffer_) {
   enabled_=node->declare_parameter<bool>("ht_enabled",false);
@@ -53,7 +53,8 @@ HtCostMap::HtCostMap(rclcpp::Node::SharedPtr node)
   if (reached_distance_>=lookahead_)
     throw std::invalid_argument("HT waypoint reached distance must be smaller than lookahead");
   if (enabled_) {
-    permission_=node->create_publisher<std_msgs::msg::Bool>("/ht_navigation_allowed",1);
+    if (publish_permission)
+      permission_=node->create_publisher<std_msgs::msg::Bool>("/ht_navigation_allowed",1);
     // Map decoding and footprint dilation must be serviced while the default
     // planner callback group is spending seconds evaluating XYtheta routes.
     map_callback_group_=node->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);

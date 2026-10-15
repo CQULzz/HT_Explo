@@ -1,0 +1,21 @@
+Running main() from /opt/ros/jazzy/src/gtest_vendor/src/gtest_main.cc
+[==========] Running 4 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 4 tests from FollowerTest
+[ RUN      ] FollowerTest.FreshMapMaintainsExecutionAcrossSlowPlannerPermission
+[INFO] [1792037037.244309396] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1
+[       OK ] FollowerTest.FreshMapMaintainsExecutionAcrossSlowPlannerPermission (2299 ms)
+[ RUN      ] FollowerTest.FreshMapsCannotExtendAnExpiredPlan
+[INFO] [1792037039.533101039] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1
+[       OK ] FollowerTest.FreshMapsCannotExtendAnExpiredPlan (3504 ms)
+[ RUN      ] FollowerTest.NewObstacleAndUnknownRevokeExecution
+[INFO] [1792037043.037800918] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1
+[       OK ] FollowerTest.NewObstacleAndUnknownRevokeExecution (988 ms)
+[ RUN      ] FollowerTest.ExplicitHoldAndMissingOdometryStillStop
+[INFO] [1792037044.026443274] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1
+[       OK ] FollowerTest.ExplicitHoldAndMissingOdometryStillStop (1409 ms)
+[----------] 4 tests from FollowerTest (8202 ms total)
+
+[----------] Global test environment tear-down
+[==========] 4 tests from 1 test suite ran. (8209 ms total)
+[  PASSED  ] 4 tests.

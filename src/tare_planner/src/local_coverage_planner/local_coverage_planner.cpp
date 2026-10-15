@@ -34,6 +34,11 @@ LocalCoveragePlanner::LocalCoveragePlanner(rclcpp::Node::SharedPtr nh)
   xytheta_config_.max_radius=nh->declare_parameter<double>("xytheta_max_radius",7.0);
   xytheta_config_.max_search_seconds=nh->declare_parameter<double>("xytheta_search_seconds",0.15);
   xytheta_config_.max_expansions=nh->declare_parameter<int>("xytheta_max_expansions",8000);
+  ht_commitment_.stall_seconds=nh->declare_parameter<double>("xytheta_stall_seconds",12.0);
+  ht_commitment_.cooldown_seconds=nh->declare_parameter<double>("xytheta_goal_cooldown_seconds",20.0);
+  if (!std::isfinite(ht_commitment_.stall_seconds) || ht_commitment_.stall_seconds<=0 ||
+      !std::isfinite(ht_commitment_.cooldown_seconds) || ht_commitment_.cooldown_seconds<=0)
+    throw std::invalid_argument("Invalid XYtheta goal memory parameters");
 }
 
 int LocalCoveragePlanner::GetBoundaryViewpointIndex(
@@ -586,6 +591,50 @@ LocalCoveragePlanner::SolveLocalCoverageProblem(
   std::vector<int> navigation_viewpoint_indices;
   GetNavigationViewPointIndices(global_path, navigation_viewpoint_indices);
 
+  if (viewpoint_manager_->HT()->enabled()) {
+    ht_visited_xy_.emplace(static_cast<int>(std::floor(robot_position_.x())),
+                           static_cast<int>(std::floor(robot_position_.y())));
+    ht_commitment_.observe({robot_position_.x(),robot_position_.y(),robot_position_.z()},
+                           node_->now().seconds());
+    // TARE's global route is a tour with two possible directions. Keep the
+    // chosen world-space destination while it remains on that tour, rather
+    // than switching to the nearest boundary on every planning cycle.
+    bool guide_present=false;
+    for (const auto& n:global_path.nodes_)
+      if (n.type_==exploration_path_ns::NodeType::GLOBAL_VIEWPOINT &&
+          (n.position_-ht_global_guide_).head<2>().norm()<1.0) guide_present=true;
+    if ((ht_guide_is_global_ && !guide_present) ||
+        (robot_position_-ht_global_guide_).head<2>().norm()<1.0)
+      ht_has_global_guide_=false;
+    if (!ht_has_global_guide_) {
+      double best_distance=std::numeric_limits<double>::infinity();
+      for (const auto& n:global_path.nodes_) {
+        if (n.type_!=exploration_path_ns::NodeType::GLOBAL_VIEWPOINT) continue;
+        const double d=(n.position_-robot_position_).head<2>().norm();
+        if (d>1.0 && d<best_distance) {
+          best_distance=d;ht_global_guide_=n.position_;ht_has_global_guide_=true;ht_guide_is_global_=true;
+        }
+      }
+      // Before the keypose graph has a global tour, TARE still supplies local
+      // horizon boundary viewpoints. Preserve one of these as a world-space
+      // guide; requiring a GLOBAL_VIEWPOINT here would deadlock bootstrap.
+      if (!ht_has_global_guide_) {
+        int boundary=-1;double nearest=std::numeric_limits<double>::infinity();
+        for (int id:navigation_viewpoint_indices) {
+          if (!viewpoint_manager_->InRange(id)) continue;
+          const auto p=viewpoint_manager_->GetViewPointPosition(id);
+          const double d=std::hypot(p.x-robot_position_.x(),p.y-robot_position_.y());
+          if (d>xytheta_config_.max_radius && d<nearest) {nearest=d;boundary=id;}
+        }
+        if (boundary>=0) {
+          const auto p=viewpoint_manager_->GetViewPointPosition(boundary);
+          ht_global_guide_=Eigen::Vector3d(p.x,p.y,p.z);
+          ht_has_global_guide_=true;ht_guide_is_global_=false;
+        }
+      }
+    }
+  }
+
   find_path_timer.Stop(false);
   find_path_runtime_ += find_path_timer.GetDuration(kRuntimeUnit);
 
@@ -651,7 +700,8 @@ LocalCoveragePlanner::SolveLocalCoverageProblem(
   std::vector<int> ordered_viewpoint_indices;
   if (!queue.empty() && queue[0].first > parameters_.kMinAddPointNum) {
     double min_path_length = DBL_MAX;
-    for (int itr = 0; itr < parameters_.kLocalPathOptimizationItrMax; itr++) {
+    const int iterations=viewpoint_manager_->HT()->enabled() ? 1 : parameters_.kLocalPathOptimizationItrMax;
+    for (int itr = 0; itr < iterations; itr++) {
       std::vector<int> selected_viewpoint_indices_itr;
 
       // Select from the queue
@@ -752,6 +802,11 @@ LocalCoveragePlanner::SolveLocalCoverageProblem(
     }
   }
   if (ht_output_target_>=0) ht_previous_target_=ht_output_target_;
+  if (ht_output_target_>=0 && viewpoint_manager_->HT()->enabled()) {
+    const auto p=viewpoint_manager_->GetViewPointPosition(ht_output_target_);
+    ht_commitment_.commit({p.x,p.y,p.z},
+      {robot_position_.x(),robot_position_.y(),robot_position_.z()},node_->now().seconds());
+  }
   return local_path;
 }
 

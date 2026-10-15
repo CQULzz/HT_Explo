@@ -3,6 +3,7 @@
 #include "ht_cost/directed_graph.h"
 #include "ht_cost/grid_edge_support.h"
 #include "ht_cost/xytheta_planner.h"
+#include "ht_cost/target_commitment.h"
 #include <iostream>
 #include <stdexcept>
 using namespace ht_cost_ns;
@@ -13,6 +14,20 @@ void check(bool condition) {
 }
 void near(double a,double b) { check(std::abs(a-b)<1e-5); }
 int main() {
+  TargetCommitment commitment;
+  commitment.commit({4,0,0},{0,0,0},1);
+  commitment.observe({0,0,0},5);check(commitment.active);
+  // Re-evaluating the same world target must not renew the stall deadline.
+  commitment.commit({4,0,0},{0,0,0},10);
+  commitment.observe({0,0,0},13);check(!commitment.active);
+  check(commitment.cooling({4.3,0,0},14));
+  check(!commitment.cooling({4,0,0},34));
+  commitment.commit({4,0,0},{0,0,0},35);
+  commitment.observe({1,0,0},45);check(commitment.active);
+  commitment.observe({1,0,0},55);check(commitment.active);
+  commitment.observe({3.6,0,0},56);check(!commitment.active);
+  commitment.commit({8,0,0},{4,0,0},60);
+  commitment.reject(61);check(!commitment.active);check(commitment.cooling({8,0,0},62));
   // Garage run 2: the robot at (6.8218, 26.2809) cannot cut through
   // cell (5,22) on its way from center (6.6,25.8) to (7.8,27.0).
   using Cell = std::array<int,3>;

@@ -121,7 +121,9 @@ def run_trial(trial,variant,duration):
         trial.start('elevation',mapper);time.sleep(3);trial.check()
         bridge=source(ros,cmu)+f' exec python3 {q(BRIDGE/"cupy_to_ht.py")}'
         trial.start('ht_bridge',bridge);time.sleep(10);trial.check()
-        follow=source(ros,ROOT/'install_standalone/setup.bash')+' exec ros2 run tare_planner xytheta_follower'
+        follow=source(ros,ROOT/'install_standalone/setup.bash')+(
+            ' exec ros2 run tare_planner xytheta_follower --ros-args'
+            f' --params-file {q(BRIDGE/"ht_trial.yaml")}')
         trial.start('xytheta_follower',follow);time.sleep(2);trial.check()
         tare=source(ros,ROOT/'install_standalone/setup.bash')+(
             ' exec ros2 launch tare_planner explore_ht.launch.py scenario:=garage use_sim_time:=false'

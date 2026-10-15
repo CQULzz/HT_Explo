@@ -11,6 +11,7 @@
 #pragma once
 
 #include <Eigen/Core>
+#include <set>
 
 #include <rclcpp/rclcpp.hpp>
 #include <nav_msgs/msg/path.hpp>
@@ -19,6 +20,7 @@
 #include "exploration_path/exploration_path.h"
 #include "viewpoint_manager/viewpoint_manager.h"
 #include "ht_cost/xytheta_planner.h"
+#include "ht_cost/target_commitment.h"
 
 namespace local_coverage_planner_ns
 {
@@ -114,6 +116,11 @@ private:
   double robot_yaw_=0;
   int ht_previous_target_=-1;
   int ht_candidate_target_=-1,ht_output_target_=-1;
+  ht_cost_ns::TargetCommitment ht_commitment_;
+  Eigen::Vector3d ht_global_guide_=Eigen::Vector3d::Zero();
+  bool ht_has_global_guide_=false;
+  bool ht_guide_is_global_=false;
+  std::set<std::pair<int,int>> ht_visited_xy_;
   ht_cost_ns::XYThetaConfig xytheta_config_;
   rclcpp::Node::SharedPtr node_;
   rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr ht_path_pub_;

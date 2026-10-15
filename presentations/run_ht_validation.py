@@ -7,6 +7,7 @@ import json
 import os
 from pathlib import Path
 import signal
+import shutil
 import subprocess
 import sys
 
@@ -36,10 +37,22 @@ def main():
               'mapper_sha256':hashlib.sha256(executable.read_bytes()).hexdigest(),
               'bridge_source':str(BRIDGE),'speed_cap_mps':.5,
               'note':'HT channel-to-physical-angle mapping still requires vehicle calibration.'}
+    manifest['git_head']=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()
+    follower=ROOT/'install_standalone/tare_planner/lib/tare_planner/xytheta_follower'
+    manifest['follower_binary_sha256']=hashlib.sha256(follower.read_bytes()).hexdigest()
+    (folder/'working_tree.patch').write_bytes(subprocess.check_output(['git','diff','HEAD'],cwd=ROOT))
+    for pattern in ['src/tare_planner/include/ht_cost/*.h',
+                    'src/tare_planner/src/ht_cost/*.cpp',
+                    'src/tare_planner/src/local_coverage_planner/*.cpp',
+                    'src/tare_planner/include/local_coverage_planner/*.h',
+                    'presentations/run_ht_validation.py','presentations/run_scheduled_comparison.py']:
+        for path in ROOT.glob(pattern):
+            target=folder/'source_snapshot'/path.relative_to(ROOT)
+            target.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(path,target)
     (folder/'manifest.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+'\n')
     topics=['/registered_scan','/state_estimation','/tf','/tf_static','/camera/image_raw',
             '/cmd_vel','/way_point','/local_path','/ht_xytheta_path','/ht_execution_status',
-            '/ht_navigation_allowed','/mission_state','/runtime','/exploration_finish',
+            '/ht_navigation_allowed','/ht_follower_status','/mission_state','/runtime','/exploration_finish',
             '/elevation_mapping/elevation_map_raw','/elevation_mapping/historical_local',
             '/ht_traversability/global_local']
     try:

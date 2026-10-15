@@ -153,7 +153,8 @@ ament_target_dependencies(tare_planner_node rclcpp std_msgs nav_msgs geometry_ms
 target_link_libraries(tare_planner_node ${catkin_LIBRARIES} sensor_coverage_planner_ground)
 
 add_executable(xytheta_follower src/ht_cost/xytheta_follower.cpp)
-ament_target_dependencies(xytheta_follower rclcpp std_msgs nav_msgs geometry_msgs)
+ament_target_dependencies(xytheta_follower rclcpp std_msgs nav_msgs geometry_msgs sensor_msgs)
+target_link_libraries(xytheta_follower ht_cost)
 
 #############
 ## Install ##
@@ -192,5 +193,8 @@ if(BUILD_TESTING)
   find_package(ament_cmake_gtest REQUIRED)
   ament_add_gtest(ht_ros_test tests/ht_ros_test.cpp TIMEOUT 60)
   target_link_libraries(ht_ros_test ht_cost)
+  ament_add_gtest(xytheta_follower_test tests/xytheta_follower_test.cpp TIMEOUT 45)
+  ament_target_dependencies(xytheta_follower_test rclcpp nav_msgs geometry_msgs sensor_msgs std_msgs)
+  target_link_libraries(xytheta_follower_test ht_cost)
 endif()
 ament_package()

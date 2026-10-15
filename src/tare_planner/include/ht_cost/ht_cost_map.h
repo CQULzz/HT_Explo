@@ -11,7 +11,7 @@
 namespace ht_cost_ns {
 class HtCostMap {
  public:
-  explicit HtCostMap(rclcpp::Node::SharedPtr node);
+  explicit HtCostMap(rclcpp::Node::SharedPtr node,bool publish_permission=true);
   bool enabled() const { return enabled_; }
   void beginCycle();
   bool ready() const;

@@ -1,0 +1,52 @@
+{
+  "before": {
+    "duration_s": 180.0,
+    "distance_m": 14.35,
+    "visited_1m_xy_cells": 13,
+    "fully_stopped_fraction": 0.4122222222222222,
+    "stationary_turn_fraction": 0.2875,
+    "published_nonempty_paths": 69,
+    "paths_starting_spin": 27,
+    "unfinished_goal_direction_reversals": 9,
+    "ht_status_callbacks": {
+      "HT_ASSISTED": 216,
+      "HT_MAP_STALE": 1,
+      "NO_EXECUTABLE_ROUTE": 7
+    },
+    "zero_by_follower_reason": {},
+    "exploration_finished": false,
+    "last_observed_translation_s": 173.002,
+    "distance_last_60_s_m": 3.0230000000000015
+  },
+  "after": {
+    "duration_s": 180.0,
+    "distance_m": 56.54,
+    "visited_1m_xy_cells": 55,
+    "fully_stopped_fraction": 0.10861111111111112,
+    "stationary_turn_fraction": 0.16694444444444445,
+    "published_nonempty_paths": 145,
+    "paths_starting_spin": 36,
+    "unfinished_goal_direction_reversals": 0,
+    "ht_status_callbacks": {
+      "HT_ASSISTED": 321,
+      "NO_EXECUTABLE_ROUTE": 5,
+      "HT_MAP_STALE": 1
+    },
+    "zero_by_follower_reason": {
+      "DRIVING": 22,
+      "GOAL_REACHED": 266,
+      "HT_MAP_STALE": 19,
+      "PLANNER_HOLD": 70,
+      "TURNING": 2,
+      "ALIGNING": 12
+    },
+    "exploration_finished": false,
+    "last_observed_translation_s": 180.002,
+    "distance_last_60_s_m": 20.307469999999995
+  },
+  "limits": [
+    "One run per version; these are trajectory/control metrics, not explored volume.",
+    "A target-direction reversal can be legitimate; count only measures replanning changes before the previous goal is reached.",
+    "The after run includes extra local HT execution validation; no HT threshold or speed limit was relaxed."
+  ]
+}

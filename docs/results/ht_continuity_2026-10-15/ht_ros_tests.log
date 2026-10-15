@@ -1,0 +1,52 @@
+Running main() from /opt/ros/jazzy/src/gtest_vendor/src/gtest_main.cc
+[==========] Running 13 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 13 tests from HtRosTest
+[ RUN      ] HtRosTest.DirectionalCostsAndValidSupport
+[INFO] [1792037045.833413610] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1
+[       OK ] HtRosTest.DirectionalCostsAndValidSupport (287 ms)
+[ RUN      ] HtRosTest.CircularBufferPreservesSpatialCells
+[INFO] [1792037046.100258722] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1
+[       OK ] HtRosTest.CircularBufferPreservesSpatialCells (263 ms)
+[ RUN      ] HtRosTest.OffCenterHazardIsHardBlockedAtPlanningAndExecution
+[INFO] [1792037046.361480428] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1
+[       OK ] HtRosTest.OffCenterHazardIsHardBlockedAtPlanningAndExecution (261 ms)
+[ RUN      ] HtRosTest.RotatedTranslatedFrameRotatesChannels
+[INFO] [1792037046.625017329] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1
+[       OK ] HtRosTest.RotatedTranslatedFrameRotatesChannels (516 ms)
+[ RUN      ] HtRosTest.MissingLayerRevokesPreviousMap
+[INFO] [1792037047.139767445] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1
+[WARN] [1792037047.395938898] [ht_ros_test]: HT map rejected: Missing ht_dir layers; set aggregate_only=false
+[       OK ] HtRosTest.MissingLayerRevokesPreviousMap (363 ms)
+[ RUN      ] HtRosTest.InvalidProbabilityPreventsExecution
+[INFO] [1792037047.502899648] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1
+[       OK ] HtRosTest.InvalidProbabilityPreventsExecution (363 ms)
+[ RUN      ] HtRosTest.StaleFutureAndMissingTransformHold
+[INFO] [1792037047.866385107] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1
+[       OK ] HtRosTest.StaleFutureAndMissingTransformHold (467 ms)
+[ RUN      ] HtRosTest.NonFinitePoseRejected
+[INFO] [1792037048.334493803] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1
+[       OK ] HtRosTest.NonFinitePoseRejected (262 ms)
+[ RUN      ] HtRosTest.MalformedMessagesDoNotEnterUnsafeConverter
+[INFO] [1792037048.598244660] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1
+[       OK ] HtRosTest.MalformedMessagesDoNotEnterUnsafeConverter (776 ms)
+[ RUN      ] HtRosTest.CalibrationRequiredAndParametersChecked
+[INFO] [1792037049.373411269] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1
+[INFO] [1792037049.528509127] [ht_uncalibrated]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=0
+[       OK ] HtRosTest.CalibrationRequiredAndParametersChecked (166 ms)
+[ RUN      ] HtRosTest.StartupPriorIsBoundedAndDoesNotOverwriteObservedRisk
+[INFO] [1792037049.539235122] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1
+[WARN] [1792037050.003182934] [ht_ros_test]: HT map rejected: Missing ht_dir layers; set aggregate_only=false
+[       OK ] HtRosTest.StartupPriorIsBoundedAndDoesNotOverwriteObservedRisk (572 ms)
+[ RUN      ] HtRosTest.UnknownAndObservedRiskBothBlockEdges
+[INFO] [1792037050.112544957] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1
+[       OK ] HtRosTest.UnknownAndObservedRiskBothBlockEdges (261 ms)
+[ RUN      ] HtRosTest.StrictPolicyAllowsOnlyKnownOrBoundedStartup
+[INFO] [1792037050.373360436] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1
+[INFO] [1792037050.528883124] [ht_strict_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1
+[       OK ] HtRosTest.StrictPolicyAllowsOnlyKnownOrBoundedStartup (416 ms)
+[----------] 13 tests from HtRosTest (4978 ms total)
+
+[----------] Global test environment tear-down
+[==========] 13 tests from 1 test suite ran. (4979 ms total)
+[  PASSED  ] 13 tests.
