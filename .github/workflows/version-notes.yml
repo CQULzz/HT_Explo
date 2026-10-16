@@ -1,0 +1,41 @@
+name: Publish HT version notes
+
+on:
+  push:
+    branches: [codex/ht8dir-v1]
+    paths:
+      - docs/version_history.json
+      - docs/release_notes/**
+      - scripts/publish_version_notes.py
+      - .github/workflows/version-notes.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ht-version-notes
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out only the version catalogue and publisher
+        env:
+          SOURCE_REPOSITORY: ${{ github.repository }}
+          SOURCE_COMMIT: ${{ github.sha }}
+        run: |
+          git init .
+          git remote add origin "https://github.com/${SOURCE_REPOSITORY}.git"
+          git sparse-checkout init --no-cone
+          git sparse-checkout set /docs/version_history.json /docs/release_notes/ /scripts/publish_version_notes.py
+          git -c protocol.version=2 fetch --depth=1 --filter=blob:none origin "${SOURCE_COMMIT}"
+          git checkout --detach FETCH_HEAD
+      - name: Validate all release descriptions
+        run: python3 scripts/publish_version_notes.py --dry-run
+      - name: Publish and verify experimental milestone notes
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python3 scripts/publish_version_notes.py

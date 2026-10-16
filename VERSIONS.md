@@ -254,3 +254,7 @@ git worktree add --detach ../HT_Explo-stage11 ht-stage-20261016-swept-check
 - 短测能动、指定小场景返回完成、完整车库/校园探索完成、实车验收是不同结论；失败复跑、控制参数差异和未测内容均保留。
 
 机器可读索引：[docs/version_history.json](docs/version_history.json)。各阶段的中文发布说明：[docs/release_notes](docs/release_notes)。
+
+## 后续怎样维护
+
+修改 `docs/version_history.json` 和相应 `docs/release_notes/*.md`，先推送与目录匹配的阶段标签，再推送说明。仓库的 [版本说明发布流程](.github/workflows/version-notes.yml)会验证标签指向并同步中文Releases；它只更新目录中的实验预发布说明，不移动标签、删除附件或修改导航代码。
