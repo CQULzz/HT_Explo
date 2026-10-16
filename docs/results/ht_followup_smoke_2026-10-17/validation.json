@@ -1,0 +1,325 @@
+{
+  "tests": {
+    "core_checks": 260,
+    "ros_map_tests": 15,
+    "follower_tests": 6,
+    "cupy_cuda_ros_tests": 8,
+    "shutdown_integration_tests": 2
+  },
+  "passed_final_core_ros_follower_suite": true,
+  "cupy_scheduling_test_passed_after_final_shutdown_order_change": true,
+  "short_trials": [
+    {
+      "trial": "smoke1",
+      "raw_folder": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_cycle_shutdown_smoke_2026-10-17",
+      "abort_or_segfault_rows": [
+        "[ERROR] [vehicleSimulator-10]: process has died [pid 939333, exit code -6, cmd '/home/lzz/my test/autonomous_exploration_development_environment/install/vehicle_simulator/lib/vehicle_simulator/vehicleSimulator --ros-args --params-file /tmp/launch_params_09buwg3f'].",
+        "[ERROR] [terrainAnalysisExt-2]: process has died [pid 939053, exit code -6, cmd '/home/lzz/my test/autonomous_exploration_development_environment/install/terrain_analysis_ext/lib/terrain_analysis_ext/terrainAnalysisExt --ros-args -r __node:=terrainAnalysisExt --params-file /tmp/launch_params_izr2meua --params-file /tmp/launch_params_h_fkj0ko --params-file /tmp/launch_params_znzly727 --params-file /tmp/launch_params_cyd85hci --params-file /tmp/launch_params_sedark35 --params-file /tmp/launch_params_t314n4_1 --params-file /tmp/launch_params_jmtvd1jd --params-file /tmp/launch_params_e8zktvgv --params-file /tmp/launch_params_mriebaee --params-file /tmp/launch_params_gmbtg3j1 --params-file /tmp/launch_params_86a9qyn4 --params-file /tmp/launch_params_5vnbc19o --params-file /tmp/launch_params_elbo0ol9 --params-file /tmp/launch_params_trsm610y --params-file /tmp/launch_params_8ynrx1u8 --params-file /tmp/launch_params_180pci94 --params-file /tmp/launch_params_w64qdtn4'].",
+        "[ERROR] [terrainAnalysis-1]: process has died [pid 939052, exit code -6, cmd '/home/lzz/my test/autonomous_exploration_development_environment/install/terrain_analysis/lib/terrain_analysis/terrainAnalysis --ros-args -r __node:=terrainAnalysis --params-file /tmp/launch_params_y5t8kwm9 --params-file /tmp/launch_params_6qn5drk3 --params-file /tmp/launch_params_ucjnvg7z --params-file /tmp/launch_params_thu6met9 --params-file /tmp/launch_params_agtatyrt --params-file /tmp/launch_params_z4pb9wcl --params-file /tmp/launch_params_iyynqp2m --params-file /tmp/launch_params_018k83ba --params-file /tmp/launch_params_8w8c9uz4 --params-file /tmp/launch_params_i6xwuu9t --params-file /tmp/launch_params_cavxh5g8 --params-file /tmp/launch_params_mmpeyzar --params-file /tmp/launch_params_cnhpw_4p --params-file /tmp/launch_params_k3tepk9i --params-file /tmp/launch_params_zdj26ofm --params-file /tmp/launch_params_pami7muv --params-file /tmp/launch_params_7xu80pcw --params-file /tmp/launch_params_3a7smzrf --params-file /tmp/launch_params_iej_m9rk --params-file /tmp/launch_params_iat3yn9e --params-file /tmp/launch_params_c6d8b6l9 --params-file /tmp/launch_params_xqq67df8 --params-file /tmp/launch_params_27ybj65d --params-file /tmp/launch_params_pbsb0ikk --params-file /tmp/launch_params_myk3cr7z --params-file /tmp/launch_params_jc_51iox'].",
+        "[ERROR] [sensorScanGeneration-3]: process has died [pid 939054, exit code -11, cmd '/home/lzz/my test/autonomous_exploration_development_environment/install/sensor_scan_generation/lib/sensor_scan_generation/sensorScanGeneration --ros-args -r __node:=sensorScanGeneration']."
+      ],
+      "shutdown": [
+        {
+          "label": "tare",
+          "pid": 939723,
+          "signal": "SIGINT",
+          "scope": "launcher"
+        },
+        {
+          "label": "xytheta_follower",
+          "pid": 939605,
+          "signal": "SIGINT",
+          "scope": "process_group"
+        },
+        {
+          "label": "ht_bridge",
+          "pid": 939531,
+          "signal": "SIGINT",
+          "scope": "process_group"
+        },
+        {
+          "label": "elevation",
+          "pid": 939456,
+          "signal": "SIGINT",
+          "scope": "process_group"
+        },
+        {
+          "label": "sim",
+          "pid": 938937,
+          "signal": "SIGINT",
+          "scope": "launcher"
+        },
+        {
+          "label": "health",
+          "pid": 938936,
+          "signal": "SIGINT",
+          "scope": "process_group"
+        },
+        {
+          "label": "record",
+          "pid": 938934,
+          "signal": "SIGINT",
+          "scope": "process_group"
+        },
+        {
+          "label": "tare",
+          "pid": 939723,
+          "returncode": 0
+        },
+        {
+          "label": "probe",
+          "pid": 939650,
+          "returncode": 0
+        },
+        {
+          "label": "xytheta_follower",
+          "pid": 939605,
+          "returncode": 0
+        },
+        {
+          "label": "ht_bridge",
+          "pid": 939531,
+          "returncode": 0
+        },
+        {
+          "label": "elevation",
+          "pid": 939456,
+          "returncode": 0
+        },
+        {
+          "label": "sim",
+          "pid": 938937,
+          "returncode": 0
+        },
+        {
+          "label": "health",
+          "pid": 938936,
+          "returncode": 0
+        },
+        {
+          "label": "record",
+          "pid": 938934,
+          "returncode": 0
+        }
+      ]
+    },
+    {
+      "trial": "smoke2",
+      "raw_folder": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_clean_shutdown_smoke2_2026-10-17",
+      "abort_or_segfault_rows": [],
+      "shutdown": [
+        {
+          "label": "tare",
+          "pid": 970398,
+          "signal": "SIGINT",
+          "scope": "launcher"
+        },
+        {
+          "label": "xytheta_follower",
+          "pid": 970144,
+          "signal": "SIGINT",
+          "scope": "process_group"
+        },
+        {
+          "label": "ht_bridge",
+          "pid": 969280,
+          "signal": "SIGINT",
+          "scope": "process_group"
+        },
+        {
+          "label": "elevation",
+          "pid": 968944,
+          "signal": "SIGINT",
+          "scope": "process_group"
+        },
+        {
+          "label": "sim",
+          "pid": 965551,
+          "signal": "SIGINT",
+          "scope": "launcher"
+        },
+        {
+          "label": "health",
+          "pid": 965550,
+          "signal": "SIGINT",
+          "scope": "process_group"
+        },
+        {
+          "label": "record",
+          "pid": 965548,
+          "signal": "SIGINT",
+          "scope": "process_group"
+        },
+        {
+          "label": "tare",
+          "pid": 970398,
+          "returncode": 0
+        },
+        {
+          "label": "probe",
+          "pid": 970347,
+          "returncode": 0
+        },
+        {
+          "label": "xytheta_follower",
+          "pid": 970144,
+          "returncode": 0
+        },
+        {
+          "label": "ht_bridge",
+          "pid": 969280,
+          "returncode": 0
+        },
+        {
+          "label": "elevation",
+          "pid": 968944,
+          "returncode": 0
+        },
+        {
+          "label": "sim",
+          "pid": 965551,
+          "returncode": 0
+        },
+        {
+          "label": "health",
+          "pid": 965550,
+          "returncode": 0
+        },
+        {
+          "label": "record",
+          "pid": 965548,
+          "returncode": 0
+        },
+        {
+          "label": "sim",
+          "pid": 965750,
+          "signal": "SIGTERM",
+          "scope": "remaining_descendant"
+        },
+        {
+          "remaining_live_descendants": []
+        }
+      ]
+    },
+    {
+      "trial": "smoke3",
+      "raw_folder": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_clean_shutdown_smoke3_2026-10-17",
+      "abort_or_segfault_rows": [],
+      "shutdown": [
+        {
+          "label": "sim",
+          "pid": 981293,
+          "signal": "SIGINT",
+          "scope": "native_gazebo_server"
+        },
+        {
+          "label": "tare",
+          "pid": 986021,
+          "signal": "SIGINT",
+          "scope": "launcher"
+        },
+        {
+          "label": "xytheta_follower",
+          "pid": 985663,
+          "signal": "SIGINT",
+          "scope": "process_group"
+        },
+        {
+          "label": "ht_bridge",
+          "pid": 984818,
+          "signal": "SIGINT",
+          "scope": "process_group"
+        },
+        {
+          "label": "elevation",
+          "pid": 984471,
+          "signal": "SIGINT",
+          "scope": "process_group"
+        },
+        {
+          "label": "sim",
+          "pid": 981101,
+          "signal": "SIGINT",
+          "scope": "launcher"
+        },
+        {
+          "label": "health",
+          "pid": 981100,
+          "signal": "SIGINT",
+          "scope": "process_group"
+        },
+        {
+          "label": "record",
+          "pid": 981098,
+          "signal": "SIGINT",
+          "scope": "process_group"
+        },
+        {
+          "label": "tare",
+          "pid": 986021,
+          "returncode": 0
+        },
+        {
+          "label": "probe",
+          "pid": 985882,
+          "returncode": 0
+        },
+        {
+          "label": "xytheta_follower",
+          "pid": 985663,
+          "returncode": 0
+        },
+        {
+          "label": "ht_bridge",
+          "pid": 984818,
+          "returncode": 0
+        },
+        {
+          "label": "elevation",
+          "pid": 984471,
+          "returncode": 0
+        },
+        {
+          "label": "sim",
+          "pid": 981101,
+          "returncode": 0
+        },
+        {
+          "label": "health",
+          "pid": 981100,
+          "returncode": 0
+        },
+        {
+          "label": "record",
+          "pid": 981098,
+          "returncode": 0
+        },
+        {
+          "remaining_live_descendants": []
+        }
+      ]
+    },
+    {
+      "trial": "smoke4",
+      "raw_folder": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_direct_gazebo_shutdown_smoke4_2026-10-17",
+      "abort_or_segfault_rows": [],
+      "shutdown": [
+        {
+          "label": "sim",
+          "pid": 994977,
+          "signal": "SIGINT",
+          "scope": "launcher"
+        },
+        {
+          "label": "sim",
+          "pid": 994977,
+          "returncode": 0
+        },
+        {
+          "remaining_live_descendants": []
+        }
+      ]
+    }
+  ],
+  "limits": "Short tests verify lifecycle and regression scenarios; no claim of long-term loop elimination or map-age bounds."
+}

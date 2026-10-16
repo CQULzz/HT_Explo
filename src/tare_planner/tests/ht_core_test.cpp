@@ -70,6 +70,32 @@ int main() {
   // A longer route and repeated visits must never improve zero-gain score.
   check(transitScore(-2,first,4)>transitScore(-2,first,12));
   check(transitScore(1,0,4)>transitScore(1,first,4));
+  // Regression: alternating global guides used to renew both stall timers.
+  GuideProgress alternating;
+  for (int epoch=0;epoch<8;++epoch) {
+    const Point target=epoch%2 ? Point{0,20,0}:Point{20,0,0};
+    const double start=epoch*16;
+    check(alternating.select(target,{0,0,0},start));
+    for (int tick=1;tick<=16;++tick) alternating.observe({0,0,0},start+tick,true);
+  }
+  check(!alternating.active);
+  check(alternating.cooling({0,20,0},129));
+  check(alternating.cooling({20,0,0},129));
+  check(alternating.select({20,0,0},{0,0,0},400));
+  near(alternating.idle_seconds,0);
+  alternating.observe({19.5,0,0},401,true);
+  check(!alternating.select({20,0,0},{19.5,0,0},402));
+  // Reached recovery targets cannot immediately form a zero-gain circuit;
+  // productive sensing and later necessary backtracking remain available.
+  TargetCommitment recovery_goal;
+  recovery_goal.commit({2,0,0},{0,0,0},1,false);
+  recovery_goal.observe({1.5,0,0},5);
+  check(recovery_goal.cooling({2.2,0,0},6));
+  check(!recovery_goal.cooling({2.2,0,0},6,true));
+  check(!recovery_goal.cooling({2,0,0},66));
+  recovery_goal.commit({4,0,0},{2,0,0},70,true);
+  recovery_goal.observe({3.5,0,0},75);
+  check(!recovery_goal.cooling({4,0,0},76));
   // Garage run 2: the robot at (6.8218, 26.2809) cannot cut through
   // cell (5,22) on its way from center (6.6,25.8) to (7.8,27.0).
   using Cell = std::array<int,3>;

@@ -4,6 +4,7 @@ import argparse
 import csv
 import datetime as dt
 import json
+import hashlib
 from pathlib import Path
 import shutil
 import subprocess
@@ -94,6 +95,15 @@ def main():
                                  '-threads','2',
                                  '-movflags','+faststart',str(folder/'camera_h264.mp4')],
                                 stdout=log, stderr=subprocess.STDOUT, timeout=900)
+    validation={'encode_returncode':result.returncode}
+    video=folder/'camera_h264.mp4'
+    if result.returncode==0:
+        with (folder/'video_decode.log').open('w') as log:
+            decoded=subprocess.run([encoder,'-nostdin','-v','error','-threads','2','-i',str(video),
+                                    '-f','null','-'],stdout=log,stderr=subprocess.STDOUT,timeout=600)
+        validation.update(full_decode_returncode=decoded.returncode,
+                          bytes=video.stat().st_size,sha256=hashlib.sha256(video.read_bytes()).hexdigest())
+    (folder/'video_validation.json').write_text(json.dumps(validation,indent=2)+'\n')
     (folder/'ANALYSIS_COMPLETED.json').write_text(json.dumps({
         'finished_at': dt.datetime.now().astimezone().isoformat(),
         'video_encode_returncode': result.returncode}, indent=2))

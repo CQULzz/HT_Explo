@@ -1,0 +1,175 @@
+[INFO] [launch]: All log files can be found below /home/lzz/.ros/log/2026-10-17-02-09-33-142493-lzz-981101
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [terrainAnalysis-1]: process started with pid [981288]
+[INFO] [terrainAnalysisExt-2]: process started with pid [981289]
+[INFO] [sensorScanGeneration-3]: process started with pid [981290]
+[INFO] [gazebo-4]: process started with pid [981291]
+[INFO] [create-5]: process started with pid [981292]
+[INFO] [create-6]: process started with pid [981307]
+[INFO] [create-7]: process started with pid [981310]
+[INFO] [parameter_bridge-8]: process started with pid [981312]
+[INFO] [image_bridge-9]: process started with pid [981314]
+[terrainAnalysis-1] [WARN] [1792174173.429587654] [rcl]: ROS_LOCALHOST_ONLY is deprecated but still honored if it is enabled. Use ROS_AUTOMATIC_DISCOVERY_RANGE and ROS_STATIC_PEERS instead.
+[terrainAnalysis-1] [WARN] [1792174173.429594787] [rcl]: 'localhost_only' is enabled, 'automatic_discovery_range' and 'static_peers' will be ignored.
+[terrainAnalysisExt-2] [WARN] [1792174173.428832440] [rcl]: ROS_LOCALHOST_ONLY is deprecated but still honored if it is enabled. Use ROS_AUTOMATIC_DISCOVERY_RANGE and ROS_STATIC_PEERS instead.
+[terrainAnalysisExt-2] [WARN] [1792174173.428839577] [rcl]: 'localhost_only' is enabled, 'automatic_discovery_range' and 'static_peers' will be ignored.
+[sensorScanGeneration-3] [WARN] [1792174173.426294860] [rcl]: ROS_LOCALHOST_ONLY is deprecated but still honored if it is enabled. Use ROS_AUTOMATIC_DISCOVERY_RANGE and ROS_STATIC_PEERS instead.
+[sensorScanGeneration-3] [WARN] [1792174173.426303525] [rcl]: 'localhost_only' is enabled, 'automatic_discovery_range' and 'static_peers' will be ignored.
+[create-5] [WARN] [1792174173.431779133] [rcl]: ROS_LOCALHOST_ONLY is deprecated but still honored if it is enabled. Use ROS_AUTOMATIC_DISCOVERY_RANGE and ROS_STATIC_PEERS instead.
+[create-5] [WARN] [1792174173.431787818] [rcl]: 'localhost_only' is enabled, 'automatic_discovery_range' and 'static_peers' will be ignored.
+[create-6] [WARN] [1792174173.456156598] [rcl]: ROS_LOCALHOST_ONLY is deprecated but still honored if it is enabled. Use ROS_AUTOMATIC_DISCOVERY_RANGE and ROS_STATIC_PEERS instead.
+[create-6] [WARN] [1792174173.456174529] [rcl]: 'localhost_only' is enabled, 'automatic_discovery_range' and 'static_peers' will be ignored.
+[create-7] [WARN] [1792174173.456560563] [rcl]: ROS_LOCALHOST_ONLY is deprecated but still honored if it is enabled. Use ROS_AUTOMATIC_DISCOVERY_RANGE and ROS_STATIC_PEERS instead.
+[create-7] [WARN] [1792174173.456572756] [rcl]: 'localhost_only' is enabled, 'automatic_discovery_range' and 'static_peers' will be ignored.
+[image_bridge-9] [WARN] [1792174173.456601885] [rcl]: ROS_LOCALHOST_ONLY is deprecated but still honored if it is enabled. Use ROS_AUTOMATIC_DISCOVERY_RANGE and ROS_STATIC_PEERS instead.
+[image_bridge-9] [WARN] [1792174173.456610806] [rcl]: 'localhost_only' is enabled, 'automatic_discovery_range' and 'static_peers' will be ignored.
+[parameter_bridge-8] [WARN] [1792174173.456863845] [rcl]: ROS_LOCALHOST_ONLY is deprecated but still honored if it is enabled. Use ROS_AUTOMATIC_DISCOVERY_RANGE and ROS_STATIC_PEERS instead.
+[parameter_bridge-8] [WARN] [1792174173.456871647] [rcl]: 'localhost_only' is enabled, 'automatic_discovery_range' and 'static_peers' will be ignored.
+[create-5] [INFO] [1792174173.457909495] [ros_gz_sim]: Requesting list of world names.
+[create-7] [INFO] [1792174173.472923672] [ros_gz_sim]: Requesting list of world names.
+[create-6] [INFO] [1792174173.474439771] [ros_gz_sim]: Requesting list of world names.
+[gazebo-4] [Msg] Gazebo Sim Server v8.11.0
+[gazebo-4] [Msg] Loading SDF world file[/home/lzz/my test/autonomous_exploration_development_environment/install/vehicle_simulator/share/vehicle_simulator/world/garage.world].
+[gazebo-4] Warning [Utils.cc:132] [/sdf/world[@name="default"]/physics/gravity:/home/lzz/my test/autonomous_exploration_development_environment/install/vehicle_simulator/share/vehicle_simulator/world/garage.world:L48]: XML Element[gravity], child of element[physics], not defined in SDF. Copying[gravity] as children of [physics].
+[gazebo-4] [Msg] Serving entity system service on [/entity/system/add]
+[gazebo-4] [Dbg] [Physics.cc:906] Loaded [gz::physics::tpeplugin::Plugin] from library [/opt/ros/jazzy/opt/gz_physics_vendor/lib/gz-physics-7/engine-plugins/libgz-physics-tpe-plugin.so]
+[gazebo-4] [Dbg] [SystemManager.cc:80] Loaded system [gz::sim::systems::Physics] for entity [1]
+[gazebo-4] [Dbg] [Sensors.cc:697] Configuring Sensors system
+[gazebo-4] [Dbg] [Sensors.cc:557] SensorsPrivate::Run
+[gazebo-4] [Dbg] [SystemManager.cc:80] Loaded system [gz::sim::systems::Sensors] for entity [1]
+[gazebo-4] [Dbg] [Sensors.cc:532] SensorsPrivate::RenderThread started
+[gazebo-4] [Dbg] [Sensors.cc:337] Waiting for init
+[gazebo-4] [Dbg] [SystemManager.cc:80] Loaded system [gz::sim::systems::SceneBroadcaster] for entity [1]
+[gazebo-4] [Msg] Create service on [/world/default/create_multiple] (async)
+[gazebo-4] [Msg] Create service on [/world/default/create_multiple/blocking] (blocking)
+[gazebo-4] [Msg] Remove service on [/world/default/remove] (async)
+[gazebo-4] [Msg] Remove service on [/world/default/remove/blocking] (blocking)
+[gazebo-4] [Msg] Pose service on [/world/default/set_pose] (async)
+[gazebo-4] [Msg] Pose service on [/world/default/set_pose/blocking] (blocking)
+[gazebo-4] [Msg] Pose service on [/world/default/set_pose_vector] (async)
+[gazebo-4] [Msg] Pose service on [/world/default/set_pose_vector/blocking] (blocking)
+[gazebo-4] [Msg] Light configuration service on [/world/default/light_config] (async)
+[gazebo-4] [Msg] Light configuration service on [/world/default/light_config/blocking] (blocking)
+[gazebo-4] [Msg] Physics service on [/world/default/set_physics] (async)
+[gazebo-4] [Msg] Physics service on [/world/default/set_physics/blocking] (blocking)
+[gazebo-4] [Msg] SphericalCoordinates service on [/world/default/set_spherical_coordinates] (async)
+[gazebo-4] [Msg] SphericalCoordinates service on [/world/default/set_spherical_coordinates/blocking] (blocking)
+[gazebo-4] [Msg] Enable collision service on [/world/default/enable_collision] (async)
+[gazebo-4] [Msg] Enable collision service on [/world/default/enable_collision/blocking] (blocking)
+[gazebo-4] [Msg] Disable collision service on [/world/default/disable_collision] (async)
+[gazebo-4] [Msg] Disable collision service on [/world/default/disable_collision/blocking] (blocking)
+[gazebo-4] [Msg] Material service on [/world/default/visual_config] (async)
+[gazebo-4] [Msg] Material service on [/world/default/visual_config/blocking] (blocking)
+[create-7] [INFO] [1792174174.081544290] [ros_gz_sim]: Entity creation successful.
+[create-5] [INFO] [1792174174.081553655] [ros_gz_sim]: Entity creation successful.
+[create-6] [INFO] [1792174174.081840219] [ros_gz_sim]: Entity creation successful.
+[INFO] [create-6]: process has finished cleanly [pid 981307]
+[INFO] [create-5]: process has finished cleanly [pid 981292]
+[INFO] [create-7]: process has finished cleanly [pid 981310]
+[parameter_bridge-8] [INFO] [1792174174.470374792] [ros_gz_bridge]: Creating GZ->ROS Bridge: [clock (gz.msgs.Clock) -> clock (rosgraph_msgs/msg/Clock)] (Lazy 0)
+[parameter_bridge-8] [INFO] [1792174174.471736532] [ros_gz_bridge]: Creating GZ->ROS Bridge: [velodyne_points/points (gz.msgs.PointCloudPacked) -> velodyne_points (sensor_msgs/msg/PointCloud2)] (Lazy 0)
+[parameter_bridge-8] [INFO] [1792174174.473862720] [ros_gz_bridge]: Creating GZ->ROS Bridge: [camera/camera_info (gz.msgs.CameraInfo) -> camera/camera_info (sensor_msgs/msg/CameraInfo)] (Lazy 0)
+[gazebo-4] [Wrn] [SdfEntityCreator.cc:933] Gazebo does not support Ogre material scripts. See https://gazebosim.org/api/sim/8/migrationsdf.html#:~:text=Materials for details.
+[gazebo-4] [Wrn] [SdfEntityCreator.cc:949] Using an internal gazebo.material to parse Gazebo/Red
+[gazebo-4] [Wrn] [SdfEntityCreator.cc:933] Gazebo does not support Ogre material scripts. See https://gazebosim.org/api/sim/8/migrationsdf.html#:~:text=Materials for details.
+[gazebo-4] [Wrn] [SdfEntityCreator.cc:949] Using an internal gazebo.material to parse Gazebo/Black
+[gazebo-4] [Wrn] [SdfEntityCreator.cc:933] Gazebo does not support Ogre material scripts. See https://gazebosim.org/api/sim/8/migrationsdf.html#:~:text=Materials for details.
+[gazebo-4] [Wrn] [SdfEntityCreator.cc:949] Using an internal gazebo.material to parse Gazebo/Black
+[gazebo-4] [Wrn] [SdfEntityCreator.cc:933] Gazebo does not support Ogre material scripts. See https://gazebosim.org/api/sim/8/migrationsdf.html#:~:text=Materials for details.
+[gazebo-4] [Wrn] [SdfEntityCreator.cc:949] Using an internal gazebo.material to parse Gazebo/Black
+[gazebo-4] [Wrn] [SdfEntityCreator.cc:933] Gazebo does not support Ogre material scripts. See https://gazebosim.org/api/sim/8/migrationsdf.html#:~:text=Materials for details.
+[gazebo-4] [Wrn] [SdfEntityCreator.cc:949] Using an internal gazebo.material to parse Gazebo/Black
+[gazebo-4] [Wrn] [SdfEntityCreator.cc:933] Gazebo does not support Ogre material scripts. See https://gazebosim.org/api/sim/8/migrationsdf.html#:~:text=Materials for details.
+[gazebo-4] [Wrn] [SdfEntityCreator.cc:949] Using an internal gazebo.material to parse Gazebo/Black
+[gazebo-4] [Wrn] [SDFFeatures.cc:328] Geometry type not supported for collision [collision].
+[gazebo-4] [Msg] Material service on [/world/default/wheel_slip] (async)
+[gazebo-4] [Msg] Material service on [/world/default/wheel_slip/blocking] (blocking)
+[gazebo-4] [Dbg] [SystemManager.cc:80] Loaded system [gz::sim::systems::UserCommands] for entity [1]
+[gazebo-4] [Msg] Loaded level [default]
+[gazebo-4] [Msg] Serving world controls on [/world/default/control], [/world/default/control/state] and [/world/default/playback/control]
+[gazebo-4] [Msg] Serving GUI information on [/world/default/gui/info]
+[gazebo-4] [Msg] World [default] initialized with [default_physics] physics profile.
+[gazebo-4] [Msg] Serving world SDF generation service on [/world/default/generate_world_sdf]
+[gazebo-4] [Msg] Serving world names on [/gazebo/worlds]
+[gazebo-4] [Msg] Resource path add service on [/gazebo/resource_paths/add].
+[gazebo-4] [Msg] Resource path get service on [/gazebo/resource_paths/get].
+[gazebo-4] [Msg] Resource path resolve service on [/gazebo/resource_paths/resolve].
+[gazebo-4] [Msg] Resource paths published on [/gazebo/resource_paths].
+[gazebo-4] [Msg] Server control service on [/server_control].
+[gazebo-4] [Msg] Found no publishers on /stats, adding root stats topic
+[gazebo-4] [Msg] Found no publishers on /clock, adding root clock topic
+[gazebo-4] [Dbg] [SimulationRunner.cc:551] Creating PostUpdate worker threads: 3
+[gazebo-4] [Dbg] [SimulationRunner.cc:562] Creating postupdate worker thread (0)
+[gazebo-4] [Dbg] [SimulationRunner.cc:562] Creating postupdate worker thread (1)
+[gazebo-4] [Dbg] [UserCommands.cc:1094] Created entity [8] named [camera]
+[gazebo-4] [Dbg] [UserCommands.cc:1094] Created entity [13] named [robot]
+[gazebo-4] [Dbg] [UserCommands.cc:1094] Created entity [22] named [lidar]
+[gazebo-4] [Dbg] [Physics.cc:1086] Attempting to set physics options, but the phyiscs engine doesn't support feature [CollisionPairMaxContacts]. Options will be ignored.
+[gazebo-4] [Dbg] [Physics.cc:2122] Attempting to set physics options, but the physics engine doesn't support feature [GravityFeature]. Options will be ignored.
+[gazebo-4] [Dbg] [SimulationFeatures.cc:59] Simulation timestep set to: 0.001
+[gazebo-4] [Dbg] [Sensors.cc:953] Initialization needed
+[gazebo-4] [Dbg] [Sensors.cc:349] Initializing render context
+[gazebo-4] [Msg] Loading plugin [gz-rendering-ogre2]
+[gazebo-4] [Msg] Serving scene information on [/world/default/scene/info]
+[gazebo-4] [Msg] Serving graph information on [/world/default/scene/graph]
+[gazebo-4] [Msg] Serving full state on [/world/default/state]
+[gazebo-4] libEGL warning: pci id for fd 67: 10de:2d04, driver (null)
+[gazebo-4]
+[gazebo-4] pci id for fd 68: 10de:2d04, driver (null)
+[gazebo-4] pci id for fd 69: 10de:2d04, driver (null)
+[gazebo-4] libEGL warning: egl: failed to create dri2 screen
+[gazebo-4] libEGL warning: pci id for fd 67: 10de:2d04, driver (null)
+[gazebo-4]
+[gazebo-4] pci id for fd 68: 10de:2d04, driver (null)
+[gazebo-4] pci id for fd 69: 10de:2d04, driver (null)
+[gazebo-4] libEGL warning: egl: failed to create dri2 screen
+[gazebo-4] libEGL warning: pci id for fd 67: 10de:2d04, driver (null)
+[gazebo-4]
+[gazebo-4] [Wrn] [Ogre2Camera.cc:423] Ogre2Camera::SetVisibilityMask: Mask bits c0000000 are set but will be ignored as they conflict with the reserved bits used internally by the ogre2 backend.
+[INFO] [vehicleSimulator-10]: process started with pid [982012]
+[vehicleSimulator-10] [WARN] [1792174178.462479514] [rcl]: ROS_LOCALHOST_ONLY is deprecated but still honored if it is enabled. Use ROS_AUTOMATIC_DISCOVERY_RANGE and ROS_STATIC_PEERS instead.
+[vehicleSimulator-10] [WARN] [1792174178.462489431] [rcl]: 'localhost_only' is enabled, 'automatic_discovery_range' and 'static_peers' will be ignored.
+[vehicleSimulator-10] [INFO] [1792174178.476934328] [vehicleSimulator]: Simulation started.
+[WARNING] [launch]: user interrupted with ctrl-c (SIGINT)
+[INFO] [vehicleSimulator-10]: sending signal 'SIGINT' to process[vehicleSimulator-10]
+[INFO] [image_bridge-9]: sending signal 'SIGINT' to process[image_bridge-9]
+[INFO] [parameter_bridge-8]: sending signal 'SIGINT' to process[parameter_bridge-8]
+[INFO] [gazebo-4]: sending signal 'SIGINT' to process[gazebo-4]
+[INFO] [sensorScanGeneration-3]: sending signal 'SIGINT' to process[sensorScanGeneration-3]
+[INFO] [terrainAnalysisExt-2]: sending signal 'SIGINT' to process[terrainAnalysisExt-2]
+[INFO] [terrainAnalysis-1]: sending signal 'SIGINT' to process[terrainAnalysis-1]
+[image_bridge-9] [INFO] [1792174256.935990869] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[parameter_bridge-8] [INFO] [1792174256.936786661] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[gazebo-4] [Msg] Serving full state (async) on [/world/default/state_async]
+[gazebo-4] [Msg] Publishing scene information on [/world/default/scene/info]
+[gazebo-4] [Msg] Publishing entity deletions on [/world/default/scene/deletion]
+[gazebo-4] [Msg] Publishing state changes on [/world/default/state]
+[gazebo-4] [Msg] Publishing pose messages on [/world/default/pose/info]
+[gazebo-4] [Msg] Publishing dynamic pose messages on [/world/default/dynamic_pose/info]
+[gazebo-4] [Dbg] [RenderUtil.cc:2646] Create scene [scene]
+[gazebo-4] [Dbg] [Sensors.cc:953] Initialization needed
+[gazebo-4] Rendering Thread initialized
+[gazebo-4] [Dbg] [CameraSensor.cc:405] Camera images for [camera::link::camera] advertised on [camera/image_raw]
+[gazebo-4] [Dbg] [CameraSensor.cc:695] Camera info for [camera::link::camera] advertised on [/camera/camera_info]
+[gazebo-4] [Dbg] [Lidar.cc:139] Laser scans for [lidar::link::gpu_lidar] advertised on [velodyne_points]
+[gazebo-4] [Dbg] [GpuLidarSensor.cc:164] Lidar points for [lidar::link::gpu_lidar] advertised on [velodyne_points/points]
+[gazebo-4] [Dbg] [CameraSensor.cc:504] Enabling camera sensor: 'camera::link::camera' data generation.
+[gazebo-4] [Dbg] [SignalHandler.cc:142] Received signal[2].
+[gazebo-4] [Dbg] [ServerPrivate.cc:122] Server received signal[2]
+[gazebo-4] [Dbg] [Sensors.cc:565] SensorsPrivate::Stop
+[gazebo-4] [Dbg] [Sensors.cc:551] SensorsPrivate::RenderThread stopped
+[gazebo-4] [Dbg] [gz.cc:434] Shutting down gz-sim-server
+[gazebo-4] [Dbg] [SimulationRunner.cc:578] Exiting postupdate worker thread (1)
+[gazebo-4] [Dbg] [SimulationRunner.cc:578] Exiting postupdate worker thread (0)
+[gazebo-4] [Dbg] [Sensors.cc:565] SensorsPrivate::Stop
+[INFO] [parameter_bridge-8]: process has finished cleanly [pid 981312]
+[INFO] [image_bridge-9]: process has finished cleanly [pid 981314]
+[INFO] [terrainAnalysis-1]: process has finished cleanly [pid 981288]
+[INFO] [terrainAnalysisExt-2]: process has finished cleanly [pid 981289]
+[INFO] [sensorScanGeneration-3]: process has finished cleanly [pid 981290]
+[ERROR] [gazebo-4]: process has died [pid 981291, exit code -2, cmd 'ruby /opt/ros/jazzy/opt/gz_tools_vendor/bin/gz sim -r -s -v4 --physics-engine libgz-physics-tpe-plugin '/home/lzz/my test/autonomous_exploration_development_environment/install/vehicle_simulator/share/vehicle_simulator/world/garage.world' --force-version 8'].
+[INFO] [launch]: process[gazebo-4] was required: shutting down launched system
+[vehicleSimulator-10] Setting vehicle pose failed
+[vehicleSimulator-10] Setting camera pose failed
+[vehicleSimulator-10] Setting lidar pose failed
+[INFO] [vehicleSimulator-10]: process has finished cleanly [pid 982012]

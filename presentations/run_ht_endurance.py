@@ -102,6 +102,20 @@ def main():
              ROOT/'src/tare_planner/src/local_coverage_planner/ht_route.cpp',
              ROOT/'src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp',
              ROOT/'src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp']
+    paths += [Path(__file__), Path(__file__).with_name('run_scheduled_comparison.py'),
+              ROOT/'src/tare_planner/include/ht_cost/target_commitment.h',
+              ROOT/'src/tare_planner/src/ht_cost/xytheta_follower.cpp',
+              CUPY/'src/elevation_mapping_cupy_2204/elevation_mapping_cupy/script/elevation_mapping_cupy/elevation_mapping_ros.py']
+    paths += [BRIDGE/name for name in ('cmu_xytheta.launch.py','cmu_vehicle_downward.launch.py','gz_sim_direct.launch.py')]
+    paths += [CMU/'src/vehicle_simulator/launch/vehicle_simulator.launch', CUPY/'config/trial_plugins.yaml']
+    paths += [CUPY/'src/elevation_mapping_cupy_2204/elevation_mapping_cupy/script/elevation_mapping_cupy'/name
+              for name in ('elevation_mapping.py','traversability_filter.py')]
+    for package, executable in [('vehicle_simulator','vehicleSimulator'),
+                                ('terrain_analysis','terrainAnalysis'),
+                                ('terrain_analysis_ext','terrainAnalysisExt'),
+                                ('sensor_scan_generation','sensorScanGeneration')]:
+        paths += [CMU/f'src/{package}/src/{executable}.cpp',
+                  CMU/f'install/{package}/lib/{package}/{executable}']
     manifest = dict(started_at=dt.datetime.now().astimezone().isoformat(),
                     planned_duration_s=args.duration, scenario='Garage', domain=args.domain,
                     speed_cap_mps=.5, preflight=preflight(),
@@ -115,7 +129,7 @@ def main():
     topics = ['/endurance/registered_scan', '/state_estimation', '/state_estimation_at_scan',
               '/tf', '/tf_static', '/cmd_vel', '/way_point', '/ht_xytheta_path',
               '/ht_execution_status', '/ht_follower_status', '/ht_execution_rejected_edge',
-              '/ht_navigation_allowed', '/mission_state', '/runtime', '/exploration_finish']
+              '/ht_navigation_allowed', '/mission_state', '/mission_completed', '/runtime', '/exploration_finish']
     stopped = threading.Event()
     failures = []
     thread = threading.Thread(target=monitor, args=(trial, folder, stopped, failures), daemon=True)

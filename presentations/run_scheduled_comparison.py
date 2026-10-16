@@ -11,6 +11,7 @@ import subprocess
 import sys
 import time
 from pathlib import Path
+import psutil
 
 HERE=Path(__file__).resolve().parent
 ROOT=HERE.parent
@@ -50,6 +51,8 @@ class Trial:
         log=(self.folder/f'{label}.log').open('w')
         proc=subprocess.Popen(['bash','-lc',command],env=self.env,stdout=log,stderr=subprocess.STDOUT,
                               start_new_session=True)
+        # ros2 launch forwards SIGINT itself; ros2 run explicitly does not.
+        proc.ht_forwards_sigint='exec ros2 launch ' in command
         self.processes.append((label,proc,log))
         print(f'{self.name}: started {label} pid={proc.pid}',flush=True)
         return proc
@@ -64,17 +67,64 @@ class Trial:
         dead=[name for name,p,_ in self.processes if p.poll() is not None]
         if dead:raise RuntimeError(f'{self.name}: processes exited early: {dead}')
     def stop(self):
+        audit=[]
+        descendants=[]
+        for label,p,_ in self.processes:
+            try:descendants.extend((label,c) for c in psutil.Process(p.pid).children(recursive=True))
+            except psutil.Error:pass
+        # The Gazebo Ruby launcher does not forward SIGINT to its native
+        # server. That server is an owned descendant, not an unrelated sim.
+        for label,child in descendants:
+            try:
+                argv=child.cmdline()
+                if (argv and (argv[0].startswith('gz sim ') or argv[:2]==['gz','sim']) and
+                        psutil.Process(child.ppid()).name() in ('sh','bash','dash')):
+                    child.send_signal(signal.SIGINT)
+                    audit.append(dict(label=label,pid=child.pid,signal='SIGINT',scope='native_gazebo_server'))
+            except psutil.Error:pass
         for label,p,_ in reversed(self.processes):
             if p.poll() is None:
-                try:os.killpg(p.pid,signal.SIGINT)
+                try:
+                    forwards=getattr(p,'ht_forwards_sigint',False)
+                    if forwards:p.send_signal(signal.SIGINT)
+                    else:os.killpg(p.pid,signal.SIGINT)
+                    audit.append(dict(label=label,pid=p.pid,signal='SIGINT',
+                                      scope='launcher' if forwards else 'process_group'))
                 except ProcessLookupError:pass
         deadline=time.monotonic()+12
-        for _,p,log in reversed(self.processes):
+        for label,p,log in reversed(self.processes):
             while p.poll() is None and time.monotonic()<deadline:time.sleep(.15)
             if p.poll() is None:
                 try:os.killpg(p.pid,signal.SIGTERM)
                 except ProcessLookupError:pass
+                audit.append(dict(label=label,pid=p.pid,signal='SIGTERM',scope='process_group'))
+                try:p.wait(timeout=5)
+                except subprocess.TimeoutExpired:
+                    try:os.killpg(p.pid,signal.SIGKILL)
+                    except ProcessLookupError:pass
+                    p.wait(timeout=5)
+                    audit.append(dict(label=label,pid=p.pid,signal='SIGKILL',scope='process_group'))
+            audit.append(dict(label=label,pid=p.pid,returncode=p.poll()))
             log.close()
+        def living(child):
+            try:return child.is_running() and child.status()!=psutil.STATUS_ZOMBIE
+            except psutil.Error:return False
+        # Do not accept a launch parent's zero exit code as proof that all
+        # descendants stopped. Preserve any escalation in the audit.
+        remaining=[(label,c) for label,c in descendants if living(c)]
+        for label,child in remaining:
+            try:child.terminate()
+            except psutil.Error:pass
+            audit.append(dict(label=label,pid=child.pid,signal='SIGTERM',scope='remaining_descendant'))
+        if remaining:psutil.wait_procs([c for _,c in remaining],timeout=3)
+        for label,child in remaining:
+            if living(child):
+                try:child.kill()
+                except psutil.Error:pass
+                audit.append(dict(label=label,pid=child.pid,signal='SIGKILL',scope='remaining_descendant'))
+        if remaining:psutil.wait_procs([c for _,c in remaining],timeout=3)
+        audit.append(dict(remaining_live_descendants=[c.pid for _,c in descendants if living(c)]))
+        (self.folder/'shutdown.json').write_text(json.dumps(audit,indent=2)+'\n')
         self.processes.clear()
 
 def preflight():

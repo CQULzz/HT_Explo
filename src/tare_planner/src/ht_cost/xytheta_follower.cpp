@@ -95,6 +95,10 @@ class XYThetaFollower : public rclcpp::Node {
       });
     stop_sub_=create_subscription<std_msgs::msg::Int8>("/stop",5,
       [this](std_msgs::msg::Int8::ConstSharedPtr msg) {stop_=msg->data;});
+    completed_sub_=create_subscription<std_msgs::msg::Bool>("/mission_completed",5,
+      [this](std_msgs::msg::Bool::ConstSharedPtr msg) {
+        completed_=msg->data;completed_received_=now().seconds();
+      });
     cmd_pub_=create_publisher<geometry_msgs::msg::TwistStamped>("/cmd_vel",5);
     status_pub_=create_publisher<std_msgs::msg::String>("/ht_follower_status",5);
     rejection_pub_=create_publisher<nav_msgs::msg::Path>("/ht_execution_rejected_edge",5);
@@ -114,6 +118,9 @@ class XYThetaFollower : public rclcpp::Node {
       if (reason!="HT_COMMAND_BLOCKED") command_blocked_since_=-1;
       linear_=0;angular_=0;cmd_pub_->publish(cmd);status(reason);
     };
+    // A current terminal heartbeat is an explicit stop, even after the final
+    // path expires. An old completion flag cannot mask subsequent failures.
+    if (completed_ && fresh(completed_received_,permission_timeout_)) {hold("COMPLETED");return;}
     if (!fresh(odom_received_,odom_timeout_) || !fresh(odom_stamp_,odom_timeout_)) {hold("ODOM_STALE");return;}
     if (!fresh(path_received_,path_timeout_) || !fresh(path_stamp_,path_timeout_)) {hold("PATH_STALE");return;}
     if (!permitted_ || permission_received_<=0 || stop_>=1) {hold("PLANNER_HOLD");return;}
@@ -227,12 +234,15 @@ class XYThetaFollower : public rclcpp::Node {
   double command_blocked_since_=-1;
   std_msgs::msg::Header path_header_;
   bool permitted_=false;
+  bool completed_=false;
+  double completed_received_=-1;
   bool prior_started_=false;
   std::unique_ptr<ht_cost_ns::HtCostMap> ht_;
   int stop_=0;
   rclcpp::Subscription<nav_msgs::msg::Path>::SharedPtr path_sub_;
   rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
   rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr permission_sub_;
+  rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr completed_sub_;
   rclcpp::Subscription<std_msgs::msg::Int8>::SharedPtr stop_sub_;
   rclcpp::Subscription<sensor_msgs::msg::PointCloud2>::SharedPtr scan_sub_;
   rclcpp::Publisher<geometry_msgs::msg::TwistStamped>::SharedPtr cmd_pub_;

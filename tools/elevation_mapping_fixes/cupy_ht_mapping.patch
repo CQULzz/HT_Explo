@@ -121,10 +121,10 @@ index bd65e32..2ca42e7 100644
          self,
          image: List[cp._core.core.ndarray],
 diff --git a/elevation_mapping_cupy/script/elevation_mapping_cupy/elevation_mapping_ros.py b/elevation_mapping_cupy/script/elevation_mapping_cupy/elevation_mapping_ros.py
-index cc06939..606cda5 100644
+index cc06939..b96144b 100644
 --- a/elevation_mapping_cupy/script/elevation_mapping_cupy/elevation_mapping_ros.py
 +++ b/elevation_mapping_cupy/script/elevation_mapping_cupy/elevation_mapping_ros.py
-@@ -7,6 +7,12 @@
+@@ -7,6 +7,13 @@
  
  from functools import partial
  from typing import Any
@@ -132,12 +132,13 @@ index cc06939..606cda5 100644
 +import os
 +import time
 +import threading
++import signal
 +from array import array as FloatArray
 +from pathlib import Path
  
  import numpy as np
  import rclpy
-@@ -15,7 +21,8 @@ from ament_index_python.packages import get_package_share_directory
+@@ -15,7 +22,8 @@ from ament_index_python.packages import get_package_share_directory
  from grid_map_msgs.msg import GridMap
  from rclpy.duration import Duration
  from rclpy.node import Node
@@ -147,7 +148,7 @@ index cc06939..606cda5 100644
  from rclpy.time import Time
  from scipy.spatial.transform import Rotation
  from sensor_msgs.msg import PointCloud2
-@@ -60,6 +67,22 @@ def _pointcloud_to_numpy(msg: PointCloud2, channels: list[str]) -> np.ndarray:
+@@ -60,6 +68,22 @@ def _pointcloud_to_numpy(msg: PointCloud2, channels: list[str]) -> np.ndarray:
      return np.asarray(list(points), dtype=np.float32)
  
  
@@ -170,7 +171,7 @@ index cc06939..606cda5 100644
  class ElevationMappingNode(Node):
      def __init__(self) -> None:
          super().__init__("elevation_mapping")
-@@ -81,14 +104,54 @@ class ElevationMappingNode(Node):
+@@ -81,14 +105,55 @@ class ElevationMappingNode(Node):
          self.map_frame = self.config.get("map_frame", self.param.map_frame if hasattr(self.param, "map_frame") else "map")
          self.base_frame = self.config.get("base_frame", "base_link")
  
@@ -208,6 +209,7 @@ index cc06939..606cda5 100644
 +        self.map_access_lock = threading.RLock()
 +        self.scan_callback_group = MutuallyExclusiveCallbackGroup()
 +        self.timer_callback_group = MutuallyExclusiveCallbackGroup()
++        self.publish_callback_group = MutuallyExclusiveCallbackGroup()
          self.map_data = np.zeros((self.map.cell_n - 2, self.map.cell_n - 2), dtype=np.float32)
          self.map_translation = None
          self.map_rotation = None
@@ -227,7 +229,7 @@ index cc06939..606cda5 100644
  
          self.pointcloud_subscriptions = []
          self.map_publishers = {}
-@@ -97,6 +160,8 @@ class ElevationMappingNode(Node):
+@@ -97,6 +162,8 @@ class ElevationMappingNode(Node):
          self.register_publishers()
          self.register_timers()
          self.get_logger().info("[ElevationMappingCupy] ROS 2 node initialized")
@@ -236,7 +238,7 @@ index cc06939..606cda5 100644
  
      def register_subscribers(self) -> None:
          for key, config in self.subscriber_configs.items():
-@@ -105,22 +170,81 @@ class ElevationMappingNode(Node):
+@@ -105,22 +172,81 @@ class ElevationMappingNode(Node):
                  continue
              topic_name = config["topic_name"]
              callback = partial(self.pointcloud_callback, sub_key=key)
@@ -259,7 +261,7 @@ index cc06939..606cda5 100644
 -            self.map_timers.append(self.create_timer(1.0 / fps, partial(self.publish_map, name)))
 +            self.map_timers.append(self.create_timer(
 +                1.0 / fps, partial(self.timed_timer, f"publish/{name}", partial(self.publish_map, name)),
-+                callback_group=self.timer_callback_group,
++                callback_group=self.publish_callback_group,
 +            ))
  
      def register_timers(self) -> None:
@@ -324,7 +326,7 @@ index cc06939..606cda5 100644
          config = self.param.subscriber_cfg[sub_key]
          channels = ["x", "y", "z"] + config.get("channels", [])
          try:
-@@ -133,12 +257,15 @@ class ElevationMappingNode(Node):
+@@ -133,12 +259,15 @@ class ElevationMappingNode(Node):
  
          stamp = Time.from_msg(msg.header.stamp)
          self.last_stamp = stamp
@@ -341,7 +343,7 @@ index cc06939..606cda5 100644
              )
          except (LookupException, ConnectivityException, ExtrapolationException) as exc:
              try:
-@@ -146,73 +273,125 @@ class ElevationMappingNode(Node):
+@@ -146,73 +275,125 @@ class ElevationMappingNode(Node):
                      self.map_frame,
                      msg.header.frame_id,
                      Time(),
@@ -500,7 +502,7 @@ index cc06939..606cda5 100644
              array = Float32MultiArray()
              n = int(data.shape[0])
              array.layout = MultiArrayLayout(
-@@ -222,7 +401,9 @@ class ElevationMappingNode(Node):
+@@ -222,7 +403,9 @@ class ElevationMappingNode(Node):
                  ],
                  data_offset=0,
              )
@@ -511,23 +513,56 @@ index cc06939..606cda5 100644
              msg.data.append(array)
  
          msg.outer_start_index = 0
-@@ -242,10 +423,17 @@ def main(args=None) -> None:
-     rclpy.init(args=args)
+@@ -238,14 +421,49 @@ class ElevationMappingNode(Node):
+         return translation, rotation
+ 
+ 
++def _stop_executor(executor) -> None:
++    # This installed Jazzy executor lacks wait_for_threads and its base
++    # shutdown destroys the guard before joining workers. Spin has already
++    # stopped submitting work: drain the pool while the guard is still valid.
++    workers = getattr(executor, "_executor", None)
++    try:
++        if workers is not None:
++            workers.shutdown(wait=True)
++        for future in getattr(executor, "_futures", []):
++            if future.done() and not future.cancelled():
++                future.result()  # Surface real callback errors; never hide them.
++    finally:
++        executor.shutdown()
++
++
+ def main(args=None) -> None:
+-    rclpy.init(args=args)
++    from rclpy.executors import ExternalShutdownException, MultiThreadedExecutor
++    from rclpy.signals import SignalHandlerOptions
++    previous_signals = {sig: signal.getsignal(sig) for sig in (signal.SIGINT, signal.SIGTERM)}
++    # A signal requests loop exit first. Keep ROS context valid until worker
++    # callbacks and entity destruction finish, then shut it down explicitly.
++    for sig in previous_signals:
++        signal.signal(sig, signal.default_int_handler)
++    rclpy.init(args=args, signal_handler_options=SignalHandlerOptions.NO)
      node = ElevationMappingNode()
++    executor = MultiThreadedExecutor(num_threads=4)
      try:
 -        rclpy.spin(node)
 +        # Separate workers serve TF, scans and timers. Map snapshots/mutations
 +        # stay serialized by the node lock while TF waits occur outside it.
-+        from rclpy.executors import MultiThreadedExecutor
-+        executor = MultiThreadedExecutor(num_threads=3)
 +        rclpy.spin(node, executor=executor)
++    except (KeyboardInterrupt, ExternalShutdownException):
++        pass
      finally:
++        # Workers may still own GPU/map operations when spin is interrupted.
++        # Join them before reading final statistics or destroying ROS entities.
++        _stop_executor(executor)
 +        if os.environ.get("CUPY_STATS_DUMP"):
 +            node.write_processing_stats()
          node.destroy_node()
 -        rclpy.shutdown()
 +        if rclpy.ok():
 +            rclpy.shutdown()
++        for sig, handler in previous_signals.items():
++            signal.signal(sig, handler)
  
  
  if __name__ == "__main__":
@@ -566,10 +601,10 @@ index e7e40e2..61c62ba 100644
      import torch.nn as nn
 diff --git a/elevation_mapping_cupy/script/elevation_mapping_cupy/tests/test_observation_age.py b/elevation_mapping_cupy/script/elevation_mapping_cupy/tests/test_observation_age.py
 new file mode 100644
-index 0000000..d9f1f20
+index 0000000..a7acf71
 --- /dev/null
 +++ b/elevation_mapping_cupy/script/elevation_mapping_cupy/tests/test_observation_age.py
-@@ -0,0 +1,172 @@
+@@ -0,0 +1,223 @@
 +"""Regression checks for actual direct-observation ages (requires CUDA)."""
 +from pathlib import Path
 +from types import SimpleNamespace
@@ -742,3 +777,54 @@ index 0000000..d9f1f20
 +    ElevationMappingNode.update_pose(node)
 +    assert looked_up == [(100_125_000_000 if offline else 0, 0)]
 +    assert moved[0][0][0] == 3.0
++
++
++def test_map_publication_runs_while_maintenance_callback_is_busy():
++    """A long pose timer must not occupy the map publisher callback group."""
++    import time
++    import rclpy
++    from rclpy.context import Context
++    from rclpy.node import Node
++    from rclpy.callback_groups import MutuallyExclusiveCallbackGroup
++    from rclpy.executors import MultiThreadedExecutor
++    from elevation_mapping_cupy.elevation_mapping_ros import ElevationMappingNode
++
++    busy, release, published = (threading.Event() for _ in range(3))
++    class Timers(Node):
++        register_publishers = ElevationMappingNode.register_publishers
++        register_timers = ElevationMappingNode.register_timers
++        timed_timer = ElevationMappingNode.timed_timer
++        def __init__(self, context):
++            super().__init__('map_timer_scheduling_test', context=context)
++            self.timer_callback_group = MutuallyExclusiveCallbackGroup()
++            self.publish_callback_group = MutuallyExclusiveCallbackGroup()
++            self.publisher_configs = {'test': {'fps': 50}}
++            self.map_publishers, self.map_timers, self.timer_profile = {}, [], {}
++            self.config = {'update_pose_fps': 50, 'update_variance_fps': 1, 'time_interval': 1}
++            self.register_publishers()
++            self.register_timers()
++        def update_pose(self):
++            busy.set()
++            release.wait(timeout=2)
++        def update_variance(self): pass
++        def update_time(self): pass
++        def write_processing_stats(self): pass
++        def publish_map(self, name):
++            if busy.is_set() and not release.is_set(): published.set()
++    context = Context()
++    rclpy.init(context=context)
++    node = Timers(context)
++    executor = MultiThreadedExecutor(num_threads=3, context=context)
++    executor.add_node(node)
++    try:
++        deadline = time.monotonic() + 1
++        while not published.is_set() and time.monotonic() < deadline:
++            executor.spin_once(timeout_sec=.02)
++        assert busy.is_set()
++        assert published.is_set(), 'Publication was starved behind the blocked maintenance timer'
++    finally:
++        release.set()
++        from elevation_mapping_cupy.elevation_mapping_ros import _stop_executor
++        _stop_executor(executor)
++        node.destroy_node()
++        context.try_shutdown()

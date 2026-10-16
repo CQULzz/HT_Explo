@@ -1,0 +1,243 @@
+diff --git a/src/sensor_scan_generation/src/sensorScanGeneration.cpp b/src/sensor_scan_generation/src/sensorScanGeneration.cpp
+index a2cb2dc..7535ae8 100644
+--- a/src/sensor_scan_generation/src/sensorScanGeneration.cpp
++++ b/src/sensor_scan_generation/src/sensorScanGeneration.cpp
+@@ -1,3 +1,4 @@
++#include <csignal>
+ #include <math.h>
+ #include <time.h>
+ #include <stdio.h>
+@@ -22,6 +23,11 @@
+ #include "rmw/types.h"
+ #include "rmw/qos_profiles.h"
+ 
++namespace {
++volatile std::sig_atomic_t shutdown_requested = 0;
++void request_shutdown(int) { shutdown_requested = 1; }
++}
++
+ using namespace std;
+ 
+ pcl::PointCloud<pcl::PointXYZ>::Ptr laserCloudIn(new pcl::PointCloud<pcl::PointXYZ>());
+@@ -100,7 +106,10 @@ void laserCloudAndOdometryHandler(const nav_msgs::msg::Odometry::ConstSharedPtr
+ 
+ int main(int argc, char** argv)
+ {
+-  rclcpp::init(argc, argv);
++  rclcpp::init(argc, argv, rclcpp::InitOptions{}, rclcpp::SignalHandlerOptions::None);
++  std::signal(SIGINT, request_shutdown);
++  std::signal(SIGTERM, request_shutdown);
++  { // Destroy ROS entities while their context is still valid.
+   auto nh = rclcpp::Node::make_shared("sensor_scan");
+ 
+   // ROS message filters
+@@ -135,7 +144,19 @@ int main(int argc, char** argv)
+ 
+   pubLaserCloud = nh->create_publisher<sensor_msgs::msg::PointCloud2>("/sensor_scan", 2);
+ 
+-  rclcpp::spin(nh);
++  rclcpp::executors::SingleThreadedExecutor executor;
++  executor.add_node(nh);
++  while (rclcpp::ok() && !shutdown_requested)
++    executor.spin_once(std::chrono::milliseconds(20));
++  executor.remove_node(nh);
++  sync_.reset();
++  subOdometry.unsubscribe();
++  subLaserCloud.unsubscribe();
++  pubOdometryPointer.reset();
++  pubLaserCloud.reset();
++  tfBroadcasterPointer.reset();
+ 
++  }
++  rclcpp::shutdown();
+   return 0;
+ }
+diff --git a/src/terrain_analysis/src/terrainAnalysis.cpp b/src/terrain_analysis/src/terrainAnalysis.cpp
+index 035c023..b0c03a3 100644
+--- a/src/terrain_analysis/src/terrainAnalysis.cpp
++++ b/src/terrain_analysis/src/terrainAnalysis.cpp
+@@ -1,3 +1,4 @@
++#include <csignal>
+ #include <math.h>
+ #include <time.h>
+ #include <stdio.h>
+@@ -29,6 +30,11 @@
+ #include "rmw/types.h"
+ #include "rmw/qos_profiles.h"
+ 
++namespace {
++volatile std::sig_atomic_t shutdown_requested = 0;
++void request_shutdown(int) { shutdown_requested = 1; }
++}
++
+ using namespace std;
+ 
+ const double PI = 3.1415926;
+@@ -198,7 +204,10 @@ void clearingHandler(const std_msgs::msg::Float32::ConstSharedPtr dis) {
+ }
+ 
+ int main(int argc, char **argv) {
+-  rclcpp::init(argc, argv);
++  rclcpp::init(argc, argv, rclcpp::InitOptions{}, rclcpp::SignalHandlerOptions::None);
++  std::signal(SIGINT, request_shutdown);
++  std::signal(SIGTERM, request_shutdown);
++  { // Destroy ROS entities while their context is still valid.
+   auto nh = rclcpp::Node::make_shared("terrainAnalysis");
+ 
+   nh->declare_parameter<double>("scanVoxelSize", scanVoxelSize);
+@@ -272,9 +281,13 @@ int main(int argc, char **argv) {
+   downSizeFilter.setLeafSize(scanVoxelSize, scanVoxelSize, scanVoxelSize);
+ 
+   rclcpp::Rate rate(100);
++  // Keep the executor alive: spin_some(node) creates a new guard condition
++  // every iteration and races SIGINT context shutdown.
++  rclcpp::executors::SingleThreadedExecutor executor;
++  executor.add_node(nh);
+   bool status = rclcpp::ok();
+-  while (status) {
+-    rclcpp::spin_some(nh);
++  while (status && !shutdown_requested) {
++    executor.spin_some();
+     if (newlaserCloud) {
+       newlaserCloud = false;
+ 
+@@ -680,8 +693,11 @@ int main(int argc, char **argv) {
+ 
+     // status = ros::ok();
+     status = rclcpp::ok();
+-    rate.sleep();
++    if (!shutdown_requested && status) rate.sleep();
+   }
+ 
++  executor.remove_node(nh);
++  }
++  rclcpp::shutdown();
+   return 0;
+ }
+diff --git a/src/terrain_analysis_ext/src/terrainAnalysisExt.cpp b/src/terrain_analysis_ext/src/terrainAnalysisExt.cpp
+index 888e3c6..357a3d9 100644
+--- a/src/terrain_analysis_ext/src/terrainAnalysisExt.cpp
++++ b/src/terrain_analysis_ext/src/terrainAnalysisExt.cpp
+@@ -1,3 +1,4 @@
++#include <csignal>
+ #include <math.h>
+ #include <time.h>
+ #include <stdio.h>
+@@ -31,6 +32,11 @@
+ #include "rmw/types.h"
+ #include "rmw/qos_profiles.h"
+ 
++namespace {
++volatile std::sig_atomic_t shutdown_requested = 0;
++void request_shutdown(int) { shutdown_requested = 1; }
++}
++
+ using namespace std;
+ 
+ const double PI = 3.1415926;
+@@ -175,7 +181,10 @@ void clearingHandler(const std_msgs::msg::Float32::ConstSharedPtr dis)
+ 
+ int main(int argc, char** argv)
+ {
+-  rclcpp::init(argc, argv);
++  rclcpp::init(argc, argv, rclcpp::InitOptions{}, rclcpp::SignalHandlerOptions::None);
++  std::signal(SIGINT, request_shutdown);
++  std::signal(SIGTERM, request_shutdown);
++  { // Destroy ROS entities while their context is still valid.
+   auto nh = rclcpp::Node::make_shared("terrainAnalysisExt");
+ 
+   nh->declare_parameter<double>("scanVoxelSize", scanVoxelSize);
+@@ -237,10 +246,14 @@ int main(int argc, char** argv)
+   std::vector<float> pointNKNSquaredDistance;
+ 
+   rclcpp::Rate rate(100);
++  // Keep the executor alive: spin_some(node) creates a new guard condition
++  // every iteration and races SIGINT context shutdown.
++  rclcpp::executors::SingleThreadedExecutor executor;
++  executor.add_node(nh);
+   bool status = rclcpp::ok();
+-  while (status)
++  while (status && !shutdown_requested)
+   {
+-    rclcpp::spin_some(nh);
++    executor.spin_some();
+ 
+     if (newlaserCloud)
+     {
+@@ -561,8 +574,11 @@ int main(int argc, char** argv)
+     }
+ 
+     status = rclcpp::ok();
+-    rate.sleep();
++    if (!shutdown_requested && status) rate.sleep();
+   }
+   
++  executor.remove_node(nh);
++  }
++  rclcpp::shutdown();
+   return 0;
+ }
+diff --git a/src/vehicle_simulator/src/vehicleSimulator.cpp b/src/vehicle_simulator/src/vehicleSimulator.cpp
+index 099ecb6..d269343 100644
+--- a/src/vehicle_simulator/src/vehicleSimulator.cpp
++++ b/src/vehicle_simulator/src/vehicleSimulator.cpp
+@@ -1,3 +1,4 @@
++#include <csignal>
+ #include <math.h>
+ #include <time.h>
+ #include <stdio.h>
+@@ -42,6 +43,11 @@
+ #include "rmw/types.h"
+ #include "rmw/qos_profiles.h"
+ 
++namespace {
++volatile std::sig_atomic_t shutdown_requested = 0;
++void request_shutdown(int) { shutdown_requested = 1; }
++}
++
+ using namespace std;
+ 
+ const double PI = 3.1415926;
+@@ -307,7 +313,10 @@ void speedHandler(const geometry_msgs::msg::TwistStamped::ConstSharedPtr speedIn
+ 
+ int main(int argc, char** argv)
+ {
+-  rclcpp::init(argc, argv);
++  rclcpp::init(argc, argv, rclcpp::InitOptions{}, rclcpp::SignalHandlerOptions::None);
++  std::signal(SIGINT, request_shutdown);
++  std::signal(SIGTERM, request_shutdown);
++  { // Destroy ROS entities while their context is still valid.
+   auto nh = rclcpp::Node::make_shared("vehicleSimulator");
+ 
+   nh->declare_parameter<bool>("use_gazebo_time", use_gazebo_time);
+@@ -392,10 +401,14 @@ int main(int argc, char** argv)
+   RCLCPP_INFO(nh->get_logger(), "Simulation started.");
+   
+   rclcpp::Rate rate(200);
++  // Keep the executor alive: spin_some(node) creates a new guard condition
++  // every iteration and races SIGINT context shutdown.
++  rclcpp::executors::SingleThreadedExecutor executor;
++  executor.add_node(nh);
+   bool status = rclcpp::ok();
+-  while (status)
++  while (status && !shutdown_requested)
+   {
+-    rclcpp::spin_some(nh);
++    executor.spin_some();
+     float vehicleRecRoll = vehicleRoll;
+     float vehicleRecPitch = vehiclePitch;
+     float vehicleRecZ = vehicleZ;
+@@ -500,8 +513,12 @@ int main(int argc, char** argv)
+     }
+ 
+     status = rclcpp::ok();
+-    rate.sleep();
++    if (!shutdown_requested && status) rate.sleep();
+   }
+ 
++  executor.remove_node(nh);
++  pubScanPointer.reset();
++  }
++  rclcpp::shutdown();
+   return 0;
+ }

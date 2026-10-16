@@ -16,6 +16,7 @@ class FollowerTest : public ::testing::Test {
   rclcpp::Publisher<grid_map_msgs::msg::GridMap>::SharedPtr map;
   rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr path;
   rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr permit;
+  rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr completed;
   rclcpp::Subscription<geometry_msgs::msg::TwistStamped>::SharedPtr commands;
   rclcpp::Subscription<std_msgs::msg::String>::SharedPtr statuses;
   rclcpp::Subscription<nav_msgs::msg::Path>::SharedPtr rejections;
@@ -34,6 +35,7 @@ class FollowerTest : public ::testing::Test {
     map=source->create_publisher<grid_map_msgs::msg::GridMap>("/ht_traversability/global_local",1);
     path=source->create_publisher<nav_msgs::msg::Path>("/ht_xytheta_path",1);
     permit=source->create_publisher<std_msgs::msg::Bool>("/ht_navigation_allowed",1);
+    completed=source->create_publisher<std_msgs::msg::Bool>("/mission_completed",1);
     commands=source->create_subscription<geometry_msgs::msg::TwistStamped>("/cmd_vel",5,
       [&](geometry_msgs::msg::TwistStamped::ConstSharedPtr p){speed=p->twist.linear.x;});
     statuses=source->create_subscription<std_msgs::msg::String>("/ht_follower_status",5,
@@ -76,6 +78,14 @@ TEST_F(FollowerTest, FreshMapMaintainsExecutionAcrossSlowPlannerPermission) {
 }
 TEST_F(FollowerTest, FreshMapsCannotExtendAnExpiredPlan) {
   spin(2900ms);EXPECT_DOUBLE_EQ(speed,0);EXPECT_EQ(reason,"PATH_STALE");
+}
+TEST_F(FollowerTest, CompletionHeartbeatExplainsTerminalStopButCannotRenewDriving) {
+  spin(2900ms);EXPECT_EQ(reason,"PATH_STALE");
+  std_msgs::msg::Bool done;done.data=true;completed->publish(done);
+  spin(150ms);EXPECT_DOUBLE_EQ(speed,0);EXPECT_EQ(reason,"COMPLETED");
+  spin(1700ms);EXPECT_DOUBLE_EQ(speed,0);EXPECT_EQ(reason,"PATH_STALE");
+  done.data=false;completed->publish(done);sendPath();allow(true);
+  spin(200ms);EXPECT_GT(speed,0);EXPECT_EQ(reason,"DRIVING");
 }
 TEST_F(FollowerTest, NewObstacleAndUnknownRevokeExecution) {
   blocked=true;spin(200ms);EXPECT_DOUBLE_EQ(speed,0);EXPECT_EQ(reason,"HT_CURRENT_POSE_BLOCKED");

@@ -861,7 +861,9 @@ LocalCoveragePlanner::SolveLocalCoverageProblem(
   if (ht_output_target_>=0 && viewpoint_manager_->HT()->enabled()) {
     const auto p=viewpoint_manager_->GetViewPointPosition(ht_output_target_);
     ht_commitment_.commit({p.x,p.y,p.z},
-      {robot_position_.x(),robot_position_.y(),robot_position_.z()},node_->now().seconds());
+      {robot_position_.x(),robot_position_.y(),robot_position_.z()},node_->now().seconds(),
+      viewpoint_manager_->GetViewPointCoveredPointNum(ht_output_target_)>0 ||
+      viewpoint_manager_->GetViewPointCoveredFrontierPointNum(ht_output_target_)>0);
   }
   return local_path;
 }

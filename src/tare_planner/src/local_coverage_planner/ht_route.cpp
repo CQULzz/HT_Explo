@@ -60,10 +60,10 @@ exploration_path_ns::ExplorationPath LocalCoveragePlanner::SolveHTTSP(
     const auto p=viewpoint_manager_->GetViewPointPosition(id);
     const double distance=std::hypot(p.x-robot_position_.x(),p.y-robot_position_.y());
     if (distance<std::max(0.8,xytheta_config_.goal_radius+0.2) || distance>xytheta_config_.max_radius) continue;
-    if (ht_commitment_.cooling({p.x,p.y,p.z},now)) continue;
-    if (!supported_endpoint(id)) continue;
     const double gain=std::max(0,viewpoint_manager_->GetViewPointCoveredPointNum(id))+
       2.0*std::max(0,viewpoint_manager_->GetViewPointCoveredFrontierPointNum(id));
+    if (ht_commitment_.cooling({p.x,p.y,p.z},now,gain>0)) continue;
+    if (!supported_endpoint(id)) continue;
     double utility=gain/(1.0+distance);
     if (gain<=0) {
       if ((id!=start_viewpoint_ind_ && id!=end_viewpoint_ind_) || distance<1.0) continue;

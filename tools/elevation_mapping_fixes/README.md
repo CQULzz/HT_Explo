@@ -14,8 +14,13 @@ The patch fixes the duplicated coordinate flip, tracks true per-cell scan
 times, uses bounded reliable transport for registered world clouds, and
 separates point ingestion from periodic callbacks. Periodic TF lookups do not
 wait for old scans. A complete map copy/mutation is locked, while TF waits and
-ROS serialization happen outside that lock. Three executor workers serve
-TF, scans and timers.
+ROS serialization happen outside that lock. Four executor workers serve
+TF, scans, maintenance timers and the separate map publication group. A busy
+maintenance callback no longer blocks publication merely by occupying its
+callback group; actual map access still uses the coherent snapshot lock.
+The trial publishes height, variance and observation age, omitting the unused
+CuPy traversability output (the HT directional output remains authoritative).
+On shutdown the worker pool is joined before node destruction.
 
 Map headers carry the last successfully integrated scan's timestamp, so an
 idle publishing timer cannot disguise stale perception as a fresh map.
