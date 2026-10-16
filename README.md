@@ -2,7 +2,7 @@
 
 **[版本总览：每版改动、功能、验证和问题](VERSIONS.md)** · [阶段标签](https://github.com/CQULzz/HT_Explo/tags) · [发布说明](https://github.com/CQULzz/HT_Explo/releases)
 
-当前是实验原型，已实现HT硬约束XYθ规划、历史高程融合与独立跟踪。**新增全局停滞恢复与重复访问记忆；最新同期20分钟估计观测6498m³，对照旧版3293.875m³。最长复测25分钟，修复后的60分钟与返航闭环尚待验证。** [最新修改、对比图和视频](docs/results/ht_progress_fix_2026-10-16/REPORT.md) · [此前60分钟失败长测](docs/results/ht_endurance_2026-10-16/REPORT.md)。
+当前是实验原型，已实现HT硬约束XYθ规划、历史高程融合与独立跟踪。**最新60分钟记录在约44分28秒返回起点并停稳，近似观测6513.75m³，对照旧长测3296.38m³；但活动期仍有低增益回访、短时地图过期和关停清理问题。** [最新长测、对比图与视频](docs/results/ht_endurance_progress_2026-10-17/REPORT.md)。
 
 下文保留原版TARE介绍及早期验证入口；当前HT功能和历史差异请先看版本总览。
 
