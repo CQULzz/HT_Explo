@@ -2,9 +2,9 @@
   "schema_version": 1,
   "updated_at": "2026-10-17",
   "branch": "codex/ht8dir-v1",
-  "status": "实验原型：一次60分钟记录中返回完成；活动期低增益回访、地图过期和关停清理仍待改进",
-  "latest_archive_commit": "3fe5b9b5ee23c7a3cc8ec7a0243cdd2d09891a38",
-  "latest_planner_change": "c85ad1f004bbaceae14cd65351be38c3a9e61273",
+  "status": "实验原型：跨目标回访、调度与关停已补修并通过短回归，新60分钟长测进行中；效率与延迟改善待验",
+  "latest_archive_commit": "bd0c2c24f7eac383a3d8120b312fa4eb499c3199",
+  "latest_planner_change": "bd0c2c24f7eac383a3d8120b312fa4eb499c3199",
   "stages": [
     {
       "id": "stage-01",
@@ -265,6 +265,23 @@
         "docs/results/ht_endurance_progress_2026-10-17/shutdown_event_audit.json"
       ],
       "control_commit": "c85ad1f004bbaceae14cd65351be38c3a9e61273"
+    },
+    {
+      "id": "stage-16",
+      "number": 16,
+      "sha": "bd0c2c24f7eac383a3d8120b312fa4eb499c3199",
+      "tag": "ht-stage-20261017-crossguide-lifecycle",
+      "title": "跨目标记忆与正常关停修复（长测待验）",
+      "kind": "功能",
+      "change": "全局引导进展跨目标切换保留；零收益到达目标暂缓回访；拆分CuPy发布调度，修复CMU/CuPy/Gazebo关停及完成状态显示。",
+      "features": "A→B→A不再重置A的停滞预算；新收益可绕过恢复目标冷却；工作区独立，HT硬门槛、严格未知、3秒时效和0.5m/s上限保留。",
+      "validation": "260核心、15 ROS、6跟踪器、8 CuPy/调度及2关停集成测试通过；第四轮仿真关停回归所有子节点正常退出，无残留。固定代码新60分钟长测正在进行。",
+      "known_issues": "短测不证明7.4分钟低收益回访已消除；新长测早期仍采样到超过3秒的地图年龄峰值。远端引导仍是距离启发，无完整全局可执行图；未做实车验证。",
+      "evidence": [
+        "docs/fixes/2026-10-17_endurance_followup.md",
+        "docs/results/ht_followup_smoke_2026-10-17/REPORT.md"
+      ],
+      "control_commit": "bd0c2c24f7eac383a3d8120b312fa4eb499c3199"
     }
   ],
   "historical_commits": [
@@ -582,6 +599,33 @@
       "change": "返航完成、回访、资源和主动关停审计、图与视频",
       "function_and_issues": "验证一次返回闭环；中途低增益回访和关停报错仍保留。",
       "original_subject": "Archive completed 60-minute HT trial with return, revisit, and shutdown audits"
+    },
+    {
+      "sha": "a8fdc8c7f6848ae78d4d3c6eeab9de94e54f1e61",
+      "short": "a8fdc8c",
+      "date": "2026-10-17",
+      "type": "实验解读",
+      "change": "补60分钟返回、低收益回访及主动关停问题说明",
+      "function_and_issues": "仅文档修改，未改变上一轮控制程序。",
+      "original_subject": "Document 60-minute return completion and remaining exploration and shutdown issues"
+    },
+    {
+      "sha": "bd0c2c24f7eac383a3d8120b312fa4eb499c3199",
+      "short": "bd0c2c2",
+      "date": "2026-10-17",
+      "type": "规划与生命周期修复",
+      "change": "全局引导进展跨目标切换保留；零收益到达目标暂缓回访；拆分CuPy发布调度，修复CMU/CuPy/Gazebo关停及完成状态显示。",
+      "function_and_issues": "短回归通过；新长测正在运行，不宣称绕圈或过期全部消失。",
+      "original_subject": "Preserve guide progress across switches and fix map scheduling and shutdown lifecycle"
+    },
+    {
+      "sha": "5ca71da93bd358a1bfc6c713eb8618ed77b88549",
+      "short": "5ca71da",
+      "date": "2026-10-17",
+      "type": "实验工具",
+      "change": "自动核验冻结哈希、子进程关停、完整视频解码和回访区间",
+      "function_and_issues": "只处理实验完成后的数据，不修改控制路径。",
+      "original_subject": "Automate frozen-source, shutdown, video and revisit audits for endurance follow-up"
     }
   ]
 }
