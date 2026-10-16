@@ -74,6 +74,15 @@ def main():
     axes[1,1].set(title='到访的 1 m × 1 m 轨迹格',xlabel='运行时间 / 分钟',ylabel='格数')
     for ax in axes.flat:
         ax.grid(alpha=.2);ax.legend(fontsize=8)
+    mission_file=a.current/'mission_audit.json'
+    if mission_file.exists():
+        completed=json.loads(mission_file.read_text()).get('first_completed_sample_s')
+        if completed is not None and completed<end:
+            for ax in [axes[0,0],axes[0,1],axes[1,1]]:
+                ax.axvspan(completed/60,end/60,color='#148f8b',alpha=.08)
+                ax.axvline(completed/60,color='#148f8b',linestyle=':',linewidth=1)
+            axes[0,0].text(.98,.06,f'浅色区：任务 COMPLETED 后停车（{completed/60:.1f} 分钟起）',
+                            transform=axes[0,0].transAxes,ha='right',fontsize=8)
     fig.suptitle(f'HT 绕圈修复验证：同一 Garage、前 {end/60:.1f} 分钟、速度上限 0.5 m/s',fontsize=15)
     fig.savefig(a.output/'comparison.png',dpi=170);plt.close(fig)
     lines=['# HT 绕圈修复：同场景等时长比较','',

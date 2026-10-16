@@ -36,6 +36,8 @@ def source(*prefixes):return ' '.join(f'source {q(p)} &&' for p in prefixes)
 
 class Trial:
     def __init__(self,name,folder,domain):
+        if not 0<=domain<=232:
+            raise ValueError('ROS domain must be between 0 and 232 for the configured Fast DDS ports')
         self.name=name;self.folder=folder;self.domain=domain;self.processes=[]
         self.env=os.environ.copy()
         self.env.update(ROS_DOMAIN_ID=str(domain),GZ_PARTITION=f'ht_tare_pair_{domain}',

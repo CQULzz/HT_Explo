@@ -1,0 +1,40 @@
+{
+  "started_at": "2026-10-16T22:53:33.862185+08:00",
+  "planned_duration_s": 1200,
+  "scenario": "Garage",
+  "domain": 232,
+  "speed_cap_mps": 0.5,
+  "preflight": {
+    "checked": [
+      "/home/lzz/my test/autonomous_exploration_development_environment/install/setup.bash",
+      "/home/lzz/my test/tare_planner_upstream_baseline/install/setup.bash",
+      "/home/lzz/my test/HT_Explo-fixposition/install_standalone/setup.bash",
+      "/home/lzz/my test/elevation_mapping_cupy_ws/install/setup.bash",
+      "/home/lzz/my test/HT_Explo-fixposition/tools/ht_cupy_bridge/cmu_xytheta.launch.py",
+      "/home/lzz/my test/HT_Explo-fixposition/tools/ht_cupy_bridge/cupy_to_ht.py",
+      "/home/lzz/my test/HT_Explo-fixposition/tools/ht_cupy_bridge/ht_trial.yaml",
+      "/home/lzz/my test/HT_Explo-fixposition/tools/ht_cupy_bridge/assets/lidar_downward.sdf",
+      "/home/lzz/my test/HT_Explo-fixposition/presentations/paired_probe.py",
+      "/home/lzz/my test/HT_Explo-fixposition/presentations/stage_garage_pose.py"
+    ],
+    "original_workspace": "/home/lzz/my test/tare_planner_upstream_baseline",
+    "current_workspace": "/home/lzz/my test/HT_Explo-fixposition",
+    "sim_workspace": "/home/lzz/my test/autonomous_exploration_development_environment"
+  },
+  "git_head": "7f1c253feccb1b7ec4b4912f70312d7b308e3a20",
+  "evidence_policy": "All control/status and odometry; original-stamped scans1Hz; exact-stamp map snapshots every10s; camera2fps. Not a full input bag.",
+  "source_hashes": {
+    "/home/lzz/my test/HT_Explo-fixposition/tools/ht_cupy_bridge/ht_trial.yaml": "a6821e1180a3c48ca1b80adb42d8f1f880958286e53cfd5fce511036a371f87f",
+    "/home/lzz/my test/HT_Explo-fixposition/tools/ht_cupy_bridge/cupy_to_ht.py": "0421233fd7e668c8a629ca84554cde8086fd74d13323f774c7fe578ef720f7d7",
+    "/home/lzz/my test/HT_Explo-fixposition/tools/ht_cupy_bridge/historical_elevation.py": "232ab871b749d18b38b7fc1e34cd48c4d67ca1876c53267561ad61e04c7bdce8",
+    "/home/lzz/my test/elevation_mapping_cupy_ws/config/trial_core.yaml": "8663d1a9435f181ba140084027a4aedc1a3d6d75a02d61366a3e3eb269cf3492",
+    "/home/lzz/my test/elevation_mapping_cupy_ws/config/trial_setup.yaml": "4f859a755afc41a79b28c6bf1b5342118ad5ae26deb31303354c5a6a17bee081",
+    "/home/lzz/my test/elevation_mapping_cupy_ws/install/elevation_mapping_cupy/lib/elevation_mapping_cupy/elevation_mapping_node": "807954bfaea87b86ece76d13b212522271090ed083b106dc355f999bff413815",
+    "/home/lzz/my test/HT_Explo-fixposition/install_standalone/tare_planner/lib/tare_planner/xytheta_follower": "0815f6b808d9e49770eb2fa1a27e92262b038a64172d4f04d36e0965c0684237",
+    "/home/lzz/my test/HT_Explo-fixposition/install_standalone/tare_planner/lib/tare_planner/tare_planner_node": "845f86b8abdccaaef918681d04457f0a960eff0119f65b1cfe60a07a7fa99d34",
+    "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/config/ht.yaml": "08abdce7ca214f0e3bfa69241ddc2e030d5bc543287dfc23d1bb377908cc29e1",
+    "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/include/ht_cost/exploration_progress.h": "243ac4ee2392b8a6f1d9a09f0e26232617ef918f05549eb53b5d618e2e50a462",
+    "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/src/local_coverage_planner/ht_route.cpp": "9679fdd26632e759901d7b8778be874d4e9ac46699dc3ee4c5fd0ef77b684c3b",
+    "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp": "03e2c4cdf75e45c3d8048263ade98ba63d5c945cd60bdae3d277630357f0e97c"
+  }
+}

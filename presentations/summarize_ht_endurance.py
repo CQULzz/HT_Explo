@@ -203,11 +203,21 @@ def main():
             accepted_rejections.append({'time_s': float(when[1])-origin, 'log': line})
     target_audit['accepted_execution_rejections'] = accepted_rejections
     (folder/'target_selection_audit.json').write_text(json.dumps(target_audit, indent=2))
+    mission = {
+        'first_exploration_finished_sample_s': next((number(row,'t_s') for row in rows if row.get('finished')=='1'),None),
+        'sampled_mission_counts': dict(collections.Counter(row['mission'] for row in health)),
+        'first_completed_sample_s': next((number(row,'wall_time')-origin for row in health if row['mission']=='COMPLETED'),None),
+        'last_sampled_mission': health[-1]['mission'] if health else None,
+        'last_sampled_execution_status': health[-1]['execution_status'] if health else None,
+        'final_distance_to_measurement_start_m': float(np.hypot(x[-1]-x[0],y[-1]-y[0])),
+        'meaning': 'Exploration finished is a return-home trigger. Only mission COMPLETED confirms the home radius, low-speed and dwell checks; neither establishes ground-truth full coverage.'}
+    (folder/'mission_audit.json').write_text(json.dumps(mission,ensure_ascii=False,indent=2))
     report = {
         'duration_s': duration, 'completed_timer': (folder/'COMPLETED.json').exists(),
         'node_restarts': 0, 'runtime_failures': failures,
         'summary': summary, 'external_metrics': external,
         'target_selection_audit': target_audit,
+        'mission_audit': mission,
         'source_aligned_input_delivery': delivery,
         'sampled_map_age_s': stats(map_age), 'sampled_scan_age_s': stats(scan_age),
         'map_age_over3s_samples': int(np.sum(map_age>3)),
@@ -307,6 +317,7 @@ def main():
              f'计划/实际记录 {duration/60:.0f} 分钟；不重启规划、建图及跟踪节点。前进上限0.5m/s。', '',
              f'- 行驶距离：{summary["distance_m"]:.2f}米；到访1米轨迹格：{summary["visited_1m_xy_cells"]}。',
              f'- 探索完成信号：{summary["exploration_finished"]}；定时结束不等于探索完成。',
+             f'- 最后采样任务状态：{mission["last_sampled_mission"]}；执行状态：{mission["last_sampled_execution_status"]}。探索完成信号只触发返航，不等于已安全回到起点。',
              f'- 运行期间父进程退出/资源保护事件：{len(failures)}个，详见endurance_audit.json。',
              f'- 1Hz采样HT地图年龄P95/最大：{stats(map_age)["p95"]:.3f}/{stats(map_age)["max"]:.3f}秒；超过3秒{int(np.sum(map_age>3))}个采样点。',
              f'- 最长完全零速约{stopped[0]["duration_s"] if stopped else 0:.1f}秒；最长实际不平移约{no_motion[0]["duration_s"] if no_motion else 0:.1f}秒，后者包括原地旋转。', '',
