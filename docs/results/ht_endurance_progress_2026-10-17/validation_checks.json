@@ -1,0 +1,174 @@
+{
+  "duration_s": 3600.0,
+  "sample_count": 7201,
+  "command_samples_in_probe": 72001,
+  "command_samples_in_bag": 72000,
+  "source_hashes_unchanged": {
+    "/home/lzz/my test/HT_Explo-fixposition/tools/ht_cupy_bridge/ht_trial.yaml": true,
+    "/home/lzz/my test/HT_Explo-fixposition/tools/ht_cupy_bridge/cupy_to_ht.py": true,
+    "/home/lzz/my test/HT_Explo-fixposition/tools/ht_cupy_bridge/historical_elevation.py": true,
+    "/home/lzz/my test/elevation_mapping_cupy_ws/config/trial_core.yaml": true,
+    "/home/lzz/my test/elevation_mapping_cupy_ws/config/trial_setup.yaml": true,
+    "/home/lzz/my test/elevation_mapping_cupy_ws/install/elevation_mapping_cupy/lib/elevation_mapping_cupy/elevation_mapping_node": true,
+    "/home/lzz/my test/HT_Explo-fixposition/install_standalone/tare_planner/lib/tare_planner/xytheta_follower": true,
+    "/home/lzz/my test/HT_Explo-fixposition/install_standalone/tare_planner/lib/tare_planner/tare_planner_node": true,
+    "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/config/ht.yaml": true,
+    "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/include/ht_cost/exploration_progress.h": true,
+    "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/include/ht_cost/execution_policy.h": true,
+    "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/src/local_coverage_planner/ht_route.cpp": true,
+    "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp": true,
+    "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp": true
+  },
+  "runtime_failures": [],
+  "mission": {
+    "first_exploration_finished_sample_s": 2650.004,
+    "sampled_mission_counts": {
+      "EXPLORING": 2636,
+      "BLOCKED": 14,
+      "RETURNING_HOME": 17,
+      "COMPLETED": 933
+    },
+    "first_completed_sample_s": 2667.4822838306427,
+    "last_sampled_mission": "COMPLETED",
+    "last_sampled_execution_status": "COMPLETED",
+    "final_distance_to_measurement_start_m": 0.29083328557783755,
+    "meaning": "Exploration finished is a return-home trigger. Only mission COMPLETED confirms the home radius, low-speed and dwell checks; neither establishes ground-truth full coverage."
+  },
+  "guide_stall_releases": 8,
+  "segments": [
+    {
+      "start_s": 0,
+      "end_s": 600,
+      "distance_m": 198.615,
+      "fully_stopped_sample_fraction": 0.07916666666666666,
+      "stationary_turn_sample_fraction": 0.1425,
+      "map_age": {
+        "count": 600,
+        "median": 1.3327440023422241,
+        "p95": 1.9953606367111192,
+        "max": 3.05539870262146
+      },
+      "reported_planner_runtime_sampled_s": {
+        "count": 1200,
+        "median": 0.332,
+        "p95": 1.07405,
+        "max": 1.23
+      },
+      "cumulative_visited_1m_xy_cells": 172,
+      "observed_free_volume_gain_m3": 3491.9625626831107
+    },
+    {
+      "start_s": 600,
+      "end_s": 1200,
+      "distance_m": 203.74099999999999,
+      "fully_stopped_sample_fraction": 0.0825,
+      "stationary_turn_sample_fraction": 0.11666666666666667,
+      "map_age": {
+        "count": 600,
+        "median": 1.3187034130096436,
+        "p95": 2.000436496734619,
+        "max": 3.374959707260132
+      },
+      "reported_planner_runtime_sampled_s": {
+        "count": 1200,
+        "median": 0.35,
+        "p95": 0.899,
+        "max": 1.261
+      },
+      "cumulative_visited_1m_xy_cells": 280,
+      "observed_free_volume_gain_m3": 1379.7874373168893
+    },
+    {
+      "start_s": 1200,
+      "end_s": 1800,
+      "distance_m": 151.81494800000007,
+      "fully_stopped_sample_fraction": 0.1,
+      "stationary_turn_sample_fraction": 0.22,
+      "map_age": {
+        "count": 600,
+        "median": 1.2792367935180664,
+        "p95": 1.9727963447570793,
+        "max": 2.7766168117523193
+      },
+      "reported_planner_runtime_sampled_s": {
+        "count": 1200,
+        "median": 0.34,
+        "p95": 1.09,
+        "max": 1.214
+      },
+      "cumulative_visited_1m_xy_cells": 337,
+      "observed_free_volume_gain_m3": 1483.1454867108123
+    },
+    {
+      "start_s": 1800,
+      "end_s": 2400,
+      "distance_m": 146.02985239920156,
+      "fully_stopped_sample_fraction": 0.07666666666666666,
+      "stationary_turn_sample_fraction": 0.2733333333333333,
+      "map_age": {
+        "count": 600,
+        "median": 1.3420050144195557,
+        "p95": 1.9842522144317627,
+        "max": 2.5038087368011475
+      },
+      "reported_planner_runtime_sampled_s": {
+        "count": 1200,
+        "median": 0.351,
+        "p95": 1.0341999999999998,
+        "max": 1.243
+      },
+      "cumulative_visited_1m_xy_cells": 345,
+      "observed_free_volume_gain_m3": 145.1045132891877
+    },
+    {
+      "start_s": 2400,
+      "end_s": 3000,
+      "distance_m": 68.36619960079838,
+      "fully_stopped_sample_fraction": 0.5925,
+      "stationary_turn_sample_fraction": 0.11,
+      "map_age": {
+        "count": 600,
+        "median": 1.309141993522644,
+        "p95": 1.983916091918945,
+        "max": 2.932349920272827
+      },
+      "reported_planner_runtime_sampled_s": {
+        "count": 1200,
+        "median": 0.0,
+        "p95": 0.685,
+        "max": 1.2
+      },
+      "cumulative_visited_1m_xy_cells": 371,
+      "observed_free_volume_gain_m3": 13.75
+    },
+    {
+      "start_s": 3000,
+      "end_s": 3600,
+      "distance_m": 0.0,
+      "fully_stopped_sample_fraction": 1.0,
+      "stationary_turn_sample_fraction": 0.0,
+      "map_age": {
+        "count": 600,
+        "median": 0.952715277671814,
+        "p95": 1.9635468959808349,
+        "max": 2.6561877727508545
+      },
+      "reported_planner_runtime_sampled_s": {
+        "count": 1200,
+        "median": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "cumulative_visited_1m_xy_cells": 371,
+      "observed_free_volume_gain_m3": 0.0
+    }
+  ],
+  "video": {
+    "name": "camera_h264.mp4",
+    "sha256": "19c64184c8f9c54020918c32256327633452259960172447ee1cb4aeabc73b16",
+    "bytes": 16172041,
+    "full_decode_returncode": 0,
+    "decode_errors": "",
+    "fps": 2
+  }
+}
