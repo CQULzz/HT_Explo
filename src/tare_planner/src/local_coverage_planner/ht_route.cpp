@@ -268,7 +268,13 @@ exploration_path_ns::ExplorationPath LocalCoveragePlanner::PlanHTReturn(const Ei
   };
   const auto plan=ht_cost_ns::planXYTheta(start,{target.x(),target.y(),target.z()},
                                          xytheta_config_,valid);
-  if (!plan.reached || plan.poses.size()<2) return result;
+  if (!plan.reached || plan.poses.size()<2) {
+    RCLCPP_WARN_THROTTLE(node_->get_logger(),*node_->get_clock(),3000,
+      "HT return search failed: robot=(%.3f,%.3f) checkpoint=(%.3f,%.3f) distance=%.3f reached=%d poses=%zu expanded=%d",
+      start.x,start.y,target.x(),target.y(),std::hypot(target.x()-start.x,target.y()-start.y),
+      plan.reached,plan.poses.size(),plan.expanded);
+    return result;
+  }
   ht_output_path_.header.frame_id="map";
   ht_output_path_.header.stamp=node_->now();
   for (size_t i=0;i<plan.poses.size();++i) {

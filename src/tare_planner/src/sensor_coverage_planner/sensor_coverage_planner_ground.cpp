@@ -963,6 +963,12 @@ void SensorCoveragePlanner3D::LocalPlanning(
     exploration_path_ns::ExplorationPath &local_path) {
   misc_utils_ns::Timer local_tsp_timer("Local planning");
   local_tsp_timer.Start();
+  if (exploration_finished_ && viewpoint_manager_->HT()->enabled()) {
+    // The return search below owns the output path. Coverage-goal search here
+    // is discarded and needlessly delays each return planning cycle.
+    local_path.Reset();local_coverage_planner_->ClearHTPath();
+    local_tsp_timer.Stop(false);return;
+  }
   if (lookahead_point_update_) {
     local_coverage_planner_->SetLookAheadPoint(lookahead_point_);
   }
@@ -1008,7 +1014,8 @@ SensorCoveragePlanner3D::ConcatenateGlobalLocalPath(
       return_progress_.checkpoints.push_back({home.x,home.y,home.z});
     }
     return_progress_.advance({robot_position_.x,robot_position_.y,robot_position_.z},
-      viewpoint_manager_->HT()->reachedDistance());
+      viewpoint_manager_->HT()->enabled() ? local_coverage_planner_->ReturnCheckpointRadius() :
+        viewpoint_manager_->HT()->reachedDistance(),home_completion_.radius);
     exploration_path_ns::Node node;
     node.position_=Eigen::Vector3d(robot_position_.x,robot_position_.y,robot_position_.z);
     node.type_=exploration_path_ns::NodeType::ROBOT;full_path.nodes_.push_back(node);

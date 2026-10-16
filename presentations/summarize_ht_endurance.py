@@ -184,7 +184,16 @@ def main():
         'new_goal_zero_reported_gain_rows': sum(row['reported_gain']==0 for row in new_goal_rows),
         'new_goal_recovery_rows': sum(row['recovery'] for row in new_goal_rows),
         'guide_log_counts': dict(collections.Counter(row['guide_xy'] for row in plan_log_rows)),
-        'note': 'These are throttled log rows, not all planning cycles. Held targets are inserted withgain0 in ht_route.cpp; their logs cannot establish zero scene gain.'}
+        'note': 'Throttled log rows, not all planning cycles. Gain is the viewpoint coverage estimate, not measured new free volume. Older builds used a gain0 placeholder for held goals; use the external observed-volume union to assess real progress.'}
+    guide_events = []
+    for line in (folder/'current/tare.log').read_text().splitlines():
+        if 'HT global guide stalled:' not in line and 'HT guide selected:' not in line:
+            continue
+        when = re.search(r'\[(\d+\.\d+)\]', line)
+        if when and 0<=float(when[1])-origin<duration:
+            guide_events.append({'time_s': float(when[1])-origin, 'log': line})
+    target_audit['guide_events'] = guide_events
+    target_audit['global_stall_releases'] = sum('HT global guide stalled:' in row['log'] for row in guide_events)
     accepted_rejections = []
     for line in (folder/'current/tare.log').read_text().splitlines():
         if 'Execution rejected HT edge' not in line:
@@ -313,7 +322,7 @@ def main():
               '保留全部控制/状态/里程计消息；原始点云每秒抽样1帧，地图精确同时间戳快照约每10秒一组，相机视频2fps。此包不是完整传感器录包，不能用抽样帧数认定输入掉包。',
               '全速输入需结合健康探针回调计数、CuPy接收/融合计数和源时间段核验；结束时可能有未完成的一帧。',
               f'以源时间戳对齐外部探针与建图接收计数，匹配{len(matches)}个检查点；计数差恒定：{delivery["constant_offset_in_observed_window"]}。详见input_delivery_audit.json；这只检查匹配窗口内的相对接收差异，不能排除上游停发或双方共同漏收。',
-              '目标选择日志单独保存在target_selection_audit.json。已承诺目标在当前代码中以gain=0占位，不能仅凭这些日志认定场景没有收益；需结合未承诺目标、实际轨迹和观测并集。',
+              '目标选择及全局引导切换日志保存在target_selection_audit.json。gain是视点覆盖估计；旧版对已承诺目标还使用过gain=0占位。实际新增观测需看自由体素并集，不能仅凭目标日志判断。',
               '自由空间是0.5m体素光线累计近似值，不是官方覆盖率或真值。内存为进程组RSS相加，可能重复计算共享页；显存总量包含桌面。',
               '单次Garage长测不能证明跨场景、实车或所有条件稳定。', '',
               '[健康/停车/内存审计](endurance_audit.json) · [每10分钟统计](ten_minute_segments.csv) · [相机视频](camera_2fps.mp4)']

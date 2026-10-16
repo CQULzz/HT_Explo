@@ -652,7 +652,9 @@ LocalCoveragePlanner::SolveLocalCoverageProblem(
     bool guide_present=false,has_global_destination=false;
     for (const auto& n:global_path.nodes_) {
       if (n.type_!=exploration_path_ns::NodeType::GLOBAL_VIEWPOINT) continue;
-      has_global_destination=true;
+      if ((n.position_-robot_position_).head<2>().norm()>1.0 &&
+          !ht_guide_progress_.cooling({n.position_.x(),n.position_.y(),n.position_.z()},now))
+        has_global_destination=true;
       if ((n.position_-ht_global_guide_).head<2>().norm()<ht_guide_progress_.identity_radius)
         guide_present=true;
     }

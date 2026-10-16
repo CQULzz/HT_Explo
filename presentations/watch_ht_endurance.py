@@ -22,6 +22,10 @@ def main():
     args = ap.parse_args()
     folder = args.folder.resolve()
     start = time.monotonic()
+    # The runner creates a new folder and refuses an existing one. When both
+    # processes start together the observer must wait, not create it first.
+    while not folder.is_dir() and time.monotonic()-start < 15:
+        time.sleep(.2)
     with (folder/'mapper_checkpoints.jsonl').open('a') as output:
         while time.monotonic()-start < 8000:
             try:

@@ -98,8 +98,10 @@ def main():
              ROOT/'install_standalone/tare_planner/lib/tare_planner/tare_planner_node',
              ROOT/'src/tare_planner/config/ht.yaml',
              ROOT/'src/tare_planner/include/ht_cost/exploration_progress.h',
+             ROOT/'src/tare_planner/include/ht_cost/execution_policy.h',
              ROOT/'src/tare_planner/src/local_coverage_planner/ht_route.cpp',
-             ROOT/'src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp']
+             ROOT/'src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp',
+             ROOT/'src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp']
     manifest = dict(started_at=dt.datetime.now().astimezone().isoformat(),
                     planned_duration_s=args.duration, scenario='Garage', domain=args.domain,
                     speed_cap_mps=.5, preflight=preflight(),

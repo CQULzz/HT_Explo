@@ -47,8 +47,12 @@ enum class Support { KNOWN, STARTUP_PRIOR, UNKNOWN, BLOCKED, FAULT };
 struct ReturnProgress {
   std::vector<Point> checkpoints;
   size_t next=0;
-  void advance(Point robot,double reached) {
-    while (next<checkpoints.size() && waypointReached(robot,checkpoints[next],reached)) ++next;
+  void advance(Point robot,double reached,double home_reached=-1) {
+    while (next<checkpoints.size()) {
+      const double radius=next+1==checkpoints.size() && home_reached>=0 ? home_reached : reached;
+      if (!waypointReached(robot,checkpoints[next],radius)) break;
+      ++next;
+    }
   }
 };
 struct ExecutionTarget { Point point; Support support=Support::KNOWN; bool valid=false; };

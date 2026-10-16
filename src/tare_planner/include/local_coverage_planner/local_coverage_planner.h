@@ -62,6 +62,11 @@ public:
   SolveLocalCoverageProblem(const exploration_path_ns::ExplorationPath& global_path, int uncovered_point_num,
                             int uncovered_frontier_point_num = 0);
   exploration_path_ns::ExplorationPath PlanHTReturn(const Eigen::Vector3d& target);
+  double ReturnCheckpointRadius() const {
+    // Search may stop goal_radius from the checkpoint; the follower consumes
+    // its last pose within 0.12 m. Include 0.03 m numerical/tracking margin.
+    return std::max(viewpoint_manager_->HT()->reachedDistance(),xytheta_config_.goal_radius+0.15);
+  }
   void PublishHTPath();
   const nav_msgs::msg::Path& GetHTPath() const { return ht_output_path_; }
   void ClearHTPath() { ht_output_path_.poses.clear(); }

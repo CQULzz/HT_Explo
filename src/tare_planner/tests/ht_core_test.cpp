@@ -188,6 +188,19 @@ int main() {
   back.advance({.2,0,0},.3);check(back.next==2);
   XYThetaConfig cfg;cfg.max_search_seconds=1.0;
   auto all_valid=[](Pose2,Pose2,double) {return true;};
+  // Return dead zone: a checkpoint 0.328 m away is already "reached" by
+  // the 0.35 m search, while the former 0.30 m consumer never advanced it.
+  XYThetaConfig returning=cfg;returning.goal_radius=.35;
+  const auto near_checkpoint=planXYTheta({0,0,0},{.328,0,0},returning,all_valid);
+  check(near_checkpoint.reached);check(near_checkpoint.poses.size()==1);
+  ReturnProgress returning_route;returning_route.checkpoints={{.328,0,0},{2,0,0}};
+  returning_route.advance({},.3);check(returning_route.next==0);
+  returning_route.advance({},returning.goal_radius+.15,.5);check(returning_route.next==1);
+  const auto onward=planXYTheta({0,0,0},returning_route.checkpoints[returning_route.next],returning,all_valid);
+  check(onward.reached && onward.poses.size()>1);
+  ReturnProgress final_home;final_home.checkpoints={{.4,0,0},{.55,0,0}};
+  final_home.advance({},.6,.5);check(final_home.next==1); // Never enlarge the home completion radius.
+  final_home.advance({.1,0,0},.6,.5);check(final_home.next==2);
   auto xy_straight=planXYTheta({0,0,0},{2,0,0},cfg,all_valid);
   check(xy_straight.reached);check(xy_straight.poses.size()>2);
   check(std::hypot(xy_straight.poses.back().x-2,xy_straight.poses.back().y)<cfg.goal_radius);
