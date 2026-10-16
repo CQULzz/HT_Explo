@@ -4,14 +4,13 @@
 
 ## 当前版本先看这里
 
-**当前已经实现：CuPy历史高程融合与局部裁图、HT八方向硬约束、实际XYθ局部规划、独立跟踪器、执行拒绝反馈。仍未解决：长期有效探索推进、反复回访、偶发地图过期与仿真网络抖动，尚无实车完整验收。**
+**当前已加入全局停滞检测、失败引导冷却、重复访问记忆与恢复评分修正。最新25分钟探索推进改善，但修复后的60分钟稳定性和返航闭环尚未通过验证，偶发地图过期仍存在。**
 
-60分钟长测走了993.48米，却在后40分钟仅增加2.5m³估计自由空间。没有崩溃不等于探索成功。当前不应作为已稳定探索的版本宣传。
+同一Garage前20分钟，估计累计观测从原长测同期3293.875m³增至6498m³，第10–20分钟增益从26.375m³增至1654.125m³。最新25分钟结束仍为EXPLORING，不能称全域完成。
 
-- 最后一次核心运动规划/执行修改：[`3912e37`](https://github.com/CQULzz/HT_Explo/commit/3912e37df7541799c354bf568ff8f3d5b0383aab)。
-- 配对评测归档：[`07ab006`](https://github.com/CQULzz/HT_Explo/commit/07ab0067dc7f47dc6eb7e5e2b9924f79f2ed9a24)；长测运行树基线也是该提交。
-- 长测归档：[`6bd5407`](https://github.com/CQULzz/HT_Explo/commit/6bd5407b781771b0460ed1533eaee6d500c91bc4)，新增测试工具/证据，未改变被测运动规划算法。
-- [最新60分钟报告](docs/results/ht_endurance_2026-10-16/REPORT.md) · [原版TARE对比](docs/results/tare_ht_pair_2026-10-16/REPORT.md) · [GitHub版本标签](https://github.com/CQULzz/HT_Explo/tags) · [GitHub Releases](https://github.com/CQULzz/HT_Explo/releases)
+- 当前核心规划代码：[`c85ad1f`](https://github.com/CQULzz/HT_Explo/commit/c85ad1f004bbaceae14cd65351be38c3a9e61273)；引导修复：[`7f1c253`](https://github.com/CQULzz/HT_Explo/commit/7f1c253feccb1b7ec4b4912f70312d7b308e3a20)。
+- [最新修改与两轮复测报告](docs/results/ht_progress_fix_2026-10-16/REPORT.md) · [最新视频](docs/results/ht_progress_fix_2026-10-16/return_fix_trial/camera_h264.mp4)。
+- [此前60分钟失败长测](docs/results/ht_endurance_2026-10-16/REPORT.md) · [此前原版TARE配对比较（旧HT）](docs/results/tare_ht_pair_2026-10-16/REPORT.md) · [GitHub Releases](https://github.com/CQULzz/HT_Explo/releases)。
 
 历史阶段标签与中文Release说明于2026-10-16补录，固定到原始提交；不会改写旧提交日期或移动原有实验标签。
 
@@ -32,6 +31,7 @@
 | [11 统一运动段检查与执行拒绝反馈](#stage-11) | [`919d826`](https://github.com/CQULzz/HT_Explo/tree/919d826f340c11e34421a738e80d2a2e85066eb9) | 消除已复现的规划通过/执行拒绝循环；检查车头变化、倒车方向和前约1米路径；不放宽HT门槛或未知策略。 | 只解决特定持续拒绝循环；仍有转向、回访与短暂停顿，短测不保证全局探索完成；最新长测进一步证实长期推进不足。 |
 | [12 最新原版TARE配对评测](#stage-12) | [`07ab006`](https://github.com/CQULzz/HT_Explo/tree/07ab0067dc7f47dc6eb7e5e2b9924f79f2ed9a24) | 明确量化原版与当前完整系统差距；与上阶段相比没有再升级运动规划算法。 | 每组一次且倒车/角速度/加速度未完全对齐，是端到端比较；HT转向、停车和回访更多，未追平原版。 |
 | [13 60分钟长测：运行连续但探索停滞](#stage-13) | [`6bd5407`](https://github.com/CQULzz/HT_Explo/tree/6bd5407b781771b0460ed1533eaee6d500c91bc4) | 可检验长期资源增长、输入延迟、运动拒绝反馈与探索增益；被测规划算法与上阶段相同。 | 未通过持续有效探索验证；全局引导长期不变、重复回访，网卡掉线时发生约13秒输入中断；内存未失控但持续扩图上界未验证。 |
+| [14 全局停滞恢复与返航容差修正](#stage-14) | [`9393e7d`](https://github.com/CQULzz/HT_Explo/tree/9393e7da7d1eeabf04a4325593834304f236e405) | 局部目标完成不再掩盖全局停滞；零收益主目标不能压住所有恢复候选；保留HT硬门槛、严格未知和速度上限。 | 第一轮返航BLOCKED；已补容差回归，但最新一轮未触发返航，不能称闭环通过。尚未重跑60分钟；地图年龄最高4.17秒，仍有过期停车。没有真值全域覆盖率或实车验收。 |
 
 ## 各阶段的修改、功能与问题
 
@@ -202,6 +202,18 @@
 - **控制/功能来源：** `3912e37`；归档提交不表示修改了运动规划算法。
 - **证据：** [REPORT.md](docs/results/ht_endurance_2026-10-16/REPORT.md) · [validation_checks.json](docs/results/ht_endurance_2026-10-16/validation_checks.json)
 
+<a id="stage-14"></a>
+
+### 14｜全局停滞恢复与返航容差修正
+
+标签：[`ht-stage-20261016-progress-memory`](https://github.com/CQULzz/HT_Explo/tree/ht-stage-20261016-progress-memory)；归档提交：[`9393e7d`](https://github.com/CQULzz/HT_Explo/commit/9393e7da7d1eeabf04a4325593834304f236e405)；核心：`c85ad1f`。
+
+- **改动：** 全局引导独立进展计时、180秒失败冷却、世界坐标重复访问记忆；修正恢复评分、返航检查点到达容差及无用探索搜索。
+- **实现功能：** 局部目标完成不再掩盖全局停滞；零收益主目标不能压住所有恢复候选；保留HT硬门槛、严格未知和速度上限。
+- **验证结果：** 242项核心、15项ROS和5项跟踪测试通过。两轮20/25分钟；最新同期20分钟估计观测6498m³，对照3293.875m³；第10–20分钟增益1654.125m³，对照26.375m³。25分钟447.50米、294格，最终EXPLORING。
+- **存在问题：** 第一轮返航BLOCKED；已补容差回归，但最新一轮未触发返航，不能称闭环通过。尚未重跑60分钟；地图年龄最高4.17秒，仍有过期停车。没有真值全域覆盖率或实车验收。
+- **证据：** [两轮报告与视频](docs/results/ht_progress_fix_2026-10-16/REPORT.md)。
+
 ## 全部历史提交逐条说明
 
 下表覆盖截至6bd5407的27个归档提交，包括资料、方案和数据格式提交，避免把每一次push都误认为算法升级。点击提交可查看当时源码和差异。当前补充版本说明本身属于文档维护，不新增导航功能。
@@ -235,6 +247,11 @@
 | 2026-10-16 | [`919d826`](https://github.com/CQULzz/HT_Explo/commit/919d826f340c11e34421a738e80d2a2e85066eb9) | 重复验证归档 | 第二轮180秒、连续零速审计及三轮对比 | 63.45米，最长零速1.50秒；算法仍3912e37。 |
 | 2026-10-16 | [`07ab006`](https://github.com/CQULzz/HT_Explo/commit/07ab0067dc7f47dc6eb7e5e2b9924f79f2ed9a24) | 原版对比评测 | 统一自由体积口径、CSV/曲线/对比视频 | 当前HT探索效率落后原版；非完全匹配控制器消融。 |
 | 2026-10-16 | [`6bd5407`](https://github.com/CQULzz/HT_Explo/commit/6bd5407b781771b0460ed1533eaee6d500c91bc4) | 长测归档 | 60分钟监测脚本、统计、视频与失败结论 | 无核心规划升级；揭示持续运动下长期探索停滞。 |
+| 2026-10-16 | [`d9eabd7`](https://github.com/CQULzz/HT_Explo/commit/d9eabd7b6c91f9c4ff160b9969f1ec7196225742) | 版本文档 | 标注13阶段的改动、功能、验证与问题 | 仅历史说明，无导航功能变更。 |
+| 2026-10-16 | [`71a2748`](https://github.com/CQULzz/HT_Explo/commit/71a27484ebda62700aa4466d0f91a46ee9ebbfe0) | 版本发布工具 | 通过仓库限定Actions同步中文Releases | 保留已有标签及附件，无导航功能变更。 |
+| 2026-10-16 | [`7f1c253`](https://github.com/CQULzz/HT_Explo/commit/7f1c253feccb1b7ec4b4912f70312d7b308e3a20) | 全局进展与恢复修复 | 引导独立停滞检测、失败冷却、重复访问记忆和恢复评分 | 20分钟探索明显改善，但末尾返航BLOCKED。 |
+| 2026-10-16 | [`c85ad1f`](https://github.com/CQULzz/HT_Explo/commit/c85ad1f004bbaceae14cd65351be38c3a9e61273) | 返航与恢复边界修正 | 对齐返航检查点到达容差、移除返航无用探索搜索 | 242核心及20ROS/跟踪测试通过；最新25分钟未触发返航，闭环仍待验。 |
+| 2026-10-16 | [`9393e7d`](https://github.com/CQULzz/HT_Explo/commit/9393e7da7d1eeabf04a4325593834304f236e405) | 两轮证据归档 | 等时长比较、CSV、任务审计及可解码视频 | 最新25分钟447.50米、294格；没有把运行定时结束写成完成探索。 |
 
 ## 怎样取回指定版本
 

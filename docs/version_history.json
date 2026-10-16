@@ -2,9 +2,9 @@
   "schema_version": 1,
   "updated_at": "2026-10-16",
   "branch": "codex/ht8dir-v1",
-  "status": "实验原型：进程连续性已长测，长期有效探索未通过",
-  "latest_archive_commit": "6bd5407b781771b0460ed1533eaee6d500c91bc4",
-  "latest_planner_change": "3912e37df7541799c354bf568ff8f3d5b0383aab",
+  "status": "实验原型：25分钟探索推进改善；修复后60分钟与返航闭环仍待验证",
+  "latest_archive_commit": "9393e7da7d1eeabf04a4325593834304f236e405",
+  "latest_planner_change": "c85ad1f004bbaceae14cd65351be38c3a9e61273",
   "stages": [
     {
       "id": "stage-01",
@@ -228,6 +228,24 @@
         "docs/results/ht_endurance_2026-10-16/validation_checks.json"
       ],
       "control_commit": "3912e37df7541799c354bf568ff8f3d5b0383aab"
+    },
+    {
+      "id": "stage-14",
+      "number": 14,
+      "sha": "9393e7da7d1eeabf04a4325593834304f236e405",
+      "tag": "ht-stage-20261016-progress-memory",
+      "title": "全局停滞恢复与返航容差修正",
+      "kind": "规划修复与回归",
+      "change": "全局引导独立进展计时、180秒失败冷却、世界坐标重复访问记忆；修正恢复评分、返航检查点到达容差及无用探索搜索。",
+      "features": "局部目标完成不再掩盖全局停滞；零收益主目标不能压住所有恢复候选；保留HT硬门槛、严格未知和速度上限。",
+      "validation": "242项核心、15项ROS和5项跟踪测试通过。两轮20/25分钟；最新同期20分钟估计观测6498m³，对照3293.875m³；第10–20分钟增益1654.125m³，对照26.375m³。25分钟447.50米、294格，最终EXPLORING。",
+      "known_issues": "第一轮返航BLOCKED；已补容差回归，但最新一轮未触发返航，不能称闭环通过。尚未重跑60分钟；地图年龄最高4.17秒，仍有过期停车。没有真值全域覆盖率或实车验收。",
+      "evidence": [
+        "docs/results/ht_progress_fix_2026-10-16/REPORT.md",
+        "docs/results/ht_progress_fix_2026-10-16/same_duration_metrics.json",
+        "docs/results/ht_progress_fix_2026-10-16/return_fix_trial/validation_checks.json"
+      ],
+      "control_commit": "c85ad1f004bbaceae14cd65351be38c3a9e61273"
     }
   ],
   "historical_commits": [
@@ -473,6 +491,51 @@
       "change": "60分钟监测脚本、统计、视频与失败结论",
       "function_and_issues": "无核心规划升级；揭示持续运动下长期探索停滞。",
       "original_subject": "Archive 60-minute HT endurance run and document exploration stagnation"
+    },
+    {
+      "sha": "d9eabd7b6c91f9c4ff160b9969f1ec7196225742",
+      "short": "d9eabd7",
+      "date": "2026-10-16",
+      "type": "版本文档",
+      "change": "标注13阶段的改动、功能、验证与问题",
+      "function_and_issues": "仅历史说明，无导航功能变更。",
+      "original_subject": "Document 13 HT milestones with features, validation and known failures"
+    },
+    {
+      "sha": "71a27484ebda62700aa4466d0f91a46ee9ebbfe0",
+      "short": "71a2748",
+      "date": "2026-10-16",
+      "type": "版本发布工具",
+      "change": "通过仓库限定Actions同步中文Releases",
+      "function_and_issues": "保留已有标签及附件，无导航功能变更。",
+      "original_subject": "Publish checked-in HT milestone notes through repository-scoped Actions"
+    },
+    {
+      "sha": "7f1c253feccb1b7ec4b4912f70312d7b308e3a20",
+      "short": "7f1c253",
+      "date": "2026-10-16",
+      "type": "全局进展与恢复修复",
+      "change": "引导独立停滞检测、失败冷却、重复访问记忆和恢复评分",
+      "function_and_issues": "20分钟探索明显改善，但末尾返航BLOCKED。",
+      "original_subject": "Track global guide stalls across local goals and penalize repeated recovery visits"
+    },
+    {
+      "sha": "c85ad1f004bbaceae14cd65351be38c3a9e61273",
+      "short": "c85ad1f",
+      "date": "2026-10-16",
+      "type": "返航与恢复边界修正",
+      "change": "对齐返航检查点到达容差、移除返航无用探索搜索",
+      "function_and_issues": "242核心及20ROS/跟踪测试通过；最新25分钟未触发返航，闭环仍待验。",
+      "original_subject": "Align return checkpoint tolerance with XYtheta search and tracking acceptance"
+    },
+    {
+      "sha": "9393e7da7d1eeabf04a4325593834304f236e405",
+      "short": "9393e7d",
+      "date": "2026-10-16",
+      "type": "两轮证据归档",
+      "change": "等时长比较、CSV、任务审计及可解码视频",
+      "function_and_issues": "最新25分钟447.50米、294格；没有把运行定时结束写成完成探索。",
+      "original_subject": "Archive global progress recovery trials with equal-duration metrics and return limitations"
     }
   ]
 }
