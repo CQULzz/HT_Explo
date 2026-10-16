@@ -1,3 +1,13 @@
+# HT_Explo：HT方向可通过性与XYθ探索规划
+
+**[版本总览：每版改动、功能、验证和问题](VERSIONS.md)** · [阶段标签](https://github.com/CQULzz/HT_Explo/tags) · [发布说明](https://github.com/CQULzz/HT_Explo/releases)
+
+当前是实验原型，已实现HT硬约束XYθ规划、历史高程融合与独立跟踪。**60分钟长测未崩溃，但后40分钟主要绕圈，新增估计自由空间仅2.5m³；长期有效探索尚未通过。** [长测报告](docs/results/ht_endurance_2026-10-16/REPORT.md) · [与原版TARE对比](docs/results/tare_ht_pair_2026-10-16/REPORT.md)。
+
+下文保留原版TARE介绍及早期验证入口；当前HT功能和历史差异请先看版本总览。
+
+---
+
 TARE planner involves a hierarchical framework for highly efficient exploration - one level in the framework maintains data densely and computes a detailed path within a local planning horizon, another level maintains data sparsely and computes a coarse path at the global scale. The paths at both levels are joined together to form the exploration path. The framework draws the insight that detailed processing is most effective close to the vehicle, while coarse processing provides sufficient utility far away from the vehicle. The framework trades-off details at the global scale for computational speed. In practice, the framework prioritizes the exploration in the surroundings of the vehicle while keeping the global picture in mind.
 
 本仓库的 HT 8dir 修复及 CMU Jazzy 车库实测说明见 [VALIDATION.md](VALIDATION.md)。其中包含 OR-Tools 依赖修复、运动停滞修复、复现命令及测试记录。HT 的模型接口和限制见 [HT_README.md](HT_README.md)。
