@@ -67,6 +67,18 @@ def main():
     validation = dict(checks=checks, source_hashes_unchanged=source_checks, video=video,
                       lifecycle_errors=lifecycle_errors, source_folder=str(raw),
                       note='These checks do not establish full coverage or absence of inefficient revisits.')
+    pools=read_json(raw/'current/ht_cpu_threads.json')
+    checks['blas_workers_bounded']=bool(pools['blas_pools']) and all(p['num_threads']==1 for p in pools['blas_pools'])
+    checks['pytorch_workers_bounded']=pools['pytorch_threads']==2
+    diagnostics=read_json(raw/'current/ht_diagnostics.json')
+    stages={}
+    for name in ('source_age_at_callback_s','fusion_and_quality_s','support_and_history_publish_s',
+                 'network_inference_s','ht_serialize_publish_s','elapsed_s'):
+        values=np.asarray([r[name] for r in diagnostics if name in r],float)
+        if values.size:
+            stages[name]=dict(count=int(values.size),median_s=float(np.median(values)),
+                              p95_s=float(np.quantile(values,.95)),max_s=float(values.max()))
+    write_json(raw/'ht_processing_stages.json',dict(thread_configuration=pools,stages=stages))
     write_json(raw / 'validation_checks.json', validation)
     if not all(checks.values()):
         raise RuntimeError('Trial needs investigation: ' + str({k:v for k,v in checks.items() if not v}))
@@ -150,6 +162,7 @@ def main():
                  'input_delivery_audit.json','ten_minute_segments.csv','stability.png','performance.png',
                  'endurance_audit.json','camera_h264.mp4','revisit_intervals.json','control_phase_audit.json'):
         shutil.copy2(raw / name, out / name)
+    shutil.copy2(raw/'ht_processing_stages.json',out/'ht_processing_stages.json')
     for source, name in [('current/timeseries.csv','timeseries.csv'),
                          ('current/observation_volume.csv','observation_volume.csv'),
                          ('current/cupy_processing_stats.json','cupy_processing_stats.json'),
@@ -177,6 +190,7 @@ def main():
              f'1 Hz采样地图年龄：P95 {age["p95"]:.3f} s，最大 {age["max"]:.3f} s，超过3秒 {audit["map_age_over3s_samples"]} 个采样点；3秒安全停车限制未放宽。',
              f'活动期全量控制：完全零速 {phases["active"]["fully_zero_fraction"]:.1%}，原地转向 {phases["active"]["stationary_turn_fraction"]:.1%}，倒车 {phases["active"]["reverse_fraction"]:.1%}。',
              '本轮无记录到的被测父进程运行期意外退出，关停日志无上述生命周期异常、无强制终止、无残留活子进程。', '']
+    lines += ['CPU线程核验：PyTorch 2线程，各BLAS库均为1线程；分段耗时见 [HT处理计时](ht_processing_stages.json)。', '']
     if longest:
         lines += [f'最长未进入新轨迹格区间：{longest["duration_s"]/60:.2f} 分钟，行驶 {longest["distance_m"]:.2f} m，新增近似观测 {longest["observed_free_volume_gain_m3"]:.3f} m³，是否涉及返航：{longest["includes_return"]}。',
                   '轨迹格不增长不必然意味着绕圈，需同时查看新增观测、运动与返航阶段。详见 revisit_intervals.json。', '']

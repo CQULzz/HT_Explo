@@ -24,12 +24,17 @@ from model import load_student_model
 from historical_elevation import HistoricalElevation
 from elevation_quality import preprocess_elevation, retain_recent_obstacle_edges
 from local_surface import SurfaceReferenceEstimator
+from cpu_threads import configure_cpu_threads
 
 
 class CupyToHt(Node):
     def __init__(self):
         super().__init__("cupy_to_ht_bridge")
-        torch.set_num_threads(2)
+        self.blas_limit, cpu_threads = configure_cpu_threads()
+        self.get_logger().info('CPU pools: PyTorch=2, BLAS=1 (independently bounded)')
+        if os.environ.get('HT_DIAGNOSTICS_DUMP'):
+            Path(os.environ['HT_DIAGNOSTICS_DUMP']).with_name('ht_cpu_threads.json').write_text(
+                json.dumps(cpu_threads, indent=2)+'\n')
         self.model = load_student_model(
             str(Path(__file__).with_name("student_best_epoch_weights.pth")), torch.device("cpu")
         )
@@ -62,6 +67,8 @@ class CupyToHt(Node):
 
     def on_map(self, source):
         started = time.monotonic()
+        source_age_at_start = self.get_clock().now().nanoseconds/1e9 - (
+            source.header.stamp.sec + source.header.stamp.nanosec*1e-9)
         stamp_key = (source.header.stamp.sec, source.header.stamp.nanosec)
         if stamp_key == self.last_source_stamp:
             return
@@ -142,6 +149,7 @@ class CupyToHt(Node):
             self.get_logger().error(f"Historical elevation update failed: {error}")
             return
         observed = quality.observed_quality
+        fusion_finished = time.monotonic()
         if not np.any(observed):
             return
 
@@ -172,10 +180,12 @@ class CupyToHt(Node):
         # Rejected height returns are unknown, not permission to reconstruct
         # traversable ground by nearest-neighbour network padding.
         support &= ~maximum_filter(rejected, size=51, mode='constant')[25:-25, 25:-25]
+        inference_started = time.monotonic()
         with torch.inference_mode():
             probabilities = torch.softmax(
                 self.model(torch.from_numpy(height[None, None])), dim=2
             )[0, :, 1].numpy()
+        inference_finished = time.monotonic()
         if probabilities.shape != (8, 241, 241):
             self.get_logger().error(f"Unexpected model output shape {probabilities.shape}")
             return
@@ -217,12 +227,18 @@ class CupyToHt(Node):
                                  'surface': surface_stats, 'quality': quality.stats,
                                  'source_rejected_cells': int(source_rejected.sum()),
                                  'retained_current_edge_cells': int(retained_edges.sum()),
+                                 'source_age_at_callback_s': source_age_at_start,
+                                 'fusion_and_quality_s': fusion_finished-started,
+                                 'support_and_history_publish_s': inference_started-fusion_finished,
+                                 'network_inference_s': inference_finished-inference_started,
+                                 'ht_serialize_publish_s': time.monotonic()-inference_finished,
                                  'elapsed_s': time.monotonic()-started})
         if self.count % 5 == 0:
             self.get_logger().info(
                 f"maps={self.count} fused={fused} observed={observed.sum()} "
                 f"history_tiles={len(self.history.tiles)} valid={support.sum()} "
-                f"center_valid={bool(support[120, 120])} inference_s={time.monotonic() - started:.3f}"
+                f"center_valid={bool(support[120, 120])} map_processing_s={time.monotonic() - started:.3f} "
+                f"network_s={inference_finished-inference_started:.3f}"
             )
 
 

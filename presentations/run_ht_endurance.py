@@ -107,6 +107,7 @@ def main():
               ROOT/'src/tare_planner/src/ht_cost/xytheta_follower.cpp',
               CUPY/'src/elevation_mapping_cupy_2204/elevation_mapping_cupy/script/elevation_mapping_cupy/elevation_mapping_ros.py']
     paths += [BRIDGE/name for name in ('cmu_xytheta.launch.py','cmu_vehicle_downward.launch.py','gz_sim_direct.launch.py')]
+    paths += [BRIDGE/name for name in ('cpu_threads.py','model.py','local_surface.py','elevation_quality.py')]
     paths += [CMU/'src/vehicle_simulator/launch/vehicle_simulator.launch', CUPY/'config/trial_plugins.yaml']
     paths += [CUPY/'src/elevation_mapping_cupy_2204/elevation_mapping_cupy/script/elevation_mapping_cupy'/name
               for name in ('elevation_mapping.py','traversability_filter.py')]

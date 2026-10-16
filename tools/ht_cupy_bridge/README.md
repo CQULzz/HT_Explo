@@ -188,3 +188,13 @@ from best-effort to reliable delivery then yielded 65 maps and 106
 `HT_ASSISTED` status samples with zero stale statuses in a 55-second Campus
 probe (`results/ht_qos_reliable_probe_2026-10-11.json`). This is a short
 smoke test, not a guarantee against later stalls.
+# CPU thread pools
+
+The bridge additionally requires `threadpoolctl` (`python3 -m pip install threadpoolctl`).
+It keeps PyTorch at two CPU threads and independently limits BLAS to one.
+Small Nx3 surface fits otherwise wake NumPy's 28-worker OpenBLAS pool, whose
+idle spin competes with mapping and planning. This changes resource scheduling,
+not HT weights, terrain fitting or safety thresholds. `ht_cpu_threads.json`
+records actual native pool settings when diagnostics are enabled. Per-map
+diagnostics separate fusion, support preparation, neural inference, publication
+and the source age on entry; `map_processing_s` is the complete callback time.

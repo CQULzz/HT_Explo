@@ -128,6 +128,7 @@ class Trial:
         self.processes.clear()
 
 def preflight():
+    import importlib.util
     needed=[CMU/'install/setup.bash',UP/'install/setup.bash',ROOT/'install_standalone/setup.bash',
             CUPY/'install/setup.bash',BRIDGE/'cmu_xytheta.launch.py',BRIDGE/'cupy_to_ht.py',
             BRIDGE/'ht_trial.yaml',BRIDGE/'assets/lidar_downward.sdf',HERE/'paired_probe.py',
@@ -135,6 +136,7 @@ def preflight():
     missing=[str(p) for p in needed if not p.exists()]
     if not (Path('/opt/ros/jazzy/bin/ros2')).exists():missing.append('executable: ros2')
     if not shutil_which('colcon'):missing.append('executable: colcon')
+    if importlib.util.find_spec('threadpoolctl') is None:missing.append('python: threadpoolctl')
     if missing:raise RuntimeError('preflight missing: '+', '.join(missing))
     return {'checked':[str(p) for p in needed], 'original_workspace':str(UP),
             'current_workspace':str(ROOT),'sim_workspace':str(CMU)}

@@ -1,0 +1,46 @@
+{
+  "native_pools": [
+    {
+      "user_api": "blas",
+      "internal_api": "openblas",
+      "num_threads": 28,
+      "prefix": "libopenblas",
+      "filepath": "/home/lzz/.local/lib/python3.12/site-packages/numpy.libs/libopenblas64_p-r0-0cf96a72.3.23.dev.so",
+      "version": "0.3.23.dev",
+      "threading_layer": "pthreads",
+      "architecture": "Prescott"
+    }
+  ],
+  "surface_fit": {
+    "None": {
+      "times_s": [
+        0.02125876400168636,
+        0.00397537200115039,
+        0.0024307959974976256,
+        0.004191684001852991
+      ],
+      "median_s": 0.004083528001501691
+    },
+    "1": {
+      "times_s": [
+        0.002313152999704471,
+        0.0020411859986779746,
+        0.002079705001960974,
+        0.0019393520015000831
+      ],
+      "median_s": 0.0020604455003194744
+    }
+  },
+  "max_height_difference_m": 0.0,
+  "note": "Synthetic 291x291 planar surface; CPU diagnostic during an initial investigation run, not end-to-end robot timing.",
+  "periodic_fit_with_idle": {
+    "None": {
+      "cpu_s": 7.694943106,
+      "wall_s": 0.6526622470009897
+    },
+    "1": {
+      "cpu_s": 0.010545677000001419,
+      "wall_s": 0.6107803039994906
+    }
+  }
+}
