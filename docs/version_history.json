@@ -2,9 +2,9 @@
   "schema_version": 1,
   "updated_at": "2026-10-17",
   "branch": "codex/ht8dir-v1",
-  "status": "实验原型：跨目标回访、调度与关停已补修并通过短回归，新60分钟长测进行中；效率与延迟改善待验",
-  "latest_archive_commit": "bd0c2c24f7eac383a3d8120b312fa4eb499c3199",
-  "latest_planner_change": "bd0c2c24f7eac383a3d8120b312fa4eb499c3199",
+  "status": "实验原型：跨目标记忆和关停短回归通过，补BLAS线程争用修复；新完整60分钟长测进行中",
+  "latest_archive_commit": "f1c84854ccc147d40d7f9120c9713ba5e11c736c",
+  "latest_planner_change": "f1c84854ccc147d40d7f9120c9713ba5e11c736c",
   "stages": [
     {
       "id": "stage-01",
@@ -271,17 +271,34 @@
       "number": 16,
       "sha": "bd0c2c24f7eac383a3d8120b312fa4eb499c3199",
       "tag": "ht-stage-20261017-crossguide-lifecycle",
-      "title": "跨目标记忆与正常关停修复（长测待验）",
+      "title": "跨目标记忆与正常关停修复（短测验证）",
       "kind": "功能",
       "change": "全局引导进展跨目标切换保留；零收益到达目标暂缓回访；拆分CuPy发布调度，修复CMU/CuPy/Gazebo关停及完成状态显示。",
       "features": "A→B→A不再重置A的停滞预算；新收益可绕过恢复目标冷却；工作区独立，HT硬门槛、严格未知、3秒时效和0.5m/s上限保留。",
-      "validation": "260核心、15 ROS、6跟踪器、8 CuPy/调度及2关停集成测试通过；第四轮仿真关停回归所有子节点正常退出，无残留。固定代码新60分钟长测正在进行。",
+      "validation": "260核心、15 ROS、6跟踪器、8 CuPy/调度及2关停集成测试通过；第四轮仿真关停回归所有子节点正常退出，无残留。首轮复测中发现额外BLAS线程争用，主动中止并保留证据；后续见阶段17。",
       "known_issues": "短测不证明7.4分钟低收益回访已消除；新长测早期仍采样到超过3秒的地图年龄峰值。远端引导仍是距离启发，无完整全局可执行图；未做实车验证。",
       "evidence": [
         "docs/fixes/2026-10-17_endurance_followup.md",
         "docs/results/ht_followup_smoke_2026-10-17/REPORT.md"
       ],
       "control_commit": "bd0c2c24f7eac383a3d8120b312fa4eb499c3199"
+    },
+    {
+      "id": "stage-17",
+      "number": 17,
+      "sha": "f1c84854ccc147d40d7f9120c9713ba5e11c736c",
+      "tag": "ht-stage-20261017-blas-threads",
+      "title": "限制BLAS空转线程与分段计时（长测待验）",
+      "kind": "实时性",
+      "change": "单独限制HT桥接的BLAS库为1线程，保留PyTorch2线程；记录实际线程池和融合/支撑准备/网络/发布耗时。",
+      "features": "消除周期性小矩阵拟合唤醒28个BLAS工作线程后大量空转的争用；不修改网络权重、HT门槛、未知策略和速度。",
+      "validation": "诊断默认配置0.653墙钟秒消耗7.695 CPU秒；BLAS单线程0.611墙钟秒消耗0.0105 CPU秒。地面参考最大差0；固定权重HT联合回归硬门槛逐格一致，另有3项参考面与6项融合回归通过。新完整60分钟正在运行。",
+      "known_issues": "该CPU诊断不等于整张HT地图提速700倍，也不是整车长测通过；约17分钟诊断轮主动中止，不作为完成60分钟记录。新长测的探索效率、地图尾延迟和返回完成仍待结果。",
+      "evidence": [
+        "docs/results/ht_blas_contention_2026-10-17/REPORT.md",
+        "docs/fixes/2026-10-17_endurance_followup.md"
+      ],
+      "control_commit": "f1c84854ccc147d40d7f9120c9713ba5e11c736c"
     }
   ],
   "historical_commits": [
@@ -626,6 +643,24 @@
       "change": "自动核验冻结哈希、子进程关停、完整视频解码和回访区间",
       "function_and_issues": "只处理实验完成后的数据，不修改控制路径。",
       "original_subject": "Automate frozen-source, shutdown, video and revisit audits for endurance follow-up"
+    },
+    {
+      "sha": "b5ec87e17bcd3875a02387474e0dfcfddea3ac96",
+      "short": "b5ec87e",
+      "date": "2026-10-17",
+      "type": "版本说明",
+      "change": "标注跨目标与关停修复及长测待验边界",
+      "function_and_issues": "不修改控制程序。",
+      "original_subject": "Label cross-guide and lifecycle fixes with short-test evidence and pending endurance limits"
+    },
+    {
+      "sha": "f1c84854ccc147d40d7f9120c9713ba5e11c736c",
+      "short": "f1c8485",
+      "date": "2026-10-17",
+      "type": "CPU线程争用修复",
+      "change": "单独限制HT桥接的BLAS库为1线程，保留PyTorch2线程；记录实际线程池和融合/支撑准备/网络/发布耗时。",
+      "function_and_issues": "该CPU诊断不等于整张HT地图提速700倍，也不是整车长测通过；约17分钟诊断轮主动中止，不作为完成60分钟记录。新长测的探索效率、地图尾延迟和返回完成仍待结果。",
+      "original_subject": "Bound hidden BLAS worker spin and record actual HT processing stages"
     }
   ]
 }
