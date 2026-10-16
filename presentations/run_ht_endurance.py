@@ -94,7 +94,12 @@ def main():
     paths = [BRIDGE/'ht_trial.yaml', BRIDGE/'cupy_to_ht.py', BRIDGE/'historical_elevation.py',
              CUPY/'config/trial_core.yaml', CUPY/'config/trial_setup.yaml',
              CUPY/'install/elevation_mapping_cupy/lib/elevation_mapping_cupy/elevation_mapping_node',
-             ROOT/'install_standalone/tare_planner/lib/tare_planner/xytheta_follower']
+             ROOT/'install_standalone/tare_planner/lib/tare_planner/xytheta_follower',
+             ROOT/'install_standalone/tare_planner/lib/tare_planner/tare_planner_node',
+             ROOT/'src/tare_planner/config/ht.yaml',
+             ROOT/'src/tare_planner/include/ht_cost/exploration_progress.h',
+             ROOT/'src/tare_planner/src/local_coverage_planner/ht_route.cpp',
+             ROOT/'src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp']
     manifest = dict(started_at=dt.datetime.now().astimezone().isoformat(),
                     planned_duration_s=args.duration, scenario='Garage', domain=args.domain,
                     speed_cap_mps=.5, preflight=preflight(),

@@ -21,6 +21,7 @@
 #include "viewpoint_manager/viewpoint_manager.h"
 #include "ht_cost/xytheta_planner.h"
 #include "ht_cost/target_commitment.h"
+#include "ht_cost/exploration_progress.h"
 
 namespace local_coverage_planner_ns
 {
@@ -121,7 +122,9 @@ private:
   Eigen::Vector3d ht_global_guide_=Eigen::Vector3d::Zero();
   bool ht_has_global_guide_=false;
   bool ht_guide_is_global_=false;
-  std::set<std::pair<int,int>> ht_visited_xy_;
+  ht_cost_ns::GuideProgress ht_guide_progress_;
+  ht_cost_ns::ExplorationVisits ht_visits_;
+  bool SetHTGuide(const Eigen::Vector3d& guide,bool global,double now);
   ht_cost_ns::XYThetaConfig xytheta_config_;
   rclcpp::Node::SharedPtr node_;
   rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr ht_path_pub_;

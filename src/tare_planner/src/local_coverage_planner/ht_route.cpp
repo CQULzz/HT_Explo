@@ -26,11 +26,12 @@ exploration_path_ns::ExplorationPath LocalCoveragePlanner::SolveHTTSP(
       if (id==robot_viewpoint_ind_ || !viewpoint_manager_->InRange(id)) continue;
       const auto p=viewpoint_manager_->GetViewPointPosition(id);
       const double d=std::hypot(p.x-robot_position_.x(),p.y-robot_position_.y());
-      if (d>xytheta_config_.max_radius && d<nearest) {
+      if (d>xytheta_config_.max_radius && d<nearest &&
+          !ht_guide_progress_.cooling({p.x,p.y,p.z},now)) {
         nearest=d;ht_global_guide_=Eigen::Vector3d(p.x,p.y,p.z);
-        ht_has_global_guide_=true;ht_guide_is_global_=false;
       }
     }
+    if (std::isfinite(nearest)) SetHTGuide(ht_global_guide_,false,now);
   }
 
   struct Target {int id;double utility;double gain;double progress;bool recovery=false;};
@@ -73,7 +74,10 @@ exploration_path_ns::ExplorationPath LocalCoveragePlanner::SolveHTTSP(
     } else if (id==ht_previous_target_) {
       utility*=1.15;
     }
-    targets.push_back({id,utility,gain,0});
+    const double progress=ht_has_global_guide_ ? (ht_global_guide_-robot_position_).head<2>().norm()-
+      std::hypot(p.x-ht_global_guide_.x(),p.y-ht_global_guide_.y()) : 0;
+    utility-=2*ht_visits_.penalty({p.x,p.y,p.z});
+    targets.push_back({id,utility,gain,progress});
   }
   std::sort(targets.begin(),targets.end(),[](const Target& a,const Target& b) {
     return a.utility>b.utility;
@@ -96,7 +100,8 @@ exploration_path_ns::ExplorationPath LocalCoveragePlanner::SolveHTTSP(
       const double progress=distant_range-remaining;
       if (progress<0.8) continue;
       if (!supported_endpoint(id)) continue;
-      stepping.push_back({id,-10.0+progress/(1.0+range),0,progress});
+      stepping.push_back({id,ht_cost_ns::transitScore(progress,
+        ht_visits_.penalty({p.x,p.y,p.z}),range/xytheta_config_.forward_speed),0,progress});
     }
     std::sort(stepping.begin(),stepping.end(),[](const Target& a,const Target& b) {
       return a.utility>b.utility;
@@ -110,7 +115,11 @@ exploration_path_ns::ExplorationPath LocalCoveragePlanner::SolveHTTSP(
     if (committed_id>=0 && viewpoint_manager_->InRange(committed_id)) {
       const auto q=viewpoint_manager_->GetViewPointPosition(committed_id);
       if (std::hypot(q.x-p.x,q.y-p.y)<0.8 && supported_endpoint(committed_id)) {
-        targets.insert(targets.begin(),{committed_id,0,0,0});
+        const double gain=std::max(0,viewpoint_manager_->GetViewPointCoveredPointNum(committed_id))+
+          2.0*std::max(0,viewpoint_manager_->GetViewPointCoveredFrontierPointNum(committed_id));
+        const double progress=ht_has_global_guide_ ? (ht_global_guide_-robot_position_).head<2>().norm()-
+          std::hypot(q.x-ht_global_guide_.x(),q.y-ht_global_guide_.y()) : 0;
+        targets.insert(targets.begin(),{committed_id,0,gain,progress});
       } else committed_id=-1;
     } else committed_id=-1;
     if (committed_id<0) ht_commitment_.reject(now);
@@ -129,10 +138,12 @@ exploration_path_ns::ExplorationPath LocalCoveragePlanner::SolveHTTSP(
     const double range=std::hypot(dx,dy);
     if (range<0.8 || range>std::min(4.0,xytheta_config_.max_radius) ||
         ht_commitment_.cooling({p.x,p.y,p.z},now) || !supported_endpoint(id)) continue;
-    const bool visited=ht_visited_xy_.count({static_cast<int>(std::floor(p.x)),static_cast<int>(std::floor(p.y))});
+    const double revisit=ht_visits_.penalty({p.x,p.y,p.z});
     const double alignment=(dx*std::cos(robot_yaw_)+dy*std::sin(robot_yaw_))/range;
-    const double utility=(visited ? -4.0 : 2.0)+0.3*alignment-0.1*range;
-    recovery.push_back({id,utility,0,utility,true});
+    const double progress=ht_has_global_guide_ ? (ht_global_guide_-robot_position_).head<2>().norm()-
+      std::hypot(p.x-ht_global_guide_.x(),p.y-ht_global_guide_.y()) : 0;
+    const double utility=ht_cost_ns::transitScore(progress,revisit,range/xytheta_config_.forward_speed)+0.3*alignment;
+    recovery.push_back({id,utility,0,progress,true});
   }
   std::sort(recovery.begin(),recovery.end(),[](const Target& a,const Target& b){return a.utility>b.utility;});
   if (!recovery.empty() && targets.size()>4) targets.resize(4);
@@ -166,7 +177,7 @@ exploration_path_ns::ExplorationPath LocalCoveragePlanner::SolveHTTSP(
   bool best_recovery=false;
   for (size_t ti=0;ti<targets.size();++ti) {
     const auto& target=targets[ti];
-    if (ti>=primary_count && best_target>=0) break;
+    if (ti>=primary_count && best_target>=0 && best_gain>0) break;
     if (!attempted_ids.insert(target.id).second) continue;
     if (attempted>=8) break;
     ++attempted;
@@ -195,7 +206,7 @@ exploration_path_ns::ExplorationPath LocalCoveragePlanner::SolveHTTSP(
     // The LiDAR coverage gain is position-based because this sensor scans 360°.
     const double score=target.gain>0 ?
       target.gain/(1.0+plan.seconds)*(target.id==ht_previous_target_?1.15:1.0) :
-      -8.0+target.progress/(1.0+plan.seconds);
+      ht_cost_ns::transitScore(target.progress,ht_visits_.penalty({goal.x,goal.y,goal.z}),plan.seconds);
     if (score<=best_score) continue;
     best_score=score;
     best_target=target.id;
@@ -231,10 +242,11 @@ exploration_path_ns::ExplorationPath LocalCoveragePlanner::SolveHTTSP(
     ordered.push_back(robot_viewpoint_ind_);
     ordered.push_back(best_target);
     RCLCPP_INFO_THROTTLE(node_->get_logger(),*node_->get_clock(),1000,
-      "XYtheta exploration target=%d gain=%.1f score=%.2f states=%zu expanded=%d travel=%.2fs candidates=%d held=%d goal=(%.2f,%.2f) guide=(%.2f,%.2f) recovery=%d",
+      "XYtheta exploration target=%d gain=%.1f score=%.2f states=%zu expanded=%d travel=%.2fs candidates=%d held=%d goal=(%.2f,%.2f) guide=(%.2f,%.2f) recovery=%d guide_active=%d guide_idle=%.1f revisit=%.2f",
       best_target,best_gain,best_score,best_plan.poses.size(),best_plan.expanded,best_plan.seconds,attempted,
       best_target==committed_id,best_plan.poses.back().x,best_plan.poses.back().y,
-      ht_global_guide_.x(),ht_global_guide_.y(),best_recovery);
+      ht_global_guide_.x(),ht_global_guide_.y(),best_recovery,ht_has_global_guide_,ht_guide_progress_.idle_seconds,
+      ht_visits_.penalty({best_plan.poses.back().x,best_plan.poses.back().y,0}));
     return result;
 }
 

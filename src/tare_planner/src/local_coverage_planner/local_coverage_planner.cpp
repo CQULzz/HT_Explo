@@ -57,9 +57,30 @@ LocalCoveragePlanner::LocalCoveragePlanner(rclcpp::Node::SharedPtr nh)
   xytheta_config_.max_expansions=nh->declare_parameter<int>("xytheta_max_expansions",8000);
   ht_commitment_.stall_seconds=nh->declare_parameter<double>("xytheta_stall_seconds",12.0);
   ht_commitment_.cooldown_seconds=nh->declare_parameter<double>("xytheta_goal_cooldown_seconds",20.0);
+  ht_guide_progress_.stall_seconds=nh->declare_parameter<double>("xytheta_guide_stall_seconds",60.0);
+  ht_guide_progress_.cooldown_seconds=nh->declare_parameter<double>("xytheta_guide_cooldown_seconds",180.0);
+  if (!std::isfinite(ht_guide_progress_.stall_seconds) || ht_guide_progress_.stall_seconds<=0 ||
+      !std::isfinite(ht_guide_progress_.cooldown_seconds) || ht_guide_progress_.cooldown_seconds<=0)
+    throw std::invalid_argument("Invalid XYtheta global guide memory parameters");
   if (!std::isfinite(ht_commitment_.stall_seconds) || ht_commitment_.stall_seconds<=0 ||
       !std::isfinite(ht_commitment_.cooldown_seconds) || ht_commitment_.cooldown_seconds<=0)
     throw std::invalid_argument("Invalid XYtheta goal memory parameters");
+}
+
+bool LocalCoveragePlanner::SetHTGuide(const Eigen::Vector3d& guide,bool global,double now) {
+  const bool changed=!ht_guide_progress_.active ||
+    (guide-Eigen::Vector3d(ht_guide_progress_.goal.x,ht_guide_progress_.goal.y,
+                         ht_guide_progress_.goal.z)).head<2>().norm()>=ht_guide_progress_.identity_radius;
+  if (!ht_guide_progress_.select({guide.x(),guide.y(),guide.z()},
+      {robot_position_.x(),robot_position_.y(),robot_position_.z()},now)) return false;
+  ht_global_guide_=Eigen::Vector3d(ht_guide_progress_.goal.x,ht_guide_progress_.goal.y,ht_guide_progress_.goal.z);
+  ht_has_global_guide_=true;ht_guide_is_global_=global;
+  if (changed) {
+    ht_commitment_.reject(now);ht_previous_target_=-1;
+    RCLCPP_INFO(node_->get_logger(),"HT guide selected: (%.2f,%.2f) global=%d remaining=%.2fm",
+      ht_global_guide_.x(),ht_global_guide_.y(),global,ht_guide_progress_.best_distance);
+  }
+  return true;
 }
 
 int LocalCoveragePlanner::GetBoundaryViewpointIndex(
@@ -613,44 +634,56 @@ LocalCoveragePlanner::SolveLocalCoverageProblem(
   GetNavigationViewPointIndices(global_path, navigation_viewpoint_indices);
 
   if (viewpoint_manager_->HT()->enabled()) {
-    ht_visited_xy_.emplace(static_cast<int>(std::floor(robot_position_.x())),
-                           static_cast<int>(std::floor(robot_position_.y())));
-    ht_commitment_.observe({robot_position_.x(),robot_position_.y(),robot_position_.z()},
-                           node_->now().seconds());
-    // TARE's global route is a tour with two possible directions. Keep the
-    // chosen world-space destination while it remains on that tour, rather
-    // than switching to the nearest boundary on every planning cycle.
-    bool guide_present=false;
-    for (const auto& n:global_path.nodes_)
-      if (n.type_==exploration_path_ns::NodeType::GLOBAL_VIEWPOINT &&
-          (n.position_-ht_global_guide_).head<2>().norm()<1.0) guide_present=true;
+    const double now=node_->now().seconds();
+    const ht_cost_ns::Point robot{robot_position_.x(),robot_position_.y(),robot_position_.z()};
+    ht_visits_.observe(robot);
+    if (ht_commitment_.active && ht_cost_ns::TargetCommitment::distance(robot,ht_commitment_.goal)<=ht_commitment_.reached)
+      ++ht_visits_.entries[ht_cost_ns::ExplorationVisits::cell(ht_commitment_.goal)];
+    ht_commitment_.observe(robot,now);
+    const auto progress=ht_guide_progress_.observe(robot,now,viewpoint_manager_->HT()->ready());
+    if (progress==ht_cost_ns::GuideProgress::Event::Stalled) {
+      RCLCPP_WARN(node_->get_logger(),
+        "HT global guide stalled: (%.2f,%.2f), best_remaining=%.2fm idle=%.1fs; cooldown=%.1fs and release local goal",
+        ht_global_guide_.x(),ht_global_guide_.y(),ht_guide_progress_.best_distance,
+        ht_guide_progress_.idle_seconds,ht_guide_progress_.cooldown_seconds);
+      ht_commitment_.reject(now);ht_previous_target_=-1;
+    }
+    if (progress!=ht_cost_ns::GuideProgress::Event::None) ht_has_global_guide_=false;
+    bool guide_present=false,has_global_destination=false;
+    for (const auto& n:global_path.nodes_) {
+      if (n.type_!=exploration_path_ns::NodeType::GLOBAL_VIEWPOINT) continue;
+      has_global_destination=true;
+      if ((n.position_-ht_global_guide_).head<2>().norm()<ht_guide_progress_.identity_radius)
+        guide_present=true;
+    }
+    // Promote bootstrap guidance when the real global tour becomes available.
     if ((ht_guide_is_global_ && !guide_present) ||
-        (robot_position_-ht_global_guide_).head<2>().norm()<1.0)
-      ht_has_global_guide_=false;
+        (!ht_guide_is_global_ && has_global_destination)) {
+      ht_has_global_guide_=false;ht_guide_progress_.active=false;
+    }
     if (!ht_has_global_guide_) {
       double best_distance=std::numeric_limits<double>::infinity();
       for (const auto& n:global_path.nodes_) {
         if (n.type_!=exploration_path_ns::NodeType::GLOBAL_VIEWPOINT) continue;
         const double d=(n.position_-robot_position_).head<2>().norm();
-        if (d>1.0 && d<best_distance) {
-          best_distance=d;ht_global_guide_=n.position_;ht_has_global_guide_=true;ht_guide_is_global_=true;
+        const ht_cost_ns::Point p{n.position_.x(),n.position_.y(),n.position_.z()};
+        if (d>1.0 && d<best_distance && !ht_guide_progress_.cooling(p,now)) {
+          best_distance=d;ht_global_guide_=n.position_;
         }
       }
-      // Before the keypose graph has a global tour, TARE still supplies local
-      // horizon boundary viewpoints. Preserve one of these as a world-space
-      // guide; requiring a GLOBAL_VIEWPOINT here would deadlock bootstrap.
+      if (std::isfinite(best_distance)) SetHTGuide(ht_global_guide_,true,now);
       if (!ht_has_global_guide_) {
         int boundary=-1;double nearest=std::numeric_limits<double>::infinity();
         for (int id:navigation_viewpoint_indices) {
           if (!viewpoint_manager_->InRange(id)) continue;
           const auto p=viewpoint_manager_->GetViewPointPosition(id);
           const double d=std::hypot(p.x-robot_position_.x(),p.y-robot_position_.y());
-          if (d>xytheta_config_.max_radius && d<nearest) {nearest=d;boundary=id;}
+          if (d>xytheta_config_.max_radius && d<nearest &&
+              !ht_guide_progress_.cooling({p.x,p.y,p.z},now)) {nearest=d;boundary=id;}
         }
         if (boundary>=0) {
           const auto p=viewpoint_manager_->GetViewPointPosition(boundary);
-          ht_global_guide_=Eigen::Vector3d(p.x,p.y,p.z);
-          ht_has_global_guide_=true;ht_guide_is_global_=false;
+          SetHTGuide(Eigen::Vector3d(p.x,p.y,p.z),false,now);
         }
       }
     }

@@ -4,6 +4,7 @@
 #include "ht_cost/grid_edge_support.h"
 #include "ht_cost/xytheta_planner.h"
 #include "ht_cost/target_commitment.h"
+#include "ht_cost/exploration_progress.h"
 #include <iostream>
 #include <stdexcept>
 using namespace ht_cost_ns;
@@ -37,6 +38,38 @@ int main() {
   commitment.observe({3.6,0,0},56);check(!commitment.active);
   commitment.commit({8,0,0},{4,0,0},60);
   commitment.reject(61);check(!commitment.active);check(commitment.cooling({8,0,0},62));
+  // Completing many short goals cannot hide a stalled global destination.
+  GuideProgress guide;
+  check(guide.select({20,0,0},{0,0,0},0));
+  for (int t=1;t<=61;++t) {
+    commitment.commit({0,1,0},{0,0,0},t);
+    commitment.observe({0,1,0},t);
+    const auto event=guide.observe({0,t%2?0.0:1.0,0},t,true);
+    check(event==(t==61?GuideProgress::Event::Stalled:GuideProgress::Event::None));
+  }
+  check(!guide.active);check(guide.cooling({21,0,0},62));
+  check(!guide.select({20.5,0,0},{0,0,0},62));
+  check(guide.select({0,20,0},{0,0,0},62));
+  check(!guide.cooling({20,0,0},242));
+  // A nearby replacement grid index must not reset the same guide's timer.
+  guide.observe({0,0,0},63,true);guide.observe({0,0,0},64,true);
+  const double idle=guide.idle_seconds;
+  check(guide.select({0,20.5,0},{0,0,0},64));near(guide.idle_seconds,idle);
+  guide.observe({0,1,0},65,true);near(guide.idle_seconds,0);
+  guide.observe({0,1,0},66,true);near(guide.idle_seconds,1);
+  guide.observe({0,1,0},67,false);guide.observe({0,1,0},100,true);
+  near(guide.idle_seconds,1);guide.observe({0,1,0},101,true);near(guide.idle_seconds,2);
+  guide.observe({0,1,0},120,true);near(guide.idle_seconds,2); // Missing callbacks do not consume budget.
+  guide.observe({0,19.5,0},121,true);check(!guide.active);
+  ExplorationVisits visits;
+  visits.observe({0.2,0.2,0});const double first=visits.penalty({0.3,0.3,0});
+  for(int i=0;i<100;++i) visits.observe({0.2,0.2,0});
+  near(visits.penalty({0.3,0.3,0}),first);
+  visits.observe({1.2,0.2,0});visits.observe({0.2,0.2,0});
+  check(visits.penalty({0.3,0.3,0})>first);near(visits.penalty({5,5,0}),0);
+  // A longer route and repeated visits must never improve zero-gain score.
+  check(transitScore(-2,first,4)>transitScore(-2,first,12));
+  check(transitScore(1,0,4)>transitScore(1,first,4));
   // Garage run 2: the robot at (6.8218, 26.2809) cannot cut through
   // cell (5,22) on its way from center (6.6,25.8) to (7.8,27.0).
   using Cell = std::array<int,3>;
