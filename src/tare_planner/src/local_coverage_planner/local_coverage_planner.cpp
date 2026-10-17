@@ -50,6 +50,11 @@ LocalCoveragePlanner::LocalCoveragePlanner(rclcpp::Node::SharedPtr nh)
                   a.x,a.y,b.x,b.y);
     });
   xytheta_config_.cell=nh->declare_parameter<double>("xytheta_cell",0.3);
+  xytheta_config_.headings=nh->declare_parameter<int>("xytheta_headings",32);
+  ht_heading_margin_=nh->declare_parameter<double>("xytheta_heading_margin",0.05);
+  if (!std::isfinite(ht_heading_margin_) || ht_heading_margin_<0 || ht_heading_margin_>=ht_cost_ns::kPi/8 ||
+      xytheta_config_.headings<8 || xytheta_config_.headings>64 || xytheta_config_.headings%8)
+    throw std::invalid_argument("Invalid XYtheta heading resolution/reserve");
   xytheta_config_.drive_step=nh->declare_parameter<double>("xytheta_drive_step",0.4);
   xytheta_config_.goal_radius=nh->declare_parameter<double>("xytheta_goal_radius",0.35);
   xytheta_config_.max_radius=nh->declare_parameter<double>("xytheta_max_radius",7.0);
@@ -70,6 +75,9 @@ LocalCoveragePlanner::LocalCoveragePlanner(rclcpp::Node::SharedPtr nh)
   if (!std::isfinite(ht_commitment_.stall_seconds) || ht_commitment_.stall_seconds<=0 ||
       !std::isfinite(ht_commitment_.cooldown_seconds) || ht_commitment_.cooldown_seconds<=0)
     throw std::invalid_argument("Invalid XYtheta goal memory parameters");
+  RCLCPP_INFO(node_->get_logger(),"XYtheta configuration: headings=%d cell=%.3f step=%.3f heading_reserve_rad=%.3f search_s=%.3f cycle_search_s=%.3f",
+    xytheta_config_.headings,xytheta_config_.cell,xytheta_config_.drive_step,ht_heading_margin_,
+    xytheta_config_.max_search_seconds,ht_cycle_search_seconds_);
 }
 
 bool LocalCoveragePlanner::SetHTGuide(const Eigen::Vector3d& guide,bool global,double now) {

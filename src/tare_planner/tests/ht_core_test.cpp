@@ -5,6 +5,7 @@
 #include "ht_cost/xytheta_planner.h"
 #include "ht_cost/target_commitment.h"
 #include "ht_cost/exploration_progress.h"
+#include "ht_cost/heading_reserve.h"
 #include <iostream>
 #include <stdexcept>
 using namespace ht_cost_ns;
@@ -15,6 +16,39 @@ void check(bool condition) {
 }
 void near(double a,double b) { check(std::abs(a-b)<1e-5); }
 int main() {
+  // Captured failure: about0.0003rad of heading drift crossed22.5degrees
+  // into a forbidden HT channel. Keep successor headings clear of that edge,
+  // while a nominally valid measured root can still turn inward.
+  const auto nominal_heading=[](Pose2 p){return std::abs(wrapYaw(p.yaw))<kPi/8;};
+  const Pose2 near_boundary{0,0,.39255702495574946};
+  check(nominal_heading(near_boundary));
+  check(successorHeadingReserve(near_boundary,near_boundary,near_boundary,.05,nominal_heading));
+  const Pose2 toward_boundary{0,0,.3926};
+  check(nominal_heading(toward_boundary));
+  check(!successorHeadingReserve(near_boundary,near_boundary,toward_boundary,.05,nominal_heading));
+  const Pose2 inward{0,0,near_boundary.yaw-kPi/16};
+  check(successorHeadingReserve(near_boundary,near_boundary,inward,.05,nominal_heading));
+  XYThetaConfig heading_config;heading_config.goal_radius=.25;heading_config.max_search_seconds=.3;
+  const auto corridor=[&](Pose2 root,Pose2 a,Pose2 b,double) {
+    if (!nominal_heading(a)||!nominal_heading(b)||std::abs(b.y-.2*b.x)>.12) return false;
+    return successorHeadingReserve(root,a,b,.05,nominal_heading);
+  };
+  Pose2 centered{};
+  auto centered_valid=[&](Pose2 a,Pose2 b,double v){return corridor(centered,a,b,v);};
+  heading_config.headings=16;
+  check(!planXYTheta(centered,{3,.6,0},heading_config,centered_valid).reached);
+  heading_config.headings=32;
+  auto heading_route=planXYTheta(centered,{3,.6,0},heading_config,centered_valid);
+  check(heading_route.reached);
+  auto inward_valid=[&](Pose2 a,Pose2 b,double v){return corridor(near_boundary,a,b,v);};
+  check(planXYTheta(near_boundary,{3,.6,0},heading_config,inward_valid).reached);
+  const Pose2 already_blocked{0,0,.3928570151329041};
+  auto blocked_valid=[&](Pose2 a,Pose2 b,double v){return corridor(already_blocked,a,b,v);};
+  check(!planXYTheta(already_blocked,{3,.6,0},heading_config,blocked_valid).reached);
+  for(size_t i=1;i<heading_route.poses.size();++i) {
+    check(nominal_heading(heading_route.poses[i]));
+    check(successorHeadingReserve(centered,heading_route.poses[i-1],heading_route.poses[i],.05,nominal_heading));
+  }
   ExecutionFailureMemory failures;
   failures.add({0,0,0},{.1,0,0},10);
   check(!failures.permits({-.1,0,0},{.2,0,0},11));

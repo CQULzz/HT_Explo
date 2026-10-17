@@ -8,11 +8,11 @@ from scipy.ndimage import distance_transform_edt
 def main():
     ap=argparse.ArgumentParser();ap.add_argument('snapshot',type=Path);ap.add_argument('output',type=Path);args=ap.parse_args()
     with np.load(args.snapshot,allow_pickle=False) as data:
-        resolution=data['history_geometry'][2]
-        observed=data['history_input_valid']>=.5
+        resolution=data['ht_geometry'][2]
         if 'ht_ht_observation_valid' in data:
             physical=data['ht_ht_observation_valid']>=.5
         else:
+            observed=data['history_input_valid']>=.5
             physical=(distance_transform_edt(~observed)*resolution<=.25)&~(data['history_rejected']>=.5)
             physical=physical[25:-25,25:-25]
         field=np.stack([data[f'ht_ht_dir_{k}'] for k in range(8)]+[data['ht_ht_valid'],physical],axis=-1)

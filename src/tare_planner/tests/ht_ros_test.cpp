@@ -7,6 +7,7 @@
 #include <thread>
 #include <fstream>
 #include <cstdlib>
+#include "ht_cost/heading_reserve.h"
 
 using namespace std::chrono_literals;
 using ht_cost_ns::Point;
@@ -53,6 +54,26 @@ class HtRosTest : public ::testing::Test {
   }
   void send(const grid_map::GridMap& map) {
     send(*grid_map::GridMapRosConverter::toMessage(map));
+  }
+  grid_map::GridMap capturedGrid(const char* filename,ht_cost_ns::Pose2& start) {
+    std::ifstream file(filename);int rows,cols;double resolution,cx,cy;
+    if (!(file>>rows>>cols>>resolution>>cx>>cy>>start.x>>start.y>>start.yaw) ||
+        rows<=0 || cols<=0 || rows>1000 || cols>1000) throw std::runtime_error("Invalid captured grid header");
+    std::vector<float> values(rows*cols*10);
+    for(auto& value:values) if(!(file>>value)) throw std::runtime_error("Truncated captured grid");
+    grid_map::GridMap result;result.setFrameId("map");
+    result.setGeometry(grid_map::Length(rows*resolution,cols*resolution),resolution,grid_map::Position(cx,cy));
+    for(int k=0;k<8;++k)result.add("ht_dir_"+std::to_string(k));
+    result.add("ht_valid");result.add("ht_observation_valid");
+    for(grid_map::GridMapIterator it(result);!it.isPastEnd();++it) {
+      grid_map::Position p;result.getPosition(*it,p);
+      const int r=std::floor(rows*.5-(p.x()-cx)/resolution),c=std::floor(cols*.5-(p.y()-cy)/resolution);
+      if(r<0||r>=rows||c<0||c>=cols)throw std::runtime_error("Captured grid index mismatch");
+      const size_t offset=(r*cols+c)*10;
+      for(int k=0;k<8;++k)result.at("ht_dir_"+std::to_string(k),*it)=values[offset+k];
+      result.at("ht_valid",*it)=values[offset+8];result.at("ht_observation_valid",*it)=values[offset+9];
+    }
+    return result;
   }
 };
 
@@ -230,6 +251,28 @@ TEST_F(HtRosTest, ReversibleMotionRejectsAOneWayEntranceWithoutChangingRawScores
   // The extra check does not waive an original low-probability rejection.
   map["ht_dir_0"].setConstant(.2f);load();
   EXPECT_EQ(guarded.motionSupport(a,b),ht_cost_ns::Support::BLOCKED);
+}
+
+TEST_F(HtRosTest, CapturedHeadingBoundaryHasPlanningReserveWithoutRelaxingMeasuredRoot) {
+  const char* filename=std::getenv("HT_BOUNDARY_FIXTURE");
+  if(!filename) GTEST_SKIP()<<"Set HT_BOUNDARY_FIXTURE to the recorded84.262s crossing";
+  ht_cost_ns::Pose2 root;auto map=capturedGrid(filename,root);
+  map.setTimestamp(node->now().nanoseconds());send(map);ASSERT_TRUE(ht->ready());
+  const auto allowed=[&](ht_cost_ns::Pose2 p){return ht->permits(ht->poseSupport(p.x,p.y,p.yaw));};
+  ASSERT_TRUE(allowed(root));
+  auto crossed=root;crossed.yaw+=.0003;
+  EXPECT_FALSE(allowed(crossed));
+  // The observed root has no *extra* reserve. It is still a legal measured
+  // state under the unchanged0.5threshold, so the initial check must pass.
+  EXPECT_TRUE(ht_cost_ns::successorHeadingReserve(root,root,root,.05,allowed));
+  auto near=root;near.yaw-=.001;
+  EXPECT_TRUE(allowed(near));
+  EXPECT_FALSE(ht_cost_ns::successorHeadingReserve(root,root,near,.05,allowed));
+  auto inward=root;inward.yaw-=ht_cost_ns::kPi/16;
+  EXPECT_TRUE(ht->permits(ht->motionSupport(root,inward)));
+  EXPECT_TRUE(ht_cost_ns::successorHeadingReserve(root,root,inward,.05,allowed));
+  // Already forbidden terrain is never made valid by the root exception.
+  EXPECT_FALSE(ht->permits(ht->motionSupport(crossed,crossed)));
 }
 
 TEST_F(HtRosTest, RotatedTranslatedFrameRotatesChannels) {

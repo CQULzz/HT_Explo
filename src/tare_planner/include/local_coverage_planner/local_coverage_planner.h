@@ -22,6 +22,7 @@
 #include "ht_cost/xytheta_planner.h"
 #include "ht_cost/target_commitment.h"
 #include "ht_cost/exploration_progress.h"
+#include "ht_cost/heading_reserve.h"
 
 namespace local_coverage_planner_ns
 {
@@ -127,6 +128,7 @@ private:
                                                   std::vector<int>& ordered);
   double ht_last_cost_ = 0;
   double ht_cycle_search_seconds_=0.35;
+  double ht_heading_margin_=0.05;
   double robot_yaw_=0;
   int ht_previous_target_=-1;
   int ht_candidate_target_=-1,ht_output_target_=-1;

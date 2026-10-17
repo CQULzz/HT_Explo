@@ -10,7 +10,7 @@
     ht_waypoint_reached_distance: 0.3
     ht_validity_radius: 0.6
     # Experimental return-margin check; validate exploration tradeoffs in simulation.
-    ht_require_reversible_motion: true
+    ht_require_reversible_motion: false
     ht_heading_offset: 0.0
     ht_channel_order: [0, 1, 2, 3, 4, 5, 6, 7]
     # Startup assumption is fixed at the mission's initial pose, never recentered.
@@ -18,6 +18,8 @@
     ht_startup_duration: 30.0
     ht_unknown_policy: strict  # Unknown is blocked except inside the bounded startup prior.
     xytheta_cell: 0.3
+    xytheta_headings: 32
+    xytheta_heading_margin: 0.05  # Radians; extra successor clearance, not a softer HT threshold.
     xytheta_drive_step: 0.4
     xytheta_goal_radius: 0.35
     xytheta_max_radius: 7.0

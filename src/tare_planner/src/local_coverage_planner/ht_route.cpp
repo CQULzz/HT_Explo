@@ -203,7 +203,11 @@ exploration_path_ns::ExplorationPath LocalCoveragePlanner::SolveHTTSP(
           viewpoint_manager_->InCollision(point)) {++geometry_rejections;return false;}
       (void)v;
       if (!ht->permits(ht->motionSupport(previous,next)) ||
-          !ht_execution_failures_.permits(previous,next,now)) {++ht_rejections;return false;}
+          !ht_execution_failures_.permits(previous,next,now) ||
+          !ht_cost_ns::successorHeadingReserve(start,previous,next,ht_heading_margin_,
+            [&](ht_cost_ns::Pose2 p){return ht->permits(ht->poseSupport(p.x,p.y,p.yaw));})) {
+        ++ht_rejections;return false;
+      }
       return true;
     };
     auto config=xytheta_config_;
@@ -277,7 +281,9 @@ exploration_path_ns::ExplorationPath LocalCoveragePlanner::PlanHTReturn(const Ei
     if (!viewpoint_manager_->InLocalPlanningHorizon(point) ||
         viewpoint_manager_->InCollision(point) ||
         !ht->permits(ht->motionSupport(previous,next)) ||
-        !ht_execution_failures_.permits(previous,next,node_->now().seconds())) return false;
+        !ht_execution_failures_.permits(previous,next,node_->now().seconds()) ||
+        !ht_cost_ns::successorHeadingReserve(start,previous,next,ht_heading_margin_,
+          [&](ht_cost_ns::Pose2 p){return ht->permits(ht->poseSupport(p.x,p.y,p.yaw));})) return false;
     (void)v;
     return true;
   };
