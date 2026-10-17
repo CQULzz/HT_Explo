@@ -1,0 +1,157 @@
+Start testing: Oct 17 17:06 CST
+----------------------------------------------------------
+1/3 Testing: ht_core_test
+1/3 Test: ht_core_test
+Command: "/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/ht_core_test"
+Directory: /home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner
+"ht_core_test" start time: Oct 17 17:06 CST
+Output:
+----------------------------------------------------------
+PASS: 311 HT core checks
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"ht_core_test" end time: Oct 17 17:06 CST
+"ht_core_test" time elapsed: 00:00:00
+----------------------------------------------------------
+
+2/3 Testing: ht_ros_test
+2/3 Test: ht_ros_test
+Command: "/usr/bin/python3" "-u" "/opt/ros/jazzy/share/ament_cmake_test/cmake/run_test.py" "/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/test_results/tare_planner/ht_ros_test.gtest.xml" "--package-name" "tare_planner" "--output-file" "/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/ament_cmake_gtest/ht_ros_test.txt" "--command" "/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/ht_ros_test" "--gtest_output=xml:/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/test_results/tare_planner/ht_ros_test.gtest.xml"
+Directory: /home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner
+"ht_ros_test" start time: Oct 17 17:06 CST
+Output:
+----------------------------------------------------------
+-- run_test.py: invoking following command in '/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner':
+ - /home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/ht_ros_test --gtest_output=xml:/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/test_results/tare_planner/ht_ros_test.gtest.xml
+Running main() from /opt/ros/jazzy/src/gtest_vendor/src/gtest_main.cc
+[==========] Running 17 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 17 tests from HtRosTest
+[ RUN      ] HtRosTest.DirectionalCostsAndValidSupport
+[WARN] [1792227976.660128396] [rcl]: ROS_LOCALHOST_ONLY is deprecated but still honored if it is enabled. Use ROS_AUTOMATIC_DISCOVERY_RANGE and ROS_STATIC_PEERS instead.
+[WARN] [1792227976.660135751] [rcl]: 'localhost_only' is enabled, 'automatic_discovery_range' and 'static_peers' will be ignored.
+[INFO] [1792227976.673757005] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1
+[       OK ] HtRosTest.DirectionalCostsAndValidSupport (278 ms)
+[ RUN      ] HtRosTest.CircularBufferPreservesSpatialCells
+[INFO] [1792227976.935670216] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1
+[       OK ] HtRosTest.CircularBufferPreservesSpatialCells (262 ms)
+[ RUN      ] HtRosTest.OffCenterHazardIsHardBlockedAtPlanningAndExecution
+[INFO] [1792227977.197246623] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1
+[       OK ] HtRosTest.OffCenterHazardIsHardBlockedAtPlanningAndExecution (263 ms)
+[ RUN      ] HtRosTest.SeparatePhysicalObservationDoesNotInflateContextTwice
+[INFO] [1792227977.460589795] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1
+[       OK ] HtRosTest.SeparatePhysicalObservationDoesNotInflateContextTwice (570 ms)
+[ RUN      ] HtRosTest.CapturedTunnelReturnKeepsRiskThresholdAndReachesHome
+[INFO] [1792227978.030968379] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1
+[       OK ] HtRosTest.CapturedTunnelReturnKeepsRiskThresholdAndReachesHome (491 ms)
+[ RUN      ] HtRosTest.RotatedTranslatedFrameRotatesChannels
+[INFO] [1792227978.522038325] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1
+[       OK ] HtRosTest.RotatedTranslatedFrameRotatesChannels (512 ms)
+[ RUN      ] HtRosTest.MissingLayerRevokesPreviousMap
+[INFO] [1792227979.034761768] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1
+[WARN] [1792227979.290706135] [ht_ros_test]: HT map rejected: Missing ht_dir layers; set aggregate_only=false
+[       OK ] HtRosTest.MissingLayerRevokesPreviousMap (364 ms)
+[ RUN      ] HtRosTest.InvalidProbabilityPreventsExecution
+[INFO] [1792227979.398771054] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1
+[       OK ] HtRosTest.InvalidProbabilityPreventsExecution (363 ms)
+[ RUN      ] HtRosTest.StaleFutureAndMissingTransformHold
+[INFO] [1792227979.761814872] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1
+[       OK ] HtRosTest.StaleFutureAndMissingTransformHold (463 ms)
+[ RUN      ] HtRosTest.NonFinitePoseRejected
+[INFO] [1792227980.225877539] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1
+[       OK ] HtRosTest.NonFinitePoseRejected (260 ms)
+[ RUN      ] HtRosTest.MalformedMessagesDoNotEnterUnsafeConverter
+[INFO] [1792227980.486205887] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1
+[       OK ] HtRosTest.MalformedMessagesDoNotEnterUnsafeConverter (777 ms)
+[ RUN      ] HtRosTest.CalibrationRequiredAndParametersChecked
+[INFO] [1792227981.264185659] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1
+[INFO] [1792227981.420262722] [ht_uncalibrated]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=0
+[       OK ] HtRosTest.CalibrationRequiredAndParametersChecked (165 ms)
+[ RUN      ] HtRosTest.StartupPriorIsBoundedAndDoesNotOverwriteObservedRisk
+[INFO] [1792227981.429971126] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1
+[WARN] [1792227981.893464296] [ht_ros_test]: HT map rejected: Missing ht_dir layers; set aggregate_only=false
+[       OK ] HtRosTest.StartupPriorIsBoundedAndDoesNotOverwriteObservedRisk (571 ms)
+[ RUN      ] HtRosTest.UnknownAndObservedRiskBothBlockEdges
+[INFO] [1792227982.001378783] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1
+[       OK ] HtRosTest.UnknownAndObservedRiskBothBlockEdges (261 ms)
+[ RUN      ] HtRosTest.StrictPolicyAllowsOnlyKnownOrBoundedStartup
+[INFO] [1792227982.262630444] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1
+[INFO] [1792227982.418236875] [ht_strict_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1
+[       OK ] HtRosTest.StrictPolicyAllowsOnlyKnownOrBoundedStartup (416 ms)
+[ RUN      ] HtRosTest.RecordedGarageUnknownCornerCannotPassAsAnUnsplitEdge
+[INFO] [1792227982.679196931] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1
+[       OK ] HtRosTest.RecordedGarageUnknownCornerCannotPassAsAnUnsplitEdge (263 ms)
+[ RUN      ] HtRosTest.HeadingSweepChecksIntermediateDirectionsAndWrapsAtPi
+[INFO] [1792227982.943221237] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1
+[       OK ] HtRosTest.HeadingSweepChecksIntermediateDirectionsAndWrapsAtPi (261 ms)
+[----------] 17 tests from HtRosTest (6547 ms total)
+
+[----------] Global test environment tear-down
+[==========] 17 tests from 1 test suite ran. (6547 ms total)
+[  PASSED  ] 17 tests.
+-- run_test.py: return code 0
+-- run_test.py: inject classname prefix into gtest result file '/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/test_results/tare_planner/ht_ros_test.gtest.xml'
+-- run_test.py: verify result file '/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/test_results/tare_planner/ht_ros_test.gtest.xml'
+<end of output>
+Test time =   6.74 sec
+----------------------------------------------------------
+Test Passed.
+"ht_ros_test" end time: Oct 17 17:06 CST
+"ht_ros_test" time elapsed: 00:00:06
+----------------------------------------------------------
+
+3/3 Testing: xytheta_follower_test
+3/3 Test: xytheta_follower_test
+Command: "/usr/bin/python3" "-u" "/opt/ros/jazzy/share/ament_cmake_test/cmake/run_test.py" "/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/test_results/tare_planner/xytheta_follower_test.gtest.xml" "--package-name" "tare_planner" "--output-file" "/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/ament_cmake_gtest/xytheta_follower_test.txt" "--command" "/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/xytheta_follower_test" "--gtest_output=xml:/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/test_results/tare_planner/xytheta_follower_test.gtest.xml"
+Directory: /home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner
+"xytheta_follower_test" start time: Oct 17 17:06 CST
+Output:
+----------------------------------------------------------
+-- run_test.py: invoking following command in '/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner':
+ - /home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/xytheta_follower_test --gtest_output=xml:/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/test_results/tare_planner/xytheta_follower_test.gtest.xml
+Running main() from /opt/ros/jazzy/src/gtest_vendor/src/gtest_main.cc
+[==========] Running 6 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 6 tests from FollowerTest
+[WARN] [1792227983.407585256] [rcl]: ROS_LOCALHOST_ONLY is deprecated but still honored if it is enabled. Use ROS_AUTOMATIC_DISCOVERY_RANGE and ROS_STATIC_PEERS instead.
+[WARN] [1792227983.407599097] [rcl]: 'localhost_only' is enabled, 'automatic_discovery_range' and 'static_peers' will be ignored.
+[ RUN      ] FollowerTest.FreshMapMaintainsExecutionAcrossSlowPlannerPermission
+[INFO] [1792227983.422519538] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1
+[       OK ] FollowerTest.FreshMapMaintainsExecutionAcrossSlowPlannerPermission (2298 ms)
+[ RUN      ] FollowerTest.FreshMapsCannotExtendAnExpiredPlan
+[INFO] [1792227985.709656248] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1
+[       OK ] FollowerTest.FreshMapsCannotExtendAnExpiredPlan (3475 ms)
+[ RUN      ] FollowerTest.CompletionHeartbeatExplainsTerminalStopButCannotRenewDriving
+[INFO] [1792227989.185554869] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1
+[       OK ] FollowerTest.CompletionHeartbeatExplainsTerminalStopButCannotRenewDriving (5566 ms)
+[ RUN      ] FollowerTest.NewObstacleAndUnknownRevokeExecution
+[INFO] [1792227994.751611449] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1
+[       OK ] FollowerTest.NewObstacleAndUnknownRevokeExecution (991 ms)
+[ RUN      ] FollowerTest.ExplicitHoldAndMissingOdometryStillStop
+[INFO] [1792227995.742687606] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1
+[       OK ] FollowerTest.ExplicitHoldAndMissingOdometryStillStop (1409 ms)
+[ RUN      ] FollowerTest.PathFailureReportsItsEdgeAndPlanIdentityOnce
+[INFO] [1792227997.152746291] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1
+[       OK ] FollowerTest.PathFailureReportsItsEdgeAndPlanIdentityOnce (1199 ms)
+[----------] 6 tests from FollowerTest (14940 ms total)
+
+[----------] Global test environment tear-down
+[==========] 6 tests from 1 test suite ran. (14947 ms total)
+[  PASSED  ] 6 tests.
+-- run_test.py: return code 0
+-- run_test.py: inject classname prefix into gtest result file '/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/test_results/tare_planner/xytheta_follower_test.gtest.xml'
+-- run_test.py: verify result file '/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/test_results/tare_planner/xytheta_follower_test.gtest.xml'
+<end of output>
+Test time =  15.15 sec
+----------------------------------------------------------
+Test Passed.
+"xytheta_follower_test" end time: Oct 17 17:06 CST
+"xytheta_follower_test" time elapsed: 00:00:15
+----------------------------------------------------------
+
+End testing: Oct 17 17:06 CST
+
+gtest =  21.89 sec*proc
+

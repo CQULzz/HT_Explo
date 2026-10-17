@@ -1,0 +1,89 @@
+{
+  "source": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_recovery_verified_10min_2026-10-17_14-55-26/tunnel",
+  "measurement_origin": 1792220160.0054145,
+  "first_completed_message_s": 249.58204674720764,
+  "active_mission": {
+    "duration_s": 249.58204674720764,
+    "command_samples": 4992,
+    "longest_zero_command_s": 4.300085783004761,
+    "fully_stopped_sample_fraction": 0.1374198717948718,
+    "max_abs_v": 0.5,
+    "max_abs_w": 0.8,
+    "max_command_gap_s": 0.05213451385498047
+  },
+  "transitions": [
+    {
+      "time_s": 0.7910544872283936,
+      "state": "EXPLORING"
+    },
+    {
+      "time_s": 50.582059144973755,
+      "state": "BLOCKED"
+    },
+    {
+      "time_s": 53.09487199783325,
+      "state": "EXPLORING"
+    },
+    {
+      "time_s": 106.76539826393127,
+      "state": "BLOCKED"
+    },
+    {
+      "time_s": 107.77540469169617,
+      "state": "EXPLORING"
+    },
+    {
+      "time_s": 136.8261513710022,
+      "state": "BLOCKED"
+    },
+    {
+      "time_s": 137.7727518081665,
+      "state": "EXPLORING"
+    },
+    {
+      "time_s": 162.58212423324585,
+      "state": "BLOCKED"
+    },
+    {
+      "time_s": 166.72481966018677,
+      "state": "EXPLORING"
+    },
+    {
+      "time_s": 211.90292596817017,
+      "state": "BLOCKED"
+    },
+    {
+      "time_s": 212.73494601249695,
+      "state": "EXPLORING"
+    },
+    {
+      "time_s": 222.90930032730103,
+      "state": "RETURNING_HOME"
+    },
+    {
+      "time_s": 249.58204674720764,
+      "state": "COMPLETED"
+    }
+  ],
+  "threshold": "|v|<0.01m/s and |w|<0.05rad/s; split intervals if command gap exceeds 0.2s",
+  "meaning": "Mission COMPLETED confirms home settling, not ground-truth complete coverage",
+  "matched_window": {
+    "duration_s": 249.58204674720764,
+    "command_samples": 4992,
+    "longest_zero_command_s": 4.300085783004761,
+    "fully_stopped_sample_fraction": 0.1374198717948718,
+    "max_abs_v": 0.5,
+    "max_abs_w": 0.8,
+    "max_command_gap_s": 0.05213451385498047
+  },
+  "completed_parking": {
+    "duration_s": 350.41795325279236,
+    "command_samples": 7008,
+    "longest_zero_command_s": 350.3900284767151,
+    "fully_stopped_sample_fraction": 1.0,
+    "max_abs_v": 0.0,
+    "max_abs_w": 0.0,
+    "max_command_gap_s": 0.05159568786621094,
+    "max_sampled_xy_displacement_from_first_parked_pose_m": 0.0
+  }
+}

@@ -218,3 +218,7 @@ not HT weights, terrain fitting or safety thresholds. `ht_cpu_threads.json`
 records actual native pool settings when diagnostics are enabled. Per-map
 diagnostics separate fusion, support preparation, neural inference, publication
 and the source age on entry; `map_processing_s` is the complete callback time.
+
+Latest stopped-map context/observation fix, its failed diagnostic attempt and
+closed-loop recordings: [fix report](../../docs/fixes/2026-10-17_context_recovery.md).
+Successful return-home checks are separate from complete terrain coverage.

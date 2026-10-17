@@ -113,7 +113,8 @@ def main():
               CUPY/'src/elevation_mapping_cupy_2204/elevation_mapping_cupy/script/elevation_mapping_cupy/elevation_mapping_ros.py']
     paths += [BRIDGE/name for name in ('cmu_xytheta.launch.py','cmu_vehicle_downward.launch.py','gz_sim_direct.launch.py')]
     paths += [BRIDGE/name for name in ('cpu_threads.py','model.py','local_surface.py','elevation_quality.py','ht_support.py','capture_replay_maps.py',
-                                     'assets/camera_sensor_mask.sdf','student_best_epoch_weights.pth')]
+                                     'assets/camera_sensor_mask.sdf','assets/lidar_downward.sdf',
+                                     'assets/robot_sensor_mask.sdf','student_best_epoch_weights.pth')]
     paths += [CMU/f'src/vehicle_simulator/world/{args.scenario}.world',
               ROOT/f'src/tare_planner/config/{args.scenario}.yaml',
               ROOT/f'install_standalone/tare_planner/share/tare_planner/{args.scenario}.yaml',

@@ -1,0 +1,63 @@
+{
+  "source": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_multiscene_10min_2026-10-17_11-37-52/tunnel",
+  "measurement_origin": 1792211160.996868,
+  "first_completed_message_s": null,
+  "active_mission": {
+    "duration_s": 600.0,
+    "command_samples": 12000,
+    "longest_zero_command_s": 496.3671233654022,
+    "fully_stopped_sample_fraction": 0.84775,
+    "max_abs_v": 0.5,
+    "max_abs_w": 0.8,
+    "max_command_gap_s": 0.055985212326049805
+  },
+  "transitions": [
+    {
+      "time_s": 0.7476084232330322,
+      "state": "EXPLORING"
+    },
+    {
+      "time_s": 7.855207204818726,
+      "state": "BLOCKED"
+    },
+    {
+      "time_s": 9.966081380844116,
+      "state": "EXPLORING"
+    },
+    {
+      "time_s": 24.49674916267395,
+      "state": "BLOCKED"
+    },
+    {
+      "time_s": 26.642591953277588,
+      "state": "EXPLORING"
+    },
+    {
+      "time_s": 81.6197919845581,
+      "state": "RETURNING_HOME"
+    },
+    {
+      "time_s": 95.65601420402527,
+      "state": "BLOCKED"
+    },
+    {
+      "time_s": 96.5414047241211,
+      "state": "RETURNING_HOME"
+    },
+    {
+      "time_s": 103.63074922561646,
+      "state": "BLOCKED"
+    }
+  ],
+  "threshold": "|v|<0.01m/s and |w|<0.05rad/s; split intervals if command gap exceeds 0.2s",
+  "meaning": "Mission COMPLETED confirms home settling, not ground-truth complete coverage",
+  "matched_window": {
+    "duration_s": 249.58204674720764,
+    "command_samples": 4991,
+    "longest_zero_command_s": 145.94917011260986,
+    "fully_stopped_sample_fraction": 0.6339410939691444,
+    "max_abs_v": 0.5,
+    "max_abs_w": 0.8,
+    "max_command_gap_s": 0.055985212326049805
+  }
+}

@@ -1,0 +1,105 @@
+{
+  "source": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_recovery_verified_10min_2026-10-17_14-55-26/indoor",
+  "measurement_origin": 1792220826.2229526,
+  "first_completed_message_s": 328.4280757904053,
+  "active_mission": {
+    "duration_s": 328.4280757904053,
+    "command_samples": 6569,
+    "longest_zero_command_s": 4.650084018707275,
+    "fully_stopped_sample_fraction": 0.15938499010503882,
+    "max_abs_v": 0.5,
+    "max_abs_w": 0.8,
+    "max_command_gap_s": 0.05184316635131836
+  },
+  "transitions": [
+    {
+      "time_s": 0.6216614246368408,
+      "state": "EXPLORING"
+    },
+    {
+      "time_s": 6.4275078773498535,
+      "state": "BLOCKED"
+    },
+    {
+      "time_s": 10.575920581817627,
+      "state": "EXPLORING"
+    },
+    {
+      "time_s": 74.03558564186096,
+      "state": "BLOCKED"
+    },
+    {
+      "time_s": 74.89263200759888,
+      "state": "EXPLORING"
+    },
+    {
+      "time_s": 85.42764210700989,
+      "state": "BLOCKED"
+    },
+    {
+      "time_s": 88.74935388565063,
+      "state": "EXPLORING"
+    },
+    {
+      "time_s": 101.8256311416626,
+      "state": "BLOCKED"
+    },
+    {
+      "time_s": 103.85142850875854,
+      "state": "EXPLORING"
+    },
+    {
+      "time_s": 214.68938994407654,
+      "state": "RETURNING_HOME"
+    },
+    {
+      "time_s": 236.75582838058472,
+      "state": "BLOCKED"
+    },
+    {
+      "time_s": 237.51833128929138,
+      "state": "RETURNING_HOME"
+    },
+    {
+      "time_s": 238.48711919784546,
+      "state": "BLOCKED"
+    },
+    {
+      "time_s": 239.48797297477722,
+      "state": "RETURNING_HOME"
+    },
+    {
+      "time_s": 240.49146580696106,
+      "state": "BLOCKED"
+    },
+    {
+      "time_s": 241.4893238544464,
+      "state": "RETURNING_HOME"
+    },
+    {
+      "time_s": 328.4280757904053,
+      "state": "COMPLETED"
+    }
+  ],
+  "threshold": "|v|<0.01m/s and |w|<0.05rad/s; split intervals if command gap exceeds 0.2s",
+  "meaning": "Mission COMPLETED confirms home settling, not ground-truth complete coverage",
+  "matched_window": {
+    "duration_s": 328.4280757904053,
+    "command_samples": 6569,
+    "longest_zero_command_s": 4.650084018707275,
+    "fully_stopped_sample_fraction": 0.15938499010503882,
+    "max_abs_v": 0.5,
+    "max_abs_w": 0.8,
+    "max_command_gap_s": 0.05184316635131836
+  },
+  "completed_parking": {
+    "duration_s": 271.5719242095947,
+    "command_samples": 5431,
+    "longest_zero_command_s": 271.5291736125946,
+    "fully_stopped_sample_fraction": 1.0,
+    "max_abs_v": 0.0,
+    "max_abs_w": 0.0,
+    "max_command_gap_s": 0.05144762992858887,
+    "max_sampled_xy_displacement_from_first_parked_pose_m": 0.0
+  }
+}
