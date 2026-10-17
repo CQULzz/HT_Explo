@@ -82,6 +82,8 @@ def main():
     parser.add_argument('--duration', type=int, default=3600)
     parser.add_argument('--domain', type=int, default=231)
     parser.add_argument('--output', type=Path)
+    parser.add_argument('--scenario',choices=['garage','campus','indoor','forest','tunnel'],default='garage')
+    parser.add_argument('--video-fps',type=int,choices=[2,10,15],default=2)
     args = parser.parse_args()
     folder = (args.output or ROOT/'presentations/scheduled_results'/
               ('ht_endurance_'+dt.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))).resolve()
@@ -107,7 +109,12 @@ def main():
               ROOT/'src/tare_planner/src/ht_cost/xytheta_follower.cpp',
               CUPY/'src/elevation_mapping_cupy_2204/elevation_mapping_cupy/script/elevation_mapping_cupy/elevation_mapping_ros.py']
     paths += [BRIDGE/name for name in ('cmu_xytheta.launch.py','cmu_vehicle_downward.launch.py','gz_sim_direct.launch.py')]
-    paths += [BRIDGE/name for name in ('cpu_threads.py','model.py','local_surface.py','elevation_quality.py')]
+    paths += [BRIDGE/name for name in ('cpu_threads.py','model.py','local_surface.py','elevation_quality.py',
+                                     'assets/camera_sensor_mask.sdf','student_best_epoch_weights.pth')]
+    paths += [CMU/f'src/vehicle_simulator/world/{args.scenario}.world',
+              ROOT/f'src/tare_planner/config/{args.scenario}.yaml',
+              ROOT/f'install_standalone/tare_planner/share/tare_planner/{args.scenario}.yaml',
+              Path(__file__).with_name('stage_garage_pose.py'),Path(__file__).with_name('endurance_probe.py')]
     paths += [CMU/'src/vehicle_simulator/launch/vehicle_simulator.launch', CUPY/'config/trial_plugins.yaml']
     paths += [CUPY/'src/elevation_mapping_cupy_2204/elevation_mapping_cupy/script/elevation_mapping_cupy'/name
               for name in ('elevation_mapping.py','traversability_filter.py')]
@@ -118,10 +125,11 @@ def main():
         paths += [CMU/f'src/{package}/src/{executable}.cpp',
                   CMU/f'install/{package}/lib/{package}/{executable}']
     manifest = dict(started_at=dt.datetime.now().astimezone().isoformat(),
-                    planned_duration_s=args.duration, scenario='Garage', domain=args.domain,
+                    planned_duration_s=args.duration, scenario=args.scenario, domain=args.domain,
+                    video_fps=args.video_fps,
                     speed_cap_mps=.5, preflight=preflight(),
                     git_head=subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
-                    evidence_policy='All control/status and odometry; original-stamped scans1Hz; exact-stamp map snapshots every10s; camera2fps. Not a full input bag.',
+                    evidence_policy=f'All control/status and odometry; original-stamped scans1Hz; exact-stamp map snapshots every10s; camera{args.video_fps}fps. Not a full input bag.',
                     source_hashes={str(p): hashlib.sha256(p.read_bytes()).hexdigest() for p in paths})
     (folder/'manifest.json').write_text(json.dumps(manifest, ensure_ascii=False, indent=2))
     (folder/'working_tree.patch').write_bytes(subprocess.check_output(['git', 'diff', 'HEAD'], cwd=ROOT))
@@ -150,8 +158,8 @@ def main():
                     '--max-cache-size 134217728 --max-bag-duration 300 --disable-keyboard-controls -o '+
                     q(folder/'evidence_bag')+' --topics '+' '.join(q(t) for t in topics))
         trial.start('health', ros+' exec python3 '+q(Path(__file__).with_name('endurance_probe.py'))+
-                    ' --output '+q(folder))
-        summary = run_trial(trial, 'current', args.duration)
+                    ' --output '+q(folder)+f' --video-fps {args.video_fps} --scenario {args.scenario}')
+        summary = run_trial(trial, 'current', args.duration,args.scenario)
         (folder/'summary.json').write_text(json.dumps(summary, ensure_ascii=False, indent=2))
         (folder/'COMPLETED.json').write_text(json.dumps({
             'finished_at': dt.datetime.now().astimezone().isoformat(),

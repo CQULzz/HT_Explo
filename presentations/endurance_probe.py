@@ -26,7 +26,12 @@ from capture_replay_maps import Capture, stamp
 
 
 class EnduranceProbe(Capture):
-    def __init__(self, output):
+    def __init__(self, output, video_fps=2, scenario='garage'):
+        self.video_fps=video_fps
+        self.scenario=scenario
+        self.camera_buffer=collections.deque(maxlen=max(8,4*video_fps))
+        self.encoded_camera=None
+        self.encoded_camera_time=None
         self.counts = collections.Counter()
         self.last_rx = {}
         self.last_stamp = {}
@@ -46,9 +51,11 @@ class EnduranceProbe(Capture):
             self.create_subscription(String, '/' + topic,
                                      lambda msg, key=topic: self.status_update(key, msg), 20)
         self.created = time.monotonic()
+        self.created_wall = time.time()
         self.last_video = self.created
-        self.writer = cv2.VideoWriter(str(output / 'camera_2fps.mp4'),
-                                     cv2.VideoWriter_fourcc(*'mp4v'), 2, (960, 600))
+        self.video_name=f'camera_{video_fps}fps.mp4'
+        self.writer = cv2.VideoWriter(str(output / self.video_name),
+                                     cv2.VideoWriter_fourcc(*'mp4v'), video_fps, (960, 600))
         if not self.writer.isOpened():
             raise RuntimeError('Cannot open camera video writer')
         self.video_frames = 0
@@ -60,7 +67,7 @@ class EnduranceProbe(Capture):
         self.csv_writer = csv.DictWriter(self.csv_file, fieldnames=names, lineterminator='\n')
         self.csv_writer.writeheader()
         self.create_timer(1.0, self.sample)
-        self.create_timer(.5, self.video)
+        self.create_timer(1.0/video_fps, self.video)
 
     def seen(self, key, msg=None):
         self.counts[key] += 1
@@ -93,6 +100,7 @@ class EnduranceProbe(Capture):
     def camera(self, msg):
         self.seen('camera')
         super().camera(msg)
+        self.camera_buffer.append((time.monotonic(),self.latest['camera']))
 
     def odom(self, msg):
         self.seen('odom', msg)
@@ -130,22 +138,30 @@ class EnduranceProbe(Capture):
         now = time.monotonic()
         # Account for delayed callbacks with repeated frames, preserving a
         # wall-time timeline. Overlay includes age of the actual received image.
-        while now - self.last_video >= .5:
-            self.last_video += .5
+        while now - self.last_video >= 1.0/self.video_fps:
+            self.last_video += 1.0/self.video_fps
+            # Retain the latest image available at this output time. A slow
+            # callback may repeat an older frame, never backfill a future one.
+            while self.camera_buffer and self.camera_buffer[0][0]<=self.last_video:
+                self.encoded_camera_time,self.encoded_camera=self.camera_buffer.popleft()
             frame = np.zeros((600, 960, 3), np.uint8)
-            if 'camera' in self.latest:
-                frame[:540] = cv2.resize(self.latest['camera'], (960, 540))
+            if self.encoded_camera is not None:
+                frame[:540] = cv2.resize(self.encoded_camera, (960, 540))
             elapsed = self.last_video - self.created
             origin = self.output / 'current/measurement_started.json'
             if not hasattr(self, 'measurement_origin') and origin.exists():
                 self.measurement_origin = json.loads(origin.read_text())['wall_time']
-            label = ('trial t=%.1fs' % (time.time() - self.measurement_origin)
+            frame_wall=self.created_wall+elapsed
+            label = ('trial t=%.1fs' % (frame_wall - self.measurement_origin)
                      if hasattr(self, 'measurement_origin') else 'INITIALIZATION')
-            image_age = now - self.last_rx.get('camera', now)
-            cv2.putText(frame, f'HT endurance | {label} | camera age={image_age:.2f}s',
+            image_age = self.last_video-self.encoded_camera_time if self.encoded_camera_time is not None else math.nan
+            v,w=self.command
+            cv2.putText(frame, f'{self.scenario.upper()} | {label} | v={v:.2f}m/s w={w:.2f}rad/s',
                         (12, 560), cv2.FONT_HERSHEY_SIMPLEX, .62, (230, 230, 230), 1)
-            text = self.status.get('ht_follower_status', 'WAITING')
-            cv2.putText(frame, text[:105], (12, 586), cv2.FONT_HERSHEY_SIMPLEX,
+            text = self.status.get('ht_follower_status', 'WAITING')+' | '+self.status.get('mission_state','WAITING')
+            age=getattr(self,'last_health',{}).get('map_source_age_s',math.nan)
+            age=float(age) if age!='' else math.nan
+            cv2.putText(frame, f'{text} | HT age={age:.2f}s | camera age={image_age:.2f}s', (12, 586), cv2.FONT_HERSHEY_SIMPLEX,
                         .55, (120, 230, 240), 1)
             self.writer.write(frame)
             self.video_frames += 1
@@ -159,15 +175,19 @@ class EnduranceProbe(Capture):
             'sampling': 'exact-source-stamp map triplets, minimum ten seconds apart'}, indent=2))
         (self.output / 'probe_summary.json').write_text(json.dumps({
             'counts': dict(self.counts), 'duration_including_initialization_s': time.monotonic()-self.created,
-            'video_frames': self.video_frames, 'video_fps': 2, 'snapshot_count': len(self.frames)}, indent=2))
+            'video_frames': self.video_frames, 'video_fps': self.video_fps,
+            'video_file':self.video_name,'video_start_wall_time':self.created_wall+1.0/self.video_fps,
+            'scenario':self.scenario,'snapshot_count': len(self.frames)}, indent=2))
 
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--video-fps',type=int,choices=[2,10,15],default=2)
+    parser.add_argument('--scenario',default='garage')
     args = parser.parse_args()
     rclpy.init()
-    node = EnduranceProbe(args.output)
+    node = EnduranceProbe(args.output,args.video_fps,args.scenario)
     try:
         rclpy.spin(node)
     except KeyboardInterrupt:

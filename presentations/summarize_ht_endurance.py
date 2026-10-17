@@ -57,6 +57,9 @@ def main():
     origin = json.loads((folder/'current/measurement_started.json').read_text())['wall_time']
     summary = json.loads((folder/'summary.json').read_text())
     duration = float(summary['duration_s'])
+    manifest=json.loads((folder/'manifest.json').read_text())
+    scenario=manifest.get('scenario','garage')
+    video_fps=manifest.get('video_fps',2)
     rows = read_csv(folder/'current/timeseries.csv')
     t = np.array([number(row, 't_s') for row in rows])
     dist = np.array([number(row, 'distance_m') for row in rows])
@@ -225,7 +228,8 @@ def main():
         'longest_fully_zero_sampled_intervals': longest(t, full_stop)[:15],
         'longest_no_actual_translation_sampled_intervals': longest(t, actual_stationary)[:15],
         'process_memory': label_stats, 'segments': segments,
-        'limitations': ['One Garage run; not a cross-environment or real-vehicle safety guarantee.',
+        'scenario': scenario,
+        'limitations': [f'One {scenario} run; not a real-vehicle safety guarantee.',
                         'A running node is not proof of exploration progress.',
                         'RSS sums can double-count shared pages. GPU total includes the desktop.',
                         'Probe ages and stop states are sampled1Hz and0.5s; full control messages retained in MCAP.',
@@ -313,13 +317,16 @@ def main():
     plt.close(fig)
     stopped = report['longest_fully_zero_sampled_intervals']
     no_motion = report['longest_no_actual_translation_sampled_intervals']
-    lines = ['# 当前HT：Garage连续长时间测试', '',
+    age_stats=stats(map_age)
+    age_text=(f'{age_stats["p95"]:.3f}/{age_stats["max"]:.3f}秒'
+              if age_stats['count'] else '未收到可用地图')
+    lines = [f'# 当前HT：{scenario}连续测试', '',
              f'计划/实际记录 {duration/60:.0f} 分钟；不重启规划、建图及跟踪节点。前进上限0.5m/s。', '',
              f'- 行驶距离：{summary["distance_m"]:.2f}米；到访1米轨迹格：{summary["visited_1m_xy_cells"]}。',
              f'- 探索完成信号：{summary["exploration_finished"]}；定时结束不等于探索完成。',
              f'- 最后采样任务状态：{mission["last_sampled_mission"]}；执行状态：{mission["last_sampled_execution_status"]}。探索完成信号只触发返航，不等于已安全回到起点。',
              f'- 运行期间父进程退出/资源保护事件：{len(failures)}个，详见endurance_audit.json。',
-             f'- 1Hz采样HT地图年龄P95/最大：{stats(map_age)["p95"]:.3f}/{stats(map_age)["max"]:.3f}秒；超过3秒{int(np.sum(map_age>3))}个采样点。',
+             f'- 1Hz采样HT地图年龄P95/最大：{age_text}；超过3秒{int(np.sum(map_age>3))}个采样点。',
              f'- 最长完全零速约{stopped[0]["duration_s"] if stopped else 0:.1f}秒；最长实际不平移约{no_motion[0]["duration_s"] if no_motion else 0:.1f}秒，后者包括原地旋转。', '',
              f'- 规划器日志确认收到并处理执行拒绝运动段{len(accepted_rejections)}次；已进入6秒冷却重规划分支。', '',
              '![稳定性曲线](stability.png)', '', '![运行性能与停车](performance.png)', '',
@@ -330,13 +337,13 @@ def main():
         lines.append(f'| {segment["start_s"]/60:.0f}–{segment["end_s"]/60:.0f} | {segment["distance_m"]:.2f} | {segment["fully_stopped_sample_fraction"]:.1%} | {segment["stationary_turn_sample_fraction"]:.1%} | {gain:.2f} |' if gain is not None else str(segment))
     lines += ['', '## 数据与限制', '',
               '资源和健康检查是外部观测；没有修改被测规划参数或用重启掩盖问题。',
-              '保留全部控制/状态/里程计消息；原始点云每秒抽样1帧，地图精确同时间戳快照约每10秒一组，相机视频2fps。此包不是完整传感器录包，不能用抽样帧数认定输入掉包。',
+              f'保留全部控制/状态/里程计消息；原始点云每秒抽样1帧，地图精确同时间戳快照约每10秒一组，相机视频{video_fps}fps。此包不是完整传感器录包，不能用抽样帧数认定输入掉包。',
               '全速输入需结合健康探针回调计数、CuPy接收/融合计数和源时间段核验；结束时可能有未完成的一帧。',
               f'以源时间戳对齐外部探针与建图接收计数，匹配{len(matches)}个检查点；计数差恒定：{delivery["constant_offset_in_observed_window"]}。详见input_delivery_audit.json；这只检查匹配窗口内的相对接收差异，不能排除上游停发或双方共同漏收。',
               '目标选择及全局引导切换日志保存在target_selection_audit.json。gain是视点覆盖估计；旧版对已承诺目标还使用过gain=0占位。实际新增观测需看自由体素并集，不能仅凭目标日志判断。',
               '自由空间是0.5m体素光线累计近似值，不是官方覆盖率或真值。内存为进程组RSS相加，可能重复计算共享页；显存总量包含桌面。',
-              '单次Garage长测不能证明跨场景、实车或所有条件稳定。', '',
-              '[健康/停车/内存审计](endurance_audit.json) · [每10分钟统计](ten_minute_segments.csv) · [相机视频](camera_2fps.mp4)']
+              '单次测试不能证明实车或所有条件稳定。', '',
+              '[健康/停车/内存审计](endurance_audit.json) · [每10分钟统计](ten_minute_segments.csv) · [相机视频](camera_h264.mp4)']
     (folder/'REPORT.md').write_text('\n'.join(lines)+'\n')
     print(json.dumps({'distance_m': summary['distance_m'], 'duration_s': duration,
                       'output': str(folder/'REPORT.md')}, ensure_ascii=False))

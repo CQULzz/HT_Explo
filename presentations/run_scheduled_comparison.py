@@ -153,19 +153,21 @@ def build_current(folder):
         completed=subprocess.run(['bash','-lc',command],stdout=log,stderr=subprocess.STDOUT,timeout=900)
     if completed.returncode:raise RuntimeError(f'current tare_planner build failed; see {folder/"build.log"}')
 
-def run_trial(trial,variant,duration):
+def run_trial(trial,variant,duration,scenario='garage'):
+    if scenario not in ('garage','campus','indoor','forest','tunnel'):
+        raise ValueError('Unsupported installed simulation scenario: '+scenario)
     ros=Path('/opt/ros/jazzy/setup.bash')
     cmu=CMU/'install/setup.bash'
-    sim=source(ros,cmu)+f' exec ros2 launch {q(BRIDGE/"cmu_xytheta.launch.py")} world_name:=garage'
+    sim=source(ros,cmu)+f' exec ros2 launch {q(BRIDGE/"cmu_xytheta.launch.py")} world_name:={scenario}'
     trial.start('sim',sim)
     time.sleep(10);trial.check()
-    stage=source(ros,cmu)+f' python3 {q(HERE/"stage_garage_pose.py")}'
+    stage=source(ros,cmu)+f' python3 {q(HERE/"stage_garage_pose.py")} --scenario {scenario}'
     stage_output=trial.run('stage',stage,95)
     stage_data=json.loads(stage_output.strip().splitlines()[-1])
     (trial.folder/'stage.json').write_text(json.dumps(stage_data,indent=2)+'\n')
     if variant=='original':
         local=source(ros,cmu)+ ' exec ros2 launch local_planner local_planner.launch autonomySpeed:=0.5'
-        tare=source(ros,cmu,UP/'install/setup.bash')+' exec ros2 launch tare_planner explore_garage.launch rviz:=false'
+        tare=source(ros,cmu,UP/'install/setup.bash')+f' exec ros2 launch tare_planner explore_{scenario}.launch rviz:=false'
     else:
         trial.env['HT_HISTORY_DUMP']=str(trial.folder/'historical_elevation.npz')
         mapper=source(ros,CUPY/'install/setup.bash')+(
@@ -180,7 +182,7 @@ def run_trial(trial,variant,duration):
             f' --params-file {q(BRIDGE/"ht_trial.yaml")}')
         trial.start('xytheta_follower',follow);time.sleep(2);trial.check()
         tare=source(ros,ROOT/'install_standalone/setup.bash')+(
-            ' exec ros2 launch tare_planner explore_ht.launch.py scenario:=garage use_sim_time:=false'
+            f' exec ros2 launch tare_planner explore_ht.launch.py scenario:={scenario} use_sim_time:=false'
             f' ht_config:={q(BRIDGE/"ht_trial.yaml")}')
     probe=source(ros,cmu,(UP/'install/setup.bash' if variant=='original' else ROOT/'install_standalone/setup.bash'))+(
         f' exec python3 {q(HERE/"paired_probe.py")} --output {q(trial.folder)}'

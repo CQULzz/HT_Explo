@@ -73,10 +73,16 @@ def main():
     with (folder/'analysis.log').open('w') as log:
         result = subprocess.run(['bash','-lc',command], stdout=log, stderr=subprocess.STDOUT,
                                 timeout=1800)
+    analysis_returncode=result.returncode
     if result.returncode:
         (folder/'POSTPROCESS_FAILED.json').write_text(json.dumps({'returncode': result.returncode}, indent=2))
-        return
     # Convert the evidence video to broadly playable H.264 after recording is closed.
+    probe=json.loads((folder/'probe_summary.json').read_text())
+    video_source=folder/probe.get('video_file','camera_2fps.mp4')
+    manifest=json.loads((folder/'manifest.json').read_text())
+    origin=json.loads((folder/'current/measurement_started.json').read_text())['wall_time']
+    offset=max(0,origin-probe.get('video_start_wall_time',origin))
+    duration=manifest['planned_duration_s']
     encoder = str(args.encoder) if args.encoder else shutil.which('ffmpeg')
     if not encoder:
         try:
@@ -90,22 +96,34 @@ def main():
                 'video_note': 'FFmpeg unavailable; camera_2fps.mp4 retained. Install imageio-ffmpeg or supply --encoder.'}, indent=2))
             return
     with (folder/'video_encode.log').open('w') as log:
-        result = subprocess.run([encoder,'-nostdin','-y','-i',str(folder/'camera_2fps.mp4'),
+        result = subprocess.run([encoder,'-nostdin','-y','-ss',str(offset),'-i',str(video_source),
+                                 '-t',str(duration),
                                  '-c:v','libx264','-preset','fast','-crf','24','-pix_fmt','yuv420p',
                                  '-threads','2',
                                  '-movflags','+faststart',str(folder/'camera_h264.mp4')],
-                                stdout=log, stderr=subprocess.STDOUT, timeout=900)
-    validation={'encode_returncode':result.returncode}
+                                stdout=log, stderr=subprocess.STDOUT, timeout=1800)
+    validation={'encode_returncode':result.returncode,'fps':probe.get('video_fps',2),
+                'requested_duration_s':duration,'trim_offset_s':offset,'source_file':str(video_source)}
     video=folder/'camera_h264.mp4'
     if result.returncode==0:
         with (folder/'video_decode.log').open('w') as log:
             decoded=subprocess.run([encoder,'-nostdin','-v','error','-threads','2','-i',str(video),
+                                    '-progress','pipe:1','-nostats',
                                     '-f','null','-'],stdout=log,stderr=subprocess.STDOUT,timeout=600)
+        progress={}
+        for line in (folder/'video_decode.log').read_text().splitlines():
+            if '=' in line:
+                key,value=line.split('=',1);progress[key]=value
+        frame_count=int(progress.get('frame','0'))
+        actual_duration=frame_count/validation['fps']
         validation.update(full_decode_returncode=decoded.returncode,
+                          decoded_frames=frame_count,duration_s=actual_duration,
+                          duration_matches=abs(actual_duration-duration)<=1.0/validation['fps']+.001,
                           bytes=video.stat().st_size,sha256=hashlib.sha256(video.read_bytes()).hexdigest())
     (folder/'video_validation.json').write_text(json.dumps(validation,indent=2)+'\n')
     (folder/'ANALYSIS_COMPLETED.json').write_text(json.dumps({
         'finished_at': dt.datetime.now().astimezone().isoformat(),
+        'analysis_returncode':analysis_returncode,
         'video_encode_returncode': result.returncode}, indent=2))
 
 
