@@ -135,7 +135,7 @@ def main():
                     video_fps=args.video_fps,
                     speed_cap_mps=.5, preflight=preflight(),
                     git_head=subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
-                    evidence_policy=f'All control/status and odometry; original-stamped scans1Hz; exact-stamp map snapshots every10s; camera{args.video_fps}fps. Not a full input bag.',
+                    evidence_policy=f'All control/status and odometry, full-rate published HT maps; original-stamped scans1Hz; exact-stamp map triplets every10s; camera{args.video_fps}fps. Raw CuPy and scans are not fully bagged.',
                     source_hashes={str(p): hashlib.sha256(p.read_bytes()).hexdigest() for p in paths})
     (folder/'manifest.json').write_text(json.dumps(manifest, ensure_ascii=False, indent=2))
     (folder/'working_tree.patch').write_bytes(subprocess.check_output(['git', 'diff', 'HEAD'], cwd=ROOT))
@@ -144,7 +144,8 @@ def main():
     topics = ['/endurance/registered_scan', '/state_estimation', '/state_estimation_at_scan',
               '/tf', '/tf_static', '/cmd_vel', '/way_point', '/ht_xytheta_path',
               '/ht_execution_status', '/ht_follower_status', '/ht_execution_rejected_edge',
-              '/ht_navigation_allowed', '/mission_state', '/mission_completed', '/runtime', '/exploration_finish']
+              '/ht_navigation_allowed', '/mission_state', '/mission_completed', '/runtime', '/exploration_finish',
+              '/ht_traversability/global_local']
     stopped = threading.Event()
     failures = []
     thread = threading.Thread(target=monitor, args=(trial, folder, stopped, failures), daemon=True)

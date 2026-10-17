@@ -18,6 +18,7 @@ HtCostMap::HtCostMap(rclcpp::Node::SharedPtr node,bool publish_permission)
   lookahead_=node->declare_parameter<double>("ht_lookahead_distance",2.0);
   reached_distance_=node->declare_parameter<double>("ht_waypoint_reached_distance",0.3);
   footprint_radius_=node->declare_parameter<double>("ht_validity_radius",0.6);
+  require_reversible_motion_=node->declare_parameter<bool>("ht_require_reversible_motion",false);
   heading_offset_=node->declare_parameter<double>("ht_heading_offset",0.0);
   const auto policy=node->declare_parameter<std::string>("ht_unknown_policy","strict");
   if (policy!="strict" && policy!="geometric_fallback") throw std::invalid_argument("Invalid ht_unknown_policy");
@@ -66,8 +67,8 @@ HtCostMap::HtCostMap(rclcpp::Node::SharedPtr node,bool publish_permission)
     subscription_=node->create_subscription<grid_map_msgs::msg::GridMap>(
       topic,rclcpp::QoS(1).reliable(),
       [this](grid_map_msgs::msg::GridMap::ConstSharedPtr msg){receive(msg);},options);
-    RCLCPP_INFO(logger_,"HT hard gate: min_probability=%.3f unknown_policy=%s calibrated=%d",
-                min_probability_,policy.c_str(),calibrated_);
+    RCLCPP_INFO(logger_,"HT hard gate: min_probability=%.3f unknown_policy=%s calibrated=%d reversible=%d",
+                min_probability_,policy.c_str(),calibrated_,require_reversible_motion_);
   }
 }
 
@@ -259,8 +260,21 @@ Support HtCostMap::motionSupport(Pose2 a,Pose2 b) const {
   for (size_t i=1;i<cuts.size();++i)
     if (!merge(supportDirected(point(cuts[i-1]),point(cuts[i]),
              a.yaw+angle*(cuts[i-1]+cuts[i])*.5))) return result;
-  if (std::hypot(b.x-a.x,b.y-a.y)>1e-6)
-    merge(support(point(0),point(1)));
+  if (std::hypot(b.x-a.x,b.y-a.y)>1e-6) {
+    if (!merge(support(point(0),point(1)))) return result;
+    // Preserve the exact swept body poses when driving the same arc backward.
+    // Body-heading checks above are already symmetric under path reversal;
+    // the additional travel-direction gate is not. Do not average opposite
+    // probabilities or assume a one-way HT edge can be retraced.
+    if (require_reversible_motion_) {
+      const auto reverse=support(point(1),point(0));
+      if (!permits(reverse))
+        RCLCPP_INFO_THROTTLE(logger_,*clock_,1000,
+          "HT_RETURN_MARGIN_BLOCK map_stamp=%.9f a=(%.3f,%.3f,%.3f) b=(%.3f,%.3f,%.3f) reverse_support=%d",
+          cycle_->stamp,a.x,a.y,a.yaw,b.x,b.y,b.yaw,static_cast<int>(reverse));
+      merge(reverse);
+    }
+  }
   return result;
 }
 Support HtCostMap::supportDirected(const Point& a,const Point& b,double heading) const {

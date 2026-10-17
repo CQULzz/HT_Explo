@@ -10,8 +10,11 @@ def main():
     with np.load(args.snapshot,allow_pickle=False) as data:
         resolution=data['history_geometry'][2]
         observed=data['history_input_valid']>=.5
-        physical=(distance_transform_edt(~observed)*resolution<=.25)&~(data['history_rejected']>=.5)
-        physical=physical[25:-25,25:-25]
+        if 'ht_ht_observation_valid' in data:
+            physical=data['ht_ht_observation_valid']>=.5
+        else:
+            physical=(distance_transform_edt(~observed)*resolution<=.25)&~(data['history_rejected']>=.5)
+            physical=physical[25:-25,25:-25]
         field=np.stack([data[f'ht_ht_dir_{k}'] for k in range(8)]+[data['ht_ht_valid'],physical],axis=-1)
         # Invalid neural cells have no probability; 0.8 is only a serialization
         # placeholder there. ht_valid remains zero, in both old and new maps.

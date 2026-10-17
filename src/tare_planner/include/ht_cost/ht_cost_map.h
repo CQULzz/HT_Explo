@@ -45,6 +45,7 @@ class HtCostMap {
   StartupPrior prior_;
   FallbackBudget budget_;
   bool geometric_fallback_=false;
+  bool require_reversible_motion_=false;
   double fallback_lookahead_=0.5, fallback_speed_=0.2;
   bool enabled_=false, calibrated_=false;
   double min_probability_=0.5, timeout_=1, step_=0.02, lookahead_=2;

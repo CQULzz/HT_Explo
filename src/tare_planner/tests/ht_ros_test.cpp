@@ -153,6 +153,85 @@ TEST_F(HtRosTest, CapturedTunnelReturnKeepsRiskThresholdAndReachesHome) {
   EXPECT_FALSE(original.reached);
 }
 
+TEST_F(HtRosTest, CapturedMapSearchResolutionAudit) {
+  const char* filename=std::getenv("HT_STUCK_FIXTURE");
+  if (!filename) GTEST_SKIP()<<"Set HT_STUCK_FIXTURE to audit a captured stop";
+  std::ifstream file(filename);ASSERT_TRUE(file.good());
+  int rows,cols;double resolution,cx,cy,x,y,yaw;
+  ASSERT_TRUE(bool(file>>rows>>cols>>resolution>>cx>>cy>>x>>y>>yaw));
+  std::vector<float> values(rows*cols*10);
+  for(auto& value:values) ASSERT_TRUE(bool(file>>value));
+  grid_map::GridMap map;map.setFrameId("map");
+  map.setGeometry(grid_map::Length(rows*resolution,cols*resolution),resolution,grid_map::Position(cx,cy));
+  for(int k=0;k<8;++k)map.add("ht_dir_"+std::to_string(k));
+  map.add("ht_valid");map.add("ht_observation_valid");
+  for(grid_map::GridMapIterator it(map);!it.isPastEnd();++it) {
+    grid_map::Position p;map.getPosition(*it,p);
+    const int r=std::floor(rows*.5-(p.x()-cx)/resolution),c=std::floor(cols*.5-(p.y()-cy)/resolution);
+    ASSERT_GE(r,0);ASSERT_LT(r,rows);ASSERT_GE(c,0);ASSERT_LT(c,cols);
+    const size_t offset=(r*cols+c)*10;
+    for(int k=0;k<8;++k)map.at("ht_dir_"+std::to_string(k),*it)=values[offset+k];
+    map.at("ht_valid",*it)=values[offset+8];map.at("ht_observation_valid",*it)=values[offset+9];
+  }
+  struct Profile {const char* name;double cell,step;int headings;};
+  const Profile profiles[]={{"production",.3,.4,16},{"heading32",.3,.4,32},
+    {"heading64",.3,.4,64},{"short16",.15,.2,16},{"fine32",.15,.2,32},{"fine64",.1,.15,64}};
+  std::vector<ht_cost_ns::Point> goals{{4.3,12.7,0}};
+  for(int k=0;k<8;++k)goals.push_back({x+2*std::cos(k*ht_cost_ns::kPi/4),y+2*std::sin(k*ht_cost_ns::kPi/4),0});
+  for(const auto& profile:profiles) for(size_t gi=0;gi<goals.size();++gi) {
+    map.setTimestamp(node->now().nanoseconds());send(map);ASSERT_TRUE(ht->ready());
+    ht_cost_ns::XYThetaConfig config;config.cell=profile.cell;config.drive_step=profile.step;
+    config.headings=profile.headings;config.goal_radius=.35;config.max_search_seconds=.7;
+    config.max_expansions=80000;
+    auto valid=[&](ht_cost_ns::Pose2 a,ht_cost_ns::Pose2 b,double){return ht->permits(ht->motionSupport(a,b));};
+    const auto started=std::chrono::steady_clock::now();
+    const auto plan=ht_cost_ns::planXYTheta({x,y,yaw},goals[gi],config,valid);
+    const double seconds=std::chrono::duration<double>(std::chrono::steady_clock::now()-started).count();
+    std::cout<<"RESOLUTION_AUDIT profile="<<profile.name<<" goal="<<gi<<" reached="<<plan.reached
+      <<" expanded="<<plan.expanded<<" poses="<<plan.poses.size()<<" seconds="<<seconds<<std::endl;
+    if(plan.reached) for(size_t i=1;i<plan.poses.size();++i) EXPECT_TRUE(valid(plan.poses[i-1],plan.poses[i],0));
+  }
+}
+
+TEST_F(HtRosTest, ReversibleMotionRejectsAOneWayEntranceWithoutChangingRawScores) {
+  rclcpp::NodeOptions options;
+  options.parameter_overrides({rclcpp::Parameter("ht_enabled",true),
+    rclcpp::Parameter("ht_directions_calibrated",true),
+    rclcpp::Parameter("ht_topic","/ht_test_map"),
+    rclcpp::Parameter("ht_require_reversible_motion",true),
+    rclcpp::Parameter("ht_map_timeout",2.0)});
+  auto guarded_node=std::make_shared<rclcpp::Node>("ht_reversible_test",options);
+  ht_cost_ns::HtCostMap guarded(guarded_node,false);
+  auto map=grid();
+  for(int k=0;k<8;++k)map["ht_dir_"+std::to_string(k)].setConstant(.8f);
+  // A car can enter this predicted one-way corridor under the old rule,
+  // but cannot retrace it while preserving its body heading.
+  map["ht_dir_4"].setConstant(.2f);
+  auto load=[&]() {
+    map.setTimestamp(node->now().nanoseconds());pub->publish(*grid_map::GridMapRosConverter::toMessage(map));
+    const auto until=std::chrono::steady_clock::now()+150ms;
+    do {rclcpp::spin_some(node);rclcpp::spin_some(guarded_node);std::this_thread::sleep_for(5ms);}
+    while(std::chrono::steady_clock::now()<until);
+    ht->beginCycle();guarded.beginCycle();
+  };
+  load();ASSERT_TRUE(guarded.ready());
+  const ht_cost_ns::Pose2 a{0,0,0},b{.4,0,0};
+  EXPECT_TRUE(ht->permits(ht->motionSupport(a,b)));
+  EXPECT_FALSE(ht->permits(ht->motionSupport(b,a)));
+  EXPECT_EQ(guarded.poseSupport(0,0,0),ht_cost_ns::Support::KNOWN);
+  EXPECT_EQ(guarded.support({0,0,0},{.4,0,0}),ht_cost_ns::Support::KNOWN);
+  EXPECT_EQ(guarded.support({.4,0,0},{0,0,0}),ht_cost_ns::Support::BLOCKED);
+  EXPECT_EQ(guarded.motionSupport(a,b),ht_cost_ns::Support::BLOCKED);
+  EXPECT_EQ(guarded.motionSupport(b,a),ht_cost_ns::Support::BLOCKED);
+  map["ht_dir_4"].setConstant(.8f);load();
+  EXPECT_EQ(guarded.motionSupport(a,b),ht_cost_ns::Support::KNOWN);
+  EXPECT_EQ(guarded.motionSupport(b,a),ht_cost_ns::Support::KNOWN);
+  EXPECT_EQ(guarded.motionSupport(a,{0,0,.3}),ht_cost_ns::Support::KNOWN);
+  // The extra check does not waive an original low-probability rejection.
+  map["ht_dir_0"].setConstant(.2f);load();
+  EXPECT_EQ(guarded.motionSupport(a,b),ht_cost_ns::Support::BLOCKED);
+}
+
 TEST_F(HtRosTest, RotatedTranslatedFrameRotatesChannels) {
   tf2_ros::StaticTransformBroadcaster broadcaster(node);
   geometry_msgs::msg::TransformStamped tf;
