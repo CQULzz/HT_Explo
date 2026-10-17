@@ -47,7 +47,8 @@ def preflight(scenes):
 
 
 def save_report(job,state):
-    lines=['# HT 五环境各10分钟实验', '',
+    title='HT 五环境各10分钟实验' if len(state['runs'])==5 else 'HT '+ '、'.join(NAMES[r['scenario']] for r in state['runs'])+'10分钟补测'
+    lines=['# '+title, '',
            f'每组测量 {state["duration_s"]} 秒，从首个具备里程计和激光输入的TARE运行周期开始计时；初始化不计入。',
            '每个场景独立启动、独立高程历史，上一组完全退出且视频处理结束后再启动下一组。车速上限均为0.5m/s，HT硬约束与3秒时效保护相同。',
            '采用对应场景TARE参数；车库沿用历史配对起点，其余使用各自仿真原生起点。因此这不是相同场景的算法优劣对照。',
@@ -141,7 +142,7 @@ def wait_process(proc,state,job,row,phase,timeout):
         if time.monotonic()>deadline:raise TimeoutError(f'{row["scenario"]}: {phase} timed out')
         try:
             origin=read_json(job/row['scenario']/'current/measurement_started.json')['wall_time']
-            row['elapsed_measurement_s']=round(time.time()-origin,1)
+            if phase=='RECORDING':row['elapsed_measurement_s']=min(state['duration_s'],round(time.time()-origin,1))
         except (OSError,ValueError,KeyError):pass
         state['updated_at']=dt.datetime.now().astimezone().isoformat()
         save_report(job,state)

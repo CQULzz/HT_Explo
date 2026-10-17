@@ -70,11 +70,12 @@ tare_planner_node:
     keypose_graph/kAddEdgeCollisionCheckPointNumThr : 1
 
     # ViewPointManager
-    viewpoint_manager/number_x : 50
-    viewpoint_manager/number_y : 50
+    # Keep the 30x30 m horizon while sampling narrow HT-supported corridors.
+    viewpoint_manager/number_x : 100
+    viewpoint_manager/number_y : 100
     viewpoint_manager/number_z : 1
-    viewpoint_manager/resolution_x : 0.6
-    viewpoint_manager/resolution_y : 0.6
+    viewpoint_manager/resolution_x : 0.3
+    viewpoint_manager/resolution_y : 0.3
     viewpoint_manager/resolution_z : 0.0
     kConnectivityHeightDiffThr : 0.25
     kGreedyViewPointSampleRange : 3
