@@ -7,11 +7,11 @@ only implementation-shaped array properties.
 import unittest
 
 import numpy as np
-from scipy.ndimage import maximum_filter
 
 from elevation_quality import preprocess_elevation
 from historical_elevation import HistoricalElevation
 from local_surface import SurfaceReferenceEstimator
+from ht_support import prepare_ht_context
 
 
 class SurfacePipelineTests(unittest.TestCase):
@@ -26,6 +26,8 @@ class SurfacePipelineTests(unittest.TestCase):
     def process(self, source_z, source_age, stamp_s, robot_z):
         source = preprocess_elevation(source_z, self.variance, self.resolution)
         measured = np.where(source.observed_quality, source_z, np.nan)
+        self.history.record_rejections(source.rejected_mask,*self.center,stamp_s,
+            stamp_s-source_age.astype(np.float64),elevation=source_z)
         count = self.history.fuse(measured, self.variance, *self.center, stamp_s,
                                    observation_time=stamp_s-source_age.astype(np.float64))
         align = lambda array, fill=np.nan: self.history.aligned_source_window(
@@ -37,12 +39,27 @@ class SurfacePipelineTests(unittest.TestCase):
         selected, selected_var, _, _ = self.history.window(
             *self.center, self.side, stamp_s, reference_height=reference,
             preferred_elevation=preferred)
-        rejected = ((align(source.rejected_mask.astype(np.float32), 0) >= .5)
-                    | self.history.last_window_incompatible_mask)
+        rejected = self.history.last_window_incompatible_mask.copy()
         selected[rejected] = np.nan
         quality = preprocess_elevation(selected, selected_var, self.resolution)
         rejected |= quality.rejected_mask
         return quality, rejected, stats, count
+
+    def test_aging_source_variance_preserves_a_measured_wall_but_new_bad_data_blocks(self):
+        z=np.full((self.side,self.side),.127,np.float32);z[35:41,35:41]+=.8
+        self.process(z,np.zeros_like(z),1.,.877)
+        self.variance[35:41,35:41]=1.
+        age=np.zeros_like(z);age[35:41,35:41]=79.
+        result,rejected,*_=self.process(z,age,80.,.877)
+        self.assertAlmostEqual(result.height_m[37,37],.927,places=5)
+        self.assertFalse(rejected[37,37])
+        result,rejected,*_=self.process(z,np.zeros_like(z),81.,.877)
+        self.assertTrue(rejected[37,37]);self.assertTrue(np.isnan(result.height_m[37,37]))
+        self.variance[35:41,35:41]=.01;age[35:41,35:41]=4.
+        result,rejected,*_=self.process(z,age,85.,.877)
+        self.assertTrue(rejected[37,37])
+        result,rejected,*_=self.process(z,np.zeros_like(z),86.,.877)
+        self.assertFalse(rejected[37,37]);self.assertAlmostEqual(result.height_m[37,37],.927,places=5)
 
     def initialize_lower_floor(self):
         z = np.full((self.side, self.side), .127, np.float32)
@@ -116,18 +133,28 @@ class SurfacePipelineTests(unittest.TestCase):
         result, rejected, _, _ = self.process(outlier, np.zeros_like(lower), 2., .877)
         self.assertTrue(rejected[40, 40])
         self.assertTrue(np.isnan(result.height_m[40, 40]))
-        # The production bridge uses this exact dilation before accepting
-        # network probabilities, so a rejected return cannot be nearest-filled
-        # into an apparently traversable HT footprint.
-        network_unknown = maximum_filter(rejected, size=51, mode='constant')
-        self.assertTrue(network_unknown[40, 40])
-        self.assertTrue(network_unknown[15, 40])
-        self.assertFalse(network_unknown[14, 40])
+        # A rejected finite return is occupied, never free ground. Its actual
+        # height supplies context without invalidating every nearby network
+        # query. Production forces all eight probabilities at occupied to 0;
+        # the consumer dilates those forbidden cells by the vehicle footprint.
+        height,support,occupied,physical=prepare_ht_context(result.height_m,
+            result.observed_quality,rejected,self.history.last_window_obstacle_elevation,
+            self.resolution)
+        self.assertAlmostEqual(height[40,40],.727,places=5)
+        self.assertTrue(occupied[15,15]);self.assertTrue(support[15,15])
+        self.assertTrue(physical[15,15])
+        self.assertTrue(support[15,0])
+        # An actually unobserved hole remains unsupported; it has no occupied
+        # measurement to justify treating it as known terrain.
+        unknown=result.height_m.copy();unknown[25:56,25:56]=np.nan
+        _,unknown_support,_,unknown_physical=prepare_ht_context(unknown,
+            np.isfinite(unknown),rejected,np.full_like(unknown,np.nan),self.resolution)
+        self.assertFalse(unknown_support[15,15]);self.assertFalse(unknown_physical[15,15])
 
-    def test_stale_confident_post_dropped_by_floor_selection_invalidates_ht(self):
+    def test_retained_post_dropped_by_floor_selection_stays_occupied(self):
         # An initially measured confident tall post becomes old. Surface
         # selection hides its height after preferred-source expiry, but must
-        # retain its unknown-occupancy evidence for the HT support guard.
+        # retain its occupied evidence instead of reverting to free ground.
         ground = np.full((self.side, self.side), .127, np.float32)
         ground[40, 40] = 1.7
         self.variance[40, 40] = .0009
@@ -137,7 +164,9 @@ class SurfacePipelineTests(unittest.TestCase):
         self.assertTrue(np.isnan(result.height_m[40, 40]))
         self.assertTrue(rejected[40, 40])
         self.assertTrue(self.history.last_window_incompatible_mask[40, 40])
-        self.assertTrue(maximum_filter(rejected, size=51, mode='constant')[40, 40])
+        _,support,occupied,_=prepare_ht_context(result.height_m,result.observed_quality,
+            rejected,self.history.last_window_obstacle_elevation,self.resolution)
+        self.assertTrue(occupied[15,15]);self.assertTrue(support[15,15])
 
     def test_ramp_reference_reuses_only_previously_observed_ramp_surface(self):
         x, y = np.meshgrid((40-np.arange(81))*self.resolution,

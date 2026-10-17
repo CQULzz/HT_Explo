@@ -125,6 +125,9 @@ class CupyToHt(Node):
             # only the selected historical crop, avoiding repeated smoothing.
             measured = np.where(source_quality.observed_quality, elevation, np.nan)
             observed_at = stamp_s-age.astype(np.float64)
+            rejected_updates=self.history.record_rejections(source_quality.rejected_mask,
+                source.info.pose.position.x,source.info.pose.position.y,stamp_s,observed_at,
+                elevation=elevation)
             fused = self.history.fuse(
                 measured, variance, source.info.pose.position.x, source.info.pose.position.y,
                 stamp_s, observation_time=observed_at)
@@ -143,8 +146,7 @@ class CupyToHt(Node):
             elevation, variance, retained_edges = retain_recent_obstacle_edges(
                 elevation, variance, current, current_var, current_age,
                 align(source_quality.edge_mask.astype(np.float32), 0) >= .5)
-            source_rejected = align(source_quality.rejected_mask.astype(np.float32), 0) >= .5
-            source_rejected |= self.history.last_window_incompatible_mask
+            source_rejected = self.history.last_window_incompatible_mask.copy()
             elevation[source_rejected] = np.nan
             raw_history = elevation.copy()
             quality = preprocess_elevation(elevation, variance, resolution)
@@ -232,6 +234,7 @@ class CupyToHt(Node):
                                  'surface': surface_stats, 'quality': quality.stats,
                                  'source_rejected_cells': int(source_rejected.sum()),
                                  'known_obstacle_cells': int(occupied.sum()),
+                                 'new_rejected_observations': rejected_updates,
                                  'retained_current_edge_cells': int(retained_edges.sum()),
                                  'source_age_at_callback_s': source_age_at_start,
                                  'fusion_and_quality_s': fusion_finished-started,

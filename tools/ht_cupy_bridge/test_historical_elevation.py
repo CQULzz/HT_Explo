@@ -10,6 +10,46 @@ from historical_elevation import HistoricalElevation
 
 
 class HistoricalElevationTest(unittest.TestCase):
+    def test_rejected_finite_height_is_forbidden_context_and_expires(self):
+        h=HistoricalElevation(.1,max_age_s=10)
+        z,v=self.one_cell(0);h.fuse(z,v,0,0,1)
+        bad,_=self.one_cell(1.4)
+        h.record_rejections(np.isfinite(bad),0,0,2,np.full(z.shape,2.),elevation=bad)
+        crop,*_=h.window(0,0,5,3,reference_height=0)
+        self.assertTrue(np.isnan(crop[2,2]))
+        self.assertAlmostEqual(h.last_window_obstacle_elevation[2,2],1.4,places=5)
+        crop,*_=h.window(0,0,5,13,reference_height=0)
+        self.assertTrue(np.isnan(crop[2,2]))
+        self.assertFalse(np.isfinite(h.last_window_obstacle_elevation).any())
+        self.assertTrue(h.last_window_incompatible_mask[2,2])
+        h.fuse(z,v,0,0,14)
+        crop,*_=h.window(0,0,5,14,reference_height=0)
+        self.assertEqual(crop[2,2],0)
+        self.assertFalse(np.isfinite(h.last_window_obstacle_elevation).any())
+
+    def test_variance_aging_cannot_reject_an_accepted_observation(self):
+        h=HistoricalElevation(.1,max_age_s=100)
+        z,v=self.one_cell(.8);h.fuse(z,v,0,0,1,observation_time=1)
+        mask=np.isfinite(z);times=np.full(z.shape,1.)
+        self.assertEqual(h.record_rejections(mask,0,0,80,times),0)
+        crop,*_=h.window(0,0,5,80,reference_height=0)
+        self.assertAlmostEqual(crop[2,2],.8,places=5)
+        self.assertFalse(h.last_window_incompatible_mask[2,2])
+
+    def test_new_rejected_measurement_persists_until_new_accepted_return(self):
+        h=HistoricalElevation(.1,max_age_s=100)
+        z,v=self.one_cell(0);h.fuse(z,v,0,0,1,observation_time=1)
+        mask=np.isfinite(z);times=np.full(z.shape,2.)
+        self.assertEqual(h.record_rejections(mask,0,0,2,times),1)
+        crop,*_=h.window(0,0,5,20,reference_height=0)
+        self.assertTrue(np.isnan(crop[2,2]));self.assertTrue(h.last_window_incompatible_mask[2,2])
+        self.assertFalse(np.isfinite(h.last_window_obstacle_elevation).any())
+        self.assertEqual(h.fuse(z,v,0,0,20,observation_time=1),0)
+        self.assertEqual(h.fuse(z,v,0,0,20,observation_time=2),0)
+        self.assertEqual(h.fuse(z,v,0,0,21,observation_time=21),1)
+        crop,*_=h.window(0,0,5,21,reference_height=0)
+        self.assertEqual(crop[2,2],0);self.assertFalse(h.last_window_incompatible_mask[2,2])
+
     def one_cell(self, z, size=5):
         values = np.full((size, size), np.nan, np.float32)
         variance = np.full_like(values, np.inf)

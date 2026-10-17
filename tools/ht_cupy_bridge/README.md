@@ -25,6 +25,15 @@ measured heights as model context and are hard blocked in all directions;
 expired or unreferenced surfaces stay unknown. CPU inference defaults to
 four PyTorch threads and channels-last layout; BLAS remains single-threaded.
 
+Retained source variance may increase without a new lidar return. Such aging
+does not invalidate the identical observation already accepted into history.
+A genuinely newer rejected return supersedes older ground: if it has a finite
+measured height, that height is kept solely as occupied context and its own
+eight HT probabilities are forced to zero. A newer accepted return can clear
+it. Missing measurements, expired evidence, and rejected returns lacking a
+finite height remain unknown. Thus an uncertain wall does not invalidate a
+whole neural receptive field, and cannot become traversable through padding.
+
 
 Start each command in a separate terminal:
 

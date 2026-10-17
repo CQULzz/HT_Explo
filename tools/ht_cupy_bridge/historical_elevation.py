@@ -23,6 +23,8 @@ class HistoricalElevation:
                 or self.association_gap_m <= 0 or self.reference_tolerance_m <= 0):
             raise ValueError("invalid historical elevation configuration")
         self.tiles = {}
+        self.rejections = {}
+        self.rejected_heights = {}
         self.frames = 0
         # A known height rejected during surface/age selection must not be
         # reconstructed as free ground by downstream nearest-value padding.
@@ -102,6 +104,9 @@ class HistoricalElevation:
             # observation of any surface at this XY. In particular, reusing
             # one old timestamp cannot create a second apparent floor.
             latest_observation = np.max(last[:, lx, ly], axis=0)
+            rejected_time=self.rejections.get((int(tx[selected[0]]),int(ty[selected[0]])))
+            if rejected_time is not None:
+                latest_observation=np.maximum(latest_observation,rejected_time[lx,ly])
             # Source ages commonly use float32 seconds. Reconstructing an
             # old timestamp from header-age introduces sub-millisecond jitter;
             # that is not a new scan (the sensor cadence is tens of ms).
@@ -124,6 +129,40 @@ class HistoricalElevation:
             last[mode, lx, ly] = obs
             updates += len(lx)
         return updates
+
+    def record_rejections(self, rejected, center_x, center_y, stamp_s, observation_time,
+                          *, elevation=None):
+        """Record genuinely new rejected measurements, not variance aging.
+
+        Retained source cells may gain process variance without a new return.
+        They cannot retroactively invalidate the same observation already
+        accepted into history. A new bad return remains forbidden until a newer
+        accepted observation clears it; simply waiting does not fill a hole.
+        A finite rejected height is retained only as occupied context. It is
+        never fused as ground and the bridge forces its eight HT scores to zero.
+        Inputs use decoded logical GridMap order, as in the production bridge.
+        """
+        rejected=np.asarray(rejected,bool);observed=np.asarray(observation_time,np.float64)
+        if observed.shape!=rejected.shape or rejected.ndim!=2:raise ValueError('rejection shape mismatch')
+        height=np.full(rejected.shape,np.nan,np.float32) if elevation is None else np.asarray(elevation,np.float32)
+        if height.shape!=rejected.shape:raise ValueError('rejected elevation shape mismatch')
+        ii,jj=np.nonzero(rejected & np.isfinite(observed) & (observed<=stamp_s+1e-3)
+                         & (stamp_s-observed<=self.max_age_s))
+        if not len(ii):return 0
+        gx,gy=self._source_indices(center_x,center_y,rejected.shape);gx,gy=gx[ii],gy[jj]
+        tx,ty=gx//self.tile_size,gy//self.tile_size
+        _,groups=np.unique(np.stack((tx,ty),axis=1),axis=0,return_inverse=True)
+        count=0
+        for group in range(int(groups.max())+1):
+            ids=np.flatnonzero(groups==group);key=(int(tx[ids[0]]),int(ty[ids[0]]))
+            _,_,last=self._tile(*key);lx,ly=gx[ids]%self.tile_size,gy[ids]%self.tile_size
+            stored=self.rejections.setdefault(key,np.full((self.tile_size,self.tile_size),-np.inf,np.float64))
+            stored_height=self.rejected_heights.setdefault(key,np.full((self.tile_size,self.tile_size),np.nan,np.float32))
+            times=observed[ii[ids],jj[ids]]
+            fresh=times>np.maximum(np.max(last[:,lx,ly],axis=0),stored[lx,ly])+1e-3
+            stored[lx[fresh],ly[fresh]]=times[fresh];count+=int(fresh.sum())
+            stored_height[lx[fresh],ly[fresh]]=height[ii[ids[fresh]],jj[ids[fresh]]]
+        return count
 
     def window(self, center_x, center_y, side, stamp_s, *, reference_height=None,
                preferred_elevation=None):
@@ -199,6 +238,13 @@ class HistoricalElevation:
                     & (newest_time > chosen_time + 1e-3)
                     & (abs(newest_z-r) > self.reference_tolerance_m))
                 found &= ~newer_incompatible
+                rejected_time=self.rejections.get((int(tx),int(ty)))
+                newer_rejection=np.zeros(found.shape,bool)
+                if rejected_time is not None:
+                    rejected_time=rejected_time[lx[:,None],ly[None,:]]
+                    newer_rejection=(rejected_time>np.max(last,axis=0)+1e-3)&(
+                        rejected_time<=stamp_s+1e-3)&(stamp_s-rejected_time<=self.max_age_s)
+                    found &= ~newer_rejection
                 # Explicit surface selection with a nonfinite reference and
                 # no current observation is not permission to choose a floor.
                 if reference_height is not None or preferred_elevation is not None:
@@ -208,17 +254,22 @@ class HistoricalElevation:
                 # not proof that the obstacle disappeared. An inactive floor
                 # with no compatible current-floor height has the same rule.
                 self.last_window_incompatible_mask[np.ix_(ix, iy)] = (
-                    np.any(np.isfinite(z), axis=0) & ~found)
+                    (np.any(np.isfinite(z), axis=0) & ~found) | newer_rejection)
                 # An observed incompatible surface is occupied/unsafe evidence,
                 # not an observation of traversable ground. Preserve its actual
                 # height separately for network context and an explicit hard
                 # obstacle mask. Never promote expired or unreferenced layers.
-                obstacle = (~found & has_reference & np.isfinite(newest_z)
+                obstacle = (~found & ~newer_rejection & has_reference & np.isfinite(newest_z)
                     & (newest_time <= stamp_s+1e-3)
                     & (stamp_s-newest_time <= self.max_age_s)
                     & (abs(newest_z-r) > self.reference_tolerance_m))
-                self.last_window_obstacle_elevation[np.ix_(ix, iy)] = np.where(
-                    obstacle, newest_z, np.nan)
+                obstacle_height=np.where(obstacle,newest_z,np.nan)
+                rejected_height=self.rejected_heights.get((int(tx),int(ty)))
+                if rejected_height is not None:
+                    rejected_height=rejected_height[lx[:,None],ly[None,:]]
+                    obstacle_height=np.where(newer_rejection & np.isfinite(rejected_height),
+                                             rejected_height,obstacle_height)
+                self.last_window_obstacle_elevation[np.ix_(ix, iy)] = obstacle_height
                 elevation[np.ix_(ix, iy)] = np.where(found, chosen_z, np.nan)
                 variance[np.ix_(ix, iy)] = np.where(found, chosen_v, np.inf)
         return elevation, variance, exact_x, exact_y
@@ -297,4 +348,6 @@ class HistoricalElevation:
             keys=np.asarray(keys, dtype=np.int32).reshape(-1, 2),
             elevation=latest[0], variance=latest[1], last_seen=latest[2],
             elevation_modes=z, variance_modes=v, last_seen_modes=last,
+            rejected_observation_time=np.stack([self.rejections.get(k,np.full((self.tile_size,self.tile_size),-np.inf)) for k in keys]) if keys else np.empty((0,self.tile_size,self.tile_size)),
+            rejected_height=np.stack([self.rejected_heights.get(k,np.full((self.tile_size,self.tile_size),np.nan,np.float32)) for k in keys]) if keys else np.empty((0,self.tile_size,self.tile_size),np.float32),
             frames=self.frames)
