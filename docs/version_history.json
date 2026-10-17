@@ -2,9 +2,9 @@
   "schema_version": 1,
   "updated_at": "2026-10-17",
   "branch": "codex/ht8dir-v1",
-  "status": "五环境各600秒及室内修正后600秒均完成记录；无运行期崩溃，低收益回访、短时延迟及隧道返航受阻仍存在",
-  "latest_archive_commit": "2d74d9c7d4e2d68f9fef9fe653a94aa8aa0196a8",
-  "latest_planner_change": "f3d1eeedae814f99d0db94673c7abadc8eaf7439",
+  "status": "隧道与室内各600秒均完成返航；停车缩短，但室内观测体积下降41.8%、地图尾延迟和任务收尾仍待改进",
+  "latest_archive_commit": "9fb2b63ca50a059e4c184f223aaa97e896b185b6",
+  "latest_planner_change": "73cae0b24e72575b8592e772fd818f85ab91a9a6",
   "stages": [
     {
       "id": "stage-01",
@@ -337,6 +337,27 @@
       "control_commit": "f1c84854ccc147d40d7f9120c9713ba5e11c736c",
       "scene_configuration_commit": "f3d1eeedae814f99d0db94673c7abadc8eaf7439",
       "validation_commit": "2d74d9c7d4e2d68f9fef9fe653a94aa8aa0196a8"
+    },
+    {
+      "id": "stage-20",
+      "number": 20,
+      "sha": "dee873db9a25778eb67060100025bea2f619c0ee",
+      "tag": "ht-stage-20261017-context-recovery",
+      "title": "观测支撑与停滞恢复：返航通过，探索仍有退步",
+      "kind": "功能与闭环验证",
+      "change": "区分网络上下文与车体观测支撑；按实际观测时间保留拒绝，有限坏高度仅作八方向禁行上下文；增加12秒原地停滞释放、有限回退和0.35秒共享搜索预算，CPU改4线程channels-last。",
+      "features": "避免网络缺测重复膨胀及旧方差反复否定历史；保留HT硬阈值、真实未知和碰撞检查，支持安全回退及实际返航。",
+      "validation": "311核心、17ROS、6跟踪及53Python回归通过；隧道/室内各600秒、两段15fps视频完整解码及各13项采集核验通过。均COMPLETED；等长前缀最长全零指令145.95→4.30秒、39.80→4.65秒；室内规划P95 1.576→1.004秒。",
+      "known_issues": "室内约215秒触发返航，总近似观测1900.250→1106.750m³（下降41.8%）；任务收尾不是全覆盖证明。室内HT年龄最大5.01秒，两场景各8个1Hz样本超过3秒。森林约4Hz本轮未重测，其他三场景未重跑。保留约195秒失败诊断；每配置仅一次、无实车或长期稳定性验收。",
+      "evidence": [
+        "docs/fixes/2026-10-17_context_recovery.md",
+        "docs/results/ht_recovery_comparison_2026-10-17/REPORT.md",
+        "docs/results/ht_recovery_10min_2026-10-17/REPORT.md",
+        "docs/results/ht_context_diagnostics_2026-10-17/REPORT.md"
+      ],
+      "control_commit": "73cae0b24e72575b8592e772fd818f85ab91a9a6",
+      "bridge_commit": "dee873db9a25778eb67060100025bea2f619c0ee",
+      "archive_commit": "9fb2b63ca50a059e4c184f223aaa97e896b185b6"
     }
   ],
   "historical_commits": [
@@ -744,7 +765,45 @@
       "change": "归档五环境各600秒及室内细采样600秒，共六段通过完整解码的视频、曲线、配置、日志和诊断。",
       "function_and_issues": "采集/进程核验通过不等于探索成功；室内改善但仍有低收益回访和最长39.8秒停车，隧道返航仍受阻。",
       "original_subject": "Archive five ten-minute scenes and indoor sampling follow-up with six verified videos"
+    },
+    {
+      "sha": "deb5d140cb8e47ef58a279914cd21948791c75aa",
+      "short": "deb5d14",
+      "date": "2026-10-17",
+      "type": "版本说明",
+      "change": "标注已完成五环境及室内补测结果和遗留问题。",
+      "function_and_issues": "无控制改动，记录阶段18/19结果。",
+      "original_subject": "Label completed multi-scene results and remaining navigation failures"
+    },
+    {
+      "sha": "73cae0b24e72575b8592e772fd818f85ab91a9a6",
+      "short": "73cae0b",
+      "date": "2026-10-17",
+      "type": "HT语义与规划恢复修复",
+      "change": "区分网络上下文与车体观测支撑；按实际观测时间保留拒绝，有限坏高度仅作八方向禁行上下文；增加12秒原地停滞释放、有限回退和0.35秒共享搜索预算，CPU改4线程channels-last。",
+      "function_and_issues": "第一版诊断仍遇墙面质量拒绝导致上下文失效，约195秒主动停止；由dee873d继续修正，未算600秒通过。",
+      "original_subject": "Separate HT context and physical support; bound recovery stalls and search latency"
+    },
+    {
+      "sha": "dee873db9a25778eb67060100025bea2f619c0ee",
+      "short": "dee873d",
+      "date": "2026-10-17",
+      "type": "观测溯源与禁行上下文修复",
+      "change": "区分真实新观测拒绝与旧方差老化；实际有限坏高度仅作禁行上下文，不融合成地面。",
+      "function_and_issues": "室内约215秒触发返航，总近似观测1900.250→1106.750m³（下降41.8%）；任务收尾不是全覆盖证明。室内HT年龄最大5.01秒，两场景各8个1Hz样本超过3秒。森林约4Hz本轮未重测，其他三场景未重跑。保留约195秒失败诊断；每配置仅一次、无实车或长期稳定性验收。",
+      "original_subject": "fix: preserve observation provenance and block uncertain returns without context halos"
+    },
+    {
+      "sha": "9fb2b63ca50a059e4c184f223aaa97e896b185b6",
+      "short": "9fb2b63",
+      "date": "2026-10-17",
+      "type": "两场景复测与证据归档",
+      "change": "归档两段600秒视频、原始失败、等长任务停车统计、完整前后曲线及播放脚本；补全后续实验SDF冻结清单。",
+      "function_and_issues": "不改变已测控制程序；返航成功而室内观测下降的结果均保留。",
+      "original_subject": "Archive stopped-map regressions and two ten-minute recovery videos with honest before-after metrics"
     }
   ],
-  "latest_planner_code": "bd0c2c24f7eac383a3d8120b312fa4eb499c3199"
+  "latest_planner_code": "73cae0b24e72575b8592e772fd818f85ab91a9a6",
+  "latest_ht_bridge_code": "dee873db9a25778eb67060100025bea2f619c0ee",
+  "latest_verified_trial_code": "dee873db9a25778eb67060100025bea2f619c0ee"
 }
