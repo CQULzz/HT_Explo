@@ -102,6 +102,8 @@ def main():
              ROOT/'src/tare_planner/src/ht_cost/ht_cost_map.cpp',
              ROOT/'src/tare_planner/include/ht_cost/ht_cost_map.h',
              ROOT/'src/tare_planner/include/local_coverage_planner/local_coverage_planner.h',
+             ROOT/'src/tare_planner/src/grid_world/grid_world.cpp',
+             ROOT/'src/tare_planner/include/grid_world/grid_world.h',
              ROOT/'src/tare_planner/include/ht_cost/exploration_progress.h',
              ROOT/'src/tare_planner/include/ht_cost/execution_policy.h',
              ROOT/'src/tare_planner/src/local_coverage_planner/ht_route.cpp',

@@ -351,6 +351,10 @@ public:
   {
     return return_home_;
   }
+  struct TourAudit {
+    int exploring=0,local_delegated=0,eligible=0,connected=0,unreachable=0;
+  };
+  const TourAudit& GetTourAudit() const { return tour_audit_; }
   void GetCellViewPointPositions(std::vector<Eigen::Vector3d>& viewpoint_positions);
   void AddPathsInBetweenCells(const std::shared_ptr<viewpoint_manager_ns::ViewPointManager>& viewpoint_manager,
                               const std::shared_ptr<keypose_graph_ns::KeyposeGraph>& keypose_graph);
@@ -389,6 +393,7 @@ private:
   Eigen::Vector3d cur_keypose_;
   bool set_home_;
   bool return_home_;
+  TourAudit tour_audit_;
   geometry_msgs::msg::Point cur_keypose_graph_node_position_;
   int cur_keypose_graph_node_ind_;
   int cur_robot_cell_ind_;

@@ -1693,6 +1693,19 @@ void SensorCoveragePlanner3D::execute() {
     double current_time = this->now().seconds();
     double delta_time = current_time - start_time_;
 
+    if (viewpoint_manager_->HT()->enabled() && !exploration_finished_) {
+      const auto& g=grid_world_->GetTourAudit();
+      const auto& c=local_coverage_planner_->GetCompletionAudit();
+      RCLCPP_INFO(this->get_logger(),
+        "COMPLETION_AUDIT global_return=%d local_complete=%d global_exploring=%d local_delegated=%d eligible=%d connected=%d unreachable=%d uncovered=%d frontier=%d nav=%d reused=%d virtual_points=%d virtual_frontier=%d queue=%d queue_best=%d frontier_queue=%d raw_gain=%d raw_frontier=%d min_points=%d min_frontier=%d ht_target=%d ht_gain=%d ht_frontier=%d ht_poses=%zu",
+        grid_world_->IsReturningHome(),local_coverage_planner_->IsLocalCoverageComplete(),
+        g.exploring,g.local_delegated,g.eligible,g.connected,g.unreachable,
+        uncovered_point_num,uncovered_frontier_point_num,c.navigation,c.reused,
+        c.virtually_covered,c.virtually_covered_frontier,c.queue,c.queue_best,c.frontier_queue,
+        c.raw_gain_candidates,c.raw_frontier_candidates,c.min_points,c.min_frontier,
+        c.output_target,c.output_gain,c.output_frontier,local_coverage_planner_->GetHTPath().poses.size());
+    }
+
     if (grid_world_->IsReturningHome() &&
         local_coverage_planner_->IsLocalCoverageComplete() &&
         (current_time - start_time_) > 5) {

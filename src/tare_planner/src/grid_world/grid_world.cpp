@@ -740,18 +740,22 @@ exploration_path_ns::ExplorationPath GridWorld::SolveGlobalTSP(
   exploration_path_ns::ExplorationPath global_path;
   std::vector<geometry_msgs::msg::Point> exploring_cell_positions;
   std::vector<int> exploring_cell_indices;
+  tour_audit_ = {};
   for (int i = 0; i < subspaces_->GetCellNumber(); i++)
   {
     if (subspaces_->GetCell(i).GetStatus() == CellStatus::EXPLORING)
     {
+      ++tour_audit_.exploring;
       if (std::find(neighbor_cell_indices_.begin(), neighbor_cell_indices_.end(), i) == neighbor_cell_indices_.end() ||
           (subspaces_->GetCell(i).GetViewPointIndices().empty() && subspaces_->GetCell(i).GetVisitCount() > 1))
       {
+        ++tour_audit_.eligible;
         if (!use_keypose_graph_ || keypose_graph == nullptr || keypose_graph->GetNodeNum() == 0)
         {
           // Use straight line connection
           exploring_cell_positions.push_back(GetCellPosition(i));
           exploring_cell_indices.push_back(i);
+          ++tour_audit_.connected;
         }
         else
         {
@@ -790,11 +794,14 @@ exploration_path_ns::ExplorationPath GridWorld::SolveGlobalTSP(
           }
           if (reachable)
           {
+            ++tour_audit_.connected;
             exploring_cell_positions.push_back(connection_point_geo);
             exploring_cell_indices.push_back(i);
           }
+          else ++tour_audit_.unreachable;
         }
       }
+      else ++tour_audit_.local_delegated;
     }
   }
 

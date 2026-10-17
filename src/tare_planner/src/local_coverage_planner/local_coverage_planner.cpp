@@ -629,6 +629,7 @@ LocalCoveragePlanner::SolveLocalCoverageProblem(
   tsp_runtime_ = 0;
 
   local_coverage_complete_ = false;
+  completion_audit_ = {};
   ht_output_path_.poses.clear();
   ht_output_target_=-1;
 
@@ -753,6 +754,20 @@ LocalCoveragePlanner::SolveLocalCoverageProblem(
   std::vector<std::pair<int, int>> frontier_queue;
   EnqueueViewpointCandidates(queue, frontier_queue, covered, frontier_covered,
                              pre_selected_viewpoint_array_indices);
+  completion_audit_.navigation=navigation_viewpoint_indices.size();
+  completion_audit_.reused=reused_viewpoint_indices.size();
+  completion_audit_.queue=queue.size();
+  completion_audit_.queue_best=queue.empty()?0:queue.front().first;
+  completion_audit_.frontier_queue=frontier_queue.size();
+  completion_audit_.virtually_covered=std::count(covered.begin(),covered.end(),true);
+  completion_audit_.virtually_covered_frontier=std::count(frontier_covered.begin(),frontier_covered.end(),true);
+  completion_audit_.min_points=parameters_.kMinAddPointNum;
+  completion_audit_.min_frontier=parameters_.kMinAddFrontierPointNum;
+  for (int id:viewpoint_manager_->GetViewPointCandidateIndices()) {
+    if (viewpoint_manager_->ViewPointVisited(id) || !viewpoint_manager_->ViewPointInExploringCell(id)) continue;
+    completion_audit_.raw_gain_candidates+=viewpoint_manager_->GetViewPointCoveredPointNum(id)>=parameters_.kMinAddPointNum;
+    completion_audit_.raw_frontier_candidates+=viewpoint_manager_->GetViewPointCoveredFrontierPointNum(id)>=parameters_.kMinAddFrontierPointNum;
+  }
 
   viewpoint_sampling_timer.Stop(false, kRuntimeUnit);
   viewpoint_sampling_runtime_ +=
@@ -863,6 +878,11 @@ LocalCoveragePlanner::SolveLocalCoverageProblem(
     }
   }
   if (ht_output_target_>=0) ht_previous_target_=ht_output_target_;
+  completion_audit_.output_target=ht_output_target_;
+  if (ht_output_target_>=0) {
+    completion_audit_.output_gain=viewpoint_manager_->GetViewPointCoveredPointNum(ht_output_target_);
+    completion_audit_.output_frontier=viewpoint_manager_->GetViewPointCoveredFrontierPointNum(ht_output_target_);
+  }
   if (ht_output_target_>=0 && viewpoint_manager_->HT()->enabled()) {
     const auto p=viewpoint_manager_->GetViewPointPosition(ht_output_target_);
     ht_commitment_.commit({p.x,p.y,p.z},

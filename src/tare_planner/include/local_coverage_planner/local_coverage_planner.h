@@ -89,6 +89,13 @@ public:
   {
     return local_coverage_complete_;
   }
+  struct CompletionAudit {
+    int navigation=0,reused=0,queue=0,queue_best=0,frontier_queue=0;
+    int virtually_covered=0,virtually_covered_frontier=0;
+    int raw_gain_candidates=0,raw_frontier_candidates=0;
+    int min_points=0,min_frontier=0,output_target=-1,output_gain=0,output_frontier=0;
+  };
+  const CompletionAudit& GetCompletionAudit() const { return completion_audit_; }
 
   // Visualization
   void GetSelectedViewPointVisCloud(pcl::PointCloud<pcl::PointXYZI>::Ptr& cloud);
@@ -151,6 +158,7 @@ private:
   bool lookahead_point_update_;
   bool use_frontier_;
   bool local_coverage_complete_;
+  CompletionAudit completion_audit_;
 
   // Viewpoint indices
   int robot_viewpoint_ind_;
