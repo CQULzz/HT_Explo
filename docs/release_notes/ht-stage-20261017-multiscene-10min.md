@@ -19,3 +19,5 @@
 室内0.6m候选视点漏掉窄走廊安全区域；隧道返航目标周围足迹含未知格，未到家；地图年龄仍有超过3秒的尾延迟，森林激光平均4.02Hz。10分钟独立重启测试不代表连续一小时、实车或全覆盖通过。
 
 证据：[ht_multiscene_10min.md](https://github.com/CQULzz/HT_Explo/blob/codex/ht8dir-v1/docs/experiments/ht_multiscene_10min.md) · [REPORT.md](https://github.com/CQULzz/HT_Explo/blob/codex/ht8dir-v1/docs/results/ht_multiscene_10min_2026-10-17/REPORT.md)
+
+验证数据与视频归档：[提交 2d74d9c](https://github.com/CQULzz/HT_Explo/commit/2d74d9c7d4e2d68f9fef9fe653a94aa8aa0196a8)。
