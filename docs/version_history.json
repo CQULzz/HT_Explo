@@ -2,7 +2,7 @@
   "schema_version": 1,
   "updated_at": "2026-10-17",
   "branch": "codex/ht8dir-v1",
-  "status": "实验原型：跨目标记忆和关停短回归通过，补BLAS线程争用修复；新完整60分钟长测进行中",
+  "status": "实验原型：线程与关停修复已补，按用户要求进行五环境各10分钟/15fps录像；尚未全部完成",
   "latest_archive_commit": "f1c84854ccc147d40d7f9120c9713ba5e11c736c",
   "latest_planner_change": "f1c84854ccc147d40d7f9120c9713ba5e11c736c",
   "stages": [
@@ -288,15 +288,31 @@
       "number": 17,
       "sha": "f1c84854ccc147d40d7f9120c9713ba5e11c736c",
       "tag": "ht-stage-20261017-blas-threads",
-      "title": "限制BLAS空转线程与分段计时（长测待验）",
+      "title": "限制BLAS空转线程与分段计时（数值回归）",
       "kind": "实时性",
       "change": "单独限制HT桥接的BLAS库为1线程，保留PyTorch2线程；记录实际线程池和融合/支撑准备/网络/发布耗时。",
       "features": "消除周期性小矩阵拟合唤醒28个BLAS工作线程后大量空转的争用；不修改网络权重、HT门槛、未知策略和速度。",
-      "validation": "诊断默认配置0.653墙钟秒消耗7.695 CPU秒；BLAS单线程0.611墙钟秒消耗0.0105 CPU秒。地面参考最大差0；固定权重HT联合回归硬门槛逐格一致，另有3项参考面与6项融合回归通过。新完整60分钟正在运行。",
-      "known_issues": "该CPU诊断不等于整张HT地图提速700倍，也不是整车长测通过；约17分钟诊断轮主动中止，不作为完成60分钟记录。新长测的探索效率、地图尾延迟和返回完成仍待结果。",
+      "validation": "诊断默认配置0.653墙钟秒消耗7.695 CPU秒；BLAS单线程0.611墙钟秒消耗0.0105 CPU秒。地面参考最大差0；固定权重HT联合回归硬门槛逐格一致，另有3项参考面与6项融合回归通过。原计划60分钟按用户新要求改为五环境各10分钟，见阶段18。",
+      "known_issues": "该CPU诊断不等于整张HT地图提速700倍，也不是整车长测通过；约17分钟诊断轮主动中止，不作为完成60分钟记录。尚不能证明60分钟稳定性；五环境10分钟记录进行中，见阶段18。",
       "evidence": [
         "docs/results/ht_blas_contention_2026-10-17/REPORT.md",
         "docs/fixes/2026-10-17_endurance_followup.md"
+      ],
+      "control_commit": "f1c84854ccc147d40d7f9120c9713ba5e11c736c"
+    },
+    {
+      "id": "stage-18",
+      "number": 18,
+      "sha": "6d6998f00f5fa9358a7c212b41da6f395ba492a5",
+      "tag": "ht-stage-20261017-multiscene-10min",
+      "title": "五环境各10分钟与15fps录像（执行中）",
+      "kind": "实验工具",
+      "change": "参数化仿真/规划场景，串行运行Garage、Campus、Indoor、Forest、Tunnel各600秒；原生相机960×540、15fps，裁剪初始化、编码和完整解码核验。",
+      "features": "各组独立地图与进程，独立视频/数据/资源审计，完成一组退出与编码后才进入下一组；底部状态条显示时间、速度、任务和地图/相机年龄，提供播放列表和预览。",
+      "validation": "视频时间轴回归通过，未来相机帧不回填到过去；H.264裁剪/完整解码样例2秒30帧通过；首组确认原生960×540。完整五组正在执行。",
+      "known_issues": "每环境仅10分钟，不能视作更长时间或实车稳定性证明；仍可能地图过期安全停车或BLOCKED，保留原始记录。不同场景参数与原生起点不同，不是算法优劣的公平对照。",
+      "evidence": [
+        "docs/experiments/ht_multiscene_10min.md"
       ],
       "control_commit": "f1c84854ccc147d40d7f9120c9713ba5e11c736c"
     }
@@ -661,6 +677,24 @@
       "change": "单独限制HT桥接的BLAS库为1线程，保留PyTorch2线程；记录实际线程池和融合/支撑准备/网络/发布耗时。",
       "function_and_issues": "该CPU诊断不等于整张HT地图提速700倍，也不是整车长测通过；约17分钟诊断轮主动中止，不作为完成60分钟记录。新长测的探索效率、地图尾延迟和返回完成仍待结果。",
       "original_subject": "Bound hidden BLAS worker spin and record actual HT processing stages"
+    },
+    {
+      "sha": "6b5d4321d8ca47d1fc03fb62d0e1a9d1ac76b598",
+      "short": "6b5d432",
+      "date": "2026-10-17",
+      "type": "版本与审计工具",
+      "change": "标注BLAS争用修复，增加等待/导出审计脚本",
+      "function_and_issues": "不改变已冻结的控制程序；原60分钟后被用户调整。",
+      "original_subject": "Document BLAS contention fix and automate audited completion of the replacement endurance run"
+    },
+    {
+      "sha": "6d6998f00f5fa9358a7c212b41da6f395ba492a5",
+      "short": "6d6998f",
+      "date": "2026-10-17",
+      "type": "多场景实验与录像",
+      "change": "参数化仿真/规划场景，串行运行Garage、Campus、Indoor、Forest、Tunnel各600秒；原生相机960×540、15fps，裁剪初始化、编码和完整解码核验。",
+      "function_and_issues": "每环境仅10分钟，不能视作更长时间或实车稳定性证明；仍可能地图过期安全停车或BLOCKED，保留原始记录。不同场景参数与原生起点不同，不是算法优劣的公平对照。",
+      "original_subject": "Run independent ten-minute HT scenes with native 15fps video and exact duration validation"
     }
   ]
 }
