@@ -50,8 +50,8 @@ LocalCoveragePlanner::LocalCoveragePlanner(rclcpp::Node::SharedPtr nh)
                   a.x,a.y,b.x,b.y);
     });
   xytheta_config_.cell=nh->declare_parameter<double>("xytheta_cell",0.3);
-  xytheta_config_.headings=nh->declare_parameter<int>("xytheta_headings",32);
-  ht_heading_margin_=nh->declare_parameter<double>("xytheta_heading_margin",0.05);
+  xytheta_config_.headings=nh->declare_parameter<int>("xytheta_headings",16);
+  ht_heading_margin_=nh->declare_parameter<double>("xytheta_heading_margin",0.0);
   if (!std::isfinite(ht_heading_margin_) || ht_heading_margin_<0 || ht_heading_margin_>=ht_cost_ns::kPi/8 ||
       xytheta_config_.headings<8 || xytheta_config_.headings>64 || xytheta_config_.headings%8)
     throw std::invalid_argument("Invalid XYtheta heading resolution/reserve");

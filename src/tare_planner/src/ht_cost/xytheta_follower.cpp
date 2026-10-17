@@ -116,7 +116,12 @@ class XYThetaFollower : public rclcpp::Node {
     };
     auto hold=[&](const std::string& reason) {
       if (reason!="HT_COMMAND_BLOCKED") command_blocked_since_=-1;
-      linear_=0;angular_=0;cmd_pub_->publish(cmd);status(reason);
+      linear_=0;angular_=0;
+      // Late command-arc rejection happens after cmd contains the candidate.
+      // Clear the outgoing message too; resetting controller state alone
+      // would publish the very motion that HT just rejected.
+      cmd.twist=geometry_msgs::msg::Twist();
+      cmd_pub_->publish(cmd);status(reason);
     };
     // A current terminal heartbeat is an explicit stop, even after the final
     // path expires. An old completion flag cannot mask subsequent failures.

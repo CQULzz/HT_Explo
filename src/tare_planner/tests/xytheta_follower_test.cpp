@@ -24,6 +24,9 @@ class FollowerTest : public ::testing::Test {
   int rejection_count=0;
   bool future_unknown=false;
   bool reverse_blocked=false,side_blocked=false;
+  bool oblique_blocked=false;
+  std::vector<geometry_msgs::msg::TwistStamped> received_commands;
+  std::vector<double> command_rejection_times;
   double speed=0;std::string reason;bool blocked=false,unknown=false,send_odom=true;
   void SetUp() override {
     if (!rclcpp::ok()) rclcpp::init(0,nullptr);
@@ -39,9 +42,10 @@ class FollowerTest : public ::testing::Test {
     permit=source->create_publisher<std_msgs::msg::Bool>("/ht_navigation_allowed",1);
     completed=source->create_publisher<std_msgs::msg::Bool>("/mission_completed",1);
     commands=source->create_subscription<geometry_msgs::msg::TwistStamped>("/cmd_vel",5,
-      [&](geometry_msgs::msg::TwistStamped::ConstSharedPtr p){speed=p->twist.linear.x;});
+      [&](geometry_msgs::msg::TwistStamped::ConstSharedPtr p){speed=p->twist.linear.x;received_commands.push_back(*p);});
     statuses=source->create_subscription<std_msgs::msg::String>("/ht_follower_status",5,
-      [&](std_msgs::msg::String::ConstSharedPtr p){reason=p->data;});
+      [&](std_msgs::msg::String::ConstSharedPtr p){reason=p->data;
+        if(reason=="HT_COMMAND_BLOCKED") command_rejection_times.push_back(source->now().seconds());});
     rejections=source->create_subscription<nav_msgs::msg::Path>("/ht_execution_rejected_edge",5,
       [&](nav_msgs::msg::Path::ConstSharedPtr p){last_rejection=*p;++rejection_count;});
     executor.add_node(source);executor.add_node(follower);spin(250ms);
@@ -68,6 +72,7 @@ class FollowerTest : public ::testing::Test {
       for (int k=0;k<8;++k) g.add("ht_dir_"+std::to_string(k),blocked ? 0.f:1.f);
       if (reverse_blocked) g["ht_dir_4"].setConstant(.2f);
       if (side_blocked) g["ht_dir_2"].setConstant(.2f);
+      if (oblique_blocked) g["ht_dir_1"].setConstant(.2f);
       if (future_unknown) {
         grid_map::Index cell;g.getIndex(grid_map::Position(1.3,0),cell);g.at("ht_valid",cell)=0;
       }
@@ -79,6 +84,28 @@ class FollowerTest : public ::testing::Test {
 };
 TEST_F(FollowerTest, FreshMapMaintainsExecutionAcrossSlowPlannerPermission) {
   spin(1700ms);EXPECT_GT(speed,.1);EXPECT_EQ(reason,"DRIVING");
+}
+TEST_F(FollowerTest, RejectedTrackingArcPublishesZeroRatherThanTheCandidateCommand) {
+  // The nominal path has safe headings and travel direction. Its lateral
+  // offset makes the controller turn; at sufficient yaw rate its commanded
+  // arc reaches the forbidden45-degree channel before the nominal path does.
+  // This exercises the *late* hold after the outgoing Twist was populated.
+  oblique_blocked=true;
+  auto lateral=last_path;lateral.header.stamp=source->now();
+  for(auto& p:lateral.poses) p.pose.position.y=.3*p.pose.position.x;
+  path->publish(lateral);received_commands.clear();command_rejection_times.clear();
+  spin(1400ms);
+  ASSERT_FALSE(command_rejection_times.empty());
+  for(double t:command_rejection_times) {
+    bool zero=false;
+    for(const auto& cmd:received_commands) {
+      const double dt=std::abs(rclcpp::Time(cmd.header.stamp).seconds()-t);
+      if(dt<.035 && cmd.twist.linear.x==0 && cmd.twist.angular.z==0) zero=true;
+    }
+    EXPECT_TRUE(zero)<<"No zero command at HT rejection time "<<t;
+  }
+  oblique_blocked=false;sendPath();allow(true);spin(250ms);
+  EXPECT_GT(speed,0);EXPECT_EQ(reason,"DRIVING");
 }
 TEST_F(FollowerTest, RefusesAOneWayPathButDoesNotRequireEveryHeadingToBeSafe) {
   side_blocked=true;spin(200ms);
