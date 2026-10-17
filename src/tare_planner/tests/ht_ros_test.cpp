@@ -214,6 +214,24 @@ TEST_F(HtRosTest, CapturedMapSearchResolutionAudit) {
   }
 }
 
+TEST_F(HtRosTest, CapturedSafeRootNeedsFinerHeadingSearchToEscape) {
+  const char* filename=std::getenv("HT_FINE_ESCAPE_FIXTURE");
+  if (!filename) GTEST_SKIP()<<"Set HT_FINE_ESCAPE_FIXTURE to the zero-command-only stopped map";
+  ht_cost_ns::Pose2 start;auto map=capturedGrid(filename,start);
+  map.setTimestamp(node->now().nanoseconds());send(map);ASSERT_TRUE(ht->ready());
+  const ht_cost_ns::Point goal{start.x+2,start.y,0};
+  ht_cost_ns::XYThetaConfig config;config.headings=16;config.cell=.3;config.drive_step=.4;
+  config.goal_radius=.35;config.max_search_seconds=.15;
+  auto valid=[&](ht_cost_ns::Pose2 a,ht_cost_ns::Pose2 b,double){return ht->permits(ht->motionSupport(a,b));};
+  ASSERT_TRUE(valid(start,start,0));
+  const auto coarse=ht_cost_ns::planXYTheta(start,goal,config,valid);
+  EXPECT_FALSE(coarse.reached);
+  config.headings=32;
+  const auto fine=ht_cost_ns::planXYTheta(start,goal,config,valid);
+  ASSERT_TRUE(fine.reached);ASSERT_GT(fine.poses.size(),1u);
+  for(size_t i=1;i<fine.poses.size();++i) EXPECT_TRUE(valid(fine.poses[i-1],fine.poses[i],0));
+}
+
 TEST_F(HtRosTest, ReversibleMotionRejectsAOneWayEntranceWithoutChangingRawScores) {
   rclcpp::NodeOptions options;
   options.parameter_overrides({rclcpp::Parameter("ht_enabled",true),
