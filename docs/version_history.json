@@ -2,9 +2,9 @@
   "schema_version": 1,
   "updated_at": "2026-10-17",
   "branch": "codex/ht8dir-v1",
-  "status": "实验原型：线程与关停修复已补，按用户要求进行五环境各10分钟/15fps录像；尚未全部完成",
+  "status": "五环境各600秒及室内修正后600秒均完成记录；无运行期崩溃，低收益回访、短时延迟及隧道返航受阻仍存在",
   "latest_archive_commit": "f1c84854ccc147d40d7f9120c9713ba5e11c736c",
-  "latest_planner_change": "f1c84854ccc147d40d7f9120c9713ba5e11c736c",
+  "latest_planner_change": "f3d1eeedae814f99d0db94673c7abadc8eaf7439",
   "stages": [
     {
       "id": "stage-01",
@@ -305,16 +305,36 @@
       "number": 18,
       "sha": "6d6998f00f5fa9358a7c212b41da6f395ba492a5",
       "tag": "ht-stage-20261017-multiscene-10min",
-      "title": "五环境各10分钟与15fps录像（执行中）",
+      "title": "五环境各10分钟与15fps录像（已完成记录）",
       "kind": "实验工具",
       "change": "参数化仿真/规划场景，串行运行Garage、Campus、Indoor、Forest、Tunnel各600秒；原生相机960×540、15fps，裁剪初始化、编码和完整解码核验。",
       "features": "各组独立地图与进程，独立视频/数据/资源审计，完成一组退出与编码后才进入下一组；底部状态条显示时间、速度、任务和地图/相机年龄，提供播放列表和预览。",
-      "validation": "视频时间轴回归通过，未来相机帧不回填到过去；H.264裁剪/完整解码样例2秒30帧通过；首组确认原生960×540。完整五组正在执行。",
-      "known_issues": "每环境仅10分钟，不能视作更长时间或实车稳定性证明；仍可能地图过期安全停车或BLOCKED，保留原始记录。不同场景参数与原生起点不同，不是算法优劣的公平对照。",
+      "validation": "五环境均记录600秒，五段H.264完整解码及13项采集/进程验证通过；车库189.57m、校园199.76m、森林168.09m持续推进；室内3.11m与隧道26.33m持续受阻。视频599.933至600秒，允许1帧误差。",
+      "known_issues": "室内0.6m候选视点漏掉窄走廊安全区域；隧道返航目标周围足迹含未知格，未到家；地图年龄仍有超过3秒的尾延迟，森林激光平均4.02Hz。10分钟独立重启测试不代表连续一小时、实车或全覆盖通过。",
       "evidence": [
-        "docs/experiments/ht_multiscene_10min.md"
+        "docs/experiments/ht_multiscene_10min.md",
+        "docs/results/ht_multiscene_10min_2026-10-17/REPORT.md"
       ],
       "control_commit": "f1c84854ccc147d40d7f9120c9713ba5e11c736c"
+    },
+    {
+      "id": "stage-19",
+      "number": 19,
+      "sha": "f3d1eeedae814f99d0db94673c7abadc8eaf7439",
+      "tag": "ht-stage-20261017-indoor-viewpoints",
+      "title": "室内视点细化：恢复推进，仍有停顿回访",
+      "kind": "场景参数修复",
+      "change": "室内视点从50×50、0.6m改为100×100、0.3m，保持30×30m范围；原HT分辨率、概率阈值、足迹半径、运动学搜索和控制速度不变。",
+      "features": "为窄HT支撑带提供候选端点，保留原参数失败视频；新增实际栅格、足迹硬门槛、时间戳与配置归档。",
+      "validation": "独立600秒补测、9000帧完整解码及13项采集/进程核验通过。里程3.11→145.28m，近似观测347.875→1900.25m³，全零指令98.2%→23.0%；运行中实际参数读取与源哈希证明仅室内视点配置不同。",
+      "known_issues": "仍有最长39.80秒停车和2.3%倒车；第6至7.5分钟行驶22.94m仅增8.375m³，低收益回访未消失。活跃搜索耗时P95为1.576秒、HT年龄最大4.67秒。隧道返航未知足迹问题未解决；每配置一次，不能视为所有场景通过。",
+      "evidence": [
+        "docs/results/ht_indoor_sampling_comparison_2026-10-17/REPORT.md",
+        "docs/results/ht_indoor_viewpoint_10min_2026-10-17/REPORT.md",
+        "docs/results/ht_multiscene_10min_2026-10-17/indoor/diagnostics/README.md"
+      ],
+      "control_commit": "f1c84854ccc147d40d7f9120c9713ba5e11c736c",
+      "scene_configuration_commit": "f3d1eeedae814f99d0db94673c7abadc8eaf7439"
     }
   ],
   "historical_commits": [
@@ -695,6 +715,25 @@
       "change": "参数化仿真/规划场景，串行运行Garage、Campus、Indoor、Forest、Tunnel各600秒；原生相机960×540、15fps，裁剪初始化、编码和完整解码核验。",
       "function_and_issues": "每环境仅10分钟，不能视作更长时间或实车稳定性证明；仍可能地图过期安全停车或BLOCKED，保留原始记录。不同场景参数与原生起点不同，不是算法优劣的公平对照。",
       "original_subject": "Run independent ten-minute HT scenes with native 15fps video and exact duration validation"
+    },
+    {
+      "sha": "c086bb1ab21ca88e54e8ed0bf4797892fa6de74d",
+      "short": "c086bb1",
+      "date": "2026-10-17",
+      "type": "版本说明",
+      "change": "标注五环境十分钟录像协议及被替代的小时任务。",
+      "function_and_issues": "文档维护，无规划升级。",
+      "original_subject": "Label user-requested five-scene ten-minute video protocol and superseded hour trial"
+    },
+    {
+      "sha": "f3d1eeedae814f99d0db94673c7abadc8eaf7439",
+      "short": "f3d1eee",
+      "date": "2026-10-17",
+      "type": "室内视点参数与证据归档",
+      "change": "室内视点从50×50、0.6m改为100×100、0.3m，保持30×30m范围；原HT分辨率、概率阈值、足迹半径、运动学搜索和控制速度不变。",
+      "function_and_issues": "仍有最长39.80秒停车和2.3%倒车；第6至7.5分钟行驶22.94m仅增8.375m³，低收益回访未消失。活跃搜索耗时P95为1.576秒、HT年龄最大4.67秒。隧道返航未知足迹问题未解决；每配置一次，不能视为所有场景通过。",
+      "original_subject": "Refine indoor viewpoint sampling while preserving the physical horizon; archive multi-scene evidence"
     }
-  ]
+  ],
+  "latest_planner_code": "bd0c2c24f7eac383a3d8120b312fa4eb499c3199"
 }

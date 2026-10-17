@@ -1,0 +1,62 @@
+{
+  "logged_plan_rows": 374,
+  "new_goal_rows": 69,
+  "new_goal_zero_reported_gain_rows": 65,
+  "new_goal_recovery_rows": 16,
+  "guide_log_counts": {
+    "5.40,-5.40": 33,
+    "9.00,-16.20": 34,
+    "1.80,-3.00": 42,
+    "-12.60,-12.60": 43,
+    "0.60,-0.60": 70,
+    "4.20,13.80": 70,
+    "-0.60,1.80": 17,
+    "18.60,-9.00": 41,
+    "23.40,-4.20": 24
+  },
+  "note": "Throttled log rows, not all planning cycles. Gain is the viewpoint coverage estimate, not measured new free volume. Older builds used a gain0 placeholder for held goals; use the external observed-volume union to assess real progress.",
+  "guide_events": [
+    {
+      "time_s": 53.682607889175415,
+      "log": "[tare_planner_node-1] [INFO] [1792209082.632424717] [tare_planner_node]: HT guide selected: (9.00,-16.20) global=0 remaining=12.16m"
+    },
+    {
+      "time_s": 108.58738970756531,
+      "log": "[tare_planner_node-1] [INFO] [1792209137.537206640] [tare_planner_node]: HT guide selected: (1.80,-3.00) global=0 remaining=14.42m"
+    },
+    {
+      "time_s": 173.68571615219116,
+      "log": "[tare_planner_node-1] [INFO] [1792209202.635533108] [tare_planner_node]: HT guide selected: (-12.60,-12.60) global=0 remaining=17.00m"
+    },
+    {
+      "time_s": 244.61902451515198,
+      "log": "[tare_planner_node-1] [INFO] [1792209273.568841470] [tare_planner_node]: HT guide selected: (0.60,-0.60) global=0 remaining=17.27m"
+    },
+    {
+      "time_s": 299.6311717033386,
+      "log": "[tare_planner_node-1] [INFO] [1792209328.580988716] [tare_planner_node]: HT guide selected: (4.20,13.80) global=0 remaining=15.05m"
+    },
+    {
+      "time_s": 412.5876431465149,
+      "log": "[tare_planner_node-1] [WARN] [1792209441.537460139] [tare_planner_node]: HT global guide stalled: (4.20,13.80), best_remaining=2.42m idle=60.0s; cooldown=180.0s and release local goal"
+    },
+    {
+      "time_s": 412.5876805782318,
+      "log": "[tare_planner_node-1] [INFO] [1792209441.537497448] [tare_planner_node]: HT guide selected: (-0.60,1.80) global=0 remaining=8.99m"
+    },
+    {
+      "time_s": 439.7429950237274,
+      "log": "[tare_planner_node-1] [INFO] [1792209468.692811937] [tare_planner_node]: HT guide selected: (18.60,-9.00) global=0 remaining=21.66m"
+    },
+    {
+      "time_s": 510.6107304096222,
+      "log": "[tare_planner_node-1] [INFO] [1792209539.560547335] [tare_planner_node]: HT guide selected: (0.60,-0.60) global=0 remaining=19.37m"
+    },
+    {
+      "time_s": 563.3257570266724,
+      "log": "[tare_planner_node-1] [INFO] [1792209592.275573959] [tare_planner_node]: HT guide selected: (23.40,-4.20) global=0 remaining=22.42m"
+    }
+  ],
+  "global_stall_releases": 1,
+  "accepted_execution_rejections": []
+}

@@ -6,7 +6,7 @@
 
 相机从原生320×180改为960×540，保持15Hz；录像为960×600（底部
 60像素用于状态）。H.264/yuv420p/faststart，裁去初始化并完整解码，
-核验600秒、15fps。收到图像较慢时会重复已有帧，不会把未来画面填到
+核验600秒、15fps，允许1帧时长误差。收到图像较慢时会重复已有帧，不会把未来画面填到
 过去的时间。画面显示场景、时间、线/角速度、任务状态及地图/相机年龄。
 
 ```bash
@@ -30,3 +30,17 @@ python3 presentations/run_ht_multiscene.py --duration 600 \
 
 10分钟记录完成不等于探索完成，也不能证明更长时间或实车稳定。
 若出现BLOCKED或中途错误，保留记录并在报告中明确标注。
+
+结果归档使用以下命令（默认必须收齐五环境，逐段视频已解码通过）：
+
+```bash
+python3 presentations/archive_ht_multiscene.py /path/to/completed_suite \
+  --output docs/results/my_multiscene_results
+# 单环境补测必须明确指定预期场景，不能假冒五组完成
+python3 presentations/archive_ht_multiscene.py /path/to/indoor_followup \
+  --scenarios indoor --output docs/results/my_indoor_followup
+```
+
+归档包括录像、曲线、源时间戳检查点、配置原件和哈希、末段原始HT及足迹硬门槛图。
+[2026-10-17实际五环境结果](../results/ht_multiscene_10min_2026-10-17/REPORT.md)
+保留室内和隧道的失败，记录完整与导航成功分别判断。

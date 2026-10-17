@@ -97,6 +97,7 @@ def main():
                'target_selection_audit.json','metric_definition.json','ten_minute_segments.csv',
                'health.csv','resources.csv','mapper_checkpoints.jsonl','COMPLETED.json',
                'ANALYSIS_COMPLETED.json','working_tree.patch','run_ht_endurance.py','endurance_probe.py',
+               'effective_parameters.json',
                'stability.png','performance.png')
         for name in names:
             if (src/name).exists():shutil.copy2(src/name,dst/name)

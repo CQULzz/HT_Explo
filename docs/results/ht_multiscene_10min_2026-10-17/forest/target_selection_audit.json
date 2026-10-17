@@ -1,0 +1,43 @@
+{
+  "logged_plan_rows": 341,
+  "new_goal_rows": 79,
+  "new_goal_zero_reported_gain_rows": 73,
+  "new_goal_recovery_rows": 17,
+  "guide_log_counts": {
+    "-17.40,-6.60": 111,
+    "-0.60,0.60": 23,
+    "18.60,1.80": 77,
+    "1.80,0.60": 35,
+    "4.20,-18.60": 61,
+    "10.20,-34.20": 34
+  },
+  "note": "Throttled log rows, not all planning cycles. Gain is the viewpoint coverage estimate, not measured new free volume. Older builds used a gain0 placeholder for held goals; use the external observed-volume union to assess real progress.",
+  "guide_events": [
+    {
+      "time_s": 187.97471833229065,
+      "log": "[tare_planner_node-1] [WARN] [1792210615.892033138] [tare_planner_node]: HT global guide stalled: (-17.40,-6.60), best_remaining=2.16m idle=60.5s; cooldown=180.0s and release local goal"
+    },
+    {
+      "time_s": 187.97476267814636,
+      "log": "[tare_planner_node-1] [INFO] [1792210615.892077348] [tare_planner_node]: HT guide selected: (-0.60,0.60) global=0 remaining=15.92m"
+    },
+    {
+      "time_s": 229.97597789764404,
+      "log": "[tare_planner_node-1] [INFO] [1792210657.893292653] [tare_planner_node]: HT guide selected: (18.60,1.80) global=0 remaining=19.76m"
+    },
+    {
+      "time_s": 363.0613157749176,
+      "log": "[tare_planner_node-1] [INFO] [1792210790.978630565] [tare_planner_node]: HT guide selected: (1.80,0.60) global=0 remaining=16.22m"
+    },
+    {
+      "time_s": 425.0171432495117,
+      "log": "[tare_planner_node-1] [INFO] [1792210852.934458053] [tare_planner_node]: HT guide selected: (4.20,-18.60) global=0 remaining=19.97m"
+    },
+    {
+      "time_s": 542.7031726837158,
+      "log": "[tare_planner_node-1] [INFO] [1792210970.620487534] [tare_planner_node]: HT guide selected: (10.20,-34.20) global=0 remaining=17.00m"
+    }
+  ],
+  "global_stall_releases": 1,
+  "accepted_execution_rejections": []
+}

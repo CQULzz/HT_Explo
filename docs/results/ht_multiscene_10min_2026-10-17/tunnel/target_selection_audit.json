@@ -1,0 +1,28 @@
+{
+  "logged_plan_rows": 52,
+  "new_goal_rows": 17,
+  "new_goal_zero_reported_gain_rows": 16,
+  "new_goal_recovery_rows": 11,
+  "guide_log_counts": {
+    "8.70,-0.30": 51,
+    "-1.50,0.30": 1
+  },
+  "note": "Throttled log rows, not all planning cycles. Gain is the viewpoint coverage estimate, not measured new free volume. Older builds used a gain0 placeholder for held goals; use the external observed-volume union to assess real progress.",
+  "guide_events": [
+    {
+      "time_s": 61.6303493976593,
+      "log": "[tare_planner_node-1] [WARN] [1792211222.627217339] [tare_planner_node]: HT global guide stalled: (8.70,-0.30), best_remaining=8.71m idle=60.9s; cooldown=180.0s and release local goal"
+    },
+    {
+      "time_s": 80.80762076377869,
+      "log": "[tare_planner_node-1] [INFO] [1792211241.804488587] [tare_planner_node]: HT guide selected: (-1.50,0.30) global=0 remaining=7.37m"
+    }
+  ],
+  "global_stall_releases": 1,
+  "accepted_execution_rejections": [
+    {
+      "time_s": 3.8871824741363525,
+      "log": "[tare_planner_node-1] [WARN] [1792211164.884050331] [tare_planner_node]: Execution rejected HT edge (-0.44,0.41)->(-0.52,0.46); replan with 6s edge cooldown"
+    }
+  ]
+}

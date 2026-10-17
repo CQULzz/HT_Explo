@@ -1,3 +1,7 @@
 # Unified patches preserve upstream CRLF and blank context lines verbatim.
 tools/elevation_mapping_fixes/*.patch -whitespace
 tools/cmu_sim_fixes/*.patch -whitespace
+
+# Frozen upstream inputs and raw working-tree diffs retain exact audited bytes.
+docs/results/**/frozen_inputs/* -whitespace
+docs/results/**/working_tree.patch -whitespace
