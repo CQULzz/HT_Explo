@@ -5,6 +5,8 @@
 #include <tf2_ros/static_transform_broadcaster.h>
 #include <chrono>
 #include <thread>
+#include <fstream>
+#include <cstdlib>
 
 using namespace std::chrono_literals;
 using ht_cost_ns::Point;
@@ -93,6 +95,62 @@ TEST_F(HtRosTest, OffCenterHazardIsHardBlockedAtPlanningAndExecution) {
   EXPECT_TRUE(std::isinf(ht->cost({-1,0,0},{1,0,0})));
   EXPECT_FALSE(ht->permits(ht->support({-1,0,0},{1,0,0})));
   EXPECT_NEAR(ht->cost({1,0,0},{-1,0,0}),2,1e-5);
+}
+
+TEST_F(HtRosTest, SeparatePhysicalObservationDoesNotInflateContextTwice) {
+  auto map=grid();
+  for(int k=0;k<8;++k) map["ht_dir_"+std::to_string(k)].setConstant(.8f);
+  map.add("ht_observation_valid",1.f);
+  grid_map::Index side;
+  ASSERT_TRUE(map.getIndex(grid_map::Position(0,.5),side));
+  map.at("ht_valid",side)=0;
+  for(int k=0;k<8;++k) map.at("ht_dir_"+std::to_string(k),side)=NAN;
+  send(map);
+  EXPECT_EQ(ht->support({-1,0,0},{1,0,0}),ht_cost_ns::Support::KNOWN);
+  // Actual under-body missing data remains forbidden.
+  map.at("ht_observation_valid",side)=0;send(map);
+  EXPECT_EQ(ht->support({-1,0,0},{1,0,0}),ht_cost_ns::Support::UNKNOWN);
+  map.at("ht_observation_valid",side)=1;
+  map.at("ht_valid",side)=1;
+  for(int k=0;k<8;++k) map.at("ht_dir_"+std::to_string(k),side)=.8f;
+  map.at("ht_dir_0",side)=.2f;send(map);
+  EXPECT_EQ(ht->support({-1,0,0},{1,0,0}),ht_cost_ns::Support::BLOCKED);
+  // Physical observations cannot authorize an unscored current pose.
+  map["ht_valid"].setConstant(0);send(map);
+  EXPECT_EQ(ht->poseSupport(-1,0,0),ht_cost_ns::Support::UNKNOWN);
+}
+
+TEST_F(HtRosTest, CapturedTunnelReturnKeepsRiskThresholdAndReachesHome) {
+  const char* filename=std::getenv("HT_TUNNEL_FIXTURE");
+  if (!filename) GTEST_SKIP()<<"Set HT_TUNNEL_FIXTURE using export_ht_tunnel_fixture.py";
+  std::ifstream file(filename);ASSERT_TRUE(file.good());
+  int rows,cols;double resolution,cx,cy,x,y,yaw;
+  ASSERT_TRUE(bool(file>>rows>>cols>>resolution>>cx>>cy>>x>>y>>yaw));
+  std::vector<float> values(rows*cols*10);
+  for(auto& value:values) ASSERT_TRUE(bool(file>>value));
+  grid_map::GridMap map;map.setFrameId("map");
+  map.setGeometry(grid_map::Length(rows*resolution,cols*resolution),resolution,grid_map::Position(cx,cy));
+  for(int k=0;k<8;++k)map.add("ht_dir_"+std::to_string(k));
+  map.add("ht_valid");map.add("ht_observation_valid");
+  for(grid_map::GridMapIterator it(map);!it.isPastEnd();++it) {
+    grid_map::Position p;map.getPosition(*it,p);
+    const int r=std::floor(rows*.5-(p.x()-cx)/resolution),c=std::floor(cols*.5-(p.y()-cy)/resolution);
+    ASSERT_GE(r,0);ASSERT_LT(r,rows);ASSERT_GE(c,0);ASSERT_LT(c,cols);
+    const size_t offset=(r*cols+c)*10;
+    for(int k=0;k<8;++k)map.at("ht_dir_"+std::to_string(k),*it)=values[offset+k];
+    map.at("ht_valid",*it)=values[offset+8];map.at("ht_observation_valid",*it)=values[offset+9];
+  }
+  map.setTimestamp(node->now().nanoseconds());send(map);ASSERT_TRUE(ht->ready());
+  ht_cost_ns::XYThetaConfig config;config.goal_radius=.35;config.max_search_seconds=.5;
+  auto valid=[&](ht_cost_ns::Pose2 a,ht_cost_ns::Pose2 b,double){return ht->permits(ht->motionSupport(a,b));};
+  auto repaired=ht_cost_ns::planXYTheta({x,y,yaw},{0,0,0},config,valid);
+  ASSERT_TRUE(repaired.reached);ASSERT_GT(repaired.poses.size(),1u);
+  for(size_t i=1;i<repaired.poses.size();++i) EXPECT_TRUE(valid(repaired.poses[i-1],repaired.poses[i],0));
+  // Removing only the new physical-observation layer reproduces the original
+  // stopped-map failure, with exactly the same old probabilities and poses.
+  map.erase("ht_observation_valid");map.setTimestamp(node->now().nanoseconds());send(map);
+  auto original=ht_cost_ns::planXYTheta({x,y,yaw},{0,0,0},config,valid);
+  EXPECT_FALSE(original.reached);
 }
 
 TEST_F(HtRosTest, RotatedTranslatedFrameRotatesChannels) {

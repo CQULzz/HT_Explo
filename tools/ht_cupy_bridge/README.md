@@ -15,6 +15,17 @@ region is published with the original map center and cell size; the unsupported
 outer border is omitted. The CuPy subscription uses reliable QoS, matching its
 publisher for these large GridMap messages.
 
+`ht_valid` is neural-context validity. `ht_observation_valid` records local
+height support with the existing 0.25m observation-distance limit; consumers
+apply the 0.6m body footprint to this layer, avoiding a second inflation of
+the 51x51 neural receptive field. Missing under-body support, an invalid
+current neural prediction, and any valid low-probability footprint cell
+still forbid motion. Observed incompatible historical surfaces retain their
+measured heights as model context and are hard blocked in all directions;
+expired or unreferenced surfaces stay unknown. CPU inference defaults to
+four PyTorch threads and channels-last layout; BLAS remains single-threaded.
+
+
 Start each command in a separate terminal:
 
 ```bash

@@ -56,7 +56,7 @@ class HtCostMap {
   std::mutex mutex_;
   std::shared_ptr<Map> latest_, cycle_;
   tf2_ros::Buffer buffer_;
-  tf2_ros::TransformListener listener_;
+  std::unique_ptr<tf2_ros::TransformListener> listener_;
   rclcpp::CallbackGroup::SharedPtr map_callback_group_;
   rclcpp::Subscription<grid_map_msgs::msg::GridMap>::SharedPtr subscription_;
   rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr permission_;

@@ -9,7 +9,7 @@
 namespace ht_cost_ns {
 HtCostMap::HtCostMap(rclcpp::Node::SharedPtr node,bool publish_permission)
   : clock_(node->get_clock()), logger_(node->get_logger()),
-    buffer_(clock_), listener_(buffer_) {
+    buffer_(clock_) {
   enabled_=node->declare_parameter<bool>("ht_enabled",false);
   calibrated_=node->declare_parameter<bool>("ht_directions_calibrated",false);
   min_probability_=node->declare_parameter<double>("ht_min_probability",0.5);
@@ -53,6 +53,9 @@ HtCostMap::HtCostMap(rclcpp::Node::SharedPtr node,bool publish_permission)
   if (reached_distance_>=lookahead_)
     throw std::invalid_argument("HT waypoint reached distance must be smaller than lookahead");
   if (enabled_) {
+    // Invalid parameters must fail before creating a TF executor thread;
+    // unwinding a half-constructed listener can hang node initialization.
+    listener_=std::make_unique<tf2_ros::TransformListener>(buffer_);
     if (publish_permission)
       permission_=node->create_publisher<std_msgs::msg::Bool>("/ht_navigation_allowed",1);
     // Map decoding and footprint dilation must be serviced while the default
@@ -129,6 +132,8 @@ void HtCostMap::receive(grid_map_msgs::msg::GridMap::ConstSharedPtr msg) {
     out->valid.assign(size,0);
     for (auto& layer : out->probabilities)
       layer.assign(size,std::numeric_limits<float>::quiet_NaN());
+    std::vector<unsigned char> physical_valid(size);
+    const bool separate_observation=grid.exists("ht_observation_valid");
     for (grid_map::GridMapIterator it(grid); !it.isPastEnd(); ++it) {
       grid_map::Position pos;
       grid.getPosition(*it,pos);
@@ -141,6 +146,8 @@ void HtCostMap::receive(grid_map_msgs::msg::GridMap::ConstSharedPtr msg) {
       const size_t index=static_cast<size_t>(row)*out->cols+col;
       const float valid=grid.at("ht_valid",*it);
       out->valid[index]=std::isfinite(valid) && valid>=0.5;
+      const float physical=separate_observation ? grid.at("ht_observation_valid",*it):valid;
+      physical_valid[index]=std::isfinite(physical) && physical>=0.5;
       for (int k=0;k<8;++k) {
         const float p=grid.at("ht_dir_"+std::to_string(k),*it);
         out->probabilities[k][index]=p;
@@ -166,7 +173,7 @@ void HtCostMap::receive(grid_map_msgs::msg::GridMap::ConstSharedPtr msg) {
     std::vector<unsigned char> source(size);
     cv::Mat src(out->rows,out->cols,CV_8UC1,source.data());
     cv::Mat dst;
-    for (size_t i=0;i<size;++i) source[i]=out->valid[i] ? 0 : 1;
+    for (size_t i=0;i<size;++i) source[i]=physical_valid[i] ? 0 : 1;
     cv::dilate(src,dst,kernel,cv::Point(-1,-1),1,cv::BORDER_CONSTANT,cv::Scalar(1));
     out->unknown_footprint.assign(dst.datastart,dst.dataend);
     for (int k=0;k<8;++k) {
@@ -282,7 +289,7 @@ Support HtCostMap::supportDirected(const Point& a,const Point& b,double heading)
     if (r<0 || c<0 || r>=cycle_->rows || c>=cycle_->cols) return Support::UNKNOWN;
     const size_t index=static_cast<size_t>(r)*cycle_->cols+c;
     if (cycle_->blocked_footprint[channel][index]) return Support::BLOCKED;
-    if (!cycle_->unknown_footprint[index]) return Support::KNOWN;
+    if (cycle_->valid[index] && !cycle_->unknown_footprint[index]) return Support::KNOWN;
     // Unknown uses the same rasterized support mask as known-unsafe terrain.
     // Re-scanning at arbitrary sub-cell offsets made split edges disagree.
     if (!prior_.initialized || prior_.retired) return Support::UNKNOWN;

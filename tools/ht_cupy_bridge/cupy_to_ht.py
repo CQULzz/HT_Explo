@@ -11,7 +11,6 @@ import time
 
 import numpy as np
 import torch
-from scipy.ndimage import distance_transform_edt, uniform_filter, maximum_filter
 
 import rclpy
 from grid_map_msgs.msg import GridMap
@@ -25,19 +24,25 @@ from historical_elevation import HistoricalElevation
 from elevation_quality import preprocess_elevation, retain_recent_obstacle_edges
 from local_surface import SurfaceReferenceEstimator
 from cpu_threads import configure_cpu_threads
+from ht_support import prepare_ht_context
 
 
 class CupyToHt(Node):
     def __init__(self):
         super().__init__("cupy_to_ht_bridge")
-        self.blas_limit, cpu_threads = configure_cpu_threads()
-        self.get_logger().info('CPU pools: PyTorch=2, BLAS=1 (independently bounded)')
+        threads=self.declare_parameter('ht_torch_threads',4).value
+        self.channels_last=self.declare_parameter('ht_channels_last',True).value
+        self.blas_limit, cpu_threads = configure_cpu_threads(threads)
+        cpu_threads['model_memory_format']='channels_last' if self.channels_last else 'contiguous'
+        self.get_logger().info(f'CPU pools: PyTorch={threads}, BLAS=1; {cpu_threads["model_memory_format"]}')
         if os.environ.get('HT_DIAGNOSTICS_DUMP'):
             Path(os.environ['HT_DIAGNOSTICS_DUMP']).with_name('ht_cpu_threads.json').write_text(
                 json.dumps(cpu_threads, indent=2)+'\n')
         self.model = load_student_model(
             str(Path(__file__).with_name("student_best_epoch_weights.pth")), torch.device("cpu")
         )
+        if self.channels_last:
+            self.model=self.model.to(memory_format=torch.channels_last)
         self.pub = self.create_publisher(GridMap, "/ht_traversability/global_local", 1)
         self.history_pub = self.create_publisher(GridMap, "/elevation_mapping/historical_local", 1)
         self.history = None
@@ -171,24 +176,22 @@ class CupyToHt(Node):
             local.data.append(data)
         self.history_pub.publish(local)
 
-        distance_cells, nearest = distance_transform_edt(~observed, return_indices=True)
-        height = elevation[tuple(nearest)].astype(np.float32)
-        near_observation = distance_cells * resolution <= 0.25
-        support = uniform_filter(
-            near_observation.astype(np.float32), size=51, mode="constant"
-        )[25:-25, 25:-25] >= 0.9
-        # Rejected height returns are unknown, not permission to reconstruct
-        # traversable ground by nearest-neighbour network padding.
-        support &= ~maximum_filter(rejected, size=51, mode='constant')[25:-25, 25:-25]
+        height, support, occupied, physical_support = prepare_ht_context(elevation, observed, rejected,
+            self.history.last_window_obstacle_elevation, resolution)
         inference_started = time.monotonic()
         with torch.inference_mode():
-            probabilities = torch.softmax(
-                self.model(torch.from_numpy(height[None, None])), dim=2
-            )[0, :, 1].numpy()
+            tensor=torch.from_numpy(height[None,None])
+            if self.channels_last:tensor=tensor.contiguous(memory_format=torch.channels_last)
+            probabilities = torch.softmax(self.model(tensor), dim=2)[0, :, 1].numpy()
         inference_finished = time.monotonic()
         if probabilities.shape != (8, 241, 241):
             self.get_logger().error(f"Unexpected model output shape {probabilities.shape}")
             return
+        # A different observed surface is never selected as free ground. Its
+        # own cell is forbidden in all directions, independently of the model;
+        # neighbours can still use its measured height as real context.
+        probabilities[:, occupied] = 0.
+        support |= occupied
 
         result = GridMap()
         result.header = deepcopy(source.header)
@@ -201,15 +204,17 @@ class CupyToHt(Node):
         output_side = nx - 50
         result.info.length_x = output_side * resolution
         result.info.length_y = output_side * resolution
-        result.layers = [f"ht_dir_{k}" for k in range(8)] + ["ht_valid"]
+        result.layers = [f"ht_dir_{k}" for k in range(8)] + ["ht_valid", "ht_observation_valid"]
         result.basic_layers = ["ht_valid"]
         result.outer_start_index = 0
         result.inner_start_index = 0
-        for k in range(9):
+        for k in range(10):
             if k < 8:
                 layer = np.where(support, probabilities[k], np.nan).astype(np.float32)
-            else:
+            elif k == 8:
                 layer = support.astype(np.float32)
+            else:
+                layer = physical_support.astype(np.float32)
             data = Float32MultiArray()
             data.layout = MultiArrayLayout(
                 dim=[
@@ -226,6 +231,7 @@ class CupyToHt(Node):
                                  'observed_cells': int(observed.sum()), 'supported_cells': int(support.sum()),
                                  'surface': surface_stats, 'quality': quality.stats,
                                  'source_rejected_cells': int(source_rejected.sum()),
+                                 'known_obstacle_cells': int(occupied.sum()),
                                  'retained_current_edge_cells': int(retained_edges.sum()),
                                  'source_age_at_callback_s': source_age_at_start,
                                  'fusion_and_quality_s': fusion_finished-started,

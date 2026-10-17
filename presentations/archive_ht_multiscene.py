@@ -47,13 +47,14 @@ def save_ht_snapshot(src,dst,scene,duration):
         valid=data['ht_ht_valid']>=.5;radius=int(np.ceil(.6/res)+1)
         ii,jj=np.mgrid[-radius:radius+1,-radius:radius+1]
         kernel=(np.hypot(ii,jj)*res<=.6+np.sqrt(2)*res).astype('uint8')
-        unknown=cv2.dilate((~valid).astype('uint8'),kernel,borderType=cv2.BORDER_CONSTANT,borderValue=1).astype(bool)
+        physical=data['ht_ht_observation_valid']>=.5 if 'ht_ht_observation_valid' in data else valid
+        unknown=cv2.dilate((~physical).astype('uint8'),kernel,borderType=cv2.BORDER_CONSTANT,borderValue=1).astype(bool)
         support_cmap=ListedColormap(['#bfc3c6','#16854a','#c93335'])
         fig,axes=plt.subplots(2,4,figsize=(15,8),layout='constrained')
         home=read_json(src/'summary.json')['start_pose_xyyaw']
         for k,axis in enumerate(axes.flat):
             blocked=cv2.dilate((valid&(data[f'ht_ht_dir_{k}']<.5)).astype('uint8'),kernel,borderType=cv2.BORDER_CONSTANT,borderValue=0).astype(bool)
-            status=np.where(blocked,2,np.where(unknown,0,1))
+            status=np.where(blocked,2,np.where(unknown|~valid,0,1))
             axis.imshow(status[::-1,::-1].T,origin='lower',extent=extent,cmap=support_cmap,norm=BoundaryNorm([-.5,.5,1.5,2.5],3),interpolation='nearest')
             axis.plot(*robot[:2],'b+',ms=7)
             if extent[0]<=home[0]<=extent[1] and extent[2]<=home[1]<=extent[3]:axis.plot(*home[:2],'*',color='#f5bc00',ms=9)

@@ -34,7 +34,7 @@ exploration_path_ns::ExplorationPath LocalCoveragePlanner::SolveHTTSP(
     if (std::isfinite(nearest)) SetHTGuide(ht_global_guide_,false,now);
   }
 
-  struct Target {int id;double utility;double gain;double progress;bool recovery=false;};
+  struct Target {int id;double utility;double gain;double progress;bool recovery=false;bool backtrack=false;};
   std::vector<Target> targets;
   auto supported_endpoint=[&](int id) {
     const auto p=viewpoint_manager_->GetViewPointPosition(id);
@@ -128,7 +128,7 @@ exploration_path_ns::ExplorationPath LocalCoveragePlanner::SolveHTTSP(
   // move required to get around an obstacle. Reserve search slots for safe
   // local escape viewpoints, preferring positions the vehicle has not visited.
   // This is a recovery utility, never a relaxation of HT risk or unknown gates.
-  std::vector<Target> recovery;
+  std::vector<Target> recovery,backtrack;
   std::unordered_set<int> primary_ids;
   for (const auto& t:targets) primary_ids.insert(t.id);
   for (int id:viewpoint_manager_->GetViewPointCandidateIndices()) {
@@ -137,13 +137,15 @@ exploration_path_ns::ExplorationPath LocalCoveragePlanner::SolveHTTSP(
     const double dx=p.x-robot_position_.x(),dy=p.y-robot_position_.y();
     const double range=std::hypot(dx,dy);
     if (range<0.8 || range>std::min(4.0,xytheta_config_.max_radius) ||
-        ht_commitment_.cooling({p.x,p.y,p.z},now) || !supported_endpoint(id)) continue;
+        ht_commitment_.failureCooling({p.x,p.y,p.z},now) || !supported_endpoint(id)) continue;
     const double revisit=ht_visits_.penalty({p.x,p.y,p.z});
     const double alignment=(dx*std::cos(robot_yaw_)+dy*std::sin(robot_yaw_))/range;
     const double progress=ht_has_global_guide_ ? (ht_global_guide_-robot_position_).head<2>().norm()-
       std::hypot(p.x-ht_global_guide_.x(),p.y-ht_global_guide_.y()) : 0;
     const double utility=ht_cost_ns::transitScore(progress,revisit,range/xytheta_config_.forward_speed)+0.3*alignment;
-    recovery.push_back({id,utility,0,progress,true});
+    if (ht_commitment_.cooling({p.x,p.y,p.z},now))
+      backtrack.push_back({id,utility,0,progress,true,true});
+    else recovery.push_back({id,utility,0,progress,true});
   }
   std::sort(recovery.begin(),recovery.end(),[](const Target& a,const Target& b){return a.utility>b.utility;});
   if (!recovery.empty() && targets.size()>4) targets.resize(4);
@@ -162,6 +164,11 @@ exploration_path_ns::ExplorationPath LocalCoveragePlanner::SolveHTTSP(
     if (targets.size()-primary_count>=8) break;
     if (recovery_ids.insert(t.id).second) targets.push_back(t);
   }
+  // A recently reached transit goal is discouraged, not a permanent barrier
+  // to necessary backtracking. Try it only if ordinary safe searches fail.
+  // Search/execution failures retain their separate cooldown and hard gates.
+  std::sort(backtrack.begin(),backtrack.end(),[](const Target& a,const Target& b){return a.utility>b.utility;});
+  for (size_t i=0;i<std::min<size_t>(2,backtrack.size());++i) targets.push_back(backtrack[i]);
   const ht_cost_ns::Pose2 start{robot_position_.x(),robot_position_.y(),robot_yaw_};
   RCLCPP_INFO_THROTTLE(node_->get_logger(),*node_->get_clock(),3000,
     "XYtheta candidates=%zu selected=%zu start=(%.2f,%.2f,%.2f) HT_start=%d collision=%d",
@@ -175,11 +182,18 @@ exploration_path_ns::ExplorationPath LocalCoveragePlanner::SolveHTTSP(
   ht_cost_ns::XYThetaPlan best_plan;
   std::unordered_set<int> attempted_ids;
   bool best_recovery=false;
+  const auto search_started=std::chrono::steady_clock::now();
   for (size_t ti=0;ti<targets.size();++ti) {
     const auto& target=targets[ti];
+    if (target.backtrack && best_target>=0) break;
     if (ti>=primary_count && best_target>=0 && best_gain>0) break;
+    if (attempted>=6 && !target.backtrack && !backtrack.empty()) continue;
     if (!attempted_ids.insert(target.id).second) continue;
     if (attempted>=8) break;
+    const double elapsed=std::chrono::duration<double>(std::chrono::steady_clock::now()-search_started).count();
+    const double remaining=ht_cycle_search_seconds_-elapsed-
+      (!target.backtrack && !backtrack.empty()?std::min(.1,ht_cycle_search_seconds_/3):0);
+    if (remaining<=.001) continue;
     ++attempted;
     const auto goal=viewpoint_manager_->GetViewPointPosition(target.id);
     int geometry_rejections=0,ht_rejections=0;
@@ -192,8 +206,9 @@ exploration_path_ns::ExplorationPath LocalCoveragePlanner::SolveHTTSP(
           !ht_execution_failures_.permits(previous,next,now)) {++ht_rejections;return false;}
       return true;
     };
-    const auto plan=ht_cost_ns::planXYTheta(start,{goal.x,goal.y,goal.z},
-                                          xytheta_config_,valid);
+    auto config=xytheta_config_;
+    config.max_search_seconds=std::min(config.max_search_seconds,remaining);
+    const auto plan=ht_cost_ns::planXYTheta(start,{goal.x,goal.y,goal.z},config,valid);
     if (!plan.reached || plan.poses.size()<2) {
       if (target.id==committed_id) ht_commitment_.reject(now);
       RCLCPP_INFO_THROTTLE(node_->get_logger(),*node_->get_clock(),3000,

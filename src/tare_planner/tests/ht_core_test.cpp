@@ -72,6 +72,7 @@ int main() {
   check(transitScore(1,0,4)>transitScore(1,first,4));
   // Regression: alternating global guides used to renew both stall timers.
   GuideProgress alternating;
+  alternating.stationary_stall_seconds=0; // Test cumulative history separately.
   for (int epoch=0;epoch<8;++epoch) {
     const Point target=epoch%2 ? Point{0,20,0}:Point{20,0,0};
     const double start=epoch*16;
@@ -85,6 +86,21 @@ int main() {
   near(alternating.idle_seconds,0);
   alternating.observe({19.5,0,0},401,true);
   check(!alternating.select({20,0,0},{19.5,0,0},402));
+  GuideProgress stopped;
+  check(stopped.select({20,0,0},{0,0,0},0));
+  for(int t=1;t<13;++t) check(stopped.observe({0,0,0},t,true)==GuideProgress::Event::None);
+  check(stopped.observe({0,0,0},13,true)==GuideProgress::Event::Stalled);
+  check(stopped.cooling({20,0,0},14));
+  GuideProgress creeping;
+  check(creeping.select({20,0,0},{0,0,0},0));
+  for(int t=1;t<=30;++t)
+    check(creeping.observe({t*.025,0,0},t,true)==GuideProgress::Event::None);
+  GuideProgress interrupted;
+  check(interrupted.select({20,0,0},{0,0,0},0));
+  for(int t=1;t<=10;++t) interrupted.observe({0,0,0},t,true);
+  interrupted.observe({0,0,0},11,false);
+  near(interrupted.stationary_seconds,0);
+  check(interrupted.observe({0,0,0},40,true)==GuideProgress::Event::None);
   // Reached recovery targets cannot immediately form a zero-gain circuit;
   // productive sensing and later necessary backtracking remain available.
   TargetCommitment recovery_goal;
@@ -92,10 +108,13 @@ int main() {
   recovery_goal.observe({1.5,0,0},5);
   check(recovery_goal.cooling({2.2,0,0},6));
   check(!recovery_goal.cooling({2.2,0,0},6,true));
+  check(!recovery_goal.failureCooling({2.2,0,0},6));
   check(!recovery_goal.cooling({2,0,0},66));
   recovery_goal.commit({4,0,0},{2,0,0},70,true);
   recovery_goal.observe({3.5,0,0},75);
   check(!recovery_goal.cooling({4,0,0},76));
+  recovery_goal.commit({6,0,0},{4,0,0},80);recovery_goal.reject(81);
+  check(recovery_goal.failureCooling({6,0,0},82));
   // Garage run 2: the robot at (6.8218, 26.2809) cannot cut through
   // cell (5,22) on its way from center (6.6,25.8) to (7.8,27.0).
   using Cell = std::array<int,3>;

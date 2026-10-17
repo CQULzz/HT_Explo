@@ -59,6 +59,11 @@ LocalCoveragePlanner::LocalCoveragePlanner(rclcpp::Node::SharedPtr nh)
   ht_commitment_.cooldown_seconds=nh->declare_parameter<double>("xytheta_goal_cooldown_seconds",20.0);
   ht_guide_progress_.stall_seconds=nh->declare_parameter<double>("xytheta_guide_stall_seconds",60.0);
   ht_guide_progress_.cooldown_seconds=nh->declare_parameter<double>("xytheta_guide_cooldown_seconds",180.0);
+  ht_guide_progress_.stationary_stall_seconds=nh->declare_parameter<double>("xytheta_guide_stationary_seconds",12.0);
+  ht_cycle_search_seconds_=nh->declare_parameter<double>("xytheta_cycle_search_seconds",0.35);
+  if (!std::isfinite(ht_cycle_search_seconds_) || ht_cycle_search_seconds_<=0 ||
+      !std::isfinite(ht_guide_progress_.stationary_stall_seconds) || ht_guide_progress_.stationary_stall_seconds<0)
+    throw std::invalid_argument("Invalid HT cycle/stationary budget");
   if (!std::isfinite(ht_guide_progress_.stall_seconds) || ht_guide_progress_.stall_seconds<=0 ||
       !std::isfinite(ht_guide_progress_.cooldown_seconds) || ht_guide_progress_.cooldown_seconds<=0)
     throw std::invalid_argument("Invalid XYtheta global guide memory parameters");
@@ -643,9 +648,9 @@ LocalCoveragePlanner::SolveLocalCoverageProblem(
     const auto progress=ht_guide_progress_.observe(robot,now,viewpoint_manager_->HT()->ready());
     if (progress==ht_cost_ns::GuideProgress::Event::Stalled) {
       RCLCPP_WARN(node_->get_logger(),
-        "HT global guide stalled: (%.2f,%.2f), best_remaining=%.2fm idle=%.1fs; cooldown=%.1fs and release local goal",
+        "HT global guide stalled: (%.2f,%.2f), best_remaining=%.2fm idle=%.1fs stationary=%.1fs; cooldown=%.1fs and release local goal",
         ht_global_guide_.x(),ht_global_guide_.y(),ht_guide_progress_.best_distance,
-        ht_guide_progress_.idle_seconds,ht_guide_progress_.cooldown_seconds);
+        ht_guide_progress_.idle_seconds,ht_guide_progress_.stationary_seconds,ht_guide_progress_.cooldown_seconds);
       ht_commitment_.reject(now);ht_previous_target_=-1;
     }
     if (progress!=ht_cost_ns::GuideProgress::Event::None) ht_has_global_guide_=false;

@@ -19,6 +19,11 @@ struct TargetCommitment {
       if (now<c.until && !(has_gain && c.recovery_only) && distance(p,c.goal)<0.8) return true;
     return false;
   }
+  bool failureCooling(Point p,double now) const {
+    for (const auto& c:cooldowns)
+      if (!c.recovery_only && now<c.until && distance(p,c.goal)<0.8) return true;
+    return false;
+  }
   void reject(double now) {
     if (active) cooldowns.push_back({goal,now+cooldown_seconds});
     active=false;

@@ -37,6 +37,8 @@ class Capture(Node):
     def grid(self,m,kind):
         n=round(m.info.length_x/m.info.resolution);k=round(m.info.length_y/m.info.resolution)
         names=[f'ht_dir_{i}' for i in range(8)]+['ht_valid'] if kind=='ht' else ['elevation','variance']
+        if kind=='ht' and 'ht_observation_valid' in m.layers:
+            names.append('ht_observation_valid')
         if kind == 'cupy':
             names += [name for name in ['observation_age'] if name in m.layers]
         elif kind == 'history':

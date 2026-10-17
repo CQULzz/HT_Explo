@@ -99,6 +99,9 @@ def main():
              ROOT/'install_standalone/tare_planner/lib/tare_planner/xytheta_follower',
              ROOT/'install_standalone/tare_planner/lib/tare_planner/tare_planner_node',
              ROOT/'src/tare_planner/config/ht.yaml',
+             ROOT/'src/tare_planner/src/ht_cost/ht_cost_map.cpp',
+             ROOT/'src/tare_planner/include/ht_cost/ht_cost_map.h',
+             ROOT/'src/tare_planner/include/local_coverage_planner/local_coverage_planner.h',
              ROOT/'src/tare_planner/include/ht_cost/exploration_progress.h',
              ROOT/'src/tare_planner/include/ht_cost/execution_policy.h',
              ROOT/'src/tare_planner/src/local_coverage_planner/ht_route.cpp',
@@ -109,7 +112,7 @@ def main():
               ROOT/'src/tare_planner/src/ht_cost/xytheta_follower.cpp',
               CUPY/'src/elevation_mapping_cupy_2204/elevation_mapping_cupy/script/elevation_mapping_cupy/elevation_mapping_ros.py']
     paths += [BRIDGE/name for name in ('cmu_xytheta.launch.py','cmu_vehicle_downward.launch.py','gz_sim_direct.launch.py')]
-    paths += [BRIDGE/name for name in ('cpu_threads.py','model.py','local_surface.py','elevation_quality.py',
+    paths += [BRIDGE/name for name in ('cpu_threads.py','model.py','local_surface.py','elevation_quality.py','ht_support.py','capture_replay_maps.py',
                                      'assets/camera_sensor_mask.sdf','student_best_epoch_weights.pth')]
     paths += [CMU/f'src/vehicle_simulator/world/{args.scenario}.world',
               ROOT/f'src/tare_planner/config/{args.scenario}.yaml',

@@ -27,6 +27,7 @@ class HistoricalElevation:
         # A known height rejected during surface/age selection must not be
         # reconstructed as free ground by downstream nearest-value padding.
         self.last_window_incompatible_mask = None
+        self.last_window_obstacle_elevation = None
 
     def _tile(self, tx, ty):
         key = (int(tx), int(ty))
@@ -155,6 +156,7 @@ class HistoricalElevation:
         elevation = np.full((side, side), np.nan, np.float32)
         variance = np.full((side, side), np.inf, np.float32)
         self.last_window_incompatible_mask = np.zeros((side, side), dtype=bool)
+        self.last_window_obstacle_elevation = np.full((side, side), np.nan, np.float32)
         for tx in np.unique(gx // self.tile_size):
             ix = np.flatnonzero(gx // self.tile_size == tx)
             for ty in np.unique(gy // self.tile_size):
@@ -207,6 +209,16 @@ class HistoricalElevation:
                 # with no compatible current-floor height has the same rule.
                 self.last_window_incompatible_mask[np.ix_(ix, iy)] = (
                     np.any(np.isfinite(z), axis=0) & ~found)
+                # An observed incompatible surface is occupied/unsafe evidence,
+                # not an observation of traversable ground. Preserve its actual
+                # height separately for network context and an explicit hard
+                # obstacle mask. Never promote expired or unreferenced layers.
+                obstacle = (~found & has_reference & np.isfinite(newest_z)
+                    & (newest_time <= stamp_s+1e-3)
+                    & (stamp_s-newest_time <= self.max_age_s)
+                    & (abs(newest_z-r) > self.reference_tolerance_m))
+                self.last_window_obstacle_elevation[np.ix_(ix, iy)] = np.where(
+                    obstacle, newest_z, np.nan)
                 elevation[np.ix_(ix, iy)] = np.where(found, chosen_z, np.nan)
                 variance[np.ix_(ix, iy)] = np.where(found, chosen_v, np.inf)
         return elevation, variance, exact_x, exact_y

@@ -11,6 +11,8 @@ struct GuideProgress {
   bool active=false, previous_healthy=false;
   double best_distance=0, idle_seconds=0, last_observed=0;
   double stall_seconds=60, cooldown_seconds=180, identity_radius=2;
+  double stationary_stall_seconds=12,stationary_seconds=0;
+  Point stationary_anchor{};
   struct Cooldown {Point goal; double until;};
   std::vector<Cooldown> cooldowns;
   struct History {Point goal;double best_distance,idle_seconds,last_seen;};
@@ -38,6 +40,7 @@ struct GuideProgress {
       [&](const History& h){return now<h.last_seen || now-h.last_seen>=4*cooldown_seconds;}),history.end());
     goal=p;active=true;best_distance=TargetCommitment::distance(robot,p);
     idle_seconds=0;last_observed=now;previous_healthy=false;
+    stationary_seconds=0;stationary_anchor=robot;
     // Changing A -> B -> A must not erase A's failed attempts. Only time
     // actually spent tracking A counts; a new best approach still renews it.
     for (const auto& h:history) if (TargetCommitment::distance(h.goal,p)<identity_radius) {
@@ -53,8 +56,13 @@ struct GuideProgress {
     last_observed=now;
     // Missing planning callbacks and stale maps are not evidence of an
     // unreachable destination. Ignore gaps, and require two healthy samples.
-    if (healthy && previous_healthy && dt>=0 && dt<=5) idle_seconds+=dt;
+    const bool continuous=healthy && previous_healthy && dt>=0 && dt<=5;
+    if (continuous) idle_seconds+=dt;
     previous_healthy=healthy;
+    if (!continuous) {stationary_seconds=0;stationary_anchor=robot;}
+    else if (TargetCommitment::distance(robot,stationary_anchor)>.1) {
+      stationary_seconds=0;stationary_anchor=robot;
+    } else if (dt>=0 && dt<=5) stationary_seconds+=dt;
     if (!healthy) return Event::None;
     const double d=TargetCommitment::distance(robot,goal);
     if (d<=1) {
@@ -65,7 +73,8 @@ struct GuideProgress {
     }
     if (d<best_distance-0.5) {best_distance=d;idle_seconds=0;}
     remember(now);
-    if (idle_seconds<stall_seconds) return Event::None;
+    if (idle_seconds<stall_seconds &&
+        (stationary_stall_seconds<=0 || stationary_seconds<stationary_stall_seconds)) return Event::None;
     cooldowns.push_back({goal,now+cooldown_seconds});forget();active=false;
     return Event::Stalled;
   }
