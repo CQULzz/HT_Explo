@@ -37,7 +37,9 @@ def pack(cells):
     return (v[:,0]<<42)|(v[:,1]<<21)|v[:,2]
 
 
-def evaluate(folder,name,duration):
+def evaluate(folder,name,duration,scan_selection='measurement_second'):
+    if scan_selection not in ('measurement_second','source_second'):
+        raise ValueError('Unknown scan selection: '+scan_selection)
     trial=folder/name;origin=json.loads((trial/'measurement_started.json').read_text())['wall_time']
     rows=list(csv.DictReader((trial/'timeseries.csv').open()))
     times=np.array([float(r['t_s']) for r in rows]);dist=np.array([float(r['distance_m']) for r in rows])
@@ -65,7 +67,11 @@ def evaluate(folder,name,duration):
     while r.has_next():
         _,data,ns=r.read_next();m=deserialize_message(data,PointCloud2);t=stamp(m)-origin
         if not 0<=t<duration:continue
-        scans_recorded+=1;bin_id=int(math.floor(t))
+        # Endurance evidence is already sampled by absolute source second.
+        # Re-binning it relative to a fractional experiment origin discards
+        # real scans when adjacent source seconds land in the same new bin.
+        scans_recorded+=1
+        bin_id=int(math.floor(stamp(m) if scan_selection=='source_second' else t))
         if bin_id==last_bin:continue
         last_bin=bin_id
         if m.header.frame_id!='map':raise ValueError('Expected registered cloud in map frame')
@@ -108,7 +114,7 @@ def evaluate(folder,name,duration):
             no_translation_first=None
     if no_translation_first is not None:longest_no_translation=max(longest_no_translation,duration-no_translation_first)
     moving=np.flatnonzero(np.diff(dist)>.005)
-    result={'observed_free_volume_m3':len(free)*.125,'processed_volume_scans':processed,
+    result={'scan_selection':scan_selection,'observed_free_volume_m3':len(free)*.125,'processed_volume_scans':processed,
             'skipped_volume_scans':skipped,'recorded_scans_in_source_time_window':scans_recorded,
             'sensor_position_source':source,'pose_time_offset_max_s':max(pose_offsets,default=None),
             'command_samples':len(commands),'fully_stopped_fraction':zero/max(1,len(commands)),

@@ -111,6 +111,8 @@ def main():
              ROOT/'src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp',
              ROOT/'src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp']
     paths += [Path(__file__), Path(__file__).with_name('run_scheduled_comparison.py'),
+              Path(__file__).with_name('summarize_ht_endurance.py'),
+              Path(__file__).with_name('summarize_tare_ht_pair.py'),
               ROOT/'src/tare_planner/include/ht_cost/target_commitment.h',
               ROOT/'src/tare_planner/src/ht_cost/xytheta_follower.cpp',
               CUPY/'src/elevation_mapping_cupy_2204/elevation_mapping_cupy/script/elevation_mapping_cupy/elevation_mapping_ros.py']

@@ -157,7 +157,7 @@ def main():
             return original_reader(path, ['/endurance/registered_scan' if topic=='/registered_scan' else topic
                                           for topic in topics])
         common.reader = sampled_reader
-        _, volume, external = common.evaluate(folder, 'current', duration)
+        _, volume, external = common.evaluate(folder, 'current', duration,scan_selection='source_second')
         volume_t = np.array([row['time_s'] for row in volume])
         volumes = np.array([row['observed_free_volume_m3'] for row in volume])
         for segment in segments:
@@ -167,7 +167,7 @@ def main():
         (folder/'metric_definition.json').write_text(json.dumps({
             'voxel_size_m': .5, 'ray_sample_step_m': .25, 'max_range_m': 15,
             'endpoint_exclusion_m': .25, 'scan_recording': 'first source-stamped scan per wall-clock source second',
-            'selection': 'at most one recorded scan per measurement second; bins may be missing',
+            'selection': 'one recorded scan per absolute source second, filtered to the measurement window; no second measurement-bin downsampling',
             'definition': 'Approximate cumulative union of observed free voxels; not ground truth or official coverage.',
             'delivery_audit': 'Sampled bag cannot establish loss of unsaved input frames; compare full-rate observer and mapper callback counters.'}, indent=2))
     failures = json.loads((folder/'runtime_failures.json').read_text()) if (folder/'runtime_failures.json').exists() else []
