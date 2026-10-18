@@ -620,12 +620,15 @@ void GridWorld::UpdateCellStatus(const std::shared_ptr<viewpoint_manager_ns::Vie
         above_frontier_threshold_count++;
       }
     }
+    const auto audit_old_status=subspaces_->GetCell(cell_ind).GetStatus();
+    const char* audit_reason="UNCHANGED";
     // Exploring to Covered
     if (subspaces_->GetCell(cell_ind).GetStatus() == CellStatus::EXPLORING &&
         above_frontier_threshold_count < kCellExploringToCoveredThr &&
         above_small_threshold_count < kCellExploringToCoveredThr && selected_viewpoint_count == 0 &&
         candidate_count > 0)
     {
+      audit_reason="NO_GAIN_WITH_CANDIDATES";
       subspaces_->GetCell(cell_ind).SetStatus(CellStatus::COVERED);
     }
     // Covered to Exploring
@@ -633,6 +636,7 @@ void GridWorld::UpdateCellStatus(const std::shared_ptr<viewpoint_manager_ns::Vie
              (above_big_threshold_count >= kCellCoveredToExploringThr ||
               above_frontier_threshold_count >= kCellCoveredToExploringThr))
     {
+      audit_reason="GAIN_REOPEN";
       subspaces_->GetCell(cell_ind).SetStatus(CellStatus::EXPLORING);
       almost_covered_cell_indices_.push_back(cell_ind);
     }
@@ -640,10 +644,12 @@ void GridWorld::UpdateCellStatus(const std::shared_ptr<viewpoint_manager_ns::Vie
     else if (subspaces_->GetCell(cell_ind).GetStatus() == CellStatus::EXPLORING && selected_viewpoint_count == 0 &&
              candidate_count > 0)
     {
+      audit_reason="ALMOST_COVERED_QUEUE";
       almost_covered_cell_indices_.push_back(cell_ind);
     }
     else if (subspaces_->GetCell(cell_ind).GetStatus() != CellStatus::COVERED && selected_viewpoint_count > 0)
     {
+      audit_reason="SELECTED_REOPEN";
       subspaces_->GetCell(cell_ind).SetStatus(CellStatus::EXPLORING);
       almost_covered_cell_indices_.erase(
           std::remove(almost_covered_cell_indices_.begin(), almost_covered_cell_indices_.end(), cell_ind),
@@ -655,6 +661,7 @@ void GridWorld::UpdateCellStatus(const std::shared_ptr<viewpoint_manager_ns::Vie
       if (subspaces_->GetCell(cell_ind).GetVisitCount() == 1 &&
           subspaces_->GetCell(cell_ind).GetGraphNodeIndices().empty())
       {
+        audit_reason="NO_CANDIDATE_FIRST_VISIT_NO_GRAPH";
         subspaces_->GetCell(cell_ind).SetStatus(CellStatus::COVERED);
       }
       else
@@ -665,27 +672,53 @@ void GridWorld::UpdateCellStatus(const std::shared_ptr<viewpoint_manager_ns::Vie
         double z_dist_to_robot = std::abs(cell_position.z - robot_position_.z);
         if (xy_dist_to_robot < kCellSize && z_dist_to_robot < kCellHeight * 0.8)
         {
+          audit_reason="NO_CANDIDATE_NEAR_ROBOT";
           subspaces_->GetCell(cell_ind).SetStatus(CellStatus::COVERED);
         }
       }
     }
 
+    const auto audit_new_status=subspaces_->GetCell(cell_ind).GetStatus();
+    if(viewpoint_manager->HT()->enabled() &&
+       (audit_old_status!=audit_new_status || audit_old_status==CellStatus::EXPLORING || candidate_count>0)) {
+      const auto pos=subspaces_->GetCell(cell_ind).GetPosition();
+      RCLCPP_INFO(rclcpp::get_logger("standalone_logger"),
+        "HT_CELL_AUDIT cell=%d xy=(%.6f,%.6f) old=%d new=%d reason=%s candidates=%d selected=%d above_small=%d above_big=%d above_frontier=%d highest_score=%d visits=%d graph_nodes=%zu robot=(%.6f,%.6f) ht_stamp=%.9f",
+        cell_ind,pos.x,pos.y,static_cast<int>(audit_old_status),static_cast<int>(audit_new_status),audit_reason,
+        candidate_count,selected_viewpoint_count,above_small_threshold_count,above_big_threshold_count,
+        above_frontier_threshold_count,highest_score,subspaces_->GetCell(cell_ind).GetVisitCount(),
+        subspaces_->GetCell(cell_ind).GetGraphNodeIndices().size(),robot_position_.x,robot_position_.y,
+        viewpoint_manager->HT()->cycleStamp());
+    }
     if (subspaces_->GetCell(cell_ind).GetStatus() == CellStatus::EXPLORING && candidate_count > 0)
     {
       subspaces_->GetCell(cell_ind).SetRobotPosition(robot_position_);
       subspaces_->GetCell(cell_ind).SetKeyposeID(cur_keypose_id_);
     }
   }
-  for (const auto& cell_ind : almost_covered_cell_indices_)
+  // Erasing a vector inside its range-for invalidates the loop iterators.
+  // Keep the existing transition and duplicate-removal policy, advancing only
+  // when the current entry remains. Do not classify missing candidates here.
+  for (size_t i=0;i<almost_covered_cell_indices_.size();)
   {
+    const int cell_ind=almost_covered_cell_indices_[i];
     if (std::find(neighbor_cell_indices_.begin(), neighbor_cell_indices_.end(), cell_ind) ==
         neighbor_cell_indices_.end())
     {
+      const auto old_status=subspaces_->GetCell(cell_ind).GetStatus();
+      if(viewpoint_manager->HT()->enabled()) {
+        const auto pos=subspaces_->GetCell(cell_ind).GetPosition();
+        RCLCPP_INFO(rclcpp::get_logger("standalone_logger"),
+          "HT_CELL_AUDIT cell=%d xy=(%.6f,%.6f) old=%d new=%d reason=ALMOST_LEFT_NEIGHBOUR candidates=-1 selected=-1 above_small=-1 above_big=-1 above_frontier=-1 highest_score=-1 visits=%d graph_nodes=%zu robot=(%.6f,%.6f) ht_stamp=%.9f",
+          cell_ind,pos.x,pos.y,static_cast<int>(old_status),static_cast<int>(CellStatus::COVERED),
+          subspaces_->GetCell(cell_ind).GetVisitCount(),subspaces_->GetCell(cell_ind).GetGraphNodeIndices().size(),
+          robot_position_.x,robot_position_.y,viewpoint_manager->HT()->cycleStamp());
+      }
       subspaces_->GetCell(cell_ind).SetStatus(CellStatus::COVERED);
       almost_covered_cell_indices_.erase(
           std::remove(almost_covered_cell_indices_.begin(), almost_covered_cell_indices_.end(), cell_ind),
           almost_covered_cell_indices_.end());
-    }
+    } else ++i;
   }
 }
 
