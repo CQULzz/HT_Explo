@@ -1,0 +1,88 @@
+Internal ctest changing into directory: /home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner
+Test project /home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner
+    Start 1: ht_core_test
+1/3 Test #1: ht_core_test .....................   Passed    0.00 sec
+    Start 2: ht_ros_test
+2/3 Test #2: ht_ros_test ......................   Passed   16.28 sec
+    Start 3: xytheta_follower_test
+3/3 Test #3: xytheta_follower_test ............***Failed   23.33 sec
+-- run_test.py: invoking following command in '/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner':
+ - /home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/xytheta_follower_test --gtest_output=xml:/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/test_results/tare_planner/xytheta_follower_test.gtest.xml
+Running main() from /opt/ros/jazzy/src/gtest_vendor/src/gtest_main.cc
+[==========] Running 11 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 1 test from ConfigurationFollowerTest
+[ RUN      ] ConfigurationFollowerTest.SeparateObstacleAndUnknownRevokeRealCommands
+[INFO] [1792297219.684840129] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=1 scores=configuration
+/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/tests/xytheta_follower_test.cpp:106: Failure
+Expected equality of these values:
+  speed
+    Which is: 0.22499999999999998
+  0
+
+/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/tests/xytheta_follower_test.cpp:107: Failure
+Expected equality of these values:
+  reason
+    Which is: "DRIVING"
+  "HT_CURRENT_POSE_BLOCKED"
+
+[  FAILED  ] ConfigurationFollowerTest.SeparateObstacleAndUnknownRevokeRealCommands (1579 ms)
+[----------] 1 test from ConfigurationFollowerTest (1579 ms total)
+
+[----------] 10 tests from FollowerTest
+[ RUN      ] FollowerTest.FreshMapMaintainsExecutionAcrossSlowPlannerPermission
+[INFO] [1792297221.251993823] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=1 scores=point
+[       OK ] FollowerTest.FreshMapMaintainsExecutionAcrossSlowPlannerPermission (2286 ms)
+[ RUN      ] FollowerTest.FineSpinFinishesHeadingAndStopsBeforeTranslation
+[INFO] [1792297223.538636247] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=1 scores=point
+[       OK ] FollowerTest.FineSpinFinishesHeadingAndStopsBeforeTranslation (2311 ms)
+[ RUN      ] FollowerTest.GroupedSpinStillRejectsAnUnsafeIntermediateDirection
+[INFO] [1792297225.850727298] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=1 scores=point
+[       OK ] FollowerTest.GroupedSpinStillRejectsAnUnsafeIntermediateDirection (823 ms)
+[ RUN      ] FollowerTest.RejectedTrackingArcPublishesZeroRatherThanTheCandidateCommand
+[INFO] [1792297226.674938313] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=1 scores=point
+[       OK ] FollowerTest.RejectedTrackingArcPublishesZeroRatherThanTheCandidateCommand (2243 ms)
+[ RUN      ] FollowerTest.RefusesAOneWayPathButDoesNotRequireEveryHeadingToBeSafe
+[INFO] [1792297228.917502444] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=1 scores=point
+[INFO] [1792297229.735943280] [xytheta_follower]: HT_RETURN_MARGIN_BLOCK map_stamp=1792297229.714880705 a=(0.000,0.000,0.000) b=(0.200,0.000,0.000) reverse_support=3
+[       OK ] FollowerTest.RefusesAOneWayPathButDoesNotRequireEveryHeadingToBeSafe (1244 ms)
+[ RUN      ] FollowerTest.FreshMapsCannotExtendAnExpiredPlan
+[INFO] [1792297230.161719312] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=1 scores=point
+[       OK ] FollowerTest.FreshMapsCannotExtendAnExpiredPlan (3476 ms)
+[ RUN      ] FollowerTest.CompletionHeartbeatExplainsTerminalStopButCannotRenewDriving
+[INFO] [1792297233.637465351] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=1 scores=point
+[       OK ] FollowerTest.CompletionHeartbeatExplainsTerminalStopButCannotRenewDriving (5563 ms)
+[ RUN      ] FollowerTest.NewObstacleAndUnknownRevokeExecution
+[INFO] [1792297239.200756828] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=1 scores=point
+[       OK ] FollowerTest.NewObstacleAndUnknownRevokeExecution (988 ms)
+[ RUN      ] FollowerTest.ExplicitHoldAndMissingOdometryStillStop
+[INFO] [1792297240.189267250] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=1 scores=point
+[       OK ] FollowerTest.ExplicitHoldAndMissingOdometryStillStop (1410 ms)
+[ RUN      ] FollowerTest.PathFailureReportsItsEdgeAndPlanIdentityOnce
+[INFO] [1792297241.599608452] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=1 scores=point
+[INFO] [1792297242.207112944] [xytheta_follower]: HT_RETURN_MARGIN_BLOCK map_stamp=1792297242.186176062 a=(0.600,0.000,0.000) b=(0.700,0.000,0.000) reverse_support=2
+[       OK ] FollowerTest.PathFailureReportsItsEdgeAndPlanIdentityOnce (1199 ms)
+[----------] 10 tests from FollowerTest (21547 ms total)
+
+[----------] Global test environment tear-down
+[==========] 11 tests from 2 test suites ran. (23133 ms total)
+[  PASSED  ] 10 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] ConfigurationFollowerTest.SeparateObstacleAndUnknownRevokeRealCommands
+
+ 1 FAILED TEST
+-- run_test.py: return code 1
+-- run_test.py: inject classname prefix into gtest result file '/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/test_results/tare_planner/xytheta_follower_test.gtest.xml'
+-- run_test.py: verify result file '/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/test_results/tare_planner/xytheta_follower_test.gtest.xml'
+
+
+67% tests passed, 1 tests failed out of 3
+
+Label Time Summary:
+gtest    =  39.61 sec*proc (2 tests)
+
+Total Test time (real) =  39.61 sec
+
+The following tests FAILED:
+	  3 - xytheta_follower_test (Failed)
+Errors while running CTest

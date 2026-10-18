@@ -1,0 +1,476 @@
+commit 149566de09c48a528140b6ec950c08c5fa29539c
+Author:     Codex <codex@local>
+AuthorDate: Sun Oct 18 12:26:43 2026 +0800
+Commit:     Codex <codex@local>
+CommitDate: Sun Oct 18 12:26:43 2026 +0800
+
+    Separate vehicle HT scores from physical obstacle footprints and enforce physical support in startup fallback
+
+diff --git a/docs/fixes/2026-10-18_configuration_gate.md b/docs/fixes/2026-10-18_configuration_gate.md
+new file mode 100644
+index 0000000..5f531a2
+--- /dev/null
++++ b/docs/fixes/2026-10-18_configuration_gate.md
+@@ -0,0 +1,27 @@
++# 室内停滞：区分车辆配置得分与物理障碍物
++
++上轮代码12d85d8完整运行600秒，约74秒后停在(9.133,-1.822)m，最终17.82m、778.000m³、BLOCKED。地图、定位和节点仍工作；当前姿态允许，实际搜索只展开28个状态。不同分辨率的54次同图查询全部失败，并未耗尽预算。
++
++## 原因与同图对照
++
++旧桥接把两种不同的量混在八张概率图里：学习模型的车辆方向得分，以及被显式置为八方向0分的实测障碍格。规划器对所有低分统一按0.6m半径加栅格余量膨胀。在已训练的整车运动标签下，周围车辆参考位姿的失败得分并非当前车体碰到该处物理障碍的同义词。
++
++追溯同权重训练协议、51×51学生输入与八个方向教师补丁：标签来自整车静态/前进试验，存在教师/学生参考位置偏移，不能当作无车体尺寸的点障碍概率。标签原始逐样本轨迹未完整重建，参考点与物理方向独立标定也尚未补齐；本轮不改偏移、方向次序或训练权重。
++
++在同一停滞快照、同一11.25°/22.5°动作库上，只把低分查询改成参考格检查，保留原0.6m缺测、物理障碍膨胀及0.5硬门槛：原来8个2m环形目标全失败，改后其中6个目标可达，6种搜索配置均得到相同6个出口。它证实旧概率聚合规则可以封住该图中的出口；不是实际车辆安全通过的真值验证。
++
++旧录包没有独立障碍层，同图对照以原桥接“八方向严格为0”的显式覆盖值重建障碍掩码，保守保留它们；不把这种重建用于新的在线导航。
++
++## 本轮修改
++
++- 桥接显式发布ht_obstacle，保留原来的障碍高度、八方向置零与观测支撑层。
++- 新configuration接口在车辆参考格查询方向HT得分，低于0.5仍直接拒绝；物理障碍及观测缺失仍按0.6m半径检查。逐格路径、转向跨通道、实际指令弧和独立TARE碰撞检查保持。
++- 配置模式必须同时收到观测支撑层、合法二值障碍层，缺任一层就拒绝地图。未预测的当前参考位置不会直接放行；不豁免被拒起点。
++- 核心默认point模式保留旧点概率接口，供历史回归和显式点图使用。仿真trial及当前HT配置显式选择configuration，不能靠缺失图层隐式切换。
++- 录像快照保留新障碍层，图表根据当轮manifest选择正确的硬门槛公式；避免用旧膨胀公式画新接口的图。
++- 新增邻近车辆得分与实测障碍的对照、物理缺测、未预测位置、缺少接口字段、真实停滞快照和执行端停车的回归。
++- 新的执行回归发现：启动先验分支用神经预测代替物理观测检查，物理缺测且HT仍有效时可能误放行。现在缓存并逐格检查真实观测支撑；先验半径外的缺测不能靠有效HT预测绕过，扫描范围也与预计算足迹核一致。
++
++统一足迹核后，旧0.25m粗网格测试中x=0.3m不再完全位于1.2m启动先验内：核触及世界格心(1.125,0.625)m，距原点约1.287m。回归改为x=0.1m允许，并新增x=0.3m拒绝断言；不为迁就旧预期而缩小核。这个启动问题是额外发现，不能用于解释已超过启动阶段的74秒停车。
++
++保留32航向和混合动作、控制器、模型与高程融合；不降低概率阈值、不缩小物理足迹、不放宽3秒时效。修改后冻结代码，按AGENTS约定完整测试600秒并与旧三轮对比。若再停住，仍保留失败结果，不将单张地图的出口恢复当成闭环稳定通过。
+diff --git a/presentations/archive_ht_multiscene.py b/presentations/archive_ht_multiscene.py
+index 30f5e50..cd53b64 100644
+--- a/presentations/archive_ht_multiscene.py
++++ b/presentations/archive_ht_multiscene.py
+@@ -53,15 +53,23 @@ def save_ht_snapshot(src,dst,scene,duration):
+         support_cmap=ListedColormap(['#bfc3c6','#16854a','#c93335'])
+         fig,axes=plt.subplots(2,4,figsize=(15,8),layout='constrained')
+         home=read_json(src/'summary.json')['start_pose_xyyaw']
++        configuration=read_json(src/'manifest.json').get('ht_score_semantics','point')=='configuration'
++        if configuration and 'ht_ht_obstacle' not in data:
++            raise RuntimeError('Configuration HT snapshot lacks its physical obstacle mask')
++        if configuration:
++            obstacle_body=cv2.dilate((data['ht_ht_obstacle']>=.5).astype('uint8'),kernel,
++                borderType=cv2.BORDER_CONSTANT,borderValue=0).astype(bool)
+         for k,axis in enumerate(axes.flat):
+-            blocked=cv2.dilate((valid&(data[f'ht_ht_dir_{k}']<.5)).astype('uint8'),kernel,borderType=cv2.BORDER_CONSTANT,borderValue=0).astype(bool)
++            low=valid&(data[f'ht_ht_dir_{k}']<.5)
++            blocked=obstacle_body|low if configuration else cv2.dilate(low.astype('uint8'),kernel,borderType=cv2.BORDER_CONSTANT,borderValue=0).astype(bool)
+             status=np.where(blocked,2,np.where(unknown|~valid,0,1))
+             axis.imshow(status[::-1,::-1].T,origin='lower',extent=extent,cmap=support_cmap,norm=BoundaryNorm([-.5,.5,1.5,2.5],3),interpolation='nearest')
+             axis.plot(*robot[:2],'b+',ms=7)
+             if extent[0]<=home[0]<=extent[1] and extent[2]<=home[1]<=extent[3]:axis.plot(*home[:2],'*',color='#f5bc00',ms=9)
+             axis.set(title=f'HT 通道 {k}',xlabel='X / m',ylabel='Y / m')
+-        fig.legend(handles=[Patch(color='#16854a',label='足迹HT允许'),Patch(color='#c93335',label='足迹包含低概率格'),Patch(color='#bfc3c6',label='足迹包含未知格')],loc='lower center',bbox_to_anchor=(.5,-.04),ncol=3)
+-        fig.suptitle(f'{NAMES[scene]}：同一快照的HT足迹硬门槛，半径0.6m，概率阈值0.5\n蓝十字为车辆，黄星为初始位置（若在图内）；另有几何、时效与运动约束')
++        fig.legend(handles=[Patch(color='#16854a',label='硬门槛允许'),Patch(color='#c93335',label='HT拒绝或车体碰到实测障碍'),Patch(color='#bfc3c6',label='预测缺失或车体覆盖未知区')],loc='lower center',bbox_to_anchor=(.5,-.04),ncol=3)
++        policy='位姿HT在参考格查询；物理障碍/缺测按0.6m检查' if configuration else '点HT低分/缺测按0.6m足迹检查'
++        fig.suptitle(f'{NAMES[scene]}：同一快照的硬门槛；{policy}；阈值0.5\n蓝十字为车辆，黄星为初始位置（若在图内）；另有几何、时效与运动约束')
+         fig.savefig(dst/'late_ht_footprint.png',dpi=140,bbox_inches='tight');plt.close(fig)
+         cv2.imwrite(str(dst/'late_camera.jpg'),data['camera'])
+     (dst/'late_map_snapshot.json').write_text(json.dumps(dict(**frame,
+diff --git a/presentations/run_ht_endurance.py b/presentations/run_ht_endurance.py
+index 7720be7..84295df 100644
+--- a/presentations/run_ht_endurance.py
++++ b/presentations/run_ht_endurance.py
+@@ -104,6 +104,7 @@ def main():
+              ROOT/'src/tare_planner/include/local_coverage_planner/local_coverage_planner.h',
+              ROOT/'src/tare_planner/include/ht_cost/heading_reserve.h',
+              ROOT/'src/tare_planner/include/ht_cost/xytheta_planner.h',
++             ROOT/'src/tare_planner/include/ht_cost/ht_cost_core.h',
+              ROOT/'src/tare_planner/src/grid_world/grid_world.cpp',
+              ROOT/'src/tare_planner/include/grid_world/grid_world.h',
+              ROOT/'src/tare_planner/include/ht_cost/exploration_progress.h',
+@@ -138,6 +139,7 @@ def main():
+                     planned_duration_s=args.duration, scenario=args.scenario, domain=args.domain,
+                     video_fps=args.video_fps,
+                     speed_cap_mps=.5, preflight=preflight(),
++                    ht_score_semantics=json.loads((BRIDGE/'ht_trial.yaml').read_text())['/**']['ros__parameters'].get('ht_score_semantics','point'),
+                     git_head=subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
+                     evidence_policy=f'All control/status and odometry, full-rate published HT maps; original-stamped scans1Hz; exact-stamp map triplets every10s; camera{args.video_fps}fps. Raw CuPy and scans are not fully bagged.',
+                     source_hashes={str(p): hashlib.sha256(p.read_bytes()).hexdigest() for p in paths})
+diff --git a/src/tare_planner/config/ht.yaml b/src/tare_planner/config/ht.yaml
+index 5f584a3..ae1edbf 100644
+--- a/src/tare_planner/config/ht.yaml
++++ b/src/tare_planner/config/ht.yaml
+@@ -3,7 +3,8 @@
+     ht_enabled: true
+     ht_directions_calibrated: false
+     ht_topic: /ht_traversability/global_local
+-    ht_min_probability: 0.5  # Every footprint sample must meet this threshold.
++    ht_min_probability: 0.5  # Every queried vehicle-reference score must meet this hard threshold.
++    ht_score_semantics: configuration  # Vehicle scores at their reference; physical obstacles have their own footprint.
+     ht_map_timeout: 1.0
+     ht_sample_step: 0.02
+     ht_lookahead_distance: 2.0
+diff --git a/src/tare_planner/include/ht_cost/ht_cost_core.h b/src/tare_planner/include/ht_cost/ht_cost_core.h
+index 4844e7d..c58590b 100644
+--- a/src/tare_planner/include/ht_cost/ht_cost_core.h
++++ b/src/tare_planner/include/ht_cost/ht_cost_core.h
+@@ -27,6 +27,7 @@ struct Map {
+   // Prepared once per received map for constant-time footprint queries.
+   std::array<std::vector<unsigned char>, 8> blocked_footprint;
+   std::vector<unsigned char> unknown_footprint;
++  std::vector<unsigned char> physical_valid;
+ 
+   bool wellFormed() const {
+     if (rows <= 0 || cols <= 0 || !std::isfinite(resolution) || resolution <= 0 ||
+@@ -34,7 +35,7 @@ struct Map {
+         !std::isfinite(yaw) || !std::isfinite(stamp) || !std::isfinite(heading_offset))
+       return false;
+     const auto size = static_cast<size_t>(rows) * cols;
+-    if (valid.size() != size) return false;
++    if (valid.size() != size || (!physical_valid.empty() && physical_valid.size()!=size)) return false;
+     auto order = channel_order;
+     std::sort(order.begin(), order.end());
+     for (int k = 0; k < 8; ++k)
+diff --git a/src/tare_planner/include/ht_cost/ht_cost_map.h b/src/tare_planner/include/ht_cost/ht_cost_map.h
+index 45f1b9c..5c8bede 100644
+--- a/src/tare_planner/include/ht_cost/ht_cost_map.h
++++ b/src/tare_planner/include/ht_cost/ht_cost_map.h
+@@ -46,6 +46,7 @@ class HtCostMap {
+   FallbackBudget budget_;
+   bool geometric_fallback_=false;
+   bool require_reversible_motion_=false;
++  bool configuration_scores_=false;
+   double fallback_lookahead_=0.5, fallback_speed_=0.2;
+   bool enabled_=false, calibrated_=false;
+   double min_probability_=0.5, timeout_=1, step_=0.02, lookahead_=2;
+diff --git a/src/tare_planner/src/ht_cost/ht_cost_map.cpp b/src/tare_planner/src/ht_cost/ht_cost_map.cpp
+index 323e2a3..a6cb290 100644
+--- a/src/tare_planner/src/ht_cost/ht_cost_map.cpp
++++ b/src/tare_planner/src/ht_cost/ht_cost_map.cpp
+@@ -18,6 +18,10 @@ HtCostMap::HtCostMap(rclcpp::Node::SharedPtr node,bool publish_permission)
+   lookahead_=node->declare_parameter<double>("ht_lookahead_distance",2.0);
+   reached_distance_=node->declare_parameter<double>("ht_waypoint_reached_distance",0.3);
+   footprint_radius_=node->declare_parameter<double>("ht_validity_radius",0.6);
++  const auto score_semantics=node->declare_parameter<std::string>("ht_score_semantics","point");
++  if (score_semantics!="point" && score_semantics!="configuration")
++    throw std::invalid_argument("HT score semantics must be point or configuration");
++  configuration_scores_=score_semantics=="configuration";
+   require_reversible_motion_=node->declare_parameter<bool>("ht_require_reversible_motion",false);
+   heading_offset_=node->declare_parameter<double>("ht_heading_offset",0.0);
+   const auto policy=node->declare_parameter<std::string>("ht_unknown_policy","strict");
+@@ -67,8 +71,8 @@ HtCostMap::HtCostMap(rclcpp::Node::SharedPtr node,bool publish_permission)
+     subscription_=node->create_subscription<grid_map_msgs::msg::GridMap>(
+       topic,rclcpp::QoS(1).reliable(),
+       [this](grid_map_msgs::msg::GridMap::ConstSharedPtr msg){receive(msg);},options);
+-    RCLCPP_INFO(logger_,"HT hard gate: min_probability=%.3f unknown_policy=%s calibrated=%d reversible=%d",
+-                min_probability_,policy.c_str(),calibrated_,require_reversible_motion_);
++    RCLCPP_INFO(logger_,"HT hard gate: min_probability=%.3f unknown_policy=%s calibrated=%d reversible=%d scores=%s",
++                min_probability_,policy.c_str(),calibrated_,require_reversible_motion_,score_semantics.c_str());
+   }
+ }
+ 
+@@ -110,6 +114,8 @@ void HtCostMap::receive(grid_map_msgs::msg::GridMap::ConstSharedPtr msg) {
+       if (!grid.exists("ht_dir_"+std::to_string(k)))
+         throw std::runtime_error("Missing ht_dir layers; set aggregate_only=false");
+     if (!grid.exists("ht_valid")) throw std::runtime_error("Missing ht_valid");
++    if (configuration_scores_ && (!grid.exists("ht_observation_valid") || !grid.exists("ht_obstacle")))
++      throw std::runtime_error("Configuration HT requires separate physical observation and obstacle layers");
+     tf2::Transform transform;
+     transform.setIdentity();
+     if (msg->header.frame_id != frame_) {
+@@ -134,6 +140,7 @@ void HtCostMap::receive(grid_map_msgs::msg::GridMap::ConstSharedPtr msg) {
+     for (auto& layer : out->probabilities)
+       layer.assign(size,std::numeric_limits<float>::quiet_NaN());
+     std::vector<unsigned char> physical_valid(size);
++    std::vector<unsigned char> occupied(size,0);
+     const bool separate_observation=grid.exists("ht_observation_valid");
+     for (grid_map::GridMapIterator it(grid); !it.isPastEnd(); ++it) {
+       grid_map::Position pos;
+@@ -149,6 +156,12 @@ void HtCostMap::receive(grid_map_msgs::msg::GridMap::ConstSharedPtr msg) {
+       out->valid[index]=std::isfinite(valid) && valid>=0.5;
+       const float physical=separate_observation ? grid.at("ht_observation_valid",*it):valid;
+       physical_valid[index]=std::isfinite(physical) && physical>=0.5;
++      if (configuration_scores_) {
++        const float obstacle=grid.at("ht_obstacle",*it);
++        if (!std::isfinite(obstacle) || (obstacle!=0.f && obstacle!=1.f))
++          throw std::runtime_error("Invalid HT obstacle mask");
++        occupied[index]=obstacle>=.5;
++      }
+       for (int k=0;k<8;++k) {
+         const float p=grid.at("ht_dir_"+std::to_string(k),*it);
+         out->probabilities[k][index]=p;
+@@ -159,9 +172,10 @@ void HtCostMap::receive(grid_map_msgs::msg::GridMap::ConstSharedPtr msg) {
+         }
+       }
+     }
+-    // Dilate known-unsafe and unknown cells by the robot support radius once
+-    // per map. This avoids scanning hundreds of footprint cells for every graph
+-    // edge, while retaining the same directional test at planning and execution.
++    // Physical obstacle/observation cells require a body footprint. Vehicle
++    // configuration scores already describe a vehicle trial at a reference
++    // position and heading; dilating them treats neighbouring *configurations*
++    // as physical obstacles. Keep the legacy point-score contract explicit.
+     const double radius_cells=std::ceil(footprint_radius_/out->resolution)+1;
+     if (!std::isfinite(radius_cells) || radius_cells>101)
+       throw std::runtime_error("HT footprint/map resolution outside supported range");
+@@ -177,9 +191,11 @@ void HtCostMap::receive(grid_map_msgs::msg::GridMap::ConstSharedPtr msg) {
+     for (size_t i=0;i<size;++i) source[i]=physical_valid[i] ? 0 : 1;
+     cv::dilate(src,dst,kernel,cv::Point(-1,-1),1,cv::BORDER_CONSTANT,cv::Scalar(1));
+     out->unknown_footprint.assign(dst.datastart,dst.dataend);
++    out->physical_valid=std::move(physical_valid);
+     for (int k=0;k<8;++k) {
+       for (size_t i=0;i<size;++i)
+-        source[i]=out->valid[i] && out->probabilities[k][i]<min_probability_ ? 1 : 0;
++        source[i]=configuration_scores_ ? occupied[i] :
++          (out->valid[i] && out->probabilities[k][i]<min_probability_ ? 1 : 0);
+       cv::dilate(src,dst,kernel,cv::Point(-1,-1),1,cv::BORDER_CONSTANT,cv::Scalar(0));
+       out->blocked_footprint[k].assign(dst.datastart,dst.dataend);
+     }
+@@ -303,20 +319,26 @@ Support HtCostMap::supportDirected(const Point& a,const Point& b,double heading)
+     if (r<0 || c<0 || r>=cycle_->rows || c>=cycle_->cols) return Support::UNKNOWN;
+     const size_t index=static_cast<size_t>(r)*cycle_->cols+c;
+     if (cycle_->blocked_footprint[channel][index]) return Support::BLOCKED;
++    if (cycle_->valid[index] && cycle_->probabilities[channel][index]<min_probability_)
++      return Support::BLOCKED;
+     if (cycle_->valid[index] && !cycle_->unknown_footprint[index]) return Support::KNOWN;
+     // Unknown uses the same rasterized support mask as known-unsafe terrain.
+     // Re-scanning at arbitrary sub-cell offsets made split edges disagree.
+     if (!prior_.initialized || prior_.retired) return Support::UNKNOWN;
+     const double mx=(cycle_->rows*.5-r-.5)*res,my=(cycle_->cols*.5-c-.5)*res;
+     const double cx=cycle_->center_x+co*mx-si*my,cy=cycle_->center_y+si*mx+co*my;
+-    const int radius=static_cast<int>(std::ceil(footprint_radius_/res));
++    if (!cycle_->valid[index] && !prior_.contains(cx,cy)) return Support::UNKNOWN;
++    const int radius=static_cast<int>(std::ceil(footprint_radius_/res))+1;
+     Support s=Support::STARTUP_PRIOR;
+     for (int ix=-radius;ix<=radius;++ix) for (int iy=-radius;iy<=radius;++iy) {
+-      const double dx=ix*res,dy=iy*res;
+-      if (std::hypot(dx,dy)>footprint_radius_+res/2) continue;
+-      const double x=cx+dx,y=cy+dy;
+-      const double p=cycle_->sample(x,y,heading);
+-      if (!std::isfinite(p) && !prior_.contains(x,y)) s=Support::UNKNOWN;
++      if (std::hypot(ix*res,iy*res)>footprint_radius_+std::sqrt(2.0)*res) continue;
++      const int rr=r+ix,cc=c+iy;
++      const bool observed=rr>=0 && cc>=0 && rr<cycle_->rows && cc<cycle_->cols &&
++        cycle_->physical_valid[static_cast<size_t>(rr)*cycle_->cols+cc];
++      const double local_x=mx-ix*res,local_y=my-iy*res;
++      const double x=cycle_->center_x+co*local_x-si*local_y;
++      const double y=cycle_->center_y+si*local_x+co*local_y;
++      if (!observed && !prior_.contains(x,y)) s=Support::UNKNOWN;
+     }
+     return s;
+   };
+diff --git a/src/tare_planner/tests/ht_ros_test.cpp b/src/tare_planner/tests/ht_ros_test.cpp
+index b2ae6e2..1ba59c5 100644
+--- a/src/tare_planner/tests/ht_ros_test.cpp
++++ b/src/tare_planner/tests/ht_ros_test.cpp
+@@ -17,6 +17,7 @@ class HtRosTest : public ::testing::Test {
+   rclcpp::Node::SharedPtr node;
+   std::unique_ptr<ht_cost_ns::HtCostMap> ht;
+   rclcpp::Publisher<grid_map_msgs::msg::GridMap>::SharedPtr pub;
++  virtual std::string scoreSemantics() const {return "point";}
+ 
+   void SetUp() override {
+     if (!rclcpp::ok()) rclcpp::init(0, nullptr);
+@@ -25,6 +26,7 @@ class HtRosTest : public ::testing::Test {
+       rclcpp::Parameter("ht_enabled", true),
+       rclcpp::Parameter("ht_directions_calibrated", true),
+       rclcpp::Parameter("ht_topic", "/ht_test_map"),
++      rclcpp::Parameter("ht_score_semantics",scoreSemantics()),
+       rclcpp::Parameter("ht_map_timeout", 2.0)});
+     node = std::make_shared<rclcpp::Node>("ht_ros_test", options);
+     ht = std::make_unique<ht_cost_ns::HtCostMap>(node);
+@@ -45,6 +47,9 @@ class HtRosTest : public ::testing::Test {
+     map.setGeometry(grid_map::Length(8, 6), 0.25);
+     for (int k=0; k<8; ++k) map.add("ht_dir_"+std::to_string(k), 0.1f*(k+1));
+     map.add("ht_valid", 1.0f);
++    if (scoreSemantics()=="configuration") {
++      map.add("ht_observation_valid",1.f);map.add("ht_obstacle",0.f);
++    }
+     map.setTimestamp(node->now().nanoseconds());
+     return map;
+   }
+@@ -77,6 +82,64 @@ class HtRosTest : public ::testing::Test {
+   }
+ };
+ 
++class HtConfigurationRosTest : public HtRosTest {
++ protected:
++  std::string scoreSemantics() const override {return "configuration";}
++};
++
++TEST_F(HtConfigurationRosTest, NeighbouringVehicleScoresAreNotPointObstacles) {
++  auto map=grid();
++  for(int k=0;k<8;++k)map["ht_dir_"+std::to_string(k)].setConstant(.8f);
++  grid_map::Index side;ASSERT_TRUE(map.getIndex(grid_map::Position(0,.5),side));
++  map.at("ht_dir_0",side)=.2f;send(map);ASSERT_TRUE(ht->ready());
++  EXPECT_EQ(ht->support({-1,0,0},{1,0,0}),ht_cost_ns::Support::KNOWN);
++  EXPECT_EQ(ht->poseSupport(0,.5,0),ht_cost_ns::Support::BLOCKED);
++  // A measurement-space obstacle at the very same side cell blocks the body,
++  // even if that cell has no neural prediction at all.
++  map.at("ht_obstacle",side)=1;map.at("ht_valid",side)=0;
++  for(int k=0;k<8;++k)map.at("ht_dir_"+std::to_string(k),side)=NAN;
++  send(map);EXPECT_EQ(ht->poseSupport(0,0,0),ht_cost_ns::Support::BLOCKED);
++  EXPECT_EQ(ht->poseSupport(0,0,ht_cost_ns::kPi),ht_cost_ns::Support::BLOCKED);
++}
++
++TEST_F(HtConfigurationRosTest, MissingBodyObservationsAndUnscoredReferenceStillReject) {
++  auto map=grid();for(int k=0;k<8;++k)map["ht_dir_"+std::to_string(k)].setConstant(.8f);
++  grid_map::Index side;ASSERT_TRUE(map.getIndex(grid_map::Position(0,.5),side));
++  map.at("ht_observation_valid",side)=0;send(map);
++  EXPECT_EQ(ht->poseSupport(0,0,0),ht_cost_ns::Support::UNKNOWN);
++  map.at("ht_observation_valid",side)=1;map["ht_valid"].setZero();send(map);
++  EXPECT_EQ(ht->poseSupport(0,0,0),ht_cost_ns::Support::UNKNOWN);
++}
++
++TEST_F(HtConfigurationRosTest, MissingOrInvalidPhysicalContractCannotEnableDriving) {
++  auto map=grid();map.erase("ht_obstacle");send(map);EXPECT_FALSE(ht->ready());
++  map.add("ht_obstacle",0.f);send(map);EXPECT_TRUE(ht->ready());
++  map["ht_obstacle"](0,0)=NAN;send(map);EXPECT_FALSE(ht->ready());
++  map["ht_obstacle"].setZero();map.erase("ht_observation_valid");send(map);EXPECT_FALSE(ht->ready());
++}
++
++TEST_F(HtConfigurationRosTest, CapturedMixedTurnStopHasAnExitWithoutInflatingVehicleScores) {
++  const char* filename=std::getenv("HT_CONFIGURATION_FIXTURE");
++  if(!filename) GTEST_SKIP()<<"Set HT_CONFIGURATION_FIXTURE to the74s mixed-turn stop";
++  ht_cost_ns::Pose2 start;auto map=capturedGrid(filename,start);map.add("ht_obstacle",0.f);
++  // Old producer did not serialize the obstacle layer. Its explicit override
++  // set all eight probabilities exactly zero. This is a reconstruction for
++  // this archived fixture only, never a substitute for the new live layer.
++  for(grid_map::GridMapIterator it(map);!it.isPastEnd();++it) {
++    bool all_zero=true;
++    for(int k=0;k<8;++k)all_zero &= map.at("ht_dir_"+std::to_string(k),*it)==0.f;
++    map.at("ht_obstacle",*it)=all_zero?1.f:0.f;
++  }
++  map.setTimestamp(node->now().nanoseconds());send(map);ASSERT_TRUE(ht->ready());
++  ht_cost_ns::XYThetaConfig config;config.headings=32;config.turn_angles={ht_cost_ns::kPi/16,ht_cost_ns::kPi/8};
++  config.goal_radius=.35;config.max_search_seconds=.3;
++  auto valid=[&](ht_cost_ns::Pose2 a,ht_cost_ns::Pose2 b,double){return ht->permits(ht->motionSupport(a,b));};
++  ASSERT_TRUE(valid(start,start,0));
++  const auto plan=ht_cost_ns::planXYTheta(start,{start.x+2,start.y,0},config,valid);
++  ASSERT_TRUE(plan.reached);ASSERT_GT(plan.poses.size(),1u);
++  for(size_t i=1;i<plan.poses.size();++i)EXPECT_TRUE(valid(plan.poses[i-1],plan.poses[i],0));
++}
++
+ TEST_F(HtRosTest, DirectionalCostsAndValidSupport) {
+   send(grid());
+   ASSERT_TRUE(ht->ready());
+@@ -374,9 +437,13 @@ TEST_F(HtRosTest, CalibrationRequiredAndParametersChecked) {
+ TEST_F(HtRosTest, StartupPriorIsBoundedAndDoesNotOverwriteObservedRisk) {
+   auto map=grid();map["ht_valid"].setZero();send(map);
+   ht->start({0,0,0});
+-  EXPECT_EQ(ht->support({}, {.3,0,0}),ht_cost_ns::Support::STARTUP_PRIOR);
+-  EXPECT_FALSE(ht->knownSegment({}, {.3,0,0}));
+-  EXPECT_NEAR(ht->cost({}, {.3,0,0}),.3,1e-5);
++  EXPECT_EQ(ht->support({}, {.1,0,0}),ht_cost_ns::Support::STARTUP_PRIOR);
++  EXPECT_FALSE(ht->knownSegment({}, {.1,0,0}));
++  EXPECT_NEAR(ht->cost({}, {.1,0,0}),.1,1e-5);
++  // With0.25m cells, the actual raster footprint at x=.3 touches the cell
++  // (1.125,.625), outside the1.2m prior. The former smaller res/2 scan missed
++  // that unknown cell despite the precomputed footprint declaring it unknown.
++  EXPECT_EQ(ht->support({}, {.3,0,0}),ht_cost_ns::Support::UNKNOWN);
+   EXPECT_EQ(ht->support({}, {1,0,0}),ht_cost_ns::Support::UNKNOWN); // Whole footprint matters.
+   EXPECT_FALSE(ht->permits(ht->support({}, {1,0,0})));
+   map["ht_valid"].setOnes();send(map);
+@@ -408,7 +475,8 @@ TEST_F(HtRosTest, StrictPolicyAllowsOnlyKnownOrBoundedStartup) {
+   node=std::make_shared<rclcpp::Node>("ht_strict_test",options);
+   ht=std::make_unique<ht_cost_ns::HtCostMap>(node);spin(150ms);
+   auto map=grid();map["ht_valid"].setZero();send(map);ht->start({});
+-  EXPECT_TRUE(ht->permits(ht->support({}, {.3,0,0})));
++  EXPECT_TRUE(ht->permits(ht->support({}, {.1,0,0})));
++  EXPECT_FALSE(ht->permits(ht->support({}, {.3,0,0})));
+   EXPECT_FALSE(ht->permits(ht->support({}, {1,0,0})));
+ }
+ 
+diff --git a/src/tare_planner/tests/xytheta_follower_test.cpp b/src/tare_planner/tests/xytheta_follower_test.cpp
+index b35f608..a3e27f0 100644
+--- a/src/tare_planner/tests/xytheta_follower_test.cpp
++++ b/src/tare_planner/tests/xytheta_follower_test.cpp
+@@ -29,11 +29,14 @@ class FollowerTest : public ::testing::Test {
+   std::vector<double> command_rejection_times;
+   double speed=0;std::string reason;bool blocked=false,unknown=false,send_odom=true;
+   double robot_yaw=0,robot_yaw_rate=0;
++  bool physical_obstacle=false,physical_hole=false;
++  virtual std::string scoreSemantics() const {return "point";}
+   void SetUp() override {
+     if (!rclcpp::ok()) rclcpp::init(0,nullptr);
+     follower=std::make_shared<XYThetaFollower>(rclcpp::NodeOptions().parameter_overrides({
+       rclcpp::Parameter("ht_enabled",true),rclcpp::Parameter("ht_directions_calibrated",true),
+       rclcpp::Parameter("ht_require_reversible_motion",true),
++      rclcpp::Parameter("ht_score_semantics",scoreSemantics()),
+       rclcpp::Parameter("ht_startup_radius",0.0),rclcpp::Parameter("ht_map_timeout",1.0)}));
+     follower->initialize();source=std::make_shared<rclcpp::Node>("follower_test_source");
+     odom=source->create_publisher<nav_msgs::msg::Odometry>("/state_estimation",5);
+@@ -73,6 +76,12 @@ class FollowerTest : public ::testing::Test {
+       grid_map::GridMap g;g.setGeometry(grid_map::Length(10,10),.2);g.setFrameId("map");
+       g.setTimestamp(source->now().nanoseconds());g.add("ht_valid",unknown ? 0.f:1.f);
+       for (int k=0;k<8;++k) g.add("ht_dir_"+std::to_string(k),blocked ? 0.f:1.f);
++      if(scoreSemantics()=="configuration") {
++        g.add("ht_observation_valid",1.f);g.add("ht_obstacle",0.f);
++        grid_map::Index side;g.getIndex(grid_map::Position(0,.5),side);
++        if(physical_obstacle)g.at("ht_obstacle",side)=1;
++        if(physical_hole)g.at("ht_observation_valid",side)=0;
++      }
+       if (reverse_blocked) g["ht_dir_4"].setConstant(.2f);
+       if (side_blocked) g["ht_dir_2"].setConstant(.2f);
+       if (oblique_blocked) g["ht_dir_1"].setConstant(.2f);
+@@ -85,6 +94,18 @@ class FollowerTest : public ::testing::Test {
+     executor.spin_some();
+   }
+ };
++class ConfigurationFollowerTest : public FollowerTest {
++ protected:
++  std::string scoreSemantics() const override {return "configuration";}
++};
++TEST_F(ConfigurationFollowerTest, SeparateObstacleAndUnknownRevokeRealCommands) {
++  spin(300ms);EXPECT_GT(speed,.1);
++  physical_obstacle=true;spin(200ms);EXPECT_DOUBLE_EQ(speed,0);
++  EXPECT_EQ(reason,"HT_CURRENT_POSE_BLOCKED");
++  physical_obstacle=false;sendPath();spin(250ms);EXPECT_GT(speed,0);
++  physical_hole=true;spin(200ms);EXPECT_DOUBLE_EQ(speed,0);
++  EXPECT_EQ(reason,"HT_CURRENT_POSE_BLOCKED");
++}
+ TEST_F(FollowerTest, FreshMapMaintainsExecutionAcrossSlowPlannerPermission) {
+   spin(1700ms);EXPECT_GT(speed,.1);EXPECT_EQ(reason,"DRIVING");
+ }
+diff --git a/tools/ht_cupy_bridge/capture_replay_maps.py b/tools/ht_cupy_bridge/capture_replay_maps.py
+index f73823d..9d92ee6 100644
+--- a/tools/ht_cupy_bridge/capture_replay_maps.py
++++ b/tools/ht_cupy_bridge/capture_replay_maps.py
+@@ -39,6 +39,8 @@ class Capture(Node):
+         names=[f'ht_dir_{i}' for i in range(8)]+['ht_valid'] if kind=='ht' else ['elevation','variance']
+         if kind=='ht' and 'ht_observation_valid' in m.layers:
+             names.append('ht_observation_valid')
++        if kind=='ht' and 'ht_obstacle' in m.layers:
++            names.append('ht_obstacle')
+         if kind == 'cupy':
+             names += [name for name in ['observation_age'] if name in m.layers]
+         elif kind == 'history':
+diff --git a/tools/ht_cupy_bridge/cupy_to_ht.py b/tools/ht_cupy_bridge/cupy_to_ht.py
+index 5e81de3..086a098 100644
+--- a/tools/ht_cupy_bridge/cupy_to_ht.py
++++ b/tools/ht_cupy_bridge/cupy_to_ht.py
+@@ -206,17 +206,20 @@ class CupyToHt(Node):
+         output_side = nx - 50
+         result.info.length_x = output_side * resolution
+         result.info.length_y = output_side * resolution
+-        result.layers = [f"ht_dir_{k}" for k in range(8)] + ["ht_valid", "ht_observation_valid"]
++        # Keep measured obstacle geometry distinct from learned vehicle scores.
++        result.layers = [f"ht_dir_{k}" for k in range(8)] + ["ht_valid", "ht_observation_valid", "ht_obstacle"]
+         result.basic_layers = ["ht_valid"]
+         result.outer_start_index = 0
+         result.inner_start_index = 0
+-        for k in range(10):
++        for k in range(11):
+             if k < 8:
+                 layer = np.where(support, probabilities[k], np.nan).astype(np.float32)
+             elif k == 8:
+                 layer = support.astype(np.float32)
+-            else:
++            elif k == 9:
+                 layer = physical_support.astype(np.float32)
++            else:
++                layer = occupied.astype(np.float32)
+             data = Float32MultiArray()
+             data.layout = MultiArrayLayout(
+                 dim=[
+diff --git a/tools/ht_cupy_bridge/ht_trial.yaml b/tools/ht_cupy_bridge/ht_trial.yaml
+index 27a3715..ec6c57d 100644
+--- a/tools/ht_cupy_bridge/ht_trial.yaml
++++ b/tools/ht_cupy_bridge/ht_trial.yaml
+@@ -1 +1 @@
+-{"/**":{"ros__parameters":{"ht_enabled":true,"ht_directions_calibrated":true,"ht_map_timeout":3.0,"ht_require_reversible_motion":false,"xytheta_headings":32,"xytheta_heading_margin":0.0}}}
++{"/**":{"ros__parameters":{"ht_enabled":true,"ht_directions_calibrated":true,"ht_map_timeout":3.0,"ht_score_semantics":"configuration","ht_require_reversible_motion":false,"xytheta_headings":32,"xytheta_heading_margin":0.0}}}

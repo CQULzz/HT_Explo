@@ -1,0 +1,10 @@
+[ 25%] Built target gtest_main
+[ 50%] Built target ht_cost
+[ 75%] Built target gtest
+[ 87%] Building CXX object CMakeFiles/ht_ros_test.dir/tests/ht_ros_test.cpp.o
+/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/tests/ht_ros_test.cpp: In member function ‘virtual void HtRosTest_CapturedMapSearchResolutionAudit_Test::TestBody()’:
+/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/tests/ht_ros_test.cpp:276:7: warning: suggest explicit braces to avoid ambiguous ‘else’ [-Wdangling-else]
+  276 |     if(plan.reached) for(size_t i=1;i<plan.poses.size();++i) EXPECT_TRUE(valid(plan.poses[i-1],plan.poses[i],0));
+      |       ^
+[100%] Linking CXX executable ht_ros_test
+[100%] Built target ht_ros_test

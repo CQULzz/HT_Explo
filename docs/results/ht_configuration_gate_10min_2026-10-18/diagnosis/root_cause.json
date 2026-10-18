@@ -1,0 +1,24 @@
+{
+  "previous_trial_commit": "12d85d871ce84bcab1191a20bbea6e1748449cd5",
+  "snapshot": "/home/lzz/my test/HT_Explo-fixposition/docs/results/ht_mixed_turns_10min_2026-10-18/indoor/stopped_snapshot.npz",
+  "snapshot_sha256": "e131bf38be1ba6136ccbefe8c7797d54ef7b427c0091f19388e348c2b8863040",
+  "old_queries": 54,
+  "old_reached": 0,
+  "new_queries": 54,
+  "new_reached": 36,
+  "mixed32_ring_reached": [
+    1,
+    2,
+    3,
+    4,
+    7,
+    8
+  ],
+  "isolated_change": "Inflate explicit/reconstructed physical obstacles and physical missing support; query learned directional score at its vehicle reference with unchanged0.5 hard threshold.",
+  "limits": [
+    "Frozen HT-only query, not a collision-ground-truth trial.",
+    "Old bag lacks separate obstacle mask: all-eight-exact-zero overrides reconstructed as obstacles; live fix requires explicit binary obstacle layer.",
+    "Motion-label reference offset and independent physical channel calibration are not changed or newly validated.",
+    "Startup physical-support fallback bug is an additional finding, not an explanation for a stop after74seconds."
+  ]
+}

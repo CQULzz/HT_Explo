@@ -1,0 +1,50 @@
+{
+  "deployed_weights": {
+    "path": "/home/lzz/my test/HT_Explo-fixposition/tools/ht_cupy_bridge/student_best_epoch_weights.pth",
+    "sha256": "0a79b865d012aa633fbb9913fc4031908dfe188ec9e161ef5a3fbb34a3f8c4d4"
+  },
+  "training_weights": {
+    "path": "/home/lzz/下载/original_scout/mini_25_training/runs/formal/student/best_epoch_weights.pth",
+    "sha256": "0a79b865d012aa633fbb9913fc4031908dfe188ec9e161ef5a3fbb34a3f8c4d4"
+  },
+  "protocol": {
+    "path": "/home/lzz/下载/original_scout/mini_25_training/runs/formal/student/protocol_resolved.json",
+    "sha256": "7fc1334023cfdfec5a614c9581173fdf682194b9877470ddaa841bb76904ee03"
+  },
+  "loader": {
+    "path": "/home/lzz/下载/original_scout/mtramap/patches.py",
+    "sha256": "506a6b77b2f713c1a2e8fdeeb3c028330a019c13fb3f7c7bcbbcc4ca6079b124"
+  },
+  "label_generator_candidate": {
+    "path": "/home/lzz/下载/ht_tra_classification_scout_mapping/txt_annotation_frontcar_repeatdata_teacher_elefilesave_multiprocess_plane_onelabel_returntime_new.py",
+    "sha256": "2099328706c82708d7f90bb37e7e4600263cd4e2b2fdea034c6789e6b2c39bbd"
+  },
+  "weights_identical": true,
+  "conclusions": [
+    "The deployed weights exactly match the recorded eight-direction distillation run.",
+    "The recorded loader uses a -0.44m teacher-to-student reference offset and directional teacher patches; its comments explicitly preserve an image-y convention.",
+    "The locally supplied label generator includes progress, roll/pitch safety, time and lateral-error conditions, and separate static negatives. A low score alone does not identify which condition failed."
+  ],
+  "limits": [
+    "The generator file is a candidate source, not independently reconstructed per-sample provenance. Raw simulation trajectories needed to recreate labels are missing.",
+    "A forward-motion classifier is not an independently validated static-stability or reverse-driving classifier.",
+    "Do not silently change pose anchors, remove footprint dilation, average directions or waive blocked starts from this audit alone. A coordinate/polarity and physical footprint validation is required."
+  ],
+  "simulation_direction_contract": {
+    "ht_channel_order": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "ht_heading_offset": 0.0,
+    "trial_calibrated_flag": true,
+    "base_default_calibrated_flag": false,
+    "independent_physical_direction_calibration_performed_this_turn": false,
+    "note": "Captured-map regressions verify software under this configured contract; the calibration flag alone is not new measured direction-calibration evidence."
+  }
+}

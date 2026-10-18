@@ -15,8 +15,9 @@ from grid_map_msgs.msg import GridMap
 
 
 class Field:
-    def __init__(self,m):
+    def __init__(self,m,score_semantics='point'):
         self.stamp=m.header.stamp.sec+m.header.stamp.nanosec*1e-9
+        if score_semantics not in ('point','configuration'):raise ValueError('Invalid HT score semantics')
         self.res=float(m.info.resolution);self.cx=m.info.pose.position.x;self.cy=m.info.pose.position.y
         n=round(m.info.length_x/self.res);self.n=n
         def layer(name):
@@ -29,7 +30,15 @@ class Field:
         radius=int(np.ceil(.6/self.res)+1);i,j=np.mgrid[-radius:radius+1,-radius:radius+1]
         kernel=(np.hypot(i,j)*self.res<=.6+np.sqrt(2)*self.res).astype('uint8')
         self.unknown=cv2.dilate((~physical).astype('uint8'),kernel,borderType=cv2.BORDER_CONSTANT,borderValue=1)>0
-        self.blocked=np.stack([cv2.dilate((self.valid&(p<.5)).astype('uint8'),kernel)>0 for p in self.p])
+        self.obstacle=layer('ht_obstacle') if 'ht_obstacle' in m.layers else None
+        if score_semantics=='configuration':
+            if self.obstacle is None:raise ValueError('Configuration map lacks physical obstacle layer')
+            occupied=cv2.dilate((self.obstacle>=.5).astype('uint8'),kernel,
+                borderType=cv2.BORDER_CONSTANT,borderValue=0)>0
+            self.blocked=occupied[None,:,:]|(self.valid[None,:,:]&(self.p<.5))
+        else:
+            self.blocked=np.stack([cv2.dilate((self.valid&(p<.5)).astype('uint8'),kernel,
+                borderType=cv2.BORDER_CONSTANT,borderValue=0)>0 for p in self.p])
         self.bi,self.bj=np.nonzero(kernel);self.bi-=radius;self.bj-=radius
 
     def inspect(self,pose):
@@ -39,7 +48,9 @@ class Field:
         if not(0<=r<self.n and 0<=c<self.n):return dict(result,status='OUTSIDE')
         status='BLOCKED' if self.blocked[k,r,c] else 'UNKNOWN' if self.unknown[r,c] or not self.valid[r,c] else 'KNOWN'
         ii,jj=r+self.bi,c+self.bj;inside=(ii>=0)&(ii<self.n)&(jj>=0)&(jj<self.n)
-        result.update(status=status,min_body_p=float(np.nanmin(self.p[k,ii[inside],jj[inside]])))
+        reference=float(self.p[k,r,c])
+        result.update(status=status,reference_probability=reference if np.isfinite(reference) else None,
+                      min_body_p=float(np.nanmin(self.p[k,ii[inside],jj[inside]])))
         reverse_status='BLOCKED' if self.blocked[(k+4)%8,r,c] else 'UNKNOWN' if self.unknown[r,c] or not self.valid[r,c] else 'KNOWN'
         result.update(reverse_status=reverse_status,reversible_pose=status=='KNOWN' and reverse_status=='KNOWN',
                       reversible_heading_pairs=int(sum(not self.blocked[d,r,c] and not self.blocked[d+4,r,c] for d in range(4)))
@@ -53,7 +64,9 @@ def main():
     ap.add_argument('--output',type=Path,required=True)
     ap.add_argument('--capture-transition',type=Path,help='Save the first same-map heading-bin crossing as a regression fixture')
     ap.add_argument('--capture-map-update',type=Path,help='Save both fields at the first same-world-pose admission change')
+    ap.add_argument('--capture-final',type=Path,help='Save the last received in-window field and pose, including physical obstacles')
     args=ap.parse_args();cv2.setNumThreads(1)
+    score_semantics=json.loads((args.trial/'manifest.json').read_text()).get('ht_score_semantics','point')
     origin=json.loads((args.trial/'current/measurement_started.json').read_text())['wall_time']
     reader=rosbag2_py.SequentialReader()
     reader.open(rosbag2_py.StorageOptions(uri=str(args.bag_file or args.trial/'evidence_bag'),storage_id='mcap'),
@@ -64,7 +77,7 @@ def main():
         topic,data,ns=reader.read_next();time_s=ns/1e9-origin
         if time_s>=600:break
         if topic=='/ht_traversability/global_local':
-            new=Field(deserialize_message(data,GridMap));map_count+=1
+            new=Field(deserialize_message(data,GridMap),score_semantics);map_count+=1
             if field is not None and pose is not None and time_s>=0:
                 a,b=field.inspect(pose),new.inspect(pose)
                 if a['status']=='KNOWN' and b['status']=='BLOCKED':
@@ -74,6 +87,7 @@ def main():
                         for label,f in [('before',field),('after',new)]:
                             np.savez_compressed(args.capture_map_update/(label+'.npz'),
                                 **{f'ht_ht_dir_{k}':f.p[k] for k in range(8)},
+                                **({'ht_ht_obstacle':f.obstacle} if f.obstacle is not None else {}),
                                 ht_ht_valid=f.valid.astype(np.float32),
                                 ht_ht_observation_valid=f.physical.astype(np.float32),
                                 ht_geometry=[f.cx,f.cy,f.res],ht_stamp=f.stamp,robot=pose)
@@ -92,6 +106,7 @@ def main():
                         args.capture_transition.parent.mkdir(parents=True,exist_ok=True)
                         np.savez_compressed(args.capture_transition,
                             **{f'ht_ht_dir_{k}':field.p[k] for k in range(8)},
+                            **({'ht_ht_obstacle':field.obstacle} if field.obstacle is not None else {}),
                             ht_ht_valid=field.valid.astype(np.float32),
                             ht_ht_observation_valid=field.physical.astype(np.float32),
                             ht_geometry=[field.cx,field.cy,field.res],ht_stamp=field.stamp,
@@ -114,9 +129,17 @@ def main():
             if s!=last_status and time_s>=0:
                 statuses.append(dict(time_s=time_s,status=s,pose=pose,field=field.inspect(pose) if field is not None and pose is not None else None))
             last_status=s
-    result=dict(source=str(args.trial.resolve()),bag_file=str(args.bag_file) if args.bag_file else None,
+    if args.capture_final and field is not None and pose is not None:
+        args.capture_final.parent.mkdir(parents=True,exist_ok=True)
+        raw={f'ht_ht_dir_{k}':field.p[k] for k in range(8)}
+        if field.obstacle is not None:raw['ht_ht_obstacle']=field.obstacle
+        np.savez_compressed(args.capture_final,**raw,ht_ht_valid=field.valid.astype(np.float32),
+            ht_ht_observation_valid=field.physical.astype(np.float32),
+            ht_geometry=[field.cx,field.cy,field.res],ht_stamp=field.stamp,robot=pose)
+    result=dict(source=str(args.trial.resolve()),bag_file=str(args.bag_file) if args.bag_file else None,score_semantics=score_semantics,
+        final_pose=pose,final_field=field.inspect(pose) if field is not None and pose is not None else None,
         ht_map_messages=map_count,known_to_blocked_changes=changes,return_margin_losses=return_changes,follower_status_changes=statuses,
-        caveat='Uses bag reception ordering, not the exact subscriber callback ordering. Raw pose admissibility excludes map freshness/startup prior; reported snapshot rules are the deployed0.5/0.6m/map-frame identity-channel settings. Pose changes and field changes are separated on identical inputs to that comparison.')
+        caveat='Uses bag reception ordering, not the exact subscriber callback ordering. Raw pose admissibility excludes map freshness/startup prior; uses manifest score semantics with0.5/0.6m/map-frame identity-channel settings. In configuration mode min_body_p is a diagnostic over neighbouring configurations, not the gate score. Pose changes and field changes are separated on identical inputs to that comparison.')
     args.output.parent.mkdir(parents=True,exist_ok=True)
     args.output.write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n')
     print(json.dumps(dict(ht_maps=map_count,known_to_blocked=len(changes),changes=changes[-6:],
