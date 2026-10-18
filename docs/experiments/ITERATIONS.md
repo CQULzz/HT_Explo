@@ -13,7 +13,9 @@
 
 | 阶段27 `4721764` | 等价几何查询提速、搜索退出原因、可靠几何记录 | 41.90 / 815.625 | 136.5s后长期几何INVALID_START；里程/体积均退步 | [报告](../results/ht_geometry_index_10min_2026-10-18/REPORT.md) · [完整数据/视频](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261018-geometry-index) |
 
-![同条件四轮对比](../results/ht_configuration_gate_10min_2026-10-18/comparison/comparison.png)
+| 阶段28 `65efef7` | 执行端几何硬检查、名义平移跟踪余量 | 117.66 / 2292.750 | 352.425s内部完成返航；覆盖判据未独立验真，体积仍低于阶段23 | [报告](../results/ht_execution_geometry_10min_2026-10-18/REPORT.md) · [完整数据/视频](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261018-execution-geometry) |
+
+![同条件四轮对比](../results/ht_execution_geometry_10min_2026-10-18/comparison/comparison.png)
 
 ## 当前问题与下一轮证据要求
 
@@ -33,3 +35,5 @@
 阶段26：58份神经上下文与发布图一致、三份模型重放差0；末段仍停。冻结图HT-only查询16个目标可达10个，细化控制也未增加。下一轮必须核查实际几何与目标/失败记忆、搜索终止原因；不是直接放宽HT或删除障碍。
 
 阶段27：末段几何拒绝起点，非预算耗尽。控制器只重新检查HT而规划器检查几何+HT；最近有效路线只留约8mm余量、实际横向偏差约12mm，首次重叠还在移动。需要对齐两层约束并留跟踪余量；不能放宽已有安全边界或据此宣称物理接触。
+
+阶段28：完整600秒，352.425秒返航完成而不是故障卡住。相同实际几何边界下307份录制点云未见参考点重叠；新增几何拦截闭环0次，只以ROS回归验证分支。内部待探索计数归零不证明真实全覆盖；必须核查单元状态转移并做同版重复、多环境。较阶段23体积仍低27.7%，地图年龄仍有3.563s长尾。
