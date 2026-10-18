@@ -94,8 +94,23 @@ def main():
                 raise RuntimeError(f'{tag}: existing assets changed unexpectedly')
         else:
             fields.update(tag_name=tag, target_commitish=stage['sha'])
-            release = api('POST', 'releases', fields)
-            action = 'created'
+            try:
+                release = api('POST', 'releases', fields)
+                action = 'created'
+            except RuntimeError as error:
+                # An evidence publisher may create the same release after our
+                # initial list. Recover only this precise uniqueness conflict.
+                if 'HTTP 422:' not in str(error) or 'already_exists' not in str(error):
+                    raise
+                previous = api('GET', 'releases/tags/'+tag)
+                before = {(a['id'], a['name'], a['size'], a.get('digest'))
+                          for a in previous.get('assets', []) if a.get('state')=='uploaded'}
+                release = api('PATCH', 'releases/'+str(previous['id']), fields)
+                after = {(a['id'], a['name'], a['size'], a.get('digest'))
+                         for a in release.get('assets', [])}
+                if not before.issubset(after):
+                    raise RuntimeError(f'{tag}: existing assets changed unexpectedly')
+                action = 'updated after concurrent creation'
         if release['body']!=body or not release['prerelease'] or release['draft']:
             raise RuntimeError(f'{tag}: release verification failed')
         results.append((stage['number'], action, release['html_url']))
