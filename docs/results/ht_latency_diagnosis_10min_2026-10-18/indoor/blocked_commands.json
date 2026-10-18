@@ -1,0 +1,24 @@
+{
+  "source": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_latency_diagnosis_10min_2026-10-18_14-18-00/indoor",
+  "status_counts": {
+    "DRIVING": 1126,
+    "GOAL_REACHED": 122,
+    "TURNING": 252,
+    "ALIGNING": 27,
+    "HT_COMMAND_BLOCKED": 21,
+    "HT_PATH_BLOCKED": 12,
+    "EMPTY_PATH": 22,
+    "PLANNER_HOLD": 10418
+  },
+  "paired_status_counts": {
+    "GOAL_REACHED": 122,
+    "HT_COMMAND_BLOCKED": 21,
+    "HT_PATH_BLOCKED": 12,
+    "EMPTY_PATH": 22,
+    "PLANNER_HOLD": 10418
+  },
+  "unmatched_command_rejections": 0,
+  "blocked_nonzero_count": 0,
+  "events": [],
+  "caveat": "Matches each late hold to its preceding command within20ms in publication order; reports unmatched events separately. Single-follower runs only. Does not infer internal map/odom callback ordering."
+}

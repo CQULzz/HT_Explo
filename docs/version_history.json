@@ -2,7 +2,7 @@
   "schema_version": 1,
   "updated_at": "2026-10-18",
   "branch": "codex/ht8dir-v1",
-  "status": "阶段23室内600秒恢复推进；仍有地图超时、短停和末尾BLOCKED，持续迭代中",
+  "status": "同导航规则复跑再次长期停滞；已留存粗视点几何拒绝根状态证据，持续修正中",
   "latest_archive_commit": "68746deee9c0fc586c11bb9954a117bbaa136284",
   "latest_planner_change": "149566d",
   "stages": [
@@ -414,6 +414,22 @@
       ],
       "control_commit": "149566de09c48a528140b6ec950c08c5fa29539c",
       "archive_commit": "68746deee9c0fc586c11bb9954a117bbaa136284"
+    },
+    {
+      "id": "stage-24",
+      "number": 24,
+      "sha": "bada7bad52fca98a3eb0942c1bc3d9c0a7d84185",
+      "tag": "ht-stage-20261018-latency-diagnosis",
+      "title": "同规则室内诊断复跑：发现几何根状态拒绝",
+      "kind": "失败复测与诊断",
+      "change": "只增加CuPy锁/回调和已有规划分项录制",
+      "features": "区分计算、排队、粗视点碰撞与实际车位查询",
+      "validation": "完整600秒23.86m、993.125m³，最终BLOCKED；13项采集检查通过，21次晚拒绝全部发零",
+      "known_issues": "约80秒后几何层禁止根状态；时效和表示更新耗时仍存在，阶段23单轮改善未稳定复现",
+      "evidence": [
+        "docs/results/ht_latency_diagnosis_10min_2026-10-18/REPORT.md"
+      ],
+      "control_commit": "149566de09c48a528140b6ec950c08c5fa29539c"
     }
   ],
   "historical_commits": [
@@ -951,5 +967,5 @@
   ],
   "latest_planner_code": "149566de09c48a528140b6ec950c08c5fa29539c",
   "latest_ht_bridge_code": "149566de09c48a528140b6ec950c08c5fa29539c",
-  "latest_verified_trial_code": "149566de09c48a528140b6ec950c08c5fa29539c"
+  "latest_verified_trial_code": "bada7bad52fca98a3eb0942c1bc3d9c0a7d84185"
 }

@@ -1,0 +1,70 @@
+{
+  "runs": [
+    {
+      "label": "分层首次",
+      "folder": "/home/lzz/my test/HT_Explo-fixposition/docs/results/ht_configuration_gate_10min_2026-10-18/indoor",
+      "scenario": "indoor",
+      "git_head": "149566de09c48a528140b6ec950c08c5fa29539c",
+      "duration_s": 600.0,
+      "speed_cap_mps": 0.5,
+      "measurement_start_pose_xyyaw": [
+        0.0006250000442378223,
+        0.0,
+        0.0
+      ],
+      "distance_m": 134.0,
+      "observed_free_volume_m3": 3170.5,
+      "final_mission": "BLOCKED",
+      "completed_at_s": null,
+      "blocked_sample_fraction": 0.07833333333333334,
+      "runtime_p95_s": 1.6160000562667847,
+      "source_sha256": {
+        "/home/lzz/my test/HT_Explo-fixposition/docs/results/ht_configuration_gate_10min_2026-10-18/indoor/timeseries.csv": "bae7a6a15e488d56651716af89378a355dda0c6258515541994147c5650bce06",
+        "/home/lzz/my test/HT_Explo-fixposition/docs/results/ht_configuration_gate_10min_2026-10-18/indoor/observation_volume.csv": "9f72f669d2099d593cf30878aac93e774dc4af7f2353c78fe9571c5a56780849",
+        "/home/lzz/my test/HT_Explo-fixposition/docs/results/ht_configuration_gate_10min_2026-10-18/indoor/manifest.json": "57d9381142fdc6ae111677e97e859d6e9cbd2d6abe7f5c7904bb2a874bb01a72",
+        "/home/lzz/my test/HT_Explo-fixposition/docs/results/ht_configuration_gate_10min_2026-10-18/indoor/metric_definition.json": "5bbbc1cdd875a80f67ec2efceb6d131f6f80c8c5d888a2b371599b0ea6caa84c",
+        "/home/lzz/my test/HT_Explo-fixposition/docs/results/ht_configuration_gate_10min_2026-10-18/indoor/suite_validation.json": "eba2b1431e0f348836ebf90ad2b0188451a4a415f8cd1cdb8a2bd440f02889e7"
+      }
+    },
+    {
+      "label": "同规则诊断复跑",
+      "folder": "/home/lzz/my test/HT_Explo-fixposition/docs/results/ht_latency_diagnosis_10min_2026-10-18/indoor",
+      "scenario": "indoor",
+      "git_head": "bada7bad52fca98a3eb0942c1bc3d9c0a7d84185",
+      "duration_s": 600.0,
+      "speed_cap_mps": 0.5,
+      "measurement_start_pose_xyyaw": [
+        0.000375000003259629,
+        -1.1911559890559202e-27,
+        5.294026762081514e-23
+      ],
+      "distance_m": 23.86,
+      "observed_free_volume_m3": 993.125,
+      "final_mission": "BLOCKED",
+      "completed_at_s": null,
+      "blocked_sample_fraction": 0.8683333333333333,
+      "runtime_p95_s": 1.4459999799728394,
+      "source_sha256": {
+        "/home/lzz/my test/HT_Explo-fixposition/docs/results/ht_latency_diagnosis_10min_2026-10-18/indoor/timeseries.csv": "28b0b28319c2101fb4e7cb9889798eb398f1d67c7134451efc4fb15d4aed7c76",
+        "/home/lzz/my test/HT_Explo-fixposition/docs/results/ht_latency_diagnosis_10min_2026-10-18/indoor/observation_volume.csv": "def40e4b25f556985016c8befa1ec810f5100a1bd125ced18c409937427b32ea",
+        "/home/lzz/my test/HT_Explo-fixposition/docs/results/ht_latency_diagnosis_10min_2026-10-18/indoor/manifest.json": "2e33ddeeb0ff6aea9546c429ce9f8b0b71f3385a0db8bc54920a069c0e3ef5c4",
+        "/home/lzz/my test/HT_Explo-fixposition/docs/results/ht_latency_diagnosis_10min_2026-10-18/indoor/metric_definition.json": "5bbbc1cdd875a80f67ec2efceb6d131f6f80c8c5d888a2b371599b0ea6caa84c",
+        "/home/lzz/my test/HT_Explo-fixposition/docs/results/ht_latency_diagnosis_10min_2026-10-18/indoor/suite_validation.json": "cb845b3beb9a2c5b4e6e147bab099b2702d9d57241721c3a4f3e15218032d5b9"
+      }
+    }
+  ],
+  "metric_definition": {
+    "voxel_size_m": 0.5,
+    "ray_sample_step_m": 0.25,
+    "max_range_m": 15,
+    "endpoint_exclusion_m": 0.25,
+    "scan_recording": "first source-stamped scan per wall-clock source second",
+    "selection": "one recorded scan per absolute source second, filtered to the measurement window; no second measurement-bin downsampling",
+    "definition": "Approximate cumulative union of observed free voxels; not ground truth or official coverage.",
+    "delivery_audit": "Sampled bag cannot establish loss of unsaved input frames; compare full-rate observer and mapper callback counters."
+  },
+  "measurement_start_pose_tolerance": {
+    "position_m": 0.05,
+    "yaw_rad": 0.02
+  }
+}
