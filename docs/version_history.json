@@ -2,9 +2,9 @@
   "schema_version": 1,
   "updated_at": "2026-10-18",
   "branch": "codex/ht8dir-v1",
-  "status": "修正晚HT拒绝仍发送非零消息、评估重复采样及一张冻结地图的16航向漏路；探索停滞仍需按实测结果核查",
-  "latest_archive_commit": "b15c06a9d4c476c1e5f6b8e04ad5bcbe9988ecdd",
-  "latest_planner_change": "67ade71c10caa8a8923b9fe9c663d10a9ec75568",
+  "status": "阶段23室内600秒恢复推进；仍有地图超时、短停和末尾BLOCKED，持续迭代中",
+  "latest_archive_commit": "68746deee9c0fc586c11bb9954a117bbaa136284",
+  "latest_planner_change": "149566d",
   "stages": [
     {
       "id": "stage-01",
@@ -380,6 +380,40 @@
       "metric_commit": "37f0d42f75220a7098baf2167da61bf38e47fa59",
       "resolution_commit": "67ade71c10caa8a8923b9fe9c663d10a9ec75568",
       "archive_commit": "b15c06a9d4c476c1e5f6b8e04ad5bcbe9988ecdd"
+    },
+    {
+      "id": "stage-22",
+      "number": 22,
+      "sha": "12d85d871ce84bcab1191a20bbea6e1748449cd5",
+      "tag": "ht-stage-20261018-mixed-turns",
+      "title": "混合转角与旋转跟踪：室内仍停滞",
+      "kind": "实验候选",
+      "change": "32航向保留11.25°与22.5°两种原地转向；跟踪器锁定旋转终点，完成旋转并降至角速度阈值后才平移。",
+      "features": "32航向保留11.25°与22.5°两种原地转向；跟踪器锁定旋转终点，完成旋转并降至角速度阈值后才平移。",
+      "validation": "390项核心、21地图/规划、10跟踪器回归通过，四个历史快照均参与；完整600秒记录；17.82m、778.000m³，最终BLOCKED，约74秒后无持续推进。",
+      "known_issues": "比单转角6.64m有所推进，但未解决起点/出口拒绝；同一停止快照54次查询全部无路，不能称为稳定通过。",
+      "evidence": [
+        "docs/results/ht_mixed_turns_10min_2026-10-18/REPORT.md"
+      ],
+      "control_commit": "12d85d871ce84bcab1191a20bbea6e1748449cd5",
+      "archive_commit": "68746deee9c0fc586c11bb9954a117bbaa136284"
+    },
+    {
+      "id": "stage-23",
+      "number": 23,
+      "sha": "149566de09c48a528140b6ec950c08c5fa29539c",
+      "tag": "ht-stage-20261018-configuration-gate",
+      "title": "HT配置得分与物理障碍分层：恢复推进，仍有短停",
+      "kind": "实验候选",
+      "change": "新增独立ht_obstacle层；HT参考位置/车头方向得分按0.5硬门槛查询，实测障碍和缺测仍保留0.6m足迹检查；修正启动先验混用观测支持的额外漏洞。",
+      "features": "新增独立ht_obstacle层；HT参考位置/车头方向得分按0.5硬门槛查询，实测障碍和缺测仍保留0.6m足迹检查；修正启动先验混用观测支持的额外漏洞。",
+      "validation": "390项核心、25地图/规划、11跟踪器回归及5实际快照通过；室内完整600秒134.00m、3170.500m³，BLOCKED抽样7.8%，212次晚拦截均发零。",
+      "known_issues": "最终约2秒BLOCKED，未观察其未来恢复；最长全零6.20s，HT地图年龄最大约5.996s，规划P95 1.616s。无探索完成或多场景/实车稳定性结论。",
+      "evidence": [
+        "docs/results/ht_configuration_gate_10min_2026-10-18/REPORT.md"
+      ],
+      "control_commit": "149566de09c48a528140b6ec950c08c5fa29539c",
+      "archive_commit": "68746deee9c0fc586c11bb9954a117bbaa136284"
     }
   ],
   "historical_commits": [
@@ -915,7 +949,7 @@
       "original_subject": "Archive command rejection proof, failed indoor trials and returned-home tunnel video"
     }
   ],
-  "latest_planner_code": "67ade71c10caa8a8923b9fe9c663d10a9ec75568",
-  "latest_ht_bridge_code": "dee873db9a25778eb67060100025bea2f619c0ee",
-  "latest_verified_trial_code": "67ade71c10caa8a8923b9fe9c663d10a9ec75568"
+  "latest_planner_code": "149566de09c48a528140b6ec950c08c5fa29539c",
+  "latest_ht_bridge_code": "149566de09c48a528140b6ec950c08c5fa29539c",
+  "latest_verified_trial_code": "149566de09c48a528140b6ec950c08c5fa29539c"
 }

@@ -1,6 +1,6 @@
 # HT_Explo：HT方向可通过性与XYθ探索规划
 
-**[版本总览：每版改动、功能、验证和问题](VERSIONS.md)** · [阶段标签](https://github.com/CQULzz/HT_Explo/tags) · [发布说明](https://github.com/CQULzz/HT_Explo/releases)
+**[每轮实验：改动、提升、缺陷与原始数据](docs/experiments/ITERATIONS.md)** · **[版本总览：每版改动、功能、验证和问题](VERSIONS.md)** · [阶段标签](https://github.com/CQULzz/HT_Explo/tags) · [发布说明](https://github.com/CQULzz/HT_Explo/releases)
 
 当前是实验原型，已实现HT硬约束XYθ规划、历史高程融合与独立跟踪，闭环仍有停滞。**最新核查修正了“HT拦截后仍发送非零候选速度”的执行错误，并用真实冻结地图验证32航向能找出16航向漏掉的HT路线；不等于所有停滞已解决。** [原因、反例与回归证据](docs/results/ht_completion_cause_audit_2026-10-18/REPORT.md) · [通俗修复说明](docs/fixes/2026-10-18_late_hold_zero_twist.md)。
 
