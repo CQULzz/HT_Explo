@@ -12,6 +12,7 @@
 
 #include <vector>
 #include <memory>
+#include <unordered_set>
 
 #include <Eigen/Eigen>
 
@@ -315,6 +316,7 @@ public:
   void Reset();
   int GetCellStatusCount(grid_world_ns::CellStatus status);
   void UpdateCellStatus(const std::shared_ptr<viewpoint_manager_ns::ViewPointManager>& viewpoint_manager);
+  size_t PendingHTCoverageCells() const {return ht_pending_gain_cells_.size();}
   exploration_path_ns::ExplorationPath
   SolveGlobalTSP(const std::shared_ptr<viewpoint_manager_ns::ViewPointManager>& viewpoint_manager,
                  std::vector<int>& ordered_cell_indices,
@@ -387,6 +389,7 @@ private:
   geometry_msgs::msg::Point origin_;
   std::vector<int> neighbor_cell_indices_;
   std::vector<int> almost_covered_cell_indices_;
+  std::unordered_set<int> ht_pending_gain_cells_;
   std::vector<std::pair<int, int>> to_connect_cell_indices_;
   std::vector<nav_msgs::msg::Path> to_connect_cell_paths_;
   Eigen::Vector3d home_position_;

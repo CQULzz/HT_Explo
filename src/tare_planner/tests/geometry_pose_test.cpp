@@ -188,3 +188,45 @@ TEST_F(LegacyPendingCell, DisabledHtPreservesLegacySelectedActivation) {
   world->UpdateCellStatus(manager);
   EXPECT_EQ(world->GetCellStatus(cell),grid_world_ns::CellStatus::UNSEEN);
 }
+
+TEST_F(PendingCell, LastObservedGainSurvivesTemporaryNoCandidates) {
+  world->UpdateCellStatus(manager);
+  ASSERT_EQ(world->GetCellStatus(cell),grid_world_ns::CellStatus::EXPLORING);
+  manager->candidate_indices_.clear();world->UpdateCellStatus(manager);
+  EXPECT_EQ(world->GetCellStatus(cell),grid_world_ns::CellStatus::EXPLORING);
+}
+TEST_F(PendingCell, LastObservedGainSurvivesNoCandidatesNearRobot) {
+  world->UpdateCellStatus(manager);
+  ASSERT_EQ(world->GetCellStatus(cell),grid_world_ns::CellStatus::EXPLORING);
+  world->CellAddVisitCount(cell);
+  geometry_msgs::msg::Point robot;robot.x=24;robot.y=0;robot.z=.75;
+  world->UpdateNeighborCells(robot);world->UpdateRobotPosition(robot);
+  manager->candidate_indices_.clear();world->UpdateCellStatus(manager);
+  EXPECT_EQ(world->GetCellStatus(cell),grid_world_ns::CellStatus::EXPLORING);
+}
+
+TEST_F(PendingCell, FreshZeroGainCanDischargeRememberedPendingTask) {
+  world->UpdateCellStatus(manager);ASSERT_EQ(world->PendingHTCoverageCells(),1u);
+  manager->candidate_indices_.clear();world->UpdateCellStatus(manager);
+  EXPECT_EQ(world->PendingHTCoverageCells(),1u);
+  manager->candidate_indices_={0};manager->ResetViewPointCoveredPointList(0);
+  world->UpdateCellStatus(manager);
+  EXPECT_EQ(world->GetCellStatus(cell),grid_world_ns::CellStatus::COVERED);
+  EXPECT_EQ(world->PendingHTCoverageCells(),0u);
+}
+TEST_F(PendingCell, NavigationOnlyTaskDoesNotInventRememberedGain) {
+  manager->ResetViewPointCoveredPointList(0);manager->SetViewPointSelected(0,true);
+  world->UpdateCellStatus(manager);
+  ASSERT_EQ(world->GetCellStatus(cell),grid_world_ns::CellStatus::EXPLORING);
+  EXPECT_EQ(world->PendingHTCoverageCells(),0u);
+  manager->SetViewPointSelected(0,false);manager->candidate_indices_.clear();world->UpdateCellStatus(manager);
+  EXPECT_EQ(world->GetCellStatus(cell),grid_world_ns::CellStatus::COVERED);
+}
+TEST_F(PendingCell, ExternalCoveredOrResetClearsPendingRegistry) {
+  world->UpdateCellStatus(manager);ASSERT_EQ(world->PendingHTCoverageCells(),1u);
+  world->SetCellStatus(cell,grid_world_ns::CellStatus::COVERED_BY_OTHERS);
+  EXPECT_EQ(world->PendingHTCoverageCells(),0u);
+  world->SetCellStatus(cell,grid_world_ns::CellStatus::UNSEEN);
+  world->UpdateCellStatus(manager);ASSERT_EQ(world->PendingHTCoverageCells(),1u);
+  world->Reset();EXPECT_EQ(world->PendingHTCoverageCells(),0u);
+}

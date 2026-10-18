@@ -1710,17 +1710,23 @@ void SensorCoveragePlanner3D::execute() {
       const auto& g=grid_world_->GetTourAudit();
       const auto& c=local_coverage_planner_->GetCompletionAudit();
       RCLCPP_INFO(this->get_logger(),
-        "COMPLETION_AUDIT global_return=%d local_complete=%d global_exploring=%d local_delegated=%d eligible=%d connected=%d unreachable=%d uncovered=%d frontier=%d nav=%d reused=%d virtual_points=%d virtual_frontier=%d queue=%d queue_best=%d frontier_queue=%d raw_gain=%d raw_frontier=%d min_points=%d min_frontier=%d ht_target=%d ht_gain=%d ht_frontier=%d ht_poses=%zu",
+        "COMPLETION_AUDIT global_return=%d local_complete=%d global_exploring=%d local_delegated=%d eligible=%d connected=%d unreachable=%d uncovered=%d frontier=%d nav=%d reused=%d virtual_points=%d virtual_frontier=%d queue=%d queue_best=%d frontier_queue=%d raw_gain=%d raw_frontier=%d min_points=%d min_frontier=%d ht_target=%d ht_gain=%d ht_frontier=%d ht_poses=%zu ht_pending=%zu",
         grid_world_->IsReturningHome(),local_coverage_planner_->IsLocalCoverageComplete(),
         g.exploring,g.local_delegated,g.eligible,g.connected,g.unreachable,
         uncovered_point_num,uncovered_frontier_point_num,c.navigation,c.reused,
         c.virtually_covered,c.virtually_covered_frontier,c.queue,c.queue_best,c.frontier_queue,
         c.raw_gain_candidates,c.raw_frontier_candidates,c.min_points,c.min_frontier,
-        c.output_target,c.output_gain,c.output_frontier,local_coverage_planner_->GetHTPath().poses.size());
+        c.output_target,c.output_gain,c.output_frontier,local_coverage_planner_->GetHTPath().poses.size(),grid_world_->PendingHTCoverageCells());
     }
 
+    const bool unresolved_ht_coverage=ht->enabled() && grid_world_->PendingHTCoverageCells()>0;
+    if (unresolved_ht_coverage && grid_world_->IsReturningHome() &&
+        local_coverage_planner_->IsLocalCoverageComplete())
+      RCLCPP_WARN_THROTTLE(this->get_logger(),*this->get_clock(),3000,
+        "HT_COVERAGE_DEFERRED pending=%zu: no current tour/local target is not completed coverage",
+        grid_world_->PendingHTCoverageCells());
     if (grid_world_->IsReturningHome() &&
-        local_coverage_planner_->IsLocalCoverageComplete() &&
+        local_coverage_planner_->IsLocalCoverageComplete() && !unresolved_ht_coverage &&
         (current_time - start_time_) > 5) {
       if (!exploration_finished_) {
         PrintExplorationStatus("Exploration completed, returning home", false);

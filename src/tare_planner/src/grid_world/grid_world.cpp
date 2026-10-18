@@ -474,6 +474,7 @@ void GridWorld::SetCellStatus(int cell_ind, grid_world_ns::CellStatus status)
 {
   MY_ASSERT(subspaces_->InRange(cell_ind));
   subspaces_->GetCell(cell_ind).SetStatus(status);
+  if(status!=CellStatus::EXPLORING)ht_pending_gain_cells_.erase(cell_ind);
 }
 
 geometry_msgs::msg::Point GridWorld::GetCellPosition(int cell_ind)
@@ -514,6 +515,7 @@ bool GridWorld::IsRobotPositionSet(int cell_ind)
 
 void GridWorld::Reset()
 {
+  ht_pending_gain_cells_.clear();
   for (int i = 0; i < subspaces_->GetCellNumber(); i++)
   {
     subspaces_->GetCell(i).Reset();
@@ -700,17 +702,34 @@ void GridWorld::UpdateCellStatus(const std::shared_ptr<viewpoint_manager_ns::Vie
         if (std::string(audit_reason)=="GAIN_REOPEN")audit_reason="GAIN_REOPEN_PENDING";
       }
     }
+    if (viewpoint_manager->HT()->enabled()) {
+      if (candidate_count>0) {
+        // A fresh candidate evaluation can discharge the old gain evidence;
+        // absence of candidates cannot establish that coverage happened.
+        if (pending_ht_gain && subspaces_->GetCell(cell_ind).GetStatus()==CellStatus::EXPLORING)
+          ht_pending_gain_cells_.insert(cell_ind);
+        else ht_pending_gain_cells_.erase(cell_ind);
+      } else if (audit_old_status==CellStatus::EXPLORING && ht_pending_gain_cells_.count(cell_ind)) {
+        subspaces_->GetCell(cell_ind).SetStatus(CellStatus::EXPLORING);
+        audit_reason="NO_CANDIDATE_DEFERRED";
+        almost_covered_cell_indices_.erase(
+          std::remove(almost_covered_cell_indices_.begin(),almost_covered_cell_indices_.end(),cell_ind),
+          almost_covered_cell_indices_.end());
+      }
+      if(subspaces_->GetCell(cell_ind).GetStatus()!=CellStatus::EXPLORING)
+        ht_pending_gain_cells_.erase(cell_ind);
+    }
     const auto audit_new_status=subspaces_->GetCell(cell_ind).GetStatus();
     if(viewpoint_manager->HT()->enabled() &&
        (audit_old_status!=audit_new_status || audit_old_status==CellStatus::EXPLORING || candidate_count>0)) {
       const auto pos=subspaces_->GetCell(cell_ind).GetPosition();
       RCLCPP_INFO(rclcpp::get_logger("standalone_logger"),
-        "HT_CELL_AUDIT cell=%d xy=(%.6f,%.6f) old=%d new=%d reason=%s candidates=%d selected=%d above_small=%d above_big=%d above_frontier=%d highest_score=%d visits=%d graph_nodes=%zu robot=(%.6f,%.6f) ht_stamp=%.9f",
+        "HT_CELL_AUDIT cell=%d xy=(%.6f,%.6f) old=%d new=%d reason=%s candidates=%d selected=%d above_small=%d above_big=%d above_frontier=%d highest_score=%d visits=%d graph_nodes=%zu robot=(%.6f,%.6f) ht_stamp=%.9f pending_gain=%d",
         cell_ind,pos.x,pos.y,static_cast<int>(audit_old_status),static_cast<int>(audit_new_status),audit_reason,
         candidate_count,selected_viewpoint_count,above_small_threshold_count,above_big_threshold_count,
         above_frontier_threshold_count,highest_score,subspaces_->GetCell(cell_ind).GetVisitCount(),
         subspaces_->GetCell(cell_ind).GetGraphNodeIndices().size(),robot_position_.x,robot_position_.y,
-        viewpoint_manager->HT()->cycleStamp());
+        viewpoint_manager->HT()->cycleStamp(),static_cast<int>(ht_pending_gain_cells_.count(cell_ind)));
     }
     if (subspaces_->GetCell(cell_ind).GetStatus() == CellStatus::EXPLORING && candidate_count > 0)
     {
@@ -731,12 +750,13 @@ void GridWorld::UpdateCellStatus(const std::shared_ptr<viewpoint_manager_ns::Vie
       if(viewpoint_manager->HT()->enabled()) {
         const auto pos=subspaces_->GetCell(cell_ind).GetPosition();
         RCLCPP_INFO(rclcpp::get_logger("standalone_logger"),
-          "HT_CELL_AUDIT cell=%d xy=(%.6f,%.6f) old=%d new=%d reason=ALMOST_LEFT_NEIGHBOUR candidates=-1 selected=-1 above_small=-1 above_big=-1 above_frontier=-1 highest_score=-1 visits=%d graph_nodes=%zu robot=(%.6f,%.6f) ht_stamp=%.9f",
+          "HT_CELL_AUDIT cell=%d xy=(%.6f,%.6f) old=%d new=%d reason=ALMOST_LEFT_NEIGHBOUR candidates=-1 selected=-1 above_small=-1 above_big=-1 above_frontier=-1 highest_score=-1 visits=%d graph_nodes=%zu robot=(%.6f,%.6f) ht_stamp=%.9f pending_gain=%d",
           cell_ind,pos.x,pos.y,static_cast<int>(old_status),static_cast<int>(CellStatus::COVERED),
           subspaces_->GetCell(cell_ind).GetVisitCount(),subspaces_->GetCell(cell_ind).GetGraphNodeIndices().size(),
-          robot_position_.x,robot_position_.y,viewpoint_manager->HT()->cycleStamp());
+          robot_position_.x,robot_position_.y,viewpoint_manager->HT()->cycleStamp(),static_cast<int>(ht_pending_gain_cells_.count(cell_ind)));
       }
       subspaces_->GetCell(cell_ind).SetStatus(CellStatus::COVERED);
+      ht_pending_gain_cells_.erase(cell_ind);
       almost_covered_cell_indices_.erase(
           std::remove(almost_covered_cell_indices_.begin(), almost_covered_cell_indices_.end(), cell_ind),
           almost_covered_cell_indices_.end());
