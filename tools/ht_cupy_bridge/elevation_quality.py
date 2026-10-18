@@ -2,9 +2,10 @@
 
 This is an input-quality filter, not a traversability classifier. It never
 creates observations, averages a height discontinuity, or replaces a rejected
-return with nearby ground. ``rejected_mask`` must also invalidate every HT
-receptive field containing such a return; nearest-neighbour filling for the
-network must not make these regions traversable.
+return with nearby ground. A finite rejected height may enter HT context only through an independent
+hard occupied layer, never as accepted ground. Remaining unknown rejects must
+invalidate their HT receptive fields; nearest-neighbour filling must not make
+the rejected cells traversable.
 """
 
 from __future__ import annotations

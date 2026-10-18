@@ -24,7 +24,7 @@ from historical_elevation import HistoricalElevation
 from elevation_quality import preprocess_elevation, retain_recent_obstacle_edges
 from local_surface import SurfaceReferenceEstimator
 from cpu_threads import configure_cpu_threads
-from ht_support import prepare_ht_context
+from ht_support import prepare_ht_context, preserve_rejected_obstacles
 
 
 class CupyToHt(Node):
@@ -51,6 +51,7 @@ class CupyToHt(Node):
         self.odometry = deque(maxlen=4000)
         self.diagnostics = []
         self.last_source_stamp = None
+        self.last_context_dump_stamp = None
         self.create_subscription(
             Odometry, self.declare_parameter('surface_odometry_topic', '/state_estimation').value,
             self.on_odometry, QoSProfile(depth=100, reliability=ReliabilityPolicy.BEST_EFFORT))
@@ -178,8 +179,12 @@ class CupyToHt(Node):
             local.data.append(data)
         self.history_pub.publish(local)
 
-        height, support, occupied, physical_support = prepare_ht_context(elevation, observed, rejected,
-            self.history.last_window_obstacle_elevation, resolution)
+        obstacle_context = preserve_rejected_obstacles(
+            self.history.last_window_obstacle_elevation, raw_history, quality.rejected_mask)
+        retained_filtered_obstacles = (np.isfinite(obstacle_context) &
+            ~np.isfinite(self.history.last_window_obstacle_elevation))
+        height, support, occupied, physical_support = prepare_ht_context(
+            elevation, observed, rejected, obstacle_context, resolution)
         inference_started = time.monotonic()
         with torch.inference_mode():
             tensor=torch.from_numpy(height[None,None])
@@ -231,19 +236,41 @@ class CupyToHt(Node):
             data.data = FloatArray('f', layer.flatten(order="F").tobytes())
             result.data.append(data)
         self.pub.publish(result)
+        published = time.monotonic()
+        context_dump_s = 0.
+        context_directory = os.environ.get('HT_CONTEXT_DUMP')
+        if context_directory and (self.last_context_dump_stamp is None or
+                                  stamp_s-self.last_context_dump_stamp >= 10.):
+            dump_started = time.monotonic()
+            directory = Path(context_directory)
+            directory.mkdir(parents=True, exist_ok=True)
+            filename = directory / f'{stamp_key[0]}_{stamp_key[1]:09d}.npz'
+            # A source stamp identifies immutable inference inputs. Never
+            # replace an earlier context if a node is accidentally restarted.
+            with filename.open('xb') as stream:
+                np.savez_compressed(stream, source_stamp=stamp_s,
+                    geometry=[center_x, center_y, resolution], height=height,
+                    raw_history=raw_history, observed=observed, rejected=rejected,
+                    quality_rejected=quality.rejected_mask, obstacle_context=obstacle_context,
+                    support=support, physical_support=physical_support, occupied=occupied,
+                    probabilities=probabilities)
+            self.last_context_dump_stamp = stamp_s
+            context_dump_s = time.monotonic()-dump_started
         self.count += 1
         self.diagnostics.append({'stamp_s': stamp_s, 'fused_cells': fused,
                                  'observed_cells': int(observed.sum()), 'supported_cells': int(support.sum()),
                                  'surface': surface_stats, 'quality': quality.stats,
                                  'source_rejected_cells': int(source_rejected.sum()),
                                  'known_obstacle_cells': int(occupied.sum()),
+                                 'retained_filtered_obstacle_cells': int(retained_filtered_obstacles.sum()),
                                  'new_rejected_observations': rejected_updates,
                                  'retained_current_edge_cells': int(retained_edges.sum()),
                                  'source_age_at_callback_s': source_age_at_start,
                                  'fusion_and_quality_s': fusion_finished-started,
                                  'support_and_history_publish_s': inference_started-fusion_finished,
                                  'network_inference_s': inference_finished-inference_started,
-                                 'ht_serialize_publish_s': time.monotonic()-inference_finished,
+                                 'ht_serialize_publish_s': published-inference_finished,
+                                 'context_dump_s': context_dump_s,
                                  'elapsed_s': time.monotonic()-started})
         if self.count % 5 == 0:
             self.get_logger().info(

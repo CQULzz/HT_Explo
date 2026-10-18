@@ -1,7 +1,8 @@
 import unittest
 import numpy as np
 from historical_elevation import HistoricalElevation
-from ht_support import prepare_ht_context
+from ht_support import prepare_ht_context, preserve_rejected_obstacles
+from pathlib import Path
 
 
 class ObstacleContextTest(unittest.TestCase):
@@ -40,6 +41,51 @@ class ObstacleContextTest(unittest.TestCase):
         z[2,2]=0;h.fuse(z,v,0,0,5);crop,*_=h.window(0,0,5,5,reference_height=0)
         self.assertEqual(crop[2,2],0)
         self.assertFalse(np.isfinite(h.last_window_obstacle_elevation).any())
+
+    def test_finite_fused_reject_is_occupied_context_never_free_ground(self):
+        raw=np.zeros((91,91),np.float32);raw[45,64]=.46
+        rejected=np.zeros_like(raw,bool);rejected[45,64]=True
+        observed=~rejected;filtered=np.where(observed,raw,np.nan)
+        before=np.full_like(raw,np.nan)
+        obstacle=preserve_rejected_obstacles(before,raw,rejected)
+        height,support,occupied,physical=prepare_ht_context(filtered,observed,rejected,obstacle,.041)
+        self.assertTrue(support[20,20])  # Clear vehicle reference need not inherit a1m halo.
+        self.assertTrue(occupied[20,39])  # Rejected cell is unsafe, not a filled free hole.
+        self.assertTrue(physical[20,39])
+        self.assertAlmostEqual(float(height[45,64]),.46,places=6)
+        self.assertTrue(np.isnan(before).all())  # Do not mutate retained history.
+
+    def test_unmeasured_reject_stays_unknown_and_keeps_context_veto(self):
+        raw=np.zeros((91,91),np.float32);raw[45,64]=np.nan
+        rejected=np.zeros_like(raw,bool);rejected[45,64]=True
+        observed=~rejected;obstacle=preserve_rejected_obstacles(np.full_like(raw,np.nan),raw,rejected)
+        _,support,occupied,physical=prepare_ht_context(raw,observed,rejected,obstacle,.041)
+        self.assertFalse(support[20,20]);self.assertFalse(occupied.any())
+        self.assertFalse(physical[20,39])
+
+    def test_existing_obstacle_height_is_not_overwritten_by_a_quality_reject(self):
+        obstacle=np.full((91,91),np.nan,np.float32);obstacle[45,45]=1.7
+        raw=np.zeros_like(obstacle);rejected=np.zeros_like(raw,bool);rejected[45,45]=True
+        retained=preserve_rejected_obstacles(obstacle,raw,rejected)
+        self.assertAlmostEqual(float(retained[45,45]),1.7,places=6)
+        with self.assertRaises(ValueError):preserve_rejected_obstacles(obstacle,raw[:2],rejected)
+
+    def test_real_stopped_snapshot_retains_one_rejected_height_as_unsafe(self):
+        snapshot=Path(__file__).resolve().parents[2]/'docs/results/ht_continuous_geometry_10min_2026-10-18/geometry_capture/stopped_snapshot.npz'
+        with np.load(snapshot) as data:
+            observed=data['history_input_valid']>=.5;rejected=data['history_rejected']>=.5
+            # Old captures omit outer25 input cells' obstacle heights. Finite
+            # placeholders reconstruct MASKS only, never substitute model input.
+            old_obstacle=np.pad(np.where(data['ht_ht_obstacle']>=.5,1.7,np.nan),25,constant_values=np.nan)
+            _,old_support,old_occupied,old_physical=prepare_ht_context(data['history_elevation'],observed,rejected,old_obstacle,data['ht_geometry'][2])
+            np.testing.assert_array_equal((old_support|old_occupied)[40:-40,40:-40],(data['ht_ht_valid']>=.5)[40:-40,40:-40])
+            self.assertFalse(old_support[120,120]);self.assertTrue(old_physical[120,120])
+            obstacle=preserve_rejected_obstacles(old_obstacle,data['history_elevation_raw'],rejected)
+            height,support,occupied,physical=prepare_ht_context(data['history_elevation'],observed,rejected,obstacle,data['ht_geometry'][2])
+            self.assertEqual(int((np.isfinite(obstacle)&~np.isfinite(old_obstacle)).sum()),1)
+            self.assertTrue(support[120,120]);self.assertTrue(occupied[105,140])
+            self.assertTrue(physical[120,120])
+            self.assertAlmostEqual(float(height[130,165]),.4596158,places=6)
 
 
 if __name__=='__main__':unittest.main()

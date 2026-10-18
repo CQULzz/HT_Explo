@@ -92,6 +92,7 @@ def main():
     folder.mkdir(parents=True)
     trial = Trial('endurance', folder/'current', args.domain)
     trial.env.update(HT_DIAGNOSTICS_DUMP=str(folder/'current/ht_diagnostics.json'),
+                     HT_CONTEXT_DUMP=str(folder/'current/inference_context'),
                      CUPY_STATS_DUMP=str(folder/'current/cupy_processing_stats.json'))
     paths = [BRIDGE/'ht_trial.yaml', BRIDGE/'cupy_to_ht.py', BRIDGE/'historical_elevation.py',
              CUPY/'config/trial_core.yaml', CUPY/'config/trial_setup.yaml',
@@ -143,7 +144,7 @@ def main():
                     speed_cap_mps=.5, preflight=preflight(),
                     ht_score_semantics=json.loads((BRIDGE/'ht_trial.yaml').read_text())['/**']['ros__parameters'].get('ht_score_semantics','point'),
                     git_head=subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
-                    evidence_policy=f'All control/status and odometry, full-rate published HT maps; original-stamped scans1Hz; exact-stamp map triplets every10s; camera{args.video_fps}fps. Raw CuPy and scans are not fully bagged.',
+                    evidence_policy=f'All control/status and odometry, full-rate published HT maps; original-stamped scans1Hz; exact-stamp map triplets and network inputs/outputs every10s; camera{args.video_fps}fps. Raw CuPy and scans are not fully bagged.',
                     source_hashes={str(p): hashlib.sha256(p.read_bytes()).hexdigest() for p in paths})
     (folder/'manifest.json').write_text(json.dumps(manifest, ensure_ascii=False, indent=2))
     (folder/'working_tree.patch').write_bytes(subprocess.check_output(['git', 'diff', 'HEAD'], cwd=ROOT))
