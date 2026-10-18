@@ -2,7 +2,7 @@
   "schema_version": 1,
   "updated_at": "2026-10-18",
   "branch": "codex/ht8dir-v1",
-  "status": "阶段29复现全局正收益任务未登记/提前核销；下一轮修正任务状态，图龄等仍未解决",
+  "status": "阶段30保留正收益任务，600秒仍前进；继续核查无候选核销与搜索开销，不标稳定",
   "latest_archive_commit": "4221aaa",
   "latest_planner_change": "43069a7b11b8028b53f6eae0d6bdc53c13e8affd",
   "stages": [
@@ -513,6 +513,23 @@
         "docs/results/ht_cell_audit_10min_2026-10-18/REPORT.md"
       ],
       "control_commit": "b6010156cc26431cc23bac33ac543982f7d5e4c1",
+      "ht_bridge_commit": "22c2749f395af8bb5dc6705b1e92548acf69494e"
+    },
+    {
+      "id": "stage-30",
+      "number": 30,
+      "sha": "ce7202bb14fa493d6ee2e4cb68dd8d56b32aef0b",
+      "tag": "ht-stage-20261018-pending-gain",
+      "title": "正收益全局任务保留：600秒169.57m/3321.25m³仍探索",
+      "kind": "实测候选",
+      "change": "按收益登记UNSEEN，全局保留仍有收益的任务，防止移出邻域核销",
+      "features": "HT/物理硬门槛不变；原零收益覆盖/已覆盖滞回/非HT保持",
+      "validation": "4个CTest目标与10项新状态回归通过；600秒169.57m/3321.25m³；最后60秒17.829m；有收益UNSEEN33→0、almost移出核销5→0",
+      "known_issues": "102次TIME_LIMIT；五次无候选覆盖分支仍需修正，3次此前刚有收益；1次地图超时和4次路径超时，重复/多环境/真值覆盖仍未验收",
+      "evidence": [
+        "docs/results/ht_pending_gain_tasks_10min_2026-10-18/REPORT.md"
+      ],
+      "control_commit": "ce7202bb14fa493d6ee2e4cb68dd8d56b32aef0b",
       "ht_bridge_commit": "22c2749f395af8bb5dc6705b1e92548acf69494e"
     }
   ],
@@ -1049,7 +1066,7 @@
       "original_subject": "Archive command rejection proof, failed indoor trials and returned-home tunnel video"
     }
   ],
-  "latest_planner_code": "b6010156cc26431cc23bac33ac543982f7d5e4c1",
+  "latest_planner_code": "ce7202bb14fa493d6ee2e4cb68dd8d56b32aef0b",
   "latest_ht_bridge_code": "22c2749f395af8bb5dc6705b1e92548acf69494e",
-  "latest_verified_trial_code": "b6010156cc26431cc23bac33ac543982f7d5e4c1"
+  "latest_verified_trial_code": "ce7202bb14fa493d6ee2e4cb68dd8d56b32aef0b"
 }

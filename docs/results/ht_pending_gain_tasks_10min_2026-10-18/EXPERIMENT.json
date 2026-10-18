@@ -1,0 +1,59 @@
+{
+  "tested_git_head": "ce7202bb14fa493d6ee2e4cb68dd8d56b32aef0b",
+  "raw_run": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_pending_gain_tasks_10min_2026-10-18_23-29-00",
+  "recording_scope": "All control/status and odometry, full-rate published HT maps and TARE collision geometry; original-stamped scans1Hz; exact-stamp map triplets and network inputs/outputs every10s; camera15fps. Raw CuPy and scans are not fully bagged.",
+  "last_motion_s": 600.003,
+  "mission": {
+    "first_exploration_finished_sample_s": null,
+    "sampled_mission_counts": {
+      "EXPLORING": 551,
+      "BLOCKED": 49
+    },
+    "first_completed_sample_s": null,
+    "last_sampled_mission": "EXPLORING",
+    "last_sampled_execution_status": "HT_ASSISTED",
+    "final_distance_to_measurement_start_m": 41.38233296951732,
+    "meaning": "Exploration finished is a return-home trigger. Only mission COMPLETED confirms the home radius, low-speed and dwell checks; neither establishes ground-truth full coverage."
+  },
+  "geometry": {
+    "radius_m": 0.6414213562373094,
+    "collision_point_threshold": 1,
+    "first_observed_margin_overlap": null,
+    "overlap_samples": 0,
+    "moving_predictions_inside_margin": 0,
+    "samples": 471,
+    "limitations": "Uses bag arrival order, latest received odometry/command and measured collision-cloud points in robot height slice. Does not reproduce planner collision-grid bounds or exact callback state. Predicted arc uses last received constant Twist, not controller internal candidate or simulator braking. Margin overlap is not physical vehicle contact. Sample lag/point noise may contribute; cannot separate them without independent truth."
+  },
+  "geometry_follower_rejections": {
+    "GEOMETRY_COMMAND_BLOCKED": 1
+  },
+  "checks": {
+    "timer_completed": true,
+    "measured_duration_matches": true,
+    "source_hashes_unchanged": true,
+    "enough_samples": true,
+    "no_runtime_parent_failure": true,
+    "no_live_descendants": true,
+    "no_forced_shutdown": true,
+    "video_full_decode_passed": true,
+    "video_duration_matches": true,
+    "video_fps_matches": true,
+    "analysis_passed": true,
+    "no_child_or_cleanup_exception": true,
+    "blas_workers_bounded": true
+  },
+  "video": {
+    "encode_returncode": 0,
+    "fps": 15,
+    "requested_duration_s": 600,
+    "trim_offset_s": 32.972057819366455,
+    "source_file": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_pending_gain_tasks_10min_2026-10-18_23-29-00/indoor/camera_15fps.mp4",
+    "full_decode_returncode": 0,
+    "decoded_frames": 9000,
+    "duration_s": 600.0,
+    "duration_matches": true,
+    "bytes": 13758724,
+    "sha256": "eaf902cb667619d47d44f15d7961093270c3f86f64fbee3d5510dad846949202"
+  },
+  "limitations": "Single indoor trial; exact global-task policies regression tested, ground-truth full coverage not independently validated. Timed search failures recovered; five old no-candidate-to-covered transitions remain. Manual6s geometry capture is after recovery, not an exact blocked callback snapshot."
+}

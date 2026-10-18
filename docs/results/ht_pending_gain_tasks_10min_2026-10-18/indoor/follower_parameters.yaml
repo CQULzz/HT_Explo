@@ -1,0 +1,57 @@
+/xytheta_follower:
+  ros__parameters:
+    geometry_timeout: 3.0
+    ht_channel_order:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
+    - 6
+    - 7
+    ht_directions_calibrated: true
+    ht_enabled: true
+    ht_fallback_lookahead: 0.5
+    ht_fallback_max_distance: 10.0
+    ht_fallback_max_seconds: 60.0
+    ht_fallback_speed: 0.2
+    ht_heading_offset: 0.0
+    ht_lookahead_distance: 2.0
+    ht_map_timeout: 3.0
+    ht_min_probability: 0.5
+    ht_require_reversible_motion: false
+    ht_sample_step: 0.02
+    ht_score_semantics: configuration
+    ht_startup_duration: 30.0
+    ht_startup_radius: 1.2
+    ht_topic: /ht_traversability/global_local
+    ht_unknown_policy: strict
+    ht_validity_radius: 0.6
+    ht_waypoint_reached_distance: 0.3
+    kCollisionGridResolutionX: 0.2
+    kCollisionGridResolutionY: 0.2
+    kViewPointCollisionMargin: 0.5
+    kViewPointCollisionMarginZMinus: 0.5
+    kViewPointCollisionMarginZPlus: 0.5
+    max_accel: 0.5
+    max_reverse: 0.25
+    max_speed: 0.5
+    max_yaw_accel: 1.2
+    max_yaw_rate: 0.8
+    mission_sensor_timeout: 3.0
+    odom_timeout: 0.5
+    path_timeout: 3.0
+    permission_timeout: 1.5
+    qos_overrides:
+      /parameter_events:
+        publisher:
+          depth: 1000
+          durability: volatile
+          history: keep_last
+          reliability: reliable
+    rotation_stop_rate: 0.06
+    rotation_tolerance: 0.04
+    start_type_description_service: true
+    use_sim_time: false
+

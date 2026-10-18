@@ -17,7 +17,9 @@
 
 | 阶段29 `b601015` | 逐单元判定日志、安全遍历almost列表 | 133.17 / 2025.125 | 内部返航完成；正收益未登记/移出邻域核销已复现，尚待修正规则 | [报告](../results/ht_cell_audit_10min_2026-10-18/REPORT.md) · [完整数据/视频](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261018-cell-audit) |
 
-![同条件四轮对比](../results/ht_execution_geometry_10min_2026-10-18/comparison/comparison.png)
+| 阶段30 `ce7202b` | 正收益登记并跨局部窗口保留全局待办 | 169.57 / 3321.250 | 600秒仍EXPLORING，末分钟17.829m；尚有无候选核销/搜索超时 | [报告](../results/ht_pending_gain_tasks_10min_2026-10-18/REPORT.md) · [完整数据/视频](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261018-pending-gain) |
+
+![同条件四轮对比](../results/ht_pending_gain_tasks_10min_2026-10-18/comparison/comparison.png)
 
 ## 当前问题与下一轮证据要求
 
@@ -41,3 +43,5 @@
 阶段28：完整600秒，352.425秒返航完成而不是故障卡住。相同实际几何边界下307份录制点云未见参考点重叠；新增几何拦截闭环0次，只以ROS回归验证分支。内部待探索计数归零不证明真实全覆盖；必须核查单元状态转移并做同版重复、多环境。较阶段23体积仍低27.7%，地图年龄仍有3.563s长尾。
 
 阶段29：451.695s仍有19个覆盖/63个前沿收益视点的(24,0)单元，452.889s因移出邻域置COVERED、453.023s触发结束。两个实际C++最小复现失败，证实收益与局部选中/邻域状态混用；下一轮修正登记和保留待办，不改硬门槛。
+
+阶段30：收益UNSEEN33→0、移出邻域核销5→0，600秒仍移动，体积3321.25m³。还有5次无候选旧分支，其中3次此前刚有收益；应保留最后有效收益并区分暂不可观察/不可达，而非再次核销。102次TIME_LIMIT与地图/路径时效仍需解决。
