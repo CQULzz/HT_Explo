@@ -1,0 +1,382 @@
+diff --git a/docs/fixes/2026-10-18_postfilter_obstacles.md b/docs/fixes/2026-10-18_postfilter_obstacles.md
+new file mode 100644
+index 0000000..c0c8162
+--- /dev/null
++++ b/docs/fixes/2026-10-18_postfilter_obstacles.md
+@@ -0,0 +1,21 @@
++# 融合后拒绝高度沿用已有硬障碍上下文规则
++
++阶段25完整600秒后仍阻塞：最后明显平移264.001秒，最后位姿HT UNKNOWN，几何允许。[原始数据、视频与逐格核对](../results/ht_continuous_geometry_10min_2026-10-18/REPORT.md)。
++
++最终输入窗口42个拒绝高程格中41格已有明确障碍，真正否决整个51×51窗口的是1个距车1.02339m的孤立点，高度0.45962m、方差0.007708m²。未发现车体范围物理缺测。旧快照只保留裁剪后的障碍掩码，不能据此重建完整神经输入；仅在不受外圈缺失影响的内区复现旧支持掩码与根状态拒绝，不能假称重跑了完整旧网络。
++
++## 核对后的处理差异
++
++源输入质量过滤对有限拒绝高度已有保守规则：保留实际高度作为障碍上下文，独立障碍格八方向概率强制零。融合窗口后的第二次质量过滤却没有把其有限拒绝高度送入这条障碍分支，使该点成为全网络窗口的未知遮罩。
++
++候选统一两道过滤的规则：融合后仍有有限原始高度的拒绝点保留为**硬障碍**，实际高度供模型作障碍上下文；原始高度不有限的拒绝点仍未知，保留整个网络窗口的未知否决。已有障碍高度优先，不被新拒绝值覆盖。没有把拒绝点补成自由地面，没有修改0.5概率、0.6m物理足迹、3秒时效或模型权重，未更新任何历史观测时间。
++
++原始历史高程、过滤后的历史高程与拒绝标记仍分别保留。独立障碍硬门槛对车体覆盖这些点的路线仍拒绝。仍需观察这一保守规则是否造成更多误报障碍，不能只看是否恢复移动。
++
++## 已完成检查与待实验
++
++- 七项支撑/历史测试通过，包括真实停止快照：只增加1格有限拒绝高度的硬障碍；当前位置支持恢复；无有限高度的拒绝仍使网络上下文无效。
++- 实际ROS桥接及真实学生网络的一帧集成检查通过：融合后拒绝高度进入网络输入，该格发布的八方向概率全部严格为0，原始地图时间戳不变。旧掩码拒绝回归日志也保留于[evidence](evidence/2026-10-18_postfilter/)。
++- 每10秒额外保存与源时间戳关联的完整神经输入、障碍高度、支撑掩码与实际输出，补足旧快照外圈信息不足；记录耗时单列，不伪造历史输入。
++
++代码提交冻结后按同起点、同速度完成600秒室内实验，与阶段23、24、25比较，并发布完整数据和视频。当前仅回归通过，尚未宣称闭环修复或多环境稳定。覆盖计算、地图时延长尾、动力学与物理标定问题仍待后续循环。
+diff --git a/docs/fixes/evidence/2026-10-18_postfilter/ht_context_baseline_check.log b/docs/fixes/evidence/2026-10-18_postfilter/ht_context_baseline_check.log
+new file mode 100644
+index 0000000..b01d28f
+--- /dev/null
++++ b/docs/fixes/evidence/2026-10-18_postfilter/ht_context_baseline_check.log
+@@ -0,0 +1,6 @@
++Reproduced original INNER support mask exactly (outer obstacle context not recorded); root physical=True predicted=False
++Traceback (most recent call last):
++  File "/tmp/ht_context_baseline_check.py", line 16, in <module>
++    assert support[120,120], 'Desired consistent finite-rejection obstacle context is missing in original pipeline'
++           ~~~~~~~^^^^^^^^^
++AssertionError: Desired consistent finite-rejection obstacle context is missing in original pipeline
+diff --git a/docs/fixes/evidence/2026-10-18_postfilter/ht_context_baseline_check.py b/docs/fixes/evidence/2026-10-18_postfilter/ht_context_baseline_check.py
+new file mode 100644
+index 0000000..3a5968d
+--- /dev/null
++++ b/docs/fixes/evidence/2026-10-18_postfilter/ht_context_baseline_check.py
+@@ -0,0 +1,16 @@
++import sys
++from pathlib import Path
++import numpy as np
++sys.path.insert(0,str(Path.cwd()/'tools/ht_cupy_bridge'))
++from ht_support import prepare_ht_context
++p=Path('docs/results/ht_continuous_geometry_10min_2026-10-18/geometry_capture/stopped_snapshot.npz')
++d=np.load(p);observed=d['history_input_valid']>=.5;rejected=d['history_rejected']>=.5
++# Existing obstacle HEIGHTS are not in old snapshots. This reconstruction checks
++# masks only; finite placeholders preserve their exact occupied/support masks.
++obstacle=np.pad(np.where(d['ht_ht_obstacle']>=.5,1.7,np.nan),25,constant_values=np.nan)
++_,support,occupied,physical=prepare_ht_context(d['history_elevation'],observed,rejected,obstacle,d['ht_geometry'][2])
++# Old snapshots omit obstacle heights/masks in the outer25 input cells.
++# Compare the inner field beyond that influence, never claim full reconstruction.
++assert np.array_equal((support|occupied)[40:-40,40:-40],(d['ht_ht_valid']>=.5)[40:-40,40:-40])
++print('Reproduced original INNER support mask exactly (outer obstacle context not recorded); root physical=%s predicted=%s' % (physical[120,120],support[120,120]),flush=True)
++assert support[120,120], 'Desired consistent finite-rejection obstacle context is missing in original pipeline'
+diff --git a/docs/fixes/evidence/2026-10-18_postfilter/ht_postfilter_bridge_tests.log b/docs/fixes/evidence/2026-10-18_postfilter/ht_postfilter_bridge_tests.log
+new file mode 100644
+index 0000000..81ba2c1
+--- /dev/null
++++ b/docs/fixes/evidence/2026-10-18_postfilter/ht_postfilter_bridge_tests.log
+@@ -0,0 +1,9 @@
++test_actual_model_output_keeps_rejected_height_as_eight_direction_hard_obstacle (test_postfilter_bridge.PostfilterBridgeTest.test_actual_model_output_keeps_rejected_height_as_eight_direction_hard_obstacle) ... [WARN] [1792311715.443392118] [rcl]: ROS_LOCALHOST_ONLY is deprecated but still honored if it is enabled. Use ROS_AUTOMATIC_DISCOVERY_RANGE and ROS_STATIC_PEERS instead.
++[WARN] [1792311715.443459229] [rcl]: 'localhost_only' is enabled, 'automatic_discovery_range' and 'static_peers' will be ignored.
++[INFO] [1792311715.671228016] [cupy_to_ht_bridge]: CPU pools: PyTorch=4, BLAS=1; channels_last
++ok
++
++----------------------------------------------------------------------
++Ran 1 test in 0.726s
++
++OK
+diff --git a/docs/fixes/evidence/2026-10-18_postfilter/ht_postfilter_context_tests.log b/docs/fixes/evidence/2026-10-18_postfilter/ht_postfilter_context_tests.log
+new file mode 100644
+index 0000000..5897017
+--- /dev/null
++++ b/docs/fixes/evidence/2026-10-18_postfilter/ht_postfilter_context_tests.log
+@@ -0,0 +1,12 @@
++test_existing_obstacle_height_is_not_overwritten_by_a_quality_reject (test_ht_support.ObstacleContextTest.test_existing_obstacle_height_is_not_overwritten_by_a_quality_reject) ... ok
++test_finite_fused_reject_is_occupied_context_never_free_ground (test_ht_support.ObstacleContextTest.test_finite_fused_reject_is_occupied_context_never_free_ground) ... ok
++test_incompatible_surface_never_becomes_selected_ground (test_ht_support.ObstacleContextTest.test_incompatible_surface_never_becomes_selected_ground) ... ok
++test_missing_area_is_not_reconstructed_as_supported_ground (test_ht_support.ObstacleContextTest.test_missing_area_is_not_reconstructed_as_supported_ground) ... ok
++test_observed_wall_is_blocked_without_unknown_halo (test_ht_support.ObstacleContextTest.test_observed_wall_is_blocked_without_unknown_halo) ... ok
++test_real_stopped_snapshot_retains_one_rejected_height_as_unsafe (test_ht_support.ObstacleContextTest.test_real_stopped_snapshot_retains_one_rejected_height_as_unsafe) ... ok
++test_unmeasured_reject_stays_unknown_and_keeps_context_veto (test_ht_support.ObstacleContextTest.test_unmeasured_reject_stays_unknown_and_keeps_context_veto) ... ok
++
++----------------------------------------------------------------------
++Ran 7 tests in 0.037s
++
++OK
+diff --git a/presentations/run_ht_endurance.py b/presentations/run_ht_endurance.py
+index 6b9a721..54f498f 100644
+--- a/presentations/run_ht_endurance.py
++++ b/presentations/run_ht_endurance.py
+@@ -92,6 +92,7 @@ def main():
+     folder.mkdir(parents=True)
+     trial = Trial('endurance', folder/'current', args.domain)
+     trial.env.update(HT_DIAGNOSTICS_DUMP=str(folder/'current/ht_diagnostics.json'),
++                     HT_CONTEXT_DUMP=str(folder/'current/inference_context'),
+                      CUPY_STATS_DUMP=str(folder/'current/cupy_processing_stats.json'))
+     paths = [BRIDGE/'ht_trial.yaml', BRIDGE/'cupy_to_ht.py', BRIDGE/'historical_elevation.py',
+              CUPY/'config/trial_core.yaml', CUPY/'config/trial_setup.yaml',
+@@ -143,7 +144,7 @@ def main():
+                     speed_cap_mps=.5, preflight=preflight(),
+                     ht_score_semantics=json.loads((BRIDGE/'ht_trial.yaml').read_text())['/**']['ros__parameters'].get('ht_score_semantics','point'),
+                     git_head=subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
+-                    evidence_policy=f'All control/status and odometry, full-rate published HT maps; original-stamped scans1Hz; exact-stamp map triplets every10s; camera{args.video_fps}fps. Raw CuPy and scans are not fully bagged.',
++                    evidence_policy=f'All control/status and odometry, full-rate published HT maps; original-stamped scans1Hz; exact-stamp map triplets and network inputs/outputs every10s; camera{args.video_fps}fps. Raw CuPy and scans are not fully bagged.',
+                     source_hashes={str(p): hashlib.sha256(p.read_bytes()).hexdigest() for p in paths})
+     (folder/'manifest.json').write_text(json.dumps(manifest, ensure_ascii=False, indent=2))
+     (folder/'working_tree.patch').write_bytes(subprocess.check_output(['git', 'diff', 'HEAD'], cwd=ROOT))
+diff --git a/tools/ht_cupy_bridge/cupy_to_ht.py b/tools/ht_cupy_bridge/cupy_to_ht.py
+index 086a098..5b43251 100644
+--- a/tools/ht_cupy_bridge/cupy_to_ht.py
++++ b/tools/ht_cupy_bridge/cupy_to_ht.py
+@@ -24,7 +24,7 @@ from historical_elevation import HistoricalElevation
+ from elevation_quality import preprocess_elevation, retain_recent_obstacle_edges
+ from local_surface import SurfaceReferenceEstimator
+ from cpu_threads import configure_cpu_threads
+-from ht_support import prepare_ht_context
++from ht_support import prepare_ht_context, preserve_rejected_obstacles
+ 
+ 
+ class CupyToHt(Node):
+@@ -51,6 +51,7 @@ class CupyToHt(Node):
+         self.odometry = deque(maxlen=4000)
+         self.diagnostics = []
+         self.last_source_stamp = None
++        self.last_context_dump_stamp = None
+         self.create_subscription(
+             Odometry, self.declare_parameter('surface_odometry_topic', '/state_estimation').value,
+             self.on_odometry, QoSProfile(depth=100, reliability=ReliabilityPolicy.BEST_EFFORT))
+@@ -178,8 +179,12 @@ class CupyToHt(Node):
+             local.data.append(data)
+         self.history_pub.publish(local)
+ 
+-        height, support, occupied, physical_support = prepare_ht_context(elevation, observed, rejected,
+-            self.history.last_window_obstacle_elevation, resolution)
++        obstacle_context = preserve_rejected_obstacles(
++            self.history.last_window_obstacle_elevation, raw_history, quality.rejected_mask)
++        retained_filtered_obstacles = (np.isfinite(obstacle_context) &
++            ~np.isfinite(self.history.last_window_obstacle_elevation))
++        height, support, occupied, physical_support = prepare_ht_context(
++            elevation, observed, rejected, obstacle_context, resolution)
+         inference_started = time.monotonic()
+         with torch.inference_mode():
+             tensor=torch.from_numpy(height[None,None])
+@@ -231,19 +236,41 @@ class CupyToHt(Node):
+             data.data = FloatArray('f', layer.flatten(order="F").tobytes())
+             result.data.append(data)
+         self.pub.publish(result)
++        published = time.monotonic()
++        context_dump_s = 0.
++        context_directory = os.environ.get('HT_CONTEXT_DUMP')
++        if context_directory and (self.last_context_dump_stamp is None or
++                                  stamp_s-self.last_context_dump_stamp >= 10.):
++            dump_started = time.monotonic()
++            directory = Path(context_directory)
++            directory.mkdir(parents=True, exist_ok=True)
++            filename = directory / f'{stamp_key[0]}_{stamp_key[1]:09d}.npz'
++            # A source stamp identifies immutable inference inputs. Never
++            # replace an earlier context if a node is accidentally restarted.
++            with filename.open('xb') as stream:
++                np.savez_compressed(stream, source_stamp=stamp_s,
++                    geometry=[center_x, center_y, resolution], height=height,
++                    raw_history=raw_history, observed=observed, rejected=rejected,
++                    quality_rejected=quality.rejected_mask, obstacle_context=obstacle_context,
++                    support=support, physical_support=physical_support, occupied=occupied,
++                    probabilities=probabilities)
++            self.last_context_dump_stamp = stamp_s
++            context_dump_s = time.monotonic()-dump_started
+         self.count += 1
+         self.diagnostics.append({'stamp_s': stamp_s, 'fused_cells': fused,
+                                  'observed_cells': int(observed.sum()), 'supported_cells': int(support.sum()),
+                                  'surface': surface_stats, 'quality': quality.stats,
+                                  'source_rejected_cells': int(source_rejected.sum()),
+                                  'known_obstacle_cells': int(occupied.sum()),
++                                 'retained_filtered_obstacle_cells': int(retained_filtered_obstacles.sum()),
+                                  'new_rejected_observations': rejected_updates,
+                                  'retained_current_edge_cells': int(retained_edges.sum()),
+                                  'source_age_at_callback_s': source_age_at_start,
+                                  'fusion_and_quality_s': fusion_finished-started,
+                                  'support_and_history_publish_s': inference_started-fusion_finished,
+                                  'network_inference_s': inference_finished-inference_started,
+-                                 'ht_serialize_publish_s': time.monotonic()-inference_finished,
++                                 'ht_serialize_publish_s': published-inference_finished,
++                                 'context_dump_s': context_dump_s,
+                                  'elapsed_s': time.monotonic()-started})
+         if self.count % 5 == 0:
+             self.get_logger().info(
+diff --git a/tools/ht_cupy_bridge/elevation_quality.py b/tools/ht_cupy_bridge/elevation_quality.py
+index 4a6b0cd..10d6f27 100644
+--- a/tools/ht_cupy_bridge/elevation_quality.py
++++ b/tools/ht_cupy_bridge/elevation_quality.py
+@@ -2,9 +2,10 @@
+ 
+ This is an input-quality filter, not a traversability classifier. It never
+ creates observations, averages a height discontinuity, or replaces a rejected
+-return with nearby ground. ``rejected_mask`` must also invalidate every HT
+-receptive field containing such a return; nearest-neighbour filling for the
+-network must not make these regions traversable.
++return with nearby ground. A finite rejected height may enter HT context only through an independent
++hard occupied layer, never as accepted ground. Remaining unknown rejects must
++invalidate their HT receptive fields; nearest-neighbour filling must not make
++the rejected cells traversable.
+ """
+ 
+ from __future__ import annotations
+diff --git a/tools/ht_cupy_bridge/ht_support.py b/tools/ht_cupy_bridge/ht_support.py
+index fa32024..6262147 100644
+--- a/tools/ht_cupy_bridge/ht_support.py
++++ b/tools/ht_cupy_bridge/ht_support.py
+@@ -3,6 +3,22 @@ import numpy as np
+ from scipy.ndimage import distance_transform_edt, uniform_filter, maximum_filter
+ 
+ 
++def preserve_rejected_obstacles(obstacle_elevation, raw_height, rejected):
++    """Keep finite post-filter rejects as unsafe occupied context, never ground.
++
++    Source-level quality rejects already use this rule in HistoricalElevation.
++    A second quality filter on the fused crop must not lose the rejected height.
++    Unmeasured/nonfinite rejects remain unknown and retain the context veto.
++    """
++    obstacle = np.asarray(obstacle_elevation, np.float32)
++    raw = np.asarray(raw_height, np.float32)
++    mask = np.asarray(rejected, bool)
++    if obstacle.ndim != 2 or raw.shape != obstacle.shape or mask.shape != obstacle.shape:
++        raise ValueError('Rejected obstacle arrays must be equal two-dimensional shapes')
++    return np.where(np.isfinite(obstacle), obstacle,
++                    np.where(mask & np.isfinite(raw), raw, np.nan)).astype(np.float32)
++
++
+ def prepare_ht_context(elevation, observed, rejected, obstacle_elevation, resolution):
+     height = np.asarray(elevation, np.float32).copy()
+     occupied = np.isfinite(obstacle_elevation)
+diff --git a/tools/ht_cupy_bridge/test_ht_support.py b/tools/ht_cupy_bridge/test_ht_support.py
+index 8c9bc5e..ab6406f 100644
+--- a/tools/ht_cupy_bridge/test_ht_support.py
++++ b/tools/ht_cupy_bridge/test_ht_support.py
+@@ -1,7 +1,8 @@
+ import unittest
+ import numpy as np
+ from historical_elevation import HistoricalElevation
+-from ht_support import prepare_ht_context
++from ht_support import prepare_ht_context, preserve_rejected_obstacles
++from pathlib import Path
+ 
+ 
+ class ObstacleContextTest(unittest.TestCase):
+@@ -41,5 +42,50 @@ class ObstacleContextTest(unittest.TestCase):
+         self.assertEqual(crop[2,2],0)
+         self.assertFalse(np.isfinite(h.last_window_obstacle_elevation).any())
+ 
++    def test_finite_fused_reject_is_occupied_context_never_free_ground(self):
++        raw=np.zeros((91,91),np.float32);raw[45,64]=.46
++        rejected=np.zeros_like(raw,bool);rejected[45,64]=True
++        observed=~rejected;filtered=np.where(observed,raw,np.nan)
++        before=np.full_like(raw,np.nan)
++        obstacle=preserve_rejected_obstacles(before,raw,rejected)
++        height,support,occupied,physical=prepare_ht_context(filtered,observed,rejected,obstacle,.041)
++        self.assertTrue(support[20,20])  # Clear vehicle reference need not inherit a1m halo.
++        self.assertTrue(occupied[20,39])  # Rejected cell is unsafe, not a filled free hole.
++        self.assertTrue(physical[20,39])
++        self.assertAlmostEqual(float(height[45,64]),.46,places=6)
++        self.assertTrue(np.isnan(before).all())  # Do not mutate retained history.
++
++    def test_unmeasured_reject_stays_unknown_and_keeps_context_veto(self):
++        raw=np.zeros((91,91),np.float32);raw[45,64]=np.nan
++        rejected=np.zeros_like(raw,bool);rejected[45,64]=True
++        observed=~rejected;obstacle=preserve_rejected_obstacles(np.full_like(raw,np.nan),raw,rejected)
++        _,support,occupied,physical=prepare_ht_context(raw,observed,rejected,obstacle,.041)
++        self.assertFalse(support[20,20]);self.assertFalse(occupied.any())
++        self.assertFalse(physical[20,39])
++
++    def test_existing_obstacle_height_is_not_overwritten_by_a_quality_reject(self):
++        obstacle=np.full((91,91),np.nan,np.float32);obstacle[45,45]=1.7
++        raw=np.zeros_like(obstacle);rejected=np.zeros_like(raw,bool);rejected[45,45]=True
++        retained=preserve_rejected_obstacles(obstacle,raw,rejected)
++        self.assertAlmostEqual(float(retained[45,45]),1.7,places=6)
++        with self.assertRaises(ValueError):preserve_rejected_obstacles(obstacle,raw[:2],rejected)
++
++    def test_real_stopped_snapshot_retains_one_rejected_height_as_unsafe(self):
++        snapshot=Path(__file__).resolve().parents[2]/'docs/results/ht_continuous_geometry_10min_2026-10-18/geometry_capture/stopped_snapshot.npz'
++        with np.load(snapshot) as data:
++            observed=data['history_input_valid']>=.5;rejected=data['history_rejected']>=.5
++            # Old captures omit outer25 input cells' obstacle heights. Finite
++            # placeholders reconstruct MASKS only, never substitute model input.
++            old_obstacle=np.pad(np.where(data['ht_ht_obstacle']>=.5,1.7,np.nan),25,constant_values=np.nan)
++            _,old_support,old_occupied,old_physical=prepare_ht_context(data['history_elevation'],observed,rejected,old_obstacle,data['ht_geometry'][2])
++            np.testing.assert_array_equal((old_support|old_occupied)[40:-40,40:-40],(data['ht_ht_valid']>=.5)[40:-40,40:-40])
++            self.assertFalse(old_support[120,120]);self.assertTrue(old_physical[120,120])
++            obstacle=preserve_rejected_obstacles(old_obstacle,data['history_elevation_raw'],rejected)
++            height,support,occupied,physical=prepare_ht_context(data['history_elevation'],observed,rejected,obstacle,data['ht_geometry'][2])
++            self.assertEqual(int((np.isfinite(obstacle)&~np.isfinite(old_obstacle)).sum()),1)
++            self.assertTrue(support[120,120]);self.assertTrue(occupied[105,140])
++            self.assertTrue(physical[120,120])
++            self.assertAlmostEqual(float(height[130,165]),.4596158,places=6)
++
+ 
+ if __name__=='__main__':unittest.main()
+diff --git a/tools/ht_cupy_bridge/test_postfilter_bridge.py b/tools/ht_cupy_bridge/test_postfilter_bridge.py
+new file mode 100644
+index 0000000..9c51187
+--- /dev/null
++++ b/tools/ht_cupy_bridge/test_postfilter_bridge.py
+@@ -0,0 +1,72 @@
++"""Exercise the real ROS bridge and model after historical post-filter rejection."""
++from array import array
++import os
++from pathlib import Path
++import tempfile
++import unittest
++from unittest.mock import patch
++
++import numpy as np
++import rclpy
++from grid_map_msgs.msg import GridMap
++from std_msgs.msg import Float32MultiArray
++
++from cupy_to_ht import CupyToHt
++
++
++class FrozenHistoricalCrop:
++    """A previously accepted height now isolated in the current crop neighbourhood."""
++    def __init__(self, resolution):
++        self.resolution=resolution;self.tiles={}
++        self.last_window_obstacle_elevation=np.full((291,291),np.nan,np.float32)
++        self.last_window_incompatible_mask=np.zeros((291,291),bool)
++
++    def record_rejections(self,*args,**kwargs):return 0
++    def fuse(self,*args,**kwargs):return 0
++    def aligned_source_window(self, source,*args,**kwargs):return np.asarray(source).copy()
++    def window(self,*args,**kwargs):
++        raw=np.zeros((291,291),np.float32);variance=np.full_like(raw,.001)
++        raw[145,164]=.46;variance[145,164]=.008
++        return raw,variance,0.,0.
++
++
++class CapturedPublisher:
++    def __init__(self):self.messages=[]
++    def publish(self,msg):self.messages.append(msg)
++
++
++class PostfilterBridgeTest(unittest.TestCase):
++    def test_actual_model_output_keeps_rejected_height_as_eight_direction_hard_obstacle(self):
++        rclpy.init();node=None
++        try:
++            node=CupyToHt();node.history=FrozenHistoricalCrop(.04093567251461988)
++            output=CapturedPublisher();node.pub=output;node.history_pub=CapturedPublisher()
++            source=GridMap();source.header.frame_id='map';source.header.stamp=node.get_clock().now().to_msg()
++            source.info.resolution=node.history.resolution
++            source.info.length_x=source.info.length_y=291*source.info.resolution
++            source.info.pose.orientation.w=1.
++            source.layers=['elevation','variance','observation_age']
++            for value in [0.,.001,0.]:
++                data=Float32MultiArray();data.data=array('f',np.full((291,291),value,np.float32).tobytes());source.data.append(data)
++            with tempfile.TemporaryDirectory() as temporary, patch.dict(os.environ,{'HT_CONTEXT_DUMP':temporary}):
++                node.on_map(source)
++                self.assertEqual(len(output.messages),1)
++                result=output.messages[0]
++                self.assertEqual(result.header.stamp,source.header.stamp)
++                def layer(name):return np.asarray(result.data[result.layers.index(name)].data).reshape((241,241),order='F')
++                self.assertEqual(layer('ht_valid')[120,120],1.)
++                self.assertEqual(layer('ht_obstacle')[120,139],1.)
++                for k in range(8):self.assertEqual(layer(f'ht_dir_{k}')[120,139],0.)
++                self.assertEqual(node.diagnostics[-1]['retained_filtered_obstacle_cells'],1)
++                captures=list(Path(temporary).glob('*.npz'));self.assertEqual(len(captures),1)
++                with np.load(captures[0]) as capture:
++                    self.assertAlmostEqual(float(capture['height'][145,164]),.46,places=6)
++                    self.assertTrue(capture['quality_rejected'][145,164])
++                    self.assertTrue(capture['occupied'][120,139])
++                    self.assertTrue(np.all(capture['probabilities'][:,120,139]==0.))
++        finally:
++            if node is not None:node.destroy_node()
++            rclpy.try_shutdown()
++
++
++if __name__=='__main__':unittest.main()

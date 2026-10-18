@@ -12,6 +12,8 @@
 
 | 阶段25 `43069a7` | 连续车位几何检查、保留安全距离并加余量；补耗时与显示 | 65.80 / 1959.875 | 264s后HT未知长期停滞，旧几何反例通过但未稳定 | [报告](../results/ht_continuous_geometry_10min_2026-10-18/REPORT.md) · [完整数据/视频](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261018-continuous-geometry) |
 
+| 阶段26 `22c2749` | 有限融合后拒绝高度保留为硬障碍，完整网络输入记录 | 116.15 / 1258.000 | 最后约95s仍BLOCKED；里程增加但较上轮体积下降35.8%，整体未通过 | [报告](../results/ht_postfilter_obstacles_10min_2026-10-18/REPORT.md) · [完整数据/视频](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261018-postfilter-obstacles) |
+
 ![同条件四轮对比](../results/ht_configuration_gate_10min_2026-10-18/comparison/comparison.png)
 
 ## 当前问题与下一轮证据要求
@@ -28,3 +30,5 @@
 每轮发布回执位于[publications](publications/)。回执给出完整记录包、逐文件清单、视频的远端大小和SHA256。原始目录包含全部已录制数据，录制本身仅含抽样激光和周期地图快照；不是所有传感器无损记录。各轮具体采集核验与缺陷见对应报告，版本功能总览见[VERSIONS.md](../../VERSIONS.md)。
 
 阶段25下一步：核查融合后有限高度拒绝为何未按源输入拒绝规则保留硬障碍上下文；保留未知/障碍足迹和HT硬门槛，再做同场景600秒。见对应报告的42/41/1逐格核对。
+
+阶段26：58份神经上下文与发布图一致、三份模型重放差0；末段仍停。冻结图HT-only查询16个目标可达10个，细化控制也未增加。下一轮必须核查实际几何与目标/失败记忆、搜索终止原因；不是直接放宽HT或删除障碍。

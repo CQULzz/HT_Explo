@@ -1,0 +1,4 @@
+/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_postfilter_obstacles_10min_2026-10-18_16-27-00/indoor/offline_audit/resolution_audit.cpp: In member function ‘virtual void HtRosTest_CapturedMapSearchResolutionAudit_Test::TestBody()’:
+/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_postfilter_obstacles_10min_2026-10-18_16-27-00/indoor/offline_audit/resolution_audit.cpp:276:7: warning: suggest explicit braces to avoid ambiguous ‘else’ [-Wdangling-else]
+  276 |     if(plan.reached) for(size_t i=1;i<plan.poses.size();++i) EXPECT_TRUE(valid(plan.poses[i-1],plan.poses[i],0));
+      |       ^

@@ -2,7 +2,7 @@
   "schema_version": 1,
   "updated_at": "2026-10-18",
   "branch": "codex/ht8dir-v1",
-  "status": "阶段25修正粗视点几何误判，600秒仍暴露融合后有限拒绝高度的上下文不一致；继续迭代",
+  "status": "阶段26有限拒绝高度接口修正；600秒仍末段停滞且观测体积退步，继续核查实际搜索与几何代价",
   "latest_archive_commit": "68746deee9c0fc586c11bb9954a117bbaa136284",
   "latest_planner_change": "43069a7b11b8028b53f6eae0d6bdc53c13e8affd",
   "stages": [
@@ -446,6 +446,23 @@
         "docs/results/ht_continuous_geometry_10min_2026-10-18/REPORT.md"
       ],
       "control_commit": "43069a7b11b8028b53f6eae0d6bdc53c13e8affd"
+    },
+    {
+      "id": "stage-26",
+      "number": 26,
+      "sha": "22c2749f395af8bb5dc6705b1e92548acf69494e",
+      "tag": "ht-stage-20261018-postfilter-obstacles",
+      "title": "有限质量拒绝高度保留为硬障碍：里程增加但体积退步",
+      "kind": "实测候选",
+      "change": "统一源/融合后有限质量拒绝高度的硬障碍上下文；新增完整网络输入输出记录",
+      "features": "不再由有限拒绝高度制造全窗口未知，拒绝格仍八方向强制零",
+      "validation": "7项支撑+实际模型ROS集成通过；600秒116.15m、1258m³；58份上下文同源逐值一致、3份模型重放差0；128次晚拒绝均发零",
+      "known_issues": "最终95秒无路停车；比上轮体积下降35.8%，不能以里程增加宣称探索提升；图龄长尾和几何记录缺失仍待解决",
+      "evidence": [
+        "docs/results/ht_postfilter_obstacles_10min_2026-10-18/REPORT.md"
+      ],
+      "control_commit": "43069a7b11b8028b53f6eae0d6bdc53c13e8affd",
+      "ht_bridge_commit": "22c2749f395af8bb5dc6705b1e92548acf69494e"
     }
   ],
   "historical_commits": [
@@ -982,6 +999,6 @@
     }
   ],
   "latest_planner_code": "43069a7b11b8028b53f6eae0d6bdc53c13e8affd",
-  "latest_ht_bridge_code": "149566de09c48a528140b6ec950c08c5fa29539c",
-  "latest_verified_trial_code": "43069a7b11b8028b53f6eae0d6bdc53c13e8affd"
+  "latest_ht_bridge_code": "22c2749f395af8bb5dc6705b1e92548acf69494e",
+  "latest_verified_trial_code": "22c2749f395af8bb5dc6705b1e92548acf69494e"
 }

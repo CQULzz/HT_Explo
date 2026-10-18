@@ -1,0 +1,42 @@
+/**:
+  ros__parameters:
+    ht_enabled: true
+    ht_directions_calibrated: false
+    ht_topic: /ht_traversability/global_local
+    ht_min_probability: 0.5  # Every queried vehicle-reference score must meet this hard threshold.
+    ht_score_semantics: configuration  # Vehicle scores at their reference; physical obstacles have their own footprint.
+    ht_map_timeout: 1.0
+    ht_sample_step: 0.02
+    ht_lookahead_distance: 2.0
+    ht_waypoint_reached_distance: 0.3
+    ht_validity_radius: 0.6
+    # Experimental return-margin check; validate exploration tradeoffs in simulation.
+    ht_require_reversible_motion: false  # Experimental; not a validated trap-prevention guarantee.
+    ht_heading_offset: 0.0
+    ht_channel_order: [0, 1, 2, 3, 4, 5, 6, 7]
+    # Startup assumption is fixed at the mission's initial pose, never recentered.
+    ht_startup_radius: 1.2
+    ht_startup_duration: 30.0
+    ht_unknown_policy: strict  # Unknown is blocked except inside the bounded startup prior.
+    xytheta_cell: 0.3
+    xytheta_headings: 32  # Captured-map regression:16 misses an HT-feasible escape.
+    xytheta_turn_angles_deg: [11.25, 22.5]  # Keep both gentle and original tighter arcs.
+    xytheta_heading_margin: 0.0  # Experimental reserve disabled; original hard HT gate remains.
+    xytheta_drive_step: 0.4
+    xytheta_goal_radius: 0.35
+    xytheta_max_radius: 7.0
+    xytheta_search_seconds: 0.15
+    xytheta_cycle_search_seconds: 0.35
+    xytheta_max_expansions: 8000
+    # World-space guide progress survives the completion of local goals.
+    xytheta_guide_stall_seconds: 60.0
+    xytheta_guide_stationary_seconds: 12.0
+    xytheta_guide_cooldown_seconds: 180.0
+    ht_fallback_speed: 0.2
+    ht_fallback_lookahead: 0.5
+    ht_fallback_max_seconds: 60.0
+    ht_fallback_max_distance: 10.0
+    mission_normal_speed: 0.5
+    mission_sensor_timeout: 3.0
+    mission_home_radius: 0.5
+    mission_home_dwell: 1.0
