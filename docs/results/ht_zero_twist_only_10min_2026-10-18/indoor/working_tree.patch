@@ -1,0 +1,146 @@
+diff --git a/presentations/archive_ht_multiscene.py b/presentations/archive_ht_multiscene.py
+index b3a17ec..30f5e50 100644
+--- a/presentations/archive_ht_multiscene.py
++++ b/presentations/archive_ht_multiscene.py
+@@ -6,6 +6,7 @@ import hashlib
+ import json
+ from pathlib import Path
+ import shutil
++import subprocess
+ import cv2
+ 
+ import matplotlib
+@@ -15,7 +16,7 @@ from matplotlib.colors import ListedColormap,BoundaryNorm
+ from matplotlib.patches import Patch
+ import numpy as np
+ 
+-from run_ht_multiscene import SCENES,NAMES
++from run_ht_multiscene import SCENES,NAMES,save_report,overview
+ 
+ 
+ def read_json(path):return json.loads(path.read_text())
+@@ -74,8 +75,16 @@ def main():
+     ap.add_argument('--output',type=Path,required=True)
+     ap.add_argument('--scenarios',nargs='+',choices=SCENES,default=list(SCENES),
+                     help='Expected completed recordings; default requires all five scenes')
++    ap.add_argument('--completed-subset',action='store_true',
++                    help='Explicitly export only validated600s recordings from an interrupted suite')
+     args=ap.parse_args();job=args.job.resolve();out=args.output.resolve()
+-    state=read_json(job/'FINISHED.json')
++    state=read_json(job/('suite.json' if args.completed_subset else 'FINISHED.json'))
++    source_state=state['state']
++    if args.completed_subset:
++        state=dict(state,runs=[r for r in state['runs'] if r['scenario'] in args.scenarios],
++                   state='RECORDED_SUBSET',source_suite_state=source_state)
++        if any(r.get('state')!='RECORDED' or not all(r.get('checks',{}).values()) for r in state['runs']):
++            raise RuntimeError('Subset contains an unvalidated/partial trial')
+     if out.exists():raise RuntimeError('Refusing to overwrite '+str(out))
+     if len(set(args.scenarios))!=len(args.scenarios) or len(state['runs'])!=len(args.scenarios) or {r['scenario'] for r in state['runs']}!=set(args.scenarios):
+         raise RuntimeError('Missing/duplicate scene recordings: expected '+str(args.scenarios))
+@@ -86,8 +95,12 @@ def main():
+             raise RuntimeError('Video duration/decode validation failed')
+     temp=out.with_name(out.name+'.staging')
+     temp.mkdir(parents=True,exist_ok=False)
+-    for name in ('REPORT.md','suite.json','FINISHED.json','videos.m3u','overview.jpg'):
+-        shutil.copy2(job/name,temp/name)
++    if args.completed_subset:
++        (temp/'EXPORT.json').write_text(json.dumps(dict(source_suite=str(job),source_state=source_state,
++            selected=args.scenarios,note='Only these validated600s recordings are exported; the interrupted suite is not declared complete.'),ensure_ascii=False,indent=2)+'\n')
++    else:
++        for name in ('REPORT.md','suite.json','FINISHED.json','videos.m3u','overview.jpg'):
++            shutil.copy2(job/name,temp/name)
+     plt.rcParams.update({'font.family':'Noto Sans CJK JP','axes.unicode_minus':False})
+     summaries={};shared_hashes=None;audits={}
+     for row in state['runs']:
+@@ -113,11 +126,24 @@ def main():
+         for path,value in hashes.items():
+             source_path=Path(path)
+             if source_path.suffix not in ('.yaml','.yml','.sdf','.world'):continue
+-            if hashlib.sha256(source_path.read_bytes()).hexdigest()!=value:
+-                raise RuntimeError('Frozen input changed before export: '+path)
++            raw=source_path.read_bytes()
++            provenance='current audited file'
++            if hashlib.sha256(raw).hexdigest()!=value:
++                # Recover exact committed bytes after an experiment has ended.
++                # The manifest hash remains authoritative; never substitute a
++                # newer config or a similarly named neighbouring workspace.
++                root=Path(__file__).resolve().parents[1]
++                relative=source_path.relative_to(root)
++                if str(relative).startswith('install_standalone/tare_planner/share/tare_planner/'):
++                    relative=Path('src/tare_planner/config')/relative.name
++                hashes_head=read_json(src/'manifest.json')['git_head']+':'+str(relative)
++                raw=subprocess.check_output(['git','show',hashes_head],cwd=root)
++                if hashlib.sha256(raw).hexdigest()!=value:
++                    raise RuntimeError('Frozen input cannot be reconstructed by its recorded hash: '+path)
++                provenance='verified git object '+hashes_head
+             name=f'{len(config_index):02d}_'+source_path.name
+-            shutil.copy2(source_path,configs/name)
+-            config_index[name]=dict(source_path=path,sha256=value)
++            (configs/name).write_bytes(raw)
++            config_index[name]=dict(source_path=path,sha256=value,provenance=provenance)
+         (configs/'index.json').write_text(json.dumps(config_index,ensure_ascii=False,indent=2)+'\n')
+         if shared_hashes is None:shared_hashes=hashes.copy()
+         else:
+@@ -126,6 +152,11 @@ def main():
+         audits[scene]=read_json(src/'endurance_audit.json')
+         save_ht_snapshot(src,dst,scene,state['duration_s'])
+         if (src/'diagnostics').is_dir():shutil.copytree(src/'diagnostics',dst/'diagnostics')
++    if args.completed_subset:
++        # Videos must exist before generating links and the playlist.
++        save_report(temp,state);overview(temp,state)
++        with (temp/'REPORT.md').open('a') as report:
++            report.write('\n这是原中止批次中已完成600秒记录的子集，不代表原批次全部完成；详见EXPORT.json。\n')
+     # Verify the common control/recording files were identical across all runs;
+     # world files and scene-specific profiles are intentionally different.
+     first=read_json(job/state['runs'][0]['scenario']/'manifest.json')['source_hashes']
+diff --git a/presentations/audit_pose_admissibility_changes.py b/presentations/audit_pose_admissibility_changes.py
+index bdfca5e..3c34bcb 100644
+--- a/presentations/audit_pose_admissibility_changes.py
++++ b/presentations/audit_pose_admissibility_changes.py
+@@ -40,6 +40,10 @@ class Field:
+         status='BLOCKED' if self.blocked[k,r,c] else 'UNKNOWN' if self.unknown[r,c] or not self.valid[r,c] else 'KNOWN'
+         ii,jj=r+self.bi,c+self.bj;inside=(ii>=0)&(ii<self.n)&(jj>=0)&(jj<self.n)
+         result.update(status=status,min_body_p=float(np.nanmin(self.p[k,ii[inside],jj[inside]])))
++        reverse_status='BLOCKED' if self.blocked[(k+4)%8,r,c] else 'UNKNOWN' if self.unknown[r,c] or not self.valid[r,c] else 'KNOWN'
++        result.update(reverse_status=reverse_status,reversible_pose=status=='KNOWN' and reverse_status=='KNOWN',
++                      reversible_heading_pairs=int(sum(not self.blocked[d,r,c] and not self.blocked[d+4,r,c] for d in range(4)))
++                      if self.valid[r,c] and not self.unknown[r,c] else 0)
+         return result
+ 
+ 
+@@ -54,7 +58,7 @@ def main():
+     reader.open(rosbag2_py.StorageOptions(uri=str(args.bag_file or args.trial/'evidence_bag'),storage_id='mcap'),
+                 rosbag2_py.ConverterOptions('',''))
+     reader.set_filter(rosbag2_py.StorageFilter(topics=['/ht_traversability/global_local','/state_estimation','/cmd_vel','/ht_follower_status']))
+-    field=None;pose=None;last_cmd=None;changes=[];statuses=[];last_status=None;map_count=0
++    field=None;pose=None;last_cmd=None;changes=[];return_changes=[];statuses=[];last_status=None;map_count=0
+     while reader.has_next():
+         topic,data,ns=reader.read_next();time_s=ns/1e9-origin
+         if time_s>=600:break
+@@ -64,6 +68,8 @@ def main():
+                 a,b=field.inspect(pose),new.inspect(pose)
+                 if a['status']=='KNOWN' and b['status']=='BLOCKED':
+                     changes.append(dict(time_s=time_s,cause='map_update_at_same_pose',pose=pose,before=a,after=b,last_cmd=last_cmd))
++                if a.get('reversible_pose') and not b.get('reversible_pose'):
++                    return_changes.append(dict(time_s=time_s,cause='map_update_at_same_pose',pose=pose,before=a,after=b,last_cmd=last_cmd))
+             field=new
+         elif topic=='/state_estimation':
+             m=deserialize_message(data,Odometry);p=m.pose.pose.position;q=m.pose.pose.orientation
+@@ -80,6 +86,8 @@ def main():
+                             ht_ht_observation_valid=field.physical.astype(np.float32),
+                             ht_geometry=[field.cx,field.cy,field.res],ht_stamp=field.stamp,
+                             robot=pose,crossed_pose=new,transition_time_s=time_s)
++                if a.get('reversible_pose') and not b.get('reversible_pose'):
++                    return_changes.append(dict(time_s=time_s,cause='pose_update_on_same_map',before_pose=pose,pose=new,before=a,after=b,last_cmd=last_cmd))
+             pose=new
+         elif topic=='/cmd_vel':
+             m=deserialize_message(data,TwistStamped)
+@@ -97,7 +105,7 @@ def main():
+                 statuses.append(dict(time_s=time_s,status=s,pose=pose,field=field.inspect(pose) if field is not None and pose is not None else None))
+             last_status=s
+     result=dict(source=str(args.trial.resolve()),bag_file=str(args.bag_file) if args.bag_file else None,
+-        ht_map_messages=map_count,known_to_blocked_changes=changes,follower_status_changes=statuses,
++        ht_map_messages=map_count,known_to_blocked_changes=changes,return_margin_losses=return_changes,follower_status_changes=statuses,
+         caveat='Uses bag reception ordering, not the exact subscriber callback ordering. Raw pose admissibility excludes map freshness/startup prior; reported snapshot rules are the deployed0.5/0.6m/map-frame identity-channel settings. Pose changes and field changes are separated on identical inputs to that comparison.')
+     args.output.parent.mkdir(parents=True,exist_ok=True)
+     args.output.write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n')

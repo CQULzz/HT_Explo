@@ -1,0 +1,31 @@
+Running main() from /opt/ros/jazzy/src/gtest_vendor/src/gtest_main.cc
+Note: Google Test filter = FollowerTest.RejectedTrackingArcPublishesZeroRatherThanTheCandidateCommand
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from FollowerTest
+[WARN] [1792260687.506287772] [rcl]: ROS_LOCALHOST_ONLY is deprecated but still honored if it is enabled. Use ROS_AUTOMATIC_DISCOVERY_RANGE and ROS_STATIC_PEERS instead.
+[WARN] [1792260687.506302360] [rcl]: 'localhost_only' is enabled, 'automatic_discovery_range' and 'static_peers' will be ignored.
+[ RUN      ] FollowerTest.RejectedTrackingArcPublishesZeroRatherThanTheCandidateCommand
+[INFO] [1792260687.520869305] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=1
+/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/tests/xytheta_follower_test.cpp:105: Failure
+Value of: zero
+  Actual: false
+Expected: true
+No zero command at HT rejection time 1792260688.5500023
+
+/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/tests/xytheta_follower_test.cpp:105: Failure
+Value of: zero
+  Actual: false
+Expected: true
+No zero command at HT rejection time 1792260689.0951493
+
+[  FAILED  ] FollowerTest.RejectedTrackingArcPublishesZeroRatherThanTheCandidateCommand (2241 ms)
+[----------] 1 test from FollowerTest (2241 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (2248 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] FollowerTest.RejectedTrackingArcPublishesZeroRatherThanTheCandidateCommand
+
+ 1 FAILED TEST

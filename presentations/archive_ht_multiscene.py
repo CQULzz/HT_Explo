@@ -6,6 +6,7 @@ import hashlib
 import json
 from pathlib import Path
 import shutil
+import subprocess
 import cv2
 
 import matplotlib
@@ -15,7 +16,7 @@ from matplotlib.colors import ListedColormap,BoundaryNorm
 from matplotlib.patches import Patch
 import numpy as np
 
-from run_ht_multiscene import SCENES,NAMES
+from run_ht_multiscene import SCENES,NAMES,save_report,overview
 
 
 def read_json(path):return json.loads(path.read_text())
@@ -74,8 +75,16 @@ def main():
     ap.add_argument('--output',type=Path,required=True)
     ap.add_argument('--scenarios',nargs='+',choices=SCENES,default=list(SCENES),
                     help='Expected completed recordings; default requires all five scenes')
+    ap.add_argument('--completed-subset',action='store_true',
+                    help='Explicitly export only validated600s recordings from an interrupted suite')
     args=ap.parse_args();job=args.job.resolve();out=args.output.resolve()
-    state=read_json(job/'FINISHED.json')
+    state=read_json(job/('suite.json' if args.completed_subset else 'FINISHED.json'))
+    source_state=state['state']
+    if args.completed_subset:
+        state=dict(state,runs=[r for r in state['runs'] if r['scenario'] in args.scenarios],
+                   state='RECORDED_SUBSET',source_suite_state=source_state)
+        if any(r.get('state')!='RECORDED' or not all(r.get('checks',{}).values()) for r in state['runs']):
+            raise RuntimeError('Subset contains an unvalidated/partial trial')
     if out.exists():raise RuntimeError('Refusing to overwrite '+str(out))
     if len(set(args.scenarios))!=len(args.scenarios) or len(state['runs'])!=len(args.scenarios) or {r['scenario'] for r in state['runs']}!=set(args.scenarios):
         raise RuntimeError('Missing/duplicate scene recordings: expected '+str(args.scenarios))
@@ -86,8 +95,12 @@ def main():
             raise RuntimeError('Video duration/decode validation failed')
     temp=out.with_name(out.name+'.staging')
     temp.mkdir(parents=True,exist_ok=False)
-    for name in ('REPORT.md','suite.json','FINISHED.json','videos.m3u','overview.jpg'):
-        shutil.copy2(job/name,temp/name)
+    if args.completed_subset:
+        (temp/'EXPORT.json').write_text(json.dumps(dict(source_suite=str(job),source_state=source_state,
+            selected=args.scenarios,note='Only these validated600s recordings are exported; the interrupted suite is not declared complete.'),ensure_ascii=False,indent=2)+'\n')
+    else:
+        for name in ('REPORT.md','suite.json','FINISHED.json','videos.m3u','overview.jpg'):
+            shutil.copy2(job/name,temp/name)
     plt.rcParams.update({'font.family':'Noto Sans CJK JP','axes.unicode_minus':False})
     summaries={};shared_hashes=None;audits={}
     for row in state['runs']:
@@ -113,11 +126,24 @@ def main():
         for path,value in hashes.items():
             source_path=Path(path)
             if source_path.suffix not in ('.yaml','.yml','.sdf','.world'):continue
-            if hashlib.sha256(source_path.read_bytes()).hexdigest()!=value:
-                raise RuntimeError('Frozen input changed before export: '+path)
+            raw=source_path.read_bytes()
+            provenance='current audited file'
+            if hashlib.sha256(raw).hexdigest()!=value:
+                # Recover exact committed bytes after an experiment has ended.
+                # The manifest hash remains authoritative; never substitute a
+                # newer config or a similarly named neighbouring workspace.
+                root=Path(__file__).resolve().parents[1]
+                relative=source_path.relative_to(root)
+                if str(relative).startswith('install_standalone/tare_planner/share/tare_planner/'):
+                    relative=Path('src/tare_planner/config')/relative.name
+                hashes_head=read_json(src/'manifest.json')['git_head']+':'+str(relative)
+                raw=subprocess.check_output(['git','show',hashes_head],cwd=root)
+                if hashlib.sha256(raw).hexdigest()!=value:
+                    raise RuntimeError('Frozen input cannot be reconstructed by its recorded hash: '+path)
+                provenance='verified git object '+hashes_head
             name=f'{len(config_index):02d}_'+source_path.name
-            shutil.copy2(source_path,configs/name)
-            config_index[name]=dict(source_path=path,sha256=value)
+            (configs/name).write_bytes(raw)
+            config_index[name]=dict(source_path=path,sha256=value,provenance=provenance)
         (configs/'index.json').write_text(json.dumps(config_index,ensure_ascii=False,indent=2)+'\n')
         if shared_hashes is None:shared_hashes=hashes.copy()
         else:
@@ -126,6 +152,11 @@ def main():
         audits[scene]=read_json(src/'endurance_audit.json')
         save_ht_snapshot(src,dst,scene,state['duration_s'])
         if (src/'diagnostics').is_dir():shutil.copytree(src/'diagnostics',dst/'diagnostics')
+    if args.completed_subset:
+        # Videos must exist before generating links and the playlist.
+        save_report(temp,state);overview(temp,state)
+        with (temp/'REPORT.md').open('a') as report:
+            report.write('\n这是原中止批次中已完成600秒记录的子集，不代表原批次全部完成；详见EXPORT.json。\n')
     # Verify the common control/recording files were identical across all runs;
     # world files and scene-specific profiles are intentionally different.
     first=read_json(job/state['runs'][0]['scenario']/'manifest.json')['source_hashes']

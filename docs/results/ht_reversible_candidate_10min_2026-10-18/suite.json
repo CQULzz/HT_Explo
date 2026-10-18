@@ -1,0 +1,44 @@
+{
+  "started_at": "2026-10-18T01:26:31.468645+08:00",
+  "duration_s": 600,
+  "git_head": "fde37365232f8af219488cafd7d1d6e9f6bf73d8",
+  "job": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_reversible_motion_10min_2026-10-18_01-26-31",
+  "state": "RECORDED_SUBSET",
+  "runs": [
+    {
+      "scenario": "indoor",
+      "state": "RECORDED",
+      "runner_pid": 1323146,
+      "watcher_pid": 1323147,
+      "elapsed_measurement_s": 600,
+      "checks": {
+        "timer_completed": true,
+        "measured_duration_matches": true,
+        "source_hashes_unchanged": true,
+        "enough_samples": true,
+        "no_runtime_parent_failure": true,
+        "no_live_descendants": true,
+        "no_forced_shutdown": true,
+        "video_full_decode_passed": true,
+        "video_duration_matches": true,
+        "video_fps_matches": true,
+        "analysis_passed": true,
+        "no_child_or_cleanup_exception": true,
+        "blas_workers_bounded": true
+      },
+      "video_ok": true,
+      "metrics": {
+        "distance_m": 20.66,
+        "visited_1m_xy_cells": 17,
+        "observed_free_volume_m3": 702.375,
+        "mission": "BLOCKED",
+        "map_age_p95_s": 1.9881150364875766,
+        "map_age_max_s": 3.308176279067993
+      },
+      "finished_at": "2026-10-18T01:37:41.080717+08:00"
+    }
+  ],
+  "updated_at": "2026-10-18T01:40:17.137543+08:00",
+  "stop_reason": "Indoor completed600s but candidate failed; partial tunnel interrupted for evidence-based revision",
+  "source_suite_state": "DIAGNOSTIC_STOPPED"
+}

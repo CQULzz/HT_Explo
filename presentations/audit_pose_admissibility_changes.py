@@ -40,6 +40,10 @@ class Field:
         status='BLOCKED' if self.blocked[k,r,c] else 'UNKNOWN' if self.unknown[r,c] or not self.valid[r,c] else 'KNOWN'
         ii,jj=r+self.bi,c+self.bj;inside=(ii>=0)&(ii<self.n)&(jj>=0)&(jj<self.n)
         result.update(status=status,min_body_p=float(np.nanmin(self.p[k,ii[inside],jj[inside]])))
+        reverse_status='BLOCKED' if self.blocked[(k+4)%8,r,c] else 'UNKNOWN' if self.unknown[r,c] or not self.valid[r,c] else 'KNOWN'
+        result.update(reverse_status=reverse_status,reversible_pose=status=='KNOWN' and reverse_status=='KNOWN',
+                      reversible_heading_pairs=int(sum(not self.blocked[d,r,c] and not self.blocked[d+4,r,c] for d in range(4)))
+                      if self.valid[r,c] and not self.unknown[r,c] else 0)
         return result
 
 
@@ -48,13 +52,14 @@ def main():
     ap.add_argument('trial',type=Path);ap.add_argument('--bag-file',type=Path)
     ap.add_argument('--output',type=Path,required=True)
     ap.add_argument('--capture-transition',type=Path,help='Save the first same-map heading-bin crossing as a regression fixture')
+    ap.add_argument('--capture-map-update',type=Path,help='Save both fields at the first same-world-pose admission change')
     args=ap.parse_args();cv2.setNumThreads(1)
     origin=json.loads((args.trial/'current/measurement_started.json').read_text())['wall_time']
     reader=rosbag2_py.SequentialReader()
     reader.open(rosbag2_py.StorageOptions(uri=str(args.bag_file or args.trial/'evidence_bag'),storage_id='mcap'),
                 rosbag2_py.ConverterOptions('',''))
     reader.set_filter(rosbag2_py.StorageFilter(topics=['/ht_traversability/global_local','/state_estimation','/cmd_vel','/ht_follower_status']))
-    field=None;pose=None;last_cmd=None;changes=[];statuses=[];last_status=None;map_count=0
+    field=None;pose=None;last_cmd=None;changes=[];return_changes=[];statuses=[];last_status=None;map_count=0
     while reader.has_next():
         topic,data,ns=reader.read_next();time_s=ns/1e9-origin
         if time_s>=600:break
@@ -64,6 +69,17 @@ def main():
                 a,b=field.inspect(pose),new.inspect(pose)
                 if a['status']=='KNOWN' and b['status']=='BLOCKED':
                     changes.append(dict(time_s=time_s,cause='map_update_at_same_pose',pose=pose,before=a,after=b,last_cmd=last_cmd))
+                    if args.capture_map_update and not args.capture_map_update.exists():
+                        args.capture_map_update.mkdir(parents=True)
+                        for label,f in [('before',field),('after',new)]:
+                            np.savez_compressed(args.capture_map_update/(label+'.npz'),
+                                **{f'ht_ht_dir_{k}':f.p[k] for k in range(8)},
+                                ht_ht_valid=f.valid.astype(np.float32),
+                                ht_ht_observation_valid=f.physical.astype(np.float32),
+                                ht_geometry=[f.cx,f.cy,f.res],ht_stamp=f.stamp,robot=pose)
+                        (args.capture_map_update/'transition.json').write_text(json.dumps(changes[-1],indent=2)+'\n')
+                if a.get('reversible_pose') and not b.get('reversible_pose'):
+                    return_changes.append(dict(time_s=time_s,cause='map_update_at_same_pose',pose=pose,before=a,after=b,last_cmd=last_cmd))
             field=new
         elif topic=='/state_estimation':
             m=deserialize_message(data,Odometry);p=m.pose.pose.position;q=m.pose.pose.orientation
@@ -80,6 +96,8 @@ def main():
                             ht_ht_observation_valid=field.physical.astype(np.float32),
                             ht_geometry=[field.cx,field.cy,field.res],ht_stamp=field.stamp,
                             robot=pose,crossed_pose=new,transition_time_s=time_s)
+                if a.get('reversible_pose') and not b.get('reversible_pose'):
+                    return_changes.append(dict(time_s=time_s,cause='pose_update_on_same_map',before_pose=pose,pose=new,before=a,after=b,last_cmd=last_cmd))
             pose=new
         elif topic=='/cmd_vel':
             m=deserialize_message(data,TwistStamped)
@@ -97,7 +115,7 @@ def main():
                 statuses.append(dict(time_s=time_s,status=s,pose=pose,field=field.inspect(pose) if field is not None and pose is not None else None))
             last_status=s
     result=dict(source=str(args.trial.resolve()),bag_file=str(args.bag_file) if args.bag_file else None,
-        ht_map_messages=map_count,known_to_blocked_changes=changes,follower_status_changes=statuses,
+        ht_map_messages=map_count,known_to_blocked_changes=changes,return_margin_losses=return_changes,follower_status_changes=statuses,
         caveat='Uses bag reception ordering, not the exact subscriber callback ordering. Raw pose admissibility excludes map freshness/startup prior; reported snapshot rules are the deployed0.5/0.6m/map-frame identity-channel settings. Pose changes and field changes are separated on identical inputs to that comparison.')
     args.output.parent.mkdir(parents=True,exist_ok=True)
     args.output.write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n')

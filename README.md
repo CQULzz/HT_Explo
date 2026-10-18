@@ -2,7 +2,11 @@
 
 **[版本总览：每版改动、功能、验证和问题](VERSIONS.md)** · [阶段标签](https://github.com/CQULzz/HT_Explo/tags) · [发布说明](https://github.com/CQULzz/HT_Explo/releases)
 
-当前是实验原型，已实现HT硬约束XYθ规划、历史高程融合与独立跟踪。**五环境各10分钟已完成，车库/校园/森林持续推进，室内原参数及隧道返航受阻。** [六段15fps视频、曲线和问题报告](docs/results/ht_multiscene_10min_2026-10-17/REPORT.md)。
+当前是实验原型，已实现HT硬约束XYθ规划、历史高程融合与独立跟踪，闭环仍有停滞。**最新核查修正了“HT拦截后仍发送非零候选速度”的执行错误，并用真实冻结地图验证32航向能找出16航向漏掉的HT路线；不等于所有停滞已解决。** [原因、反例与回归证据](docs/results/ht_completion_cause_audit_2026-10-18/REPORT.md) · [通俗修复说明](docs/fixes/2026-10-18_late_hold_zero_twist.md)。
+
+最新室内/隧道各600秒：室内6.64m、432.875m³仍BLOCKED；隧道79.00m、621.375m³，约230.53秒返航完成。[两段视频、曲线与HT图](docs/results/ht_zero_twist_fine_heading_10min_2026-10-18/REPORT.md)。
+
+历史五环境各10分钟记录中，车库/校园/森林持续推进，室内原参数及隧道返航受阻；它们不是当前代码重新通过五环境的证明。[历史六段15fps视频、曲线和问题报告](docs/results/ht_multiscene_10min_2026-10-17/REPORT.md)。
 
 室内视点细化为0.3m、100×100，保持30×30m范围与HT硬门槛。另测10分钟，里程3.11→145.28m、近似观测348→1900m³，但最长仍停约40秒，低收益回访和隧道返航问题未解决。[修改前后对比](docs/results/ht_indoor_sampling_comparison_2026-10-17/REPORT.md)。
 

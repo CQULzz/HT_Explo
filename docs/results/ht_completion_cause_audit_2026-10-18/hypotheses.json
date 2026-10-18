@@ -1,0 +1,58 @@
+[
+  {
+    "hypothesis": "The 41.8% final volume difference is wholly caused by early return",
+    "status": "rejected_as_sole_explanation",
+    "evidence": "Volume already differs at 60s:936.754 vs480.193m3, before the215s return trigger; trajectories diverged.",
+    "limit": "Late stop still contributes to the observed gap; its counterfactual contribution is unknown."
+  },
+  {
+    "hypothesis": "The5.01s worst HT age caused the215s return decision",
+    "status": "rejected_by_time_order",
+    "evidence": "Peak at400.240s, mission alreadyCOMPLETED; return trigger215.002s."
+  },
+  {
+    "hypothesis": "The volume decline is just a shorter recording or missing ray bins",
+    "status": "not_supported_by_archived_metric_inputs",
+    "evidence": "Both600s,600 processed volume scans,0 skipped; same voxel/ray settings and sensor-frame pose policy.",
+    "limit": "This is not proof that no full-rate source frame was lost."
+  },
+  {
+    "hypothesis": "Any global_return flag means all global exploration is exhausted",
+    "status": "rejected_by_live_evidence",
+    "evidence": "Global tour delegates local EXPLORING cells and can setglobal_return=1 while local tasks remain. It is a hint combined with local completion."
+  },
+  {
+    "hypothesis": "Virtual TARE coverage hides a valuable HT goal at completion",
+    "status": "not_reproduced_in_one600s_diagnostic",
+    "evidence": "545 logged planning rows; no local_complete=1, no completion trigger. The run instead blocks near(6.333,13.093)."
+  },
+  {
+    "hypothesis": "The new stop is caused by missing physical support or forced-zero bad returns under the car",
+    "status": "rejected_for_captured_stop",
+    "evidence": "At(6.333,13.093),valid context,0unknown footprintcells,0forced-zero footprintcells. HTchannel0allows the pose; other channels contain low-probability footprintcells."
+  },
+  {
+    "hypothesis": "The search resolution misses an HT-feasible escape route",
+    "status": "not_supported_for_this_captured_stop",
+    "evidence": "54 production/finer-resolution searches using6profiles and9goals on identical HT probabilities all fail. Search components exhaust8to120states in milliseconds, below0.7s budget.",
+    "limit": "A sampled search audit is not a proof about every continuous-state motion."
+  },
+  {
+    "hypothesis": "Missing local retraceability admission allows a directional sink risk",
+    "status": "optional_conservative_policy_not_established_root_cause",
+    "evidence": "motionSupport checks the actual travel direction, body heading and swept support, but never the opposite travel direction for retracing. At the stopped pose channel0 is allowed and opposite channel4 contains278 low-probability footprintcells; no under-body unknown or forced-zero cells.",
+    "limit": "Ten-second saved HT snapshots do not establish whether the reverse corridor became unsafe only after newer observations. A local retrace check cannot guarantee safety under future map changes or global return-home reachability. Reversible-only and combined candidates still fail. An additional actual control-message bug was subsequently identified; do not infer the missing conservative admission rule independently caused these stops."
+  },
+  {
+    "hypothesis": "Late HT command rejection actually publishes a zero Twist",
+    "status": "false_in_original_fixed_and_regression_verified",
+    "evidence": "hold() reset internal linear_/angular_ but published the already populated candidate message.146 nonzero late-hold pairs in the combined600s indoor bag. Targeted ROS follower regression fails before the one-line message reset and passes afterward.",
+    "limit": "Explains rejected-command leakage and the observed boundary-crossing sequence; does not establish every historical no-route or215s return has this cause."
+  },
+  {
+    "hypothesis": "All600 recorded endurance scans contribute to the volume metric",
+    "status": "false_in_original_fixed_offline",
+    "evidence": "Combined indoor has600 unique absolute source seconds but576 origin-relative bins. Same-bag correction processes600 scans with0skips;1217.25→1218.25m3.",
+    "limit": "Evaluation selection only. Does not cause vehicle stoppage; the old dense/recovery pair each already had600 bins and is not explained by this bug."
+  }
+]

@@ -1,0 +1,44 @@
+{
+  "started_at": "2026-10-18T01:52:52.313589+08:00",
+  "duration_s": 600,
+  "git_head": "77cd87cef62bccc35949deef40dd2c156ef3d112",
+  "job": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_combined_admission_10min_2026-10-18_01-52-52",
+  "state": "RECORDED_SUBSET",
+  "runs": [
+    {
+      "scenario": "indoor",
+      "state": "RECORDED",
+      "runner_pid": 1407119,
+      "watcher_pid": 1407120,
+      "elapsed_measurement_s": 600,
+      "checks": {
+        "timer_completed": true,
+        "measured_duration_matches": true,
+        "source_hashes_unchanged": true,
+        "enough_samples": true,
+        "no_runtime_parent_failure": true,
+        "no_live_descendants": true,
+        "no_forced_shutdown": true,
+        "video_full_decode_passed": true,
+        "video_duration_matches": true,
+        "video_fps_matches": true,
+        "analysis_passed": true,
+        "no_child_or_cleanup_exception": true,
+        "blas_workers_bounded": true
+      },
+      "video_ok": true,
+      "metrics": {
+        "distance_m": 67.69,
+        "visited_1m_xy_cells": 38,
+        "observed_free_volume_m3": 1217.25,
+        "mission": "BLOCKED",
+        "map_age_p95_s": 1.965937709808349,
+        "map_age_max_s": 2.7267467975616455
+      },
+      "finished_at": "2026-10-18T02:04:10.940817+08:00"
+    }
+  ],
+  "updated_at": "2026-10-18T02:09:59.101505+08:00",
+  "stop_reason": "Confirmed late HT rejection publishes nonzero candidate Twist. Preserve completed600s indoor; tunnel interrupted after314.5s, not a600s trial. Stop before correcting controller and re-testing.",
+  "source_suite_state": "DIAGNOSTIC_STOPPED"
+}

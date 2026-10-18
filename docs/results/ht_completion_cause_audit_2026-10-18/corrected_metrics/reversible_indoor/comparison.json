@@ -1,0 +1,72 @@
+{
+  "source": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_reversible_motion_10min_2026-10-18_01-26-31/indoor",
+  "original": {
+    "observed_free_volume_m3": 702.375,
+    "processed_volume_scans": 596,
+    "skipped_volume_scans": 0,
+    "recorded_scans_in_source_time_window": 600,
+    "sensor_position_source": "nearest sensor-frame state_estimation (common to both systems)",
+    "pose_time_offset_max_s": 2.384185791015625e-07,
+    "command_samples": 12000,
+    "fully_stopped_fraction": 0.882,
+    "stationary_turn_fraction": 0.0245,
+    "reverse_command_fraction": 0.004083333333333333,
+    "max_abs_linear_command_mps": 0.5,
+    "max_abs_yaw_command_rps": 0.8,
+    "longest_zero_command_s": 515.7285447120667,
+    "follower_status_samples": {
+      "DRIVING": 1106,
+      "HT_PATH_BLOCKED": 9,
+      "HT_COMMAND_BLOCKED": 16,
+      "HT_MAP_STALE": 12,
+      "PLANNER_HOLD": 10373,
+      "TURNING": 294,
+      "GOAL_REACHED": 101,
+      "EMPTY_PATH": 16,
+      "ALIGNING": 43,
+      "HT_CURRENT_POSE_BLOCKED": 30
+    },
+    "longest_no_translation_command_s": 515.7285447120667,
+    "last_translation_s": 84.503,
+    "distance_last60_m": 0.0
+  },
+  "recomputed": {
+    "scan_selection": "source_second",
+    "observed_free_volume_m3": 702.375,
+    "processed_volume_scans": 600,
+    "skipped_volume_scans": 0,
+    "recorded_scans_in_source_time_window": 600,
+    "sensor_position_source": "nearest sensor-frame state_estimation (common to both systems)",
+    "pose_time_offset_max_s": 2.384185791015625e-07,
+    "command_samples": 12000,
+    "fully_stopped_fraction": 0.882,
+    "stationary_turn_fraction": 0.0245,
+    "reverse_command_fraction": 0.004083333333333333,
+    "max_abs_linear_command_mps": 0.5,
+    "max_abs_yaw_command_rps": 0.8,
+    "longest_zero_command_s": 515.7285447120667,
+    "follower_status_samples": {
+      "DRIVING": 1106,
+      "HT_PATH_BLOCKED": 9,
+      "HT_COMMAND_BLOCKED": 16,
+      "HT_MAP_STALE": 12,
+      "PLANNER_HOLD": 10373,
+      "TURNING": 294,
+      "GOAL_REACHED": 101,
+      "EMPTY_PATH": 16,
+      "ALIGNING": 43,
+      "HT_CURRENT_POSE_BLOCKED": 30
+    },
+    "longest_no_translation_command_s": 515.7285447120667,
+    "last_translation_s": 84.503,
+    "distance_last60_m": 0.0
+  },
+  "evaluator_sha256": "679203aab69b3a4ec1b21718f2b7b9dfa9d0fa8f6c7f1b93231c4b0f74ca68f0",
+  "input_sha256": {
+    "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_reversible_motion_10min_2026-10-18_01-26-31/indoor/evidence_bag/metadata.yaml": "31f2eea229fc96732f9455e5c57fa52145dbdcbea429c5e6cec5f4bad17c18f9",
+    "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_reversible_motion_10min_2026-10-18_01-26-31/indoor/current/measurement_started.json": "2eda750a2fcb1bce4bc9994258ba6d4ac40b1207b610af177e011fca979e2314",
+    "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_reversible_motion_10min_2026-10-18_01-26-31/indoor/current/timeseries.csv": "e2c67f49a04c1efaba5ff9ac0ad993529f7f0f55df11c06b794d686e0c738fcd"
+  },
+  "selection": "Keep first recorded scan in each absolute source second inside the measurement window; do not downsample again in origin-relative seconds.",
+  "scope": "Offline evaluation only. Original simulation outputs and reports are unchanged."
+}

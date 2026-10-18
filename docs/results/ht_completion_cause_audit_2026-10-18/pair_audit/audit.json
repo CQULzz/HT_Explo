@@ -1,0 +1,63 @@
+{
+  "cases": {
+    "before": {
+      "source": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_indoor_dense_10min_2026-10-17_12-38-24/indoor",
+      "volume_at_s": {
+        "60": 936.753860256952,
+        "120": 1185.25,
+        "180": 1218.1581920594144,
+        "215": 1221.4572339120832,
+        "328.43": 1314.375,
+        "600": 1900.25
+      },
+      "map_age_peak": {
+        "time_s": 405.68871307373047,
+        "age_s": 4.671635389328003,
+        "mission": "BLOCKED"
+      },
+      "processed_volume_scans": 600,
+      "skipped_volume_scans": 0,
+      "pose_time_offset_max_s": 2.384185791015625e-07,
+      "raw_scan_count": 2988,
+      "first_exploration_finished_s": null
+    },
+    "after": {
+      "source": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_recovery_verified_10min_2026-10-17_14-55-26/indoor",
+      "volume_at_s": {
+        "60": 480.19340853518395,
+        "120": 746.940842791016,
+        "180": 1037.5823949669889,
+        "215": 1089.1434018953858,
+        "328.43": 1106.75,
+        "600": 1106.75
+      },
+      "map_age_peak": {
+        "time_s": 400.2401478290558,
+        "age_s": 5.009129285812378,
+        "mission": "COMPLETED"
+      },
+      "processed_volume_scans": 600,
+      "skipped_volume_scans": 0,
+      "pose_time_offset_max_s": 2.384185791015625e-07,
+      "raw_scan_count": 2992,
+      "first_exploration_finished_s": 215.002
+    }
+  },
+  "accounting": {
+    "final_gap_m3": 793.5,
+    "gap_already_at215_m3": 132.31383201669746,
+    "change_in_gap_after215_m3": 661.1861679833025,
+    "caveat": "Algebraic decomposition of observed runs, not the counterfactual gain of forcing longer exploration."
+  },
+  "source_sha256": {
+    "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_indoor_dense_10min_2026-10-17_12-38-24/indoor/current/measurement_started.json": "3fcf1bddbf423e91743547906c49e0d8d9f7fbf2e1212a683285def190b23b0f",
+    "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_indoor_dense_10min_2026-10-17_12-38-24/indoor/current/observation_volume.csv": "075f8d1ebed69b779d09861c5cf7573ffbac7f6d5bd202a0311b31327df4ee0e",
+    "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_indoor_dense_10min_2026-10-17_12-38-24/indoor/health.csv": "280099fe0bad1ea006313c8114f6c10ae62d22e17212d9af0581234b28f071b0",
+    "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_indoor_dense_10min_2026-10-17_12-38-24/indoor/endurance_audit.json": "08c0846ef8f155029b78d95e87e4b756486d20c78db1917de2c74863c97f521d",
+    "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_recovery_verified_10min_2026-10-17_14-55-26/indoor/current/measurement_started.json": "0b2fd5983e60107f107d2401d9dba016cb27a215e0584e192ffddb2a90bc6139",
+    "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_recovery_verified_10min_2026-10-17_14-55-26/indoor/current/observation_volume.csv": "0d5996bbb1f71fa2c9edd9075a3116a1dc4a529825ed387bc12cdb8447e9011b",
+    "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_recovery_verified_10min_2026-10-17_14-55-26/indoor/health.csv": "49dc368b88c7e9f91f50706a1a5f99d8146be7f8f4dd49742c69a41eb2ef44cd",
+    "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_recovery_verified_10min_2026-10-17_14-55-26/indoor/endurance_audit.json": "4357615ac0f2d43c6b9e72f5e737dd816c14cadcd78ab87340d0b96a485d95d4"
+  },
+  "conclusion": "One stochastic run per version, divergent trajectories, bundled modifications: no single cause of the 41.8% final difference can be identified from this pair. Inspect actual completion evidence before changing policy."
+}

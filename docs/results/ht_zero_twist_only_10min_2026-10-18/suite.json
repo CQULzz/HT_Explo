@@ -1,0 +1,44 @@
+{
+  "started_at": "2026-10-18T02:15:16.014192+08:00",
+  "duration_s": 600,
+  "git_head": "37f0d42f75220a7098baf2167da61bf38e47fa59",
+  "job": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_zero_twist_verified_10min_2026-10-18_02-15-15",
+  "state": "RECORDED_SUBSET",
+  "runs": [
+    {
+      "scenario": "indoor",
+      "state": "RECORDED",
+      "runner_pid": 1411996,
+      "watcher_pid": 1411997,
+      "elapsed_measurement_s": 600,
+      "checks": {
+        "timer_completed": true,
+        "measured_duration_matches": true,
+        "source_hashes_unchanged": true,
+        "enough_samples": true,
+        "no_runtime_parent_failure": true,
+        "no_live_descendants": true,
+        "no_forced_shutdown": true,
+        "video_full_decode_passed": true,
+        "video_duration_matches": true,
+        "video_fps_matches": true,
+        "analysis_passed": true,
+        "no_child_or_cleanup_exception": true,
+        "blas_workers_bounded": true
+      },
+      "video_ok": true,
+      "metrics": {
+        "distance_m": 40.34,
+        "visited_1m_xy_cells": 36,
+        "observed_free_volume_m3": 1000.125,
+        "mission": "BLOCKED",
+        "map_age_p95_s": 1.775969302654266,
+        "map_age_max_s": 3.5070037841796875
+      },
+      "finished_at": "2026-10-18T02:26:25.614495+08:00"
+    }
+  ],
+  "updated_at": "2026-10-18T02:26:25.617035+08:00",
+  "stop_reason": "Completed600s zero-command-only indoor still blocks without command leakage. Same-input C++ audit finds HT-feasible2m escapes at32 headings but not16; stop remaining batch to isolate finer heading search, not retrace admission. Any incomplete tunnel is not counted as600s.",
+  "source_suite_state": "DIAGNOSTIC_STOPPED"
+}
