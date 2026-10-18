@@ -1,0 +1,59 @@
+{
+  "tested_git_head": "b6010156cc26431cc23bac33ac543982f7d5e4c1",
+  "raw_run": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_cell_audit_10min_2026-10-18_17-51-00",
+  "recording_scope": "All control/status and odometry, full-rate published HT maps and TARE collision geometry; original-stamped scans1Hz; exact-stamp map triplets and network inputs/outputs every10s; camera15fps. Raw CuPy and scans are not fully bagged.",
+  "last_motion_s": 513.003,
+  "mission": {
+    "first_exploration_finished_sample_s": 453.505,
+    "sampled_mission_counts": {
+      "EXPLORING": 360,
+      "BLOCKED": 93,
+      "RETURNING_HOME": 64,
+      "COMPLETED": 83
+    },
+    "first_completed_sample_s": 517.2439153194427,
+    "last_sampled_mission": "COMPLETED",
+    "last_sampled_execution_status": "HT_MAP_STALE",
+    "final_distance_to_measurement_start_m": 0.2932064119353463,
+    "meaning": "Exploration finished is a return-home trigger. Only mission COMPLETED confirms the home radius, low-speed and dwell checks; neither establishes ground-truth full coverage."
+  },
+  "geometry": {
+    "radius_m": 0.6414213562373094,
+    "collision_point_threshold": 1,
+    "first_observed_margin_overlap": null,
+    "overlap_samples": 0,
+    "moving_predictions_inside_margin": 0,
+    "samples": 414,
+    "limitations": "Uses bag arrival order, latest received odometry/command and measured collision-cloud points in robot height slice. Does not reproduce planner collision-grid bounds or exact callback state. Predicted arc uses last received constant Twist, not controller internal candidate or simulator braking. Margin overlap is not physical vehicle contact. Sample lag/point noise may contribute; cannot separate them without independent truth."
+  },
+  "geometry_follower_rejections": {},
+  "checks": {
+    "timer_completed": true,
+    "measured_duration_matches": true,
+    "source_hashes_unchanged": true,
+    "enough_samples": true,
+    "no_runtime_parent_failure": true,
+    "no_live_descendants": true,
+    "no_forced_shutdown": true,
+    "video_full_decode_passed": true,
+    "video_duration_matches": true,
+    "video_fps_matches": true,
+    "analysis_passed": true,
+    "no_child_or_cleanup_exception": true,
+    "blas_workers_bounded": true
+  },
+  "video": {
+    "encode_returncode": 0,
+    "fps": 15,
+    "requested_duration_s": 600,
+    "trim_offset_s": 35.690534353256226,
+    "source_file": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_cell_audit_10min_2026-10-18_17-51-00/indoor/camera_15fps.mp4",
+    "full_decode_returncode": 0,
+    "decoded_frames": 8999,
+    "duration_s": 599.9333333333333,
+    "duration_matches": true,
+    "bytes": 10644284,
+    "sha256": "c25e29203e6e031ef0af647ee02294a6d121ab11692fa97ef26884d63f68b8c2"
+  },
+  "limitations": "Single indoor diagnostic trial plus safe vector traversal change. Per-cell logs prove task bookkeeping drops positive-gain cells, not exact physical full-coverage truth. Next candidate needs state-policy regression and full simulation."
+}
