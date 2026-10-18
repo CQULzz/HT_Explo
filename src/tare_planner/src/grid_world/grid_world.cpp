@@ -678,6 +678,28 @@ void GridWorld::UpdateCellStatus(const std::shared_ptr<viewpoint_manager_ns::Vie
       }
     }
 
+    // Global coverage tasks are evidence of remaining gain, not only the
+    // endpoint selected by this cycle's single-route XYtheta executor.
+    // Keep legacy non-HT behaviour and covered-cell reopening hysteresis.
+    const int pending_threshold=std::max(1,kCellUnknownToExploringThr);
+    const bool pending_ht_gain=viewpoint_manager->HT()->enabled() && candidate_count>0 &&
+        (above_small_threshold_count>=pending_threshold ||
+         above_frontier_threshold_count>=pending_threshold);
+    if (pending_ht_gain) {
+      if (subspaces_->GetCell(cell_ind).GetStatus()==CellStatus::UNSEEN) {
+        subspaces_->GetCell(cell_ind).SetStatus(CellStatus::EXPLORING);
+        audit_reason="REGISTER_OBSERVED_GAIN";
+      }
+      if (subspaces_->GetCell(cell_ind).GetStatus()==CellStatus::EXPLORING) {
+        // A temporarily unselected goal must not enter the almost-covered
+        // queue and later disappear merely because the local window moves.
+        almost_covered_cell_indices_.erase(
+          std::remove(almost_covered_cell_indices_.begin(),almost_covered_cell_indices_.end(),cell_ind),
+          almost_covered_cell_indices_.end());
+        if (std::string(audit_reason)=="ALMOST_COVERED_QUEUE")audit_reason="KEEP_PENDING_GAIN";
+        if (std::string(audit_reason)=="GAIN_REOPEN")audit_reason="GAIN_REOPEN_PENDING";
+      }
+    }
     const auto audit_new_status=subspaces_->GetCell(cell_ind).GetStatus();
     if(viewpoint_manager->HT()->enabled() &&
        (audit_old_status!=audit_new_status || audit_old_status==CellStatus::EXPLORING || candidate_count>0)) {
