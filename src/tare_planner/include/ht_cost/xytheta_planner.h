@@ -65,6 +65,7 @@ struct XYThetaPlan {
   double seconds=std::numeric_limits<double>::infinity();
   int expanded=0;
   bool reached=false;
+  bool direct_connection=false;
   XYThetaTermination termination=XYThetaTermination::INVALID_INPUT;
 };
 
@@ -82,6 +83,9 @@ struct XYThetaConfig {
   double max_radius=7.0;
   int max_expansions=8000;
   double max_search_seconds=0.2;
+  // The production HT caller enables checked spin/straight connections.
+  // Keep archived graph-only queries reproducible unless explicitly enabled.
+  bool try_direct_connection=false;
 };
 
 // Hybrid A*: the key is discrete (x,y,theta), while each stored state and
@@ -103,6 +107,60 @@ XYThetaPlan planXYTheta(Pose2 start,Point goal,const XYThetaConfig& cfg,Valid va
   for (double angle:turn_angles)
     if (!std::isfinite(angle) || angle<=0 || angle>kPi/2) return out;
   out.termination=XYThetaTermination::EXHAUSTED;
+  const auto deadline=std::chrono::steady_clock::now()+
+      std::chrono::duration<double>(cfg.max_search_seconds);
+  const double direct_distance=std::hypot(goal.x-start.x,goal.y-start.y);
+  if (cfg.try_direct_connection && std::isfinite(direct_distance) &&
+      direct_distance<=cfg.max_radius && direct_distance<.05*std::numeric_limits<int>::max()) {
+    const double distance=direct_distance;
+    if (distance<=cfg.goal_radius) {
+      out.poses={start};out.seconds=0;out.reached=true;
+      out.direct_connection=true;out.termination=XYThetaTermination::REACHED;return out;
+    }
+    struct Connection {double heading,rotation,seconds;bool reverse;};
+    std::array<Connection,2> connections;
+    const double bearing=std::atan2(goal.y-start.y,goal.x-start.x);
+    for (int i=0;i<2;++i) {
+      const bool reverse=i!=0;
+      const double heading=wrapYaw(bearing+(reverse?kPi:0));
+      const double rotation=wrapYaw(heading-start.yaw);
+      connections[i]={heading,rotation,std::abs(rotation)/cfg.max_yaw_rate+
+        distance/(reverse?cfg.reverse_speed:cfg.forward_speed)*(reverse?1.15:1.0),reverse};
+    }
+    if (connections[1].seconds<connections[0].seconds) std::swap(connections[0],connections[1]);
+    // These are actual differential-drive motions: spin at bounded yaw rate,
+    // then translate along the body axis (forward or reverse). Every segment
+    // uses the caller's unchanged HT, geometry and failure-memory predicate.
+    for (const auto& connection:connections) {
+      Pose2 previous=start;
+      std::vector<Pose2> poses{start};
+      bool feasible=true,timed_out=false;
+      auto append=[&](Pose2 next,double v) {
+        if (std::chrono::steady_clock::now()>deadline) {
+          timed_out=true;return false;
+        }
+        if (std::hypot(next.x-start.x,next.y-start.y)>cfg.max_radius ||
+            !valid(previous,next,v)) return false;
+        poses.push_back(next);previous=next;return true;
+      };
+      const int turns=static_cast<int>(std::ceil(std::abs(connection.rotation)/.05));
+      for (int i=1;i<=turns && feasible;++i) {
+        Pose2 next=start;next.yaw=wrapYaw(start.yaw+connection.rotation*i/turns);
+        feasible=append(next,0);
+      }
+      const int steps=std::max(1,static_cast<int>(std::ceil(distance/.05)));
+      for (int i=1;i<=steps && feasible;++i) {
+        Pose2 next{start.x+(goal.x-start.x)*i/steps,
+                   start.y+(goal.y-start.y)*i/steps,connection.heading};
+        feasible=append(next,connection.reverse?-cfg.reverse_speed:cfg.forward_speed);
+      }
+      if (feasible) {
+        out.poses=std::move(poses);out.seconds=connection.seconds;out.reached=true;
+        out.direct_connection=true;out.termination=XYThetaTermination::REACHED;return out;
+      }
+      if (timed_out) {out.termination=XYThetaTermination::TIME_LIMIT;return out;}
+    }
+  }
   struct Control {double v,omega,duration;};
   const double forward_time=cfg.drive_step/cfg.forward_speed;
   const double reverse_time=cfg.drive_step/cfg.reverse_speed;
@@ -139,8 +197,6 @@ XYThetaPlan planXYTheta(Pose2 start,Point goal,const XYThetaConfig& cfg,Valid va
   std::priority_queue<QueueItem,std::vector<QueueItem>,std::greater<QueueItem>> open;
   auto heuristic=[&](Pose2 p) {return std::hypot(goal.x-p.x,goal.y-p.y)/cfg.forward_speed;};
   open.emplace(heuristic(start),0);
-  const auto deadline=std::chrono::steady_clock::now()+
-      std::chrono::duration<double>(cfg.max_search_seconds);
   while (!open.empty() && out.expanded<cfg.max_expansions) {
     if ((out.expanded&31)==0 && std::chrono::steady_clock::now()>deadline) {
       out.termination=XYThetaTermination::TIME_LIMIT;break;

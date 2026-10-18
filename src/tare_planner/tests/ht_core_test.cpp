@@ -17,6 +17,49 @@ void check(bool condition) {
 }
 void near(double a,double b) { check(std::abs(a-b)<1e-5); }
 int main() {
+  // Captured35s stop: open local recovery behind the vehicle takes thousands
+  // of graph validity queries. A checked spin/straight connection reaches it
+  // without spending those graph expansions or weakening the predicate.
+  XYThetaConfig connector;connector.headings=32;connector.turn_angles={kPi/16,kPi/8};
+  connector.goal_radius=.35;connector.max_search_seconds=1;connector.max_expansions=1;
+  const Pose2 captured_root{13.107903480529785,5.560585975646973,1.813777685165405};
+  const Point captured_goal{12.75,2.85,0};
+  auto connector_open=[](Pose2,Pose2,double){return true;};
+  check(!planXYTheta(captured_root,captured_goal,connector,connector_open).reached);
+  connector.try_direct_connection=true;
+  size_t connection_queries=0;
+  auto counted_open=[&](Pose2,Pose2,double){++connection_queries;return true;};
+  const auto direct=planXYTheta(captured_root,captured_goal,connector,counted_open);
+  check(direct.reached && direct.direct_connection && direct.expanded==0);
+  check(connection_queries<200);
+  for(size_t i=1;i<direct.poses.size();++i) {
+    const auto& a=direct.poses[i-1];const auto& b=direct.poses[i];
+    const double dx=b.x-a.x,dy=b.y-a.y,d=std::hypot(dx,dy);
+    check(d<=.050001);check(std::abs(wrapYaw(b.yaw-a.yaw))<=.050001);
+    if(d>1e-9) {
+      check(std::abs(wrapYaw(b.yaw-a.yaw))<1e-9);
+      check(std::abs(-std::sin(b.yaw)*dx+std::cos(b.yaw)*dy)<1e-9);
+    }
+  }
+  // Reverse is an actual body-axis motion, not a sideways shortcut.
+  const auto direct_reverse=planXYTheta({},Point{-1,0,0},connector,connector_open);
+  check(direct_reverse.reached && direct_reverse.direct_connection);
+  for(const auto& p:direct_reverse.poses) {near(p.y,0);near(p.yaw,0);}
+  // A blocked direct line falls back to the existing curved graph search.
+  connector.max_expansions=8000;
+  auto connector_obstacle=[](Pose2,Pose2 p,double){return !(p.x>.6 && p.x<1.4 && std::abs(p.y)<.55);};
+  const auto connector_detour=planXYTheta({},Point{2,0,0},connector,connector_obstacle);
+  check(connector_detour.reached && !connector_detour.direct_connection);
+  for(const auto& p:connector_detour.poses) check(connector_obstacle({},p,0));
+  // Rejected intermediate orientations cannot be jumped over.
+  auto sealed_heading=[](Pose2,Pose2 p,double){return std::hypot(p.x,p.y)<1e-9 && std::abs(p.yaw)<.01;};
+  check(!planXYTheta({},Point{0,2,0},connector,sealed_heading).reached);
+  auto direct_invalid_root=[](Pose2,Pose2,double){return false;};
+  check(planXYTheta({},Point{2,0,0},connector,direct_invalid_root).termination==XYThetaTermination::INVALID_START);
+  connector.max_search_seconds=1e-12;
+  check(planXYTheta({},Point{2,0,0},connector,connector_open).termination==XYThetaTermination::TIME_LIMIT);
+  connector.max_search_seconds=1;connector.max_radius=.5;
+  check(!planXYTheta({},Point{2,0,0},connector,connector_open).reached);
   // Stage32: each primary search consumes0.15s and fails; a short safe
   // recovery would take0.02s, but the sequential queue never reaches it
   // inside the0.35s cycle. Test scheduling with a deterministic clock.

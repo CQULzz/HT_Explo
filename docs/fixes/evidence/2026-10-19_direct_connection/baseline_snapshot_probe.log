@@ -1,0 +1,28 @@
+Running main() from /opt/ros/jazzy/src/gtest_vendor/src/gtest_main.cc
+Note: Google Test filter = SnapshotSearch.RecordedStoppedEnvironment
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from SnapshotSearch
+[ RUN      ] SnapshotSearch.RecordedStoppedEnvironment
+[INFO] [1792343368.540896994] [tare_planner_node]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0 scores=configuration
+DIRECT goal=12.75,2.85 reverse=0 allowed=1 queries=111 geometry_reject=0 ht_reject=0
+DIRECT goal=12.75,2.85 reverse=1 allowed=1 queries=63 geometry_reject=0 ht_reject=0
+SEARCH goal=12.75,2.85 budget=0.075 term=TIME_LIMIT expanded=96 queries=4993 geometry_reject=0 ht_reject=0 wall_s=0.0756587
+SEARCH goal=12.75,2.85 budget=0.15 term=REACHED expanded=130 queries=6709 geometry_reject=0 ht_reject=0 wall_s=0.0960262
+SEARCH goal=12.75,2.85 budget=1 term=REACHED expanded=130 queries=6709 geometry_reject=0 ht_reject=0 wall_s=0.0995399
+DIRECT goal=13.05,2.25 reverse=0 allowed=1 queries=125 geometry_reject=0 ht_reject=0
+DIRECT goal=13.05,2.25 reverse=1 allowed=1 queries=73 geometry_reject=0 ht_reject=0
+SEARCH goal=13.05,2.25 budget=0.075 term=TIME_LIMIT expanded=64 queries=3329 geometry_reject=0 ht_reject=0 wall_s=0.099492
+SEARCH goal=13.05,2.25 budget=0.15 term=TIME_LIMIT expanded=32 queries=1665 geometry_reject=0 ht_reject=0 wall_s=0.158412
+SEARCH goal=13.05,2.25 budget=1 term=REACHED expanded=167 queries=8633 geometry_reject=0 ht_reject=3 wall_s=0.747508
+DIRECT goal=12.45,6.15 reverse=0 allowed=1 queries=30 geometry_reject=0 ht_reject=0
+DIRECT goal=12.45,6.15 reverse=1 allowed=1 queries=69 geometry_reject=0 ht_reject=0
+SEARCH goal=12.45,6.15 budget=0.075 term=REACHED expanded=5 queries=209 geometry_reject=0 ht_reject=0 wall_s=0.0195572
+SEARCH goal=12.45,6.15 budget=0.15 term=REACHED expanded=5 queries=209 geometry_reject=0 ht_reject=0 wall_s=0.0130474
+SEARCH goal=12.45,6.15 budget=1 term=REACHED expanded=5 queries=209 geometry_reject=0 ht_reject=0 wall_s=0.00325804
+[       OK ] SnapshotSearch.RecordedStoppedEnvironment (2822 ms)
+[----------] 1 test from SnapshotSearch (2822 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (2822 ms total)
+[  PASSED  ] 1 test.

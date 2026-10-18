@@ -1,0 +1,31 @@
+Running main() from /opt/ros/jazzy/src/gtest_vendor/src/gtest_main.cc
+Note: Google Test filter = SnapshotSearch.RecordedStoppedEnvironment
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from SnapshotSearch
+[ RUN      ] SnapshotSearch.RecordedStoppedEnvironment
+[INFO] [1792343576.148037242] [tare_planner_node]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0 scores=configuration
+DIRECT goal=12.75,2.85 reverse=0 allowed=1 queries=111 geometry_reject=0 ht_reject=0
+DIRECT goal=12.75,2.85 reverse=1 allowed=1 queries=63 geometry_reject=0 ht_reject=0
+SEARCH goal=12.75,2.85 direct_enabled=0 budget=0.075 term=TIME_LIMIT direct=0 expanded=96 queries=4993 geometry_reject=0 ht_reject=0 wall_s=0.0801689
+SEARCH goal=12.75,2.85 direct_enabled=0 budget=0.15 term=REACHED direct=0 expanded=130 queries=6709 geometry_reject=0 ht_reject=0 wall_s=0.100225
+SEARCH goal=12.75,2.85 direct_enabled=1 budget=0.075 term=REACHED direct=1 expanded=0 queries=112 geometry_reject=0 ht_reject=0 wall_s=0.00181949
+SEARCH goal=12.75,2.85 direct_enabled=1 budget=0.15 term=REACHED direct=1 expanded=0 queries=112 geometry_reject=0 ht_reject=0 wall_s=0.0017287
+DIRECT goal=13.05,2.25 reverse=0 allowed=1 queries=125 geometry_reject=0 ht_reject=0
+DIRECT goal=13.05,2.25 reverse=1 allowed=1 queries=73 geometry_reject=0 ht_reject=0
+SEARCH goal=13.05,2.25 direct_enabled=0 budget=0.075 term=TIME_LIMIT direct=0 expanded=96 queries=4993 geometry_reject=0 ht_reject=0 wall_s=0.0786207
+SEARCH goal=13.05,2.25 direct_enabled=0 budget=0.15 term=REACHED direct=0 expanded=167 queries=8633 geometry_reject=0 ht_reject=3 wall_s=0.123215
+SEARCH goal=13.05,2.25 direct_enabled=1 budget=0.075 term=REACHED direct=1 expanded=0 queries=126 geometry_reject=0 ht_reject=0 wall_s=0.00211448
+SEARCH goal=13.05,2.25 direct_enabled=1 budget=0.15 term=REACHED direct=1 expanded=0 queries=126 geometry_reject=0 ht_reject=0 wall_s=0.00213054
+DIRECT goal=12.45,6.15 reverse=0 allowed=1 queries=30 geometry_reject=0 ht_reject=0
+DIRECT goal=12.45,6.15 reverse=1 allowed=1 queries=69 geometry_reject=0 ht_reject=0
+SEARCH goal=12.45,6.15 direct_enabled=0 budget=0.075 term=REACHED direct=0 expanded=5 queries=209 geometry_reject=0 ht_reject=0 wall_s=0.00322071
+SEARCH goal=12.45,6.15 direct_enabled=0 budget=0.15 term=REACHED direct=0 expanded=5 queries=209 geometry_reject=0 ht_reject=0 wall_s=0.00315869
+SEARCH goal=12.45,6.15 direct_enabled=1 budget=0.075 term=REACHED direct=1 expanded=0 queries=31 geometry_reject=0 ht_reject=0 wall_s=0.000456203
+SEARCH goal=12.45,6.15 direct_enabled=1 budget=0.15 term=REACHED direct=1 expanded=0 queries=31 geometry_reject=0 ht_reject=0 wall_s=0.000422734
+[       OK ] SnapshotSearch.RecordedStoppedEnvironment (1950 ms)
+[----------] 1 test from SnapshotSearch (1950 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (1950 ms total)
+[  PASSED  ] 1 test.
