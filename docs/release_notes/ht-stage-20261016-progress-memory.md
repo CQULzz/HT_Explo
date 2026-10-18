@@ -21,3 +21,7 @@
 第一轮返航BLOCKED；补容差回归后，25分钟轮未触发返航。后续阶段15的60分钟记录验证了一次返回完成，但活动期仍有低增益回访、短时地图过期和关停清理报错；无实车或真值全覆盖验收。 体积是抽样点云射线的自由体素并集近似，不是官方覆盖率。两轮不是严格单一改动消融。
 
 2026-10-17后续验证：[阶段15完整60分钟记录与返航审计](https://github.com/CQULzz/HT_Explo/blob/codex/ht8dir-v1/docs/results/ht_endurance_progress_2026-10-17/REPORT.md)。原两轮20/25分钟的失败与未验证状态仍保留。
+
+## 2026-10-18后续复核
+
+2026-10-18复核确认本阶段含晚HT拦截仍发布非零候选Twist的缺陷，阶段21修正；历史记录保留，不能由原通过项推断该晚分支正确停车。 [证据与修正](https://github.com/CQULzz/HT_Explo/blob/codex/ht8dir-v1/docs/results/ht_completion_cause_audit_2026-10-18/REPORT.md)。这不是对所有历史停滞的统一归因。

@@ -21,3 +21,7 @@
 证据：[REPORT.md](https://github.com/CQULzz/HT_Explo/blob/codex/ht8dir-v1/docs/results/ht_indoor_sampling_comparison_2026-10-17/REPORT.md) · [REPORT.md](https://github.com/CQULzz/HT_Explo/blob/codex/ht8dir-v1/docs/results/ht_indoor_viewpoint_10min_2026-10-17/REPORT.md) · [README.md](https://github.com/CQULzz/HT_Explo/blob/codex/ht8dir-v1/docs/results/ht_multiscene_10min_2026-10-17/indoor/diagnostics/README.md)
 
 验证数据与视频归档：[提交 2d74d9c](https://github.com/CQULzz/HT_Explo/commit/2d74d9c7d4e2d68f9fef9fe653a94aa8aa0196a8)。
+
+## 2026-10-18后续复核
+
+2026-10-18复核确认本阶段含晚HT拦截仍发布非零候选Twist的缺陷，阶段21修正；历史记录保留，不能由原通过项推断该晚分支正确停车。 [证据与修正](https://github.com/CQULzz/HT_Explo/blob/codex/ht8dir-v1/docs/results/ht_completion_cause_audit_2026-10-18/REPORT.md)。这不是对所有历史停滞的统一归因。

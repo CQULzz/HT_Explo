@@ -21,3 +21,7 @@
 室内约215秒触发返航，总近似观测1900.250→1106.750m³（下降41.8%）；任务收尾不是全覆盖证明。室内HT年龄最大5.01秒，两场景各8个1Hz样本超过3秒。森林约4Hz本轮未重测，其他三场景未重跑。保留约195秒失败诊断；每配置仅一次、无实车或长期稳定性验收。
 
 证据：[2026-10-17_context_recovery.md](https://github.com/CQULzz/HT_Explo/blob/codex/ht8dir-v1/docs/fixes/2026-10-17_context_recovery.md) · [REPORT.md](https://github.com/CQULzz/HT_Explo/blob/codex/ht8dir-v1/docs/results/ht_recovery_comparison_2026-10-17/REPORT.md) · [REPORT.md](https://github.com/CQULzz/HT_Explo/blob/codex/ht8dir-v1/docs/results/ht_recovery_10min_2026-10-17/REPORT.md) · [REPORT.md](https://github.com/CQULzz/HT_Explo/blob/codex/ht8dir-v1/docs/results/ht_context_diagnostics_2026-10-17/REPORT.md)
+
+## 2026-10-18后续复核
+
+2026-10-18复核确认本阶段含晚HT拦截仍发布非零候选Twist的缺陷，阶段21修正；历史记录保留，不能由原通过项推断该晚分支正确停车。 [证据与修正](https://github.com/CQULzz/HT_Explo/blob/codex/ht8dir-v1/docs/results/ht_completion_cause_audit_2026-10-18/REPORT.md)。这不是对所有历史停滞的统一归因。

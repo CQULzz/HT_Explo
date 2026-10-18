@@ -34,3 +34,7 @@
 - [garage_ht_experiment_results.zip](https://github.com/CQULzz/HT_Explo/releases/download/ht-garage-repeat-20261015-1225/garage_ht_experiment_results.zip)
 - [original_bag_0.mcap](https://github.com/CQULzz/HT_Explo/releases/download/ht-garage-repeat-20261015-1225/original_bag_0.mcap)
 - [release_files.json](https://github.com/CQULzz/HT_Explo/releases/download/ht-garage-repeat-20261015-1225/release_files.json)
+
+## 2026-10-18后续复核
+
+2026-10-18复核确认本阶段含晚HT拦截仍发布非零候选Twist的缺陷，阶段21修正；历史记录保留，不能由原通过项推断该晚分支正确停车。 [证据与修正](https://github.com/CQULzz/HT_Explo/blob/codex/ht8dir-v1/docs/results/ht_completion_cause_audit_2026-10-18/REPORT.md)。这不是对所有历史停滞的统一归因。
