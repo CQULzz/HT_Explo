@@ -7,12 +7,11 @@
 | 阶段21 `67ade71` | 32航向、晚HT拒绝发零 | 6.64 / 432.875 | 约30s后长期BLOCKED；细角度不是全部根因 | [报告](../results/ht_zero_twist_fine_heading_10min_2026-10-18/REPORT.md) |
 | 阶段22 `12d85d8` | 11.25°/22.5°混合动作、旋转终点锁定 | 17.82 / 778.000 | 约74s后长期BLOCKED；同图54次查询均失败、未耗尽搜索预算 | [报告](../results/ht_mixed_turns_10min_2026-10-18/REPORT.md) · [原始记录与MP4](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261018-mixed-turns) |
 | 阶段23 `149566d` | HT车辆配置得分与物理障碍分层、启动先验支持修正 | 134.00 / 3170.500 | 最后60s仍走10.93m；BLOCKED抽样88.0%→7.8%；最终约2s BLOCKED、最长全零6.20s，未完成探索 | [报告](../results/ht_configuration_gate_10min_2026-10-18/REPORT.md) · [原始记录与MP4](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261018-configuration-gate) |
-
 | 阶段24 `bada7ba` | 同规则复跑，补CuPy锁/回调与规划分项记录 | 23.86 / 993.125 | 最后明显平移79.503s；几何层拒绝根状态，搜索展开0状态；再次长期BLOCKED | [报告](../results/ht_latency_diagnosis_10min_2026-10-18/REPORT.md) · [数据和视频](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261018-latency-diagnosis) |
-
 | 阶段25 `43069a7` | 连续车位几何检查、保留安全距离并加余量；补耗时与显示 | 65.80 / 1959.875 | 264s后HT未知长期停滞，旧几何反例通过但未稳定 | [报告](../results/ht_continuous_geometry_10min_2026-10-18/REPORT.md) · [完整数据/视频](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261018-continuous-geometry) |
-
 | 阶段26 `22c2749` | 有限融合后拒绝高度保留为硬障碍，完整网络输入记录 | 116.15 / 1258.000 | 最后约95s仍BLOCKED；里程增加但较上轮体积下降35.8%，整体未通过 | [报告](../results/ht_postfilter_obstacles_10min_2026-10-18/REPORT.md) · [完整数据/视频](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261018-postfilter-obstacles) |
+
+| 阶段27 `4721764` | 等价几何查询提速、搜索退出原因、可靠几何记录 | 41.90 / 815.625 | 136.5s后长期几何INVALID_START；里程/体积均退步 | [报告](../results/ht_geometry_index_10min_2026-10-18/REPORT.md) · [完整数据/视频](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261018-geometry-index) |
 
 ![同条件四轮对比](../results/ht_configuration_gate_10min_2026-10-18/comparison/comparison.png)
 
@@ -32,3 +31,5 @@
 阶段25下一步：核查融合后有限高度拒绝为何未按源输入拒绝规则保留硬障碍上下文；保留未知/障碍足迹和HT硬门槛，再做同场景600秒。见对应报告的42/41/1逐格核对。
 
 阶段26：58份神经上下文与发布图一致、三份模型重放差0；末段仍停。冻结图HT-only查询16个目标可达10个，细化控制也未增加。下一轮必须核查实际几何与目标/失败记忆、搜索终止原因；不是直接放宽HT或删除障碍。
+
+阶段27：末段几何拒绝起点，非预算耗尽。控制器只重新检查HT而规划器检查几何+HT；最近有效路线只留约8mm余量、实际横向偏差约12mm，首次重叠还在移动。需要对齐两层约束并留跟踪余量；不能放宽已有安全边界或据此宣称物理接触。

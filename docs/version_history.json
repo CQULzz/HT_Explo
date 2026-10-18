@@ -2,7 +2,7 @@
   "schema_version": 1,
   "updated_at": "2026-10-18",
   "branch": "codex/ht8dir-v1",
-  "status": "阶段26有限拒绝高度接口修正；600秒仍末段停滞且观测体积退步，继续核查实际搜索与几何代价",
+  "status": "阶段27查询提速未消除停滞；136.5s后几何拒绝起点，下一轮对齐执行约束与跟踪余量",
   "latest_archive_commit": "39a3718",
   "latest_planner_change": "43069a7b11b8028b53f6eae0d6bdc53c13e8affd",
   "stages": [
@@ -462,6 +462,23 @@
         "docs/results/ht_postfilter_obstacles_10min_2026-10-18/REPORT.md"
       ],
       "control_commit": "43069a7b11b8028b53f6eae0d6bdc53c13e8affd",
+      "ht_bridge_commit": "22c2749f395af8bb5dc6705b1e92548acf69494e"
+    },
+    {
+      "id": "stage-27",
+      "number": 27,
+      "sha": "4721764fa77eb634f4a0ba50b1381a05b3790195",
+      "tag": "ht-stage-20261018-geometry-index",
+      "title": "等价连续碰撞查询提速：仍因执行进入几何边界停滞",
+      "kind": "实测候选",
+      "change": "固定高度XY索引与边界3D回退；逐搜索终止原因、可靠几何录包",
+      "features": "6561真实查询输出一致/微基准3.68倍；800边界及搜索退出回归",
+      "validation": "完整600秒41.9m/815.625m³；最终BLOCKED；最后60秒480次几何INVALID_START；59份模型上下文一致",
+      "known_issues": "比上一轮里程与体积退步；136.5s后停滞；规划几何/HT与执行只检查HT不一致；贴边余量不足、图龄长尾",
+      "evidence": [
+        "docs/results/ht_geometry_index_10min_2026-10-18/REPORT.md"
+      ],
+      "control_commit": "4721764fa77eb634f4a0ba50b1381a05b3790195",
       "ht_bridge_commit": "22c2749f395af8bb5dc6705b1e92548acf69494e"
     }
   ],
@@ -998,7 +1015,7 @@
       "original_subject": "Archive command rejection proof, failed indoor trials and returned-home tunnel video"
     }
   ],
-  "latest_planner_code": "43069a7b11b8028b53f6eae0d6bdc53c13e8affd",
+  "latest_planner_code": "4721764fa77eb634f4a0ba50b1381a05b3790195",
   "latest_ht_bridge_code": "22c2749f395af8bb5dc6705b1e92548acf69494e",
-  "latest_verified_trial_code": "22c2749f395af8bb5dc6705b1e92548acf69494e"
+  "latest_verified_trial_code": "4721764fa77eb634f4a0ba50b1381a05b3790195"
 }

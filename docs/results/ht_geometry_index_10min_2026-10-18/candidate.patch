@@ -1,0 +1,2671 @@
+diff --git a/docs/experiments/publications/stage26.json b/docs/experiments/publications/stage26.json
+new file mode 100644
+index 0000000..7ffedfc
+--- /dev/null
++++ b/docs/experiments/publications/stage26.json
+@@ -0,0 +1,35 @@
++{
++  "tag": "ht-stage-20261018-postfilter-obstacles",
++  "tested_commit": "22c2749f395af8bb5dc6705b1e92548acf69494e",
++  "raw_suite": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_postfilter_obstacles_10min_2026-10-18_16-27-00",
++  "result_archive": "/home/lzz/my test/HT_Explo-fixposition/docs/results/ht_postfilter_obstacles_10min_2026-10-18",
++  "release": "https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261018-postfilter-obstacles",
++  "recording_scope": "Full published HT/control/odom/status; source-second laser samples; periodic map snapshots, not all raw laser/CuPy frames.",
++  "assets": [
++    {
++      "name": "ht-stage-20261018-postfilter-obstacles-raw.tar",
++      "bytes": 1149521920,
++      "sha256": "14addec1a81b60dd807f79b4df3a298630f606f2dd872b6193060d948b480d62"
++    },
++    {
++      "name": "ht-stage-20261018-postfilter-obstacles-raw-files.json",
++      "bytes": 35798,
++      "sha256": "9f963fc18c148a200a85d15aa4992f6beca0ada7fc58577ced30b278c42ce5f5"
++    },
++    {
++      "name": "ht-stage-20261018-postfilter-obstacles-results.tar",
++      "bytes": 26347520,
++      "sha256": "7c394dec1d6dffe2a6ed02305fbcf137ebcb582b5af920f7ab8d5829bcb5b49e"
++    },
++    {
++      "name": "ht-stage-20261018-postfilter-obstacles-results-files.json",
++      "bytes": 18106,
++      "sha256": "41968ad72f85cd780c1a576f1a6d95b67dc72d537a2aa2ef8598cb0f98806871"
++    },
++    {
++      "name": "ht-stage-20261018-postfilter-obstacles-indoor.mp4",
++      "bytes": 10608728,
++      "sha256": "04d8b15cce2519137b6fa66f9ba42beff7c9d25eb326a11c76c3b7a68a6e2c70"
++    }
++  ]
++}
+diff --git a/docs/fixes/2026-10-18_geometry_index.md b/docs/fixes/2026-10-18_geometry_index.md
+new file mode 100644
+index 0000000..0b6f7f0
+--- /dev/null
++++ b/docs/fixes/2026-10-18_geometry_index.md
+@@ -0,0 +1,19 @@
++# 连续碰撞查询索引与搜索终止诊断（候选27）
++
++阶段26仍在约505秒后停止移动；末态HT根节点已知、几何根节点无碰撞，但此前记录缺少完整碰撞点云，不能断言唯一原因。失败搜索接近单目标0.15秒预算，需区分超时、空间耗尽、扩展上限与其他硬约束。
++
++## 改动与边界
++
++连续碰撞判定原来每次查询检索三维邻域，再判断水平半径和上下高度。现按本周期真实车体高度先筛选障碍，建立XY索引：查询高度完全相同时用最近邻判断；不同高度及浮点边界回退原始三维判断。原有0.5米碰撞余量、半格对角线余量、上下高度阈值、禁行区和未知拒绝均保留，HT阈值、搜索预算、动作分辨率和速度不变。
++
++添加逐目标终止原因、几何耗时和各硬约束拒绝计数；完整记录碰撞点云及候选视点。手工证据采集改用与发布端匹配的可靠订阅。这些日志、录包开销计入实测。
++
++## 已完成验证
++
++- 真实静态碰撞点云6561个固定查询，重复3次，所有输出逐字节等于旧实现；碰撞1614个。平均耗时从约0.1293秒降到0.03518秒，查询微基准约3.68倍。不能据此声称整车规划加速3.68倍。
++- 800组高度、非对称上下界及半径浮点边界对照；真实旧根节点回归；搜索不同退出原因回归。
++- 全部4个CTest目标通过，保留日志与基准源码、旧实现、输出和校验值于同目录evidence。
++
++## 待验证与剩余问题
++
++冻结代码后做完整600秒同起点室内闭环实验，与阶段26及较好阶段23比较。仍需验证最终停滞的实际约束、低收益绕行、建图时延尾部；单次通过也不能证明多环境长期稳定。每轮先发布完整记录、视频和失败结论再进入下一候选。
+diff --git a/docs/fixes/evidence/2026-10-18_geometry_index/RESULT.json b/docs/fixes/evidence/2026-10-18_geometry_index/RESULT.json
+new file mode 100644
+index 0000000..04eab3b
+--- /dev/null
++++ b/docs/fixes/evidence/2026-10-18_geometry_index/RESULT.json
+@@ -0,0 +1,45 @@
++{
++  "baseline": [
++    {
++      "repeat": 0.0,
++      "queries": 6561.0,
++      "blocked": 1614.0,
++      "elapsed_s": 0.128701
++    },
++    {
++      "repeat": 1.0,
++      "queries": 6561.0,
++      "blocked": 1614.0,
++      "elapsed_s": 0.131004
++    },
++    {
++      "repeat": 2.0,
++      "queries": 6561.0,
++      "blocked": 1614.0,
++      "elapsed_s": 0.128172
++    }
++  ],
++  "optimized": [
++    {
++      "repeat": 0.0,
++      "queries": 6561.0,
++      "blocked": 1614.0,
++      "elapsed_s": 0.0350902
++    },
++    {
++      "repeat": 1.0,
++      "queries": 6561.0,
++      "blocked": 1614.0,
++      "elapsed_s": 0.0354492
++    },
++    {
++      "repeat": 2.0,
++      "queries": 6561.0,
++      "blocked": 1614.0,
++      "elapsed_s": 0.0349902
++    }
++  ],
++  "mean_speedup": 3.675528003517497,
++  "reference_sha256": "fbb03662aa3ecefce69fb02379fb58975554ab70a4c033be81176325b6105f67",
++  "meaning": "Each of6561 fixed poses matches the original result byte-for-byte in each of3 repeats. This is a static CPU-query benchmark, not an end-to-end speedup claim."
++}
+diff --git a/docs/fixes/evidence/2026-10-18_geometry_index/baseline.log b/docs/fixes/evidence/2026-10-18_geometry_index/baseline.log
+new file mode 100644
+index 0000000..d60a9d8
+--- /dev/null
++++ b/docs/fixes/evidence/2026-10-18_geometry_index/baseline.log
+@@ -0,0 +1,15 @@
++Running main() from /opt/ros/jazzy/src/gtest_vendor/src/gtest_main.cc
++Note: Google Test filter = GeometryBenchmark.CapturedCylinderQueries
++[==========] Running 1 test from 1 test suite.
++[----------] Global test environment set-up.
++[----------] 1 test from GeometryBenchmark
++[ RUN      ] GeometryBenchmark.CapturedCylinderQueries
++BENCH repeat=0 queries=6561 blocked=1614 elapsed_s=0.128701
++BENCH repeat=1 queries=6561 blocked=1614 elapsed_s=0.131004
++BENCH repeat=2 queries=6561 blocked=1614 elapsed_s=0.128172
++[       OK ] GeometryBenchmark.CapturedCylinderQueries (653 ms)
++[----------] 1 test from GeometryBenchmark (653 ms total)
++
++[----------] Global test environment tear-down
++[==========] 1 test from 1 test suite ran. (653 ms total)
++[  PASSED  ] 1 test.
+diff --git a/docs/fixes/evidence/2026-10-18_geometry_index/baseline_viewpoint_manager.cpp b/docs/fixes/evidence/2026-10-18_geometry_index/baseline_viewpoint_manager.cpp
+new file mode 100644
+index 0000000..05dad51
+--- /dev/null
++++ b/docs/fixes/evidence/2026-10-18_geometry_index/baseline_viewpoint_manager.cpp
+@@ -0,0 +1,1585 @@
++/**
++ * @file viewpoint_manager.cpp
++ * @author Chao Cao (ccao1@andrew.cmu.edu)
++ * @brief Class that manages the viewpoints inside the local planning horizon
++ * @version 0.1
++ * @date 2020-06-10
++ *
++ * @copyright Copyright (c) 2021
++ *
++ */
++#include "viewpoint_manager/viewpoint_manager.h"
++#include "ht_cost/grid_edge_support.h"
++#include "ht_cost/directed_graph.h"
++
++namespace viewpoint_manager_ns
++{
++bool ViewPointManagerParameter::ReadParameters(rclcpp::Node::SharedPtr nh)
++{
++  nh->get_parameter("kUseFrontier", kUseFrontier);
++  kNumber.x() = nh->get_parameter("viewpoint_manager/number_x").as_int();
++  kNumber.y() = nh->get_parameter("viewpoint_manager/number_y").as_int();
++  kNumber.z() = nh->get_parameter("viewpoint_manager/number_z").as_int();
++  kResolution.x() = nh->get_parameter("viewpoint_manager/resolution_x").as_double();
++  kResolution.y() = nh->get_parameter("viewpoint_manager/resolution_y").as_double();
++  kResolution.z() = nh->get_parameter("viewpoint_manager/resolution_z").as_double();
++
++  nh->get_parameter("kConnectivityHeightDiffThr", kConnectivityHeightDiffThr);
++  nh->get_parameter("kViewPointCollisionMargin", kViewPointCollisionMargin);
++  nh->get_parameter("kViewPointCollisionMarginZPlus", kViewPointCollisionMarginZPlus);
++  nh->get_parameter("kViewPointCollisionMarginZMinus", kViewPointCollisionMarginZMinus);
++  nh->get_parameter("kCollisionGridZScale", kCollisionGridZScale);
++  kCollisionGridResolution.x() = nh->get_parameter("kCollisionGridResolutionX").as_double();
++  kCollisionGridResolution.y() = nh->get_parameter("kCollisionGridResolutionY").as_double();
++  kCollisionGridResolution.z() = nh->get_parameter("kCollisionGridResolutionZ").as_double();
++  nh->get_parameter("kLineOfSightStopAtNearestObstacle", kLineOfSightStopAtNearestObstacle);
++  nh->get_parameter("kCheckDynamicObstacleCollision", kCheckDynamicObstacleCollision);
++  nh->get_parameter("kCollisionFrameCountMax", kCollisionFrameCountMax);
++  nh->get_parameter("kViewPointHeightFromTerrain", kViewPointHeightFromTerrain);
++  nh->get_parameter("kViewPointHeightFromTerrainChangeThreshold", kViewPointHeightFromTerrainChangeThreshold);
++  nh->get_parameter("kCollisionPointThr", kCollisionPointThr);
++  nh->get_parameter("kCoverageOcclusionThr", kCoverageOcclusionThr);
++  nh->get_parameter("kCoverageDilationRadius", kCoverageDilationRadius);
++  nh->get_parameter("kCoveragePointCloudResolution", kCoveragePointCloudResolution);
++  nh->get_parameter("kSensorRange", kSensorRange);
++  nh->get_parameter("kNeighborRange", kNeighborRange);
++
++  dimension_ = 2;
++  kViewPointNumber = kNumber.x() * kNumber.y() * kNumber.z();
++  kRolloverStepsize = kNumber / 5;
++
++  for (int i = 0; i < dimension_; i++)
++  {
++    LocalPlanningHorizonSize(i) = kNumber(i) * kResolution(i);
++  }
++
++  kCollisionGridSize = Eigen::Vector3i::Ones();
++  for (int i = 0; i < dimension_; i++)
++  {
++    kCollisionGridSize(i) =
++        ceil((kNumber(i) * kResolution(i) + kViewPointCollisionMargin * 2) / kCollisionGridResolution(i));
++  }
++
++  kVerticalFOVRatio = tan(M_PI / 15);
++  kDiffZMax = kSensorRange * kVerticalFOVRatio;
++  kInFovXYDistThreshold = 3 * (kCoveragePointCloudResolution / 2) / tan(M_PI / 15);
++  kInFovZDiffThreshold = 3 * kCoveragePointCloudResolution;
++
++  return true;
++}
++
++ViewPointManager::ViewPointManager(rclcpp::Node::SharedPtr nh) : initialized_(false)
++{
++  vp_.ReadParameters(nh);
++  ht_map_ = std::make_shared<ht_cost_ns::HtCostMap>(nh);
++
++  kdtree_viewpoint_candidate_ = pcl::KdTreeFLANN<pcl::PointXYZI>::Ptr(new pcl::KdTreeFLANN<pcl::PointXYZI>());
++  kdtree_viewpoint_in_collision_ = pcl::KdTreeFLANN<pcl::PointXYZI>::Ptr(new pcl::KdTreeFLANN<pcl::PointXYZI>());
++  viewpoint_candidate_cloud_ = pcl::PointCloud<pcl::PointXYZI>::Ptr(new pcl::PointCloud<pcl::PointXYZI>);
++  viewpoint_in_collision_cloud_ = pcl::PointCloud<pcl::PointXYZI>::Ptr(new pcl::PointCloud<pcl::PointXYZI>);
++  pose_collision_cloud_.reset(new pcl::PointCloud<pcl::PointXYZI>);
++  pose_collision_tree_.reset(new pcl::KdTreeFLANN<pcl::PointXYZI>(false));
++
++  grid_ = std::make_shared<rolling_grid_ns::RollingGrid>(vp_.kNumber);
++  origin_ = Eigen::Vector3d::Zero();
++
++  viewpoints_.resize(vp_.kViewPointNumber);
++  for (int x = 0; x < vp_.kNumber.x(); x++)
++  {
++    for (int y = 0; y < vp_.kNumber.y(); y++)
++    {
++      for (int z = 0; z < vp_.kNumber.z(); z++)
++      {
++        Eigen::Vector3i sub(x, y, z);
++        int ind = grid_->Sub2Ind(sub);
++        viewpoints_[ind] = viewpoint_ns::ViewPoint();
++      }
++    }
++  }
++
++  graph_index_map_.resize(vp_.kViewPointNumber);
++  for (auto& ind : graph_index_map_)
++  {
++    ind = -1;
++  }
++
++  ComputeConnectedNeighborIndices();
++  ComputeInRangeNeighborIndices();
++  GetCollisionCorrespondence();
++
++  local_planning_horizon_size_ = Eigen::Vector3d::Zero();
++  for (int i = 0; i < vp_.dimension_; i++)
++  {
++    local_planning_horizon_size_(i) = vp_.kNumber(i) * vp_.kResolution(i);
++  }
++}
++
++void ViewPointManager::ComputeConnectedNeighborIndices()
++{
++  connected_neighbor_indices_.resize(vp_.kViewPointNumber);
++  connected_neighbor_dist_.resize(vp_.kViewPointNumber);
++
++  std::vector<Eigen::Vector3i> idx_addon;
++  for (int x = -1; x <= 1; x++)
++  {
++    for (int y = -1; y <= 1; y++)
++    {
++      for (int z = -1; z <= 1; z++)
++      {
++        if (x == 0 && y == 0 && z == 0)
++          continue;
++        idx_addon.push_back(Eigen::Vector3i(x, y, z));
++      }
++    }
++  }
++
++  for (int x = 0; x < vp_.kNumber.x(); x++)
++  {
++    for (int y = 0; y < vp_.kNumber.y(); y++)
++    {
++      for (int z = 0; z < vp_.kNumber.z(); z++)
++      {
++        Eigen::Vector3i sub(x, y, z);
++        int ind = grid_->Sub2Ind(sub);
++        for (int i = 0; i < idx_addon.size(); i++)
++        {
++          Eigen::Vector3i neighbor_sub = sub + idx_addon[i];
++          if (grid_->InRange(neighbor_sub))
++          {
++            connected_neighbor_indices_[ind].push_back(grid_->Sub2Ind(neighbor_sub));
++            double dist = sqrt(vp_.kResolution.x() * vp_.kResolution.x() * std::abs(idx_addon[i].x()) +
++                               vp_.kResolution.y() * vp_.kResolution.y() * std::abs(idx_addon[i].y()) +
++                               vp_.kResolution.z() * vp_.kResolution.z() * std::abs(idx_addon[i].z()));
++            connected_neighbor_dist_[ind].push_back(dist);
++          }
++        }
++      }
++    }
++  }
++}
++
++void ViewPointManager::ComputeInRangeNeighborIndices()
++{
++  pcl::PointCloud<pcl::PointXYZ>::Ptr cloud = pcl::PointCloud<pcl::PointXYZ>::Ptr(new pcl::PointCloud<pcl::PointXYZ>);
++  for (int i = 0; i < vp_.kViewPointNumber; i++)
++  {
++    Eigen::Vector3i sub = grid_->Ind2Sub(i);
++    pcl::PointXYZ point;
++    point.x = sub.x() * vp_.kResolution.x() + vp_.kResolution.x() / 2.0;
++    point.y = sub.y() * vp_.kResolution.y() + vp_.kResolution.y() / 2.0;
++    point.z = sub.z() * vp_.kResolution.z() + vp_.kResolution.z() / 2.0;
++    cloud->points.push_back(point);
++  }
++
++  pcl::KdTreeFLANN<pcl::PointXYZ>::Ptr kdtree =
++      pcl::KdTreeFLANN<pcl::PointXYZ>::Ptr(new pcl::KdTreeFLANN<pcl::PointXYZ>());
++  kdtree->setInputCloud(cloud);
++  in_range_neighbor_indices_.resize(vp_.kViewPointNumber);
++  std::vector<int> in_range_indices;
++  std::vector<float> in_range_sqdist;
++  for (int i = 0; i < in_range_neighbor_indices_.size(); i++)
++  {
++    pcl::PointXYZ point = cloud->points[i];
++    kdtree->radiusSearch(point, vp_.kNeighborRange, in_range_indices, in_range_sqdist);
++    for (const auto& ind : in_range_indices)
++    {
++      in_range_neighbor_indices_[i].push_back(ind);
++    }
++  }
++}
++
++void ViewPointManager::GetCollisionCorrespondence()
++{
++  misc_utils_ns::Timer timer("get collision grid correspondence");
++  timer.Start();
++
++  collision_grid_origin_ = Eigen::Vector3d::Zero();
++  for (int i = 0; i < vp_.dimension_; i++)
++  {
++    collision_grid_origin_(i) -= vp_.kViewPointCollisionMargin;
++  }
++  std::vector<int> viewpoint_index_correspondence;
++  collision_grid_ = std::make_shared<grid_ns::Grid<std::vector<int>>>(
++      vp_.kCollisionGridSize, viewpoint_index_correspondence, collision_grid_origin_, vp_.kCollisionGridResolution, 2);
++  collision_point_count_.resize(collision_grid_->GetCellNumber(), 0);
++
++  pcl::PointCloud<pcl::PointXYZI>::Ptr viewpoint_cloud(new pcl::PointCloud<pcl::PointXYZI>());
++  pcl::KdTreeFLANN<pcl::PointXYZI>::Ptr kdtree(new pcl::KdTreeFLANN<pcl::PointXYZI>());
++
++  // Get viewpoint cloud
++  // int count = 0;
++  for (int x = 0; x < vp_.kNumber.x(); x++)
++  {
++    for (int y = 0; y < vp_.kNumber.y(); y++)
++    {
++      for (int z = 0; z < vp_.kNumber.z(); z++)
++      {
++        int ind = grid_->Sub2Ind(Eigen::Vector3i(x, y, z));
++        pcl::PointXYZI point;
++        point.x = (x + 0.5) * vp_.kResolution.x();
++        point.y = (y + 0.5) * vp_.kResolution.y();
++        point.z = (z + 0.5) * vp_.kResolution.z();
++        point.z *= vp_.kCollisionGridZScale;
++        point.intensity = ind;
++        viewpoint_cloud->points.push_back(point);
++      }
++    }
++  }
++  // std::cout << "computing collision grid viewpoint cloud size: " << viewpoint_cloud->points.size() << std::endl;
++  kdtree->setInputCloud(viewpoint_cloud);
++  std::vector<int> nearby_viewpoint_indices;
++  std::vector<float> nearby_viewpoint_sqdist;
++  int count = 0;
++  for (int x = 0; x < vp_.kCollisionGridSize.x(); x++)
++  {
++    for (int y = 0; y < vp_.kCollisionGridSize.y(); y++)
++    {
++      for (int z = 0; z < vp_.kCollisionGridSize.z(); z++)
++      {
++        Eigen::Vector3d query_point_position = collision_grid_->Sub2Pos(x, y, z);
++        pcl::PointXYZI query_point;
++        query_point.x = query_point_position.x();
++        query_point.y = query_point_position.y();
++        query_point.z = query_point_position.z();
++        query_point.z *= vp_.kCollisionGridZScale;
++        kdtree->radiusSearch(query_point, vp_.kViewPointCollisionMargin, nearby_viewpoint_indices,
++                             nearby_viewpoint_sqdist);
++        int grid_ind = collision_grid_->Sub2Ind(x, y, z);
++        for (int i = 0; i < nearby_viewpoint_indices.size(); i++)
++        {
++          int ind = nearby_viewpoint_indices[i];
++          int viewpoint_ind = (int)(viewpoint_cloud->points[ind].intensity);
++          MY_ASSERT(viewpoint_ind >= 0 && viewpoint_ind < vp_.kViewPointNumber);
++          collision_grid_->GetCell(grid_ind).push_back(viewpoint_ind);
++        }
++      }
++    }
++  }
++
++  timer.Stop(false);
++}
++
++bool ViewPointManager::UpdateRobotPosition(const Eigen::Vector3d& robot_position)
++{
++  robot_position_ = robot_position;
++
++  if (!initialized_)
++  {
++    initialized_ = true;
++    UpdateOrigin();
++
++    for (int x = 0; x < vp_.kNumber.x(); x++)
++    {
++      for (int y = 0; y < vp_.kNumber.y(); y++)
++      {
++        for (int z = 0; z < vp_.kNumber.z(); z++)
++        {
++          int ind = grid_->Sub2Ind(Eigen::Vector3i(x, y, z));
++          geometry_msgs::msg::Point position;
++          position.x = origin_.x() + x * vp_.kResolution.x() + vp_.kResolution.x() / 2.0;
++          position.y = origin_.y() + y * vp_.kResolution.y() + vp_.kResolution.y() / 2.0;
++          position.z = robot_position.z();
++          SetViewPointPosition(ind, position, true);
++          ResetViewPoint(ind, true);
++        }
++      }
++    }
++  }
++  Eigen::Vector3i robot_grid_sub;
++  Eigen::Vector3d diff = robot_position_ - origin_;
++  Eigen::Vector3i sub = Eigen::Vector3i::Zero();
++  for (int i = 0; i < vp_.dimension_; i++)
++  {
++    robot_grid_sub(i) = diff(i) > 0 ? static_cast<int>(diff(i) / (vp_.kRolloverStepsize(i) * vp_.kResolution(i))) : -1;
++  }
++
++  Eigen::Vector3i sub_diff = Eigen::Vector3i::Zero();
++  for (int i = 0; i < vp_.dimension_; i++)
++  {
++    sub_diff(i) = (vp_.kNumber(i) / vp_.kRolloverStepsize(i)) / 2 - robot_grid_sub(i);
++  }
++
++  if (sub_diff.x() == 0 && sub_diff.y() == 0 && sub_diff.z() == 0)
++  {
++    return false;
++  }
++
++  Eigen::Vector3i rollover_step;
++  rollover_step.x() = std::abs(sub_diff.x()) > 0 ?
++                          vp_.kRolloverStepsize.x() * ((sub_diff.x() > 0) ? 1 : -1) * std::abs(sub_diff.x()) :
++                          0;
++  rollover_step.y() = std::abs(sub_diff.y()) > 0 ?
++                          vp_.kRolloverStepsize.y() * ((sub_diff.y() > 0) ? 1 : -1) * std::abs(sub_diff.y()) :
++                          0;
++  rollover_step.z() = std::abs(sub_diff.z()) > 0 ?
++                          vp_.kRolloverStepsize.z() * ((sub_diff.z() > 0) ? 1 : -1) * std::abs(sub_diff.z()) :
++                          0;
++
++  // std::cout << "rolling x: " << rollover_step.x() << " y: " << rollover_step.y() << " z: " << rollover_step.z()
++  //           << std::endl;
++  grid_->Roll(rollover_step);
++
++  misc_utils_ns::Timer reset_timer("reset viewpoint");
++  reset_timer.Start();
++
++  //   origin_ = origin_ - rollover_step.cast<double>() * vp_.kResolution;
++  origin_.x() -= rollover_step.x() * vp_.kResolution.x();
++  origin_.y() -= rollover_step.y() * vp_.kResolution.y();
++  origin_.z() -= rollover_step.z() * vp_.kResolution.z();
++
++  grid_->GetUpdatedIndices(updated_viewpoint_indices_);
++  for (const auto& ind : updated_viewpoint_indices_)
++  {
++    MY_ASSERT(grid_->InRange(ind));
++    Eigen::Vector3i sub = grid_->Ind2Sub(ind);
++    geometry_msgs::msg::Point new_position;
++    new_position.x = origin_.x() + sub.x() * vp_.kResolution.x() + vp_.kResolution.x() / 2.0;
++    new_position.y = origin_.y() + sub.y() * vp_.kResolution.y() + vp_.kResolution.y() / 2.0;
++    new_position.z = robot_position_.z();
++    SetViewPointPosition(ind, new_position);
++    ResetViewPoint(ind);
++  }
++  reset_timer.Stop(false);
++  return true;
++}
++
++void ViewPointManager::UpdateOrigin()
++{
++  for (int i = 0; i < vp_.dimension_; i++)
++  {
++    origin_(i) = robot_position_(i) - (vp_.kResolution(i) * vp_.kNumber(i)) / 2.0;
++  }
++}
++
++int ViewPointManager::GetViewPointArrayInd(int viewpoint_ind, bool use_array_ind) const
++{
++  MY_ASSERT(grid_->InRange(viewpoint_ind));
++  return (use_array_ind ? viewpoint_ind : grid_->GetArrayInd(viewpoint_ind));
++}
++
++int ViewPointManager::GetViewPointInd(int viewpoint_array_ind) const
++{
++  return grid_->GetInd(viewpoint_array_ind);
++}
++
++Eigen::Vector3i ViewPointManager::GetViewPointSub(Eigen::Vector3d position)
++{
++  Eigen::Vector3d diff = position - origin_;
++  Eigen::Vector3i sub = Eigen::Vector3i::Zero();
++  for (int i = 0; i < vp_.dimension_; i++)
++  {
++    sub(i) = diff(i) > 0 ? static_cast<int>(diff(i) / vp_.kResolution(i)) : -1;
++  }
++  return sub;
++}
++
++int ViewPointManager::GetViewPointInd(Eigen::Vector3d position)
++{
++  Eigen::Vector3i sub = GetViewPointSub(position);
++  if (grid_->InRange(sub))
++  {
++    return grid_->Sub2Ind(sub);
++  }
++  else
++  {
++    return -1;
++  }
++}
++
++void ViewPointManager::GetVisualizationCloud(pcl::PointCloud<pcl::PointXYZI>::Ptr& vis_cloud)
++{
++  vis_cloud->clear();
++  for (int i = 0; i < vp_.kViewPointNumber; i++)
++  {
++    if (IsViewPointCandidate(i, true))
++    {
++      geometry_msgs::msg::Point position = GetViewPointPosition(i, true);
++      pcl::PointXYZI vis_point;
++      vis_point.x = position.x;
++      vis_point.y = position.y;
++      vis_point.z = position.z;
++      if (ViewPointVisited(i, true))
++      {
++        vis_point.intensity = -1.0;
++      }
++      else
++      {
++        vis_point.intensity = GetViewPointCoveredPointNum(i, true);
++        vis_point.intensity += i * 1.0 / 10000.0;
++      }
++      vis_cloud->points.push_back(vis_point);
++    }
++  }
++}
++
++void ViewPointManager::CheckViewPointCollisionWithCollisionGrid(
++    const pcl::PointCloud<pcl::PointXYZI>::Ptr& collision_cloud)
++{
++  for (int i = 0; i < viewpoints_.size(); i++)
++  {
++    if (ViewPointInCollision(i, true))
++    {
++      AddViewPointCollisionFrameCount(i, true);
++    }
++  }
++
++  std::fill(collision_point_count_.begin(), collision_point_count_.end(), 0);
++  collision_grid_origin_ = origin_ - Eigen::Vector3d::Ones() * vp_.kViewPointCollisionMargin;
++  collision_grid_->SetOrigin(collision_grid_origin_);
++  for (const auto& point : collision_cloud->points)
++  {
++    Eigen::Vector3i collision_grid_sub = collision_grid_->Pos2Sub(point.x, point.y, point.z);
++    if (collision_grid_->InRange(collision_grid_sub))
++    {
++      int collision_grid_ind = collision_grid_->Sub2Ind(collision_grid_sub);
++      collision_point_count_[collision_grid_ind]++;
++      if (collision_point_count_[collision_grid_ind] >= vp_.kCollisionPointThr)
++      {
++        std::vector<int> collision_viewpoint_indices = collision_grid_->GetCellValue(collision_grid_ind);
++        for (int i = 0; i < collision_viewpoint_indices.size(); i++)
++        {
++          int viewpoint_ind = collision_viewpoint_indices[i];
++          MY_ASSERT(viewpoint_ind >= 0 && viewpoint_ind < vp_.kViewPointNumber);
++          double z_diff = point.z - GetViewPointHeight(viewpoint_ind);
++          if ((z_diff >= 0 && z_diff <= vp_.kViewPointCollisionMarginZPlus) ||
++              (z_diff < 0 && z_diff >= -vp_.kViewPointCollisionMarginZMinus))
++          {
++            SetViewPointCollision(viewpoint_ind, true);
++            ResetViewPointCollisionFrameCount(viewpoint_ind);
++          }
++        }
++      }
++    }
++  }
++  // Retain measured point coordinates. Quantized coverage-viewpoint labels
++  // are not a collision field for arbitrary continuous vehicle references.
++  // Preserve the existing occupied-bin count threshold and input history.
++  pose_collision_cloud_->clear();
++  for (const auto& point : collision_cloud->points)
++  {
++    if (!std::isfinite(point.x) || !std::isfinite(point.y) || !std::isfinite(point.z)) continue;
++    const auto sub = collision_grid_->Pos2Sub(point.x, point.y, point.z);
++    if (collision_grid_->InRange(sub) &&
++        collision_point_count_[collision_grid_->Sub2Ind(sub)] >= vp_.kCollisionPointThr)
++      pose_collision_cloud_->push_back(point);
++  }
++  if (!pose_collision_cloud_->empty()) pose_collision_tree_->setInputCloud(pose_collision_cloud_);
++  pose_collision_ready_ = true;
++}
++
++bool ViewPointManager::InCollisionAtPose(const Eigen::Vector3d& position)
++{
++  if (!position.allFinite() || !pose_collision_ready_ || !InLocalPlanningHorizon(position)) return true;
++  geometry_msgs::msg::Point query;
++  query.x=position.x();query.y=position.y();query.z=position.z();
++  if (!viewpoint_boundary_.points.empty() && !misc_utils_ns::PointInPolygon(query,viewpoint_boundary_)) return true;
++  for (const auto& boundary:nogo_boundary_)
++    if (!boundary.points.empty() && misc_utils_ns::PointInPolygon(query,boundary)) return true;
++  if (pose_collision_cloud_->empty()) return false;
++  // Keep the configured physical margin, adding half a collision-cell diagonal
++  // for raster uncertainty. Never exempt an actually colliding root state.
++  const double radius=vp_.kViewPointCollisionMargin+
++      .5*std::hypot(vp_.kCollisionGridResolution.x(),vp_.kCollisionGridResolution.y());
++  const double vertical=std::max(vp_.kViewPointCollisionMarginZPlus,vp_.kViewPointCollisionMarginZMinus);
++  pcl::PointXYZI point;point.x=query.x;point.y=query.y;point.z=query.z;
++  std::vector<int> indices;std::vector<float> squared;
++  pose_collision_tree_->radiusSearch(point,std::hypot(radius,vertical)+1e-5,indices,squared);
++  for (int index:indices) {
++    const auto& obstacle=pose_collision_cloud_->points[index];
++    const double dz=obstacle.z-position.z();
++    if (dz<=vp_.kViewPointCollisionMarginZPlus && dz>=-vp_.kViewPointCollisionMarginZMinus &&
++        std::hypot(obstacle.x-position.x(),obstacle.y-position.y())<=radius+1e-7) return true;
++  }
++  return false;
++}
++
++bool ViewPointManager::InCollision(const Eigen::Vector3d& position)
++{
++  int viewpoint_ind = GetViewPointInd(position);
++  bool node_in_collision = false;
++  if (InRange(viewpoint_ind) && std::abs(GetViewPointHeight(viewpoint_ind) - position.z()) <
++                                    std::max(vp_.kResolution.x(), vp_.kResolution.y()) * 2)
++  {
++    if (ViewPointInCollision(viewpoint_ind))
++    {
++      return true;
++    }
++  }
++  return false;
++}
++
++bool ViewPointManager::InCurrentFrameLineOfSight(const Eigen::Vector3d& position)
++{
++  int viewpoint_ind = GetViewPointInd(position);
++  bool in_line_of_sight = false;
++  if (InRange(viewpoint_ind))
++  {
++    if (ViewPointInCurrentFrameLineOfSight(viewpoint_ind))
++    {
++      return true;
++    }
++  }
++  return false;
++}
++
++void ViewPointManager::CheckViewPointBoundaryCollision()
++{
++  // Check for the polygon boundary and nogo zones
++  for (int i = 0; i < vp_.kViewPointNumber; i++)
++  {
++    geometry_msgs::msg::Point viewpoint_position = GetViewPointPosition(i, true);
++    if ((!viewpoint_boundary_.points.empty() &&
++         !misc_utils_ns::PointInPolygon(viewpoint_position, viewpoint_boundary_)))
++    {
++      SetViewPointCollision(i, true, true);
++      continue;
++    }
++    for (int j = 0; j < nogo_boundary_.size(); j++)
++    {
++      if (!nogo_boundary_[j].points.empty() && misc_utils_ns::PointInPolygon(viewpoint_position, nogo_boundary_[j]))
++      {
++        SetViewPointCollision(i, true, true);
++
++        break;
++      }
++    }
++  }
++}
++
++void ViewPointManager::CheckViewPointCollision(const pcl::PointCloud<pcl::PointXYZI>::Ptr& collision_cloud)
++{
++  CheckViewPointCollisionWithCollisionGrid(collision_cloud);
++  CheckViewPointBoundaryCollision();
++}
++
++void ViewPointManager::CheckViewPointCollisionWithTerrain(const pcl::PointCloud<pcl::PointXYZI>::Ptr& terrain_cloud,
++                                                          double collision_threshold)
++{
++  pcl::PointCloud<pcl::PointXYZI>::Ptr collision_cloud(new pcl::PointCloud<pcl::PointXYZI>());
++  for (const auto& point : terrain_cloud->points)
++  {
++    if (point.intensity > collision_threshold)
++    {
++      collision_cloud->points.push_back(point);
++    }
++  }
++  CheckViewPointCollisionWithCollisionGrid(collision_cloud);
++}
++
++void ViewPointManager::CheckViewPointLineOfSightHelper(const Eigen::Vector3i& start_sub, const Eigen::Vector3i& end_sub,
++                                                       const Eigen::Vector3i& max_sub, const Eigen::Vector3i& min_sub)
++{
++  if (end_sub == start_sub)
++    return;
++  int viewpoint_ind = grid_->Sub2Ind(end_sub);
++  geometry_msgs::msg::Point viewpoint_position = GetViewPointPosition(viewpoint_ind);
++  std::vector<Eigen::Vector3i> ray_cast_cells;
++  misc_utils_ns::RayCast(start_sub, end_sub, max_sub, min_sub, ray_cast_cells);
++  if (ray_cast_cells.size() > 1)
++  {
++    if (vp_.kLineOfSightStopAtNearestObstacle)
++    {
++      bool occlude = false;
++      for (int i = 1; i < ray_cast_cells.size(); i++)
++      {
++        int viewpoint_ind = grid_->Sub2Ind(ray_cast_cells[i]);
++        if (ViewPointInCollision(viewpoint_ind) && GetViewPointCollisionFrameCount(viewpoint_ind) == 0)
++        {
++          occlude = true;
++          break;
++        }
++        if (!occlude)
++        {
++          SetViewPointInLineOfSight(viewpoint_ind, true);
++          if (vp_.kCheckDynamicObstacleCollision &&
++              GetViewPointCollisionFrameCount(viewpoint_ind) > vp_.kCollisionFrameCountMax)
++
++          {
++            SetViewPointCollision(viewpoint_ind, false);
++          }
++        }
++      }
++    }
++    else
++    {
++      bool hit_obstacle = false;
++      bool in_line_of_sight = false;
++      for (int i = ray_cast_cells.size() - 1; i >= 0; i--)
++      {
++        int viewpoint_ind = grid_->Sub2Ind(ray_cast_cells[i]);
++        if (ViewPointInCollision(viewpoint_ind) && GetViewPointCollisionFrameCount(viewpoint_ind) == 0)
++        {
++          hit_obstacle = true;
++        }
++        if (hit_obstacle && !ViewPointInCollision(viewpoint_ind))
++        {
++          in_line_of_sight = true;
++        }
++        if (hit_obstacle && ViewPointInCollision(viewpoint_ind) &&
++            GetViewPointCollisionFrameCount(viewpoint_ind) > vp_.kCollisionFrameCountMax)
++
++        {
++          in_line_of_sight = true;
++          if (vp_.kCheckDynamicObstacleCollision)
++          {
++            SetViewPointCollision(viewpoint_ind, false);
++          }
++        }
++        if (in_line_of_sight)
++        {
++          SetViewPointInLineOfSight(viewpoint_ind, true);
++        }
++      }
++      if (!hit_obstacle)
++      {
++        for (int i = ray_cast_cells.size() - 1; i >= 0; i--)
++        {
++          int viewpoint_ind = grid_->Sub2Ind(ray_cast_cells[i]);
++          SetViewPointInLineOfSight(viewpoint_ind, true);
++        }
++      }
++    }
++
++    // Set in current frame line of sight
++    bool occlude = false;
++    for (int i = 1; i < ray_cast_cells.size(); i++)
++    {
++      int viewpoint_ind = grid_->Sub2Ind(ray_cast_cells[i]);
++      if (ViewPointInCollision(viewpoint_ind) && GetViewPointCollisionFrameCount(viewpoint_ind) == 0)
++      {
++        occlude = true;
++        break;
++      }
++      if (!occlude)
++      {
++        SetViewPointInCurrentFrameLineOfSight(viewpoint_ind, true);
++      }
++    }
++  }
++}
++
++void ViewPointManager::CheckViewPointLineOfSight()
++{
++  if (!initialized_)
++    return;
++
++  for (int i = 0; i < viewpoints_.size(); i++)
++  {
++    SetViewPointInCurrentFrameLineOfSight(i, false, true);
++  }
++
++  Eigen::Vector3i robot_sub = GetViewPointSub(robot_position_);
++  MY_ASSERT(grid_->InRange(robot_sub));
++  int robot_viewpoint_ind = grid_->Sub2Ind(robot_sub);
++  SetViewPointInLineOfSight(robot_viewpoint_ind, true);
++  SetViewPointInCurrentFrameLineOfSight(robot_viewpoint_ind, true);
++
++  std::vector<bool> checked(vp_.kViewPointNumber, false);
++  std::vector<Eigen::Vector3i> ray_cast_cells;
++  Eigen::Vector3i max_sub(vp_.kNumber.x() - 1, vp_.kNumber.y() - 1, vp_.kNumber.z() - 1);
++  Eigen::Vector3i min_sub(0, 0, 0);
++
++  int x_indices[2] = { 0, vp_.kNumber.x() - 1 };
++  int y_indices[2] = { 0, vp_.kNumber.y() - 1 };
++  int z_indices[2] = { 0, vp_.kNumber.z() - 1 };
++
++  for (int xi = 0; xi < 2; xi++)
++  {
++    for (int y = 0; y < vp_.kNumber.y(); y++)
++    {
++      for (int z = 0; z < vp_.kNumber.z(); z++)
++      {
++        int x = x_indices[xi];
++        Eigen::Vector3i end_sub(x, y, z);
++        int array_ind = grid_->GetArrayInd(end_sub);
++        if (!checked[array_ind])
++        {
++          CheckViewPointLineOfSightHelper(robot_sub, end_sub, max_sub, min_sub);
++          checked[array_ind] = true;
++        }
++      }
++    }
++  }
++
++  for (int x = 0; x < vp_.kNumber.x(); x++)
++  {
++    for (int yi = 0; yi < 2; yi++)
++    {
++      for (int z = 0; z < vp_.kNumber.z(); z++)
++      {
++        int y = y_indices[yi];
++        Eigen::Vector3i end_sub(x, y, z);
++        int array_ind = grid_->GetArrayInd(end_sub);
++        if (!checked[array_ind])
++        {
++          CheckViewPointLineOfSightHelper(robot_sub, end_sub, max_sub, min_sub);
++          checked[array_ind] = true;
++        }
++      }
++    }
++  }
++
++  for (int x = 0; x < vp_.kNumber.x(); x++)
++  {
++    for (int y = 0; y < vp_.kNumber.y(); y++)
++    {
++      for (int zi = 0; zi < 2; zi++)
++      {
++        int z = z_indices[zi];
++        Eigen::Vector3i end_sub(x, y, z);
++        int array_ind = grid_->GetArrayInd(end_sub);
++        if (!checked[array_ind])
++        {
++          CheckViewPointLineOfSightHelper(robot_sub, end_sub, max_sub, min_sub);
++          checked[array_ind] = true;
++        }
++      }
++    }
++  }
++}
++
++void ViewPointManager::CheckViewPointInFOV()
++{
++  if (!initialized_)
++    return;
++  Eigen::Vector3i robot_sub = GetViewPointSub(robot_position_);
++  MY_ASSERT(grid_->InRange(robot_sub));
++  for (int i = 0; i < vp_.kViewPointNumber; i++)
++  {
++    geometry_msgs::msg::Point viewpoint_position = GetViewPointPosition(i, true);
++    if (!InRobotFOV(Eigen::Vector3d(viewpoint_position.x, viewpoint_position.y, viewpoint_position.z)))
++    {
++      SetViewPointInLineOfSight(i, false, true);
++    }
++  }
++  int robot_viewpoint_ind = grid_->Sub2Ind(robot_sub);
++  SetViewPointInLineOfSight(robot_viewpoint_ind, true);
++}
++
++bool ViewPointManager::InFOV(const Eigen::Vector3d& point_position, const Eigen::Vector3d& viewpoint_position)
++{
++  Eigen::Vector3d diff = point_position - viewpoint_position;
++  double xy_diff = sqrt(diff.x() * diff.x() + diff.y() * diff.y());
++  double z_diff = std::abs(diff.z());
++  if (z_diff < vp_.kVerticalFOVRatio * xy_diff)
++  {
++    return true;
++  }
++  else
++  {
++    return false;
++  }
++}
++
++bool ViewPointManager::InFOVAndRange(const Eigen::Vector3d& point_position, const Eigen::Vector3d& viewpoint_position)
++{
++  Eigen::Vector3d diff = point_position - viewpoint_position;
++  double z_diff = std::abs(diff.z());
++  if (z_diff > vp_.kDiffZMax)
++  {
++    return false;
++  }
++  double xy_diff = sqrt(diff.x() * diff.x() + diff.y() * diff.y());
++  if (xy_diff > vp_.kSensorRange)
++  {
++    return false;
++  }
++  if (z_diff < vp_.kVerticalFOVRatio * xy_diff)
++  {
++    return true;
++  }
++  else
++  {
++    return false;
++  }
++}
++
++bool ViewPointManager::InRobotFOV(const Eigen::Vector3d& position)
++{
++  return InFOV(position, robot_position_);
++}
++
++void ViewPointManager::CheckViewPointConnectivity()
++{
++  if (!initialized_)
++    return;
++  Eigen::Vector3i robot_sub = GetViewPointSub(robot_position_);
++  MY_ASSERT(grid_->InRange(robot_sub));
++  int robot_ind = grid_->Sub2Ind(robot_sub);
++  int robot_array_ind = grid_->GetArrayInd(robot_sub);
++  if (ViewPointInCollision(robot_ind))
++  {
++    // std::cout << "ViewPointManager::CheckViewPointConnectivity: robot in collision" << std::endl;
++    // return;
++    // Find the nearest viewpoint that is not in collision
++    bool found_collision_free_viewpoint = false;
++    double min_dist_to_robot = DBL_MAX;
++    for (int i = 0; i < vp_.kViewPointNumber; i++)
++    {
++      int array_ind = grid_->GetArrayInd(i);
++      if (!ViewPointInCollision(i))
++      {
++        geometry_msgs::msg::Point position = GetViewPointPosition(i);
++        Eigen::Vector3d viewpoint_position(position.x, position.y, position.z);
++        double dist_to_robot = (viewpoint_position - robot_position_).norm();
++        if (dist_to_robot < min_dist_to_robot)
++        {
++          min_dist_to_robot = dist_to_robot;
++          robot_ind = i;
++          robot_array_ind = array_ind;
++          found_collision_free_viewpoint = true;
++        }
++      }
++    }
++    if (!found_collision_free_viewpoint)
++    {
++      std::cout << "All viewpoints in collision, exisiting" << std::endl;
++      return;
++    }
++  }
++  for (auto& viewpoint : viewpoints_)
++  {
++    viewpoint.SetConnected(false);
++  }
++  std::vector<bool> checked(vp_.kViewPointNumber, false);
++  checked[robot_ind] = true;
++  SetViewPointConnected(robot_ind, true);
++  std::list<int> queue;
++  queue.push_back(robot_ind);
++  int connected_viewpoint_count = 1;
++  while (!queue.empty())
++  {
++    int cur_ind = queue.front();
++    queue.pop_front();
++    for (int i = 0; i < connected_neighbor_indices_[cur_ind].size(); i++)
++    {
++      int neighbor_ind = connected_neighbor_indices_[cur_ind][i];
++      if (!grid_->InRange(neighbor_ind))
++      {
++        std::cout << "ViewPointManager::CheckViewPointConnectivity: neighbor ind out of bound" << std::endl;
++        continue;
++      }
++      // A blocked diagonal is an edge failure: another parent may still
++      // reach this neighbor, so do not mark it checked on this attempt.
++      if (ht_map_->enabled() && !HTConnectionSupported(cur_ind, neighbor_ind)) continue;
++      if (!checked[neighbor_ind] && !ViewPointInCollision(neighbor_ind) && ViewPointInLineOfSight(neighbor_ind))
++      {
++        if (std::abs(GetViewPointHeight(cur_ind) - GetViewPointHeight(neighbor_ind)) < vp_.kConnectivityHeightDiffThr)
++        {
++          SetViewPointConnected(neighbor_ind, true);
++          connected_viewpoint_count++;
++          queue.push_back(neighbor_ind);
++        }
++      }
++      checked[neighbor_ind] = true;
++    }
++  }
++}
++
++void ViewPointManager::UpdateViewPointVisited(const std::vector<Eigen::Vector3d>& positions)
++{
++  if (!initialized_)
++    return;
++
++  for (const auto& position : positions)
++  {
++    if (!InLocalPlanningHorizon(position))
++    {
++      continue;
++    }
++    Eigen::Vector3i viewpoint_sub = GetViewPointSub(position);
++    if (grid_->InRange(viewpoint_sub))
++    {
++      int viewpoint_ind = grid_->Sub2Ind(viewpoint_sub);
++      SetViewPointVisited(viewpoint_ind, true);
++      for (const auto& neighbor_viewpoint_ind : in_range_neighbor_indices_[viewpoint_ind])
++      {
++        MY_ASSERT(grid_->InRange(neighbor_viewpoint_ind));
++        SetViewPointVisited(neighbor_viewpoint_ind, true);
++        int neighbor_array_ind = grid_->GetArrayInd(neighbor_viewpoint_ind);
++      }
++    }
++  }
++}
++
++void ViewPointManager::UpdateViewPointVisited(std::shared_ptr<grid_world_ns::GridWorld> const& grid_world)
++{
++  for (int i = 0; i < viewpoints_.size(); i++)
++  {
++    geometry_msgs::msg::Point viewpoint_position = GetViewPointPosition(i, true);
++    int cell_ind = grid_world->GetCellInd(viewpoint_position.x, viewpoint_position.y, viewpoint_position.z);
++    if (grid_world->IndInBound((cell_ind)))
++    {
++      grid_world_ns::CellStatus cell_status = grid_world->GetCellStatus(cell_ind);
++      if (cell_status == grid_world_ns::CellStatus::COVERED_BY_OTHERS)
++      {
++        SetViewPointVisited(i, true, true);
++      }
++    }
++  }
++}
++
++void ViewPointManager::SetViewPointHeightWithTerrain(const pcl::PointCloud<pcl::PointXYZI>::Ptr& terrain_cloud,
++                                                     double terrain_height_threshold)
++{
++  // Set the height of the viewpoint nearby the robot to be the height of the robot, in case there is no terrain cloud
++  // within the blind spot.
++  if (!initialized_)
++    return;
++  Eigen::Vector3i robot_sub = GetViewPointSub(robot_position_);
++  int robot_ind = grid_->Sub2Ind(robot_sub);
++  MY_ASSERT(grid_->InRange(robot_sub));
++  geometry_msgs::msg::Point robot_viewpoint_position = GetViewPointPosition(robot_ind);
++
++  if (!ViewPointHasTerrainHeight(robot_ind) ||
++      std::abs(robot_viewpoint_position.z - robot_position_.z()) > vp_.kViewPointHeightFromTerrainChangeThreshold)
++  {
++    robot_viewpoint_position.z = robot_position_.z();
++    SetViewPointPosition(robot_ind, robot_viewpoint_position);
++    for (int i = 0; i < in_range_neighbor_indices_[robot_ind].size(); i++)
++    {
++      int neighbor_ind = in_range_neighbor_indices_[robot_ind][i];
++      MY_ASSERT(grid_->InRange(neighbor_ind));
++      if (!ViewPointHasTerrainHeight(neighbor_ind) ||
++          std::abs(GetViewPointHeight(neighbor_ind) - robot_position_.z()) > 0.6)
++      {
++        SetViewPointHeight(neighbor_ind, robot_position_.z());
++      }
++    }
++  }
++
++  // Set the height of other viewpoints
++  for (const auto& terrain_point : terrain_cloud->points)
++  {
++    if (terrain_point.intensity > terrain_height_threshold)
++    {
++      continue;
++    }
++    Eigen::Vector3i viewpoint_sub = GetViewPointSub(Eigen::Vector3d(terrain_point.x, terrain_point.y, terrain_point.z));
++    if (grid_->InRange(viewpoint_sub))
++    {
++      int viewpoint_ind = grid_->Sub2Ind(viewpoint_sub);
++      double target_height = terrain_point.z + vp_.kViewPointHeightFromTerrain;
++      // If the viewpoint has not been set height with terrain points, or if there is a terrain point with a lower
++      // height
++      if (!ViewPointHasTerrainHeight(viewpoint_ind) || target_height < GetViewPointHeight(viewpoint_ind))
++      {
++        if (std::abs(target_height - GetViewPointHeight(viewpoint_ind)) >
++            vp_.kViewPointHeightFromTerrainChangeThreshold)
++        {
++          ResetViewPoint(viewpoint_ind);
++        }
++        SetViewPointHeight(viewpoint_ind, target_height);
++        SetViewPointHasTerrainHeight(viewpoint_ind, true);
++      }
++    }
++  }
++
++  // For viewpoints that are not set heights with terrain directly, use neighbors' heights
++  for (int i = 0; i < vp_.kViewPointNumber; i++)
++  {
++    if (!ViewPointHasTerrainHeight(i))
++    {
++      for (const auto& neighbor_ind : in_range_neighbor_indices_[i])
++      {
++        MY_ASSERT(grid_->InRange(neighbor_ind));
++        if (ViewPointHasTerrainHeight(neighbor_ind))
++        {
++          double neighbor_height = GetViewPointHeight(neighbor_ind);
++          if (std::abs(neighbor_height - GetViewPointHeight(i)) > vp_.kViewPointHeightFromTerrainChangeThreshold)
++          {
++            geometry_msgs::msg::Point viewpoint_position = GetViewPointPosition(i);
++            viewpoint_position.z = neighbor_height;
++            ResetViewPoint(i);
++            SetViewPointPosition(i, viewpoint_position);
++          }
++          else
++          {
++            SetViewPointHeight(i, neighbor_height);
++          }
++        }
++      }
++    }
++  }
++}
++
++// Reset viewpoint
++void ViewPointManager::ResetViewPoint(int viewpoint_ind, bool use_array_ind)
++{
++  int array_ind = GetViewPointArrayInd(viewpoint_ind, use_array_ind);
++  viewpoints_[array_ind].Reset();
++}
++
++void ViewPointManager::ResetViewPointCoverage()
++{
++  for (auto& viewpoint : viewpoints_)
++  {
++    viewpoint.ResetCoverage();
++  }
++}
++
++// Collision
++bool ViewPointManager::ViewPointInCollision(int viewpoint_ind, bool use_array_ind)
++{
++  int array_ind = GetViewPointArrayInd(viewpoint_ind, use_array_ind);
++  return viewpoints_[array_ind].InCollision();
++}
++void ViewPointManager::SetViewPointCollision(int viewpoint_ind, bool in_collision, bool use_array_ind)
++{
++  int array_ind = GetViewPointArrayInd(viewpoint_ind, use_array_ind);
++  viewpoints_[array_ind].SetInCollision(in_collision);
++}
++// Line of Sight
++bool ViewPointManager::ViewPointInLineOfSight(int viewpoint_ind, bool use_array_ind)
++{
++  int array_ind = GetViewPointArrayInd(viewpoint_ind, use_array_ind);
++  return viewpoints_[array_ind].InLineOfSight();
++}
++void ViewPointManager::SetViewPointInLineOfSight(int viewpoint_ind, bool in_line_of_sight, bool use_array_ind)
++{
++  int array_ind = GetViewPointArrayInd(viewpoint_ind, use_array_ind);
++  viewpoints_[array_ind].SetInLineOfSight(in_line_of_sight);
++}
++// Connectivity
++bool ViewPointManager::ViewPointConnected(int viewpoint_ind, bool use_array_ind)
++{
++  int array_ind = GetViewPointArrayInd(viewpoint_ind, use_array_ind);
++  return viewpoints_[array_ind].Connected();
++}
++void ViewPointManager::SetViewPointConnected(int viewpoint_ind, bool connected, bool use_array_ind)
++{
++  int array_ind = GetViewPointArrayInd(viewpoint_ind, use_array_ind);
++  viewpoints_[array_ind].SetConnected(connected);
++}
++// Visited
++bool ViewPointManager::ViewPointVisited(int viewpoint_ind, bool use_array_ind)
++{
++  int array_ind = GetViewPointArrayInd(viewpoint_ind, use_array_ind);
++  return viewpoints_[array_ind].Visited();
++}
++void ViewPointManager::SetViewPointVisited(int viewpoint_ind, bool visited, bool use_array_ind)
++{
++  int array_ind = GetViewPointArrayInd(viewpoint_ind, use_array_ind);
++  viewpoints_[array_ind].SetVisited(visited);
++}
++// Selected
++bool ViewPointManager::ViewPointSelected(int viewpoint_ind, bool use_array_ind)
++{
++  int array_ind = GetViewPointArrayInd(viewpoint_ind, use_array_ind);
++  return viewpoints_[array_ind].Selected();
++}
++void ViewPointManager::SetViewPointSelected(int viewpoint_ind, bool selected, bool use_array_ind)
++{
++  int array_ind = GetViewPointArrayInd(viewpoint_ind, use_array_ind);
++  viewpoints_[array_ind].SetSelected(selected);
++}
++// Candidacy
++bool ViewPointManager::IsViewPointCandidate(int viewpoint_ind, bool use_array_ind)
++{
++  int array_ind = GetViewPointArrayInd(viewpoint_ind, use_array_ind);
++  return viewpoints_[array_ind].IsCandidate();
++}
++void ViewPointManager::SetViewPointCandidate(int viewpoint_ind, bool candidate, bool use_array_ind)
++{
++  int array_ind = GetViewPointArrayInd(viewpoint_ind, use_array_ind);
++  viewpoints_[array_ind].SetCandidate(candidate);
++}
++// Terrain Height
++bool ViewPointManager::ViewPointHasTerrainHeight(int viewpoint_ind, bool use_array_ind)
++{
++  int array_ind = GetViewPointArrayInd(viewpoint_ind, use_array_ind);
++  return viewpoints_[array_ind].HasTerrainHeight();
++}
++void ViewPointManager::SetViewPointHasTerrainHeight(int viewpoint_ind, bool has_terrain_height, bool use_array_ind)
++{
++  int array_ind = GetViewPointArrayInd(viewpoint_ind, use_array_ind);
++  viewpoints_[array_ind].SetHasTerrainHeight(has_terrain_height);
++}
++// In exploring cell
++bool ViewPointManager::ViewPointInExploringCell(int viewpoint_ind, bool use_array_ind)
++{
++  int array_ind = GetViewPointArrayInd(viewpoint_ind, use_array_ind);
++  return viewpoints_[array_ind].InExploringCell();
++}
++void ViewPointManager::SetViewPointInExploringCell(int viewpoint_ind, bool in_exploring_cell, bool use_array_ind)
++{
++  int array_ind = GetViewPointArrayInd(viewpoint_ind, use_array_ind);
++  viewpoints_[array_ind].SetInExploringCell(in_exploring_cell);
++}
++// Height
++double ViewPointManager::GetViewPointHeight(int viewpoint_ind, bool use_array_ind)
++{
++  int array_ind = GetViewPointArrayInd(viewpoint_ind, use_array_ind);
++  return viewpoints_[array_ind].GetHeight();
++}
++void ViewPointManager::SetViewPointHeight(int viewpoint_ind, double height, bool use_array_ind)
++{
++  int array_ind = GetViewPointArrayInd(viewpoint_ind, use_array_ind);
++  viewpoints_[array_ind].SetHeight(height);
++}
++// In current frame line of sight
++bool ViewPointManager::ViewPointInCurrentFrameLineOfSight(int viewpoint_ind, bool use_array_ind)
++{
++  int array_ind = GetViewPointArrayInd(viewpoint_ind, use_array_ind);
++  return viewpoints_[array_ind].InCurrentFrameLineOfSight();
++}
++void ViewPointManager::SetViewPointInCurrentFrameLineOfSight(int viewpoint_ind, bool in_current_frame_line_of_sight,
++                                                             bool use_array_ind)
++{
++  int array_ind = GetViewPointArrayInd(viewpoint_ind, use_array_ind);
++  viewpoints_[array_ind].SetInCurrentFrameLineOfSight(in_current_frame_line_of_sight);
++}
++// Position
++geometry_msgs::msg::Point ViewPointManager::GetViewPointPosition(int viewpoint_ind, bool use_array_ind)
++{
++  int array_ind = GetViewPointArrayInd(viewpoint_ind, use_array_ind);
++  return viewpoints_[array_ind].GetPosition();
++}
++void ViewPointManager::SetViewPointPosition(int viewpoint_ind, geometry_msgs::msg::Point position, bool use_array_ind)
++{
++  int array_ind = GetViewPointArrayInd(viewpoint_ind, use_array_ind);
++  viewpoints_[array_ind].SetPosition(position);
++}
++// Cell Ind
++int ViewPointManager::GetViewPointCellInd(int viewpoint_ind, bool use_array_ind)
++{
++  int array_ind = GetViewPointArrayInd(viewpoint_ind, use_array_ind);
++  return viewpoints_[array_ind].GetCellInd();
++}
++void ViewPointManager::SetViewPointCellInd(int viewpoint_ind, int cell_ind, bool use_array_ind)
++{
++  int array_ind = GetViewPointArrayInd(viewpoint_ind, use_array_ind);
++  viewpoints_[array_ind].SetCellInd(cell_ind);
++}
++// Collision frame count
++int ViewPointManager::GetViewPointCollisionFrameCount(int viewpoint_ind, bool use_array_ind)
++{
++  int array_ind = GetViewPointArrayInd(viewpoint_ind, use_array_ind);
++  return viewpoints_[array_ind].GetCollisionFrameCount();
++}
++void ViewPointManager::AddViewPointCollisionFrameCount(int viewpoint_ind, bool use_array_ind)
++{
++  int array_ind = GetViewPointArrayInd(viewpoint_ind, use_array_ind);
++  viewpoints_[array_ind].AddCollisionFrame();
++}
++void ViewPointManager::ResetViewPointCollisionFrameCount(int viewpoint_ind, bool use_array_ind)
++{
++  int array_ind = GetViewPointArrayInd(viewpoint_ind, use_array_ind);
++  viewpoints_[array_ind].ResetCollisionFrameCount();
++}
++// Covered point list
++void ViewPointManager::ResetViewPointCoveredPointList(int viewpoint_ind, bool use_array_ind)
++{
++  int array_ind = GetViewPointArrayInd(viewpoint_ind, use_array_ind);
++  viewpoints_[array_ind].ResetCoveredPointList();
++  viewpoints_[array_ind].ResetCoveredFrontierPointList();
++}
++void ViewPointManager::AddUncoveredPoint(int viewpoint_ind, int point_ind, bool use_array_ind)
++{
++  int array_ind = GetViewPointArrayInd(viewpoint_ind, use_array_ind);
++  viewpoints_[array_ind].AddCoveredPoint(point_ind);
++}
++void ViewPointManager::AddUncoveredFrontierPoint(int viewpoint_ind, int point_ind, bool use_array_ind)
++{
++  int array_ind = GetViewPointArrayInd(viewpoint_ind, use_array_ind);
++  viewpoints_[array_ind].AddCoveredFrontierPoint(point_ind);
++}
++const std::vector<int>& ViewPointManager::GetViewPointCoveredPointList(int viewpoint_ind, bool use_array_ind) const
++{
++  int array_ind = GetViewPointArrayInd(viewpoint_ind, use_array_ind);
++  return viewpoints_[array_ind].GetCoveredPointList();
++}
++const std::vector<int>& ViewPointManager::GetViewPointCoveredFrontierPointList(int viewpoint_ind,
++                                                                               bool use_array_ind) const
++{
++  int array_ind = GetViewPointArrayInd(viewpoint_ind, use_array_ind);
++  return viewpoints_[array_ind].GetCoveredFrontierPointList();
++}
++
++int ViewPointManager::GetViewPointCoveredPointNum(int viewpoint_ind, bool use_array_ind)
++{
++  int array_ind = GetViewPointArrayInd(viewpoint_ind, use_array_ind);
++  return viewpoints_[array_ind].GetCoveredPointNum();
++}
++
++int ViewPointManager::GetViewPointCoveredFrontierPointNum(int viewpoint_ind, bool use_array_ind)
++{
++  int array_ind = GetViewPointArrayInd(viewpoint_ind, use_array_ind);
++  return viewpoints_[array_ind].GetCoveredFrontierPointNum();
++}
++
++int ViewPointManager::GetViewPointCoveredPointNum(const std::vector<bool>& point_list, int viewpoint_index,
++                                                  bool use_array_ind)
++{
++  int covered_point_num = 0;
++  for (const auto& point_ind : GetViewPointCoveredPointList(viewpoint_index, use_array_ind))
++  {
++    MY_ASSERT(misc_utils_ns::InRange<bool>(point_list, point_ind));
++    if (!point_list[point_ind])
++    {
++      covered_point_num++;
++    }
++  }
++  return covered_point_num;
++}
++int ViewPointManager::GetViewPointCoveredFrontierPointNum(const std::vector<bool>& frontier_point_list,
++                                                          int viewpoint_index, bool use_array_ind)
++{
++  int covered_frontier_point_num = 0;
++  for (const auto& point_ind : GetViewPointCoveredFrontierPointList(viewpoint_index, use_array_ind))
++  {
++    MY_ASSERT(misc_utils_ns::InRange<bool>(frontier_point_list, point_ind));
++    if (!frontier_point_list[point_ind])
++    {
++      covered_frontier_point_num++;
++    }
++  }
++  return covered_frontier_point_num;
++}
++
++void ViewPointManager::UpdateViewPointCoveredPoint(std::vector<bool>& point_list, int viewpoint_index,
++                                                   bool use_array_ind)
++{
++  for (const auto& point_ind : GetViewPointCoveredPointList(viewpoint_index, use_array_ind))
++  {
++    MY_ASSERT(misc_utils_ns::InRange<bool>(point_list, point_ind));
++    point_list[point_ind] = true;
++  }
++}
++void ViewPointManager::UpdateViewPointCoveredFrontierPoint(std::vector<bool>& frontier_point_list, int viewpoint_index,
++                                                           bool use_array_ind)
++{
++  for (const auto& point_ind : GetViewPointCoveredFrontierPointList(viewpoint_index, use_array_ind))
++  {
++    MY_ASSERT(misc_utils_ns::InRange<bool>(frontier_point_list, point_ind));
++    frontier_point_list[point_ind] = true;
++  }
++}
++
++int ViewPointManager::GetViewPointCandidate()
++{
++  viewpoint_candidate_cloud_->clear();
++  viewpoint_in_collision_cloud_->clear();
++  candidate_indices_.clear();
++
++  for (int i = 0; i < vp_.kViewPointNumber; i++)
++  {
++    SetViewPointCandidate(i, false);
++    if (!ViewPointInCollision(i) && ViewPointInLineOfSight(i) && ViewPointConnected(i))
++    {
++      SetViewPointCandidate(i, true);
++      candidate_indices_.push_back(i);
++      geometry_msgs::msg::Point viewpoint_position = GetViewPointPosition(i);
++      pcl::PointXYZI point;
++      point.x = viewpoint_position.x;
++      point.y = viewpoint_position.y;
++      point.z = viewpoint_position.z;
++      viewpoint_candidate_cloud_->points.push_back(point);
++    }
++    if (ViewPointInCollision(i))
++    {
++      geometry_msgs::msg::Point viewpoint_position = GetViewPointPosition(i);
++      pcl::PointXYZI point;
++      point.x = viewpoint_position.x;
++      point.y = viewpoint_position.y;
++      point.z = viewpoint_position.z;
++      point.intensity = GetViewPointCollisionFrameCount(i);
++      viewpoint_in_collision_cloud_->points.push_back(point);
++    }
++  }
++
++  if (!candidate_indices_.empty())
++  {
++    kdtree_viewpoint_candidate_->setInputCloud(viewpoint_candidate_cloud_);
++  }
++
++  if (!viewpoint_in_collision_cloud_->points.empty())
++  {
++    kdtree_viewpoint_in_collision_->setInputCloud(viewpoint_in_collision_cloud_);
++  }
++
++  // Construct a graph of all the viewpoints
++  GetCandidateViewPointGraph(candidate_viewpoint_graph_, candidate_viewpoint_dist_, candidate_viewpoint_position_);
++  if (ht_map_->enabled()) {
++    candidate_ht_dist_ = candidate_viewpoint_dist_;
++    for (size_t i=0;i<candidate_viewpoint_graph_.size();++i) {
++      const auto& a=candidate_viewpoint_position_[i];
++      for (size_t j=0;j<candidate_viewpoint_graph_[i].size();++j) {
++        const auto& b=candidate_viewpoint_position_[candidate_viewpoint_graph_[i][j]];
++        candidate_ht_dist_[i][j]=ht_map_->cost({a.x,a.y,a.z},{b.x,b.y,b.z});
++      }
++    }
++  }
++
++  return candidate_indices_.size();
++}
++
++double ViewPointManager::GetHTShortestPath(int start,int target,nav_msgs::msg::Path& path)
++{
++  path.poses.clear();
++  if (!InRange(start) || !InRange(target) || !IsViewPointCandidate(start) ||
++      !IsViewPointCandidate(target)) return std::numeric_limits<double>::infinity();
++  std::vector<int> indices;
++  const double cost=ht_cost_ns::shortestPath(candidate_viewpoint_graph_,candidate_ht_dist_,
++                                           graph_index_map_[start],graph_index_map_[target],indices);
++  path.header.frame_id="map";
++  for (int i:indices) {
++    geometry_msgs::msg::PoseStamped pose;
++    pose.pose.position=candidate_viewpoint_position_[i];
++    pose.pose.orientation.w=1;
++    path.poses.push_back(pose);
++  }
++  return cost;
++}
++
++nav_msgs::msg::Path ViewPointManager::GetViewPointShortestPath(int start_viewpoint_ind, int target_viewpoint_ind)
++{
++  nav_msgs::msg::Path path;
++  if (!InRange(start_viewpoint_ind))
++  {
++    RCLCPP_WARN_STREAM(rclcpp::get_logger("standalone_logger"),
++                       "ViewPointManager::GetViewPointShortestPath start viewpoint ind: " << start_viewpoint_ind
++                                                                                          << " not in range");
++    return path;
++  }
++  if (!InRange(target_viewpoint_ind))
++  {
++    RCLCPP_WARN_STREAM(rclcpp::get_logger("standalone_logger"),
++                       "ViewPointManager::GetViewPointShortestPath target viewpoint ind: " << target_viewpoint_ind
++                                                                                           << " not in range");
++    return path;
++  }
++
++  int start_graph_ind = graph_index_map_[start_viewpoint_ind];
++  int target_graph_ind = graph_index_map_[target_viewpoint_ind];
++
++  std::vector<int> path_graph_indices;
++  double path_length =
++      misc_utils_ns::AStarSearch(candidate_viewpoint_graph_, candidate_viewpoint_dist_, candidate_viewpoint_position_,
++                                 start_graph_ind, target_graph_ind, true, path_graph_indices);
++  if (path_graph_indices.size() >= 2)
++  {
++    for (int i = 0; i < path_graph_indices.size(); i++)
++    {
++      int graph_idx = path_graph_indices[i];
++      int ind = candidate_indices_[graph_idx];
++      geometry_msgs::msg::PoseStamped pose;
++      pose.pose.position = GetViewPointPosition(ind);
++      path.poses.push_back(pose);
++    }
++  }
++  return path;
++}
++
++nav_msgs::msg::Path ViewPointManager::GetViewPointShortestPath(const Eigen::Vector3d& start_position,
++                                                               const Eigen::Vector3d& target_position)
++{
++  nav_msgs::msg::Path path;
++  if (!InLocalPlanningHorizon(start_position))
++  {
++    RCLCPP_WARN_STREAM(rclcpp::get_logger("standalone_logger"),
++                       "ViewPointManager::GetViewPointShortestPath start position "
++                           << start_position.transpose() << " not in local planning horizon");
++    return path;
++  }
++  if (!InLocalPlanningHorizon(target_position))
++  {
++    RCLCPP_WARN_STREAM(rclcpp::get_logger("standalone_logger"),
++                       "ViewPointManager::GetViewPointShortestPath target position "
++                           << target_position.transpose() << " not in local planning horizon");
++    return path;
++  }
++  int start_viewpoint_ind = GetNearestCandidateViewPointInd(start_position);
++  int target_viewpoint_ind = GetNearestCandidateViewPointInd(target_position);
++
++  return GetViewPointShortestPath(start_viewpoint_ind, target_viewpoint_ind);
++}
++
++bool ViewPointManager::GetViewPointShortestPathWithMaxLength(const Eigen::Vector3d& start_position,
++                                                             const Eigen::Vector3d& target_position,
++                                                             double max_path_length, nav_msgs::msg::Path& path)
++{
++  if (!InLocalPlanningHorizon(start_position))
++  {
++    RCLCPP_WARN_STREAM(rclcpp::get_logger("standalone_logger"),
++                       "ViewPointManager::GetViewPointShortestPath start position "
++                           << start_position.transpose() << " not in local planning horizon");
++    return false;
++  }
++  if (!InLocalPlanningHorizon(target_position))
++  {
++    RCLCPP_WARN_STREAM(rclcpp::get_logger("standalone_logger"),
++                       "ViewPointManager::GetViewPointShortestPath target position "
++                           << target_position.transpose() << " not in local planning horizon");
++    return false;
++  }
++  int start_viewpoint_ind = GetNearestCandidateViewPointInd(start_position);
++  int target_viewpoint_ind = GetNearestCandidateViewPointInd(target_position);
++  int start_graph_ind = graph_index_map_[start_viewpoint_ind];
++  int target_graph_ind = graph_index_map_[target_viewpoint_ind];
++
++  std::vector<int> path_graph_indices;
++  double shortest_path_dist = 0;
++  bool found_path = misc_utils_ns::AStarSearchWithMaxPathLength(
++      candidate_viewpoint_graph_, candidate_viewpoint_dist_, candidate_viewpoint_position_, start_graph_ind,
++      target_graph_ind, true, path_graph_indices, shortest_path_dist, max_path_length);
++
++  if (found_path && path_graph_indices.size() >= 2)
++  {
++    for (int i = 0; i < path_graph_indices.size(); i++)
++    {
++      int graph_idx = path_graph_indices[i];
++      int ind = candidate_indices_[graph_idx];
++      geometry_msgs::msg::PoseStamped pose;
++      pose.pose.position = GetViewPointPosition(ind);
++      path.poses.push_back(pose);
++    }
++  }
++  return found_path;
++}
++
++void ViewPointManager::UpdateCandidateViewPointCellStatus(std::shared_ptr<grid_world_ns::GridWorld> const& grid_world)
++{
++  for (const auto& ind : candidate_indices_)
++  {
++    int cell_ind = GetViewPointCellInd(ind);
++    if (grid_world->IndInBound(cell_ind))
++    {
++      grid_world_ns::CellStatus cell_status = grid_world->GetCellStatus(cell_ind);
++      if (cell_status == grid_world_ns::CellStatus::UNSEEN || cell_status == grid_world_ns::CellStatus::EXPLORING)
++      {
++        SetViewPointInExploringCell(ind, true);
++      }
++      else
++      {
++        SetViewPointInExploringCell(ind, false);
++      }
++    }
++    else
++    {
++      RCLCPP_WARN_STREAM(rclcpp::get_logger("standalone_logger"),
++                         "ViewPointManager::UpdateCandidateViewPointCellStatus: cell ind " << cell_ind
++                                                                                           << " out of bound");
++    }
++  }
++}
++
++bool ViewPointManager::HTConnectionSupported(int from, int to)
++{
++  if (std::abs(GetViewPointHeight(from) - GetViewPointHeight(to)) >= vp_.kConnectivityHeightDiffThr)
++    return false;
++  const auto a = grid_->Ind2Sub(from);
++  const auto b = grid_->Ind2Sub(to);
++  return ht_cost_ns::gridEdgeSupported({a.x(), a.y(), a.z()}, {b.x(), b.y(), b.z()},
++      [this](const std::array<int, 3>& cell) {
++        const Eigen::Vector3i sub(cell[0], cell[1], cell[2]);
++        if (!grid_->InRange(sub)) return false;
++        const int ind = grid_->Sub2Ind(sub);
++        return !ViewPointInCollision(ind) && ViewPointInLineOfSight(ind);
++      });
++}
++
++void ViewPointManager::GetCandidateViewPointGraph(std::vector<std::vector<int>>& graph,
++                                                  std::vector<std::vector<double>>& dist,
++                                                  std::vector<geometry_msgs::msg::Point>& positions)
++{
++  graph.clear();
++  dist.clear();
++  positions.clear();
++  if (candidate_indices_.empty())
++  {
++    return;
++  }
++  graph.resize(candidate_indices_.size());
++  dist.resize(graph.size());
++
++  for (int i = 0; i < candidate_indices_.size(); i++)
++  {
++    int ind = candidate_indices_[i];
++    graph_index_map_[ind] = i;
++  }
++
++  // Build the graph
++  for (int i = 0; i < candidate_indices_.size(); i++)
++  {
++    int cur_ind = candidate_indices_[i];
++    positions.push_back(GetViewPointPosition(cur_ind));
++    for (int j = 0; j < connected_neighbor_indices_[cur_ind].size(); j++)
++    {
++      int neighbor_ind = connected_neighbor_indices_[cur_ind][j];
++      double neighbor_dist = connected_neighbor_dist_[cur_ind][j];
++      if (IsViewPointCandidate(neighbor_ind) &&
++          (!ht_map_->enabled() || HTConnectionSupported(cur_ind, neighbor_ind)))
++      {
++        graph[i].push_back(graph_index_map_[neighbor_ind]);
++        dist[i].push_back(neighbor_dist);
++      }
++    }
++  }
++}
++
++int ViewPointManager::GetNearestCandidateViewPointInd(const Eigen::Vector3d& position)
++{
++  int viewpoint_ind = GetViewPointInd(position);
++  if (InRange(viewpoint_ind))
++  {
++    if (IsViewPointCandidate(viewpoint_ind))
++    {
++      return viewpoint_ind;
++    }
++  }
++  if (!candidate_indices_.empty())
++  {
++    // Find the closest viewpoint that is a candidate viewpoint
++    double min_dist = DBL_MAX;
++    int min_dist_ind = -1;
++    geometry_msgs::msg::Point query_position;
++    query_position.x = position.x();
++    query_position.y = position.y();
++    query_position.z = position.z();
++    for (const auto& cur_viewpoint_ind : candidate_indices_)
++    {
++      geometry_msgs::msg::Point cur_position = GetViewPointPosition(cur_viewpoint_ind);
++      double dist = misc_utils_ns::PointXYZDist<geometry_msgs::msg::Point, geometry_msgs::msg::Point>(cur_position,
++                                                                                                      query_position);
++      if (dist < min_dist)
++      {
++        min_dist = dist;
++        min_dist_ind = cur_viewpoint_ind;
++      }
++    }
++    return min_dist_ind;
++  }
++  else
++  {
++    std::cout << "Candidate viewpoint empty, can't find nearest candidate viewpoints to the position" << std::endl;
++    return -1;
++  }
++}
++
++void ViewPointManager::GetCollisionViewPointVisCloud(pcl::PointCloud<pcl::PointXYZI>::Ptr& cloud)
++{
++  cloud->clear();
++  for (const auto& point : viewpoint_in_collision_cloud_->points)
++  {
++    cloud->points.push_back(point);
++  }
++}
++
++bool ViewPointManager::InLocalPlanningHorizon(const Eigen::Vector3d& position)
++{
++  int viewpoint_ind = GetViewPointInd(position);
++  if (InRange(viewpoint_ind))
++  {
++    double max_z_diff = std::max(vp_.kResolution.x(), vp_.kResolution.y()) * 2;
++    geometry_msgs::msg::Point viewpoint_position = GetViewPointPosition(viewpoint_ind);
++    if (std::abs(viewpoint_position.z - position.z()) < max_z_diff &&
++        (IsViewPointCandidate(viewpoint_ind) || ViewPointInCollision(viewpoint_ind)))
++    {
++      return true;
++    }
++  }
++  return false;
++}
++
++}  // namespace viewpoint_manager_ns
+diff --git a/docs/fixes/evidence/2026-10-18_geometry_index/baseline_viewpoint_manager.h b/docs/fixes/evidence/2026-10-18_geometry_index/baseline_viewpoint_manager.h
+new file mode 100644
+index 0000000..f0cede8
+--- /dev/null
++++ b/docs/fixes/evidence/2026-10-18_geometry_index/baseline_viewpoint_manager.h
+@@ -0,0 +1,385 @@
++/**
++ * @file viewpoint_manager.h
++ * @author Chao Cao (ccao1@andrew.cmu.edu)
++ * @brief Class that manages the viewpoints inside the local planning horizon
++ * @version 0.1
++ * @date 2020-06-10
++ *
++ * @copyright Copyright (c) 2021
++ *
++ */
++#pragma once
++
++#include <memory>
++#include "ht_cost/ht_cost_map.h"
++#include <cmath>
++
++#include <Eigen/Core>
++// ROS
++#include <rclcpp/rclcpp.hpp>
++#include <nav_msgs/msg/path.hpp>
++#include <geometry_msgs/msg/point.hpp>
++// PCL
++#include <pcl_conversions/pcl_conversions.h>
++#include <pcl/point_cloud.h>
++#include <pcl/point_types.h>
++#include <pcl/filters/extract_indices.h>
++#include <pcl/kdtree/kdtree.h>
++#include <pcl/kdtree/kdtree_flann.h>
++#include <pcl/PointIndices.h>
++
++#include <grid/grid.h>
++#include <rolling_grid/rolling_grid.h>
++#include <viewpoint/viewpoint.h>
++#include <utils/misc_utils.h>
++#include <grid_world/grid_world.h>
++#include <exploration_path/exploration_path.h>
++
++namespace viewpoint_manager_ns
++{
++struct ViewPointManagerParameter
++{
++  // Layout
++  bool kUseFrontier;
++  int dimension_;
++  int kViewPointNumber;
++  Eigen::Vector3i kNumber;
++  Eigen::Vector3i kRolloverStepsize;
++  Eigen::Vector3d kResolution;
++  Eigen::Vector3d LocalPlanningHorizonSize;
++
++  // Collision check
++  double kConnectivityHeightDiffThr;
++
++  // Collision grid
++  Eigen::Vector3i kCollisionGridSize;
++  Eigen::Vector3d kCollisionGridResolution;
++  double kViewPointCollisionMargin;
++  double kViewPointCollisionMarginZPlus;
++  double kViewPointCollisionMarginZMinus;
++  double kCollisionGridZScale;
++  int kCollisionPointThr;
++
++  // Line of Sight Check
++  bool kLineOfSightStopAtNearestObstacle;
++  bool kCheckDynamicObstacleCollision;
++  int kCollisionFrameCountMax;
++
++  // Terrain height
++  double kViewPointHeightFromTerrain;
++  double kViewPointHeightFromTerrainChangeThreshold;
++
++  // Coverage
++  double kCoverageOcclusionThr;
++  double kCoverageDilationRadius;
++  double kCoveragePointCloudResolution;
++
++  // Distances
++  double kSensorRange;
++  double kVisitRange;
++  double kNeighborRange;
++  double kHeightFromTerrain;
++  double kDistanceToIntConst;
++
++  // FOV
++  double kVerticalFOVRatio;
++  double kDiffZMax;
++  double kInFovXYDistThreshold;
++  double kInFovZDiffThreshold;
++
++  bool ReadParameters(rclcpp::Node::SharedPtr nh);
++};
++
++class ViewPointManager
++{
++public:
++  std::vector<int> candidate_indices_;
++  explicit ViewPointManager(rclcpp::Node::SharedPtr nh);
++  ~ViewPointManager() = default;
++
++  int GetViewPointArrayInd(int viewpoint_ind, bool use_array_ind = false) const;
++  int GetViewPointInd(int viewpoint_array_ind) const;
++
++  inline bool InRange(int viewpoint_ind)
++  {
++    return grid_->InRange(viewpoint_ind);
++  }
++  inline bool InRange(const Eigen::Vector3i& sub)
++  {
++    return grid_->InRange(sub);
++  }
++  inline int GetViewPointNum()
++  {
++    return viewpoints_.size();
++  }
++  Eigen::Vector3d GetResolution()
++  {
++    return vp_.kResolution;
++  }
++  inline void UpdateViewPointBoundary(const geometry_msgs::msg::Polygon& polygon)
++  {
++    viewpoint_boundary_ = polygon;
++  }
++
++  inline void UpdateNogoBoundary(const std::vector<geometry_msgs::msg::Polygon>& nogo_boundary)
++  {
++    nogo_boundary_ = nogo_boundary;
++  }
++  bool UpdateRobotPosition(const Eigen::Vector3d& robot_position);
++  void UpdateOrigin();
++  Eigen::Vector3i GetViewPointSub(Eigen::Vector3d position);
++  int GetViewPointInd(Eigen::Vector3d position);
++  Eigen::Vector3d GetOrigin()
++  {
++    return origin_;
++  }
++
++  bool InCollision(const Eigen::Vector3d& position);
++  // Continuous vehicle reference position, separate from coverage viewpoint marks.
++  bool InCollisionAtPose(const Eigen::Vector3d& position);
++  bool InCurrentFrameLineOfSight(const Eigen::Vector3d& position);
++  void CheckViewPointBoundaryCollision();
++  void CheckViewPointCollisionWithCollisionGrid(const pcl::PointCloud<pcl::PointXYZI>::Ptr& collision_cloud);
++  void CheckViewPointCollision(const pcl::PointCloud<pcl::PointXYZI>::Ptr& collision_cloud);
++  void CheckViewPointCollisionWithTerrain(const pcl::PointCloud<pcl::PointXYZI>::Ptr& terrain_cloud,
++                                          double collision_threshold);
++  void CheckViewPointLineOfSightHelper(const Eigen::Vector3i& start_sub, const Eigen::Vector3i& end_sub,
++                                       const Eigen::Vector3i& max_sub, const Eigen::Vector3i& min_sub);
++  void CheckViewPointLineOfSight();
++  void CheckViewPointInFOV();
++  bool InFOV(const Eigen::Vector3d& point_position, const Eigen::Vector3d& viewpoint_position);
++  bool InFOVAndRange(const Eigen::Vector3d& point_position, const Eigen::Vector3d& viewpoint_position);
++  bool InRobotFOV(const Eigen::Vector3d& position);
++  void CheckViewPointConnectivity();
++  void UpdateViewPointVisited(const std::vector<Eigen::Vector3d>& positions);
++  void UpdateViewPointVisited(std::shared_ptr<grid_world_ns::GridWorld> const& grid_world);
++  void SetViewPointHeightWithTerrain(const pcl::PointCloud<pcl::PointXYZI>::Ptr& terrain_cloud,
++                                     double terrain_height_threshold = DBL_MAX);
++
++  template <class PCLPointType>
++  void UpdateViewPointCoverage(const typename pcl::PointCloud<PCLPointType>::Ptr& cloud)
++  {
++    // std::cout << "update cloud size: " << cloud->points.size() << std::endl;
++    int update_viewpoint_count = 0;
++    for (auto& viewpoint : viewpoints_)
++    {
++      if (viewpoint.InCollision())
++      {
++        continue;
++      }
++      update_viewpoint_count++;
++    }
++    // std::cout << "update viewpoint num: " << update_viewpoint_count << std::endl;
++    for (const auto& point : cloud->points)
++    {
++      for (int i = 0; i < viewpoints_.size(); i++)
++      // for (auto& viewpoint : viewpoints_)
++      {
++        if (viewpoints_[i].InCollision())
++        {
++          continue;
++        }
++        geometry_msgs::msg::Point viewpoint_position = viewpoints_[i].GetPosition();
++        if (misc_utils_ns::InFOVSimple(
++                Eigen::Vector3d(point.x, point.y, point.z),
++                Eigen::Vector3d(viewpoint_position.x, viewpoint_position.y, viewpoint_position.z),
++                vp_.kVerticalFOVRatio, vp_.kSensorRange, vp_.kInFovXYDistThreshold, vp_.kInFovZDiffThreshold))
++        {
++          viewpoints_[i].UpdateCoverage<PCLPointType>(point);
++        }
++      }
++    }
++  }
++
++  template <class PCLPointType>
++  void UpdateRolledOverViewPointCoverage(const typename pcl::PointCloud<PCLPointType>::Ptr& cloud)
++  {
++    for (const auto& point : cloud->points)
++    {
++      for (const auto& viewpoint_ind : updated_viewpoint_indices_)
++      {
++        int array_ind = grid_->GetArrayInd(viewpoint_ind);
++        if (viewpoints_[array_ind].InCollision())
++        {
++          continue;
++        }
++        geometry_msgs::msg::Point viewpoint_position = viewpoints_[array_ind].GetPosition();
++        if (misc_utils_ns::InFOVSimple(
++                Eigen::Vector3d(point.x, point.y, point.z),
++                Eigen::Vector3d(viewpoint_position.x, viewpoint_position.y, viewpoint_position.z),
++                vp_.kVerticalFOVRatio, vp_.kSensorRange, vp_.kInFovXYDistThreshold, vp_.kInFovZDiffThreshold))
++        {
++          viewpoints_[array_ind].UpdateCoverage<PCLPointType>(point);
++        }
++      }
++    }
++  }
++
++  inline double GetSensorRange() const
++  {
++    return vp_.kSensorRange;
++  }
++  inline double GetCoverageOcclusionThr() const
++  {
++    return vp_.kCoverageOcclusionThr;
++  }
++  inline double GetCoverageDilationRadius() const
++  {
++    return vp_.kCoverageDilationRadius;
++  }
++
++  template <class PointType>
++  bool VisibleByViewPoint(const PointType& point, int viewpoint_ind)
++  {
++    MY_ASSERT(grid_->InRange(viewpoint_ind));
++    int array_ind = grid_->GetArrayInd(viewpoint_ind);
++    geometry_msgs::msg::Point viewpoint_position = viewpoints_[array_ind].GetPosition();
++    if (std::abs(point.z - viewpoint_position.z) > vp_.kDiffZMax)
++    {
++      return false;
++    }
++    if (!misc_utils_ns::InFOVSimple(Eigen::Vector3d(point.x, point.y, point.z),
++                                    Eigen::Vector3d(viewpoint_position.x, viewpoint_position.y, viewpoint_position.z),
++                                    vp_.kVerticalFOVRatio, vp_.kSensorRange, vp_.kInFovXYDistThreshold,
++                                    vp_.kInFovZDiffThreshold))
++    {
++      return false;
++    }
++    bool visible = viewpoints_[array_ind].CheckVisibility<PointType>(point, vp_.kCoverageOcclusionThr);
++
++    return visible;
++  }
++
++  // Viewpoint management
++  void ResetViewPoint(int viewpoint_ind, bool use_array_ind = false);
++  void ResetViewPointCoverage();
++
++  bool ViewPointInCollision(int viewpoint_ind, bool use_array_ind = false);
++  void SetViewPointCollision(int viewpoint_ind, bool in_collision, bool use_array_ind = false);
++
++  bool ViewPointInLineOfSight(int viewpoint_ind, bool use_array_ind = false);
++  void SetViewPointInLineOfSight(int viewpoint_ind, bool in_line_of_sight, bool use_array_ind = false);
++
++  bool ViewPointConnected(int viewpoint_ind, bool use_array_ind = false);
++  void SetViewPointConnected(int viewpoint_ind, bool connected, bool use_array_ind = false);
++
++  bool ViewPointVisited(int viewpoint_ind, bool use_array_ind = false);
++  void SetViewPointVisited(int viewpoint_ind, bool visited, bool use_array_ind = false);
++
++  bool ViewPointSelected(int viewpoint_ind, bool use_array_ind = false);
++  void SetViewPointSelected(int viewpoint_ind, bool selected, bool use_array_ind = false);
++
++  bool IsViewPointCandidate(int viewpoint_ind, bool use_array_ind = false);
++  void SetViewPointCandidate(int viewpoint_ind, bool candidate, bool use_array_ind = false);
++
++  bool ViewPointHasTerrainHeight(int viewpoint_ind, bool use_array_ind = false);
++  void SetViewPointHasTerrainHeight(int viewpoint_ind, bool has_terrain_height, bool use_array_ind = false);
++
++  bool ViewPointInExploringCell(int viewpoint_ind, bool use_array_ind = false);
++  void SetViewPointInExploringCell(int viewpoint_ind, bool in_exploring_cell, bool use_array_ind = false);
++
++  double GetViewPointHeight(int viewpoint_ind, bool use_array_ind = false);
++  void SetViewPointHeight(int viewpoint_ind, double height, bool use_array_ind = false);
++
++  bool ViewPointInCurrentFrameLineOfSight(int viewpoint_ind, bool use_array_ind = false);
++  void SetViewPointInCurrentFrameLineOfSight(int viewpoint_ind, bool in_current_frame_line_of_sight,
++                                             bool use_array_ind = false);
++
++  geometry_msgs::msg::Point GetViewPointPosition(int viewpoint_ind, bool use_array_ind = false);
++  void SetViewPointPosition(int viewpoint_ind, geometry_msgs::msg::Point position, bool use_array_ind = false);
++
++  int GetViewPointCellInd(int viewpoint_ind, bool use_array_ind = false);
++  void SetViewPointCellInd(int viewpoint_ind, int cell_ind, bool use_array_ind = false);
++
++  int GetViewPointCollisionFrameCount(int viewpoint_ind, bool use_array_ind = false);
++  void AddViewPointCollisionFrameCount(int viewpoint_ind, bool use_array_ind = false);
++  void ResetViewPointCollisionFrameCount(int viewpoint_ind, bool use_array_ind = false);
++
++  void ResetViewPointCoveredPointList(int viewpoint_ind, bool use_array_ind = false);
++  void AddUncoveredPoint(int viewpoint_ind, int point_ind, bool use_array_ind = false);
++  void AddUncoveredFrontierPoint(int viewpoint_ind, int point_ind, bool use_array_ind = false);
++  const std::vector<int>& GetViewPointCoveredPointList(int viewpoint_ind, bool use_array_ind = false) const;
++  const std::vector<int>& GetViewPointCoveredFrontierPointList(int viewpoint_ind, bool use_array_ind = false) const;
++
++  int GetViewPointCoveredPointNum(int viewpoint_ind, bool use_array_ind = false);
++  int GetViewPointCoveredFrontierPointNum(int viewpoint_ind, bool use_array_ind = false);
++  int GetViewPointCoveredPointNum(const std::vector<bool>& point_list, int viewpoint_index, bool use_array_ind = false);
++  int GetViewPointCoveredFrontierPointNum(const std::vector<bool>& frontier_point_list, int viewpoint_index,
++                                          bool use_array_ind = false);
++  void UpdateViewPointCoveredPoint(std::vector<bool>& point_list, int viewpoint_index, bool use_array_ind = false);
++  void UpdateViewPointCoveredFrontierPoint(std::vector<bool>& frontier_point_list, int viewpoint_index,
++                                           bool use_array_ind = false);
++
++  int GetViewPointCandidate();
++  std::vector<int> GetViewPointCandidateIndices() const
++  {
++    return candidate_indices_;
++  }
++  nav_msgs::msg::Path GetViewPointShortestPath(int start_viewpoint_ind, int target_viewpoint_ind);
++  std::shared_ptr<ht_cost_ns::HtCostMap> HT() const { return ht_map_; }
++  double GetHTShortestPath(int start, int target, nav_msgs::msg::Path& path);
++  nav_msgs::msg::Path GetViewPointShortestPath(const Eigen::Vector3d& start_position,
++                                               const Eigen::Vector3d& target_position);
++  bool GetViewPointShortestPathWithMaxLength(const Eigen::Vector3d& start_position,
++                                             const Eigen::Vector3d& target_position, double max_path_length,
++                                             nav_msgs::msg::Path& path);
++
++  void UpdateCandidateViewPointCellStatus(std::shared_ptr<grid_world_ns::GridWorld> const& grid_world);
++
++  int GetNearestCandidateViewPointInd(const Eigen::Vector3d& position);
++  bool InLocalPlanningHorizon(const Eigen::Vector3d& position);
++  Eigen::Vector3d GetLocalPlanningHorizonSize()
++  {
++    return vp_.LocalPlanningHorizonSize;
++  }
++  bool UseFrontier()
++  {
++    return vp_.kUseFrontier;
++  }
++  // For visualization
++  void GetVisualizationCloud(pcl::PointCloud<pcl::PointXYZI>::Ptr& vis_cloud);
++  void GetCollisionViewPointVisCloud(pcl::PointCloud<pcl::PointXYZI>::Ptr& cloud);
++
++  typedef std::shared_ptr<ViewPointManager> Ptr;
++
++private:
++  void ComputeConnectedNeighborIndices();
++  void ComputeInRangeNeighborIndices();
++  bool HTConnectionSupported(int from, int to);
++  void GetCandidateViewPointGraph(std::vector<std::vector<int>>& graph, std::vector<std::vector<double>>& dist,
++                                  std::vector<geometry_msgs::msg::Point>& positions);
++  void GetCollisionCorrespondence();
++
++  bool initialized_;
++  ViewPointManagerParameter vp_;
++  std::shared_ptr<rolling_grid_ns::RollingGrid> grid_;
++  std::vector<viewpoint_ns::ViewPoint> viewpoints_;
++  std::vector<std::vector<int>> connected_neighbor_indices_;
++  std::vector<std::vector<double>> connected_neighbor_dist_;
++  std::vector<std::vector<int>> in_range_neighbor_indices_;
++  std::vector<int> updated_viewpoint_indices_;
++  std::vector<int> graph_index_map_;
++  Eigen::Vector3d robot_position_;
++  Eigen::Vector3d origin_;
++  Eigen::Vector3d collision_grid_origin_;
++  Eigen::Vector3d local_planning_horizon_size_;
++  std::shared_ptr<grid_ns::Grid<std::vector<int>>> collision_grid_;
++  std::vector<int> collision_point_count_;
++  std::vector<std::vector<int>> candidate_viewpoint_graph_;
++  std::vector<std::vector<double>> candidate_viewpoint_dist_;
++  std::vector<std::vector<double>> candidate_ht_dist_;
++  std::shared_ptr<ht_cost_ns::HtCostMap> ht_map_;
++  std::vector<geometry_msgs::msg::Point> candidate_viewpoint_position_;
++  pcl::KdTreeFLANN<pcl::PointXYZI>::Ptr kdtree_viewpoint_candidate_;
++  pcl::KdTreeFLANN<pcl::PointXYZI>::Ptr kdtree_viewpoint_in_collision_;
++  pcl::PointCloud<pcl::PointXYZI>::Ptr viewpoint_candidate_cloud_;
++  pcl::PointCloud<pcl::PointXYZI>::Ptr viewpoint_in_collision_cloud_;
++  pcl::PointCloud<pcl::PointXYZI>::Ptr pose_collision_cloud_;
++  pcl::KdTreeFLANN<pcl::PointXYZI>::Ptr pose_collision_tree_;
++  bool pose_collision_ready_ = false;
++
++  geometry_msgs::msg::Polygon viewpoint_boundary_;
++  std::vector<geometry_msgs::msg::Polygon> nogo_boundary_;
++};
++
++}  // namespace viewpoint_manager_ns
+diff --git a/docs/fixes/evidence/2026-10-18_geometry_index/geometry_benchmark.cpp b/docs/fixes/evidence/2026-10-18_geometry_index/geometry_benchmark.cpp
+new file mode 100644
+index 0000000..1dfca18
+--- /dev/null
++++ b/docs/fixes/evidence/2026-10-18_geometry_index/geometry_benchmark.cpp
+@@ -0,0 +1,117 @@
++#include <gtest/gtest.h>
++#include "viewpoint_manager/viewpoint_manager.h"
++#include <fstream>
++#include <sstream>
++
++TEST(GeometryPose, CapturedContinuousRootDoesNotInheritNeighbourCollision) {
++  if (!rclcpp::ok()) rclcpp::init(0,nullptr);
++  rclcpp::NodeOptions options;
++  options.arguments({"--ros-args","--params-file",HT_SOURCE_ROOT "/config/indoor.yaml"});
++  options.automatically_declare_parameters_from_overrides(true);
++  auto node=std::make_shared<rclcpp::Node>("tare_planner_node",options);
++  viewpoint_manager_ns::ViewPointManager manager(node);
++  manager.UpdateRobotPosition(Eigen::Vector3d(0,0,0.7439746856689453));
++  const Eigen::Vector3d robot(11.358543395996094,1.208035945892334,0.7468403577804565);
++  manager.UpdateRobotPosition(robot);
++  auto cloud=std::make_shared<pcl::PointCloud<pcl::PointXYZI>>();
++  std::ifstream stream(HT_SOURCE_ROOT "/../../docs/results/ht_latency_diagnosis_10min_2026-10-18/geometry_capture/collision_points.csv");
++  ASSERT_TRUE(stream.good());std::string line;std::getline(stream,line);
++  while(std::getline(stream,line)) {
++    std::replace(line.begin(),line.end(),',',' ');std::istringstream row(line);
++    pcl::PointXYZI point;ASSERT_TRUE(bool(row>>point.x>>point.y>>point.z>>point.intensity));cloud->push_back(point);
++  }
++  ASSERT_GT(cloud->size(),25000u);
++  manager.CheckViewPointCollision(cloud);
++  // Regression expectation: an actual pose must not inherit a neighbouring
++  // quantized viewpoint's collision mark when its physical envelope is clear.
++  EXPECT_TRUE(manager.InCollision(robot));  // Actual old implementation reproduces the failure.
++  EXPECT_FALSE(manager.InCollisionAtPose(robot));
++  // The same observed obstacle must still reject an actually colliding root.
++  EXPECT_TRUE(manager.InCollisionAtPose(Eigen::Vector3d(11.15774,1.8920302,robot.z())));
++  EXPECT_TRUE(manager.InCollisionAtPose(Eigen::Vector3d(std::numeric_limits<double>::quiet_NaN(),1,robot.z())));
++  EXPECT_TRUE(manager.InCollisionAtPose(Eigen::Vector3d(100,100,robot.z())));
++  // A real keep-out boundary remains authoritative at the continuous position.
++  geometry_msgs::msg::Polygon polygon;
++  for(const auto& delta:std::vector<Eigen::Vector2d>{{-1,-1},{1,-1},{1,1},{-1,1}}) {
++    geometry_msgs::msg::Point32 p;p.x=robot.x()+delta.x();p.y=robot.y()+delta.y();polygon.points.push_back(p);
++  }
++  manager.UpdateNogoBoundary({polygon});
++  EXPECT_TRUE(manager.InCollisionAtPose(robot));
++}
++
++TEST(GeometryPose, HeightSliceMatchesBruteForceAtBoundariesAndOtherHeights) {
++  if (!rclcpp::ok())rclcpp::init(0,nullptr);
++  rclcpp::NodeOptions options;
++  options.arguments({"--ros-args","--params-file",HT_SOURCE_ROOT "/config/indoor.yaml"});
++  options.automatically_declare_parameters_from_overrides(true);
++  auto node=std::make_shared<rclcpp::Node>("tare_planner_node",options);
++  node->set_parameter(rclcpp::Parameter("kViewPointCollisionMarginZPlus",.2));
++  node->set_parameter(rclcpp::Parameter("kViewPointCollisionMarginZMinus",.7));
++  viewpoint_manager_ns::ViewPointManager manager(node);
++  manager.UpdateRobotPosition(Eigen::Vector3d(0,0,.75));
++  auto cloud=std::make_shared<pcl::PointCloud<pcl::PointXYZI>>();
++  for(const auto& p:std::vector<Eigen::Vector3d>{{5,5,.95},{2,2,.05},{-2,3,1.1},{5.000001,5.000001,.95}}) {
++    pcl::PointXYZI v;v.x=p.x();v.y=p.y();v.z=p.z();cloud->push_back(v);
++  }
++  manager.CheckViewPointCollision(cloud);
++  for(int i=0;i<manager.GetViewPointNum();++i) {
++    manager.SetViewPointInLineOfSight(i,true);manager.SetViewPointConnected(i,true);
++  }
++  manager.GetViewPointCandidate();
++  const double radius=.5+.5*std::hypot(.2,.2);
++  int checked=0;
++  for(double z:{.75,.74999997,.75000003,.9,.4})
++    for(int k=0;k<32;++k)for(double offset:{-1e-5,-1e-7,0.,1e-7,1e-5}) {
++      const double theta=k*ht_cost_ns::kPi/16;
++      const Eigen::Vector3d query(5+(radius+offset)*std::cos(theta),5+(radius+offset)*std::sin(theta),z);
++      bool expected=false;
++      for(const auto& obstacle:cloud->points) {
++        const double dz=obstacle.z-query.z();
++        expected|=dz<=.2 && dz>=-.7 && std::hypot(obstacle.x-query.x(),obstacle.y-query.y())<=radius+1e-7;
++      }
++      EXPECT_EQ(manager.InCollisionAtPose(query),expected)<<"q="<<query.transpose();++checked;
++    }
++  EXPECT_EQ(checked,800);
++}
++
++TEST(SearchAudit, SeparatesDeadlineExpansionLimitAndExhaustedComponent) {
++  using namespace ht_cost_ns;
++  XYThetaConfig config;config.max_search_seconds=10;
++  auto open=[](Pose2,Pose2,double){return true;};
++  auto blocked=[](Pose2,Pose2,double){return false;};
++  EXPECT_EQ(planXYTheta(Pose2{},Point{1,0,0},config,blocked).termination,XYThetaTermination::INVALID_START);
++  EXPECT_EQ(planXYTheta(Pose2{},Point{},config,open).termination,XYThetaTermination::REACHED);
++  auto sealed=[](Pose2,Pose2 p,double){return std::hypot(p.x,p.y)<1e-9 && std::abs(p.yaw)<1e-9;};
++  EXPECT_EQ(planXYTheta(Pose2{},Point{1,0,0},config,sealed).termination,XYThetaTermination::EXHAUSTED);
++  config.max_expansions=1;
++  EXPECT_EQ(planXYTheta(Pose2{},Point{3,0,0},config,open).termination,XYThetaTermination::EXPANSION_LIMIT);
++  config.max_expansions=8000;config.max_search_seconds=1e-12;
++  EXPECT_EQ(planXYTheta(Pose2{},Point{3,0,0},config,open).termination,XYThetaTermination::TIME_LIMIT);
++}
++
++#include <chrono>
++#include <iostream>
++#include <cstdlib>
++TEST(GeometryBenchmark, CapturedCylinderQueries) {
++  if (!rclcpp::ok())rclcpp::init(0,nullptr);
++  rclcpp::NodeOptions options;options.arguments({"--ros-args","--params-file",HT_SOURCE_ROOT "/config/indoor.yaml"});options.automatically_declare_parameters_from_overrides(true);
++  auto node=std::make_shared<rclcpp::Node>("tare_planner_node",options);viewpoint_manager_ns::ViewPointManager manager(node);
++  manager.UpdateRobotPosition(Eigen::Vector3d(0,0,.7439746856689453));
++  const Eigen::Vector3d robot(11.358543395996094,1.208035945892334,.7468403577804565);manager.UpdateRobotPosition(robot);
++  auto cloud=std::make_shared<pcl::PointCloud<pcl::PointXYZI>>();
++  std::ifstream source(HT_SOURCE_ROOT "/../../docs/results/ht_latency_diagnosis_10min_2026-10-18/geometry_capture/collision_points.csv");ASSERT_TRUE(source.good());std::string line;std::getline(source,line);
++  while(std::getline(source,line)){std::replace(line.begin(),line.end(),',',' ');std::istringstream row(line);pcl::PointXYZI p;ASSERT_TRUE(bool(row>>p.x>>p.y>>p.z>>p.intensity));cloud->push_back(p);}
++  manager.CheckViewPointCollision(cloud);
++  for(int i=0;i<manager.GetViewPointNum();++i){manager.SetViewPointInLineOfSight(i,true);manager.SetViewPointConnected(i,true);}manager.GetViewPointCandidate();
++  std::vector<Eigen::Vector3d> queries;for(int ix=-40;ix<=40;++ix)for(int iy=-40;iy<=40;++iy)queries.push_back(robot+Eigen::Vector3d(ix*.05,iy*.05,0));
++  std::vector<unsigned char> reference;const char* file=std::getenv("HT_GEOMETRY_REFERENCE_RESULT");ASSERT_NE(file,nullptr);
++  if(!std::getenv("HT_GEOMETRY_WRITE_REFERENCE")) {std::ifstream input(file,std::ios::binary);ASSERT_TRUE(input.good());reference.assign(std::istreambuf_iterator<char>(input),{});ASSERT_EQ(reference.size(),queries.size());}
++  for(int repeat=0;repeat<3;++repeat) {
++    auto started=std::chrono::steady_clock::now();std::vector<unsigned char> result;result.reserve(queries.size());int blocked=0;
++    for(const auto& q:queries){const bool value=manager.InCollisionAtPose(q);result.push_back(value);blocked+=value;}
++    double elapsed=std::chrono::duration<double>(std::chrono::steady_clock::now()-started).count();
++    std::cout<<"BENCH repeat="<<repeat<<" queries="<<queries.size()<<" blocked="<<blocked<<" elapsed_s="<<elapsed<<std::endl;
++    if(std::getenv("HT_GEOMETRY_WRITE_REFERENCE") && repeat==0){std::ofstream output(file,std::ios::binary);output.write(reinterpret_cast<const char*>(result.data()),result.size());reference=result;}
++    ASSERT_EQ(reference,result);
++  }
++}
+diff --git a/docs/fixes/evidence/2026-10-18_geometry_index/ht_geometry_index_ctest.log b/docs/fixes/evidence/2026-10-18_geometry_index/ht_geometry_index_ctest.log
+new file mode 100644
+index 0000000..6dbd6bf
+--- /dev/null
++++ b/docs/fixes/evidence/2026-10-18_geometry_index/ht_geometry_index_ctest.log
+@@ -0,0 +1,17 @@
++Internal ctest changing into directory: /home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner
++Test project /home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner
++    Start 1: ht_core_test
++1/4 Test #1: ht_core_test .....................   Passed    0.00 sec
++    Start 2: geometry_pose_test
++2/4 Test #2: geometry_pose_test ...............   Passed    0.68 sec
++    Start 3: ht_ros_test
++3/4 Test #3: ht_ros_test ......................   Passed   15.46 sec
++    Start 4: xytheta_follower_test
++4/4 Test #4: xytheta_follower_test ............   Passed   23.32 sec
++
++100% tests passed, 0 tests failed out of 4
++
++Label Time Summary:
++gtest    =  39.45 sec*proc (3 tests)
++
++Total Test time (real) =  39.46 sec
+diff --git a/docs/fixes/evidence/2026-10-18_geometry_index/optimized.log b/docs/fixes/evidence/2026-10-18_geometry_index/optimized.log
+new file mode 100644
+index 0000000..66f6c1d
+--- /dev/null
++++ b/docs/fixes/evidence/2026-10-18_geometry_index/optimized.log
+@@ -0,0 +1,15 @@
++Running main() from /opt/ros/jazzy/src/gtest_vendor/src/gtest_main.cc
++Note: Google Test filter = GeometryBenchmark.CapturedCylinderQueries
++[==========] Running 1 test from 1 test suite.
++[----------] Global test environment set-up.
++[----------] 1 test from GeometryBenchmark
++[ RUN      ] GeometryBenchmark.CapturedCylinderQueries
++BENCH repeat=0 queries=6561 blocked=1614 elapsed_s=0.0350902
++BENCH repeat=1 queries=6561 blocked=1614 elapsed_s=0.0354492
++BENCH repeat=2 queries=6561 blocked=1614 elapsed_s=0.0349902
++[       OK ] GeometryBenchmark.CapturedCylinderQueries (362 ms)
++[----------] 1 test from GeometryBenchmark (362 ms total)
++
++[----------] Global test environment tear-down
++[==========] 1 test from 1 test suite ran. (362 ms total)
++[  PASSED  ] 1 test.
+diff --git a/docs/fixes/evidence/2026-10-18_geometry_index/prepare_geometry_benchmark.py b/docs/fixes/evidence/2026-10-18_geometry_index/prepare_geometry_benchmark.py
+new file mode 100644
+index 0000000..6abbfd8
+--- /dev/null
++++ b/docs/fixes/evidence/2026-10-18_geometry_index/prepare_geometry_benchmark.py
+@@ -0,0 +1,43 @@
++from pathlib import Path
++import subprocess,shlex,os
++root=Path.cwd();out=Path('/tmp/ht_geometry_index_audit');build=root/'build_standalone/tare_planner'
++s=Path('src/tare_planner/tests/geometry_pose_test.cpp').read_text()
++s+='''
++#include <chrono>
++#include <iostream>
++#include <cstdlib>
++TEST(GeometryBenchmark, CapturedCylinderQueries) {
++  if (!rclcpp::ok())rclcpp::init(0,nullptr);
++  rclcpp::NodeOptions options;options.arguments({"--ros-args","--params-file",HT_SOURCE_ROOT "/config/indoor.yaml"});options.automatically_declare_parameters_from_overrides(true);
++  auto node=std::make_shared<rclcpp::Node>("tare_planner_node",options);viewpoint_manager_ns::ViewPointManager manager(node);
++  manager.UpdateRobotPosition(Eigen::Vector3d(0,0,.7439746856689453));
++  const Eigen::Vector3d robot(11.358543395996094,1.208035945892334,.7468403577804565);manager.UpdateRobotPosition(robot);
++  auto cloud=std::make_shared<pcl::PointCloud<pcl::PointXYZI>>();
++  std::ifstream source(HT_SOURCE_ROOT "/../../docs/results/ht_latency_diagnosis_10min_2026-10-18/geometry_capture/collision_points.csv");ASSERT_TRUE(source.good());std::string line;std::getline(source,line);
++  while(std::getline(source,line)){std::replace(line.begin(),line.end(),',',' ');std::istringstream row(line);pcl::PointXYZI p;ASSERT_TRUE(bool(row>>p.x>>p.y>>p.z>>p.intensity));cloud->push_back(p);}
++  manager.CheckViewPointCollision(cloud);
++  for(int i=0;i<manager.GetViewPointNum();++i){manager.SetViewPointInLineOfSight(i,true);manager.SetViewPointConnected(i,true);}manager.GetViewPointCandidate();
++  std::vector<Eigen::Vector3d> queries;for(int ix=-40;ix<=40;++ix)for(int iy=-40;iy<=40;++iy)queries.push_back(robot+Eigen::Vector3d(ix*.05,iy*.05,0));
++  std::vector<unsigned char> reference;const char* file=std::getenv("HT_GEOMETRY_REFERENCE_RESULT");ASSERT_NE(file,nullptr);
++  if(!std::getenv("HT_GEOMETRY_WRITE_REFERENCE")) {std::ifstream input(file,std::ios::binary);ASSERT_TRUE(input.good());reference.assign(std::istreambuf_iterator<char>(input),{});ASSERT_EQ(reference.size(),queries.size());}
++  for(int repeat=0;repeat<3;++repeat) {
++    auto started=std::chrono::steady_clock::now();std::vector<unsigned char> result;result.reserve(queries.size());int blocked=0;
++    for(const auto& q:queries){const bool value=manager.InCollisionAtPose(q);result.push_back(value);blocked+=value;}
++    double elapsed=std::chrono::duration<double>(std::chrono::steady_clock::now()-started).count();
++    std::cout<<"BENCH repeat="<<repeat<<" queries="<<queries.size()<<" blocked="<<blocked<<" elapsed_s="<<elapsed<<std::endl;
++    if(std::getenv("HT_GEOMETRY_WRITE_REFERENCE") && repeat==0){std::ofstream output(file,std::ios::binary);output.write(reinterpret_cast<const char*>(result.data()),result.size());reference=result;}
++    ASSERT_EQ(reference,result);
++  }
++}
++'''
++(out/'geometry_benchmark.cpp').write_text(s)
++flags={}
++for line in (build/'CMakeFiles/geometry_pose_test.dir/flags.make').read_text().splitlines():
++ if ' = ' in line:
++  k,v=line.split(' = ',1);flags[k]=shlex.split(v)
++with (out/'build.log').open('w') as log:
++ subprocess.run(['/usr/bin/c++',*flags['CXX_DEFINES'],*flags['CXX_INCLUDES'],*flags['CXX_FLAGS'],'-c',str(out/'geometry_benchmark.cpp'),'-o',str(out/'geometry_benchmark.o')],cwd=build,stdout=log,stderr=subprocess.STDOUT,check=True)
++ link=shlex.split((build/'CMakeFiles/geometry_pose_test.dir/link.txt').read_text());link=[str(out/'geometry_benchmark.o') if x.endswith('tests/geometry_pose_test.cpp.o') else x for x in link];link[link.index('-o')+1]=str(out/'benchmark');subprocess.run(link,cwd=build,stdout=log,stderr=subprocess.STDOUT,check=True)
++env=os.environ.copy();env.update(ROS_DOMAIN_ID='218',HT_GEOMETRY_REFERENCE_RESULT=str(out/'reference.bin'))
++if os.environ.get('HT_GEOMETRY_WRITE_REFERENCE'):env['HT_GEOMETRY_WRITE_REFERENCE']='1'
++with (out/('baseline.log' if env.get('HT_GEOMETRY_WRITE_REFERENCE') else 'optimized.log')).open('w') as log:subprocess.run([str(out/'benchmark'),'--gtest_filter=GeometryBenchmark.CapturedCylinderQueries'],env=env,stdout=log,stderr=subprocess.STDOUT,check=True)
+diff --git a/docs/fixes/evidence/2026-10-18_geometry_index/reference.bin b/docs/fixes/evidence/2026-10-18_geometry_index/reference.bin
+new file mode 100644
+index 0000000..d1e1486
+Binary files /dev/null and b/docs/fixes/evidence/2026-10-18_geometry_index/reference.bin differ
+diff --git a/docs/version_history.json b/docs/version_history.json
+index 98f9c30..7154136 100644
+--- a/docs/version_history.json
++++ b/docs/version_history.json
+@@ -3,7 +3,7 @@
+   "updated_at": "2026-10-18",
+   "branch": "codex/ht8dir-v1",
+   "status": "阶段26有限拒绝高度接口修正；600秒仍末段停滞且观测体积退步，继续核查实际搜索与几何代价",
+-  "latest_archive_commit": "68746deee9c0fc586c11bb9954a117bbaa136284",
++  "latest_archive_commit": "39a3718",
+   "latest_planner_change": "43069a7b11b8028b53f6eae0d6bdc53c13e8affd",
+   "stages": [
+     {
+diff --git a/presentations/capture_geometry_evidence.py b/presentations/capture_geometry_evidence.py
+index 079336b..aba29f4 100644
+--- a/presentations/capture_geometry_evidence.py
++++ b/presentations/capture_geometry_evidence.py
+@@ -21,8 +21,8 @@ def callback(topic,msg):
+  a=np.column_stack([raw[n] for n in names]).astype(np.float32)
+  keep=np.hypot(a[:,0]-pose[0][0],a[:,1]-pose[0][1])<5
+  key=topic.strip('/');data[key]=a[keep];meta[key]=dict(stamp=msg.header.stamp.sec+msg.header.stamp.nanosec*1e-9,frame=msg.header.frame_id,fields=names,total=len(a),local=int(keep.sum()),received=time.time())
+-topics=['/collision_cloud','/terrain_map','/terrain_map_ext','/viewpoint_in_collision_cloud_','/registered_scan']
+-for topic in topics:node.create_subscription(PointCloud2,topic,lambda msg,t=topic:callback(t,msg),QoSProfile(depth=1,reliability=ReliabilityPolicy.BEST_EFFORT))
++topics=['/collision_cloud','/terrain_map','/terrain_map_ext','/viewpoint_in_collision_cloud_','/viewpoint_vis_cloud','/registered_scan']
++for topic in topics:node.create_subscription(PointCloud2,topic,lambda msg,t=topic:callback(t,msg),QoSProfile(depth=2,reliability=ReliabilityPolicy.RELIABLE))
+ end=time.monotonic()+args.duration
+ while time.monotonic()<end:rclpy.spin_once(node,timeout_sec=.2)
+ np.savez_compressed(out/'clouds.npz',**data);(out/'metadata.json').write_text(json.dumps(meta,indent=2)+'\n');print(json.dumps(meta,indent=2));node.destroy_node();rclpy.shutdown()
+diff --git a/presentations/run_ht_endurance.py b/presentations/run_ht_endurance.py
+index 54f498f..33284c2 100644
+--- a/presentations/run_ht_endurance.py
++++ b/presentations/run_ht_endurance.py
+@@ -144,7 +144,7 @@ def main():
+                     speed_cap_mps=.5, preflight=preflight(),
+                     ht_score_semantics=json.loads((BRIDGE/'ht_trial.yaml').read_text())['/**']['ros__parameters'].get('ht_score_semantics','point'),
+                     git_head=subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
+-                    evidence_policy=f'All control/status and odometry, full-rate published HT maps; original-stamped scans1Hz; exact-stamp map triplets and network inputs/outputs every10s; camera{args.video_fps}fps. Raw CuPy and scans are not fully bagged.',
++                    evidence_policy=f'All control/status and odometry, full-rate published HT maps and TARE collision geometry; original-stamped scans1Hz; exact-stamp map triplets and network inputs/outputs every10s; camera{args.video_fps}fps. Raw CuPy and scans are not fully bagged.',
+                     source_hashes={str(p): hashlib.sha256(p.read_bytes()).hexdigest() for p in paths})
+     (folder/'manifest.json').write_text(json.dumps(manifest, ensure_ascii=False, indent=2))
+     (folder/'working_tree.patch').write_bytes(subprocess.check_output(['git', 'diff', 'HEAD'], cwd=ROOT))
+@@ -154,7 +154,7 @@ def main():
+               '/tf', '/tf_static', '/cmd_vel', '/way_point', '/ht_xytheta_path',
+               '/ht_execution_status', '/ht_follower_status', '/ht_execution_rejected_edge',
+               '/ht_navigation_allowed', '/mission_state', '/mission_completed', '/runtime', '/runtime_breakdown', '/exploration_finish',
+-              '/ht_traversability/global_local']
++              '/ht_traversability/global_local', '/collision_cloud', '/viewpoint_in_collision_cloud_', '/viewpoint_vis_cloud']
+     stopped = threading.Event()
+     failures = []
+     thread = threading.Thread(target=monitor, args=(trial, folder, stopped, failures), daemon=True)
+diff --git a/src/tare_planner/include/ht_cost/ht_cost_map.h b/src/tare_planner/include/ht_cost/ht_cost_map.h
+index 5c8bede..c737468 100644
+--- a/src/tare_planner/include/ht_cost/ht_cost_map.h
++++ b/src/tare_planner/include/ht_cost/ht_cost_map.h
+@@ -37,6 +37,7 @@ class HtCostMap {
+   double lookahead() const { return lookahead_; }
+   double reachedDistance() const { return reached_distance_; }
+   double step() const { return step_; }
++  double cycleStamp() const { return cycle_ ? cycle_->stamp : -1.; }
+  private:
+   Support supportDirected(const Point& a,const Point& b,double heading) const;
+   void receive(grid_map_msgs::msg::GridMap::ConstSharedPtr msg);
+diff --git a/src/tare_planner/include/ht_cost/xytheta_planner.h b/src/tare_planner/include/ht_cost/xytheta_planner.h
+index 3069dc1..4633e6d 100644
+--- a/src/tare_planner/include/ht_cost/xytheta_planner.h
++++ b/src/tare_planner/include/ht_cost/xytheta_planner.h
+@@ -49,11 +49,23 @@ struct ExecutionFailureMemory {
+   }
+ };
+ 
++enum class XYThetaTermination { INVALID_INPUT, INVALID_START, REACHED, TIME_LIMIT, EXPANSION_LIMIT, EXHAUSTED };
++inline const char* terminationName(XYThetaTermination value) {
++  switch(value) {
++    case XYThetaTermination::INVALID_INPUT:return "INVALID_INPUT";
++    case XYThetaTermination::INVALID_START:return "INVALID_START";
++    case XYThetaTermination::REACHED:return "REACHED";
++    case XYThetaTermination::TIME_LIMIT:return "TIME_LIMIT";
++    case XYThetaTermination::EXPANSION_LIMIT:return "EXPANSION_LIMIT";
++    default:return "EXHAUSTED";
++  }
++}
+ struct XYThetaPlan {
+   std::vector<Pose2> poses;
+   double seconds=std::numeric_limits<double>::infinity();
+   int expanded=0;
+   bool reached=false;
++  XYThetaTermination termination=XYThetaTermination::INVALID_INPUT;
+ };
+ 
+ struct XYThetaConfig {
+@@ -85,11 +97,12 @@ XYThetaPlan planXYTheta(Pose2 start,Point goal,const XYThetaConfig& cfg,Valid va
+       cfg.reverse_speed<=0 || cfg.max_yaw_rate<=0 || cfg.max_expansions<=0)
+     return out;
+   start.yaw=wrapYaw(start.yaw);
+-  if (!valid(start,start,0)) return out;
++  if (!valid(start,start,0)) {out.termination=XYThetaTermination::INVALID_START;return out;}
+   const double yaw_step=2*kPi/cfg.headings;
+   const auto turn_angles=cfg.turn_angles.empty() ? std::vector<double>{yaw_step}:cfg.turn_angles;
+   for (double angle:turn_angles)
+     if (!std::isfinite(angle) || angle<=0 || angle>kPi/2) return out;
++  out.termination=XYThetaTermination::EXHAUSTED;
+   struct Control {double v,omega,duration;};
+   const double forward_time=cfg.drive_step/cfg.forward_speed;
+   const double reverse_time=cfg.drive_step/cfg.reverse_speed;
+@@ -129,7 +142,9 @@ XYThetaPlan planXYTheta(Pose2 start,Point goal,const XYThetaConfig& cfg,Valid va
+   const auto deadline=std::chrono::steady_clock::now()+
+       std::chrono::duration<double>(cfg.max_search_seconds);
+   while (!open.empty() && out.expanded<cfg.max_expansions) {
+-    if ((out.expanded&31)==0 && std::chrono::steady_clock::now()>deadline) break;
++    if ((out.expanded&31)==0 && std::chrono::steady_clock::now()>deadline) {
++      out.termination=XYThetaTermination::TIME_LIMIT;break;
++    }
+     const int index=open.top().second;open.pop();
+     const State current=states[index];
+     if (current.g>best[key(current.pose)]+1e-9) continue;
+@@ -141,7 +156,7 @@ XYThetaPlan planXYTheta(Pose2 start,Point goal,const XYThetaConfig& cfg,Valid va
+       out.poses.push_back(start);
+       for (size_t i=1;i<chain.size();++i)
+         out.poses.insert(out.poses.end(),states[chain[i]].edge.begin(),states[chain[i]].edge.end());
+-      out.seconds=current.g;out.reached=true;return out;
++      out.seconds=current.g;out.reached=true;out.termination=XYThetaTermination::REACHED;return out;
+     }
+     for (const auto& control:controls) {
+       if (std::abs(control.omega)>cfg.max_yaw_rate+1e-9) continue;
+@@ -180,6 +195,8 @@ XYThetaPlan planXYTheta(Pose2 start,Point goal,const XYThetaConfig& cfg,Valid va
+       open.emplace(candidate+heuristic(pose),next_index);
+     }
+   }
++  if (out.termination!=XYThetaTermination::TIME_LIMIT && !open.empty() && out.expanded>=cfg.max_expansions)
++    out.termination=XYThetaTermination::EXPANSION_LIMIT;
+   return out;
+ }
+ }  // namespace ht_cost_ns
+diff --git a/src/tare_planner/include/viewpoint_manager/viewpoint_manager.h b/src/tare_planner/include/viewpoint_manager/viewpoint_manager.h
+index f0cede8..02571d8 100644
+--- a/src/tare_planner/include/viewpoint_manager/viewpoint_manager.h
++++ b/src/tare_planner/include/viewpoint_manager/viewpoint_manager.h
+@@ -13,6 +13,7 @@
+ #include <memory>
+ #include "ht_cost/ht_cost_map.h"
+ #include <cmath>
++#include <limits>
+ 
+ #include <Eigen/Core>
+ // ROS
+@@ -376,6 +377,10 @@ private:
+   pcl::PointCloud<pcl::PointXYZI>::Ptr viewpoint_in_collision_cloud_;
+   pcl::PointCloud<pcl::PointXYZI>::Ptr pose_collision_cloud_;
+   pcl::KdTreeFLANN<pcl::PointXYZI>::Ptr pose_collision_tree_;
++  pcl::PointCloud<pcl::PointXYZI>::Ptr pose_collision_xy_cloud_;
++  pcl::KdTreeFLANN<pcl::PointXYZI>::Ptr pose_collision_xy_tree_;
++  double pose_collision_reference_z_ = std::numeric_limits<double>::quiet_NaN();
++  bool pose_collision_3d_ready_ = false;
+   bool pose_collision_ready_ = false;
+ 
+   geometry_msgs::msg::Polygon viewpoint_boundary_;
+diff --git a/src/tare_planner/src/local_coverage_planner/ht_route.cpp b/src/tare_planner/src/local_coverage_planner/ht_route.cpp
+index da18679..89f4a55 100644
+--- a/src/tare_planner/src/local_coverage_planner/ht_route.cpp
++++ b/src/tare_planner/src/local_coverage_planner/ht_route.cpp
+@@ -206,23 +206,35 @@ exploration_path_ns::ExplorationPath LocalCoveragePlanner::SolveHTTSP(
+     if (remaining<=.001) continue;
+     ++attempted;
+     const auto goal=viewpoint_manager_->GetViewPointPosition(target.id);
+-    int geometry_rejections=0,ht_rejections=0;
++    int geometry_rejections=0,ht_rejections=0,memory_rejections=0,reserve_rejections=0,geometry_queries=0;
++    double geometry_seconds=0;
+     auto valid=[&](ht_cost_ns::Pose2 previous,ht_cost_ns::Pose2 next,double v) {
+       const Eigen::Vector3d point(next.x,next.y,robot_position_.z());
+-      if (!viewpoint_manager_->InLocalPlanningHorizon(point) ||
+-          viewpoint_manager_->InCollisionAtPose(point)) {++geometry_rejections;return false;}
++      if (!viewpoint_manager_->InLocalPlanningHorizon(point)) {++geometry_rejections;return false;}
++      const auto geometry_started=std::chrono::steady_clock::now();
++      const bool colliding=viewpoint_manager_->InCollisionAtPose(point);
++      geometry_seconds+=std::chrono::duration<double>(std::chrono::steady_clock::now()-geometry_started).count();
++      ++geometry_queries;
++      if (colliding) {++geometry_rejections;return false;}
+       (void)v;
+-      if (!ht->permits(ht->motionSupport(previous,next)) ||
+-          !ht_execution_failures_.permits(previous,next,now) ||
+-          !ht_cost_ns::successorHeadingReserve(start,previous,next,ht_heading_margin_,
++      if (!ht->permits(ht->motionSupport(previous,next))) {++ht_rejections;return false;}
++      if (!ht_execution_failures_.permits(previous,next,now)) {++memory_rejections;return false;}
++      if (!ht_cost_ns::successorHeadingReserve(start,previous,next,ht_heading_margin_,
+             [&](ht_cost_ns::Pose2 p){return ht->permits(ht->poseSupport(p.x,p.y,p.yaw));})) {
+-        ++ht_rejections;return false;
++        ++reserve_rejections;return false;
+       }
+       return true;
+     };
+     auto config=xytheta_config_;
+     config.max_search_seconds=std::min(config.max_search_seconds,remaining);
++    const auto query_started=std::chrono::steady_clock::now();
+     const auto plan=ht_cost_ns::planXYTheta(start,{goal.x,goal.y,goal.z},config,valid);
++    const double query_seconds=std::chrono::duration<double>(std::chrono::steady_clock::now()-query_started).count();
++    RCLCPP_INFO(node_->get_logger(),
++      "HT_SEARCH_AUDIT target=%d goal=(%.6f,%.6f) gain=%.1f recovery=%d backtrack=%d ht_stamp=%.9f termination=%s elapsed_s=%.6f budget_s=%.6f expanded=%d expansion_limit=%d geometry_queries=%d geometry_s=%.6f geometry_reject=%d ht_reject=%d memory_reject=%d reserve_reject=%d",
++      target.id,goal.x,goal.y,target.gain,target.recovery,target.backtrack,ht->cycleStamp(),
++      ht_cost_ns::terminationName(plan.termination),query_seconds,config.max_search_seconds,plan.expanded,
++      config.max_expansions,geometry_queries,geometry_seconds,geometry_rejections,ht_rejections,memory_rejections,reserve_rejections);
+     if (!plan.reached || plan.poses.size()<2) {
+       if (target.id==committed_id) ht_commitment_.reject(now);
+       RCLCPP_INFO_THROTTLE(node_->get_logger(),*node_->get_clock(),3000,
+@@ -246,6 +258,9 @@ exploration_path_ns::ExplorationPath LocalCoveragePlanner::SolveHTTSP(
+     // It is re-searched and hard-checked against this cycle's current map.
+     if (target.id==committed_id) break;
+   }
++  RCLCPP_INFO(node_->get_logger(),"HT_SEARCH_SUMMARY targets=%zu primary=%zu attempts=%d cycle_budget_s=%.6f elapsed_s=%.6f output_target=%d ht_stamp=%.9f",
++    targets.size(),primary_count,attempted,ht_cycle_search_seconds_,
++    std::chrono::duration<double>(std::chrono::steady_clock::now()-search_started).count(),best_target,ht->cycleStamp());
+   if (best_target<0) return result;
+   ht_candidate_target_=best_target;
+   ht_last_cost_=-best_score;
+diff --git a/src/tare_planner/src/viewpoint_manager/viewpoint_manager.cpp b/src/tare_planner/src/viewpoint_manager/viewpoint_manager.cpp
+index 05dad51..0f0fe96 100644
+--- a/src/tare_planner/src/viewpoint_manager/viewpoint_manager.cpp
++++ b/src/tare_planner/src/viewpoint_manager/viewpoint_manager.cpp
+@@ -79,6 +79,8 @@ ViewPointManager::ViewPointManager(rclcpp::Node::SharedPtr nh) : initialized_(fa
+   viewpoint_in_collision_cloud_ = pcl::PointCloud<pcl::PointXYZI>::Ptr(new pcl::PointCloud<pcl::PointXYZI>);
+   pose_collision_cloud_.reset(new pcl::PointCloud<pcl::PointXYZI>);
+   pose_collision_tree_.reset(new pcl::KdTreeFLANN<pcl::PointXYZI>(false));
++  pose_collision_xy_cloud_.reset(new pcl::PointCloud<pcl::PointXYZI>);
++  pose_collision_xy_tree_.reset(new pcl::KdTreeFLANN<pcl::PointXYZI>(false));
+ 
+   grid_ = std::make_shared<rolling_grid_ns::RollingGrid>(vp_.kNumber);
+   origin_ = Eigen::Vector3d::Zero();
+@@ -463,7 +465,19 @@ void ViewPointManager::CheckViewPointCollisionWithCollisionGrid(
+         collision_point_count_[collision_grid_->Sub2Ind(sub)] >= vp_.kCollisionPointThr)
+       pose_collision_cloud_->push_back(point);
+   }
+-  if (!pose_collision_cloud_->empty()) pose_collision_tree_->setInputCloud(pose_collision_cloud_);
++  // All SE2 queries in this planning cycle use this exact odometry height.
++  // Height-filter first, then the cylindrical test reduces to nearest XY
++  // distance. Keep original 3D points for queries at any other height.
++  pose_collision_reference_z_ = robot_position_.z();
++  pose_collision_xy_cloud_->clear();
++  for (const auto& point:pose_collision_cloud_->points) {
++    const double dz=point.z-pose_collision_reference_z_;
++    if (dz<=vp_.kViewPointCollisionMarginZPlus && dz>=-vp_.kViewPointCollisionMarginZMinus) {
++      auto xy=point;xy.z=0;pose_collision_xy_cloud_->push_back(xy);
++    }
++  }
++  if (!pose_collision_xy_cloud_->empty()) pose_collision_xy_tree_->setInputCloud(pose_collision_xy_cloud_);
++  pose_collision_3d_ready_ = false;
+   pose_collision_ready_ = true;
+ }
+ 
+@@ -480,6 +494,25 @@ bool ViewPointManager::InCollisionAtPose(const Eigen::Vector3d& position)
+   // for raster uncertainty. Never exempt an actually colliding root state.
+   const double radius=vp_.kViewPointCollisionMargin+
+       .5*std::hypot(vp_.kCollisionGridResolution.x(),vp_.kCollisionGridResolution.y());
++  if (position.z()==pose_collision_reference_z_) {
++    if (pose_collision_xy_cloud_->empty()) return false;
++    pcl::PointXYZI xy;xy.x=query.x;xy.y=query.y;xy.z=0;
++    std::vector<int> nearest(1);std::vector<float> squared_nearest(1);
++    if (pose_collision_xy_tree_->nearestKSearch(xy,1,nearest,squared_nearest)==1) {
++      const auto& obstacle=pose_collision_xy_cloud_->points[nearest[0]];
++      if (std::hypot(obstacle.x-position.x(),obstacle.y-position.y())<=radius+1e-7) return true;
++      // Float KD ordering is sufficient away from the boundary. At a nearly
++      // tied boundary, fall back to the original exact-coordinate 3D test;
++      // never lose a collision through query-coordinate rounding.
++      const double error=std::hypot(double(xy.x)-position.x(),double(xy.y)-position.y())+
++          8*std::numeric_limits<float>::epsilon()*(radius+1);
++      if (std::sqrt(double(squared_nearest[0]))>radius+1e-7+error) return false;
++    }
++  }
++  if (!pose_collision_3d_ready_) {
++    pose_collision_tree_->setInputCloud(pose_collision_cloud_);
++    pose_collision_3d_ready_=true;
++  }
+   const double vertical=std::max(vp_.kViewPointCollisionMarginZPlus,vp_.kViewPointCollisionMarginZMinus);
+   pcl::PointXYZI point;point.x=query.x;point.y=query.y;point.z=query.z;
+   std::vector<int> indices;std::vector<float> squared;
+diff --git a/src/tare_planner/tests/geometry_pose_test.cpp b/src/tare_planner/tests/geometry_pose_test.cpp
+index 20eb6a1..42389aa 100644
+--- a/src/tare_planner/tests/geometry_pose_test.cpp
++++ b/src/tare_planner/tests/geometry_pose_test.cpp
+@@ -38,3 +38,53 @@ TEST(GeometryPose, CapturedContinuousRootDoesNotInheritNeighbourCollision) {
+   manager.UpdateNogoBoundary({polygon});
+   EXPECT_TRUE(manager.InCollisionAtPose(robot));
+ }
++
++TEST(GeometryPose, HeightSliceMatchesBruteForceAtBoundariesAndOtherHeights) {
++  if (!rclcpp::ok())rclcpp::init(0,nullptr);
++  rclcpp::NodeOptions options;
++  options.arguments({"--ros-args","--params-file",HT_SOURCE_ROOT "/config/indoor.yaml"});
++  options.automatically_declare_parameters_from_overrides(true);
++  auto node=std::make_shared<rclcpp::Node>("tare_planner_node",options);
++  node->set_parameter(rclcpp::Parameter("kViewPointCollisionMarginZPlus",.2));
++  node->set_parameter(rclcpp::Parameter("kViewPointCollisionMarginZMinus",.7));
++  viewpoint_manager_ns::ViewPointManager manager(node);
++  manager.UpdateRobotPosition(Eigen::Vector3d(0,0,.75));
++  auto cloud=std::make_shared<pcl::PointCloud<pcl::PointXYZI>>();
++  for(const auto& p:std::vector<Eigen::Vector3d>{{5,5,.95},{2,2,.05},{-2,3,1.1},{5.000001,5.000001,.95}}) {
++    pcl::PointXYZI v;v.x=p.x();v.y=p.y();v.z=p.z();cloud->push_back(v);
++  }
++  manager.CheckViewPointCollision(cloud);
++  for(int i=0;i<manager.GetViewPointNum();++i) {
++    manager.SetViewPointInLineOfSight(i,true);manager.SetViewPointConnected(i,true);
++  }
++  manager.GetViewPointCandidate();
++  const double radius=.5+.5*std::hypot(.2,.2);
++  int checked=0;
++  for(double z:{.75,.74999997,.75000003,.9,.4})
++    for(int k=0;k<32;++k)for(double offset:{-1e-5,-1e-7,0.,1e-7,1e-5}) {
++      const double theta=k*ht_cost_ns::kPi/16;
++      const Eigen::Vector3d query(5+(radius+offset)*std::cos(theta),5+(radius+offset)*std::sin(theta),z);
++      bool expected=false;
++      for(const auto& obstacle:cloud->points) {
++        const double dz=obstacle.z-query.z();
++        expected|=dz<=.2 && dz>=-.7 && std::hypot(obstacle.x-query.x(),obstacle.y-query.y())<=radius+1e-7;
++      }
++      EXPECT_EQ(manager.InCollisionAtPose(query),expected)<<"q="<<query.transpose();++checked;
++    }
++  EXPECT_EQ(checked,800);
++}
++
++TEST(SearchAudit, SeparatesDeadlineExpansionLimitAndExhaustedComponent) {
++  using namespace ht_cost_ns;
++  XYThetaConfig config;config.max_search_seconds=10;
++  auto open=[](Pose2,Pose2,double){return true;};
++  auto blocked=[](Pose2,Pose2,double){return false;};
++  EXPECT_EQ(planXYTheta(Pose2{},Point{1,0,0},config,blocked).termination,XYThetaTermination::INVALID_START);
++  EXPECT_EQ(planXYTheta(Pose2{},Point{},config,open).termination,XYThetaTermination::REACHED);
++  auto sealed=[](Pose2,Pose2 p,double){return std::hypot(p.x,p.y)<1e-9 && std::abs(p.yaw)<1e-9;};
++  EXPECT_EQ(planXYTheta(Pose2{},Point{1,0,0},config,sealed).termination,XYThetaTermination::EXHAUSTED);
++  config.max_expansions=1;
++  EXPECT_EQ(planXYTheta(Pose2{},Point{3,0,0},config,open).termination,XYThetaTermination::EXPANSION_LIMIT);
++  config.max_expansions=8000;config.max_search_seconds=1e-12;
++  EXPECT_EQ(planXYTheta(Pose2{},Point{3,0,0},config,open).termination,XYThetaTermination::TIME_LIMIT);
++}

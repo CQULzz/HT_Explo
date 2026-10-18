@@ -1,0 +1,109 @@
+{
+  "logged_plan_rows": 83,
+  "new_goal_rows": 25,
+  "new_goal_zero_reported_gain_rows": 21,
+  "new_goal_recovery_rows": 13,
+  "guide_log_counts": {
+    "9.45,-0.45": 40,
+    "1.35,-0.15": 16,
+    "1.05,12.15": 27
+  },
+  "note": "Throttled log rows, not all planning cycles. Gain is the viewpoint coverage estimate, not measured new free volume. Older builds used a gain0 placeholder for held goals; use the external observed-volume union to assess real progress.",
+  "guide_events": [
+    {
+      "time_s": 67.9622871875763,
+      "log": "[tare_planner_node-1] [INFO] [1792314464.521556961] [tare_planner_node]: HT guide selected: (1.35,-0.15) global=0 remaining=7.40m"
+    },
+    {
+      "time_s": 96.80694556236267,
+      "log": "[tare_planner_node-1] [INFO] [1792314493.366215311] [tare_planner_node]: HT guide selected: (1.05,12.15) global=0 remaining=12.27m"
+    },
+    {
+      "time_s": 149.6082465648651,
+      "log": "[tare_planner_node-1] [WARN] [1792314546.167516254] [tare_planner_node]: HT global guide stalled: (1.05,12.15), best_remaining=1.74m idle=17.9s stationary=13.0s; cooldown=180.0s and release local goal"
+    },
+    {
+      "time_s": 149.60847568511963,
+      "log": "[tare_planner_node-1] [INFO] [1792314546.167745400] [tare_planner_node]: HT guide selected: (14.85,1.05) global=0 remaining=16.80m"
+    },
+    {
+      "time_s": 162.634761095047,
+      "log": "[tare_planner_node-1] [WARN] [1792314559.194030798] [tare_planner_node]: HT global guide stalled: (14.85,1.05), best_remaining=16.80m idle=12.0s stationary=12.0s; cooldown=180.0s and release local goal"
+    },
+    {
+      "time_s": 277.6086235046387,
+      "log": "[tare_planner_node-1] [INFO] [1792314674.167893142] [tare_planner_node]: HT guide selected: (1.95,1.35) global=0 remaining=10.85m"
+    },
+    {
+      "time_s": 291.6151657104492,
+      "log": "[tare_planner_node-1] [WARN] [1792314688.174435359] [tare_planner_node]: HT global guide stalled: (1.95,1.35), best_remaining=10.85m idle=13.0s stationary=13.0s; cooldown=180.0s and release local goal"
+    },
+    {
+      "time_s": 343.59492802619934,
+      "log": "[tare_planner_node-1] [INFO] [1792314740.154197622] [tare_planner_node]: HT guide selected: (14.25,1.65) global=0 remaining=15.95m"
+    },
+    {
+      "time_s": 357.60335755348206,
+      "log": "[tare_planner_node-1] [WARN] [1792314754.162627131] [tare_planner_node]: HT global guide stalled: (14.25,1.65), best_remaining=15.95m idle=13.0s stationary=13.0s; cooldown=180.0s and release local goal"
+    },
+    {
+      "time_s": 358.6106722354889,
+      "log": "[tare_planner_node-1] [INFO] [1792314755.169941931] [tare_planner_node]: HT guide selected: (14.85,-0.45) global=0 remaining=17.83m"
+    },
+    {
+      "time_s": 371.63567996025085,
+      "log": "[tare_planner_node-1] [WARN] [1792314768.194949579] [tare_planner_node]: HT global guide stalled: (14.85,-0.45), best_remaining=17.83m idle=12.0s stationary=12.0s; cooldown=180.0s and release local goal"
+    },
+    {
+      "time_s": 472.6231074333191,
+      "log": "[tare_planner_node-1] [INFO] [1792314869.182377033] [tare_planner_node]: HT guide selected: (1.95,1.35) global=0 remaining=10.85m"
+    },
+    {
+      "time_s": 485.7898895740509,
+      "log": "[tare_planner_node-1] [WARN] [1792314882.349159177] [tare_planner_node]: HT global guide stalled: (1.95,1.35), best_remaining=10.85m idle=12.2s stationary=12.2s; cooldown=180.0s and release local goal"
+    },
+    {
+      "time_s": 549.6094686985016,
+      "log": "[tare_planner_node-1] [INFO] [1792314946.168738299] [tare_planner_node]: HT guide selected: (14.25,1.65) global=0 remaining=15.95m"
+    },
+    {
+      "time_s": 563.6121966838837,
+      "log": "[tare_planner_node-1] [WARN] [1792314960.171466414] [tare_planner_node]: HT global guide stalled: (14.25,1.65), best_remaining=15.95m idle=12.8s stationary=12.8s; cooldown=180.0s and release local goal"
+    },
+    {
+      "time_s": 565.6078917980194,
+      "log": "[tare_planner_node-1] [INFO] [1792314962.167161581] [tare_planner_node]: HT guide selected: (14.85,-0.45) global=0 remaining=17.83m"
+    },
+    {
+      "time_s": 579.605726480484,
+      "log": "[tare_planner_node-1] [WARN] [1792314976.164996193] [tare_planner_node]: HT global guide stalled: (14.85,-0.45), best_remaining=17.83m idle=12.8s stationary=12.8s; cooldown=180.0s and release local goal"
+    }
+  ],
+  "global_stall_releases": 8,
+  "accepted_execution_rejections": [
+    {
+      "time_s": 24.996347188949585,
+      "log": "[tare_planner_node-1] [WARN] [1792314421.555616754] [tare_planner_node]: Execution rejected HT edge (3.56,3.90)->(3.42,3.74); replan with 6s edge cooldown"
+    },
+    {
+      "time_s": 31.146067142486572,
+      "log": "[tare_planner_node-1] [WARN] [1792314427.705336887] [tare_planner_node]: Execution rejected HT edge (3.61,3.31)->(3.56,3.20); replan with 6s edge cooldown"
+    },
+    {
+      "time_s": 34.69616079330444,
+      "log": "[tare_planner_node-1] [WARN] [1792314431.255430375] [tare_planner_node]: Execution rejected HT edge (3.63,2.75)->(3.56,2.61); replan with 6s edge cooldown"
+    },
+    {
+      "time_s": 38.9960823059082,
+      "log": "[tare_planner_node-1] [WARN] [1792314435.555352003] [tare_planner_node]: Execution rejected HT edge (3.61,1.77)->(3.56,1.65); replan with 6s edge cooldown"
+    },
+    {
+      "time_s": 105.24631452560425,
+      "log": "[tare_planner_node-1] [WARN] [1792314501.805584105] [tare_planner_node]: Execution rejected HT edge (2.45,2.04)->(2.52,2.19); replan with 6s edge cooldown"
+    },
+    {
+      "time_s": 108.19621205329895,
+      "log": "[tare_planner_node-1] [WARN] [1792314504.755481603] [tare_planner_node]: Execution rejected HT edge (2.45,2.36)->(2.52,2.52); replan with 6s edge cooldown"
+    }
+  ]
+}
