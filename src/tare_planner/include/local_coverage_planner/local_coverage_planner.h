@@ -169,9 +169,9 @@ private:
   int lookahead_viewpoint_ind_;
 
   // Runtime
-  int find_path_runtime_;
-  int viewpoint_sampling_runtime_;
-  int tsp_runtime_;
+  int find_path_runtime_=0;
+  int viewpoint_sampling_runtime_=0;
+  int tsp_runtime_=0;
   static const std::string kRuntimeUnit;
 
   std::vector<int> last_selected_viewpoint_indices_;

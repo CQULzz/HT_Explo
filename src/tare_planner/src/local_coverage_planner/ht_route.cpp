@@ -5,9 +5,19 @@
 #include <unordered_set>
 
 namespace local_coverage_planner_ns {
+namespace {
+struct ScopedSearchRuntime {
+  int& microseconds;
+  std::chrono::steady_clock::time_point started=std::chrono::steady_clock::now();
+  ~ScopedSearchRuntime() {microseconds+=static_cast<int>(std::chrono::duration_cast<std::chrono::microseconds>(
+    std::chrono::steady_clock::now()-started).count());}
+};
+}
+
 
 exploration_path_ns::ExplorationPath LocalCoveragePlanner::SolveHTTSP(
     const std::vector<int>& selected,std::vector<int>& ordered) {
+  ScopedSearchRuntime measured{find_path_runtime_};
   using namespace exploration_path_ns;
   ExplorationPath result;
   ordered.clear();
@@ -38,7 +48,7 @@ exploration_path_ns::ExplorationPath LocalCoveragePlanner::SolveHTTSP(
   std::vector<Target> targets;
   auto supported_endpoint=[&](int id) {
     const auto p=viewpoint_manager_->GetViewPointPosition(id);
-    if (viewpoint_manager_->InCollision(Eigen::Vector3d(p.x,p.y,robot_position_.z()))) return false;
+    if (viewpoint_manager_->InCollisionAtPose(Eigen::Vector3d(p.x,p.y,robot_position_.z()))) return false;
     for (int k=0;k<8;++k)
       if (ht->permits(ht->poseSupport(p.x,p.y,k*ht_cost_ns::kPi/4))) return true;
     return false;
@@ -174,7 +184,7 @@ exploration_path_ns::ExplorationPath LocalCoveragePlanner::SolveHTTSP(
     "XYtheta candidates=%zu selected=%zu start=(%.2f,%.2f,%.2f) HT_start=%d collision=%d",
     targets.size(),selected.size(),start.x,start.y,start.yaw,
     static_cast<int>(ht->poseSupport(start.x,start.y,start.yaw)),
-    viewpoint_manager_->InCollision(robot_position_));
+    viewpoint_manager_->InCollisionAtPose(robot_position_));
   int attempted=0;
   int best_target=-1;
   double best_score=-std::numeric_limits<double>::infinity();
@@ -200,7 +210,7 @@ exploration_path_ns::ExplorationPath LocalCoveragePlanner::SolveHTTSP(
     auto valid=[&](ht_cost_ns::Pose2 previous,ht_cost_ns::Pose2 next,double v) {
       const Eigen::Vector3d point(next.x,next.y,robot_position_.z());
       if (!viewpoint_manager_->InLocalPlanningHorizon(point) ||
-          viewpoint_manager_->InCollision(point)) {++geometry_rejections;return false;}
+          viewpoint_manager_->InCollisionAtPose(point)) {++geometry_rejections;return false;}
       (void)v;
       if (!ht->permits(ht->motionSupport(previous,next)) ||
           !ht_execution_failures_.permits(previous,next,now) ||
@@ -270,6 +280,7 @@ exploration_path_ns::ExplorationPath LocalCoveragePlanner::SolveHTTSP(
 }
 
 exploration_path_ns::ExplorationPath LocalCoveragePlanner::PlanHTReturn(const Eigen::Vector3d& target) {
+  ScopedSearchRuntime measured{find_path_runtime_};
   using namespace exploration_path_ns;
   ExplorationPath result;
   ht_output_path_.poses.clear();
@@ -279,7 +290,7 @@ exploration_path_ns::ExplorationPath LocalCoveragePlanner::PlanHTReturn(const Ei
   auto valid=[&](ht_cost_ns::Pose2 previous,ht_cost_ns::Pose2 next,double v) {
     const Eigen::Vector3d point(next.x,next.y,robot_position_.z());
     if (!viewpoint_manager_->InLocalPlanningHorizon(point) ||
-        viewpoint_manager_->InCollision(point) ||
+        viewpoint_manager_->InCollisionAtPose(point) ||
         !ht->permits(ht->motionSupport(previous,next)) ||
         !ht_execution_failures_.permits(previous,next,node_->now().seconds()) ||
         !ht_cost_ns::successorHeadingReserve(start,previous,next,ht_heading_margin_,

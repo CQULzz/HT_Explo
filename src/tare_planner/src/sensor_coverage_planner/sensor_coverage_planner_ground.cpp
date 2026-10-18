@@ -1100,7 +1100,7 @@ bool SensorCoveragePlanner3D::GetLookAheadPoint(
           1-2*(pose.orientation.y*pose.orientation.y+pose.orientation.z*pose.orientation.z));
         const ht_cost_ns::Point point{pose.position.x,pose.position.y,robot.z()};
         if (!viewpoint_manager_->InLocalPlanningHorizon(Eigen::Vector3d(point.x,point.y,point.z)) ||
-            viewpoint_manager_->InCollision(Eigen::Vector3d(point.x,point.y,point.z)) ||
+            viewpoint_manager_->InCollisionAtPose(Eigen::Vector3d(point.x,point.y,point.z)) ||
             !ht->permits(ht->motionSupport(previous_pose,{point.x,point.y,yaw}))) return false;
         const double step=std::hypot(point.x-previous.x,point.y-previous.y);
         distance+=step;previous=point;previous_pose={point.x,point.y,yaw};
@@ -1649,10 +1649,18 @@ void SensorCoveragePlanner3D::execute() {
     misc_utils_ns::Timer update_representation_timer("update representation");
     update_representation_timer.Start();
 
+    auto profile_last=std::chrono::steady_clock::now();
+    auto phase_ms=[&]() {
+      const auto current=std::chrono::steady_clock::now();
+      const double elapsed=std::chrono::duration<double,std::milli>(current-profile_last).count();
+      profile_last=current;return elapsed;
+    };
     // Update grid world
     UpdateGlobalRepresentation();
+    const double global_representation_ms=phase_ms();
 
     int viewpoint_candidate_count = UpdateViewPoints();
+    const double viewpoints_ms=phase_ms();
     if (viewpoint_candidate_count == 0) {
       lookahead_point_update_=false;
       hold_reason_="NO_GEOMETRIC_VIEWPOINTS";force_hold_=true;
@@ -1663,16 +1671,21 @@ void SensorCoveragePlanner3D::execute() {
     }
 
     UpdateKeyposeGraph();
+    const double keypose_ms=phase_ms();
+    double coverage_ms=0,areas_ms=0;
 
     int uncovered_point_num = 0;
     int uncovered_frontier_point_num = 0;
     if (!exploration_finished_ || !kNoExplorationReturnHome) {
-      UpdateViewPointCoverage();
-      UpdateCoveredAreas(uncovered_point_num, uncovered_frontier_point_num);
+      UpdateViewPointCoverage();coverage_ms=phase_ms();
+      UpdateCoveredAreas(uncovered_point_num, uncovered_frontier_point_num);areas_ms=phase_ms();
     } else {
       viewpoint_manager_->ResetViewPointCoverage();
     }
 
+    if (viewpoint_manager_->HT()->enabled())
+      RCLCPP_INFO(this->get_logger(),"HT_REPRESENTATION_PROFILE global_ms=%.3f viewpoints_ms=%.3f keypose_ms=%.3f coverage_ms=%.3f covered_areas_ms=%.3f",
+        global_representation_ms,viewpoints_ms,keypose_ms,coverage_ms,areas_ms);
     update_representation_timer.Stop(false);
     update_representation_runtime_ +=
         update_representation_timer.GetDuration("ms");

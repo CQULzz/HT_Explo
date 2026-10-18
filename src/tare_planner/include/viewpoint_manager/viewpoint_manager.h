@@ -135,6 +135,8 @@ public:
   }
 
   bool InCollision(const Eigen::Vector3d& position);
+  // Continuous vehicle reference position, separate from coverage viewpoint marks.
+  bool InCollisionAtPose(const Eigen::Vector3d& position);
   bool InCurrentFrameLineOfSight(const Eigen::Vector3d& position);
   void CheckViewPointBoundaryCollision();
   void CheckViewPointCollisionWithCollisionGrid(const pcl::PointCloud<pcl::PointXYZI>::Ptr& collision_cloud);
@@ -372,6 +374,9 @@ private:
   pcl::KdTreeFLANN<pcl::PointXYZI>::Ptr kdtree_viewpoint_in_collision_;
   pcl::PointCloud<pcl::PointXYZI>::Ptr viewpoint_candidate_cloud_;
   pcl::PointCloud<pcl::PointXYZI>::Ptr viewpoint_in_collision_cloud_;
+  pcl::PointCloud<pcl::PointXYZI>::Ptr pose_collision_cloud_;
+  pcl::KdTreeFLANN<pcl::PointXYZI>::Ptr pose_collision_tree_;
+  bool pose_collision_ready_ = false;
 
   geometry_msgs::msg::Polygon viewpoint_boundary_;
   std::vector<geometry_msgs::msg::Polygon> nogo_boundary_;

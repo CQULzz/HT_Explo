@@ -77,6 +77,8 @@ ViewPointManager::ViewPointManager(rclcpp::Node::SharedPtr nh) : initialized_(fa
   kdtree_viewpoint_in_collision_ = pcl::KdTreeFLANN<pcl::PointXYZI>::Ptr(new pcl::KdTreeFLANN<pcl::PointXYZI>());
   viewpoint_candidate_cloud_ = pcl::PointCloud<pcl::PointXYZI>::Ptr(new pcl::PointCloud<pcl::PointXYZI>);
   viewpoint_in_collision_cloud_ = pcl::PointCloud<pcl::PointXYZI>::Ptr(new pcl::PointCloud<pcl::PointXYZI>);
+  pose_collision_cloud_.reset(new pcl::PointCloud<pcl::PointXYZI>);
+  pose_collision_tree_.reset(new pcl::KdTreeFLANN<pcl::PointXYZI>(false));
 
   grid_ = std::make_shared<rolling_grid_ns::RollingGrid>(vp_.kNumber);
   origin_ = Eigen::Vector3d::Zero();
@@ -449,6 +451,46 @@ void ViewPointManager::CheckViewPointCollisionWithCollisionGrid(
       }
     }
   }
+  // Retain measured point coordinates. Quantized coverage-viewpoint labels
+  // are not a collision field for arbitrary continuous vehicle references.
+  // Preserve the existing occupied-bin count threshold and input history.
+  pose_collision_cloud_->clear();
+  for (const auto& point : collision_cloud->points)
+  {
+    if (!std::isfinite(point.x) || !std::isfinite(point.y) || !std::isfinite(point.z)) continue;
+    const auto sub = collision_grid_->Pos2Sub(point.x, point.y, point.z);
+    if (collision_grid_->InRange(sub) &&
+        collision_point_count_[collision_grid_->Sub2Ind(sub)] >= vp_.kCollisionPointThr)
+      pose_collision_cloud_->push_back(point);
+  }
+  if (!pose_collision_cloud_->empty()) pose_collision_tree_->setInputCloud(pose_collision_cloud_);
+  pose_collision_ready_ = true;
+}
+
+bool ViewPointManager::InCollisionAtPose(const Eigen::Vector3d& position)
+{
+  if (!position.allFinite() || !pose_collision_ready_ || !InLocalPlanningHorizon(position)) return true;
+  geometry_msgs::msg::Point query;
+  query.x=position.x();query.y=position.y();query.z=position.z();
+  if (!viewpoint_boundary_.points.empty() && !misc_utils_ns::PointInPolygon(query,viewpoint_boundary_)) return true;
+  for (const auto& boundary:nogo_boundary_)
+    if (!boundary.points.empty() && misc_utils_ns::PointInPolygon(query,boundary)) return true;
+  if (pose_collision_cloud_->empty()) return false;
+  // Keep the configured physical margin, adding half a collision-cell diagonal
+  // for raster uncertainty. Never exempt an actually colliding root state.
+  const double radius=vp_.kViewPointCollisionMargin+
+      .5*std::hypot(vp_.kCollisionGridResolution.x(),vp_.kCollisionGridResolution.y());
+  const double vertical=std::max(vp_.kViewPointCollisionMarginZPlus,vp_.kViewPointCollisionMarginZMinus);
+  pcl::PointXYZI point;point.x=query.x;point.y=query.y;point.z=query.z;
+  std::vector<int> indices;std::vector<float> squared;
+  pose_collision_tree_->radiusSearch(point,std::hypot(radius,vertical)+1e-5,indices,squared);
+  for (int index:indices) {
+    const auto& obstacle=pose_collision_cloud_->points[index];
+    const double dz=obstacle.z-position.z();
+    if (dz<=vp_.kViewPointCollisionMarginZPlus && dz>=-vp_.kViewPointCollisionMarginZMinus &&
+        std::hypot(obstacle.x-position.x(),obstacle.y-position.y())<=radius+1e-7) return true;
+  }
+  return false;
 }
 
 bool ViewPointManager::InCollision(const Eigen::Vector3d& position)
@@ -1518,8 +1560,7 @@ int ViewPointManager::GetNearestCandidateViewPointInd(const Eigen::Vector3d& pos
 void ViewPointManager::GetCollisionViewPointVisCloud(pcl::PointCloud<pcl::PointXYZI>::Ptr& cloud)
 {
   cloud->clear();
-  // for (const auto& point : viewpoint_in_collision_cloud_->points)
-  for (const auto& point : viewpoint_candidate_cloud_->points)
+  for (const auto& point : viewpoint_in_collision_cloud_->points)
   {
     cloud->points.push_back(point);
   }
