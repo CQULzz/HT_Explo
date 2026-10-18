@@ -16,11 +16,15 @@ elif [[ "${1:-}" == '--postfilter' ]]; then
 elif [[ "${1:-}" == '--geometry-index' ]]; then
   ht_playlist="$ht_repo_root/docs/results/ht_geometry_index_10min_2026-10-18/videos.m3u"
   printf '阶段27失败记录：41.90米；136.5秒后几何拒绝起点而停滞。\n'
-else
+elif [[ "${1:-}" == '--execution-geometry' ]]; then
   ht_playlist="$ht_repo_root/docs/results/ht_execution_geometry_10min_2026-10-18/videos.m3u"
-  printf '最新阶段28室内完整10分钟：执行几何检查及跟踪余量；117.66米，2292.75立方米。\n'
-  printf '约352秒内部完成返航，后段为完成后停车；尚未独立验证全场景覆盖或多环境稳定性。\n'
-  printf '上一轮失败加 --geometry-index；阶段26加 --postfilter；较高观测体积的阶段23加 --configuration；历史五环境加 --previous。\n'
+elif [[ "${1:-}" == '--cell-audit' ]]; then
+  ht_playlist="$ht_repo_root/docs/results/ht_cell_audit_10min_2026-10-18/videos.m3u"
+else
+  ht_playlist="$ht_repo_root/docs/results/ht_pending_gain_tasks_10min_2026-10-18/videos.m3u"
+  printf '最新阶段30室内完整10分钟：保留正收益全局任务；169.57米，3321.25立方米。\n'
+  printf '最后一分钟仍走17.829米，600秒因测试计时器结束，算法未宣布探索完成。\n'
+  printf '阶段29加 --cell-audit，阶段28加 --execution-geometry；较高体积阶段23加 --configuration；历史五环境加 --previous。\n'
 fi
 if [[ ! -f "$ht_playlist" ]] || ! rg -q '^[^#[:space:]]' "$ht_playlist"; then
   printf '未找到完整视频播放列表：%s\n' "$ht_playlist"
