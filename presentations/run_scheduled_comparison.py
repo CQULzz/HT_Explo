@@ -174,6 +174,13 @@ def run_trial(trial,variant,duration,scenario='garage'):
             ' exec ros2 run elevation_mapping_cupy elevation_mapping_node --ros-args'
             f' -p core_param_file:={q(CUPY/"config/trial_core.yaml")}'
             f' -p setup_file:={q(CUPY/"config/trial_setup.yaml")}')
+        if os.environ.get('HT_PROFILE_CUPY') == '1':
+            # Observe the installed independent mapper; do not replace its source.
+            trial.env['CUPY_TIMING_TRACE']=str(trial.folder/'cupy_timing.jsonl')
+            mapper=source(ros,CUPY/'install/setup.bash')+(
+                f' exec python3 {q(BRIDGE/"profile_cupy_runtime.py")} --ros-args'
+                f' -p core_param_file:={q(CUPY/"config/trial_core.yaml")}'
+                f' -p setup_file:={q(CUPY/"config/trial_setup.yaml")}')
         trial.start('elevation',mapper);time.sleep(3);trial.check()
         bridge=source(ros,cmu)+f' exec python3 {q(BRIDGE/"cupy_to_ht.py")}'
         trial.start('ht_bridge',bridge);time.sleep(10);trial.check()

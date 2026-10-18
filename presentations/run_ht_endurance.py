@@ -119,7 +119,7 @@ def main():
               ROOT/'src/tare_planner/src/ht_cost/xytheta_follower.cpp',
               CUPY/'src/elevation_mapping_cupy_2204/elevation_mapping_cupy/script/elevation_mapping_cupy/elevation_mapping_ros.py']
     paths += [BRIDGE/name for name in ('cmu_xytheta.launch.py','cmu_vehicle_downward.launch.py','gz_sim_direct.launch.py')]
-    paths += [BRIDGE/name for name in ('cpu_threads.py','model.py','local_surface.py','elevation_quality.py','ht_support.py','capture_replay_maps.py',
+    paths += [BRIDGE/name for name in ('cpu_threads.py','model.py','local_surface.py','elevation_quality.py','ht_support.py','capture_replay_maps.py','profile_cupy_runtime.py',
                                      'assets/camera_sensor_mask.sdf','assets/lidar_downward.sdf',
                                      'assets/robot_sensor_mask.sdf','student_best_epoch_weights.pth')]
     paths += [CMU/f'src/vehicle_simulator/world/{args.scenario}.world',
@@ -137,7 +137,7 @@ def main():
                   CMU/f'install/{package}/lib/{package}/{executable}']
     manifest = dict(started_at=dt.datetime.now().astimezone().isoformat(),
                     planned_duration_s=args.duration, scenario=args.scenario, domain=args.domain,
-                    video_fps=args.video_fps,
+                    video_fps=args.video_fps, cupy_timing_profile=os.environ.get('HT_PROFILE_CUPY')=='1',
                     speed_cap_mps=.5, preflight=preflight(),
                     ht_score_semantics=json.loads((BRIDGE/'ht_trial.yaml').read_text())['/**']['ros__parameters'].get('ht_score_semantics','point'),
                     git_head=subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
@@ -150,7 +150,7 @@ def main():
     topics = ['/endurance/registered_scan', '/state_estimation', '/state_estimation_at_scan',
               '/tf', '/tf_static', '/cmd_vel', '/way_point', '/ht_xytheta_path',
               '/ht_execution_status', '/ht_follower_status', '/ht_execution_rejected_edge',
-              '/ht_navigation_allowed', '/mission_state', '/mission_completed', '/runtime', '/exploration_finish',
+              '/ht_navigation_allowed', '/mission_state', '/mission_completed', '/runtime', '/runtime_breakdown', '/exploration_finish',
               '/ht_traversability/global_local']
     stopped = threading.Event()
     failures = []
