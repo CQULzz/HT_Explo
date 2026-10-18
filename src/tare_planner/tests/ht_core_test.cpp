@@ -6,6 +6,7 @@
 #include "ht_cost/target_commitment.h"
 #include "ht_cost/exploration_progress.h"
 #include "ht_cost/heading_reserve.h"
+#include "ht_cost/search_schedule.h"
 #include <iostream>
 #include <stdexcept>
 using namespace ht_cost_ns;
@@ -16,6 +17,40 @@ void check(bool condition) {
 }
 void near(double a,double b) { check(std::abs(a-b)<1e-5); }
 int main() {
+  // Stage32: each primary search consumes0.15s and fails; a short safe
+  // recovery would take0.02s, but the sequential queue never reaches it
+  // inside the0.35s cycle. Test scheduling with a deterministic clock.
+  auto recoveryWithinBudget=[](const std::vector<std::size_t>& order) {
+    double elapsed=0;
+    for (auto i:order) {
+      const double remaining=.35-elapsed;
+      if (remaining<=.001) continue;
+      const double cost=i<4?.15:.02;
+      if (i>=4 && cost<=remaining) return true;
+      elapsed+=std::min(cost,remaining);
+    }
+    return false;
+  };
+  check(!recoveryWithinBudget({0,1,2,3,4,5,6,7,8,9,10,11}));
+  check(recoveryWithinBudget(targetSearchOrder(12,4,12)));
+  check(targetSearchOrder(6,4,4)==std::vector<std::size_t>({0,1,2,3,4,5}));
+  check(targetSearchOrder(4,0,4)==std::vector<std::size_t>({0,1,2,3}));
+  check(targetSearchOrder(2,0,0)==std::vector<std::size_t>({0,1}));
+  check(targetSearchOrder(0,0,0).empty());
+  for (std::size_t total=0;total<16;++total)
+    for (std::size_t primary=0;primary<=total;++primary)
+      for (std::size_t recovery=primary;recovery<=total;++recovery) {
+        auto order=targetSearchOrder(total,primary,recovery);
+        check(order.size()==total);
+        if (primary) check(order.front()==0);  // committed primary remains first
+        auto sorted=order;std::sort(sorted.begin(),sorted.end());
+        for(std::size_t i=0;i<total;++i) check(sorted[i]==i);
+        // Backtrack retains its original tail position and order.
+        for(std::size_t i=recovery;i<total;++i) check(order[i]==i);
+      }
+  bool invalid=false;
+  try {targetSearchOrder(2,2,1);} catch(const std::invalid_argument&) {invalid=true;}
+  check(invalid);
   // A narrow circular lane needs the old22.5degree arc. Refining the key
   // must not remove that control in favor of only wider11.25degree arcs.
   XYThetaConfig mixed;mixed.headings=32;mixed.goal_radius=.02;

@@ -1,4 +1,5 @@
 #include "local_coverage_planner/local_coverage_planner.h"
+#include "ht_cost/search_schedule.h"
 #include <algorithm>
 #include <cmath>
 #include <limits>
@@ -174,6 +175,7 @@ exploration_path_ns::ExplorationPath LocalCoveragePlanner::SolveHTTSP(
     if (targets.size()-primary_count>=8) break;
     if (recovery_ids.insert(t.id).second) targets.push_back(t);
   }
+  const size_t recovery_end=targets.size();
   // A recently reached transit goal is discouraged, not a permanent barrier
   // to necessary backtracking. Try it only if ordinary safe searches fail.
   // Search/execution failures retain their separate cooldown and hard gates.
@@ -186,6 +188,7 @@ exploration_path_ns::ExplorationPath LocalCoveragePlanner::SolveHTTSP(
     static_cast<int>(ht->poseSupport(start.x,start.y,start.yaw)),
     viewpoint_manager_->InCollisionAtPose(robot_position_));
   int attempted=0;
+  int recovery_attempted=0,backtrack_attempted=0;
   int best_target=-1;
   double best_score=-std::numeric_limits<double>::infinity();
   double best_gain=0;
@@ -193,10 +196,12 @@ exploration_path_ns::ExplorationPath LocalCoveragePlanner::SolveHTTSP(
   std::unordered_set<int> attempted_ids;
   bool best_recovery=false;
   const auto search_started=std::chrono::steady_clock::now();
-  for (size_t ti=0;ti<targets.size();++ti) {
+  for (const size_t ti:ht_cost_ns::targetSearchOrder(targets.size(),primary_count,recovery_end)) {
     const auto& target=targets[ti];
     if (target.backtrack && best_target>=0) break;
-    if (ti>=primary_count && best_target>=0 && best_gain>0) break;
+    // Recovery is interleaved with primary goals. A known gain route skips
+    // recovery, without skipping the remaining primary comparisons.
+    if (target.recovery && best_target>=0 && best_gain>0) continue;
     if (attempted>=6 && !target.backtrack && !backtrack.empty()) continue;
     if (!attempted_ids.insert(target.id).second) continue;
     if (attempted>=8) break;
@@ -205,6 +210,8 @@ exploration_path_ns::ExplorationPath LocalCoveragePlanner::SolveHTTSP(
       (!target.backtrack && !backtrack.empty()?std::min(.1,ht_cycle_search_seconds_/3):0);
     if (remaining<=.001) continue;
     ++attempted;
+    if (target.backtrack) ++backtrack_attempted;
+    else if (target.recovery) ++recovery_attempted;
     const auto goal=viewpoint_manager_->GetViewPointPosition(target.id);
     int geometry_rejections=0,ht_rejections=0,memory_rejections=0,reserve_rejections=0,geometry_queries=0;
     double geometry_seconds=0;
@@ -258,9 +265,9 @@ exploration_path_ns::ExplorationPath LocalCoveragePlanner::SolveHTTSP(
     // It is re-searched and hard-checked against this cycle's current map.
     if (target.id==committed_id) break;
   }
-  RCLCPP_INFO(node_->get_logger(),"HT_SEARCH_SUMMARY targets=%zu primary=%zu attempts=%d cycle_budget_s=%.6f elapsed_s=%.6f output_target=%d ht_stamp=%.9f",
+  RCLCPP_INFO(node_->get_logger(),"HT_SEARCH_SUMMARY targets=%zu primary=%zu attempts=%d cycle_budget_s=%.6f elapsed_s=%.6f output_target=%d ht_stamp=%.9f recovery_attempts=%d backtrack_attempts=%d",
     targets.size(),primary_count,attempted,ht_cycle_search_seconds_,
-    std::chrono::duration<double>(std::chrono::steady_clock::now()-search_started).count(),best_target,ht->cycleStamp());
+    std::chrono::duration<double>(std::chrono::steady_clock::now()-search_started).count(),best_target,ht->cycleStamp(),recovery_attempted,backtrack_attempted);
   if (best_target<0) return result;
   ht_candidate_target_=best_target;
   ht_last_cost_=-best_score;
