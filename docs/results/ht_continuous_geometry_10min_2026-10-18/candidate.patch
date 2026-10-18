@@ -1,0 +1,331 @@
+diff --git a/docs/fixes/2026-10-18_continuous_geometry.md b/docs/fixes/2026-10-18_continuous_geometry.md
+new file mode 100644
+index 0000000..11ccd84
+--- /dev/null
++++ b/docs/fixes/2026-10-18_continuous_geometry.md
+@@ -0,0 +1,18 @@
++# 连续车位与覆盖视点碰撞分离
++
++阶段24同导航规则的600秒复跑最后明显平移在79.503秒，之后长期BLOCKED。HT参考得分仍允许；日志为根状态几何拒绝、展开0状态。证据与失败视频见[该轮报告](../results/ht_latency_diagnosis_10min_2026-10-18/REPORT.md)。
++
++不是靠跳过根状态离开：使用保存的25,794个碰撞输入点，在原C++ ViewPointManager中重现实际车位被粗视点标记拒绝。修改前的回归明确失败；新查询在原数据上允许当前车位，但移到真实障碍点处仍拒绝，非有限位置、规划范围之外和禁入多边形也拒绝。
++
++## 候选改动
++
++- 覆盖采样、视点连接及全局图继续使用原视点标记。XYθ路线的端点、连续采样位姿、返航搜索与前方路线复核改用实际连续位置的碰撞点云查询。
++- 每次碰撞更新从同份原始碰撞输入保留已达到原栅格点数门槛的实测点，构建独立KD树。保留原配置的水平/垂直安全距离；水平额外加半个碰撞格对角线，室内为0.5+0.1414=0.6414m。HT物理支持半径0.6m及其离散余量、概率0.5硬门槛和3秒时效均未改。
++- 对实际碰撞的根状态仍拒绝，不沿用邻视点的碰撞标记。禁入边界在实际位置检查；输入未准备好、范围外或无效坐标拒绝。
++- 修正旧碰撞可视化函数误发候选视点。补HT搜索耗时计数和表示更新的分项日志；旧local_search的0不能作为旧版没有搜索的证据。新旧体积/里程指标保持一致，运行耗时比较需注明此统计补全。
++
++390项核心检查、25个ROS地图/规划用例、11个执行器用例与新增真实几何快照回归全部通过，五个历史HT快照均参与。新增回归同时检查实际障碍与禁入边界仍拒绝。尚未据此宣称闭环问题修好：提交并冻结后，进行独立完整600秒室内对照，保留原始记录和可解码视频，再上传GitHub。
++
++## 尚未解决
++
++尚未完成新接口的多场景、重复长测、实车验证。点云是观测证据而非物理真值；未观测的安全性继续由HT物理缺测规则约束。地图长尾延迟和表示更新耗时仍待分项定位；完整动力学、模型方向及参考点物理标定未通过独立验收。本轮不降低硬门槛来换里程。
+diff --git a/presentations/run_ht_endurance.py b/presentations/run_ht_endurance.py
+index dfd5fbb..6b9a721 100644
+--- a/presentations/run_ht_endurance.py
++++ b/presentations/run_ht_endurance.py
+@@ -105,6 +105,8 @@ def main():
+              ROOT/'src/tare_planner/include/ht_cost/heading_reserve.h',
+              ROOT/'src/tare_planner/include/ht_cost/xytheta_planner.h',
+              ROOT/'src/tare_planner/include/ht_cost/ht_cost_core.h',
++             ROOT/'src/tare_planner/src/viewpoint_manager/viewpoint_manager.cpp',
++             ROOT/'src/tare_planner/include/viewpoint_manager/viewpoint_manager.h',
+              ROOT/'src/tare_planner/src/grid_world/grid_world.cpp',
+              ROOT/'src/tare_planner/include/grid_world/grid_world.h',
+              ROOT/'src/tare_planner/include/ht_cost/exploration_progress.h',
+diff --git a/src/tare_planner/CMakeLists.txt b/src/tare_planner/CMakeLists.txt
+index 07fbbc8..860fe0e 100644
+--- a/src/tare_planner/CMakeLists.txt
++++ b/src/tare_planner/CMakeLists.txt
+@@ -191,6 +191,9 @@ if(BUILD_TESTING)
+   add_executable(ht_core_test tests/ht_core_test.cpp)
+   add_test(NAME ht_core_test COMMAND ht_core_test)
+   find_package(ament_cmake_gtest REQUIRED)
++  ament_add_gtest(geometry_pose_test tests/geometry_pose_test.cpp TIMEOUT 45)
++  target_compile_definitions(geometry_pose_test PRIVATE HT_SOURCE_ROOT="${CMAKE_CURRENT_SOURCE_DIR}")
++  target_link_libraries(geometry_pose_test viewpoint_manager "-Wl,--whole-archive" planning_env "-Wl,--no-whole-archive" pointcloud_manager)
+   ament_add_gtest(ht_ros_test tests/ht_ros_test.cpp TIMEOUT 60)
+   target_link_libraries(ht_ros_test ht_cost)
+   ament_add_gtest(xytheta_follower_test tests/xytheta_follower_test.cpp TIMEOUT 45)
+diff --git a/src/tare_planner/include/local_coverage_planner/local_coverage_planner.h b/src/tare_planner/include/local_coverage_planner/local_coverage_planner.h
+index 51f6c30..1c2df43 100644
+--- a/src/tare_planner/include/local_coverage_planner/local_coverage_planner.h
++++ b/src/tare_planner/include/local_coverage_planner/local_coverage_planner.h
+@@ -169,9 +169,9 @@ private:
+   int lookahead_viewpoint_ind_;
+ 
+   // Runtime
+-  int find_path_runtime_;
+-  int viewpoint_sampling_runtime_;
+-  int tsp_runtime_;
++  int find_path_runtime_=0;
++  int viewpoint_sampling_runtime_=0;
++  int tsp_runtime_=0;
+   static const std::string kRuntimeUnit;
+ 
+   std::vector<int> last_selected_viewpoint_indices_;
+diff --git a/src/tare_planner/include/viewpoint_manager/viewpoint_manager.h b/src/tare_planner/include/viewpoint_manager/viewpoint_manager.h
+index 628a86a..f0cede8 100644
+--- a/src/tare_planner/include/viewpoint_manager/viewpoint_manager.h
++++ b/src/tare_planner/include/viewpoint_manager/viewpoint_manager.h
+@@ -135,6 +135,8 @@ public:
+   }
+ 
+   bool InCollision(const Eigen::Vector3d& position);
++  // Continuous vehicle reference position, separate from coverage viewpoint marks.
++  bool InCollisionAtPose(const Eigen::Vector3d& position);
+   bool InCurrentFrameLineOfSight(const Eigen::Vector3d& position);
+   void CheckViewPointBoundaryCollision();
+   void CheckViewPointCollisionWithCollisionGrid(const pcl::PointCloud<pcl::PointXYZI>::Ptr& collision_cloud);
+@@ -372,6 +374,9 @@ private:
+   pcl::KdTreeFLANN<pcl::PointXYZI>::Ptr kdtree_viewpoint_in_collision_;
+   pcl::PointCloud<pcl::PointXYZI>::Ptr viewpoint_candidate_cloud_;
+   pcl::PointCloud<pcl::PointXYZI>::Ptr viewpoint_in_collision_cloud_;
++  pcl::PointCloud<pcl::PointXYZI>::Ptr pose_collision_cloud_;
++  pcl::KdTreeFLANN<pcl::PointXYZI>::Ptr pose_collision_tree_;
++  bool pose_collision_ready_ = false;
+ 
+   geometry_msgs::msg::Polygon viewpoint_boundary_;
+   std::vector<geometry_msgs::msg::Polygon> nogo_boundary_;
+diff --git a/src/tare_planner/src/local_coverage_planner/ht_route.cpp b/src/tare_planner/src/local_coverage_planner/ht_route.cpp
+index 6913d61..da18679 100644
+--- a/src/tare_planner/src/local_coverage_planner/ht_route.cpp
++++ b/src/tare_planner/src/local_coverage_planner/ht_route.cpp
+@@ -5,9 +5,19 @@
+ #include <unordered_set>
+ 
+ namespace local_coverage_planner_ns {
++namespace {
++struct ScopedSearchRuntime {
++  int& microseconds;
++  std::chrono::steady_clock::time_point started=std::chrono::steady_clock::now();
++  ~ScopedSearchRuntime() {microseconds+=static_cast<int>(std::chrono::duration_cast<std::chrono::microseconds>(
++    std::chrono::steady_clock::now()-started).count());}
++};
++}
++
+ 
+ exploration_path_ns::ExplorationPath LocalCoveragePlanner::SolveHTTSP(
+     const std::vector<int>& selected,std::vector<int>& ordered) {
++  ScopedSearchRuntime measured{find_path_runtime_};
+   using namespace exploration_path_ns;
+   ExplorationPath result;
+   ordered.clear();
+@@ -38,7 +48,7 @@ exploration_path_ns::ExplorationPath LocalCoveragePlanner::SolveHTTSP(
+   std::vector<Target> targets;
+   auto supported_endpoint=[&](int id) {
+     const auto p=viewpoint_manager_->GetViewPointPosition(id);
+-    if (viewpoint_manager_->InCollision(Eigen::Vector3d(p.x,p.y,robot_position_.z()))) return false;
++    if (viewpoint_manager_->InCollisionAtPose(Eigen::Vector3d(p.x,p.y,robot_position_.z()))) return false;
+     for (int k=0;k<8;++k)
+       if (ht->permits(ht->poseSupport(p.x,p.y,k*ht_cost_ns::kPi/4))) return true;
+     return false;
+@@ -174,7 +184,7 @@ exploration_path_ns::ExplorationPath LocalCoveragePlanner::SolveHTTSP(
+     "XYtheta candidates=%zu selected=%zu start=(%.2f,%.2f,%.2f) HT_start=%d collision=%d",
+     targets.size(),selected.size(),start.x,start.y,start.yaw,
+     static_cast<int>(ht->poseSupport(start.x,start.y,start.yaw)),
+-    viewpoint_manager_->InCollision(robot_position_));
++    viewpoint_manager_->InCollisionAtPose(robot_position_));
+   int attempted=0;
+   int best_target=-1;
+   double best_score=-std::numeric_limits<double>::infinity();
+@@ -200,7 +210,7 @@ exploration_path_ns::ExplorationPath LocalCoveragePlanner::SolveHTTSP(
+     auto valid=[&](ht_cost_ns::Pose2 previous,ht_cost_ns::Pose2 next,double v) {
+       const Eigen::Vector3d point(next.x,next.y,robot_position_.z());
+       if (!viewpoint_manager_->InLocalPlanningHorizon(point) ||
+-          viewpoint_manager_->InCollision(point)) {++geometry_rejections;return false;}
++          viewpoint_manager_->InCollisionAtPose(point)) {++geometry_rejections;return false;}
+       (void)v;
+       if (!ht->permits(ht->motionSupport(previous,next)) ||
+           !ht_execution_failures_.permits(previous,next,now) ||
+@@ -270,6 +280,7 @@ exploration_path_ns::ExplorationPath LocalCoveragePlanner::SolveHTTSP(
+ }
+ 
+ exploration_path_ns::ExplorationPath LocalCoveragePlanner::PlanHTReturn(const Eigen::Vector3d& target) {
++  ScopedSearchRuntime measured{find_path_runtime_};
+   using namespace exploration_path_ns;
+   ExplorationPath result;
+   ht_output_path_.poses.clear();
+@@ -279,7 +290,7 @@ exploration_path_ns::ExplorationPath LocalCoveragePlanner::PlanHTReturn(const Ei
+   auto valid=[&](ht_cost_ns::Pose2 previous,ht_cost_ns::Pose2 next,double v) {
+     const Eigen::Vector3d point(next.x,next.y,robot_position_.z());
+     if (!viewpoint_manager_->InLocalPlanningHorizon(point) ||
+-        viewpoint_manager_->InCollision(point) ||
++        viewpoint_manager_->InCollisionAtPose(point) ||
+         !ht->permits(ht->motionSupport(previous,next)) ||
+         !ht_execution_failures_.permits(previous,next,node_->now().seconds()) ||
+         !ht_cost_ns::successorHeadingReserve(start,previous,next,ht_heading_margin_,
+diff --git a/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp b/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp
+index 95ee109..8b77ddb 100644
+--- a/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp
++++ b/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp
+@@ -1100,7 +1100,7 @@ bool SensorCoveragePlanner3D::GetLookAheadPoint(
+           1-2*(pose.orientation.y*pose.orientation.y+pose.orientation.z*pose.orientation.z));
+         const ht_cost_ns::Point point{pose.position.x,pose.position.y,robot.z()};
+         if (!viewpoint_manager_->InLocalPlanningHorizon(Eigen::Vector3d(point.x,point.y,point.z)) ||
+-            viewpoint_manager_->InCollision(Eigen::Vector3d(point.x,point.y,point.z)) ||
++            viewpoint_manager_->InCollisionAtPose(Eigen::Vector3d(point.x,point.y,point.z)) ||
+             !ht->permits(ht->motionSupport(previous_pose,{point.x,point.y,yaw}))) return false;
+         const double step=std::hypot(point.x-previous.x,point.y-previous.y);
+         distance+=step;previous=point;previous_pose={point.x,point.y,yaw};
+@@ -1649,10 +1649,18 @@ void SensorCoveragePlanner3D::execute() {
+     misc_utils_ns::Timer update_representation_timer("update representation");
+     update_representation_timer.Start();
+ 
++    auto profile_last=std::chrono::steady_clock::now();
++    auto phase_ms=[&]() {
++      const auto current=std::chrono::steady_clock::now();
++      const double elapsed=std::chrono::duration<double,std::milli>(current-profile_last).count();
++      profile_last=current;return elapsed;
++    };
+     // Update grid world
+     UpdateGlobalRepresentation();
++    const double global_representation_ms=phase_ms();
+ 
+     int viewpoint_candidate_count = UpdateViewPoints();
++    const double viewpoints_ms=phase_ms();
+     if (viewpoint_candidate_count == 0) {
+       lookahead_point_update_=false;
+       hold_reason_="NO_GEOMETRIC_VIEWPOINTS";force_hold_=true;
+@@ -1663,16 +1671,21 @@ void SensorCoveragePlanner3D::execute() {
+     }
+ 
+     UpdateKeyposeGraph();
++    const double keypose_ms=phase_ms();
++    double coverage_ms=0,areas_ms=0;
+ 
+     int uncovered_point_num = 0;
+     int uncovered_frontier_point_num = 0;
+     if (!exploration_finished_ || !kNoExplorationReturnHome) {
+-      UpdateViewPointCoverage();
+-      UpdateCoveredAreas(uncovered_point_num, uncovered_frontier_point_num);
++      UpdateViewPointCoverage();coverage_ms=phase_ms();
++      UpdateCoveredAreas(uncovered_point_num, uncovered_frontier_point_num);areas_ms=phase_ms();
+     } else {
+       viewpoint_manager_->ResetViewPointCoverage();
+     }
+ 
++    if (viewpoint_manager_->HT()->enabled())
++      RCLCPP_INFO(this->get_logger(),"HT_REPRESENTATION_PROFILE global_ms=%.3f viewpoints_ms=%.3f keypose_ms=%.3f coverage_ms=%.3f covered_areas_ms=%.3f",
++        global_representation_ms,viewpoints_ms,keypose_ms,coverage_ms,areas_ms);
+     update_representation_timer.Stop(false);
+     update_representation_runtime_ +=
+         update_representation_timer.GetDuration("ms");
+diff --git a/src/tare_planner/src/viewpoint_manager/viewpoint_manager.cpp b/src/tare_planner/src/viewpoint_manager/viewpoint_manager.cpp
+index b58497b..05dad51 100644
+--- a/src/tare_planner/src/viewpoint_manager/viewpoint_manager.cpp
++++ b/src/tare_planner/src/viewpoint_manager/viewpoint_manager.cpp
+@@ -77,6 +77,8 @@ ViewPointManager::ViewPointManager(rclcpp::Node::SharedPtr nh) : initialized_(fa
+   kdtree_viewpoint_in_collision_ = pcl::KdTreeFLANN<pcl::PointXYZI>::Ptr(new pcl::KdTreeFLANN<pcl::PointXYZI>());
+   viewpoint_candidate_cloud_ = pcl::PointCloud<pcl::PointXYZI>::Ptr(new pcl::PointCloud<pcl::PointXYZI>);
+   viewpoint_in_collision_cloud_ = pcl::PointCloud<pcl::PointXYZI>::Ptr(new pcl::PointCloud<pcl::PointXYZI>);
++  pose_collision_cloud_.reset(new pcl::PointCloud<pcl::PointXYZI>);
++  pose_collision_tree_.reset(new pcl::KdTreeFLANN<pcl::PointXYZI>(false));
+ 
+   grid_ = std::make_shared<rolling_grid_ns::RollingGrid>(vp_.kNumber);
+   origin_ = Eigen::Vector3d::Zero();
+@@ -449,6 +451,46 @@ void ViewPointManager::CheckViewPointCollisionWithCollisionGrid(
+       }
+     }
+   }
++  // Retain measured point coordinates. Quantized coverage-viewpoint labels
++  // are not a collision field for arbitrary continuous vehicle references.
++  // Preserve the existing occupied-bin count threshold and input history.
++  pose_collision_cloud_->clear();
++  for (const auto& point : collision_cloud->points)
++  {
++    if (!std::isfinite(point.x) || !std::isfinite(point.y) || !std::isfinite(point.z)) continue;
++    const auto sub = collision_grid_->Pos2Sub(point.x, point.y, point.z);
++    if (collision_grid_->InRange(sub) &&
++        collision_point_count_[collision_grid_->Sub2Ind(sub)] >= vp_.kCollisionPointThr)
++      pose_collision_cloud_->push_back(point);
++  }
++  if (!pose_collision_cloud_->empty()) pose_collision_tree_->setInputCloud(pose_collision_cloud_);
++  pose_collision_ready_ = true;
++}
++
++bool ViewPointManager::InCollisionAtPose(const Eigen::Vector3d& position)
++{
++  if (!position.allFinite() || !pose_collision_ready_ || !InLocalPlanningHorizon(position)) return true;
++  geometry_msgs::msg::Point query;
++  query.x=position.x();query.y=position.y();query.z=position.z();
++  if (!viewpoint_boundary_.points.empty() && !misc_utils_ns::PointInPolygon(query,viewpoint_boundary_)) return true;
++  for (const auto& boundary:nogo_boundary_)
++    if (!boundary.points.empty() && misc_utils_ns::PointInPolygon(query,boundary)) return true;
++  if (pose_collision_cloud_->empty()) return false;
++  // Keep the configured physical margin, adding half a collision-cell diagonal
++  // for raster uncertainty. Never exempt an actually colliding root state.
++  const double radius=vp_.kViewPointCollisionMargin+
++      .5*std::hypot(vp_.kCollisionGridResolution.x(),vp_.kCollisionGridResolution.y());
++  const double vertical=std::max(vp_.kViewPointCollisionMarginZPlus,vp_.kViewPointCollisionMarginZMinus);
++  pcl::PointXYZI point;point.x=query.x;point.y=query.y;point.z=query.z;
++  std::vector<int> indices;std::vector<float> squared;
++  pose_collision_tree_->radiusSearch(point,std::hypot(radius,vertical)+1e-5,indices,squared);
++  for (int index:indices) {
++    const auto& obstacle=pose_collision_cloud_->points[index];
++    const double dz=obstacle.z-position.z();
++    if (dz<=vp_.kViewPointCollisionMarginZPlus && dz>=-vp_.kViewPointCollisionMarginZMinus &&
++        std::hypot(obstacle.x-position.x(),obstacle.y-position.y())<=radius+1e-7) return true;
++  }
++  return false;
+ }
+ 
+ bool ViewPointManager::InCollision(const Eigen::Vector3d& position)
+@@ -1518,8 +1560,7 @@ int ViewPointManager::GetNearestCandidateViewPointInd(const Eigen::Vector3d& pos
+ void ViewPointManager::GetCollisionViewPointVisCloud(pcl::PointCloud<pcl::PointXYZI>::Ptr& cloud)
+ {
+   cloud->clear();
+-  // for (const auto& point : viewpoint_in_collision_cloud_->points)
+-  for (const auto& point : viewpoint_candidate_cloud_->points)
++  for (const auto& point : viewpoint_in_collision_cloud_->points)
+   {
+     cloud->points.push_back(point);
+   }
+diff --git a/src/tare_planner/tests/geometry_pose_test.cpp b/src/tare_planner/tests/geometry_pose_test.cpp
+new file mode 100644
+index 0000000..20eb6a1
+--- /dev/null
++++ b/src/tare_planner/tests/geometry_pose_test.cpp
+@@ -0,0 +1,40 @@
++#include <gtest/gtest.h>
++#include "viewpoint_manager/viewpoint_manager.h"
++#include <fstream>
++#include <sstream>
++
++TEST(GeometryPose, CapturedContinuousRootDoesNotInheritNeighbourCollision) {
++  if (!rclcpp::ok()) rclcpp::init(0,nullptr);
++  rclcpp::NodeOptions options;
++  options.arguments({"--ros-args","--params-file",HT_SOURCE_ROOT "/config/indoor.yaml"});
++  options.automatically_declare_parameters_from_overrides(true);
++  auto node=std::make_shared<rclcpp::Node>("tare_planner_node",options);
++  viewpoint_manager_ns::ViewPointManager manager(node);
++  manager.UpdateRobotPosition(Eigen::Vector3d(0,0,0.7439746856689453));
++  const Eigen::Vector3d robot(11.358543395996094,1.208035945892334,0.7468403577804565);
++  manager.UpdateRobotPosition(robot);
++  auto cloud=std::make_shared<pcl::PointCloud<pcl::PointXYZI>>();
++  std::ifstream stream(HT_SOURCE_ROOT "/../../docs/results/ht_latency_diagnosis_10min_2026-10-18/geometry_capture/collision_points.csv");
++  ASSERT_TRUE(stream.good());std::string line;std::getline(stream,line);
++  while(std::getline(stream,line)) {
++    std::replace(line.begin(),line.end(),',',' ');std::istringstream row(line);
++    pcl::PointXYZI point;ASSERT_TRUE(bool(row>>point.x>>point.y>>point.z>>point.intensity));cloud->push_back(point);
++  }
++  ASSERT_GT(cloud->size(),25000u);
++  manager.CheckViewPointCollision(cloud);
++  // Regression expectation: an actual pose must not inherit a neighbouring
++  // quantized viewpoint's collision mark when its physical envelope is clear.
++  EXPECT_TRUE(manager.InCollision(robot));  // Actual old implementation reproduces the failure.
++  EXPECT_FALSE(manager.InCollisionAtPose(robot));
++  // The same observed obstacle must still reject an actually colliding root.
++  EXPECT_TRUE(manager.InCollisionAtPose(Eigen::Vector3d(11.15774,1.8920302,robot.z())));
++  EXPECT_TRUE(manager.InCollisionAtPose(Eigen::Vector3d(std::numeric_limits<double>::quiet_NaN(),1,robot.z())));
++  EXPECT_TRUE(manager.InCollisionAtPose(Eigen::Vector3d(100,100,robot.z())));
++  // A real keep-out boundary remains authoritative at the continuous position.
++  geometry_msgs::msg::Polygon polygon;
++  for(const auto& delta:std::vector<Eigen::Vector2d>{{-1,-1},{1,-1},{1,1},{-1,1}}) {
++    geometry_msgs::msg::Point32 p;p.x=robot.x()+delta.x();p.y=robot.y()+delta.y();polygon.points.push_back(p);
++  }
++  manager.UpdateNogoBoundary({polygon});
++  EXPECT_TRUE(manager.InCollisionAtPose(robot));
++}

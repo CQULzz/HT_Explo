@@ -1,0 +1,41 @@
+Internal ctest changing into directory: /home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner
+Test project /home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner
+    Start 2: geometry_pose_test
+1/1 Test #2: geometry_pose_test ...............***Failed    0.47 sec
+-- run_test.py: invoking following command in '/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner':
+ - /home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/geometry_pose_test --gtest_output=xml:/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/test_results/tare_planner/geometry_pose_test.gtest.xml
+Running main() from /opt/ros/jazzy/src/gtest_vendor/src/gtest_main.cc
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from GeometryPose
+[ RUN      ] GeometryPose.CapturedContinuousRootDoesNotInheritNeighbourCollision
+/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/tests/geometry_pose_test.cpp:27: Failure
+Value of: manager.InCollision(robot)
+  Actual: true
+Expected: false
+
+[  FAILED  ] GeometryPose.CapturedContinuousRootDoesNotInheritNeighbourCollision (235 ms)
+[----------] 1 test from GeometryPose (235 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (235 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] GeometryPose.CapturedContinuousRootDoesNotInheritNeighbourCollision
+
+ 1 FAILED TEST
+-- run_test.py: return code 1
+-- run_test.py: inject classname prefix into gtest result file '/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/test_results/tare_planner/geometry_pose_test.gtest.xml'
+-- run_test.py: verify result file '/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/test_results/tare_planner/geometry_pose_test.gtest.xml'
+
+
+0% tests passed, 1 tests failed out of 1
+
+Label Time Summary:
+gtest    =   0.47 sec*proc (1 test)
+
+Total Test time (real) =   0.47 sec
+
+The following tests FAILED:
+	  2 - geometry_pose_test (Failed)
+Errors while running CTest

@@ -2,9 +2,9 @@
   "schema_version": 1,
   "updated_at": "2026-10-18",
   "branch": "codex/ht8dir-v1",
-  "status": "同导航规则复跑再次长期停滞；已留存粗视点几何拒绝根状态证据，持续修正中",
+  "status": "阶段25修正粗视点几何误判，600秒仍暴露融合后有限拒绝高度的上下文不一致；继续迭代",
   "latest_archive_commit": "68746deee9c0fc586c11bb9954a117bbaa136284",
-  "latest_planner_change": "149566d",
+  "latest_planner_change": "43069a7b11b8028b53f6eae0d6bdc53c13e8affd",
   "stages": [
     {
       "id": "stage-01",
@@ -430,6 +430,22 @@
         "docs/results/ht_latency_diagnosis_10min_2026-10-18/REPORT.md"
       ],
       "control_commit": "149566de09c48a528140b6ec950c08c5fa29539c"
+    },
+    {
+      "id": "stage-25",
+      "number": 25,
+      "sha": "43069a7b11b8028b53f6eae0d6bdc53c13e8affd",
+      "tag": "ht-stage-20261018-continuous-geometry",
+      "title": "连续位姿几何检查：旧反例修正，仍有HT未知停滞",
+      "kind": "实测候选",
+      "change": "实际位置查询实测碰撞点云；保留安全距离并加栅格余量；修正碰撞显示与计时",
+      "features": "不再继承邻覆盖视点碰撞标记，真正碰撞根状态仍拒绝",
+      "validation": "390核心、25ROS、11执行器及真实几何回归通过；完整600秒65.80m、1959.875m³，25次晚拒绝均发零",
+      "known_issues": "264秒后HT未知导致长期停车；一处融合后有限高度拒绝产生全窗口未知；图龄长尾和覆盖统计耗时仍存在",
+      "evidence": [
+        "docs/results/ht_continuous_geometry_10min_2026-10-18/REPORT.md"
+      ],
+      "control_commit": "43069a7b11b8028b53f6eae0d6bdc53c13e8affd"
     }
   ],
   "historical_commits": [
@@ -965,7 +981,7 @@
       "original_subject": "Archive command rejection proof, failed indoor trials and returned-home tunnel video"
     }
   ],
-  "latest_planner_code": "149566de09c48a528140b6ec950c08c5fa29539c",
+  "latest_planner_code": "43069a7b11b8028b53f6eae0d6bdc53c13e8affd",
   "latest_ht_bridge_code": "149566de09c48a528140b6ec950c08c5fa29539c",
-  "latest_verified_trial_code": "bada7bad52fca98a3eb0942c1bc3d9c0a7d84185"
+  "latest_verified_trial_code": "43069a7b11b8028b53f6eae0d6bdc53c13e8affd"
 }
