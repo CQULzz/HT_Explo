@@ -206,23 +206,35 @@ exploration_path_ns::ExplorationPath LocalCoveragePlanner::SolveHTTSP(
     if (remaining<=.001) continue;
     ++attempted;
     const auto goal=viewpoint_manager_->GetViewPointPosition(target.id);
-    int geometry_rejections=0,ht_rejections=0;
+    int geometry_rejections=0,ht_rejections=0,memory_rejections=0,reserve_rejections=0,geometry_queries=0;
+    double geometry_seconds=0;
     auto valid=[&](ht_cost_ns::Pose2 previous,ht_cost_ns::Pose2 next,double v) {
       const Eigen::Vector3d point(next.x,next.y,robot_position_.z());
-      if (!viewpoint_manager_->InLocalPlanningHorizon(point) ||
-          viewpoint_manager_->InCollisionAtPose(point)) {++geometry_rejections;return false;}
+      if (!viewpoint_manager_->InLocalPlanningHorizon(point)) {++geometry_rejections;return false;}
+      const auto geometry_started=std::chrono::steady_clock::now();
+      const bool colliding=viewpoint_manager_->InCollisionAtPose(point);
+      geometry_seconds+=std::chrono::duration<double>(std::chrono::steady_clock::now()-geometry_started).count();
+      ++geometry_queries;
+      if (colliding) {++geometry_rejections;return false;}
       (void)v;
-      if (!ht->permits(ht->motionSupport(previous,next)) ||
-          !ht_execution_failures_.permits(previous,next,now) ||
-          !ht_cost_ns::successorHeadingReserve(start,previous,next,ht_heading_margin_,
+      if (!ht->permits(ht->motionSupport(previous,next))) {++ht_rejections;return false;}
+      if (!ht_execution_failures_.permits(previous,next,now)) {++memory_rejections;return false;}
+      if (!ht_cost_ns::successorHeadingReserve(start,previous,next,ht_heading_margin_,
             [&](ht_cost_ns::Pose2 p){return ht->permits(ht->poseSupport(p.x,p.y,p.yaw));})) {
-        ++ht_rejections;return false;
+        ++reserve_rejections;return false;
       }
       return true;
     };
     auto config=xytheta_config_;
     config.max_search_seconds=std::min(config.max_search_seconds,remaining);
+    const auto query_started=std::chrono::steady_clock::now();
     const auto plan=ht_cost_ns::planXYTheta(start,{goal.x,goal.y,goal.z},config,valid);
+    const double query_seconds=std::chrono::duration<double>(std::chrono::steady_clock::now()-query_started).count();
+    RCLCPP_INFO(node_->get_logger(),
+      "HT_SEARCH_AUDIT target=%d goal=(%.6f,%.6f) gain=%.1f recovery=%d backtrack=%d ht_stamp=%.9f termination=%s elapsed_s=%.6f budget_s=%.6f expanded=%d expansion_limit=%d geometry_queries=%d geometry_s=%.6f geometry_reject=%d ht_reject=%d memory_reject=%d reserve_reject=%d",
+      target.id,goal.x,goal.y,target.gain,target.recovery,target.backtrack,ht->cycleStamp(),
+      ht_cost_ns::terminationName(plan.termination),query_seconds,config.max_search_seconds,plan.expanded,
+      config.max_expansions,geometry_queries,geometry_seconds,geometry_rejections,ht_rejections,memory_rejections,reserve_rejections);
     if (!plan.reached || plan.poses.size()<2) {
       if (target.id==committed_id) ht_commitment_.reject(now);
       RCLCPP_INFO_THROTTLE(node_->get_logger(),*node_->get_clock(),3000,
@@ -246,6 +258,9 @@ exploration_path_ns::ExplorationPath LocalCoveragePlanner::SolveHTTSP(
     // It is re-searched and hard-checked against this cycle's current map.
     if (target.id==committed_id) break;
   }
+  RCLCPP_INFO(node_->get_logger(),"HT_SEARCH_SUMMARY targets=%zu primary=%zu attempts=%d cycle_budget_s=%.6f elapsed_s=%.6f output_target=%d ht_stamp=%.9f",
+    targets.size(),primary_count,attempted,ht_cycle_search_seconds_,
+    std::chrono::duration<double>(std::chrono::steady_clock::now()-search_started).count(),best_target,ht->cycleStamp());
   if (best_target<0) return result;
   ht_candidate_target_=best_target;
   ht_last_cost_=-best_score;

@@ -49,11 +49,23 @@ struct ExecutionFailureMemory {
   }
 };
 
+enum class XYThetaTermination { INVALID_INPUT, INVALID_START, REACHED, TIME_LIMIT, EXPANSION_LIMIT, EXHAUSTED };
+inline const char* terminationName(XYThetaTermination value) {
+  switch(value) {
+    case XYThetaTermination::INVALID_INPUT:return "INVALID_INPUT";
+    case XYThetaTermination::INVALID_START:return "INVALID_START";
+    case XYThetaTermination::REACHED:return "REACHED";
+    case XYThetaTermination::TIME_LIMIT:return "TIME_LIMIT";
+    case XYThetaTermination::EXPANSION_LIMIT:return "EXPANSION_LIMIT";
+    default:return "EXHAUSTED";
+  }
+}
 struct XYThetaPlan {
   std::vector<Pose2> poses;
   double seconds=std::numeric_limits<double>::infinity();
   int expanded=0;
   bool reached=false;
+  XYThetaTermination termination=XYThetaTermination::INVALID_INPUT;
 };
 
 struct XYThetaConfig {
@@ -85,11 +97,12 @@ XYThetaPlan planXYTheta(Pose2 start,Point goal,const XYThetaConfig& cfg,Valid va
       cfg.reverse_speed<=0 || cfg.max_yaw_rate<=0 || cfg.max_expansions<=0)
     return out;
   start.yaw=wrapYaw(start.yaw);
-  if (!valid(start,start,0)) return out;
+  if (!valid(start,start,0)) {out.termination=XYThetaTermination::INVALID_START;return out;}
   const double yaw_step=2*kPi/cfg.headings;
   const auto turn_angles=cfg.turn_angles.empty() ? std::vector<double>{yaw_step}:cfg.turn_angles;
   for (double angle:turn_angles)
     if (!std::isfinite(angle) || angle<=0 || angle>kPi/2) return out;
+  out.termination=XYThetaTermination::EXHAUSTED;
   struct Control {double v,omega,duration;};
   const double forward_time=cfg.drive_step/cfg.forward_speed;
   const double reverse_time=cfg.drive_step/cfg.reverse_speed;
@@ -129,7 +142,9 @@ XYThetaPlan planXYTheta(Pose2 start,Point goal,const XYThetaConfig& cfg,Valid va
   const auto deadline=std::chrono::steady_clock::now()+
       std::chrono::duration<double>(cfg.max_search_seconds);
   while (!open.empty() && out.expanded<cfg.max_expansions) {
-    if ((out.expanded&31)==0 && std::chrono::steady_clock::now()>deadline) break;
+    if ((out.expanded&31)==0 && std::chrono::steady_clock::now()>deadline) {
+      out.termination=XYThetaTermination::TIME_LIMIT;break;
+    }
     const int index=open.top().second;open.pop();
     const State current=states[index];
     if (current.g>best[key(current.pose)]+1e-9) continue;
@@ -141,7 +156,7 @@ XYThetaPlan planXYTheta(Pose2 start,Point goal,const XYThetaConfig& cfg,Valid va
       out.poses.push_back(start);
       for (size_t i=1;i<chain.size();++i)
         out.poses.insert(out.poses.end(),states[chain[i]].edge.begin(),states[chain[i]].edge.end());
-      out.seconds=current.g;out.reached=true;return out;
+      out.seconds=current.g;out.reached=true;out.termination=XYThetaTermination::REACHED;return out;
     }
     for (const auto& control:controls) {
       if (std::abs(control.omega)>cfg.max_yaw_rate+1e-9) continue;
@@ -180,6 +195,8 @@ XYThetaPlan planXYTheta(Pose2 start,Point goal,const XYThetaConfig& cfg,Valid va
       open.emplace(candidate+heuristic(pose),next_index);
     }
   }
+  if (out.termination!=XYThetaTermination::TIME_LIMIT && !open.empty() && out.expanded>=cfg.max_expansions)
+    out.termination=XYThetaTermination::EXPANSION_LIMIT;
   return out;
 }
 }  // namespace ht_cost_ns

@@ -13,6 +13,7 @@
 #include <memory>
 #include "ht_cost/ht_cost_map.h"
 #include <cmath>
+#include <limits>
 
 #include <Eigen/Core>
 // ROS
@@ -376,6 +377,10 @@ private:
   pcl::PointCloud<pcl::PointXYZI>::Ptr viewpoint_in_collision_cloud_;
   pcl::PointCloud<pcl::PointXYZI>::Ptr pose_collision_cloud_;
   pcl::KdTreeFLANN<pcl::PointXYZI>::Ptr pose_collision_tree_;
+  pcl::PointCloud<pcl::PointXYZI>::Ptr pose_collision_xy_cloud_;
+  pcl::KdTreeFLANN<pcl::PointXYZI>::Ptr pose_collision_xy_tree_;
+  double pose_collision_reference_z_ = std::numeric_limits<double>::quiet_NaN();
+  bool pose_collision_3d_ready_ = false;
   bool pose_collision_ready_ = false;
 
   geometry_msgs::msg::Polygon viewpoint_boundary_;

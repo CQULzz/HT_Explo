@@ -144,7 +144,7 @@ def main():
                     speed_cap_mps=.5, preflight=preflight(),
                     ht_score_semantics=json.loads((BRIDGE/'ht_trial.yaml').read_text())['/**']['ros__parameters'].get('ht_score_semantics','point'),
                     git_head=subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
-                    evidence_policy=f'All control/status and odometry, full-rate published HT maps; original-stamped scans1Hz; exact-stamp map triplets and network inputs/outputs every10s; camera{args.video_fps}fps. Raw CuPy and scans are not fully bagged.',
+                    evidence_policy=f'All control/status and odometry, full-rate published HT maps and TARE collision geometry; original-stamped scans1Hz; exact-stamp map triplets and network inputs/outputs every10s; camera{args.video_fps}fps. Raw CuPy and scans are not fully bagged.',
                     source_hashes={str(p): hashlib.sha256(p.read_bytes()).hexdigest() for p in paths})
     (folder/'manifest.json').write_text(json.dumps(manifest, ensure_ascii=False, indent=2))
     (folder/'working_tree.patch').write_bytes(subprocess.check_output(['git', 'diff', 'HEAD'], cwd=ROOT))
@@ -154,7 +154,7 @@ def main():
               '/tf', '/tf_static', '/cmd_vel', '/way_point', '/ht_xytheta_path',
               '/ht_execution_status', '/ht_follower_status', '/ht_execution_rejected_edge',
               '/ht_navigation_allowed', '/mission_state', '/mission_completed', '/runtime', '/runtime_breakdown', '/exploration_finish',
-              '/ht_traversability/global_local']
+              '/ht_traversability/global_local', '/collision_cloud', '/viewpoint_in_collision_cloud_', '/viewpoint_vis_cloud']
     stopped = threading.Event()
     failures = []
     thread = threading.Thread(target=monitor, args=(trial, folder, stopped, failures), daemon=True)

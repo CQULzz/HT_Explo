@@ -79,6 +79,8 @@ ViewPointManager::ViewPointManager(rclcpp::Node::SharedPtr nh) : initialized_(fa
   viewpoint_in_collision_cloud_ = pcl::PointCloud<pcl::PointXYZI>::Ptr(new pcl::PointCloud<pcl::PointXYZI>);
   pose_collision_cloud_.reset(new pcl::PointCloud<pcl::PointXYZI>);
   pose_collision_tree_.reset(new pcl::KdTreeFLANN<pcl::PointXYZI>(false));
+  pose_collision_xy_cloud_.reset(new pcl::PointCloud<pcl::PointXYZI>);
+  pose_collision_xy_tree_.reset(new pcl::KdTreeFLANN<pcl::PointXYZI>(false));
 
   grid_ = std::make_shared<rolling_grid_ns::RollingGrid>(vp_.kNumber);
   origin_ = Eigen::Vector3d::Zero();
@@ -463,7 +465,19 @@ void ViewPointManager::CheckViewPointCollisionWithCollisionGrid(
         collision_point_count_[collision_grid_->Sub2Ind(sub)] >= vp_.kCollisionPointThr)
       pose_collision_cloud_->push_back(point);
   }
-  if (!pose_collision_cloud_->empty()) pose_collision_tree_->setInputCloud(pose_collision_cloud_);
+  // All SE2 queries in this planning cycle use this exact odometry height.
+  // Height-filter first, then the cylindrical test reduces to nearest XY
+  // distance. Keep original 3D points for queries at any other height.
+  pose_collision_reference_z_ = robot_position_.z();
+  pose_collision_xy_cloud_->clear();
+  for (const auto& point:pose_collision_cloud_->points) {
+    const double dz=point.z-pose_collision_reference_z_;
+    if (dz<=vp_.kViewPointCollisionMarginZPlus && dz>=-vp_.kViewPointCollisionMarginZMinus) {
+      auto xy=point;xy.z=0;pose_collision_xy_cloud_->push_back(xy);
+    }
+  }
+  if (!pose_collision_xy_cloud_->empty()) pose_collision_xy_tree_->setInputCloud(pose_collision_xy_cloud_);
+  pose_collision_3d_ready_ = false;
   pose_collision_ready_ = true;
 }
 
@@ -480,6 +494,25 @@ bool ViewPointManager::InCollisionAtPose(const Eigen::Vector3d& position)
   // for raster uncertainty. Never exempt an actually colliding root state.
   const double radius=vp_.kViewPointCollisionMargin+
       .5*std::hypot(vp_.kCollisionGridResolution.x(),vp_.kCollisionGridResolution.y());
+  if (position.z()==pose_collision_reference_z_) {
+    if (pose_collision_xy_cloud_->empty()) return false;
+    pcl::PointXYZI xy;xy.x=query.x;xy.y=query.y;xy.z=0;
+    std::vector<int> nearest(1);std::vector<float> squared_nearest(1);
+    if (pose_collision_xy_tree_->nearestKSearch(xy,1,nearest,squared_nearest)==1) {
+      const auto& obstacle=pose_collision_xy_cloud_->points[nearest[0]];
+      if (std::hypot(obstacle.x-position.x(),obstacle.y-position.y())<=radius+1e-7) return true;
+      // Float KD ordering is sufficient away from the boundary. At a nearly
+      // tied boundary, fall back to the original exact-coordinate 3D test;
+      // never lose a collision through query-coordinate rounding.
+      const double error=std::hypot(double(xy.x)-position.x(),double(xy.y)-position.y())+
+          8*std::numeric_limits<float>::epsilon()*(radius+1);
+      if (std::sqrt(double(squared_nearest[0]))>radius+1e-7+error) return false;
+    }
+  }
+  if (!pose_collision_3d_ready_) {
+    pose_collision_tree_->setInputCloud(pose_collision_cloud_);
+    pose_collision_3d_ready_=true;
+  }
   const double vertical=std::max(vp_.kViewPointCollisionMarginZPlus,vp_.kViewPointCollisionMarginZMinus);
   pcl::PointXYZI point;point.x=query.x;point.y=query.y;point.z=query.z;
   std::vector<int> indices;std::vector<float> squared;

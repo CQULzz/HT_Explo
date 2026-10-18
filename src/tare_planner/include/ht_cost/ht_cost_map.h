@@ -37,6 +37,7 @@ class HtCostMap {
   double lookahead() const { return lookahead_; }
   double reachedDistance() const { return reached_distance_; }
   double step() const { return step_; }
+  double cycleStamp() const { return cycle_ ? cycle_->stamp : -1.; }
  private:
   Support supportDirected(const Point& a,const Point& b,double heading) const;
   void receive(grid_map_msgs::msg::GridMap::ConstSharedPtr msg);
