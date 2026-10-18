@@ -12,6 +12,7 @@ import sys
 import time
 from pathlib import Path
 import psutil
+import yaml
 
 HERE=Path(__file__).resolve().parent
 ROOT=HERE.parent
@@ -184,9 +185,15 @@ def run_trial(trial,variant,duration,scenario='garage'):
         trial.start('elevation',mapper);time.sleep(3);trial.check()
         bridge=source(ros,cmu)+f' exec python3 {q(BRIDGE/"cupy_to_ht.py")}'
         trial.start('ht_bridge',bridge);time.sleep(10);trial.check()
+        # Scenario YAML is scoped to tare_planner_node. Pass the shared physical
+        # envelope explicitly so follower geometry cannot silently use defaults.
+        scene_parameters=yaml.safe_load((ROOT/f'install_standalone/tare_planner/share/tare_planner/{scenario}.yaml').read_text())['tare_planner_node']['ros__parameters']
+        geometry_parameters=''.join(f' -p {key}:={q(scene_parameters[key])}' for key in (
+            'kViewPointCollisionMargin','kCollisionGridResolutionX','kCollisionGridResolutionY',
+            'kViewPointCollisionMarginZPlus','kViewPointCollisionMarginZMinus'))
         follow=source(ros,ROOT/'install_standalone/setup.bash')+(
             ' exec ros2 run tare_planner xytheta_follower --ros-args'
-            f' --params-file {q(BRIDGE/"ht_trial.yaml")}')
+            f' --params-file {q(BRIDGE/"ht_trial.yaml")}'+geometry_parameters)
         trial.start('xytheta_follower',follow);time.sleep(2);trial.check()
         tare=source(ros,ROOT/'install_standalone/setup.bash')+(
             f' exec ros2 launch tare_planner explore_ht.launch.py scenario:={scenario} use_sim_time:=false'

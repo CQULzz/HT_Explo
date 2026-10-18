@@ -154,7 +154,7 @@ target_link_libraries(tare_planner_node ${catkin_LIBRARIES} sensor_coverage_plan
 
 add_executable(xytheta_follower src/ht_cost/xytheta_follower.cpp)
 ament_target_dependencies(xytheta_follower rclcpp std_msgs nav_msgs geometry_msgs sensor_msgs)
-target_link_libraries(xytheta_follower ht_cost)
+target_link_libraries(xytheta_follower ht_cost ${PCL_LIBRARIES})
 
 #############
 ## Install ##
@@ -198,6 +198,6 @@ if(BUILD_TESTING)
   target_link_libraries(ht_ros_test ht_cost)
   ament_add_gtest(xytheta_follower_test tests/xytheta_follower_test.cpp TIMEOUT 45)
   ament_target_dependencies(xytheta_follower_test rclcpp nav_msgs geometry_msgs sensor_msgs std_msgs)
-  target_link_libraries(xytheta_follower_test ht_cost)
+  target_link_libraries(xytheta_follower_test ht_cost ${PCL_LIBRARIES})
 endif()
 ament_package()

@@ -48,7 +48,7 @@ exploration_path_ns::ExplorationPath LocalCoveragePlanner::SolveHTTSP(
   std::vector<Target> targets;
   auto supported_endpoint=[&](int id) {
     const auto p=viewpoint_manager_->GetViewPointPosition(id);
-    if (viewpoint_manager_->InCollisionAtPose(Eigen::Vector3d(p.x,p.y,robot_position_.z()))) return false;
+    if (viewpoint_manager_->InCollisionAtPose(Eigen::Vector3d(p.x,p.y,robot_position_.z()),ht_tracking_margin_)) return false;
     for (int k=0;k<8;++k)
       if (ht->permits(ht->poseSupport(p.x,p.y,k*ht_cost_ns::kPi/4))) return true;
     return false;
@@ -212,7 +212,7 @@ exploration_path_ns::ExplorationPath LocalCoveragePlanner::SolveHTTSP(
       const Eigen::Vector3d point(next.x,next.y,robot_position_.z());
       if (!viewpoint_manager_->InLocalPlanningHorizon(point)) {++geometry_rejections;return false;}
       const auto geometry_started=std::chrono::steady_clock::now();
-      const bool colliding=viewpoint_manager_->InCollisionAtPose(point);
+      const bool colliding=viewpoint_manager_->InCollisionAtPose(point,std::abs(v)>1e-9 ? ht_tracking_margin_:0.0);
       geometry_seconds+=std::chrono::duration<double>(std::chrono::steady_clock::now()-geometry_started).count();
       ++geometry_queries;
       if (colliding) {++geometry_rejections;return false;}
@@ -305,7 +305,7 @@ exploration_path_ns::ExplorationPath LocalCoveragePlanner::PlanHTReturn(const Ei
   auto valid=[&](ht_cost_ns::Pose2 previous,ht_cost_ns::Pose2 next,double v) {
     const Eigen::Vector3d point(next.x,next.y,robot_position_.z());
     if (!viewpoint_manager_->InLocalPlanningHorizon(point) ||
-        viewpoint_manager_->InCollisionAtPose(point) ||
+        viewpoint_manager_->InCollisionAtPose(point,std::abs(v)>1e-9 ? ht_tracking_margin_:0.0) ||
         !ht->permits(ht->motionSupport(previous,next)) ||
         !ht_execution_failures_.permits(previous,next,node_->now().seconds()) ||
         !ht_cost_ns::successorHeadingReserve(start,previous,next,ht_heading_margin_,

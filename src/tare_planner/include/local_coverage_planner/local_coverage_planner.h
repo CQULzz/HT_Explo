@@ -128,6 +128,7 @@ private:
                                                   std::vector<int>& ordered);
   double ht_last_cost_ = 0;
   double ht_cycle_search_seconds_=0.35;
+  double ht_tracking_margin_=0.12;
   double ht_heading_margin_=0.05;
   double robot_yaw_=0;
   int ht_previous_target_=-1;

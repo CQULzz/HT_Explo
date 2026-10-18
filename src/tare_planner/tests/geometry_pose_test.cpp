@@ -26,6 +26,10 @@ TEST(GeometryPose, CapturedContinuousRootDoesNotInheritNeighbourCollision) {
   // quantized viewpoint's collision mark when its physical envelope is clear.
   EXPECT_TRUE(manager.InCollision(robot));  // Actual old implementation reproduces the failure.
   EXPECT_FALSE(manager.InCollisionAtPose(robot));
+  // Nominal driving must leave a tracking tube; actual-root checks retain
+  // the original physical boundary and never bypass an overlap.
+  EXPECT_TRUE(manager.InCollisionAtPose(robot,.12));
+  EXPECT_TRUE(manager.InCollisionAtPose(robot,-.01));
   // The same observed obstacle must still reject an actually colliding root.
   EXPECT_TRUE(manager.InCollisionAtPose(Eigen::Vector3d(11.15774,1.8920302,robot.z())));
   EXPECT_TRUE(manager.InCollisionAtPose(Eigen::Vector3d(std::numeric_limits<double>::quiet_NaN(),1,robot.z())));

@@ -20,7 +20,7 @@ def main():
     reader=rosbag2_py.SequentialReader()
     reader.open(rosbag2_py.StorageOptions(uri=str(args.trial/'evidence_bag'),storage_id='mcap'),rosbag2_py.ConverterOptions('',''))
     reader.set_filter(rosbag2_py.StorageFilter(topics=['/cmd_vel','/ht_follower_status']))
-    last=None;bad=[];counts=Counter();paired=Counter()
+    last=None;bad=[];geometry_bad=[];counts=Counter();paired=Counter()
     while reader.has_next():
         topic,data,ns=reader.read_next();t=ns/1e9-origin
         if not 0<=t<duration:continue
@@ -33,9 +33,13 @@ def main():
                 paired[status]+=1
                 if status=='HT_COMMAND_BLOCKED' and any(abs(v)>1e-9 for v in last['twist']):
                     bad.append(dict(last,status_time_s=t))
+                if status.startswith("GEOMETRY_") and any(abs(v)>1e-9 for v in last["twist"]):
+                    geometry_bad.append(dict(last,status_time_s=t,status=status))
     result=dict(source=str(args.trial.resolve()),status_counts=dict(counts),paired_status_counts=dict(paired),
         unmatched_command_rejections=counts['HT_COMMAND_BLOCKED']-paired['HT_COMMAND_BLOCKED'],
         blocked_nonzero_count=len(bad),events=bad,
+        geometry_nonzero_count=len(geometry_bad),geometry_events=geometry_bad,
+        unmatched_geometry_rejections={k:counts[k]-paired[k] for k in counts if k.startswith("GEOMETRY_")},
         caveat='Matches each late hold to its preceding command within20ms in publication order; reports unmatched events separately. Single-follower runs only. Does not infer internal map/odom callback ordering.')
     args.output.parent.mkdir(parents=True,exist_ok=True)
     args.output.write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n')

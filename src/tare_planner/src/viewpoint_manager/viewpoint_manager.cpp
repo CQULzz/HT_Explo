@@ -481,9 +481,9 @@ void ViewPointManager::CheckViewPointCollisionWithCollisionGrid(
   pose_collision_ready_ = true;
 }
 
-bool ViewPointManager::InCollisionAtPose(const Eigen::Vector3d& position)
+bool ViewPointManager::InCollisionAtPose(const Eigen::Vector3d& position, double extra_margin)
 {
-  if (!position.allFinite() || !pose_collision_ready_ || !InLocalPlanningHorizon(position)) return true;
+  if (!std::isfinite(extra_margin) || extra_margin<0 || extra_margin>1 || !position.allFinite() || !pose_collision_ready_ || !InLocalPlanningHorizon(position)) return true;
   geometry_msgs::msg::Point query;
   query.x=position.x();query.y=position.y();query.z=position.z();
   if (!viewpoint_boundary_.points.empty() && !misc_utils_ns::PointInPolygon(query,viewpoint_boundary_)) return true;
@@ -492,7 +492,7 @@ bool ViewPointManager::InCollisionAtPose(const Eigen::Vector3d& position)
   if (pose_collision_cloud_->empty()) return false;
   // Keep the configured physical margin, adding half a collision-cell diagonal
   // for raster uncertainty. Never exempt an actually colliding root state.
-  const double radius=vp_.kViewPointCollisionMargin+
+  const double radius=extra_margin+vp_.kViewPointCollisionMargin+
       .5*std::hypot(vp_.kCollisionGridResolution.x(),vp_.kCollisionGridResolution.y());
   if (position.z()==pose_collision_reference_z_) {
     if (pose_collision_xy_cloud_->empty()) return false;

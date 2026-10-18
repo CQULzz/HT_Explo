@@ -1,5 +1,7 @@
 #include "ht_cost/xytheta_planner.h"
 #include "ht_cost/ht_cost_map.h"
+#include "ht_cost/measured_collision_field.h"
+#include <sensor_msgs/point_cloud2_iterator.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <nav_msgs/msg/odometry.hpp>
 #include <nav_msgs/msg/path.hpp>
@@ -43,6 +45,40 @@ class XYThetaFollower : public rclcpp::Node {
     // timeout makes the vehicle stop for half of every healthy cycle.
     permission_timeout_=declare_parameter<double>("permission_timeout",1.5);
     scan_timeout_=declare_parameter<double>("mission_sensor_timeout",3.0);
+    geometry_timeout_=declare_parameter<double>("geometry_timeout",3.0);
+    const double margin=declare_parameter<double>("kViewPointCollisionMargin",0.5);
+    const double cell_x=declare_parameter<double>("kCollisionGridResolutionX",0.2);
+    const double cell_y=declare_parameter<double>("kCollisionGridResolutionY",0.2);
+    geometry_z_plus_=declare_parameter<double>("kViewPointCollisionMarginZPlus",0.5);
+    geometry_z_minus_=declare_parameter<double>("kViewPointCollisionMarginZMinus",0.5);
+    geometry_radius_=margin+.5*std::hypot(cell_x,cell_y);
+    for(double value:{geometry_timeout_,margin,cell_x,cell_y,geometry_z_plus_,geometry_z_minus_})
+      if (!std::isfinite(value)||value<=0)throw std::invalid_argument("Invalid execution geometry envelope");
+    geometry_sub_=create_subscription<sensor_msgs::msg::PointCloud2>("/collision_cloud",rclcpp::QoS(1).reliable(),
+      [this](sensor_msgs::msg::PointCloud2::ConstSharedPtr msg) {
+        geometry_received_=-1;
+        if(msg->header.frame_id!="map" || msg->is_bigendian)return;
+        auto cloud=std::make_shared<ht_cost_ns::MeasuredCollisionField::Cloud>();
+        try {
+          if(msg->width && msg->height) {
+            if(msg->point_step==0 || msg->row_step<msg->point_step*msg->width ||
+               msg->data.size()<size_t(msg->row_step)*msg->height)return;
+            for(const char* name:{"x","y","z"}) {
+              bool found=false;
+              for(const auto& field:msg->fields)if(field.name==name &&
+                field.datatype==sensor_msgs::msg::PointField::FLOAT32 && field.count==1 &&
+                field.offset+sizeof(float)<=msg->point_step)found=true;
+              if(!found)return;
+            }
+            sensor_msgs::PointCloud2ConstIterator<float> x(*msg,"x"),y(*msg,"y"),z(*msg,"z");
+            for(;x!=x.end();++x,++y,++z)if(std::isfinite(*x)&&std::isfinite(*y)&&std::isfinite(*z)) {
+              pcl::PointXYZ p;p.x=*x;p.y=*y;p.z=*z;cloud->push_back(p);
+            }
+          }
+        }catch(const std::exception&) {return;}
+        geometry_.update(cloud);geometry_received_=now().seconds();
+        geometry_stamp_=rclcpp::Time(msg->header.stamp).seconds();
+      });
     for (double v:{max_speed_,max_reverse_,max_yaw_rate_,max_accel_,max_yaw_accel_,
                    path_timeout_,odom_timeout_,permission_timeout_,scan_timeout_,
                    rotation_tolerance_,rotation_stop_rate_})
@@ -84,9 +120,9 @@ class XYThetaFollower : public rclcpp::Node {
       });
     odom_sub_=create_subscription<nav_msgs::msg::Odometry>("/state_estimation",5,
       [this](nav_msgs::msg::Odometry::ConstSharedPtr msg) {
-        robot_=poseOf(msg->pose.pose);
+        robot_=poseOf(msg->pose.pose);robot_z_=msg->pose.pose.position.z;
         measured_yaw_rate_=msg->twist.twist.angular.z;
-        if (!std::isfinite(robot_.x) || !std::isfinite(robot_.y) || !std::isfinite(robot_.yaw) ||
+        if (!std::isfinite(robot_z_) || !std::isfinite(robot_.x) || !std::isfinite(robot_.y) || !std::isfinite(robot_.yaw) ||
             !std::isfinite(measured_yaw_rate_)) {
           odom_received_=-1;return;
         }
@@ -146,6 +182,8 @@ class XYThetaFollower : public rclcpp::Node {
       // A fresh map and a bounded-age plan are checked here independently of
       // TARE's expensive planning callback. Never renew a stale Bool blindly.
       if (!ht_->permits(ht_->poseSupport(robot_.x,robot_.y,robot_.yaw))) {hold("HT_CURRENT_POSE_BLOCKED");return;}
+      if (!fresh(geometry_received_,geometry_timeout_) || !fresh(geometry_stamp_,geometry_timeout_)) {hold("GEOMETRY_STALE");return;}
+      if (geometryBlocked(robot_)) {hold("GEOMETRY_CURRENT_POSE_BLOCKED");return;}
     } else if (!fresh(permission_received_,permission_timeout_)) {hold("PERMISSION_STALE");return;}
     while (index_<path_.size()) {
       const bool rotating=gear(path_[index_-1],path_[index_])==0;
@@ -174,6 +212,12 @@ class XYThetaFollower : public rclcpp::Node {
         const double angle=wrapYaw(p.yaw-previous.yaw);
         const int samples=std::max(1,static_cast<int>(std::ceil(std::max(length/.05,std::abs(angle)/.1))));
         if (length>1.0 || samples>100) {hold("PATH_DISCONTINUITY");return;}
+        for(int sample=1;sample<=samples;++sample) {
+          const double fraction=double(sample)/samples;
+          Pose2 q{previous.x+(p.x-previous.x)*fraction,previous.y+(p.y-previous.y)*fraction,
+                  wrapYaw(previous.yaw+angle*fraction)};
+          if(geometryBlocked(q)) {rejectEdge(previous,p);hold("GEOMETRY_PATH_BLOCKED");return;}
+        }
         if (!ht_->permits(ht_->motionSupport(previous,p))) {
           rejectEdge(previous,p);hold("HT_PATH_BLOCKED");return;
         }
@@ -219,6 +263,9 @@ class XYThetaFollower : public rclcpp::Node {
         Pose2 next=p;
         next.x+=linear_*.05*std::cos(p.yaw+angular_*.025);
         next.y+=linear_*.05*std::sin(p.yaw+angular_*.025);next.yaw=wrapYaw(p.yaw+angular_*.05);
+        if (geometryBlocked(next)) {
+          rejectEdge(p,next);hold("GEOMETRY_COMMAND_BLOCKED");return;
+        }
         if (!ht_->permits(ht_->motionSupport(p,next))) {
           if (command_blocked_since_<0) command_blocked_since_=now_s;
           if (now_s-command_blocked_since_>=.5) rejectEdge(p,next);
@@ -243,6 +290,9 @@ class XYThetaFollower : public rclcpp::Node {
     }
     return index;
   }
+  bool geometryBlocked(Pose2 p) {
+    return geometry_.blocked(p.x,p.y,robot_z_,geometry_radius_,geometry_z_plus_,geometry_z_minus_);
+  }
   void rejectEdge(Pose2 a,Pose2 b) {
     // Header identifies the rejected plan, not the observation time. Delayed
     // feedback must never invalidate a newer plan. Emit once per publication.
@@ -257,6 +307,10 @@ class XYThetaFollower : public rclcpp::Node {
     }
     rejection_pub_->publish(edge);
   }
+  ht_cost_ns::MeasuredCollisionField geometry_;
+  double robot_z_=0,geometry_received_=-1,geometry_stamp_=-1;
+  double geometry_timeout_,geometry_radius_,geometry_z_plus_,geometry_z_minus_;
+  rclcpp::Subscription<sensor_msgs::msg::PointCloud2>::SharedPtr geometry_sub_;
   std::vector<Pose2> path_;
   size_t index_=1;
   size_t rotation_goal_index_=0;

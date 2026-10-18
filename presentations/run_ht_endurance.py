@@ -102,6 +102,7 @@ def main():
              ROOT/'src/tare_planner/config/ht.yaml',
              ROOT/'src/tare_planner/src/ht_cost/ht_cost_map.cpp',
              ROOT/'src/tare_planner/include/ht_cost/ht_cost_map.h',
+             ROOT/'src/tare_planner/include/ht_cost/measured_collision_field.h',
              ROOT/'src/tare_planner/include/local_coverage_planner/local_coverage_planner.h',
              ROOT/'src/tare_planner/include/ht_cost/heading_reserve.h',
              ROOT/'src/tare_planner/include/ht_cost/xytheta_planner.h',

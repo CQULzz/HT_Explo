@@ -59,6 +59,9 @@ LocalCoveragePlanner::LocalCoveragePlanner(rclcpp::Node::SharedPtr nh)
       throw std::invalid_argument("Invalid XYtheta motion angle");
     xytheta_config_.turn_angles.push_back(angle*ht_cost_ns::kPi/180.0);
   }
+  ht_tracking_margin_=nh->declare_parameter<double>("xytheta_tracking_margin",0.12);
+  if (!std::isfinite(ht_tracking_margin_) || ht_tracking_margin_<0 || ht_tracking_margin_>1)
+    throw std::invalid_argument("Invalid XYtheta tracking margin");
   ht_heading_margin_=nh->declare_parameter<double>("xytheta_heading_margin",0.0);
   if (!std::isfinite(ht_heading_margin_) || ht_heading_margin_<0 || ht_heading_margin_>=ht_cost_ns::kPi/8 ||
       xytheta_config_.headings<8 || xytheta_config_.headings>64 || xytheta_config_.headings%8)
