@@ -1,0 +1,235 @@
+Start testing: Oct 18 11:09 CST
+----------------------------------------------------------
+1/3 Testing: ht_core_test
+1/3 Test: ht_core_test
+Command: "/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/ht_core_test"
+Directory: /home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner
+"ht_core_test" start time: Oct 18 11:09 CST
+Output:
+----------------------------------------------------------
+PASS: 390 HT core checks
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"ht_core_test" end time: Oct 18 11:09 CST
+"ht_core_test" time elapsed: 00:00:00
+----------------------------------------------------------
+
+2/3 Testing: ht_ros_test
+2/3 Test: ht_ros_test
+Command: "/usr/bin/python3" "-u" "/opt/ros/jazzy/share/ament_cmake_test/cmake/run_test.py" "/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/test_results/tare_planner/ht_ros_test.gtest.xml" "--package-name" "tare_planner" "--output-file" "/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/ament_cmake_gtest/ht_ros_test.txt" "--command" "/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/ht_ros_test" "--gtest_output=xml:/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/test_results/tare_planner/ht_ros_test.gtest.xml"
+Directory: /home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner
+"ht_ros_test" start time: Oct 18 11:09 CST
+Output:
+----------------------------------------------------------
+-- run_test.py: invoking following command in '/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner':
+ - /home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/ht_ros_test --gtest_output=xml:/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/test_results/tare_planner/ht_ros_test.gtest.xml
+Running main() from /opt/ros/jazzy/src/gtest_vendor/src/gtest_main.cc
+[==========] Running 21 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 21 tests from HtRosTest
+[ RUN      ] HtRosTest.DirectionalCostsAndValidSupport
+[INFO] [1792292988.244738599] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0
+[       OK ] HtRosTest.DirectionalCostsAndValidSupport (278 ms)
+[ RUN      ] HtRosTest.CircularBufferPreservesSpatialCells
+[INFO] [1792292988.507693911] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0
+[       OK ] HtRosTest.CircularBufferPreservesSpatialCells (262 ms)
+[ RUN      ] HtRosTest.OffCenterHazardIsHardBlockedAtPlanningAndExecution
+[INFO] [1792292988.772192565] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0
+[       OK ] HtRosTest.OffCenterHazardIsHardBlockedAtPlanningAndExecution (263 ms)
+[ RUN      ] HtRosTest.SeparatePhysicalObservationDoesNotInflateContextTwice
+[INFO] [1792292989.033834663] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0
+[       OK ] HtRosTest.SeparatePhysicalObservationDoesNotInflateContextTwice (570 ms)
+[ RUN      ] HtRosTest.CapturedTunnelReturnKeepsRiskThresholdAndReachesHome
+[INFO] [1792292989.604116173] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0
+[       OK ] HtRosTest.CapturedTunnelReturnKeepsRiskThresholdAndReachesHome (484 ms)
+[ RUN      ] HtRosTest.CapturedMapSearchResolutionAudit
+[INFO] [1792292990.089022558] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0
+RESOLUTION_AUDIT profile=production goal=0 reached=0 expanded=8 poses=0 seconds=5.519e-05
+RESOLUTION_AUDIT profile=production goal=1 reached=0 expanded=8 poses=0 seconds=5.0058e-05
+RESOLUTION_AUDIT profile=production goal=2 reached=0 expanded=8 poses=0 seconds=6.445e-05
+RESOLUTION_AUDIT profile=production goal=3 reached=0 expanded=8 poses=0 seconds=6.5955e-05
+RESOLUTION_AUDIT profile=production goal=4 reached=0 expanded=8 poses=0 seconds=0.000109306
+RESOLUTION_AUDIT profile=production goal=5 reached=0 expanded=8 poses=0 seconds=5.6764e-05
+RESOLUTION_AUDIT profile=production goal=6 reached=0 expanded=8 poses=0 seconds=0.000129608
+RESOLUTION_AUDIT profile=production goal=7 reached=0 expanded=8 poses=0 seconds=6.3384e-05
+RESOLUTION_AUDIT profile=production goal=8 reached=0 expanded=8 poses=0 seconds=6.1868e-05
+RESOLUTION_AUDIT profile=heading32 goal=0 reached=0 expanded=16 poses=0 seconds=7.8122e-05
+RESOLUTION_AUDIT profile=heading32 goal=1 reached=0 expanded=16 poses=0 seconds=8.1139e-05
+RESOLUTION_AUDIT profile=heading32 goal=2 reached=0 expanded=16 poses=0 seconds=0.000135886
+RESOLUTION_AUDIT profile=heading32 goal=3 reached=0 expanded=16 poses=0 seconds=9.3787e-05
+RESOLUTION_AUDIT profile=heading32 goal=4 reached=0 expanded=16 poses=0 seconds=8.6198e-05
+RESOLUTION_AUDIT profile=heading32 goal=5 reached=0 expanded=16 poses=0 seconds=8.0793e-05
+RESOLUTION_AUDIT profile=heading32 goal=6 reached=0 expanded=16 poses=0 seconds=9.3263e-05
+RESOLUTION_AUDIT profile=heading32 goal=7 reached=0 expanded=16 poses=0 seconds=0.000104084
+RESOLUTION_AUDIT profile=heading32 goal=8 reached=0 expanded=16 poses=0 seconds=0.000130944
+RESOLUTION_AUDIT profile=heading64 goal=0 reached=0 expanded=32 poses=0 seconds=0.000159238
+RESOLUTION_AUDIT profile=heading64 goal=1 reached=0 expanded=32 poses=0 seconds=0.000180168
+RESOLUTION_AUDIT profile=heading64 goal=2 reached=0 expanded=32 poses=0 seconds=0.000174992
+RESOLUTION_AUDIT profile=heading64 goal=3 reached=0 expanded=32 poses=0 seconds=0.000159415
+RESOLUTION_AUDIT profile=heading64 goal=4 reached=0 expanded=32 poses=0 seconds=0.00024109
+RESOLUTION_AUDIT profile=heading64 goal=5 reached=0 expanded=32 poses=0 seconds=0.000163928
+RESOLUTION_AUDIT profile=heading64 goal=6 reached=0 expanded=32 poses=0 seconds=0.000165397
+RESOLUTION_AUDIT profile=heading64 goal=7 reached=0 expanded=32 poses=0 seconds=0.000164592
+RESOLUTION_AUDIT profile=heading64 goal=8 reached=0 expanded=32 poses=0 seconds=0.000166607
+RESOLUTION_AUDIT profile=short16 goal=0 reached=0 expanded=18 poses=0 seconds=7.8615e-05
+RESOLUTION_AUDIT profile=short16 goal=1 reached=0 expanded=16 poses=0 seconds=7.3742e-05
+RESOLUTION_AUDIT profile=short16 goal=2 reached=0 expanded=16 poses=0 seconds=0.000133037
+RESOLUTION_AUDIT profile=short16 goal=3 reached=0 expanded=16 poses=0 seconds=7.6197e-05
+RESOLUTION_AUDIT profile=short16 goal=4 reached=0 expanded=18 poses=0 seconds=8.4666e-05
+RESOLUTION_AUDIT profile=short16 goal=5 reached=0 expanded=18 poses=0 seconds=0.00011362
+RESOLUTION_AUDIT profile=short16 goal=6 reached=0 expanded=18 poses=0 seconds=0.000117876
+RESOLUTION_AUDIT profile=short16 goal=7 reached=0 expanded=16 poses=0 seconds=9.2724e-05
+RESOLUTION_AUDIT profile=short16 goal=8 reached=0 expanded=16 poses=0 seconds=0.000116343
+RESOLUTION_AUDIT profile=fine32 goal=0 reached=0 expanded=60 poses=0 seconds=0.000220807
+RESOLUTION_AUDIT profile=fine32 goal=1 reached=0 expanded=48 poses=0 seconds=0.000235619
+RESOLUTION_AUDIT profile=fine32 goal=2 reached=0 expanded=48 poses=0 seconds=0.000225314
+RESOLUTION_AUDIT profile=fine32 goal=3 reached=0 expanded=52 poses=0 seconds=0.000204394
+RESOLUTION_AUDIT profile=fine32 goal=4 reached=0 expanded=52 poses=0 seconds=0.00123659
+RESOLUTION_AUDIT profile=fine32 goal=5 reached=0 expanded=60 poses=0 seconds=0.00144762
+RESOLUTION_AUDIT profile=fine32 goal=6 reached=0 expanded=60 poses=0 seconds=0.00144185
+RESOLUTION_AUDIT profile=fine32 goal=7 reached=0 expanded=60 poses=0 seconds=0.00142427
+RESOLUTION_AUDIT profile=fine32 goal=8 reached=0 expanded=56 poses=0 seconds=0.00135176
+RESOLUTION_AUDIT profile=fine64 goal=0 reached=0 expanded=112 poses=0 seconds=0.00284065
+RESOLUTION_AUDIT profile=fine64 goal=1 reached=0 expanded=120 poses=0 seconds=0.00301426
+RESOLUTION_AUDIT profile=fine64 goal=2 reached=0 expanded=120 poses=0 seconds=0.00302309
+RESOLUTION_AUDIT profile=fine64 goal=3 reached=0 expanded=112 poses=0 seconds=0.000429378
+RESOLUTION_AUDIT profile=fine64 goal=4 reached=0 expanded=112 poses=0 seconds=0.000430386
+RESOLUTION_AUDIT profile=fine64 goal=5 reached=0 expanded=112 poses=0 seconds=0.000483099
+RESOLUTION_AUDIT profile=fine64 goal=6 reached=0 expanded=112 poses=0 seconds=0.000517194
+RESOLUTION_AUDIT profile=fine64 goal=7 reached=0 expanded=112 poses=0 seconds=0.000470392
+RESOLUTION_AUDIT profile=fine64 goal=8 reached=0 expanded=120 poses=0 seconds=0.000508708
+[       OK ] HtRosTest.CapturedMapSearchResolutionAudit (5975 ms)
+[ RUN      ] HtRosTest.CapturedSafeRootNeedsFinerHeadingSearchToEscape
+[INFO] [1792292996.064213476] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0
+[       OK ] HtRosTest.CapturedSafeRootNeedsFinerHeadingSearchToEscape (337 ms)
+[ RUN      ] HtRosTest.ReversibleMotionRejectsAOneWayEntranceWithoutChangingRawScores
+[INFO] [1792292996.401791552] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0
+[INFO] [1792292996.557161072] [ht_reversible_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=1
+[INFO] [1792292996.711445967] [ht_reversible_test]: HT_RETURN_MARGIN_BLOCK map_stamp=1792292996.557194710 a=(0.000,0.000,0.000) b=(0.400,0.000,0.000) reverse_support=3
+[       OK ] HtRosTest.ReversibleMotionRejectsAOneWayEntranceWithoutChangingRawScores (617 ms)
+[ RUN      ] HtRosTest.CapturedHeadingBoundaryHasPlanningReserveWithoutRelaxingMeasuredRoot
+[INFO] [1792292997.019770290] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0
+[       OK ] HtRosTest.CapturedHeadingBoundaryHasPlanningReserveWithoutRelaxingMeasuredRoot (337 ms)
+[ RUN      ] HtRosTest.RotatedTranslatedFrameRotatesChannels
+[INFO] [1792292997.356931487] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0
+[       OK ] HtRosTest.RotatedTranslatedFrameRotatesChannels (513 ms)
+[ RUN      ] HtRosTest.MissingLayerRevokesPreviousMap
+[INFO] [1792292997.870534156] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0
+[WARN] [1792292998.127106846] [ht_ros_test]: HT map rejected: Missing ht_dir layers; set aggregate_only=false
+[       OK ] HtRosTest.MissingLayerRevokesPreviousMap (364 ms)
+[ RUN      ] HtRosTest.InvalidProbabilityPreventsExecution
+[INFO] [1792292998.235315345] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0
+[       OK ] HtRosTest.InvalidProbabilityPreventsExecution (364 ms)
+[ RUN      ] HtRosTest.StaleFutureAndMissingTransformHold
+[INFO] [1792292998.599467882] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0
+[       OK ] HtRosTest.StaleFutureAndMissingTransformHold (466 ms)
+[ RUN      ] HtRosTest.NonFinitePoseRejected
+[INFO] [1792292999.066468751] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0
+[       OK ] HtRosTest.NonFinitePoseRejected (260 ms)
+[ RUN      ] HtRosTest.MalformedMessagesDoNotEnterUnsafeConverter
+[INFO] [1792292999.327151704] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0
+[       OK ] HtRosTest.MalformedMessagesDoNotEnterUnsafeConverter (775 ms)
+[ RUN      ] HtRosTest.CalibrationRequiredAndParametersChecked
+[INFO] [1792293000.102801592] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0
+[INFO] [1792293000.257617495] [ht_uncalibrated]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=0 reversible=0
+[       OK ] HtRosTest.CalibrationRequiredAndParametersChecked (164 ms)
+[ RUN      ] HtRosTest.StartupPriorIsBoundedAndDoesNotOverwriteObservedRisk
+[INFO] [1792293000.267369498] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0
+[WARN] [1792293000.729518244] [ht_ros_test]: HT map rejected: Missing ht_dir layers; set aggregate_only=false
+[       OK ] HtRosTest.StartupPriorIsBoundedAndDoesNotOverwriteObservedRisk (569 ms)
+[ RUN      ] HtRosTest.UnknownAndObservedRiskBothBlockEdges
+[INFO] [1792293000.837110573] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0
+[       OK ] HtRosTest.UnknownAndObservedRiskBothBlockEdges (261 ms)
+[ RUN      ] HtRosTest.StrictPolicyAllowsOnlyKnownOrBoundedStartup
+[INFO] [1792293001.098216298] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0
+[INFO] [1792293001.253154147] [ht_strict_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0
+[       OK ] HtRosTest.StrictPolicyAllowsOnlyKnownOrBoundedStartup (415 ms)
+[ RUN      ] HtRosTest.RecordedGarageUnknownCornerCannotPassAsAnUnsplitEdge
+[INFO] [1792293001.513619514] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0
+[       OK ] HtRosTest.RecordedGarageUnknownCornerCannotPassAsAnUnsplitEdge (263 ms)
+[ RUN      ] HtRosTest.HeadingSweepChecksIntermediateDirectionsAndWrapsAtPi
+[INFO] [1792293001.777763793] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0
+[       OK ] HtRosTest.HeadingSweepChecksIntermediateDirectionsAndWrapsAtPi (261 ms)
+[----------] 21 tests from HtRosTest (13810 ms total)
+
+[----------] Global test environment tear-down
+[==========] 21 tests from 1 test suite ran. (13810 ms total)
+[  PASSED  ] 21 tests.
+-- run_test.py: return code 0
+-- run_test.py: inject classname prefix into gtest result file '/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/test_results/tare_planner/ht_ros_test.gtest.xml'
+-- run_test.py: verify result file '/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/test_results/tare_planner/ht_ros_test.gtest.xml'
+<end of output>
+Test time =  14.00 sec
+----------------------------------------------------------
+Test Passed.
+"ht_ros_test" end time: Oct 18 11:10 CST
+"ht_ros_test" time elapsed: 00:00:14
+----------------------------------------------------------
+
+3/3 Testing: xytheta_follower_test
+3/3 Test: xytheta_follower_test
+Command: "/usr/bin/python3" "-u" "/opt/ros/jazzy/share/ament_cmake_test/cmake/run_test.py" "/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/test_results/tare_planner/xytheta_follower_test.gtest.xml" "--package-name" "tare_planner" "--output-file" "/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/ament_cmake_gtest/xytheta_follower_test.txt" "--command" "/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/xytheta_follower_test" "--gtest_output=xml:/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/test_results/tare_planner/xytheta_follower_test.gtest.xml"
+Directory: /home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner
+"xytheta_follower_test" start time: Oct 18 11:10 CST
+Output:
+----------------------------------------------------------
+-- run_test.py: invoking following command in '/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner':
+ - /home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/xytheta_follower_test --gtest_output=xml:/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/test_results/tare_planner/xytheta_follower_test.gtest.xml
+Running main() from /opt/ros/jazzy/src/gtest_vendor/src/gtest_main.cc
+[==========] Running 10 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 10 tests from FollowerTest
+[ RUN      ] FollowerTest.FreshMapMaintainsExecutionAcrossSlowPlannerPermission
+[INFO] [1792293002.259169054] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=1
+[       OK ] FollowerTest.FreshMapMaintainsExecutionAcrossSlowPlannerPermission (2299 ms)
+[ RUN      ] FollowerTest.FineSpinFinishesHeadingAndStopsBeforeTranslation
+[INFO] [1792293004.547262208] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=1
+[       OK ] FollowerTest.FineSpinFinishesHeadingAndStopsBeforeTranslation (2328 ms)
+[ RUN      ] FollowerTest.GroupedSpinStillRejectsAnUnsafeIntermediateDirection
+[INFO] [1792293006.875372473] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=1
+[       OK ] FollowerTest.GroupedSpinStillRejectsAnUnsafeIntermediateDirection (824 ms)
+[ RUN      ] FollowerTest.RejectedTrackingArcPublishesZeroRatherThanTheCandidateCommand
+[INFO] [1792293007.699851679] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=1
+[       OK ] FollowerTest.RejectedTrackingArcPublishesZeroRatherThanTheCandidateCommand (2222 ms)
+[ RUN      ] FollowerTest.RefusesAOneWayPathButDoesNotRequireEveryHeadingToBeSafe
+[INFO] [1792293009.922858046] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=1
+[INFO] [1792293010.740347597] [xytheta_follower]: HT_RETURN_MARGIN_BLOCK map_stamp=1792293010.719473124 a=(0.000,0.000,0.000) b=(0.200,0.000,0.000) reverse_support=3
+[       OK ] FollowerTest.RefusesAOneWayPathButDoesNotRequireEveryHeadingToBeSafe (1242 ms)
+[ RUN      ] FollowerTest.FreshMapsCannotExtendAnExpiredPlan
+[INFO] [1792293011.165194922] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=1
+[       OK ] FollowerTest.FreshMapsCannotExtendAnExpiredPlan (3479 ms)
+[ RUN      ] FollowerTest.CompletionHeartbeatExplainsTerminalStopButCannotRenewDriving
+[INFO] [1792293014.645109589] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=1
+[       OK ] FollowerTest.CompletionHeartbeatExplainsTerminalStopButCannotRenewDriving (5580 ms)
+[ RUN      ] FollowerTest.NewObstacleAndUnknownRevokeExecution
+[INFO] [1792293020.226066960] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=1
+[       OK ] FollowerTest.NewObstacleAndUnknownRevokeExecution (987 ms)
+[ RUN      ] FollowerTest.ExplicitHoldAndMissingOdometryStillStop
+[INFO] [1792293021.213657999] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=1
+[       OK ] FollowerTest.ExplicitHoldAndMissingOdometryStillStop (1410 ms)
+[ RUN      ] FollowerTest.PathFailureReportsItsEdgeAndPlanIdentityOnce
+[INFO] [1792293022.624301612] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=1
+[INFO] [1792293023.233755007] [xytheta_follower]: HT_RETURN_MARGIN_BLOCK map_stamp=1792293023.212809563 a=(0.600,0.000,0.000) b=(0.700,0.000,0.000) reverse_support=2
+[       OK ] FollowerTest.PathFailureReportsItsEdgeAndPlanIdentityOnce (1201 ms)
+[----------] 10 tests from FollowerTest (21577 ms total)
+
+[----------] Global test environment tear-down
+[==========] 10 tests from 1 test suite ran. (21583 ms total)
+[  PASSED  ] 10 tests.
+-- run_test.py: return code 0
+-- run_test.py: inject classname prefix into gtest result file '/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/test_results/tare_planner/xytheta_follower_test.gtest.xml'
+-- run_test.py: verify result file '/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/test_results/tare_planner/xytheta_follower_test.gtest.xml'
+<end of output>
+Test time =  21.79 sec
+----------------------------------------------------------
+Test Passed.
+"xytheta_follower_test" end time: Oct 18 11:10 CST
+"xytheta_follower_test" time elapsed: 00:00:21
+----------------------------------------------------------
+
+End testing: Oct 18 11:10 CST
+
+gtest =  35.79 sec*proc
+

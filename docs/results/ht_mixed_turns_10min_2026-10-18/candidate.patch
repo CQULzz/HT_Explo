@@ -1,0 +1,565 @@
+commit 12d85d871ce84bcab1191a20bbea6e1748449cd5
+Author:     Codex <codex@local>
+AuthorDate: Sun Oct 18 11:10:50 2026 +0800
+Commit:     Codex <codex@local>
+CommitDate: Sun Oct 18 11:10:50 2026 +0800
+
+    Keep mixed turn primitives and finish fine spins before driving; require 600s iteration comparisons
+
+diff --git a/AGENTS.md b/AGENTS.md
+new file mode 100644
+index 0000000..148b4ba
+--- /dev/null
++++ b/AGENTS.md
+@@ -0,0 +1,10 @@
++# 实验与修改记录
++
++用户要求：每一轮影响导航、控制、建图或HT推理行为的修改，完成后至少进行一次完整600秒仿真小测，保留数据并画图与历史版本比较。
++
++- 把一组候选修改编译、回归检查完成后冻结为一个版本；测试期间不能修改该组使用的源码、参数和二进制。
++- 使用独立输出目录，保留提交号、实际参数、源文件及二进制哈希、MCAP、CSV、地图快照、日志和可解码视频；不要覆盖失败记录。
++- 小测完整记录600秒，即使车辆提前停住也继续采集诊断。进程异常退出要保留部分记录，不能称为完整小测。
++- 相同场景、起点、速度和指标口径才可作版本比较。原地转向、阻塞停车和任务完成后停车分别解释。
++- 每轮至少输出累计观测自由体积、实际里程随时间的对比图及任务状态。单轮结果不能证明普遍优劣。
++- 细节见 docs/experiments/ht_iteration_protocol.md。
+diff --git a/docs/experiments/ht_iteration_protocol.md b/docs/experiments/ht_iteration_protocol.md
+new file mode 100644
+index 0000000..edaca5b
+--- /dev/null
++++ b/docs/experiments/ht_iteration_protocol.md
+@@ -0,0 +1,22 @@
++# 每轮修改至少10分钟的验证约定
++
++每一轮影响系统行为的候选修改都必须做完整600秒小测，保留失败结果。编译和回归期间的修正属于同一候选；未经完整小测，不标为已验证版本。文档、图表和只读分析不改变导航行为，但也须保留数据来源。
++
++1. 说明本轮改动、预期效果和仍未解决的问题；完成针对性回归。
++2. 提交代码，冻结运行源码、配置、权重和二进制。独立启动同一场景，起点、速度、建图和指标口径与对照一致。测试期间不调整参数。
++3. 记录从首个具备激光和里程计的TARE运行周期起的600秒。提前BLOCKED仍继续记录；提前COMPLETED则注明停车原因。异常退出不计作完整600秒。
++4. 保留原始MCAP（全部控制、位姿、状态、发布的HT图；激光按源秒采样）、10秒地图快照、有效参数、源文件/二进制哈希、资源监控、CSV与视频。这里不是全频原始激光或CuPy输入的无损录制。
++5. 检查记录时长、节点退出、文件冻结和视频完整解码。记录完整与导航成功分别判断。
++6. 用 presentations/compare_ht_iterations.py 比较同场景版本，画累计观测自由体积、里程、速度和实际轨迹；保留提交号、指标定义、状态和对照来源。
++
++运行例：
++
++```bash
++python3 presentations/run_ht_multiscene.py --duration 600 --scenarios indoor \
++  --domain 226 --encoder /path/to/ffmpeg --output /path/to/new_suite
++python3 presentations/compare_ht_iterations.py \
++  --run '上一版=/path/to/previous/indoor' \
++  --run '本轮=/path/to/new_suite/indoor' --output /path/to/new_comparison
++```
++
++原始数据保存在运行目录，精选结果另行归档。每轮必须明确哪些数据已归档、哪些仅在本机，不把视频或汇总表当成全部原始数据。单次高体积也可能伴随最终卡死；不能据此称为稳定修复。
+diff --git a/docs/fixes/2026-10-18_mixed_turns.md b/docs/fixes/2026-10-18_mixed_turns.md
+new file mode 100644
+index 0000000..b5c06b7
+--- /dev/null
++++ b/docs/fixes/2026-10-18_mixed_turns.md
+@@ -0,0 +1,17 @@
++# 航向分档与动作解耦、原地旋转跟踪修正
++
++此前32航向把搜索键和运动原语同时细化：0.4m圆弧由22.5°变成11.25°，对应半径由约1.02m增为2.04m，没有保留旧的较急圆弧。控制器仍按0.14rad（约8°）容差消耗原地旋转点，可能在细角度旋转尚未完成时转入平移。
++
++本轮作为一个候选版本验证：
++
++- 生产配置保留32航向，显式动作角集合为11.25°与22.5°，包含正反圆弧、原地左右转和直行。改变航向键分辨率不再自动改变这个动作集合。空集合仅在独立核心接口中保留历史耦合模式，用于重放旧回归；生产节点拒绝空参数。
++- 原地连续同向旋转以整段目标跟踪，每段最多90°且锁定终点，不能跨越反向旋转或平移段。到达角度0.04rad容差且指令、实测角速度均不超过0.06rad/s才转入下一段。
++- 分组合并目标不删HT扫掠检查：名义段和实际控制弧都继续检查，包括中间HT方向通道。HT八通道、概率阈值、足迹、地图时效及实验速度不变。
++- 新增窄圆弧可达性回归、实际卡死快照上的混合动作回归，以及未转完/仍旋转时禁止提前平移、中间方向禁行的ROS控制回归。
++- 建立AGENTS.md和10分钟迭代记录规范、同场景对比脚本；运行清单新增规划器头文件哈希。
++
++这仍然是XYθ运动学搜索：状态里没有速度与加速度，路径时间也是恒定控制原语时间近似。控制器保持现有加速度限制和指令弧复核，不能把本轮表述成已经实现完整动力学可行性证明。
++
++本轮不修改HT预测有效范围与足迹聚合接口。此前新预测邻格使当前位置失效的问题仍可能触发，不能因动作库修正就宣称它已解决。保留所有600秒测试的成功或失败记录，与旧版采用同场景、原生起点、0.5m/s上限和相同源秒采样自由体积口径比较。
++
++测试结果另存独立运行目录并在结果报告中关联提交号；测试期间冻结控制代码、配置和二进制。
+diff --git a/presentations/compare_ht_iterations.py b/presentations/compare_ht_iterations.py
+new file mode 100644
+index 0000000..c38fd99
+--- /dev/null
++++ b/presentations/compare_ht_iterations.py
+@@ -0,0 +1,135 @@
++#!/usr/bin/env python3
++"""Compare complete, same-scene600s iterations without overwriting evidence."""
++import argparse
++import csv
++import hashlib
++import json
++import math
++from pathlib import Path
++
++import matplotlib
++matplotlib.use('Agg')
++import matplotlib.pyplot as plt
++
++
++def read(path):
++    return json.loads(path.read_text())
++
++
++def datafile(folder, name):
++    return folder/name if (folder/name).exists() else folder/'current'/name
++
++
++def rows(path):
++    with path.open() as stream:
++        return list(csv.DictReader(stream))
++
++
++def load(spec):
++    label, separator, raw = spec.partition('=')
++    if not separator or not label:
++        raise ValueError('Expected LABEL=FOLDER')
++    folder = Path(raw).resolve()
++    summary = read(folder/'summary.json')
++    manifest = read(folder/'manifest.json')
++    validation = read(folder/'suite_validation.json')
++    if summary['duration_s'] != 600 or manifest['planned_duration_s'] != 600:
++        raise ValueError('Not a complete600s iteration: '+str(folder))
++    if not (folder/'COMPLETED.json').exists() or not all(validation['checks'].values()):
++        raise ValueError('Recording validation failed: '+str(folder))
++    metric = read(folder/'metric_definition.json')
++    mission = read(folder/'mission_audit.json')
++    motion_path = datafile(folder, 'timeseries.csv')
++    volume_path = datafile(folder, 'observation_volume.csv')
++    motion, volume = rows(motion_path), rows(volume_path)
++    if not motion or not volume or float(motion[-1]['t_s']) < 599:
++        raise ValueError('Incomplete motion/volume series')
++    counts = mission['sampled_mission_counts']
++    total = sum(counts.values())
++    result = dict(label=label, folder=str(folder), scenario=manifest['scenario'],
++                  git_head=manifest['git_head'], duration_s=summary['duration_s'],
++                  speed_cap_mps=manifest['speed_cap_mps'],
++                  measurement_start_pose_xyyaw=summary['start_pose_xyyaw'],
++                  distance_m=summary['distance_m'],
++                  observed_free_volume_m3=float(volume[-1]['observed_free_volume_m3']),
++                  final_mission=mission['last_sampled_mission'],
++                  completed_at_s=mission['first_completed_sample_s'],
++                  blocked_sample_fraction=counts.get('BLOCKED', 0)/total if total else None,
++                  runtime_p95_s=summary['planner_runtime_p95_s'],
++                  source_sha256={str(p):hashlib.sha256(p.read_bytes()).hexdigest()
++                                 for p in (motion_path, volume_path, folder/'manifest.json',
++                                           folder/'metric_definition.json',folder/'suite_validation.json')})
++    return result, motion, volume, metric, summary['start_pose_xyyaw']
++
++
++def main():
++    parser = argparse.ArgumentParser()
++    parser.add_argument('--run', action='append', required=True, help='LABEL=FOLDER')
++    parser.add_argument('--output', type=Path, required=True)
++    args = parser.parse_args()
++    if len(args.run)<2:
++        raise ValueError('Need at least two versions')
++    runs = [load(spec) for spec in args.run]
++    first = runs[0]
++    for row in runs[1:]:
++        if row[0]['scenario'] != first[0]['scenario'] or row[0]['speed_cap_mps'] != first[0]['speed_cap_mps']:
++            raise ValueError('Scenario or speed cap mismatch')
++        if row[3] != first[3]:
++            raise ValueError('Metric definitions differ; recompute before comparing')
++        if math.hypot(row[4][0]-first[4][0],row[4][1]-first[4][1])>.05 or abs(
++                math.remainder(row[4][2]-first[4][2],2*math.pi))>.02:
++            raise ValueError('Initial poses differ')
++    out = args.output.resolve()
++    out.mkdir(parents=True, exist_ok=False)
++    plt.rcParams.update({'font.family':'Noto Sans CJK JP','axes.unicode_minus':False})
++    fig, axes = plt.subplots(2,2,figsize=(14,9),layout='constrained')
++    for result, motion, volume, _, _ in runs:
++        label = result['label']
++        line, = axes[0,0].plot([float(r['time_s'])/60 for r in volume],
++                              [float(r['observed_free_volume_m3']) for r in volume],label=label)
++        color = line.get_color()
++        t = [float(r['t_s'])/60 for r in motion]
++        axes[0,1].plot(t,[float(r['distance_m']) for r in motion],color=color,label=label)
++        axes[1,0].plot(t,[float(r['odom_speed_mps']) for r in motion],color=color,label=label,alpha=.8,lw=.8)
++        axes[1,1].plot([float(r['x_m']) for r in motion],
++                       [float(r['y_m']) for r in motion],color=color,label=label)
++        axes[1,1].scatter(float(motion[-1]['x_m']),float(motion[-1]['y_m']),color=color,marker='x')
++    titles = [('累计观测自由体积（近似）','时间 / 分钟','m³'),
++              ('实际累计里程','时间 / 分钟','m'),
++              ('里程计平移速度（原地转向时也为零）','时间 / 分钟','m/s'),
++              ('实际XY轨迹，叉号为终点','X / m','Y / m')]
++    for axis, (title,xlabel,ylabel) in zip(axes.flat,titles):
++        axis.set(title=title,xlabel=xlabel,ylabel=ylabel)
++        axis.grid(alpha=.2);axis.legend(fontsize=9)
++    for axis in (axes[0,0],axes[0,1],axes[1,0]):
++        axis.set_xlim(0,10)
++    axes[1,1].set_aspect('equal',adjustable='datalim')
++    fig.suptitle('同一室内场景，各完整600秒；不同闭环轨迹的单次记录，不代表统计优劣' if first[0]['scenario']=='indoor'
++                 else f'{first[0]["scenario"]}：各完整600秒的历史版本对比')
++    fig.savefig(out/'comparison.png',dpi=170)
++    fig.savefig(out/'comparison.pdf');plt.close(fig)
++    results = [row[0] for row in runs]
++    (out/'comparison.json').write_text(json.dumps(dict(runs=results,metric_definition=first[3],
++        measurement_start_pose_tolerance=dict(position_m=.05,yaw_rad=.02)),ensure_ascii=False,indent=2)+'\n')
++    columns = ['label','git_head','distance_m','observed_free_volume_m3','final_mission',
++               'completed_at_s','blocked_sample_fraction','runtime_p95_s','folder']
++    with (out/'comparison.csv').open('w') as stream:
++        writer=csv.DictWriter(stream,fieldnames=columns,extrasaction='ignore');writer.writeheader();writer.writerows(results)
++    lines=['# 同场景版本10分钟对比','',
++           '各组600秒；同场景原生起点、相同速度上限和体积统计定义。计时起点允许5cm/0.02rad差异，实际位姿保存在JSON中。不同闭环轨迹的单次试验，不能独立归因或证明普遍优劣。',
++           '体积是0.5m自由体素并集近似，不是真值覆盖率。平移速度为零也可能是在原地转向。','',
++           '| 版本 | 代码 | 里程(m) | 观测自由体积(m³) | 最终状态 | BLOCKED抽样占比 | 规划P95(s) |',
++           '|---|---|---:|---:|---|---:|---:|']
++    for r in results:
++        lines.append(f'| {r["label"]} | `{r["git_head"][:7]}` | {r["distance_m"]:.2f} | {r["observed_free_volume_m3"]:.3f} | {r["final_mission"]} | {r["blocked_sample_fraction"]:.1%} | {r["runtime_p95_s"]:.3f} |')
++    lines += ['', '![体积、里程、速度和轨迹对比](comparison.png)','',
++              '原始目录、输入CSV和记录校验文件的哈希保存在[comparison.json](comparison.json)。',
++              '视频、原始MCAP与地图快照在各运行目录；历史结果中的精选归档可能只含视频、CSV和末段快照。']
++    for r in results:
++        lines.append(f'\n- {r["label"]}：`{r["folder"]}`')
++    (out/'REPORT.md').write_text('\n'.join(lines)+'\n')
++    print(out)
++
++
++if __name__=='__main__':
++    main()
+diff --git a/presentations/run_ht_endurance.py b/presentations/run_ht_endurance.py
+index 7d73789..7720be7 100644
+--- a/presentations/run_ht_endurance.py
++++ b/presentations/run_ht_endurance.py
+@@ -103,6 +103,7 @@ def main():
+              ROOT/'src/tare_planner/include/ht_cost/ht_cost_map.h',
+              ROOT/'src/tare_planner/include/local_coverage_planner/local_coverage_planner.h',
+              ROOT/'src/tare_planner/include/ht_cost/heading_reserve.h',
++             ROOT/'src/tare_planner/include/ht_cost/xytheta_planner.h',
+              ROOT/'src/tare_planner/src/grid_world/grid_world.cpp',
+              ROOT/'src/tare_planner/include/grid_world/grid_world.h',
+              ROOT/'src/tare_planner/include/ht_cost/exploration_progress.h',
+diff --git a/src/tare_planner/config/ht.yaml b/src/tare_planner/config/ht.yaml
+index fa68cc7..5f584a3 100644
+--- a/src/tare_planner/config/ht.yaml
++++ b/src/tare_planner/config/ht.yaml
+@@ -19,6 +19,7 @@
+     ht_unknown_policy: strict  # Unknown is blocked except inside the bounded startup prior.
+     xytheta_cell: 0.3
+     xytheta_headings: 32  # Captured-map regression:16 misses an HT-feasible escape.
++    xytheta_turn_angles_deg: [11.25, 22.5]  # Keep both gentle and original tighter arcs.
+     xytheta_heading_margin: 0.0  # Experimental reserve disabled; original hard HT gate remains.
+     xytheta_drive_step: 0.4
+     xytheta_goal_radius: 0.35
+diff --git a/src/tare_planner/include/ht_cost/xytheta_planner.h b/src/tare_planner/include/ht_cost/xytheta_planner.h
+index 7090a65..3069dc1 100644
+--- a/src/tare_planner/include/ht_cost/xytheta_planner.h
++++ b/src/tare_planner/include/ht_cost/xytheta_planner.h
+@@ -59,6 +59,9 @@ struct XYThetaPlan {
+ struct XYThetaConfig {
+   double cell=0.3;
+   int headings=16;
++  // Explicit motion angles are independent of the search-key resolution.
++  // Empty retains the historical coupled controls for archived regressions.
++  std::vector<double> turn_angles;
+   double drive_step=0.4;
+   double forward_speed=0.5;
+   double reverse_speed=0.25;
+@@ -70,8 +73,9 @@ struct XYThetaConfig {
+ };
+ 
+ // Hybrid A*: the key is discrete (x,y,theta), while each stored state and
+-// primitive trajectory remain continuous. The primitive controls are exactly
+-// executable by a differential drive: constant (v,omega), including v=0 spin.
++// primitive trajectory remain continuous. Constant(v,omega), including v=0
++// spin, is differential-drive kinematics; acceleration transitions are not
++// represented in these states. The follower limits and checks actual commands.
+ template<class Valid>
+ XYThetaPlan planXYTheta(Pose2 start,Point goal,const XYThetaConfig& cfg,Valid valid) {
+   XYThetaPlan out;
+@@ -83,6 +87,24 @@ XYThetaPlan planXYTheta(Pose2 start,Point goal,const XYThetaConfig& cfg,Valid va
+   start.yaw=wrapYaw(start.yaw);
+   if (!valid(start,start,0)) return out;
+   const double yaw_step=2*kPi/cfg.headings;
++  const auto turn_angles=cfg.turn_angles.empty() ? std::vector<double>{yaw_step}:cfg.turn_angles;
++  for (double angle:turn_angles)
++    if (!std::isfinite(angle) || angle<=0 || angle>kPi/2) return out;
++  struct Control {double v,omega,duration;};
++  const double forward_time=cfg.drive_step/cfg.forward_speed;
++  const double reverse_time=cfg.drive_step/cfg.reverse_speed;
++  std::vector<Control> controls;
++  for (size_t i=0;i<turn_angles.size();++i) {
++    const double angle=turn_angles[i];
++    controls.push_back({0,cfg.max_yaw_rate,angle/cfg.max_yaw_rate});
++    controls.push_back({0,-cfg.max_yaw_rate,angle/cfg.max_yaw_rate});
++    if (i==0) controls.push_back({cfg.forward_speed,0,forward_time});
++    controls.push_back({cfg.forward_speed,angle/forward_time,forward_time});
++    controls.push_back({cfg.forward_speed,-angle/forward_time,forward_time});
++    if (i==0) controls.push_back({-cfg.reverse_speed,0,reverse_time});
++    controls.push_back({-cfg.reverse_speed,angle/reverse_time,reverse_time});
++    controls.push_back({-cfg.reverse_speed,-angle/reverse_time,reverse_time});
++  }
+   struct Key { int x,y,h; bool operator==(const Key& b) const {return x==b.x&&y==b.y&&h==b.h;} };
+   struct Hash { size_t operator()(Key k) const {
+     uint64_t z=(uint64_t(uint32_t(k.x))*0x9e3779b185ebca87ULL) ^
+@@ -121,17 +143,6 @@ XYThetaPlan planXYTheta(Pose2 start,Point goal,const XYThetaConfig& cfg,Valid va
+         out.poses.insert(out.poses.end(),states[chain[i]].edge.begin(),states[chain[i]].edge.end());
+       out.seconds=current.g;out.reached=true;return out;
+     }
+-    struct Control {double v,omega,duration;};
+-    const double forward_time=cfg.drive_step/cfg.forward_speed;
+-    const double reverse_time=cfg.drive_step/cfg.reverse_speed;
+-    const Control controls[]={{0,cfg.max_yaw_rate,yaw_step/cfg.max_yaw_rate},
+-      {0,-cfg.max_yaw_rate,yaw_step/cfg.max_yaw_rate},
+-      {cfg.forward_speed,0,forward_time},
+-      {cfg.forward_speed,yaw_step/forward_time,forward_time},
+-      {cfg.forward_speed,-yaw_step/forward_time,forward_time},
+-      {-cfg.reverse_speed,0,reverse_time},
+-      {-cfg.reverse_speed,yaw_step/reverse_time,reverse_time},
+-      {-cfg.reverse_speed,-yaw_step/reverse_time,reverse_time}};
+     for (const auto& control:controls) {
+       if (std::abs(control.omega)>cfg.max_yaw_rate+1e-9) continue;
+       const int n=std::max(2,static_cast<int>(std::ceil(std::max(
+diff --git a/src/tare_planner/src/ht_cost/xytheta_follower.cpp b/src/tare_planner/src/ht_cost/xytheta_follower.cpp
+index a2029a7..10ca029 100644
+--- a/src/tare_planner/src/ht_cost/xytheta_follower.cpp
++++ b/src/tare_planner/src/ht_cost/xytheta_follower.cpp
+@@ -35,6 +35,8 @@ class XYThetaFollower : public rclcpp::Node {
+     max_yaw_rate_=declare_parameter<double>("max_yaw_rate",0.8);
+     max_accel_=declare_parameter<double>("max_accel",0.5);
+     max_yaw_accel_=declare_parameter<double>("max_yaw_accel",1.2);
++    rotation_tolerance_=declare_parameter<double>("rotation_tolerance",0.04);
++    rotation_stop_rate_=declare_parameter<double>("rotation_stop_rate",0.06);
+     path_timeout_=declare_parameter<double>("path_timeout",3.0);
+     odom_timeout_=declare_parameter<double>("odom_timeout",0.5);
+     // TARE publishes this permission in its 1 Hz planning callback. A 0.5 s
+@@ -42,8 +44,11 @@ class XYThetaFollower : public rclcpp::Node {
+     permission_timeout_=declare_parameter<double>("permission_timeout",1.5);
+     scan_timeout_=declare_parameter<double>("mission_sensor_timeout",3.0);
+     for (double v:{max_speed_,max_reverse_,max_yaw_rate_,max_accel_,max_yaw_accel_,
+-                   path_timeout_,odom_timeout_,permission_timeout_,scan_timeout_})
++                   path_timeout_,odom_timeout_,permission_timeout_,scan_timeout_,
++                   rotation_tolerance_,rotation_stop_rate_})
+       if (!std::isfinite(v) || v<=0) throw std::invalid_argument("Invalid follower limit or timeout");
++    if (rotation_tolerance_>=ht_cost_ns::kPi/32)
++      throw std::invalid_argument("Rotation tolerance must be smaller than half an11.25degree turn");
+     path_sub_=create_subscription<nav_msgs::msg::Path>("/ht_xytheta_path",rclcpp::QoS(1).reliable(),
+       [this](nav_msgs::msg::Path::ConstSharedPtr msg) {
+         std::vector<Pose2> incoming;
+@@ -72,6 +77,7 @@ class XYThetaFollower : public rclcpp::Node {
+             if (score<best) {best=score;index_=std::max<size_t>(1,i);}
+           }
+         }
++        rotation_goal_index_=0;
+         path_received_=now().seconds();
+         path_stamp_=rclcpp::Time(msg->header.stamp).seconds();
+         path_header_=msg->header;
+@@ -79,7 +85,9 @@ class XYThetaFollower : public rclcpp::Node {
+     odom_sub_=create_subscription<nav_msgs::msg::Odometry>("/state_estimation",5,
+       [this](nav_msgs::msg::Odometry::ConstSharedPtr msg) {
+         robot_=poseOf(msg->pose.pose);
+-        if (!std::isfinite(robot_.x) || !std::isfinite(robot_.y) || !std::isfinite(robot_.yaw)) {
++        measured_yaw_rate_=msg->twist.twist.angular.z;
++        if (!std::isfinite(robot_.x) || !std::isfinite(robot_.y) || !std::isfinite(robot_.yaw) ||
++            !std::isfinite(measured_yaw_rate_)) {
+           odom_received_=-1;return;
+         }
+         odom_received_=now().seconds();
+@@ -140,11 +148,20 @@ class XYThetaFollower : public rclcpp::Node {
+       if (!ht_->permits(ht_->poseSupport(robot_.x,robot_.y,robot_.yaw))) {hold("HT_CURRENT_POSE_BLOCKED");return;}
+     } else if (!fresh(permission_received_,permission_timeout_)) {hold("PERMISSION_STALE");return;}
+     while (index_<path_.size()) {
++      const bool rotating=gear(path_[index_-1],path_[index_])==0;
++      // Intermediate angular samples are for swept validation. Track a whole
++      // monotonic spin, so the position tolerance cannot consume its last
++      // heading before the car has aligned and stopped rotating.
++      if (rotating) {
++        if (!rotation_goal_index_) rotation_goal_index_=rotationEnd(index_);
++        index_=rotation_goal_index_;
++      }
+       const auto& p=path_[index_];
+       const double distance=std::hypot(p.x-robot_.x,p.y-robot_.y);
+       const double yaw_error=std::abs(wrapYaw(p.yaw-robot_.yaw));
+-      if (distance>0.12 || (gear(path_[index_-1],p)==0 && yaw_error>0.14)) break;
+-      ++index_;
++      if (distance>0.12 || (rotating && (yaw_error>rotation_tolerance_ ||
++          std::abs(angular_)>rotation_stop_rate_ || std::abs(measured_yaw_rate_)>rotation_stop_rate_))) break;
++      ++index_;rotation_goal_index_=0;
+     }
+     if (index_>=path_.size()) {
+       hold("GOAL_REACHED");return;
+@@ -178,7 +195,8 @@ class XYThetaFollower : public rclcpp::Node {
+     const auto& target=path_[target_index];
+     double wanted_v=0,wanted_w=0;
+     if (direction==0) {
+-      wanted_w=clamp(2.5*wrapYaw(target.yaw-robot_.yaw),max_yaw_rate_);
++      const double error=wrapYaw(target.yaw-robot_.yaw);
++      wanted_w=std::abs(error)<=rotation_tolerance_ ? 0:clamp(2.5*error,max_yaw_rate_);
+     } else {
+       const double bearing=std::atan2(target.y-robot_.y,target.x-robot_.x);
+       const double travel_yaw=robot_.yaw+(direction<0?ht_cost_ns::kPi:0);
+@@ -213,6 +231,18 @@ class XYThetaFollower : public rclcpp::Node {
+     status(std::abs(linear_)>.01 ? "DRIVING" : std::abs(angular_)>.05 ? "TURNING" : "ALIGNING");
+     cmd_pub_->publish(cmd);
+   }
++  size_t rotationEnd(size_t index) const {
++    double angle=wrapYaw(path_[index].yaw-path_[index-1].yaw);
++    if (std::abs(angle)<1e-9) return index;
++    const double sign=std::copysign(1.0,angle);
++    double total=std::abs(angle);
++    while (index+1<path_.size() && gear(path_[index],path_[index+1])==0) {
++      const double next=wrapYaw(path_[index+1].yaw-path_[index].yaw);
++      if (next*sign<0 || total+std::abs(next)>ht_cost_ns::kPi/2+1e-9) break;
++      total+=std::abs(next);++index;
++    }
++    return index;
++  }
+   void rejectEdge(Pose2 a,Pose2 b) {
+     // Header identifies the rejected plan, not the observation time. Delayed
+     // feedback must never invalidate a newer plan. Emit once per publication.
+@@ -229,10 +259,12 @@ class XYThetaFollower : public rclcpp::Node {
+   }
+   std::vector<Pose2> path_;
+   size_t index_=1;
++  size_t rotation_goal_index_=0;
+   Pose2 robot_{};
+   double path_received_=-1,odom_received_=-1,permission_received_=-1;
+   double path_stamp_=-1,odom_stamp_=-1,scan_received_=-1,scan_stamp_=-1,scan_timeout_;
+   double max_speed_,max_reverse_,max_yaw_rate_,max_accel_,max_yaw_accel_;
++  double rotation_tolerance_,rotation_stop_rate_,measured_yaw_rate_=0;
+   double path_timeout_,odom_timeout_,permission_timeout_;
+   double linear_=0,angular_=0;
+   double last_rejected_stamp_=-1;
+diff --git a/src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp b/src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp
+index 965395e..219d822 100644
+--- a/src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp
++++ b/src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp
+@@ -51,6 +51,14 @@ LocalCoveragePlanner::LocalCoveragePlanner(rclcpp::Node::SharedPtr nh)
+     });
+   xytheta_config_.cell=nh->declare_parameter<double>("xytheta_cell",0.3);
+   xytheta_config_.headings=nh->declare_parameter<int>("xytheta_headings",32);
++  const auto turn_degrees=nh->declare_parameter<std::vector<double>>(
++    "xytheta_turn_angles_deg",{11.25,22.5});
++  if (turn_degrees.empty()) throw std::invalid_argument("Empty XYtheta motion-angle set");
++  for (double angle:turn_degrees) {
++    if (!std::isfinite(angle) || angle<=0 || angle>90)
++      throw std::invalid_argument("Invalid XYtheta motion angle");
++    xytheta_config_.turn_angles.push_back(angle*ht_cost_ns::kPi/180.0);
++  }
+   ht_heading_margin_=nh->declare_parameter<double>("xytheta_heading_margin",0.0);
+   if (!std::isfinite(ht_heading_margin_) || ht_heading_margin_<0 || ht_heading_margin_>=ht_cost_ns::kPi/8 ||
+       xytheta_config_.headings<8 || xytheta_config_.headings>64 || xytheta_config_.headings%8)
+@@ -78,6 +86,8 @@ LocalCoveragePlanner::LocalCoveragePlanner(rclcpp::Node::SharedPtr nh)
+   RCLCPP_INFO(node_->get_logger(),"XYtheta configuration: headings=%d cell=%.3f step=%.3f heading_reserve_rad=%.3f search_s=%.3f cycle_search_s=%.3f",
+     xytheta_config_.headings,xytheta_config_.cell,xytheta_config_.drive_step,ht_heading_margin_,
+     xytheta_config_.max_search_seconds,ht_cycle_search_seconds_);
++  for (double angle:turn_degrees)
++    RCLCPP_INFO(node_->get_logger(),"XYtheta motion angle=%.3f deg (independent of heading bins)",angle);
+ }
+ 
+ bool LocalCoveragePlanner::SetHTGuide(const Eigen::Vector3d& guide,bool global,double now) {
+diff --git a/src/tare_planner/tests/ht_core_test.cpp b/src/tare_planner/tests/ht_core_test.cpp
+index 9430a97..9520f2c 100644
+--- a/src/tare_planner/tests/ht_core_test.cpp
++++ b/src/tare_planner/tests/ht_core_test.cpp
+@@ -16,6 +16,26 @@ void check(bool condition) {
+ }
+ void near(double a,double b) { check(std::abs(a-b)<1e-5); }
+ int main() {
++  // A narrow circular lane needs the old22.5degree arc. Refining the key
++  // must not remove that control in favor of only wider11.25degree arcs.
++  XYThetaConfig mixed;mixed.headings=32;mixed.goal_radius=.02;
++  mixed.max_search_seconds=.1;mixed.turn_angles={kPi/16};
++  const double radius=mixed.drive_step/(kPi/8);
++  const Point arc_goal{radius*std::sin(kPi/8),radius*(1-std::cos(kPi/8)),0};
++  auto narrow_arc=[&](Pose2 a,Pose2 b,double v) {
++    if (std::hypot(b.x,b.y)<1e-9 && std::abs(b.yaw)<1e-9) return true;
++    if (v<=0 || b.yaw<0 || b.yaw>kPi/8+1e-9) return false;
++    (void)a;
++    return std::abs(std::hypot(b.x,b.y-radius)-radius)<.001;
++  };
++  check(!planXYTheta({},arc_goal,mixed,narrow_arc).reached);
++  mixed.turn_angles.push_back(kPi/8);
++  const auto retained_arc=planXYTheta({},arc_goal,mixed,narrow_arc);
++  check(retained_arc.reached);near(retained_arc.seconds,.8);
++  mixed.headings=64;
++  check(planXYTheta({},arc_goal,mixed,narrow_arc).reached);
++  mixed.turn_angles={std::numeric_limits<double>::quiet_NaN()};
++  check(!planXYTheta({},arc_goal,mixed,narrow_arc).reached);
+   // Captured failure: about0.0003rad of heading drift crossed22.5degrees
+   // into a forbidden HT channel. Keep successor headings clear of that edge,
+   // while a nominally valid measured root can still turn inward.
+@@ -40,6 +60,8 @@ int main() {
+   heading_config.headings=32;
+   auto heading_route=planXYTheta(centered,{3,.6,0},heading_config,centered_valid);
+   check(heading_route.reached);
++  heading_config.turn_angles={kPi/16,kPi/8};
++  check(planXYTheta(centered,{3,.6,0},heading_config,centered_valid).reached);
+   auto inward_valid=[&](Pose2 a,Pose2 b,double v){return corridor(near_boundary,a,b,v);};
+   check(planXYTheta(near_boundary,{3,.6,0},heading_config,inward_valid).reached);
+   const Pose2 already_blocked{0,0,.3928570151329041};
+diff --git a/src/tare_planner/tests/ht_ros_test.cpp b/src/tare_planner/tests/ht_ros_test.cpp
+index 8583358..b2ae6e2 100644
+--- a/src/tare_planner/tests/ht_ros_test.cpp
++++ b/src/tare_planner/tests/ht_ros_test.cpp
+@@ -230,6 +230,10 @@ TEST_F(HtRosTest, CapturedSafeRootNeedsFinerHeadingSearchToEscape) {
+   const auto fine=ht_cost_ns::planXYTheta(start,goal,config,valid);
+   ASSERT_TRUE(fine.reached);ASSERT_GT(fine.poses.size(),1u);
+   for(size_t i=1;i<fine.poses.size();++i) EXPECT_TRUE(valid(fine.poses[i-1],fine.poses[i],0));
++  config.turn_angles={ht_cost_ns::kPi/16,ht_cost_ns::kPi/8};
++  const auto mixed=ht_cost_ns::planXYTheta(start,goal,config,valid);
++  ASSERT_TRUE(mixed.reached);
++  for(size_t i=1;i<mixed.poses.size();++i) EXPECT_TRUE(valid(mixed.poses[i-1],mixed.poses[i],0));
+ }
+ 
+ TEST_F(HtRosTest, ReversibleMotionRejectsAOneWayEntranceWithoutChangingRawScores) {
+diff --git a/src/tare_planner/tests/xytheta_follower_test.cpp b/src/tare_planner/tests/xytheta_follower_test.cpp
+index ab1f41f..b35f608 100644
+--- a/src/tare_planner/tests/xytheta_follower_test.cpp
++++ b/src/tare_planner/tests/xytheta_follower_test.cpp
+@@ -28,6 +28,7 @@ class FollowerTest : public ::testing::Test {
+   std::vector<geometry_msgs::msg::TwistStamped> received_commands;
+   std::vector<double> command_rejection_times;
+   double speed=0;std::string reason;bool blocked=false,unknown=false,send_odom=true;
++  double robot_yaw=0,robot_yaw_rate=0;
+   void SetUp() override {
+     if (!rclcpp::ok()) rclcpp::init(0,nullptr);
+     follower=std::make_shared<XYThetaFollower>(rclcpp::NodeOptions().parameter_overrides({
+@@ -64,7 +65,9 @@ class FollowerTest : public ::testing::Test {
+   void spin(std::chrono::milliseconds duration) {
+     const auto end=std::chrono::steady_clock::now()+duration;
+     while (std::chrono::steady_clock::now()<end) {
+-      nav_msgs::msg::Odometry o;o.header.stamp=source->now();o.pose.pose.orientation.w=1;
++      nav_msgs::msg::Odometry o;o.header.stamp=source->now();
++      o.pose.pose.orientation.w=std::cos(robot_yaw/2);
++      o.pose.pose.orientation.z=std::sin(robot_yaw/2);o.twist.twist.angular.z=robot_yaw_rate;
+       if (send_odom) odom->publish(o);
+       sensor_msgs::msg::PointCloud2 s;s.header.stamp=source->now();scan->publish(s);
+       grid_map::GridMap g;g.setGeometry(grid_map::Length(10,10),.2);g.setFrameId("map");
+@@ -85,6 +88,39 @@ class FollowerTest : public ::testing::Test {
+ TEST_F(FollowerTest, FreshMapMaintainsExecutionAcrossSlowPlannerPermission) {
+   spin(1700ms);EXPECT_GT(speed,.1);EXPECT_EQ(reason,"DRIVING");
+ }
++TEST_F(FollowerTest, FineSpinFinishesHeadingAndStopsBeforeTranslation) {
++  nav_msgs::msg::Path p;p.header.frame_id="map";p.header.stamp=source->now();
++  const double turn=ht_cost_ns::kPi/16;
++  auto append=[&](double x,double y,double yaw) {
++    geometry_msgs::msg::PoseStamped pose;pose.header=p.header;
++    pose.pose.position.x=x;pose.pose.position.y=y;
++    pose.pose.orientation.w=std::cos(yaw/2);pose.pose.orientation.z=std::sin(yaw/2);
++    p.poses.push_back(pose);
++  };
++  append(0,0,0);append(0,0,turn/2);append(0,0,turn);
++  for(int i=1;i<=20;++i) append(.1*i*std::cos(turn),.1*i*std::sin(turn),turn);
++  //5.5degrees still missing: the old8degree tolerance began driving here.
++  robot_yaw=.1;path->publish(p);allow(true);spin(900ms);
++  ASSERT_FALSE(received_commands.empty());
++  EXPECT_DOUBLE_EQ(speed,0);EXPECT_EQ(reason,"TURNING");
++  EXPECT_GT(received_commands.back().twist.angular.z,.1);
++  // Correct heading but measured yaw motion must still settle.
++  robot_yaw=turn;robot_yaw_rate=.2;spin(400ms);
++  EXPECT_DOUBLE_EQ(speed,0);
++  robot_yaw_rate=0;spin(400ms);
++  EXPECT_GT(speed,.1);EXPECT_EQ(reason,"DRIVING");
++}
++TEST_F(FollowerTest, GroupedSpinStillRejectsAnUnsafeIntermediateDirection) {
++  nav_msgs::msg::Path p;p.header.frame_id="map";p.header.stamp=source->now();
++  for(int i=0;i<=16;++i) {
++    geometry_msgs::msg::PoseStamped pose;pose.header=p.header;
++    const double yaw=i*ht_cost_ns::kPi/32;
++    pose.pose.orientation.w=std::cos(yaw/2);pose.pose.orientation.z=std::sin(yaw/2);
++    p.poses.push_back(pose);
++  }
++  oblique_blocked=true;path->publish(p);spin(250ms);
++  EXPECT_DOUBLE_EQ(speed,0);EXPECT_EQ(reason,"HT_PATH_BLOCKED");
++}
+ TEST_F(FollowerTest, RejectedTrackingArcPublishesZeroRatherThanTheCandidateCommand) {
+   // The nominal path has safe headings and travel direction. Its lateral
+   // offset makes the controller turn; at sufficient yaw rate its commanded

@@ -4,6 +4,10 @@
 
 ## 当前版本先看这里
 
+**阶段22：混合转弯动作与细角度旋转跟踪，室内完整600秒仍阻塞。** 测试代码`12d85d8`，实际17.82m、778.000m³；相比上一轮32航向单转角的6.64m/432.875m³增加，但低于此前16航向那轮40.34m/1000.125m³，三轮均未完成探索。单次不同轨迹不作普遍优劣或单项因果结论。
+
+[修改内容](docs/fixes/2026-10-18_mixed_turns.md) · [600秒数据、视频与停滞复核](docs/results/ht_mixed_turns_10min_2026-10-18/REPORT.md) · [三轮对比图](docs/results/ht_mixed_turns_10min_2026-10-18/comparison/comparison.png)。保留32档搜索航向，同时提供11.25°/22.5°动作；旋转按整段目标跟踪并确认角速度下降。HT八通道、阈值和足迹未变；模型语义与足迹接口仍未解决。每轮行为修改至少600秒，规范写入AGENTS.md和[实验约定](docs/experiments/ht_iteration_protocol.md)。
+
 **阶段21：修正HT晚拦截仍发非零速度；细化为32航向以解决真实冻结地图中的漏路，闭环仍需逐例核查。**
 
 [通俗修复说明](docs/fixes/2026-10-18_late_hold_zero_twist.md) · [原因核查、反例、原始数据和回归](docs/results/ht_completion_cause_audit_2026-10-18/REPORT.md)。
