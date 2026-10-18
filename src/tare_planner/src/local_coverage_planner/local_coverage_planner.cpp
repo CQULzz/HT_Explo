@@ -51,6 +51,14 @@ LocalCoveragePlanner::LocalCoveragePlanner(rclcpp::Node::SharedPtr nh)
     });
   xytheta_config_.cell=nh->declare_parameter<double>("xytheta_cell",0.3);
   xytheta_config_.headings=nh->declare_parameter<int>("xytheta_headings",32);
+  const auto turn_degrees=nh->declare_parameter<std::vector<double>>(
+    "xytheta_turn_angles_deg",{11.25,22.5});
+  if (turn_degrees.empty()) throw std::invalid_argument("Empty XYtheta motion-angle set");
+  for (double angle:turn_degrees) {
+    if (!std::isfinite(angle) || angle<=0 || angle>90)
+      throw std::invalid_argument("Invalid XYtheta motion angle");
+    xytheta_config_.turn_angles.push_back(angle*ht_cost_ns::kPi/180.0);
+  }
   ht_heading_margin_=nh->declare_parameter<double>("xytheta_heading_margin",0.0);
   if (!std::isfinite(ht_heading_margin_) || ht_heading_margin_<0 || ht_heading_margin_>=ht_cost_ns::kPi/8 ||
       xytheta_config_.headings<8 || xytheta_config_.headings>64 || xytheta_config_.headings%8)
@@ -78,6 +86,8 @@ LocalCoveragePlanner::LocalCoveragePlanner(rclcpp::Node::SharedPtr nh)
   RCLCPP_INFO(node_->get_logger(),"XYtheta configuration: headings=%d cell=%.3f step=%.3f heading_reserve_rad=%.3f search_s=%.3f cycle_search_s=%.3f",
     xytheta_config_.headings,xytheta_config_.cell,xytheta_config_.drive_step,ht_heading_margin_,
     xytheta_config_.max_search_seconds,ht_cycle_search_seconds_);
+  for (double angle:turn_degrees)
+    RCLCPP_INFO(node_->get_logger(),"XYtheta motion angle=%.3f deg (independent of heading bins)",angle);
 }
 
 bool LocalCoveragePlanner::SetHTGuide(const Eigen::Vector3d& guide,bool global,double now) {

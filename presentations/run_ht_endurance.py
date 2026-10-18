@@ -103,6 +103,7 @@ def main():
              ROOT/'src/tare_planner/include/ht_cost/ht_cost_map.h',
              ROOT/'src/tare_planner/include/local_coverage_planner/local_coverage_planner.h',
              ROOT/'src/tare_planner/include/ht_cost/heading_reserve.h',
+             ROOT/'src/tare_planner/include/ht_cost/xytheta_planner.h',
              ROOT/'src/tare_planner/src/grid_world/grid_world.cpp',
              ROOT/'src/tare_planner/include/grid_world/grid_world.h',
              ROOT/'src/tare_planner/include/ht_cost/exploration_progress.h',

@@ -230,6 +230,10 @@ TEST_F(HtRosTest, CapturedSafeRootNeedsFinerHeadingSearchToEscape) {
   const auto fine=ht_cost_ns::planXYTheta(start,goal,config,valid);
   ASSERT_TRUE(fine.reached);ASSERT_GT(fine.poses.size(),1u);
   for(size_t i=1;i<fine.poses.size();++i) EXPECT_TRUE(valid(fine.poses[i-1],fine.poses[i],0));
+  config.turn_angles={ht_cost_ns::kPi/16,ht_cost_ns::kPi/8};
+  const auto mixed=ht_cost_ns::planXYTheta(start,goal,config,valid);
+  ASSERT_TRUE(mixed.reached);
+  for(size_t i=1;i<mixed.poses.size();++i) EXPECT_TRUE(valid(mixed.poses[i-1],mixed.poses[i],0));
 }
 
 TEST_F(HtRosTest, ReversibleMotionRejectsAOneWayEntranceWithoutChangingRawScores) {

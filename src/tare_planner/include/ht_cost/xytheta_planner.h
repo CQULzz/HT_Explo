@@ -59,6 +59,9 @@ struct XYThetaPlan {
 struct XYThetaConfig {
   double cell=0.3;
   int headings=16;
+  // Explicit motion angles are independent of the search-key resolution.
+  // Empty retains the historical coupled controls for archived regressions.
+  std::vector<double> turn_angles;
   double drive_step=0.4;
   double forward_speed=0.5;
   double reverse_speed=0.25;
@@ -70,8 +73,9 @@ struct XYThetaConfig {
 };
 
 // Hybrid A*: the key is discrete (x,y,theta), while each stored state and
-// primitive trajectory remain continuous. The primitive controls are exactly
-// executable by a differential drive: constant (v,omega), including v=0 spin.
+// primitive trajectory remain continuous. Constant(v,omega), including v=0
+// spin, is differential-drive kinematics; acceleration transitions are not
+// represented in these states. The follower limits and checks actual commands.
 template<class Valid>
 XYThetaPlan planXYTheta(Pose2 start,Point goal,const XYThetaConfig& cfg,Valid valid) {
   XYThetaPlan out;
@@ -83,6 +87,24 @@ XYThetaPlan planXYTheta(Pose2 start,Point goal,const XYThetaConfig& cfg,Valid va
   start.yaw=wrapYaw(start.yaw);
   if (!valid(start,start,0)) return out;
   const double yaw_step=2*kPi/cfg.headings;
+  const auto turn_angles=cfg.turn_angles.empty() ? std::vector<double>{yaw_step}:cfg.turn_angles;
+  for (double angle:turn_angles)
+    if (!std::isfinite(angle) || angle<=0 || angle>kPi/2) return out;
+  struct Control {double v,omega,duration;};
+  const double forward_time=cfg.drive_step/cfg.forward_speed;
+  const double reverse_time=cfg.drive_step/cfg.reverse_speed;
+  std::vector<Control> controls;
+  for (size_t i=0;i<turn_angles.size();++i) {
+    const double angle=turn_angles[i];
+    controls.push_back({0,cfg.max_yaw_rate,angle/cfg.max_yaw_rate});
+    controls.push_back({0,-cfg.max_yaw_rate,angle/cfg.max_yaw_rate});
+    if (i==0) controls.push_back({cfg.forward_speed,0,forward_time});
+    controls.push_back({cfg.forward_speed,angle/forward_time,forward_time});
+    controls.push_back({cfg.forward_speed,-angle/forward_time,forward_time});
+    if (i==0) controls.push_back({-cfg.reverse_speed,0,reverse_time});
+    controls.push_back({-cfg.reverse_speed,angle/reverse_time,reverse_time});
+    controls.push_back({-cfg.reverse_speed,-angle/reverse_time,reverse_time});
+  }
   struct Key { int x,y,h; bool operator==(const Key& b) const {return x==b.x&&y==b.y&&h==b.h;} };
   struct Hash { size_t operator()(Key k) const {
     uint64_t z=(uint64_t(uint32_t(k.x))*0x9e3779b185ebca87ULL) ^
@@ -121,17 +143,6 @@ XYThetaPlan planXYTheta(Pose2 start,Point goal,const XYThetaConfig& cfg,Valid va
         out.poses.insert(out.poses.end(),states[chain[i]].edge.begin(),states[chain[i]].edge.end());
       out.seconds=current.g;out.reached=true;return out;
     }
-    struct Control {double v,omega,duration;};
-    const double forward_time=cfg.drive_step/cfg.forward_speed;
-    const double reverse_time=cfg.drive_step/cfg.reverse_speed;
-    const Control controls[]={{0,cfg.max_yaw_rate,yaw_step/cfg.max_yaw_rate},
-      {0,-cfg.max_yaw_rate,yaw_step/cfg.max_yaw_rate},
-      {cfg.forward_speed,0,forward_time},
-      {cfg.forward_speed,yaw_step/forward_time,forward_time},
-      {cfg.forward_speed,-yaw_step/forward_time,forward_time},
-      {-cfg.reverse_speed,0,reverse_time},
-      {-cfg.reverse_speed,yaw_step/reverse_time,reverse_time},
-      {-cfg.reverse_speed,-yaw_step/reverse_time,reverse_time}};
     for (const auto& control:controls) {
       if (std::abs(control.omega)>cfg.max_yaw_rate+1e-9) continue;
       const int n=std::max(2,static_cast<int>(std::ceil(std::max(

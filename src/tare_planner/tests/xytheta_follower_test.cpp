@@ -28,6 +28,7 @@ class FollowerTest : public ::testing::Test {
   std::vector<geometry_msgs::msg::TwistStamped> received_commands;
   std::vector<double> command_rejection_times;
   double speed=0;std::string reason;bool blocked=false,unknown=false,send_odom=true;
+  double robot_yaw=0,robot_yaw_rate=0;
   void SetUp() override {
     if (!rclcpp::ok()) rclcpp::init(0,nullptr);
     follower=std::make_shared<XYThetaFollower>(rclcpp::NodeOptions().parameter_overrides({
@@ -64,7 +65,9 @@ class FollowerTest : public ::testing::Test {
   void spin(std::chrono::milliseconds duration) {
     const auto end=std::chrono::steady_clock::now()+duration;
     while (std::chrono::steady_clock::now()<end) {
-      nav_msgs::msg::Odometry o;o.header.stamp=source->now();o.pose.pose.orientation.w=1;
+      nav_msgs::msg::Odometry o;o.header.stamp=source->now();
+      o.pose.pose.orientation.w=std::cos(robot_yaw/2);
+      o.pose.pose.orientation.z=std::sin(robot_yaw/2);o.twist.twist.angular.z=robot_yaw_rate;
       if (send_odom) odom->publish(o);
       sensor_msgs::msg::PointCloud2 s;s.header.stamp=source->now();scan->publish(s);
       grid_map::GridMap g;g.setGeometry(grid_map::Length(10,10),.2);g.setFrameId("map");
@@ -84,6 +87,39 @@ class FollowerTest : public ::testing::Test {
 };
 TEST_F(FollowerTest, FreshMapMaintainsExecutionAcrossSlowPlannerPermission) {
   spin(1700ms);EXPECT_GT(speed,.1);EXPECT_EQ(reason,"DRIVING");
+}
+TEST_F(FollowerTest, FineSpinFinishesHeadingAndStopsBeforeTranslation) {
+  nav_msgs::msg::Path p;p.header.frame_id="map";p.header.stamp=source->now();
+  const double turn=ht_cost_ns::kPi/16;
+  auto append=[&](double x,double y,double yaw) {
+    geometry_msgs::msg::PoseStamped pose;pose.header=p.header;
+    pose.pose.position.x=x;pose.pose.position.y=y;
+    pose.pose.orientation.w=std::cos(yaw/2);pose.pose.orientation.z=std::sin(yaw/2);
+    p.poses.push_back(pose);
+  };
+  append(0,0,0);append(0,0,turn/2);append(0,0,turn);
+  for(int i=1;i<=20;++i) append(.1*i*std::cos(turn),.1*i*std::sin(turn),turn);
+  //5.5degrees still missing: the old8degree tolerance began driving here.
+  robot_yaw=.1;path->publish(p);allow(true);spin(900ms);
+  ASSERT_FALSE(received_commands.empty());
+  EXPECT_DOUBLE_EQ(speed,0);EXPECT_EQ(reason,"TURNING");
+  EXPECT_GT(received_commands.back().twist.angular.z,.1);
+  // Correct heading but measured yaw motion must still settle.
+  robot_yaw=turn;robot_yaw_rate=.2;spin(400ms);
+  EXPECT_DOUBLE_EQ(speed,0);
+  robot_yaw_rate=0;spin(400ms);
+  EXPECT_GT(speed,.1);EXPECT_EQ(reason,"DRIVING");
+}
+TEST_F(FollowerTest, GroupedSpinStillRejectsAnUnsafeIntermediateDirection) {
+  nav_msgs::msg::Path p;p.header.frame_id="map";p.header.stamp=source->now();
+  for(int i=0;i<=16;++i) {
+    geometry_msgs::msg::PoseStamped pose;pose.header=p.header;
+    const double yaw=i*ht_cost_ns::kPi/32;
+    pose.pose.orientation.w=std::cos(yaw/2);pose.pose.orientation.z=std::sin(yaw/2);
+    p.poses.push_back(pose);
+  }
+  oblique_blocked=true;path->publish(p);spin(250ms);
+  EXPECT_DOUBLE_EQ(speed,0);EXPECT_EQ(reason,"HT_PATH_BLOCKED");
 }
 TEST_F(FollowerTest, RejectedTrackingArcPublishesZeroRatherThanTheCandidateCommand) {
   // The nominal path has safe headings and travel direction. Its lateral

@@ -16,6 +16,26 @@ void check(bool condition) {
 }
 void near(double a,double b) { check(std::abs(a-b)<1e-5); }
 int main() {
+  // A narrow circular lane needs the old22.5degree arc. Refining the key
+  // must not remove that control in favor of only wider11.25degree arcs.
+  XYThetaConfig mixed;mixed.headings=32;mixed.goal_radius=.02;
+  mixed.max_search_seconds=.1;mixed.turn_angles={kPi/16};
+  const double radius=mixed.drive_step/(kPi/8);
+  const Point arc_goal{radius*std::sin(kPi/8),radius*(1-std::cos(kPi/8)),0};
+  auto narrow_arc=[&](Pose2 a,Pose2 b,double v) {
+    if (std::hypot(b.x,b.y)<1e-9 && std::abs(b.yaw)<1e-9) return true;
+    if (v<=0 || b.yaw<0 || b.yaw>kPi/8+1e-9) return false;
+    (void)a;
+    return std::abs(std::hypot(b.x,b.y-radius)-radius)<.001;
+  };
+  check(!planXYTheta({},arc_goal,mixed,narrow_arc).reached);
+  mixed.turn_angles.push_back(kPi/8);
+  const auto retained_arc=planXYTheta({},arc_goal,mixed,narrow_arc);
+  check(retained_arc.reached);near(retained_arc.seconds,.8);
+  mixed.headings=64;
+  check(planXYTheta({},arc_goal,mixed,narrow_arc).reached);
+  mixed.turn_angles={std::numeric_limits<double>::quiet_NaN()};
+  check(!planXYTheta({},arc_goal,mixed,narrow_arc).reached);
   // Captured failure: about0.0003rad of heading drift crossed22.5degrees
   // into a forbidden HT channel. Keep successor headings clear of that edge,
   // while a nominally valid measured root can still turn inward.
@@ -40,6 +60,8 @@ int main() {
   heading_config.headings=32;
   auto heading_route=planXYTheta(centered,{3,.6,0},heading_config,centered_valid);
   check(heading_route.reached);
+  heading_config.turn_angles={kPi/16,kPi/8};
+  check(planXYTheta(centered,{3,.6,0},heading_config,centered_valid).reached);
   auto inward_valid=[&](Pose2 a,Pose2 b,double v){return corridor(near_boundary,a,b,v);};
   check(planXYTheta(near_boundary,{3,.6,0},heading_config,inward_valid).reached);
   const Pose2 already_blocked{0,0,.3928570151329041};

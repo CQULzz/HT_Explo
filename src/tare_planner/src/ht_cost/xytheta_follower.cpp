@@ -35,6 +35,8 @@ class XYThetaFollower : public rclcpp::Node {
     max_yaw_rate_=declare_parameter<double>("max_yaw_rate",0.8);
     max_accel_=declare_parameter<double>("max_accel",0.5);
     max_yaw_accel_=declare_parameter<double>("max_yaw_accel",1.2);
+    rotation_tolerance_=declare_parameter<double>("rotation_tolerance",0.04);
+    rotation_stop_rate_=declare_parameter<double>("rotation_stop_rate",0.06);
     path_timeout_=declare_parameter<double>("path_timeout",3.0);
     odom_timeout_=declare_parameter<double>("odom_timeout",0.5);
     // TARE publishes this permission in its 1 Hz planning callback. A 0.5 s
@@ -42,8 +44,11 @@ class XYThetaFollower : public rclcpp::Node {
     permission_timeout_=declare_parameter<double>("permission_timeout",1.5);
     scan_timeout_=declare_parameter<double>("mission_sensor_timeout",3.0);
     for (double v:{max_speed_,max_reverse_,max_yaw_rate_,max_accel_,max_yaw_accel_,
-                   path_timeout_,odom_timeout_,permission_timeout_,scan_timeout_})
+                   path_timeout_,odom_timeout_,permission_timeout_,scan_timeout_,
+                   rotation_tolerance_,rotation_stop_rate_})
       if (!std::isfinite(v) || v<=0) throw std::invalid_argument("Invalid follower limit or timeout");
+    if (rotation_tolerance_>=ht_cost_ns::kPi/32)
+      throw std::invalid_argument("Rotation tolerance must be smaller than half an11.25degree turn");
     path_sub_=create_subscription<nav_msgs::msg::Path>("/ht_xytheta_path",rclcpp::QoS(1).reliable(),
       [this](nav_msgs::msg::Path::ConstSharedPtr msg) {
         std::vector<Pose2> incoming;
@@ -72,6 +77,7 @@ class XYThetaFollower : public rclcpp::Node {
             if (score<best) {best=score;index_=std::max<size_t>(1,i);}
           }
         }
+        rotation_goal_index_=0;
         path_received_=now().seconds();
         path_stamp_=rclcpp::Time(msg->header.stamp).seconds();
         path_header_=msg->header;
@@ -79,7 +85,9 @@ class XYThetaFollower : public rclcpp::Node {
     odom_sub_=create_subscription<nav_msgs::msg::Odometry>("/state_estimation",5,
       [this](nav_msgs::msg::Odometry::ConstSharedPtr msg) {
         robot_=poseOf(msg->pose.pose);
-        if (!std::isfinite(robot_.x) || !std::isfinite(robot_.y) || !std::isfinite(robot_.yaw)) {
+        measured_yaw_rate_=msg->twist.twist.angular.z;
+        if (!std::isfinite(robot_.x) || !std::isfinite(robot_.y) || !std::isfinite(robot_.yaw) ||
+            !std::isfinite(measured_yaw_rate_)) {
           odom_received_=-1;return;
         }
         odom_received_=now().seconds();
@@ -140,11 +148,20 @@ class XYThetaFollower : public rclcpp::Node {
       if (!ht_->permits(ht_->poseSupport(robot_.x,robot_.y,robot_.yaw))) {hold("HT_CURRENT_POSE_BLOCKED");return;}
     } else if (!fresh(permission_received_,permission_timeout_)) {hold("PERMISSION_STALE");return;}
     while (index_<path_.size()) {
+      const bool rotating=gear(path_[index_-1],path_[index_])==0;
+      // Intermediate angular samples are for swept validation. Track a whole
+      // monotonic spin, so the position tolerance cannot consume its last
+      // heading before the car has aligned and stopped rotating.
+      if (rotating) {
+        if (!rotation_goal_index_) rotation_goal_index_=rotationEnd(index_);
+        index_=rotation_goal_index_;
+      }
       const auto& p=path_[index_];
       const double distance=std::hypot(p.x-robot_.x,p.y-robot_.y);
       const double yaw_error=std::abs(wrapYaw(p.yaw-robot_.yaw));
-      if (distance>0.12 || (gear(path_[index_-1],p)==0 && yaw_error>0.14)) break;
-      ++index_;
+      if (distance>0.12 || (rotating && (yaw_error>rotation_tolerance_ ||
+          std::abs(angular_)>rotation_stop_rate_ || std::abs(measured_yaw_rate_)>rotation_stop_rate_))) break;
+      ++index_;rotation_goal_index_=0;
     }
     if (index_>=path_.size()) {
       hold("GOAL_REACHED");return;
@@ -178,7 +195,8 @@ class XYThetaFollower : public rclcpp::Node {
     const auto& target=path_[target_index];
     double wanted_v=0,wanted_w=0;
     if (direction==0) {
-      wanted_w=clamp(2.5*wrapYaw(target.yaw-robot_.yaw),max_yaw_rate_);
+      const double error=wrapYaw(target.yaw-robot_.yaw);
+      wanted_w=std::abs(error)<=rotation_tolerance_ ? 0:clamp(2.5*error,max_yaw_rate_);
     } else {
       const double bearing=std::atan2(target.y-robot_.y,target.x-robot_.x);
       const double travel_yaw=robot_.yaw+(direction<0?ht_cost_ns::kPi:0);
@@ -213,6 +231,18 @@ class XYThetaFollower : public rclcpp::Node {
     status(std::abs(linear_)>.01 ? "DRIVING" : std::abs(angular_)>.05 ? "TURNING" : "ALIGNING");
     cmd_pub_->publish(cmd);
   }
+  size_t rotationEnd(size_t index) const {
+    double angle=wrapYaw(path_[index].yaw-path_[index-1].yaw);
+    if (std::abs(angle)<1e-9) return index;
+    const double sign=std::copysign(1.0,angle);
+    double total=std::abs(angle);
+    while (index+1<path_.size() && gear(path_[index],path_[index+1])==0) {
+      const double next=wrapYaw(path_[index+1].yaw-path_[index].yaw);
+      if (next*sign<0 || total+std::abs(next)>ht_cost_ns::kPi/2+1e-9) break;
+      total+=std::abs(next);++index;
+    }
+    return index;
+  }
   void rejectEdge(Pose2 a,Pose2 b) {
     // Header identifies the rejected plan, not the observation time. Delayed
     // feedback must never invalidate a newer plan. Emit once per publication.
@@ -229,10 +259,12 @@ class XYThetaFollower : public rclcpp::Node {
   }
   std::vector<Pose2> path_;
   size_t index_=1;
+  size_t rotation_goal_index_=0;
   Pose2 robot_{};
   double path_received_=-1,odom_received_=-1,permission_received_=-1;
   double path_stamp_=-1,odom_stamp_=-1,scan_received_=-1,scan_stamp_=-1,scan_timeout_;
   double max_speed_,max_reverse_,max_yaw_rate_,max_accel_,max_yaw_accel_;
+  double rotation_tolerance_,rotation_stop_rate_,measured_yaw_rate_=0;
   double path_timeout_,odom_timeout_,permission_timeout_;
   double linear_=0,angular_=0;
   double last_rejected_stamp_=-1;
