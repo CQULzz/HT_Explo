@@ -29,11 +29,14 @@ class FollowerTest : public ::testing::Test {
   std::vector<double> command_rejection_times;
   double speed=0;std::string reason;bool blocked=false,unknown=false,send_odom=true;
   double robot_yaw=0,robot_yaw_rate=0;
+  bool physical_obstacle=false,physical_hole=false;
+  virtual std::string scoreSemantics() const {return "point";}
   void SetUp() override {
     if (!rclcpp::ok()) rclcpp::init(0,nullptr);
     follower=std::make_shared<XYThetaFollower>(rclcpp::NodeOptions().parameter_overrides({
       rclcpp::Parameter("ht_enabled",true),rclcpp::Parameter("ht_directions_calibrated",true),
       rclcpp::Parameter("ht_require_reversible_motion",true),
+      rclcpp::Parameter("ht_score_semantics",scoreSemantics()),
       rclcpp::Parameter("ht_startup_radius",0.0),rclcpp::Parameter("ht_map_timeout",1.0)}));
     follower->initialize();source=std::make_shared<rclcpp::Node>("follower_test_source");
     odom=source->create_publisher<nav_msgs::msg::Odometry>("/state_estimation",5);
@@ -73,6 +76,12 @@ class FollowerTest : public ::testing::Test {
       grid_map::GridMap g;g.setGeometry(grid_map::Length(10,10),.2);g.setFrameId("map");
       g.setTimestamp(source->now().nanoseconds());g.add("ht_valid",unknown ? 0.f:1.f);
       for (int k=0;k<8;++k) g.add("ht_dir_"+std::to_string(k),blocked ? 0.f:1.f);
+      if(scoreSemantics()=="configuration") {
+        g.add("ht_observation_valid",1.f);g.add("ht_obstacle",0.f);
+        grid_map::Index side;g.getIndex(grid_map::Position(0,.5),side);
+        if(physical_obstacle)g.at("ht_obstacle",side)=1;
+        if(physical_hole)g.at("ht_observation_valid",side)=0;
+      }
       if (reverse_blocked) g["ht_dir_4"].setConstant(.2f);
       if (side_blocked) g["ht_dir_2"].setConstant(.2f);
       if (oblique_blocked) g["ht_dir_1"].setConstant(.2f);
@@ -85,6 +94,18 @@ class FollowerTest : public ::testing::Test {
     executor.spin_some();
   }
 };
+class ConfigurationFollowerTest : public FollowerTest {
+ protected:
+  std::string scoreSemantics() const override {return "configuration";}
+};
+TEST_F(ConfigurationFollowerTest, SeparateObstacleAndUnknownRevokeRealCommands) {
+  spin(300ms);EXPECT_GT(speed,.1);
+  physical_obstacle=true;spin(200ms);EXPECT_DOUBLE_EQ(speed,0);
+  EXPECT_EQ(reason,"HT_CURRENT_POSE_BLOCKED");
+  physical_obstacle=false;sendPath();spin(250ms);EXPECT_GT(speed,0);
+  physical_hole=true;spin(200ms);EXPECT_DOUBLE_EQ(speed,0);
+  EXPECT_EQ(reason,"HT_CURRENT_POSE_BLOCKED");
+}
 TEST_F(FollowerTest, FreshMapMaintainsExecutionAcrossSlowPlannerPermission) {
   spin(1700ms);EXPECT_GT(speed,.1);EXPECT_EQ(reason,"DRIVING");
 }

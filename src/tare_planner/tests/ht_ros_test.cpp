@@ -17,6 +17,7 @@ class HtRosTest : public ::testing::Test {
   rclcpp::Node::SharedPtr node;
   std::unique_ptr<ht_cost_ns::HtCostMap> ht;
   rclcpp::Publisher<grid_map_msgs::msg::GridMap>::SharedPtr pub;
+  virtual std::string scoreSemantics() const {return "point";}
 
   void SetUp() override {
     if (!rclcpp::ok()) rclcpp::init(0, nullptr);
@@ -25,6 +26,7 @@ class HtRosTest : public ::testing::Test {
       rclcpp::Parameter("ht_enabled", true),
       rclcpp::Parameter("ht_directions_calibrated", true),
       rclcpp::Parameter("ht_topic", "/ht_test_map"),
+      rclcpp::Parameter("ht_score_semantics",scoreSemantics()),
       rclcpp::Parameter("ht_map_timeout", 2.0)});
     node = std::make_shared<rclcpp::Node>("ht_ros_test", options);
     ht = std::make_unique<ht_cost_ns::HtCostMap>(node);
@@ -45,6 +47,9 @@ class HtRosTest : public ::testing::Test {
     map.setGeometry(grid_map::Length(8, 6), 0.25);
     for (int k=0; k<8; ++k) map.add("ht_dir_"+std::to_string(k), 0.1f*(k+1));
     map.add("ht_valid", 1.0f);
+    if (scoreSemantics()=="configuration") {
+      map.add("ht_observation_valid",1.f);map.add("ht_obstacle",0.f);
+    }
     map.setTimestamp(node->now().nanoseconds());
     return map;
   }
@@ -76,6 +81,64 @@ class HtRosTest : public ::testing::Test {
     return result;
   }
 };
+
+class HtConfigurationRosTest : public HtRosTest {
+ protected:
+  std::string scoreSemantics() const override {return "configuration";}
+};
+
+TEST_F(HtConfigurationRosTest, NeighbouringVehicleScoresAreNotPointObstacles) {
+  auto map=grid();
+  for(int k=0;k<8;++k)map["ht_dir_"+std::to_string(k)].setConstant(.8f);
+  grid_map::Index side;ASSERT_TRUE(map.getIndex(grid_map::Position(0,.5),side));
+  map.at("ht_dir_0",side)=.2f;send(map);ASSERT_TRUE(ht->ready());
+  EXPECT_EQ(ht->support({-1,0,0},{1,0,0}),ht_cost_ns::Support::KNOWN);
+  EXPECT_EQ(ht->poseSupport(0,.5,0),ht_cost_ns::Support::BLOCKED);
+  // A measurement-space obstacle at the very same side cell blocks the body,
+  // even if that cell has no neural prediction at all.
+  map.at("ht_obstacle",side)=1;map.at("ht_valid",side)=0;
+  for(int k=0;k<8;++k)map.at("ht_dir_"+std::to_string(k),side)=NAN;
+  send(map);EXPECT_EQ(ht->poseSupport(0,0,0),ht_cost_ns::Support::BLOCKED);
+  EXPECT_EQ(ht->poseSupport(0,0,ht_cost_ns::kPi),ht_cost_ns::Support::BLOCKED);
+}
+
+TEST_F(HtConfigurationRosTest, MissingBodyObservationsAndUnscoredReferenceStillReject) {
+  auto map=grid();for(int k=0;k<8;++k)map["ht_dir_"+std::to_string(k)].setConstant(.8f);
+  grid_map::Index side;ASSERT_TRUE(map.getIndex(grid_map::Position(0,.5),side));
+  map.at("ht_observation_valid",side)=0;send(map);
+  EXPECT_EQ(ht->poseSupport(0,0,0),ht_cost_ns::Support::UNKNOWN);
+  map.at("ht_observation_valid",side)=1;map["ht_valid"].setZero();send(map);
+  EXPECT_EQ(ht->poseSupport(0,0,0),ht_cost_ns::Support::UNKNOWN);
+}
+
+TEST_F(HtConfigurationRosTest, MissingOrInvalidPhysicalContractCannotEnableDriving) {
+  auto map=grid();map.erase("ht_obstacle");send(map);EXPECT_FALSE(ht->ready());
+  map.add("ht_obstacle",0.f);send(map);EXPECT_TRUE(ht->ready());
+  map["ht_obstacle"](0,0)=NAN;send(map);EXPECT_FALSE(ht->ready());
+  map["ht_obstacle"].setZero();map.erase("ht_observation_valid");send(map);EXPECT_FALSE(ht->ready());
+}
+
+TEST_F(HtConfigurationRosTest, CapturedMixedTurnStopHasAnExitWithoutInflatingVehicleScores) {
+  const char* filename=std::getenv("HT_CONFIGURATION_FIXTURE");
+  if(!filename) GTEST_SKIP()<<"Set HT_CONFIGURATION_FIXTURE to the74s mixed-turn stop";
+  ht_cost_ns::Pose2 start;auto map=capturedGrid(filename,start);map.add("ht_obstacle",0.f);
+  // Old producer did not serialize the obstacle layer. Its explicit override
+  // set all eight probabilities exactly zero. This is a reconstruction for
+  // this archived fixture only, never a substitute for the new live layer.
+  for(grid_map::GridMapIterator it(map);!it.isPastEnd();++it) {
+    bool all_zero=true;
+    for(int k=0;k<8;++k)all_zero &= map.at("ht_dir_"+std::to_string(k),*it)==0.f;
+    map.at("ht_obstacle",*it)=all_zero?1.f:0.f;
+  }
+  map.setTimestamp(node->now().nanoseconds());send(map);ASSERT_TRUE(ht->ready());
+  ht_cost_ns::XYThetaConfig config;config.headings=32;config.turn_angles={ht_cost_ns::kPi/16,ht_cost_ns::kPi/8};
+  config.goal_radius=.35;config.max_search_seconds=.3;
+  auto valid=[&](ht_cost_ns::Pose2 a,ht_cost_ns::Pose2 b,double){return ht->permits(ht->motionSupport(a,b));};
+  ASSERT_TRUE(valid(start,start,0));
+  const auto plan=ht_cost_ns::planXYTheta(start,{start.x+2,start.y,0},config,valid);
+  ASSERT_TRUE(plan.reached);ASSERT_GT(plan.poses.size(),1u);
+  for(size_t i=1;i<plan.poses.size();++i)EXPECT_TRUE(valid(plan.poses[i-1],plan.poses[i],0));
+}
 
 TEST_F(HtRosTest, DirectionalCostsAndValidSupport) {
   send(grid());
@@ -374,9 +437,13 @@ TEST_F(HtRosTest, CalibrationRequiredAndParametersChecked) {
 TEST_F(HtRosTest, StartupPriorIsBoundedAndDoesNotOverwriteObservedRisk) {
   auto map=grid();map["ht_valid"].setZero();send(map);
   ht->start({0,0,0});
-  EXPECT_EQ(ht->support({}, {.3,0,0}),ht_cost_ns::Support::STARTUP_PRIOR);
-  EXPECT_FALSE(ht->knownSegment({}, {.3,0,0}));
-  EXPECT_NEAR(ht->cost({}, {.3,0,0}),.3,1e-5);
+  EXPECT_EQ(ht->support({}, {.1,0,0}),ht_cost_ns::Support::STARTUP_PRIOR);
+  EXPECT_FALSE(ht->knownSegment({}, {.1,0,0}));
+  EXPECT_NEAR(ht->cost({}, {.1,0,0}),.1,1e-5);
+  // With0.25m cells, the actual raster footprint at x=.3 touches the cell
+  // (1.125,.625), outside the1.2m prior. The former smaller res/2 scan missed
+  // that unknown cell despite the precomputed footprint declaring it unknown.
+  EXPECT_EQ(ht->support({}, {.3,0,0}),ht_cost_ns::Support::UNKNOWN);
   EXPECT_EQ(ht->support({}, {1,0,0}),ht_cost_ns::Support::UNKNOWN); // Whole footprint matters.
   EXPECT_FALSE(ht->permits(ht->support({}, {1,0,0})));
   map["ht_valid"].setOnes();send(map);
@@ -408,7 +475,8 @@ TEST_F(HtRosTest, StrictPolicyAllowsOnlyKnownOrBoundedStartup) {
   node=std::make_shared<rclcpp::Node>("ht_strict_test",options);
   ht=std::make_unique<ht_cost_ns::HtCostMap>(node);spin(150ms);
   auto map=grid();map["ht_valid"].setZero();send(map);ht->start({});
-  EXPECT_TRUE(ht->permits(ht->support({}, {.3,0,0})));
+  EXPECT_TRUE(ht->permits(ht->support({}, {.1,0,0})));
+  EXPECT_FALSE(ht->permits(ht->support({}, {.3,0,0})));
   EXPECT_FALSE(ht->permits(ht->support({}, {1,0,0})));
 }
 

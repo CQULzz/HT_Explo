@@ -206,17 +206,20 @@ class CupyToHt(Node):
         output_side = nx - 50
         result.info.length_x = output_side * resolution
         result.info.length_y = output_side * resolution
-        result.layers = [f"ht_dir_{k}" for k in range(8)] + ["ht_valid", "ht_observation_valid"]
+        # Keep measured obstacle geometry distinct from learned vehicle scores.
+        result.layers = [f"ht_dir_{k}" for k in range(8)] + ["ht_valid", "ht_observation_valid", "ht_obstacle"]
         result.basic_layers = ["ht_valid"]
         result.outer_start_index = 0
         result.inner_start_index = 0
-        for k in range(10):
+        for k in range(11):
             if k < 8:
                 layer = np.where(support, probabilities[k], np.nan).astype(np.float32)
             elif k == 8:
                 layer = support.astype(np.float32)
-            else:
+            elif k == 9:
                 layer = physical_support.astype(np.float32)
+            else:
+                layer = occupied.astype(np.float32)
             data = Float32MultiArray()
             data.layout = MultiArrayLayout(
                 dim=[

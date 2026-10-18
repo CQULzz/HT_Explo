@@ -104,6 +104,7 @@ def main():
              ROOT/'src/tare_planner/include/local_coverage_planner/local_coverage_planner.h',
              ROOT/'src/tare_planner/include/ht_cost/heading_reserve.h',
              ROOT/'src/tare_planner/include/ht_cost/xytheta_planner.h',
+             ROOT/'src/tare_planner/include/ht_cost/ht_cost_core.h',
              ROOT/'src/tare_planner/src/grid_world/grid_world.cpp',
              ROOT/'src/tare_planner/include/grid_world/grid_world.h',
              ROOT/'src/tare_planner/include/ht_cost/exploration_progress.h',
@@ -138,6 +139,7 @@ def main():
                     planned_duration_s=args.duration, scenario=args.scenario, domain=args.domain,
                     video_fps=args.video_fps,
                     speed_cap_mps=.5, preflight=preflight(),
+                    ht_score_semantics=json.loads((BRIDGE/'ht_trial.yaml').read_text())['/**']['ros__parameters'].get('ht_score_semantics','point'),
                     git_head=subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
                     evidence_policy=f'All control/status and odometry, full-rate published HT maps; original-stamped scans1Hz; exact-stamp map triplets every10s; camera{args.video_fps}fps. Raw CuPy and scans are not fully bagged.',
                     source_hashes={str(p): hashlib.sha256(p.read_bytes()).hexdigest() for p in paths})

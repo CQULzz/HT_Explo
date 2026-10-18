@@ -39,6 +39,8 @@ class Capture(Node):
         names=[f'ht_dir_{i}' for i in range(8)]+['ht_valid'] if kind=='ht' else ['elevation','variance']
         if kind=='ht' and 'ht_observation_valid' in m.layers:
             names.append('ht_observation_valid')
+        if kind=='ht' and 'ht_obstacle' in m.layers:
+            names.append('ht_obstacle')
         if kind == 'cupy':
             names += [name for name in ['observation_age'] if name in m.layers]
         elif kind == 'history':

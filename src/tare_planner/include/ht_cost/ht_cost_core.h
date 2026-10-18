@@ -27,6 +27,7 @@ struct Map {
   // Prepared once per received map for constant-time footprint queries.
   std::array<std::vector<unsigned char>, 8> blocked_footprint;
   std::vector<unsigned char> unknown_footprint;
+  std::vector<unsigned char> physical_valid;
 
   bool wellFormed() const {
     if (rows <= 0 || cols <= 0 || !std::isfinite(resolution) || resolution <= 0 ||
@@ -34,7 +35,7 @@ struct Map {
         !std::isfinite(yaw) || !std::isfinite(stamp) || !std::isfinite(heading_offset))
       return false;
     const auto size = static_cast<size_t>(rows) * cols;
-    if (valid.size() != size) return false;
+    if (valid.size() != size || (!physical_valid.empty() && physical_valid.size()!=size)) return false;
     auto order = channel_order;
     std::sort(order.begin(), order.end());
     for (int k = 0; k < 8; ++k)

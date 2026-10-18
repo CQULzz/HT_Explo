@@ -53,15 +53,23 @@ def save_ht_snapshot(src,dst,scene,duration):
         support_cmap=ListedColormap(['#bfc3c6','#16854a','#c93335'])
         fig,axes=plt.subplots(2,4,figsize=(15,8),layout='constrained')
         home=read_json(src/'summary.json')['start_pose_xyyaw']
+        configuration=read_json(src/'manifest.json').get('ht_score_semantics','point')=='configuration'
+        if configuration and 'ht_ht_obstacle' not in data:
+            raise RuntimeError('Configuration HT snapshot lacks its physical obstacle mask')
+        if configuration:
+            obstacle_body=cv2.dilate((data['ht_ht_obstacle']>=.5).astype('uint8'),kernel,
+                borderType=cv2.BORDER_CONSTANT,borderValue=0).astype(bool)
         for k,axis in enumerate(axes.flat):
-            blocked=cv2.dilate((valid&(data[f'ht_ht_dir_{k}']<.5)).astype('uint8'),kernel,borderType=cv2.BORDER_CONSTANT,borderValue=0).astype(bool)
+            low=valid&(data[f'ht_ht_dir_{k}']<.5)
+            blocked=obstacle_body|low if configuration else cv2.dilate(low.astype('uint8'),kernel,borderType=cv2.BORDER_CONSTANT,borderValue=0).astype(bool)
             status=np.where(blocked,2,np.where(unknown|~valid,0,1))
             axis.imshow(status[::-1,::-1].T,origin='lower',extent=extent,cmap=support_cmap,norm=BoundaryNorm([-.5,.5,1.5,2.5],3),interpolation='nearest')
             axis.plot(*robot[:2],'b+',ms=7)
             if extent[0]<=home[0]<=extent[1] and extent[2]<=home[1]<=extent[3]:axis.plot(*home[:2],'*',color='#f5bc00',ms=9)
             axis.set(title=f'HT 通道 {k}',xlabel='X / m',ylabel='Y / m')
-        fig.legend(handles=[Patch(color='#16854a',label='足迹HT允许'),Patch(color='#c93335',label='足迹包含低概率格'),Patch(color='#bfc3c6',label='足迹包含未知格')],loc='lower center',bbox_to_anchor=(.5,-.04),ncol=3)
-        fig.suptitle(f'{NAMES[scene]}：同一快照的HT足迹硬门槛，半径0.6m，概率阈值0.5\n蓝十字为车辆，黄星为初始位置（若在图内）；另有几何、时效与运动约束')
+        fig.legend(handles=[Patch(color='#16854a',label='硬门槛允许'),Patch(color='#c93335',label='HT拒绝或车体碰到实测障碍'),Patch(color='#bfc3c6',label='预测缺失或车体覆盖未知区')],loc='lower center',bbox_to_anchor=(.5,-.04),ncol=3)
+        policy='位姿HT在参考格查询；物理障碍/缺测按0.6m检查' if configuration else '点HT低分/缺测按0.6m足迹检查'
+        fig.suptitle(f'{NAMES[scene]}：同一快照的硬门槛；{policy}；阈值0.5\n蓝十字为车辆，黄星为初始位置（若在图内）；另有几何、时效与运动约束')
         fig.savefig(dst/'late_ht_footprint.png',dpi=140,bbox_inches='tight');plt.close(fig)
         cv2.imwrite(str(dst/'late_camera.jpg'),data['camera'])
     (dst/'late_map_snapshot.json').write_text(json.dumps(dict(**frame,

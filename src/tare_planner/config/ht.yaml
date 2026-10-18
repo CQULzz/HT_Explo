@@ -3,7 +3,8 @@
     ht_enabled: true
     ht_directions_calibrated: false
     ht_topic: /ht_traversability/global_local
-    ht_min_probability: 0.5  # Every footprint sample must meet this threshold.
+    ht_min_probability: 0.5  # Every queried vehicle-reference score must meet this hard threshold.
+    ht_score_semantics: configuration  # Vehicle scores at their reference; physical obstacles have their own footprint.
     ht_map_timeout: 1.0
     ht_sample_step: 0.02
     ht_lookahead_distance: 2.0

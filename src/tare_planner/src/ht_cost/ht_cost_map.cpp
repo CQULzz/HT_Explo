@@ -18,6 +18,10 @@ HtCostMap::HtCostMap(rclcpp::Node::SharedPtr node,bool publish_permission)
   lookahead_=node->declare_parameter<double>("ht_lookahead_distance",2.0);
   reached_distance_=node->declare_parameter<double>("ht_waypoint_reached_distance",0.3);
   footprint_radius_=node->declare_parameter<double>("ht_validity_radius",0.6);
+  const auto score_semantics=node->declare_parameter<std::string>("ht_score_semantics","point");
+  if (score_semantics!="point" && score_semantics!="configuration")
+    throw std::invalid_argument("HT score semantics must be point or configuration");
+  configuration_scores_=score_semantics=="configuration";
   require_reversible_motion_=node->declare_parameter<bool>("ht_require_reversible_motion",false);
   heading_offset_=node->declare_parameter<double>("ht_heading_offset",0.0);
   const auto policy=node->declare_parameter<std::string>("ht_unknown_policy","strict");
@@ -67,8 +71,8 @@ HtCostMap::HtCostMap(rclcpp::Node::SharedPtr node,bool publish_permission)
     subscription_=node->create_subscription<grid_map_msgs::msg::GridMap>(
       topic,rclcpp::QoS(1).reliable(),
       [this](grid_map_msgs::msg::GridMap::ConstSharedPtr msg){receive(msg);},options);
-    RCLCPP_INFO(logger_,"HT hard gate: min_probability=%.3f unknown_policy=%s calibrated=%d reversible=%d",
-                min_probability_,policy.c_str(),calibrated_,require_reversible_motion_);
+    RCLCPP_INFO(logger_,"HT hard gate: min_probability=%.3f unknown_policy=%s calibrated=%d reversible=%d scores=%s",
+                min_probability_,policy.c_str(),calibrated_,require_reversible_motion_,score_semantics.c_str());
   }
 }
 
@@ -110,6 +114,8 @@ void HtCostMap::receive(grid_map_msgs::msg::GridMap::ConstSharedPtr msg) {
       if (!grid.exists("ht_dir_"+std::to_string(k)))
         throw std::runtime_error("Missing ht_dir layers; set aggregate_only=false");
     if (!grid.exists("ht_valid")) throw std::runtime_error("Missing ht_valid");
+    if (configuration_scores_ && (!grid.exists("ht_observation_valid") || !grid.exists("ht_obstacle")))
+      throw std::runtime_error("Configuration HT requires separate physical observation and obstacle layers");
     tf2::Transform transform;
     transform.setIdentity();
     if (msg->header.frame_id != frame_) {
@@ -134,6 +140,7 @@ void HtCostMap::receive(grid_map_msgs::msg::GridMap::ConstSharedPtr msg) {
     for (auto& layer : out->probabilities)
       layer.assign(size,std::numeric_limits<float>::quiet_NaN());
     std::vector<unsigned char> physical_valid(size);
+    std::vector<unsigned char> occupied(size,0);
     const bool separate_observation=grid.exists("ht_observation_valid");
     for (grid_map::GridMapIterator it(grid); !it.isPastEnd(); ++it) {
       grid_map::Position pos;
@@ -149,6 +156,12 @@ void HtCostMap::receive(grid_map_msgs::msg::GridMap::ConstSharedPtr msg) {
       out->valid[index]=std::isfinite(valid) && valid>=0.5;
       const float physical=separate_observation ? grid.at("ht_observation_valid",*it):valid;
       physical_valid[index]=std::isfinite(physical) && physical>=0.5;
+      if (configuration_scores_) {
+        const float obstacle=grid.at("ht_obstacle",*it);
+        if (!std::isfinite(obstacle) || (obstacle!=0.f && obstacle!=1.f))
+          throw std::runtime_error("Invalid HT obstacle mask");
+        occupied[index]=obstacle>=.5;
+      }
       for (int k=0;k<8;++k) {
         const float p=grid.at("ht_dir_"+std::to_string(k),*it);
         out->probabilities[k][index]=p;
@@ -159,9 +172,10 @@ void HtCostMap::receive(grid_map_msgs::msg::GridMap::ConstSharedPtr msg) {
         }
       }
     }
-    // Dilate known-unsafe and unknown cells by the robot support radius once
-    // per map. This avoids scanning hundreds of footprint cells for every graph
-    // edge, while retaining the same directional test at planning and execution.
+    // Physical obstacle/observation cells require a body footprint. Vehicle
+    // configuration scores already describe a vehicle trial at a reference
+    // position and heading; dilating them treats neighbouring *configurations*
+    // as physical obstacles. Keep the legacy point-score contract explicit.
     const double radius_cells=std::ceil(footprint_radius_/out->resolution)+1;
     if (!std::isfinite(radius_cells) || radius_cells>101)
       throw std::runtime_error("HT footprint/map resolution outside supported range");
@@ -177,9 +191,11 @@ void HtCostMap::receive(grid_map_msgs::msg::GridMap::ConstSharedPtr msg) {
     for (size_t i=0;i<size;++i) source[i]=physical_valid[i] ? 0 : 1;
     cv::dilate(src,dst,kernel,cv::Point(-1,-1),1,cv::BORDER_CONSTANT,cv::Scalar(1));
     out->unknown_footprint.assign(dst.datastart,dst.dataend);
+    out->physical_valid=std::move(physical_valid);
     for (int k=0;k<8;++k) {
       for (size_t i=0;i<size;++i)
-        source[i]=out->valid[i] && out->probabilities[k][i]<min_probability_ ? 1 : 0;
+        source[i]=configuration_scores_ ? occupied[i] :
+          (out->valid[i] && out->probabilities[k][i]<min_probability_ ? 1 : 0);
       cv::dilate(src,dst,kernel,cv::Point(-1,-1),1,cv::BORDER_CONSTANT,cv::Scalar(0));
       out->blocked_footprint[k].assign(dst.datastart,dst.dataend);
     }
@@ -303,20 +319,26 @@ Support HtCostMap::supportDirected(const Point& a,const Point& b,double heading)
     if (r<0 || c<0 || r>=cycle_->rows || c>=cycle_->cols) return Support::UNKNOWN;
     const size_t index=static_cast<size_t>(r)*cycle_->cols+c;
     if (cycle_->blocked_footprint[channel][index]) return Support::BLOCKED;
+    if (cycle_->valid[index] && cycle_->probabilities[channel][index]<min_probability_)
+      return Support::BLOCKED;
     if (cycle_->valid[index] && !cycle_->unknown_footprint[index]) return Support::KNOWN;
     // Unknown uses the same rasterized support mask as known-unsafe terrain.
     // Re-scanning at arbitrary sub-cell offsets made split edges disagree.
     if (!prior_.initialized || prior_.retired) return Support::UNKNOWN;
     const double mx=(cycle_->rows*.5-r-.5)*res,my=(cycle_->cols*.5-c-.5)*res;
     const double cx=cycle_->center_x+co*mx-si*my,cy=cycle_->center_y+si*mx+co*my;
-    const int radius=static_cast<int>(std::ceil(footprint_radius_/res));
+    if (!cycle_->valid[index] && !prior_.contains(cx,cy)) return Support::UNKNOWN;
+    const int radius=static_cast<int>(std::ceil(footprint_radius_/res))+1;
     Support s=Support::STARTUP_PRIOR;
     for (int ix=-radius;ix<=radius;++ix) for (int iy=-radius;iy<=radius;++iy) {
-      const double dx=ix*res,dy=iy*res;
-      if (std::hypot(dx,dy)>footprint_radius_+res/2) continue;
-      const double x=cx+dx,y=cy+dy;
-      const double p=cycle_->sample(x,y,heading);
-      if (!std::isfinite(p) && !prior_.contains(x,y)) s=Support::UNKNOWN;
+      if (std::hypot(ix*res,iy*res)>footprint_radius_+std::sqrt(2.0)*res) continue;
+      const int rr=r+ix,cc=c+iy;
+      const bool observed=rr>=0 && cc>=0 && rr<cycle_->rows && cc<cycle_->cols &&
+        cycle_->physical_valid[static_cast<size_t>(rr)*cycle_->cols+cc];
+      const double local_x=mx-ix*res,local_y=my-iy*res;
+      const double x=cycle_->center_x+co*local_x-si*local_y;
+      const double y=cycle_->center_y+si*local_x+co*local_y;
+      if (!observed && !prior_.contains(x,y)) s=Support::UNKNOWN;
     }
     return s;
   };
