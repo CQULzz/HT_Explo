@@ -2,7 +2,7 @@
   "schema_version": 1,
   "updated_at": "2026-10-18",
   "branch": "codex/ht8dir-v1",
-  "status": "阶段30保留正收益任务，600秒仍前进；继续核查无候选核销与搜索开销，不标稳定",
+  "status": "阶段31修正候选缺失核销，体积退步；先同导航二进制复测，再分析查询/时效和不可达任务，不标稳定",
   "latest_archive_commit": "3de03ee",
   "latest_planner_change": "43069a7b11b8028b53f6eae0d6bdc53c13e8affd",
   "stages": [
@@ -530,6 +530,23 @@
         "docs/results/ht_pending_gain_tasks_10min_2026-10-18/REPORT.md"
       ],
       "control_commit": "ce7202bb14fa493d6ee2e4cb68dd8d56b32aef0b",
+      "ht_bridge_commit": "22c2749f395af8bb5dc6705b1e92548acf69494e"
+    },
+    {
+      "id": "stage-31",
+      "number": 31,
+      "sha": "b05ed9e717a3e430cc6243ed61666b5120f76e5b",
+      "tag": "ht-stage-20261019-deferred-gain",
+      "title": "候选缺失保留有效收益：核销正确但体积退步",
+      "kind": "实测候选",
+      "change": "记录最后有效收益、候选缺失延期，有效评估核销及完成守卫",
+      "features": "不凭候选暂缺报覆盖；零收益导航/既有滞回/非HT保持",
+      "validation": "18项几何/状态回归及4个CTest目标通过；600秒162.71m/2703.875m³；19单元延期、4次重新评估解除登记、无候选误核销0；实际拦截全零",
+      "known_issues": "体积比阶段30下降18.6%；81次TIME_LIMIT及地图/路径时效；末刻EMPTY_PATH零速度，未验证后续恢复；真值/重复/多环境未验收",
+      "evidence": [
+        "docs/results/ht_deferred_gain_tasks_10min_2026-10-19/REPORT.md"
+      ],
+      "control_commit": "b05ed9e717a3e430cc6243ed61666b5120f76e5b",
       "ht_bridge_commit": "22c2749f395af8bb5dc6705b1e92548acf69494e"
     }
   ],
@@ -1066,7 +1083,7 @@
       "original_subject": "Archive command rejection proof, failed indoor trials and returned-home tunnel video"
     }
   ],
-  "latest_planner_code": "ce7202bb14fa493d6ee2e4cb68dd8d56b32aef0b",
+  "latest_planner_code": "b05ed9e717a3e430cc6243ed61666b5120f76e5b",
   "latest_ht_bridge_code": "22c2749f395af8bb5dc6705b1e92548acf69494e",
-  "latest_verified_trial_code": "ce7202bb14fa493d6ee2e4cb68dd8d56b32aef0b"
+  "latest_verified_trial_code": "b05ed9e717a3e430cc6243ed61666b5120f76e5b"
 }

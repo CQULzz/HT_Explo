@@ -1,0 +1,46 @@
+Running main() from /opt/ros/jazzy/src/gtest_vendor/src/gtest_main.cc
+[==========] Running 4 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 4 tests from PendingCell
+[ RUN      ] PendingCell.GainWithoutSelectedLocalGoalMustEnterGlobalTodo
+[INFO] [1792338898.628511253] [tare_planner_node]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=0 reversible=0 scores=point
+[INFO] [1792338898.817165433] [standalone_logger]: HT_CELL_AUDIT cell=64 xy=(24.000000,0.000000) old=0 new=1 reason=REGISTER_OBSERVED_GAIN candidates=1 selected=0 above_small=1 above_big=1 above_frontier=1 highest_score=235 visits=1 graph_nodes=0 robot=(9.267491,-14.360244) ht_stamp=-1.000000000
+[       OK ] PendingCell.GainWithoutSelectedLocalGoalMustEnterGlobalTodo (214 ms)
+[ RUN      ] PendingCell.PositiveGainMustSurviveLeavingLocalNeighbourhood
+[INFO] [1792338898.827453896] [tare_planner_node]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=0 reversible=0 scores=point
+[INFO] [1792338899.010447520] [standalone_logger]: HT_CELL_AUDIT cell=64 xy=(24.000000,0.000000) old=1 new=1 reason=KEEP_PENDING_GAIN candidates=1 selected=0 above_small=1 above_big=1 above_frontier=1 highest_score=235 visits=1 graph_nodes=0 robot=(9.267491,-14.360244) ht_stamp=-1.000000000
+[       OK ] PendingCell.PositiveGainMustSurviveLeavingLocalNeighbourhood (192 ms)
+[ RUN      ] PendingCell.LastObservedGainSurvivesTemporaryNoCandidates
+[INFO] [1792338899.020175042] [tare_planner_node]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=0 reversible=0 scores=point
+[INFO] [1792338899.205410173] [standalone_logger]: HT_CELL_AUDIT cell=64 xy=(24.000000,0.000000) old=0 new=1 reason=REGISTER_OBSERVED_GAIN candidates=1 selected=0 above_small=1 above_big=1 above_frontier=1 highest_score=235 visits=1 graph_nodes=0 robot=(9.267491,-14.360244) ht_stamp=-1.000000000
+[INFO] [1792338899.205442850] [standalone_logger]: HT_CELL_AUDIT cell=64 xy=(24.000000,0.000000) old=1 new=2 reason=NO_CANDIDATE_FIRST_VISIT_NO_GRAPH candidates=0 selected=0 above_small=0 above_big=0 above_frontier=0 highest_score=-1 visits=1 graph_nodes=0 robot=(9.267491,-14.360244) ht_stamp=-1.000000000
+/tmp/ht_no_candidate_regression/regression.cpp:53: Failure
+Expected equality of these values:
+  world->GetCellStatus(cell)
+    Which is: 4-byte object <02-00 00-00>
+  grid_world_ns::CellStatus::EXPLORING
+    Which is: 4-byte object <01-00 00-00>
+
+[  FAILED  ] PendingCell.LastObservedGainSurvivesTemporaryNoCandidates (196 ms)
+[ RUN      ] PendingCell.LastObservedGainSurvivesNoCandidatesNearRobot
+[INFO] [1792338899.216996768] [tare_planner_node]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=0 reversible=0 scores=point
+[INFO] [1792338899.397395748] [standalone_logger]: HT_CELL_AUDIT cell=64 xy=(24.000000,0.000000) old=0 new=1 reason=REGISTER_OBSERVED_GAIN candidates=1 selected=0 above_small=1 above_big=1 above_frontier=1 highest_score=235 visits=1 graph_nodes=0 robot=(9.267491,-14.360244) ht_stamp=-1.000000000
+[INFO] [1792338899.397424635] [standalone_logger]: HT_CELL_AUDIT cell=64 xy=(24.000000,0.000000) old=1 new=2 reason=NO_CANDIDATE_NEAR_ROBOT candidates=0 selected=0 above_small=0 above_big=0 above_frontier=0 highest_score=-1 visits=2 graph_nodes=0 robot=(24.000000,0.000000) ht_stamp=-1.000000000
+/tmp/ht_no_candidate_regression/regression.cpp:62: Failure
+Expected equality of these values:
+  world->GetCellStatus(cell)
+    Which is: 4-byte object <02-00 00-00>
+  grid_world_ns::CellStatus::EXPLORING
+    Which is: 4-byte object <01-00 00-00>
+
+[  FAILED  ] PendingCell.LastObservedGainSurvivesNoCandidatesNearRobot (190 ms)
+[----------] 4 tests from PendingCell (794 ms total)
+
+[----------] Global test environment tear-down
+[==========] 4 tests from 1 test suite ran. (794 ms total)
+[  PASSED  ] 2 tests.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] PendingCell.LastObservedGainSurvivesTemporaryNoCandidates
+[  FAILED  ] PendingCell.LastObservedGainSurvivesNoCandidatesNearRobot
+
+ 2 FAILED TESTS

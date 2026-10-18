@@ -1,0 +1,59 @@
+{
+  "tested_git_head": "b05ed9e717a3e430cc6243ed61666b5120f76e5b",
+  "raw_run": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_deferred_gain_tasks_10min_2026-10-19_00-00-17",
+  "recording_scope": "All control/status and odometry, full-rate published HT maps and TARE collision geometry; original-stamped scans1Hz; exact-stamp map triplets and network inputs/outputs every10s; camera15fps. Raw CuPy and scans are not fully bagged.",
+  "last_motion_s": 598.001,
+  "mission": {
+    "first_exploration_finished_sample_s": null,
+    "sampled_mission_counts": {
+      "EXPLORING": 578,
+      "BLOCKED": 22
+    },
+    "first_completed_sample_s": null,
+    "last_sampled_mission": "EXPLORING",
+    "last_sampled_execution_status": "HT_ASSISTED",
+    "final_distance_to_measurement_start_m": 27.949874597214205,
+    "meaning": "Exploration finished is a return-home trigger. Only mission COMPLETED confirms the home radius, low-speed and dwell checks; neither establishes ground-truth full coverage."
+  },
+  "geometry": {
+    "radius_m": 0.6414213562373094,
+    "collision_point_threshold": 1,
+    "first_observed_margin_overlap": null,
+    "overlap_samples": 0,
+    "moving_predictions_inside_margin": 0,
+    "samples": 469,
+    "limitations": "Uses bag arrival order, latest received odometry/command and measured collision-cloud points in robot height slice. Does not reproduce planner collision-grid bounds or exact callback state. Predicted arc uses last received constant Twist, not controller internal candidate or simulator braking. Margin overlap is not physical vehicle contact. Sample lag/point noise may contribute; cannot separate them without independent truth."
+  },
+  "geometry_follower_rejections": {
+    "GEOMETRY_COMMAND_BLOCKED": 2
+  },
+  "checks": {
+    "timer_completed": true,
+    "measured_duration_matches": true,
+    "source_hashes_unchanged": true,
+    "enough_samples": true,
+    "no_runtime_parent_failure": true,
+    "no_live_descendants": true,
+    "no_forced_shutdown": true,
+    "video_full_decode_passed": true,
+    "video_duration_matches": true,
+    "video_fps_matches": true,
+    "analysis_passed": true,
+    "no_child_or_cleanup_exception": true,
+    "blas_workers_bounded": true
+  },
+  "video": {
+    "encode_returncode": 0,
+    "fps": 15,
+    "requested_duration_s": 600,
+    "trim_offset_s": 31.817543029785156,
+    "source_file": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_deferred_gain_tasks_10min_2026-10-19_00-00-17/indoor/camera_15fps.mp4",
+    "full_decode_returncode": 0,
+    "decoded_frames": 8999,
+    "duration_s": 599.9333333333333,
+    "duration_matches": true,
+    "bytes": 13575394,
+    "sha256": "f28898a4702a4e368d136b5955b01c3337e3891faf318dcc6218fbbdc5d86657"
+  },
+  "limitations": "Single indoor trial; task evidence retention and discharge tested, not independent physical coverage truth. No combined tour/local completion with pending event occurred. HTTP download cache was cleared only after this run; future repeats have more free disk."
+}

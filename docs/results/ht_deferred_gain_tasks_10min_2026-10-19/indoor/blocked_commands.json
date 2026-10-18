@@ -1,0 +1,37 @@
+{
+  "source": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_deferred_gain_tasks_10min_2026-10-19_00-00-17/indoor",
+  "status_counts": {
+    "DRIVING": 7886,
+    "GOAL_REACHED": 1428,
+    "TURNING": 1631,
+    "PLANNER_HOLD": 465,
+    "ALIGNING": 66,
+    "HT_MAP_STALE": 7,
+    "HT_PATH_BLOCKED": 56,
+    "EMPTY_PATH": 394,
+    "HT_COMMAND_BLOCKED": 58,
+    "GEOMETRY_COMMAND_BLOCKED": 2,
+    "PATH_STALE": 1
+  },
+  "paired_status_counts": {
+    "GOAL_REACHED": 1428,
+    "PLANNER_HOLD": 465,
+    "HT_MAP_STALE": 7,
+    "HT_PATH_BLOCKED": 56,
+    "EMPTY_PATH": 394,
+    "HT_COMMAND_BLOCKED": 58,
+    "DRIVING": 8,
+    "GEOMETRY_COMMAND_BLOCKED": 2,
+    "TURNING": 2,
+    "PATH_STALE": 1
+  },
+  "unmatched_command_rejections": 0,
+  "blocked_nonzero_count": 0,
+  "events": [],
+  "geometry_nonzero_count": 0,
+  "geometry_events": [],
+  "unmatched_geometry_rejections": {
+    "GEOMETRY_COMMAND_BLOCKED": 0
+  },
+  "caveat": "Matches each late hold to its preceding command within20ms in publication order; reports unmatched events separately. Single-follower runs only. Does not infer internal map/odom callback ordering."
+}
