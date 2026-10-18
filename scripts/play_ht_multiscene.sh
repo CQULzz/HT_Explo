@@ -20,11 +20,13 @@ elif [[ "${1:-}" == '--execution-geometry' ]]; then
   ht_playlist="$ht_repo_root/docs/results/ht_execution_geometry_10min_2026-10-18/videos.m3u"
 elif [[ "${1:-}" == '--cell-audit' ]]; then
   ht_playlist="$ht_repo_root/docs/results/ht_cell_audit_10min_2026-10-18/videos.m3u"
-else
+elif [[ "${1:-}" == '--pending-gain' ]]; then
   ht_playlist="$ht_repo_root/docs/results/ht_pending_gain_tasks_10min_2026-10-18/videos.m3u"
-  printf '最新阶段30室内完整10分钟：保留正收益全局任务；169.57米，3321.25立方米。\n'
-  printf '最后一分钟仍走17.829米，600秒因测试计时器结束，算法未宣布探索完成。\n'
-  printf '阶段29加 --cell-audit，阶段28加 --execution-geometry；较高体积阶段23加 --configuration；历史五环境加 --previous。\n'
+else
+  ht_playlist="$ht_repo_root/docs/results/ht_deferred_gain_tasks_10min_2026-10-19/videos.m3u"
+  printf '最新阶段31室内完整10分钟：候选缺失时保留有效收益；162.71米，2703.875立方米。\n'
+  printf '末分钟行驶12.462米，末帧EMPTY_PATH停车；算法未宣布完成。观测体积比阶段30下降18.6%，正在复测。\n'
+  printf '阶段30加 --pending-gain，阶段29加 --cell-audit，阶段28加 --execution-geometry；较高体积阶段23加 --configuration；历史五环境加 --previous。\n'
 fi
 if [[ ! -f "$ht_playlist" ]] || ! rg -q '^[^#[:space:]]' "$ht_playlist"; then
   printf '未找到完整视频播放列表：%s\n' "$ht_playlist"
