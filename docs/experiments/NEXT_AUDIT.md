@@ -5,7 +5,7 @@
 ## 优先核查完成判据，暂不改成强行持续行驶
 
 - 阶段28在约272秒COMPLETION_AUDIT中global_exploring、uncovered、frontier归零，global_return和local_complete同时成立，之后返航。与阶段23轨迹对比，走过的支路不同；近似自由体积低27.7%，不能仅以完成状态推断覆盖更好。
-- grid_world.cpp的EXPLORING且candidate_count==0分支，可按VisitCount/GraphNodeIndices或距车范围将单元设为COVERED。viewpoint_manager.cpp的连接遍历含HTConnectionSupported，因此“无候选/不连通”与传感器真正覆盖并不是相同事实。
+- grid_world.cpp的EXPLORING且candidate_count==0分支，可按VisitCount/GraphNodeIndices或距车范围将单元设为COVERED。连接遍历调用HTConnectionSupported，但核对实现后，该函数实际只检查高度、几何碰撞/视线和格角连接，并不直接查询HT神经概率，不能凭函数名把无候选归因于HT概率。“无候选/不连通”仍与传感器真正覆盖不是同一事实。
 - 这只是源码中的风险路径，当前录包没有每一次单元状态转移及其各项计数，不能宣称已证明本轮就是该分支导致过早完成。
 - 下一诊断应记录单元ID/世界位置、旧新状态、VisitCount/图节点数、candidate_count、覆盖/前沿收益计数、HT连通性和地图时戳，尤其保留最后一个EXPLORING单元转移。先证明时间线，再决定是否引入单独的待观察/不可达状态；不能把不可规划当作覆盖，也不能把不可达目标永久当作有效收益。
 
