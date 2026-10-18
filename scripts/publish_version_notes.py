@@ -80,13 +80,17 @@ def main():
                       draft=False, prerelease=True, make_latest='false')
         previous = by_tag.get(tag)
         if previous:
+            # The initial paginated list may predate an independent evidence
+            # upload. New attachments are allowed; completed old attachments
+            # must survive unchanged. Do not compare in-progress zero-byte assets.
+            previous = api('GET', 'releases/'+str(previous['id']))
             release = api('PATCH', 'releases/'+str(previous['id']), fields)
             action = 'updated'
             before = {(asset['id'], asset['name'], asset['size'], asset.get('digest'))
-                      for asset in previous.get('assets', [])}
+                      for asset in previous.get('assets', []) if asset.get('state') == 'uploaded'}
             after = {(asset['id'], asset['name'], asset['size'], asset.get('digest'))
                      for asset in release.get('assets', [])}
-            if before!=after:
+            if not before.issubset(after):
                 raise RuntimeError(f'{tag}: existing assets changed unexpectedly')
         else:
             fields.update(tag_name=tag, target_commitish=stage['sha'])
