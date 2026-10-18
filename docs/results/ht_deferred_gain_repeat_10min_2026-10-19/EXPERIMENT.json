@@ -1,0 +1,114 @@
+{
+  "tested_git_head": "867ba1f5d40c813291bbb148fad2d5fc5b8907d1",
+  "control_commit": "b05ed9e717a3e430cc6243ed61666b5120f76e5b",
+  "raw_run": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_deferred_gain_repeat_10min_2026-10-19_00-27-33",
+  "recording_scope": "All control/status and odometry, full-rate published HT maps and TARE collision geometry; original-stamped scans1Hz; exact-stamp map triplets and network inputs/outputs every10s; camera15fps. Raw CuPy and scans are not fully bagged.",
+  "last_motion_s": 13.502,
+  "mission": {
+    "first_exploration_finished_sample_s": null,
+    "sampled_mission_counts": {
+      "EXPLORING": 14,
+      "BLOCKED": 586
+    },
+    "first_completed_sample_s": null,
+    "last_sampled_mission": "BLOCKED",
+    "last_sampled_execution_status": "NO_EXECUTABLE_ROUTE",
+    "final_distance_to_measurement_start_m": 4.291727158149735,
+    "meaning": "Exploration finished is a return-home trigger. Only mission COMPLETED confirms the home radius, low-speed and dwell checks; neither establishes ground-truth full coverage."
+  },
+  "geometry": {
+    "radius_m": 0.6414213562373094,
+    "collision_point_threshold": 1,
+    "first_observed_margin_overlap": null,
+    "overlap_samples": 0,
+    "moving_predictions_inside_margin": 0,
+    "samples": 543,
+    "limitations": "Uses bag arrival order, latest received odometry/command and measured collision-cloud points in robot height slice. Does not reproduce planner collision-grid bounds or exact callback state. Predicted arc uses last received constant Twist, not controller internal candidate or simulator braking. Margin overlap is not physical vehicle contact. Sample lag/point noise may contribute; cannot separate them without independent truth."
+  },
+  "checks": {
+    "timer_completed": true,
+    "measured_duration_matches": true,
+    "source_hashes_unchanged": true,
+    "enough_samples": true,
+    "no_runtime_parent_failure": true,
+    "no_live_descendants": true,
+    "no_forced_shutdown": true,
+    "video_full_decode_passed": true,
+    "video_duration_matches": true,
+    "video_fps_matches": true,
+    "analysis_passed": true,
+    "no_child_or_cleanup_exception": true,
+    "blas_workers_bounded": true
+  },
+  "video": {
+    "encode_returncode": 0,
+    "fps": 15,
+    "requested_duration_s": 600,
+    "trim_offset_s": 33.256511926651,
+    "source_file": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_deferred_gain_repeat_10min_2026-10-19_00-27-33/indoor/camera_15fps.mp4",
+    "full_decode_returncode": 0,
+    "decoded_frames": 9000,
+    "duration_s": 600.0,
+    "duration_matches": true,
+    "bytes": 2442940,
+    "sha256": "c846799ac1f57d1ab0631dee0a61e9139a7d12f36423ad14b612572eec8c343d"
+  },
+  "repeat": {
+    "reference_tested_commit": "b05ed9e717a3e430cc6243ed61666b5120f76e5b",
+    "repeat_tested_commit": "867ba1f5d40c813291bbb148fad2d5fc5b8907d1",
+    "navigation_control_commit": "b05ed9e717a3e430cc6243ed61666b5120f76e5b",
+    "all_63_manifest_hashes_identical": true,
+    "effective_parameters_equal": {
+      "planner_parameters.yaml": true,
+      "follower_parameters.yaml": true
+    },
+    "last_motion_sample_s": 13.502,
+    "metrics": {
+      "scan_selection": "source_second",
+      "observed_free_volume_m3": 419.75,
+      "processed_volume_scans": 601,
+      "skipped_volume_scans": 0,
+      "recorded_scans_in_source_time_window": 601,
+      "sensor_position_source": "nearest sensor-frame state_estimation (common to both systems)",
+      "pose_time_offset_max_s": 2.384185791015625e-07,
+      "command_samples": 12000,
+      "fully_stopped_fraction": 0.977,
+      "stationary_turn_fraction": 0.0020833333333333333,
+      "reverse_command_fraction": 0.0,
+      "max_abs_linear_command_mps": 0.5,
+      "max_abs_yaw_command_rps": 0.8,
+      "longest_zero_command_s": 586.0400168895721,
+      "follower_status_samples": {
+        "DRIVING": 251,
+        "GOAL_REACHED": 2,
+        "TURNING": 25,
+        "ALIGNING": 1,
+        "PLANNER_HOLD": 11721
+      },
+      "longest_no_translation_command_s": 586.0400168895721,
+      "last_translation_s": 14.002,
+      "distance_last60_m": 0.0
+    },
+    "scheduling": {
+      "cycles": 541,
+      "failed_all_timeout_with_unattempted_extra_targets": 482,
+      "first_starved_s": 67.89817571640015,
+      "last_starved_s": 599.8460998535156,
+      "post60_cycles": 489,
+      "post60_starved_cycles": 482,
+      "post60_recovery_attempts": 7,
+      "most_common_starved_goals": [
+        [
+          "(6.750000,0.150000);(6.750000,0.450000);(6.450000,0.150000)",
+          479
+        ],
+        [
+          "(6.750000,0.150000);(6.750000,0.450000)",
+          3
+        ]
+      ],
+      "limitations": "Targets minus primary combines recovery and optional backtrack. Search logs show queued alternatives were not attempted, not that they are feasible. This audit cannot attribute the different initial trajectory to a single variable or prove physical coverage."
+    },
+    "limitations": "Same navigation binary/config/weights, different closed-loop run. Pip HTTP cache cleared after reference; more free disk this run. No statistical or single-variable causal attribution."
+  }
+}

@@ -21,6 +21,8 @@
 
 | 阶段31 `b05ed9e` | 有效收益记忆、候选缺失延期与完成守卫 | 162.71 / 2703.875 | 19单元延期/4次解除登记，无候选误核销0；体积退步18.6%，末刻EMPTY_PATH | [报告](../results/ht_deferred_gain_tasks_10min_2026-10-19/REPORT.md) · [完整数据/视频](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261019-deferred-gain) |
 
+| 阶段32 `867ba1f`（导航仍b05ed9e） | 相同程序/参数复测，恢复调度审计 | 5.66 / 419.750 | 14秒后长期停滞；482轮恢复目标未获搜索机会，稳定性未通过 | [报告](../results/ht_deferred_gain_repeat_10min_2026-10-19/REPORT.md) · [原始数据/视频](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261019-deferred-repeat) |
+
 ![同条件四轮对比](../results/ht_pending_gain_tasks_10min_2026-10-18/comparison/comparison.png)
 
 ## 当前问题与证据状态（阶段31已完整实测）
@@ -55,3 +57,5 @@
 旧轮原始记录的本地无损压缩与恢复说明：[LOCAL_DATA.md](LOCAL_DATA.md)。报告/视频仍可直接浏览；完整数据同时保留于已校验Release附件。
 
 阶段31：19个单元延期、4次有效评估解除登记，其中2个仍导航占位EXPLORING；不要误说全都完成覆盖。结束后清理约20.2GB pip可重下载HTTP缓存；下一轮源码/二进制不变复测，披露磁盘可用量增加，避免把环境差异当代码收益。
+
+阶段32：同导航二进制/配置/权重复跑仍失败，约14秒后持续停车。482轮主要目标全超时且仍有排队替代目标却未尝试恢复；已有预留只照顾backtrack，普通恢复被排在主要目标后而耗尽预算。先修调度，不声称替代目标必然可达；保持硬约束/速度/总预算，再做600秒。

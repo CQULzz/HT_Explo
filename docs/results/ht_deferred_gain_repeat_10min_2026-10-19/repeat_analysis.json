@@ -1,0 +1,58 @@
+{
+  "reference_tested_commit": "b05ed9e717a3e430cc6243ed61666b5120f76e5b",
+  "repeat_tested_commit": "867ba1f5d40c813291bbb148fad2d5fc5b8907d1",
+  "navigation_control_commit": "b05ed9e717a3e430cc6243ed61666b5120f76e5b",
+  "all_63_manifest_hashes_identical": true,
+  "effective_parameters_equal": {
+    "planner_parameters.yaml": true,
+    "follower_parameters.yaml": true
+  },
+  "last_motion_sample_s": 13.502,
+  "metrics": {
+    "scan_selection": "source_second",
+    "observed_free_volume_m3": 419.75,
+    "processed_volume_scans": 601,
+    "skipped_volume_scans": 0,
+    "recorded_scans_in_source_time_window": 601,
+    "sensor_position_source": "nearest sensor-frame state_estimation (common to both systems)",
+    "pose_time_offset_max_s": 2.384185791015625e-07,
+    "command_samples": 12000,
+    "fully_stopped_fraction": 0.977,
+    "stationary_turn_fraction": 0.0020833333333333333,
+    "reverse_command_fraction": 0.0,
+    "max_abs_linear_command_mps": 0.5,
+    "max_abs_yaw_command_rps": 0.8,
+    "longest_zero_command_s": 586.0400168895721,
+    "follower_status_samples": {
+      "DRIVING": 251,
+      "GOAL_REACHED": 2,
+      "TURNING": 25,
+      "ALIGNING": 1,
+      "PLANNER_HOLD": 11721
+    },
+    "longest_no_translation_command_s": 586.0400168895721,
+    "last_translation_s": 14.002,
+    "distance_last60_m": 0.0
+  },
+  "scheduling": {
+    "cycles": 541,
+    "failed_all_timeout_with_unattempted_extra_targets": 482,
+    "first_starved_s": 67.89817571640015,
+    "last_starved_s": 599.8460998535156,
+    "post60_cycles": 489,
+    "post60_starved_cycles": 482,
+    "post60_recovery_attempts": 7,
+    "most_common_starved_goals": [
+      [
+        "(6.750000,0.150000);(6.750000,0.450000);(6.450000,0.150000)",
+        479
+      ],
+      [
+        "(6.750000,0.150000);(6.750000,0.450000)",
+        3
+      ]
+    ],
+    "limitations": "Targets minus primary combines recovery and optional backtrack. Search logs show queued alternatives were not attempted, not that they are feasible. This audit cannot attribute the different initial trajectory to a single variable or prove physical coverage."
+  },
+  "limitations": "Same navigation binary/config/weights, different closed-loop run. Pip HTTP cache cleared after reference; more free disk this run. No statistical or single-variable causal attribution."
+}

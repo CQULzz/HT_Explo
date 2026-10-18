@@ -1,0 +1,133 @@
+{
+  "source": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_deferred_gain_repeat_10min_2026-10-19_00-27-33/indoor",
+  "bag_file": null,
+  "score_semantics": "configuration",
+  "final_pose": [
+    2.882479667663574,
+    3.180925130844116,
+    1.759472846984863
+  ],
+  "final_field": {
+    "map_stamp": 1792341487.0211546,
+    "heading_bin": 2,
+    "row": 120,
+    "col": 120,
+    "status": "KNOWN",
+    "reference_probability": 0.9998719692230225,
+    "min_body_p": 0.9876825213432312,
+    "reverse_status": "KNOWN",
+    "reversible_pose": true,
+    "reversible_heading_pairs": 4
+  },
+  "ht_map_messages": 1185,
+  "known_to_blocked_changes": [],
+  "return_margin_losses": [],
+  "follower_status_changes": [
+    {
+      "time_s": 6.560148477554321,
+      "status": "GOAL_REACHED",
+      "pose": [
+        2.9715688228607178,
+        0.7306006550788879,
+        0.21895197033882144
+      ],
+      "field": {
+        "map_stamp": 1792340894.0064378,
+        "heading_bin": 0,
+        "row": 114,
+        "col": 119,
+        "status": "KNOWN",
+        "reference_probability": 0.999876856803894,
+        "min_body_p": 0.9997599720954895,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 6.660112142562866,
+      "status": "TURNING",
+      "pose": [
+        2.9715688228607178,
+        0.7306006550788879,
+        0.2189519703388215
+      ],
+      "field": {
+        "map_stamp": 1792340894.0064378,
+        "heading_bin": 0,
+        "row": 114,
+        "col": 119,
+        "status": "KNOWN",
+        "reference_probability": 0.999876856803894,
+        "min_body_p": 0.9997599720954895,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 7.910139560699463,
+      "status": "ALIGNING",
+      "pose": [
+        2.9715688228607178,
+        0.7306006550788879,
+        0.5722205042839051
+      ],
+      "field": {
+        "map_stamp": 1792340894.6114585,
+        "heading_bin": 1,
+        "row": 119,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998792409896851,
+        "min_body_p": 0.9998136162757874,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 7.960162878036499,
+      "status": "DRIVING",
+      "pose": [
+        2.9715688228607178,
+        0.7306006550788879,
+        0.5743513703346252
+      ],
+      "field": {
+        "map_stamp": 1792340894.6114585,
+        "heading_bin": 1,
+        "row": 119,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998792409896851,
+        "min_body_p": 0.9998136162757874,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 13.959993600845337,
+      "status": "PLANNER_HOLD",
+      "pose": [
+        2.882479667663574,
+        3.180925130844116,
+        1.7594728469848628
+      ],
+      "field": {
+        "map_stamp": 1792340900.0337863,
+        "heading_bin": 2,
+        "row": 126,
+        "col": 97,
+        "status": "KNOWN",
+        "reference_probability": 0.9996970891952515,
+        "min_body_p": 0.9810125827789307,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    }
+  ],
+  "caveat": "Uses bag reception ordering, not the exact subscriber callback ordering. Raw pose admissibility excludes map freshness/startup prior; uses manifest score semantics with0.5/0.6m/map-frame identity-channel settings. In configuration mode min_body_p is a diagnostic over neighbouring configurations, not the gate score. Pose changes and field changes are separated on identical inputs to that comparison."
+}

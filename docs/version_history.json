@@ -2,7 +2,7 @@
   "schema_version": 1,
   "updated_at": "2026-10-19",
   "branch": "codex/ht8dir-v1",
-  "status": "阶段31修正候选缺失核销，体积退步；先同导航二进制复测，再分析查询/时效和不可达任务，不标稳定",
+  "status": "阶段32相同导航程序复测早期长期BLOCKED；确认恢复搜索被预算挤掉，下一候选修正调度后再测，不标稳定",
   "latest_archive_commit": "15f5e90",
   "latest_planner_change": "43069a7b11b8028b53f6eae0d6bdc53c13e8affd",
   "stages": [
@@ -548,6 +548,23 @@
       ],
       "control_commit": "b05ed9e717a3e430cc6243ed61666b5120f76e5b",
       "ht_bridge_commit": "22c2749f395af8bb5dc6705b1e92548acf69494e"
+    },
+    {
+      "id": "stage-32",
+      "number": 32,
+      "sha": "867ba1f5d40c813291bbb148fad2d5fc5b8907d1",
+      "tag": "ht-stage-20261019-deferred-repeat",
+      "title": "相同导航程序复测：早期长期停滞",
+      "kind": "失败复测",
+      "change": "导航未改，63份哈希一致；追加重复验证与恢复目标调度审计",
+      "features": "记录相同导航二进制也会长期停滞的反例",
+      "validation": "室内完整600秒5.66m/419.750m³；末分钟0m；482轮排队替代目标无搜索机会；视频600秒完整解码、13项采集核验",
+      "known_issues": "14秒后无平移，恢复预算饥饿；尚未证明替代路线可达，覆盖真值/多环境未验收",
+      "evidence": [
+        "docs/results/ht_deferred_gain_repeat_10min_2026-10-19/REPORT.md"
+      ],
+      "control_commit": "b05ed9e717a3e430cc6243ed61666b5120f76e5b",
+      "ht_bridge_commit": "22c2749f395af8bb5dc6705b1e92548acf69494e"
     }
   ],
   "historical_commits": [
@@ -1085,5 +1102,5 @@
   ],
   "latest_planner_code": "b05ed9e717a3e430cc6243ed61666b5120f76e5b",
   "latest_ht_bridge_code": "22c2749f395af8bb5dc6705b1e92548acf69494e",
-  "latest_verified_trial_code": "b05ed9e717a3e430cc6243ed61666b5120f76e5b"
+  "latest_verified_trial_code": "867ba1f5d40c813291bbb148fad2d5fc5b8907d1"
 }
