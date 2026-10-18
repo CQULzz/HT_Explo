@@ -1,0 +1,687 @@
+diff --git a/docs/fixes/2026-10-19_recovery_scheduling.md b/docs/fixes/2026-10-19_recovery_scheduling.md
+new file mode 100644
+index 0000000..af9a10b
+--- /dev/null
++++ b/docs/fixes/2026-10-19_recovery_scheduling.md
+@@ -0,0 +1,14 @@
++# 恢复目标调度候选（阶段32完整发布后实施）
++
++证据：阶段32完整600s，63份哈希一致、有效参数一致，但14s后不再平移。541轮调度中482轮在仍有排队替代目标时，已尝试主要目标全部TIME_LIMIT且未尝试恢复。482/489为60s之后周期；后7轮曾尝试恢复，不能笼统说整个后半程从未尝试。源码对普通恢复没有预算预留。几何计时包含调度等待，不叫纯CPU占比。
++
++方案：保持目标池、排序分值、HT/几何硬判定、总预算0.35s、单目标0.15s、已有backtrack预留和单次最多8次搜索；仅把首个普通恢复目标排在首个主要目标之后。首个主要目标已有有效正收益路线时跳过恢复，继续比较剩余主要目标；已承诺目标成功仍立即选用。没有恢复目标时顺序与旧版相同，backtrack保留在末尾。重复目标仍去重。
++
++回归：使用生产队列函数，给主要目标搜索赋予0.15s确定耗时和失败，恢复搜索0.02s成功，周期预算0.35s，旧顺序用光预算无路线，新顺序可获得恢复路线；只证明调度机会，不宣称真实路径存在。覆盖无恢复、无主要、只有backtrack、合法索引且无重复、正收益可跳恢复等边界。整个CTest与原几何/HT/控制回归必须通过，再完整600s闭环。逐周期日志增加尝试的普通恢复/回退次数，分析代码兼容旧日志。
++
++
++阶段32完整Release已通过远端大小/SHA256校验，回执见`docs/experiments/publications/stage32.json`。修改的生产队列函数在`search_schedule.h`，实际`SolveHTTSP`使用该顺序；恢复已插入主要队列时，把旧“进入恢复区就break”改为按目标类别continue，保留后续主要目标比较。已承诺目标仍第一个搜索且成功立即返回；普通恢复与backtrack尝试分别计数。
++
++`old_sequential_regression.log`是先将实际旧顺序等价提取为队列函数、再运行新增回归得到的失败（check2，退出134），不是旧版真实车辆路径重放。确定性时钟用例只隔离预算挤占；没有宣称旧数据里某条恢复路线已证明可达。新core检查包含分区排列边界与原有核心约束，通过日志见`new_schedule_regression.log`。600秒结果必须另见本轮实验，不能以单元检查代替。
++
++新头文件纳入实验source_hashes。保持单目标0.15s、周期0.35s配置；原搜索每32次展开才检查截止，仍可能超出名义预算，尚未修复这项长尾。此次没有提高预算，也没有绝对实时保证。恢复路线按当前地图重新搜索并通过相同硬检查，不复用过时路径授权。
+diff --git a/docs/fixes/evidence/2026-10-19_recovery_scheduling/LastTest.log b/docs/fixes/evidence/2026-10-19_recovery_scheduling/LastTest.log
+new file mode 100644
+index 0000000..9816031
+--- /dev/null
++++ b/docs/fixes/evidence/2026-10-19_recovery_scheduling/LastTest.log
+@@ -0,0 +1,380 @@
++Start testing: Oct 19 00:47 CST
++----------------------------------------------------------
++1/4 Testing: ht_core_test
++1/4 Test: ht_core_test
++Command: "/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/ht_core_test"
++Directory: /home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner
++"ht_core_test" start time: Oct 19 00:47 CST
++Output:
++----------------------------------------------------------
++PASS: 14133 HT core checks
++<end of output>
++Test time =   0.00 sec
++----------------------------------------------------------
++Test Passed.
++"ht_core_test" end time: Oct 19 00:47 CST
++"ht_core_test" time elapsed: 00:00:00
++----------------------------------------------------------
++
++2/4 Testing: geometry_pose_test
++2/4 Test: geometry_pose_test
++Command: "/usr/bin/python3" "-u" "/opt/ros/jazzy/share/ament_cmake_test/cmake/run_test.py" "/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/test_results/tare_planner/geometry_pose_test.gtest.xml" "--package-name" "tare_planner" "--output-file" "/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/ament_cmake_gtest/geometry_pose_test.txt" "--command" "/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/geometry_pose_test" "--gtest_output=xml:/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/test_results/tare_planner/geometry_pose_test.gtest.xml"
++Directory: /home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner
++"geometry_pose_test" start time: Oct 19 00:47 CST
++Output:
++----------------------------------------------------------
++-- run_test.py: invoking following command in '/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner':
++ - /home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/geometry_pose_test --gtest_output=xml:/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/test_results/tare_planner/geometry_pose_test.gtest.xml
++Running main() from /opt/ros/jazzy/src/gtest_vendor/src/gtest_main.cc
++[==========] Running 18 tests from 4 test suites.
++[----------] Global test environment set-up.
++[----------] 2 tests from GeometryPose
++[ RUN      ] GeometryPose.CapturedContinuousRootDoesNotInheritNeighbourCollision
++[       OK ] GeometryPose.CapturedContinuousRootDoesNotInheritNeighbourCollision (248 ms)
++[ RUN      ] GeometryPose.HeightSliceMatchesBruteForceAtBoundariesAndOtherHeights
++[       OK ] GeometryPose.HeightSliceMatchesBruteForceAtBoundariesAndOtherHeights (194 ms)
++[----------] 2 tests from GeometryPose (442 ms total)
++
++[----------] 1 test from SearchAudit
++[ RUN      ] SearchAudit.SeparatesDeadlineExpansionLimitAndExhaustedComponent
++[       OK ] SearchAudit.SeparatesDeadlineExpansionLimitAndExhaustedComponent (0 ms)
++[----------] 1 test from SearchAudit (0 ms total)
++
++[----------] 14 tests from PendingCell
++[ RUN      ] PendingCell.GainWithoutSelectedLocalGoalMustEnterGlobalTodo
++[INFO] [1792342053.560673412] [tare_planner_node]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=0 reversible=0 scores=point
++[INFO] [1792342053.748983972] [standalone_logger]: HT_CELL_AUDIT cell=64 xy=(24.000000,0.000000) old=0 new=1 reason=REGISTER_OBSERVED_GAIN candidates=1 selected=0 above_small=1 above_big=1 above_frontier=1 highest_score=235 visits=1 graph_nodes=0 robot=(9.267491,-14.360244) ht_stamp=-1.000000000 pending_gain=1
++[       OK ] PendingCell.GainWithoutSelectedLocalGoalMustEnterGlobalTodo (203 ms)
++[ RUN      ] PendingCell.PositiveGainMustSurviveLeavingLocalNeighbourhood
++[INFO] [1792342053.761507094] [tare_planner_node]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=0 reversible=0 scores=point
++[INFO] [1792342053.953502134] [standalone_logger]: HT_CELL_AUDIT cell=64 xy=(24.000000,0.000000) old=1 new=1 reason=KEEP_PENDING_GAIN candidates=1 selected=0 above_small=1 above_big=1 above_frontier=1 highest_score=235 visits=1 graph_nodes=0 robot=(9.267491,-14.360244) ht_stamp=-1.000000000 pending_gain=1
++[       OK ] PendingCell.PositiveGainMustSurviveLeavingLocalNeighbourhood (203 ms)
++[ RUN      ] PendingCell.FrontierOnlyObservationRegistersGlobalTodo
++[INFO] [1792342053.964637365] [tare_planner_node]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=0 reversible=0 scores=point
++[INFO] [1792342054.154241596] [standalone_logger]: HT_CELL_AUDIT cell=64 xy=(24.000000,0.000000) old=0 new=1 reason=REGISTER_OBSERVED_GAIN candidates=1 selected=0 above_small=0 above_big=0 above_frontier=1 highest_score=0 visits=1 graph_nodes=0 robot=(9.267491,-14.360244) ht_stamp=-1.000000000 pending_gain=1
++[       OK ] PendingCell.FrontierOnlyObservationRegistersGlobalTodo (202 ms)
++[ RUN      ] PendingCell.ZeroGainDoesNotCreateGlobalTodo
++[INFO] [1792342054.170503746] [tare_planner_node]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=0 reversible=0 scores=point
++[INFO] [1792342054.363485022] [standalone_logger]: HT_CELL_AUDIT cell=64 xy=(24.000000,0.000000) old=0 new=0 reason=UNCHANGED candidates=1 selected=0 above_small=0 above_big=0 above_frontier=0 highest_score=0 visits=1 graph_nodes=0 robot=(9.267491,-14.360244) ht_stamp=-1.000000000 pending_gain=0
++[       OK ] PendingCell.ZeroGainDoesNotCreateGlobalTodo (207 ms)
++[ RUN      ] PendingCell.VisitedViewpointDoesNotCreateGlobalTodo
++[INFO] [1792342054.374904469] [tare_planner_node]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=0 reversible=0 scores=point
++[INFO] [1792342054.561782213] [standalone_logger]: HT_CELL_AUDIT cell=64 xy=(24.000000,0.000000) old=0 new=0 reason=UNCHANGED candidates=1 selected=0 above_small=0 above_big=0 above_frontier=0 highest_score=-1 visits=1 graph_nodes=0 robot=(9.267491,-14.360244) ht_stamp=-1.000000000 pending_gain=0
++[       OK ] PendingCell.VisitedViewpointDoesNotCreateGlobalTodo (198 ms)
++[ RUN      ] PendingCell.NoCandidateDoesNotInventObservedGain
++[INFO] [1792342054.573608736] [tare_planner_node]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=0 reversible=0 scores=point
++[       OK ] PendingCell.NoCandidateDoesNotInventObservedGain (197 ms)
++[ RUN      ] PendingCell.ExistingZeroGainTaskCanStillBecomeCovered
++[INFO] [1792342054.771192596] [tare_planner_node]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=0 reversible=0 scores=point
++[INFO] [1792342054.961597859] [standalone_logger]: HT_CELL_AUDIT cell=64 xy=(24.000000,0.000000) old=1 new=2 reason=NO_GAIN_WITH_CANDIDATES candidates=1 selected=0 above_small=0 above_big=0 above_frontier=0 highest_score=0 visits=1 graph_nodes=0 robot=(9.267491,-14.360244) ht_stamp=-1.000000000 pending_gain=0
++[       OK ] PendingCell.ExistingZeroGainTaskCanStillBecomeCovered (201 ms)
++[ RUN      ] PendingCell.OtherSelectedGoalDoesNotHidePendingCell
++[INFO] [1792342054.972482518] [tare_planner_node]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=0 reversible=0 scores=point
++[INFO] [1792342055.160672554] [standalone_logger]: HT_CELL_AUDIT cell=63 xy=(18.000000,0.000000) old=0 new=1 reason=SELECTED_REOPEN candidates=1 selected=1 above_small=1 above_big=1 above_frontier=0 highest_score=150 visits=1 graph_nodes=0 robot=(9.267491,-14.360244) ht_stamp=-1.000000000 pending_gain=1
++[INFO] [1792342055.160700908] [standalone_logger]: HT_CELL_AUDIT cell=64 xy=(24.000000,0.000000) old=0 new=1 reason=REGISTER_OBSERVED_GAIN candidates=1 selected=0 above_small=1 above_big=1 above_frontier=1 highest_score=235 visits=1 graph_nodes=0 robot=(9.267491,-14.360244) ht_stamp=-1.000000000 pending_gain=1
++[       OK ] PendingCell.OtherSelectedGoalDoesNotHidePendingCell (198 ms)
++[ RUN      ] PendingCell.CoveredCellReopeningKeepsExistingHysteresis
++[INFO] [1792342055.170748018] [tare_planner_node]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=0 reversible=0 scores=point
++[INFO] [1792342055.352808470] [standalone_logger]: HT_CELL_AUDIT cell=64 xy=(24.000000,0.000000) old=2 new=2 reason=UNCHANGED candidates=1 selected=0 above_small=1 above_big=1 above_frontier=1 highest_score=235 visits=1 graph_nodes=0 robot=(9.267491,-14.360244) ht_stamp=-1.000000000 pending_gain=0
++[       OK ] PendingCell.CoveredCellReopeningKeepsExistingHysteresis (192 ms)
++[ RUN      ] PendingCell.LastObservedGainSurvivesTemporaryNoCandidates
++[INFO] [1792342055.363142442] [tare_planner_node]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=0 reversible=0 scores=point
++[INFO] [1792342055.548266306] [standalone_logger]: HT_CELL_AUDIT cell=64 xy=(24.000000,0.000000) old=0 new=1 reason=REGISTER_OBSERVED_GAIN candidates=1 selected=0 above_small=1 above_big=1 above_frontier=1 highest_score=235 visits=1 graph_nodes=0 robot=(9.267491,-14.360244) ht_stamp=-1.000000000 pending_gain=1
++[INFO] [1792342055.548293269] [standalone_logger]: HT_CELL_AUDIT cell=64 xy=(24.000000,0.000000) old=1 new=1 reason=NO_CANDIDATE_DEFERRED candidates=0 selected=0 above_small=0 above_big=0 above_frontier=0 highest_score=-1 visits=1 graph_nodes=0 robot=(9.267491,-14.360244) ht_stamp=-1.000000000 pending_gain=1
++[       OK ] PendingCell.LastObservedGainSurvivesTemporaryNoCandidates (198 ms)
++[ RUN      ] PendingCell.LastObservedGainSurvivesNoCandidatesNearRobot
++[INFO] [1792342055.561633324] [tare_planner_node]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=0 reversible=0 scores=point
++[INFO] [1792342055.753828494] [standalone_logger]: HT_CELL_AUDIT cell=64 xy=(24.000000,0.000000) old=0 new=1 reason=REGISTER_OBSERVED_GAIN candidates=1 selected=0 above_small=1 above_big=1 above_frontier=1 highest_score=235 visits=1 graph_nodes=0 robot=(9.267491,-14.360244) ht_stamp=-1.000000000 pending_gain=1
++[INFO] [1792342055.753853884] [standalone_logger]: HT_CELL_AUDIT cell=64 xy=(24.000000,0.000000) old=1 new=1 reason=NO_CANDIDATE_DEFERRED candidates=0 selected=0 above_small=0 above_big=0 above_frontier=0 highest_score=-1 visits=2 graph_nodes=0 robot=(24.000000,0.000000) ht_stamp=-1.000000000 pending_gain=1
++[       OK ] PendingCell.LastObservedGainSurvivesNoCandidatesNearRobot (203 ms)
++[ RUN      ] PendingCell.FreshZeroGainCanDischargeRememberedPendingTask
++[INFO] [1792342055.764955221] [tare_planner_node]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=0 reversible=0 scores=point
++[INFO] [1792342055.950944021] [standalone_logger]: HT_CELL_AUDIT cell=64 xy=(24.000000,0.000000) old=0 new=1 reason=REGISTER_OBSERVED_GAIN candidates=1 selected=0 above_small=1 above_big=1 above_frontier=1 highest_score=235 visits=1 graph_nodes=0 robot=(9.267491,-14.360244) ht_stamp=-1.000000000 pending_gain=1
++[INFO] [1792342055.950967001] [standalone_logger]: HT_CELL_AUDIT cell=64 xy=(24.000000,0.000000) old=1 new=1 reason=NO_CANDIDATE_DEFERRED candidates=0 selected=0 above_small=0 above_big=0 above_frontier=0 highest_score=-1 visits=1 graph_nodes=0 robot=(9.267491,-14.360244) ht_stamp=-1.000000000 pending_gain=1
++[INFO] [1792342055.950971416] [standalone_logger]: HT_CELL_AUDIT cell=64 xy=(24.000000,0.000000) old=1 new=2 reason=NO_GAIN_WITH_CANDIDATES candidates=1 selected=0 above_small=0 above_big=0 above_frontier=0 highest_score=0 visits=1 graph_nodes=0 robot=(9.267491,-14.360244) ht_stamp=-1.000000000 pending_gain=0
++[       OK ] PendingCell.FreshZeroGainCanDischargeRememberedPendingTask (196 ms)
++[ RUN      ] PendingCell.NavigationOnlyTaskDoesNotInventRememberedGain
++[INFO] [1792342055.961715649] [tare_planner_node]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=0 reversible=0 scores=point
++[INFO] [1792342056.147651867] [standalone_logger]: HT_CELL_AUDIT cell=64 xy=(24.000000,0.000000) old=0 new=1 reason=SELECTED_REOPEN candidates=1 selected=1 above_small=0 above_big=0 above_frontier=0 highest_score=0 visits=1 graph_nodes=0 robot=(9.267491,-14.360244) ht_stamp=-1.000000000 pending_gain=0
++[INFO] [1792342056.147671404] [standalone_logger]: HT_CELL_AUDIT cell=64 xy=(24.000000,0.000000) old=1 new=2 reason=NO_CANDIDATE_FIRST_VISIT_NO_GRAPH candidates=0 selected=0 above_small=0 above_big=0 above_frontier=0 highest_score=-1 visits=1 graph_nodes=0 robot=(9.267491,-14.360244) ht_stamp=-1.000000000 pending_gain=0
++[       OK ] PendingCell.NavigationOnlyTaskDoesNotInventRememberedGain (196 ms)
++[ RUN      ] PendingCell.ExternalCoveredOrResetClearsPendingRegistry
++[INFO] [1792342056.158751902] [tare_planner_node]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=0 reversible=0 scores=point
++[INFO] [1792342056.345061748] [standalone_logger]: HT_CELL_AUDIT cell=64 xy=(24.000000,0.000000) old=0 new=1 reason=REGISTER_OBSERVED_GAIN candidates=1 selected=0 above_small=1 above_big=1 above_frontier=1 highest_score=235 visits=1 graph_nodes=0 robot=(9.267491,-14.360244) ht_stamp=-1.000000000 pending_gain=1
++[INFO] [1792342056.345085523] [standalone_logger]: HT_CELL_AUDIT cell=64 xy=(24.000000,0.000000) old=0 new=1 reason=REGISTER_OBSERVED_GAIN candidates=1 selected=0 above_small=1 above_big=1 above_frontier=1 highest_score=235 visits=1 graph_nodes=0 robot=(9.267491,-14.360244) ht_stamp=-1.000000000 pending_gain=1
++[       OK ] PendingCell.ExternalCoveredOrResetClearsPendingRegistry (196 ms)
++[----------] 14 tests from PendingCell (2797 ms total)
++
++[----------] 1 test from LegacyPendingCell
++[ RUN      ] LegacyPendingCell.DisabledHtPreservesLegacySelectedActivation
++[       OK ] LegacyPendingCell.DisabledHtPreservesLegacySelectedActivation (203 ms)
++[----------] 1 test from LegacyPendingCell (203 ms total)
++
++[----------] Global test environment tear-down
++[==========] 18 tests from 4 test suites ran. (3443 ms total)
++[  PASSED  ] 18 tests.
++-- run_test.py: return code 0
++-- run_test.py: inject classname prefix into gtest result file '/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/test_results/tare_planner/geometry_pose_test.gtest.xml'
++-- run_test.py: verify result file '/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/test_results/tare_planner/geometry_pose_test.gtest.xml'
++<end of output>
++Test time =   3.66 sec
++----------------------------------------------------------
++Test Passed.
++"geometry_pose_test" end time: Oct 19 00:47 CST
++"geometry_pose_test" time elapsed: 00:00:03
++----------------------------------------------------------
++
++3/4 Testing: ht_ros_test
++3/4 Test: ht_ros_test
++Command: "/usr/bin/python3" "-u" "/opt/ros/jazzy/share/ament_cmake_test/cmake/run_test.py" "/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/test_results/tare_planner/ht_ros_test.gtest.xml" "--package-name" "tare_planner" "--output-file" "/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/ament_cmake_gtest/ht_ros_test.txt" "--command" "/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/ht_ros_test" "--gtest_output=xml:/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/test_results/tare_planner/ht_ros_test.gtest.xml"
++Directory: /home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner
++"ht_ros_test" start time: Oct 19 00:47 CST
++Output:
++----------------------------------------------------------
++-- run_test.py: invoking following command in '/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner':
++ - /home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/ht_ros_test --gtest_output=xml:/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/test_results/tare_planner/ht_ros_test.gtest.xml
++Running main() from /opt/ros/jazzy/src/gtest_vendor/src/gtest_main.cc
++[==========] Running 25 tests from 2 test suites.
++[----------] Global test environment set-up.
++[----------] 4 tests from HtConfigurationRosTest
++[ RUN      ] HtConfigurationRosTest.NeighbouringVehicleScoresAreNotPointObstacles
++[INFO] [1792342056.772678177] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0 scores=configuration
++[       OK ] HtConfigurationRosTest.NeighbouringVehicleScoresAreNotPointObstacles (383 ms)
++[ RUN      ] HtConfigurationRosTest.MissingBodyObservationsAndUnscoredReferenceStillReject
++[INFO] [1792342057.140668304] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0 scores=configuration
++[       OK ] HtConfigurationRosTest.MissingBodyObservationsAndUnscoredReferenceStillReject (365 ms)
++[ RUN      ] HtConfigurationRosTest.MissingOrInvalidPhysicalContractCannotEnableDriving
++[INFO] [1792342057.505657239] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0 scores=configuration
++[WARN] [1792342057.658904655] [ht_ros_test]: HT map rejected: Configuration HT requires separate physical observation and obstacle layers
++[       OK ] HtConfigurationRosTest.MissingOrInvalidPhysicalContractCannotEnableDriving (570 ms)
++[ RUN      ] HtConfigurationRosTest.CapturedMixedTurnStopHasAnExitWithoutInflatingVehicleScores
++[INFO] [1792342058.076565017] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0 scores=configuration
++[       OK ] HtConfigurationRosTest.CapturedMixedTurnStopHasAnExitWithoutInflatingVehicleScores (359 ms)
++[----------] 4 tests from HtConfigurationRosTest (1678 ms total)
++
++[----------] 21 tests from HtRosTest
++[ RUN      ] HtRosTest.DirectionalCostsAndValidSupport
++[INFO] [1792342058.435937199] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0 scores=point
++[       OK ] HtRosTest.DirectionalCostsAndValidSupport (261 ms)
++[ RUN      ] HtRosTest.CircularBufferPreservesSpatialCells
++[INFO] [1792342058.696600040] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0 scores=point
++[       OK ] HtRosTest.CircularBufferPreservesSpatialCells (261 ms)
++[ RUN      ] HtRosTest.OffCenterHazardIsHardBlockedAtPlanningAndExecution
++[INFO] [1792342058.957963179] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0 scores=point
++[       OK ] HtRosTest.OffCenterHazardIsHardBlockedAtPlanningAndExecution (260 ms)
++[ RUN      ] HtRosTest.SeparatePhysicalObservationDoesNotInflateContextTwice
++[INFO] [1792342059.219065765] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0 scores=point
++[       OK ] HtRosTest.SeparatePhysicalObservationDoesNotInflateContextTwice (571 ms)
++[ RUN      ] HtRosTest.CapturedTunnelReturnKeepsRiskThresholdAndReachesHome
++[INFO] [1792342059.790418872] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0 scores=point
++[       OK ] HtRosTest.CapturedTunnelReturnKeepsRiskThresholdAndReachesHome (502 ms)
++[ RUN      ] HtRosTest.CapturedMapSearchResolutionAudit
++[INFO] [1792342060.293428988] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0 scores=point
++RESOLUTION_AUDIT profile=production goal=0 reached=0 expanded=8 poses=0 seconds=0.000101714
++RESOLUTION_AUDIT profile=production goal=1 reached=0 expanded=8 poses=0 seconds=6.0392e-05
++RESOLUTION_AUDIT profile=production goal=2 reached=0 expanded=8 poses=0 seconds=6.478e-05
++RESOLUTION_AUDIT profile=production goal=3 reached=0 expanded=8 poses=0 seconds=5.9008e-05
++RESOLUTION_AUDIT profile=production goal=4 reached=0 expanded=8 poses=0 seconds=5.2142e-05
++RESOLUTION_AUDIT profile=production goal=5 reached=0 expanded=8 poses=0 seconds=5.7178e-05
++RESOLUTION_AUDIT profile=production goal=6 reached=0 expanded=8 poses=0 seconds=5.1915e-05
++RESOLUTION_AUDIT profile=production goal=7 reached=0 expanded=8 poses=0 seconds=6.2281e-05
++RESOLUTION_AUDIT profile=production goal=8 reached=0 expanded=8 poses=0 seconds=5.375e-05
++RESOLUTION_AUDIT profile=heading32 goal=0 reached=0 expanded=16 poses=0 seconds=8.4084e-05
++RESOLUTION_AUDIT profile=heading32 goal=1 reached=0 expanded=16 poses=0 seconds=0.000123075
++RESOLUTION_AUDIT profile=heading32 goal=2 reached=0 expanded=16 poses=0 seconds=9.3854e-05
++RESOLUTION_AUDIT profile=heading32 goal=3 reached=0 expanded=16 poses=0 seconds=9.0564e-05
++RESOLUTION_AUDIT profile=heading32 goal=4 reached=0 expanded=16 poses=0 seconds=0.000125561
++RESOLUTION_AUDIT profile=heading32 goal=5 reached=0 expanded=16 poses=0 seconds=0.000111484
++RESOLUTION_AUDIT profile=heading32 goal=6 reached=0 expanded=16 poses=0 seconds=8.6937e-05
++RESOLUTION_AUDIT profile=heading32 goal=7 reached=0 expanded=16 poses=0 seconds=9.8607e-05
++RESOLUTION_AUDIT profile=heading32 goal=8 reached=0 expanded=16 poses=0 seconds=0.000116656
++RESOLUTION_AUDIT profile=heading64 goal=0 reached=0 expanded=32 poses=0 seconds=0.000168371
++RESOLUTION_AUDIT profile=heading64 goal=1 reached=0 expanded=32 poses=0 seconds=0.000187047
++RESOLUTION_AUDIT profile=heading64 goal=2 reached=0 expanded=32 poses=0 seconds=0.00016207
++RESOLUTION_AUDIT profile=heading64 goal=3 reached=0 expanded=32 poses=0 seconds=0.000176367
++RESOLUTION_AUDIT profile=heading64 goal=4 reached=0 expanded=32 poses=0 seconds=0.000157388
++RESOLUTION_AUDIT profile=heading64 goal=5 reached=0 expanded=32 poses=0 seconds=0.000153405
++RESOLUTION_AUDIT profile=heading64 goal=6 reached=0 expanded=32 poses=0 seconds=0.000151699
++RESOLUTION_AUDIT profile=heading64 goal=7 reached=0 expanded=32 poses=0 seconds=0.000152396
++RESOLUTION_AUDIT profile=heading64 goal=8 reached=0 expanded=32 poses=0 seconds=0.00014601
++RESOLUTION_AUDIT profile=short16 goal=0 reached=0 expanded=18 poses=0 seconds=8.2333e-05
++RESOLUTION_AUDIT profile=short16 goal=1 reached=0 expanded=16 poses=0 seconds=9.4759e-05
++RESOLUTION_AUDIT profile=short16 goal=2 reached=0 expanded=16 poses=0 seconds=7.1513e-05
++RESOLUTION_AUDIT profile=short16 goal=3 reached=0 expanded=16 poses=0 seconds=7.0042e-05
++RESOLUTION_AUDIT profile=short16 goal=4 reached=0 expanded=18 poses=0 seconds=0.000106134
++RESOLUTION_AUDIT profile=short16 goal=5 reached=0 expanded=18 poses=0 seconds=0.000130707
++RESOLUTION_AUDIT profile=short16 goal=6 reached=0 expanded=18 poses=0 seconds=0.000128265
++RESOLUTION_AUDIT profile=short16 goal=7 reached=0 expanded=16 poses=0 seconds=8.2833e-05
++RESOLUTION_AUDIT profile=short16 goal=8 reached=0 expanded=16 poses=0 seconds=0.000133465
++RESOLUTION_AUDIT profile=fine32 goal=0 reached=0 expanded=60 poses=0 seconds=0.000236082
++RESOLUTION_AUDIT profile=fine32 goal=1 reached=0 expanded=48 poses=0 seconds=0.000266261
++RESOLUTION_AUDIT profile=fine32 goal=2 reached=0 expanded=48 poses=0 seconds=0.000187217
++RESOLUTION_AUDIT profile=fine32 goal=3 reached=0 expanded=52 poses=0 seconds=0.000193274
++RESOLUTION_AUDIT profile=fine32 goal=4 reached=0 expanded=52 poses=0 seconds=0.000210911
++RESOLUTION_AUDIT profile=fine32 goal=5 reached=0 expanded=60 poses=0 seconds=0.000222084
++RESOLUTION_AUDIT profile=fine32 goal=6 reached=0 expanded=60 poses=0 seconds=0.000233099
++RESOLUTION_AUDIT profile=fine32 goal=7 reached=0 expanded=60 poses=0 seconds=0.000241429
++RESOLUTION_AUDIT profile=fine32 goal=8 reached=0 expanded=56 poses=0 seconds=0.000213859
++RESOLUTION_AUDIT profile=fine64 goal=0 reached=0 expanded=112 poses=0 seconds=0.000500528
++RESOLUTION_AUDIT profile=fine64 goal=1 reached=0 expanded=120 poses=0 seconds=0.000988449
++RESOLUTION_AUDIT profile=fine64 goal=2 reached=0 expanded=120 poses=0 seconds=0.000977647
++RESOLUTION_AUDIT profile=fine64 goal=3 reached=0 expanded=112 poses=0 seconds=0.000748681
++RESOLUTION_AUDIT profile=fine64 goal=4 reached=0 expanded=112 poses=0 seconds=0.0004258
++RESOLUTION_AUDIT profile=fine64 goal=5 reached=0 expanded=112 poses=0 seconds=0.000470924
++RESOLUTION_AUDIT profile=fine64 goal=6 reached=0 expanded=112 poses=0 seconds=0.000449175
++RESOLUTION_AUDIT profile=fine64 goal=7 reached=0 expanded=112 poses=0 seconds=0.000428765
++RESOLUTION_AUDIT profile=fine64 goal=8 reached=0 expanded=120 poses=0 seconds=0.000459945
++[       OK ] HtRosTest.CapturedMapSearchResolutionAudit (5775 ms)
++[ RUN      ] HtRosTest.CapturedSafeRootNeedsFinerHeadingSearchToEscape
++[INFO] [1792342066.069375525] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0 scores=point
++[       OK ] HtRosTest.CapturedSafeRootNeedsFinerHeadingSearchToEscape (328 ms)
++[ RUN      ] HtRosTest.ReversibleMotionRejectsAOneWayEntranceWithoutChangingRawScores
++[INFO] [1792342066.397159356] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0 scores=point
++[INFO] [1792342066.555349570] [ht_reversible_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=1 scores=point
++[INFO] [1792342066.709645414] [ht_reversible_test]: HT_RETURN_MARGIN_BLOCK map_stamp=1792342066.555398703 a=(0.000,0.000,0.000) b=(0.400,0.000,0.000) reverse_support=3
++[       OK ] HtRosTest.ReversibleMotionRejectsAOneWayEntranceWithoutChangingRawScores (621 ms)
++[ RUN      ] HtRosTest.CapturedHeadingBoundaryHasPlanningReserveWithoutRelaxingMeasuredRoot
++[INFO] [1792342067.019233769] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0 scores=point
++[       OK ] HtRosTest.CapturedHeadingBoundaryHasPlanningReserveWithoutRelaxingMeasuredRoot (335 ms)
++[ RUN      ] HtRosTest.RotatedTranslatedFrameRotatesChannels
++[INFO] [1792342067.354327865] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0 scores=point
++[       OK ] HtRosTest.RotatedTranslatedFrameRotatesChannels (513 ms)
++[ RUN      ] HtRosTest.MissingLayerRevokesPreviousMap
++[INFO] [1792342067.868106477] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0 scores=point
++[WARN] [1792342068.124494308] [ht_ros_test]: HT map rejected: Missing ht_dir layers; set aggregate_only=false
++[       OK ] HtRosTest.MissingLayerRevokesPreviousMap (364 ms)
++[ RUN      ] HtRosTest.InvalidProbabilityPreventsExecution
++[INFO] [1792342068.232234439] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0 scores=point
++[       OK ] HtRosTest.InvalidProbabilityPreventsExecution (363 ms)
++[ RUN      ] HtRosTest.StaleFutureAndMissingTransformHold
++[INFO] [1792342068.596125999] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0 scores=point
++[       OK ] HtRosTest.StaleFutureAndMissingTransformHold (470 ms)
++[ RUN      ] HtRosTest.NonFinitePoseRejected
++[INFO] [1792342069.067734734] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0 scores=point
++[       OK ] HtRosTest.NonFinitePoseRejected (261 ms)
++[ RUN      ] HtRosTest.MalformedMessagesDoNotEnterUnsafeConverter
++[INFO] [1792342069.328236971] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0 scores=point
++[       OK ] HtRosTest.MalformedMessagesDoNotEnterUnsafeConverter (778 ms)
++[ RUN      ] HtRosTest.CalibrationRequiredAndParametersChecked
++[INFO] [1792342070.108472968] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0 scores=point
++[INFO] [1792342070.264959318] [ht_uncalibrated]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=0 reversible=0 scores=point
++[       OK ] HtRosTest.CalibrationRequiredAndParametersChecked (167 ms)
++[ RUN      ] HtRosTest.StartupPriorIsBoundedAndDoesNotOverwriteObservedRisk
++[INFO] [1792342070.273927747] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0 scores=point
++[WARN] [1792342070.739299785] [ht_ros_test]: HT map rejected: Missing ht_dir layers; set aggregate_only=false
++[       OK ] HtRosTest.StartupPriorIsBoundedAndDoesNotOverwriteObservedRisk (573 ms)
++[ RUN      ] HtRosTest.UnknownAndObservedRiskBothBlockEdges
++[INFO] [1792342070.847664140] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0 scores=point
++[       OK ] HtRosTest.UnknownAndObservedRiskBothBlockEdges (260 ms)
++[ RUN      ] HtRosTest.StrictPolicyAllowsOnlyKnownOrBoundedStartup
++[INFO] [1792342071.107947902] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0 scores=point
++[INFO] [1792342071.265143699] [ht_strict_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0 scores=point
++[       OK ] HtRosTest.StrictPolicyAllowsOnlyKnownOrBoundedStartup (420 ms)
++[ RUN      ] HtRosTest.RecordedGarageUnknownCornerCannotPassAsAnUnsplitEdge
++[INFO] [1792342071.528687365] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0 scores=point
++[       OK ] HtRosTest.RecordedGarageUnknownCornerCannotPassAsAnUnsplitEdge (265 ms)
++[ RUN      ] HtRosTest.HeadingSweepChecksIntermediateDirectionsAndWrapsAtPi
++[INFO] [1792342071.794408270] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0 scores=point
++[       OK ] HtRosTest.HeadingSweepChecksIntermediateDirectionsAndWrapsAtPi (261 ms)
++[----------] 21 tests from HtRosTest (13620 ms total)
++
++[----------] Global test environment tear-down
++[==========] 25 tests from 2 test suites ran. (15299 ms total)
++[  PASSED  ] 25 tests.
++-- run_test.py: return code 0
++-- run_test.py: inject classname prefix into gtest result file '/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/test_results/tare_planner/ht_ros_test.gtest.xml'
++-- run_test.py: verify result file '/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/test_results/tare_planner/ht_ros_test.gtest.xml'
++<end of output>
++Test time =  15.50 sec
++----------------------------------------------------------
++Test Passed.
++"ht_ros_test" end time: Oct 19 00:47 CST
++"ht_ros_test" time elapsed: 00:00:15
++----------------------------------------------------------
++
++4/4 Testing: xytheta_follower_test
++4/4 Test: xytheta_follower_test
++Command: "/usr/bin/python3" "-u" "/opt/ros/jazzy/share/ament_cmake_test/cmake/run_test.py" "/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/test_results/tare_planner/xytheta_follower_test.gtest.xml" "--package-name" "tare_planner" "--output-file" "/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/ament_cmake_gtest/xytheta_follower_test.txt" "--command" "/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/xytheta_follower_test" "--gtest_output=xml:/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/test_results/tare_planner/xytheta_follower_test.gtest.xml"
++Directory: /home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner
++"xytheta_follower_test" start time: Oct 19 00:47 CST
++Output:
++----------------------------------------------------------
++-- run_test.py: invoking following command in '/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner':
++ - /home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/xytheta_follower_test --gtest_output=xml:/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/test_results/tare_planner/xytheta_follower_test.gtest.xml
++Running main() from /opt/ros/jazzy/src/gtest_vendor/src/gtest_main.cc
++[==========] Running 16 tests from 2 test suites.
++[----------] Global test environment set-up.
++[----------] 1 test from ConfigurationFollowerTest
++[ RUN      ] ConfigurationFollowerTest.SeparateObstacleAndUnknownRevokeRealCommands
++[INFO] [1792342072.270945009] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=1 scores=configuration
++[       OK ] ConfigurationFollowerTest.SeparateObstacleAndUnknownRevokeRealCommands (1575 ms)
++[----------] 1 test from ConfigurationFollowerTest (1575 ms total)
++
++[----------] 15 tests from FollowerTest
++[ RUN      ] FollowerTest.FreshMapMaintainsExecutionAcrossSlowPlannerPermission
++[INFO] [1792342073.835122103] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=1 scores=point
++[       OK ] FollowerTest.FreshMapMaintainsExecutionAcrossSlowPlannerPermission (2293 ms)
++[ RUN      ] FollowerTest.FineSpinFinishesHeadingAndStopsBeforeTranslation
++[INFO] [1792342076.131124558] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=1 scores=point
++[       OK ] FollowerTest.FineSpinFinishesHeadingAndStopsBeforeTranslation (2331 ms)
++[ RUN      ] FollowerTest.GroupedSpinStillRejectsAnUnsafeIntermediateDirection
++[INFO] [1792342078.460753691] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=1 scores=point
++[       OK ] FollowerTest.GroupedSpinStillRejectsAnUnsafeIntermediateDirection (825 ms)
++[ RUN      ] FollowerTest.RejectedTrackingArcPublishesZeroRatherThanTheCandidateCommand
++[INFO] [1792342079.286363070] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=1 scores=point
++[       OK ] FollowerTest.RejectedTrackingArcPublishesZeroRatherThanTheCandidateCommand (2231 ms)
++[ RUN      ] FollowerTest.RefusesAOneWayPathButDoesNotRequireEveryHeadingToBeSafe
++[INFO] [1792342081.517871184] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=1 scores=point
++[INFO] [1792342082.336420779] [xytheta_follower]: HT_RETURN_MARGIN_BLOCK map_stamp=1792342082.315505743 a=(0.000,0.000,0.000) b=(0.200,0.000,0.000) reverse_support=3
++[       OK ] FollowerTest.RefusesAOneWayPathButDoesNotRequireEveryHeadingToBeSafe (1244 ms)
++[ RUN      ] FollowerTest.FreshMapsCannotExtendAnExpiredPlan
++[INFO] [1792342082.762461485] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=1 scores=point
++[       OK ] FollowerTest.FreshMapsCannotExtendAnExpiredPlan (3490 ms)
++[ RUN      ] FollowerTest.CompletionHeartbeatExplainsTerminalStopButCannotRenewDriving
++[INFO] [1792342086.254267354] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=1 scores=point
++[       OK ] FollowerTest.CompletionHeartbeatExplainsTerminalStopButCannotRenewDriving (5582 ms)
++[ RUN      ] FollowerTest.NewObstacleAndUnknownRevokeExecution
++[INFO] [1792342091.834827554] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=1 scores=point
++[       OK ] FollowerTest.NewObstacleAndUnknownRevokeExecution (1009 ms)
++[ RUN      ] FollowerTest.ExplicitHoldAndMissingOdometryStillStop
++[INFO] [1792342092.844293698] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=1 scores=point
++[       OK ] FollowerTest.ExplicitHoldAndMissingOdometryStillStop (1410 ms)
++[ RUN      ] FollowerTest.PathFailureReportsItsEdgeAndPlanIdentityOnce
++[INFO] [1792342094.254980152] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=1 scores=point
++[INFO] [1792342094.864779776] [xytheta_follower]: HT_RETURN_MARGIN_BLOCK map_stamp=1792342094.843706846 a=(0.400,0.000,0.000) b=(0.500,0.000,0.000) reverse_support=2
++[       OK ] FollowerTest.PathFailureReportsItsEdgeAndPlanIdentityOnce (1204 ms)
++[ RUN      ] FollowerTest.MeasuredGeometryRevokesCommandsEvenWhenHtAllows
++[INFO] [1792342095.459649711] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=1 scores=point
++[       OK ] FollowerTest.MeasuredGeometryRevokesCommandsEvenWhenHtAllows (1308 ms)
++[ RUN      ] FollowerTest.GeometryPathCheckPublishesZeroAndInvalidatesExactPath
++[INFO] [1792342096.768201546] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=1 scores=point
++[       OK ] FollowerTest.GeometryPathCheckPublishesZeroAndInvalidatesExactPath (995 ms)
++[ RUN      ] FollowerTest.GeometryFreshnessAndFrameAreRequired
++[INFO] [1792342097.763787753] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=1 scores=point
++[       OK ] FollowerTest.GeometryFreshnessAndFrameAreRequired (1832 ms)
++[ RUN      ] FollowerTest.ObstacleAboveVehicleCylinderDoesNotBlockFreePath
++[INFO] [1792342099.596066492] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=1 scores=point
++[       OK ] FollowerTest.ObstacleAboveVehicleCylinderDoesNotBlockFreePath (782 ms)
++[ RUN      ] FollowerTest.GeometryCommandArcRejectsTrackingDepartureWithActualZeroTwist
++[INFO] [1792342100.378665749] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=1 scores=point
++[       OK ] FollowerTest.GeometryCommandArcRejectsTrackingDepartureWithActualZeroTwist (1980 ms)
++[----------] 15 tests from FollowerTest (28524 ms total)
++
++[----------] Global test environment tear-down
++[==========] 16 tests from 2 test suites ran. (30106 ms total)
++[  PASSED  ] 16 tests.
++-- run_test.py: return code 0
++-- run_test.py: inject classname prefix into gtest result file '/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/test_results/tare_planner/xytheta_follower_test.gtest.xml'
++-- run_test.py: verify result file '/home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner/test_results/tare_planner/xytheta_follower_test.gtest.xml'
++<end of output>
++Test time =  30.30 sec
++----------------------------------------------------------
++Test Passed.
++"xytheta_follower_test" end time: Oct 19 00:48 CST
++"xytheta_follower_test" time elapsed: 00:00:30
++----------------------------------------------------------
++
++End testing: Oct 19 00:48 CST
++
++gtest =  49.46 sec*proc
++
+diff --git a/docs/fixes/evidence/2026-10-19_recovery_scheduling/baseline_scheduling_summary.json b/docs/fixes/evidence/2026-10-19_recovery_scheduling/baseline_scheduling_summary.json
+new file mode 100644
+index 0000000..eb6ce6b
+--- /dev/null
++++ b/docs/fixes/evidence/2026-10-19_recovery_scheduling/baseline_scheduling_summary.json
+@@ -0,0 +1,20 @@
++{
++  "cycles": 541,
++  "failed_all_timeout_with_unattempted_extra_targets": 482,
++  "first_starved_s": 67.89817571640015,
++  "last_starved_s": 599.8460998535156,
++  "post60_cycles": 489,
++  "post60_starved_cycles": 482,
++  "post60_recovery_attempts": 7,
++  "most_common_starved_goals": [
++    [
++      "(6.750000,0.150000);(6.750000,0.450000);(6.450000,0.150000)",
++      479
++    ],
++    [
++      "(6.750000,0.150000);(6.750000,0.450000)",
++      3
++    ]
++  ],
++  "limitations": "Targets minus primary combines recovery and optional backtrack. Search logs show queued alternatives were not attempted, not that they are feasible. This audit cannot attribute the different initial trajectory to a single variable or prove physical coverage."
++}
+diff --git a/docs/fixes/evidence/2026-10-19_recovery_scheduling/ctest.log b/docs/fixes/evidence/2026-10-19_recovery_scheduling/ctest.log
+new file mode 100644
+index 0000000..d16d85c
+--- /dev/null
++++ b/docs/fixes/evidence/2026-10-19_recovery_scheduling/ctest.log
+@@ -0,0 +1,17 @@
++Internal ctest changing into directory: /home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner
++Test project /home/lzz/my test/HT_Explo-fixposition/build_standalone/tare_planner
++    Start 1: ht_core_test
++1/4 Test #1: ht_core_test .....................   Passed    0.00 sec
++    Start 2: geometry_pose_test
++2/4 Test #2: geometry_pose_test ...............   Passed    3.66 sec
++    Start 3: ht_ros_test
++3/4 Test #3: ht_ros_test ......................   Passed   15.50 sec
++    Start 4: xytheta_follower_test
++4/4 Test #4: xytheta_follower_test ............   Passed   30.30 sec
++
++100% tests passed, 0 tests failed out of 4
++
++Label Time Summary:
++gtest    =  49.46 sec*proc (3 tests)
++
++Total Test time (real) =  49.47 sec
+diff --git a/docs/fixes/evidence/2026-10-19_recovery_scheduling/new_schedule_regression.log b/docs/fixes/evidence/2026-10-19_recovery_scheduling/new_schedule_regression.log
+new file mode 100644
+index 0000000..428f7ec
+--- /dev/null
++++ b/docs/fixes/evidence/2026-10-19_recovery_scheduling/new_schedule_regression.log
+@@ -0,0 +1 @@
++PASS: 14133 HT core checks
+diff --git a/docs/fixes/evidence/2026-10-19_recovery_scheduling/old_search_schedule.h b/docs/fixes/evidence/2026-10-19_recovery_scheduling/old_search_schedule.h
+new file mode 100644
+index 0000000..e5ae414
+--- /dev/null
++++ b/docs/fixes/evidence/2026-10-19_recovery_scheduling/old_search_schedule.h
+@@ -0,0 +1,19 @@
++#pragma once
++
++#include <cstddef>
++#include <stdexcept>
++#include <vector>
++
++namespace ht_cost_ns {
++// Queue partitions: primary goals, ordinary recovery, then backtracking.
++inline std::vector<std::size_t> targetSearchOrder(std::size_t total,
++                                                std::size_t primary_end,
++                                                std::size_t recovery_end) {
++  if (primary_end>recovery_end || recovery_end>total)
++    throw std::invalid_argument("Invalid HT target partitions");
++  std::vector<std::size_t> order;
++  order.reserve(total);
++  for (std::size_t i=0;i<total;++i) order.push_back(i);
++  return order;
++}
++}  // namespace ht_cost_ns
+diff --git a/docs/fixes/evidence/2026-10-19_recovery_scheduling/old_sequential_regression.log b/docs/fixes/evidence/2026-10-19_recovery_scheduling/old_sequential_regression.log
+new file mode 100644
+index 0000000..dc99038
+--- /dev/null
++++ b/docs/fixes/evidence/2026-10-19_recovery_scheduling/old_sequential_regression.log
+@@ -0,0 +1,3 @@
++terminate called after throwing an instance of 'std::runtime_error'
++  what():  Failed check 2
++exit_code=134
+diff --git a/presentations/audit_ht_search_scheduling.py b/presentations/audit_ht_search_scheduling.py
+new file mode 100644
+index 0000000..2ddd7ab
+--- /dev/null
++++ b/presentations/audit_ht_search_scheduling.py
+@@ -0,0 +1,25 @@
++"""Read recorded search/summary pairs to detect queued recovery starvation."""
++import argparse,re,json,csv,collections
++from pathlib import Path
++p=argparse.ArgumentParser();p.add_argument('trial',type=Path);p.add_argument('--output',type=Path,required=True);a=p.parse_args();a.output.mkdir(parents=True,exist_ok=True)
++origin=json.load(open(a.trial/'current/measurement_started.json'))['wall_time'];queries=[];cycles=[]
++for line in (a.trial/'current/tare.log').read_text(errors='replace').splitlines():
++ m=re.search(r'\[INFO\] \[([\d.]+)\]',line)
++ if not m:continue
++ t=float(m[1])-origin
++ if not 0<=t<=600:continue
++ def decode(marker):
++  d=dict(re.findall(r'(\w+)=([^ ]+)',line.split(marker,1)[1]));d['t_s']=t
++  for k,v in list(d.items()):
++   try:d[k]=float(v)
++   except (ValueError,TypeError):pass
++  return d
++ if 'HT_SEARCH_AUDIT ' in line:queries.append(decode('HT_SEARCH_AUDIT '))
++ if 'HT_SEARCH_SUMMARY ' in line:
++  d=decode('HT_SEARCH_SUMMARY ');d['reported_recovery_attempts']=d.get('recovery_attempts');d['reported_backtrack_attempts']=d.get('backtrack_attempts');d['ordinary_recovery_attempts']=sum(r['recovery']!=0 and r['backtrack']==0 for r in queries);d['recorded_queries']=len(queries);d['recovery_attempts']=sum(r['recovery']!=0 for r in queries);d['backtrack_attempts']=sum(r['backtrack']!=0 for r in queries);d['all_queries_timed_out']=bool(queries) and all(r['termination']=='TIME_LIMIT' for r in queries);d['queued_extra_targets']=max(0,d['targets']-d['primary']);d['goals']=';'.join(str(r['goal']) for r in queries);cycles.append(d);queries=[]
++starved=[r for r in cycles if r['output_target']<0 and r['queued_extra_targets']>0 and r['recovery_attempts']==0 and r['all_queries_timed_out']]
++s=dict(cycles=len(cycles),failed_all_timeout_with_unattempted_extra_targets=len(starved),first_starved_s=starved[0]['t_s'] if starved else None,last_starved_s=starved[-1]['t_s'] if starved else None,post60_cycles=sum(r['t_s']>60 for r in cycles),post60_starved_cycles=sum(r['t_s']>60 for r in starved),post60_recovery_attempts=sum(r['recovery_attempts'] for r in cycles if r['t_s']>60),most_common_starved_goals=collections.Counter(r['goals'] for r in starved).most_common(8),limitations='Targets minus primary combines recovery and optional backtrack. Search logs show queued alternatives were not attempted, not that they are feasible. This audit cannot attribute the different initial trajectory to a single variable or prove physical coverage.')
++(a.output/'summary.json').write_text(json.dumps(s,indent=2)+'\n')
++with (a.output/'cycles.csv').open('w') as f:
++ if cycles:w=csv.DictWriter(f,fieldnames=cycles[0]);w.writeheader();w.writerows(cycles)
++print(json.dumps(s,indent=2))
+diff --git a/presentations/run_ht_endurance.py b/presentations/run_ht_endurance.py
+index 5acdc4b..311dfbf 100644
+--- a/presentations/run_ht_endurance.py
++++ b/presentations/run_ht_endurance.py
+@@ -105,6 +105,7 @@ def main():
+              ROOT/'src/tare_planner/include/ht_cost/measured_collision_field.h',
+              ROOT/'src/tare_planner/include/local_coverage_planner/local_coverage_planner.h',
+              ROOT/'src/tare_planner/include/ht_cost/heading_reserve.h',
++             ROOT/'src/tare_planner/include/ht_cost/search_schedule.h',
+              ROOT/'src/tare_planner/include/ht_cost/xytheta_planner.h',
+              ROOT/'src/tare_planner/include/ht_cost/ht_cost_core.h',
+              ROOT/'src/tare_planner/src/viewpoint_manager/viewpoint_manager.cpp',
+diff --git a/src/tare_planner/include/ht_cost/search_schedule.h b/src/tare_planner/include/ht_cost/search_schedule.h
+new file mode 100644
+index 0000000..7e55542
+--- /dev/null
++++ b/src/tare_planner/include/ht_cost/search_schedule.h
+@@ -0,0 +1,27 @@
++#pragma once
++
++#include <cstddef>
++#include <stdexcept>
++#include <vector>
++
++namespace ht_cost_ns {
++// Queue partitions: primary goals, ordinary recovery, then backtracking.
++inline std::vector<std::size_t> targetSearchOrder(std::size_t total,
++                                                std::size_t primary_end,
++                                                std::size_t recovery_end) {
++  if (primary_end>recovery_end || recovery_end>total)
++    throw std::invalid_argument("Invalid HT target partitions");
++  std::vector<std::size_t> order;
++  order.reserve(total);
++  // A full primary timeout must not spend every cycle before reaching a
++  // recovery candidate. Give one ordinary recovery the second slot, while
++  // preserving the first primary (including a committed goal) and all tail
++  // backtracking priorities. Callers skip recovery if a gain route exists.
++  if (primary_end) order.push_back(0);
++  if (primary_end<recovery_end) order.push_back(primary_end);
++  for (std::size_t i=1;i<primary_end;++i) order.push_back(i);
++  for (std::size_t i=primary_end+1;i<recovery_end;++i) order.push_back(i);
++  for (std::size_t i=recovery_end;i<total;++i) order.push_back(i);
++  return order;
++}
++}  // namespace ht_cost_ns
+diff --git a/src/tare_planner/src/local_coverage_planner/ht_route.cpp b/src/tare_planner/src/local_coverage_planner/ht_route.cpp
+index 5b1d3f4..056fa6d 100644
+--- a/src/tare_planner/src/local_coverage_planner/ht_route.cpp
++++ b/src/tare_planner/src/local_coverage_planner/ht_route.cpp
+@@ -1,4 +1,5 @@
+ #include "local_coverage_planner/local_coverage_planner.h"
++#include "ht_cost/search_schedule.h"
+ #include <algorithm>
+ #include <cmath>
+ #include <limits>
+@@ -174,6 +175,7 @@ exploration_path_ns::ExplorationPath LocalCoveragePlanner::SolveHTTSP(
+     if (targets.size()-primary_count>=8) break;
+     if (recovery_ids.insert(t.id).second) targets.push_back(t);
+   }
++  const size_t recovery_end=targets.size();
+   // A recently reached transit goal is discouraged, not a permanent barrier
+   // to necessary backtracking. Try it only if ordinary safe searches fail.
+   // Search/execution failures retain their separate cooldown and hard gates.
+@@ -186,6 +188,7 @@ exploration_path_ns::ExplorationPath LocalCoveragePlanner::SolveHTTSP(
+     static_cast<int>(ht->poseSupport(start.x,start.y,start.yaw)),
+     viewpoint_manager_->InCollisionAtPose(robot_position_));
+   int attempted=0;
++  int recovery_attempted=0,backtrack_attempted=0;
+   int best_target=-1;
+   double best_score=-std::numeric_limits<double>::infinity();
+   double best_gain=0;
+@@ -193,10 +196,12 @@ exploration_path_ns::ExplorationPath LocalCoveragePlanner::SolveHTTSP(
+   std::unordered_set<int> attempted_ids;
+   bool best_recovery=false;
+   const auto search_started=std::chrono::steady_clock::now();
+-  for (size_t ti=0;ti<targets.size();++ti) {
++  for (const size_t ti:ht_cost_ns::targetSearchOrder(targets.size(),primary_count,recovery_end)) {
+     const auto& target=targets[ti];
+     if (target.backtrack && best_target>=0) break;
+-    if (ti>=primary_count && best_target>=0 && best_gain>0) break;
++    // Recovery is interleaved with primary goals. A known gain route skips
++    // recovery, without skipping the remaining primary comparisons.
++    if (target.recovery && best_target>=0 && best_gain>0) continue;
+     if (attempted>=6 && !target.backtrack && !backtrack.empty()) continue;
+     if (!attempted_ids.insert(target.id).second) continue;
+     if (attempted>=8) break;
+@@ -205,6 +210,8 @@ exploration_path_ns::ExplorationPath LocalCoveragePlanner::SolveHTTSP(
+       (!target.backtrack && !backtrack.empty()?std::min(.1,ht_cycle_search_seconds_/3):0);
+     if (remaining<=.001) continue;
+     ++attempted;
++    if (target.backtrack) ++backtrack_attempted;
++    else if (target.recovery) ++recovery_attempted;
+     const auto goal=viewpoint_manager_->GetViewPointPosition(target.id);
+     int geometry_rejections=0,ht_rejections=0,memory_rejections=0,reserve_rejections=0,geometry_queries=0;
+     double geometry_seconds=0;
+@@ -258,9 +265,9 @@ exploration_path_ns::ExplorationPath LocalCoveragePlanner::SolveHTTSP(
+     // It is re-searched and hard-checked against this cycle's current map.
+     if (target.id==committed_id) break;
+   }
+-  RCLCPP_INFO(node_->get_logger(),"HT_SEARCH_SUMMARY targets=%zu primary=%zu attempts=%d cycle_budget_s=%.6f elapsed_s=%.6f output_target=%d ht_stamp=%.9f",
++  RCLCPP_INFO(node_->get_logger(),"HT_SEARCH_SUMMARY targets=%zu primary=%zu attempts=%d cycle_budget_s=%.6f elapsed_s=%.6f output_target=%d ht_stamp=%.9f recovery_attempts=%d backtrack_attempts=%d",
+     targets.size(),primary_count,attempted,ht_cycle_search_seconds_,
+-    std::chrono::duration<double>(std::chrono::steady_clock::now()-search_started).count(),best_target,ht->cycleStamp());
++    std::chrono::duration<double>(std::chrono::steady_clock::now()-search_started).count(),best_target,ht->cycleStamp(),recovery_attempted,backtrack_attempted);
+   if (best_target<0) return result;
+   ht_candidate_target_=best_target;
+   ht_last_cost_=-best_score;
+diff --git a/src/tare_planner/tests/ht_core_test.cpp b/src/tare_planner/tests/ht_core_test.cpp
+index 9520f2c..72cce82 100644
+--- a/src/tare_planner/tests/ht_core_test.cpp
++++ b/src/tare_planner/tests/ht_core_test.cpp
+@@ -6,6 +6,7 @@
+ #include "ht_cost/target_commitment.h"
+ #include "ht_cost/exploration_progress.h"
+ #include "ht_cost/heading_reserve.h"
++#include "ht_cost/search_schedule.h"
+ #include <iostream>
+ #include <stdexcept>
+ using namespace ht_cost_ns;
+@@ -16,6 +17,40 @@ void check(bool condition) {
+ }
+ void near(double a,double b) { check(std::abs(a-b)<1e-5); }
+ int main() {
++  // Stage32: each primary search consumes0.15s and fails; a short safe
++  // recovery would take0.02s, but the sequential queue never reaches it
++  // inside the0.35s cycle. Test scheduling with a deterministic clock.
++  auto recoveryWithinBudget=[](const std::vector<std::size_t>& order) {
++    double elapsed=0;
++    for (auto i:order) {
++      const double remaining=.35-elapsed;
++      if (remaining<=.001) continue;
++      const double cost=i<4?.15:.02;
++      if (i>=4 && cost<=remaining) return true;
++      elapsed+=std::min(cost,remaining);
++    }
++    return false;
++  };
++  check(!recoveryWithinBudget({0,1,2,3,4,5,6,7,8,9,10,11}));
++  check(recoveryWithinBudget(targetSearchOrder(12,4,12)));
++  check(targetSearchOrder(6,4,4)==std::vector<std::size_t>({0,1,2,3,4,5}));
++  check(targetSearchOrder(4,0,4)==std::vector<std::size_t>({0,1,2,3}));
++  check(targetSearchOrder(2,0,0)==std::vector<std::size_t>({0,1}));
++  check(targetSearchOrder(0,0,0).empty());
++  for (std::size_t total=0;total<16;++total)
++    for (std::size_t primary=0;primary<=total;++primary)
++      for (std::size_t recovery=primary;recovery<=total;++recovery) {
++        auto order=targetSearchOrder(total,primary,recovery);
++        check(order.size()==total);
++        if (primary) check(order.front()==0);  // committed primary remains first
++        auto sorted=order;std::sort(sorted.begin(),sorted.end());
++        for(std::size_t i=0;i<total;++i) check(sorted[i]==i);
++        // Backtrack retains its original tail position and order.
++        for(std::size_t i=recovery;i<total;++i) check(order[i]==i);
++      }
++  bool invalid=false;
++  try {targetSearchOrder(2,2,1);} catch(const std::invalid_argument&) {invalid=true;}
++  check(invalid);
+   // A narrow circular lane needs the old22.5degree arc. Refining the key
+   // must not remove that control in favor of only wider11.25degree arcs.
+   XYThetaConfig mixed;mixed.headings=32;mixed.goal_radius=.02;

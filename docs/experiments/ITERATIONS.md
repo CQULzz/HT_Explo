@@ -23,6 +23,8 @@
 
 | 阶段32 `867ba1f`（导航仍b05ed9e） | 相同程序/参数复测，恢复调度审计 | 5.66 / 419.750 | 14秒后长期停滞；482轮恢复目标未获搜索机会，稳定性未通过 | [报告](../results/ht_deferred_gain_repeat_10min_2026-10-19/REPORT.md) · [原始数据/视频](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261019-deferred-repeat) |
 
+| 阶段33 `ba7942c` | 普通恢复目标提前搜索，预算不增 | 151.57 / 2480.000 | EXPLORING；末分钟15.525m，仍有停顿 | [报告](../results/ht_recovery_search_slot_10min_2026-10-19/REPORT.md) · [数据/视频](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261019-recovery-slot) |
+
 ![同条件四轮对比](../results/ht_pending_gain_tasks_10min_2026-10-18/comparison/comparison.png)
 
 ## 当前问题与证据状态（阶段31已完整实测）
@@ -59,3 +61,5 @@
 阶段31：19个单元延期、4次有效评估解除登记，其中2个仍导航占位EXPLORING；不要误说全都完成覆盖。结束后清理约20.2GB pip可重下载HTTP缓存；下一轮源码/二进制不变复测，披露磁盘可用量增加，避免把环境差异当代码收益。
 
 阶段32：同导航二进制/配置/权重复跑仍失败，约14秒后持续停车。482轮主要目标全超时且仍有排队替代目标却未尝试恢复；已有预留只照顾backtrack，普通恢复被排在主要目标后而耗尽预算。先修调度，不声称替代目标必然可达；保持硬约束/速度/总预算，再做600秒。
+
+阶段33：恢复目标提前获得搜索机会，完整600秒151.57m/2480.000m³，末分钟15.525m；总预算/安全门槛未变，仍有232次TIME_LIMIT，最长全零35.800s。应继续同版复测及多环境，不能只选阶段32差轮作为普遍提升依据。

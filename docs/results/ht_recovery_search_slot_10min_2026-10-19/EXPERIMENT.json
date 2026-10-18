@@ -1,0 +1,124 @@
+{
+  "tested_git_head": "ba7942ce176378d68b0eeab99a4f4bb9a5e68913",
+  "raw_run": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_recovery_search_slot_10min_2026-10-19_00-48-40",
+  "recording_scope": "All control/status and odometry, full-rate published HT maps and TARE collision geometry; original-stamped scans1Hz; exact-stamp map triplets and network inputs/outputs every10s; camera15fps. Raw CuPy and scans are not fully bagged.",
+  "last_motion_s": 600.001,
+  "mission": {
+    "first_exploration_finished_sample_s": null,
+    "sampled_mission_counts": {
+      "EXPLORING": 499,
+      "BLOCKED": 101
+    },
+    "first_completed_sample_s": null,
+    "last_sampled_mission": "EXPLORING",
+    "last_sampled_execution_status": "HT_ASSISTED",
+    "final_distance_to_measurement_start_m": 22.437539660132078,
+    "meaning": "Exploration finished is a return-home trigger. Only mission COMPLETED confirms the home radius, low-speed and dwell checks; neither establishes ground-truth full coverage."
+  },
+  "geometry": {
+    "radius_m": 0.6414213562373094,
+    "collision_point_threshold": 1,
+    "first_observed_margin_overlap": null,
+    "overlap_samples": 0,
+    "moving_predictions_inside_margin": 0,
+    "samples": 464,
+    "limitations": "Uses bag arrival order, latest received odometry/command and measured collision-cloud points in robot height slice. Does not reproduce planner collision-grid bounds or exact callback state. Predicted arc uses last received constant Twist, not controller internal candidate or simulator braking. Margin overlap is not physical vehicle contact. Sample lag/point noise may contribute; cannot separate them without independent truth."
+  },
+  "checks": {
+    "timer_completed": true,
+    "measured_duration_matches": true,
+    "source_hashes_unchanged": true,
+    "enough_samples": true,
+    "no_runtime_parent_failure": true,
+    "no_live_descendants": true,
+    "no_forced_shutdown": true,
+    "video_full_decode_passed": true,
+    "video_duration_matches": true,
+    "video_fps_matches": true,
+    "analysis_passed": true,
+    "no_child_or_cleanup_exception": true,
+    "blas_workers_bounded": true
+  },
+  "video": {
+    "encode_returncode": 0,
+    "fps": 15,
+    "requested_duration_s": 600,
+    "trim_offset_s": 30.996189832687378,
+    "source_file": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_recovery_search_slot_10min_2026-10-19_00-48-40/indoor/camera_15fps.mp4",
+    "full_decode_returncode": 0,
+    "decoded_frames": 9000,
+    "duration_s": 600.0,
+    "duration_matches": true,
+    "bytes": 12014571,
+    "sha256": "0860639e53c10bdb559b48c579a6463ad2e517c1a1087211f759a5615459885a"
+  },
+  "configuration": {
+    "reference_commit": "867ba1f5d40c813291bbb148fad2d5fc5b8907d1",
+    "candidate_commit": "ba7942ce176378d68b0eeab99a4f4bb9a5e68913",
+    "effective_parameters_equal": {
+      "planner_parameters.yaml": true,
+      "follower_parameters.yaml": true
+    },
+    "changed_manifest_entries": {
+      "/home/lzz/my test/HT_Explo-fixposition/install_standalone/tare_planner/lib/tare_planner/tare_planner_node": {
+        "before": "5dd820dbe0f711d7f8836eb7f5847f161c8ec28236e550447de16fdc1617f5b9",
+        "after": "04cb17abf28161e33051620d0b9d11e39da77a26f7a536e4b567bb79d30d3549"
+      },
+      "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/include/ht_cost/search_schedule.h": {
+        "before": null,
+        "after": "55adf99f44bd6d86b75903c68d2dd1dd6c349c11da67c6bfc52009cb95bcaeea"
+      },
+      "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/src/local_coverage_planner/ht_route.cpp": {
+        "before": "c7c09bac6b2415df7eaab332b46758b907afb329e07b5eabce2fd0b6d21b1b68",
+        "after": "72f88569edfab5d9344a231548ced4fdf7aee2f9f2743d360ecaa76093044f4a"
+      },
+      "/home/lzz/my test/HT_Explo-fixposition/presentations/run_ht_endurance.py": {
+        "before": "a9ec59337aab9dddac55039dab5dbc92932d462f8f28a8fc63b88a13f7d61443",
+        "after": "42c85de054cdb03e86df8ddec9fb2bfe1989acd3fb7529501bd8cc0e7184aa4b"
+      }
+    },
+    "unchanged_existing_entries": 60
+  },
+  "metrics": {
+    "scan_selection": "source_second",
+    "observed_free_volume_m3": 2480.0,
+    "processed_volume_scans": 600,
+    "skipped_volume_scans": 0,
+    "recorded_scans_in_source_time_window": 600,
+    "sensor_position_source": "nearest sensor-frame state_estimation (common to both systems)",
+    "pose_time_offset_max_s": 2.384185791015625e-07,
+    "command_samples": 12000,
+    "fully_stopped_fraction": 0.29533333333333334,
+    "stationary_turn_fraction": 0.09741666666666667,
+    "reverse_command_fraction": 0.010666666666666666,
+    "max_abs_linear_command_mps": 0.5,
+    "max_abs_yaw_command_rps": 0.8,
+    "longest_zero_command_s": 35.79987363815307,
+    "follower_status_samples": {
+      "DRIVING": 7287,
+      "GOAL_REACHED": 1021,
+      "TURNING": 1169,
+      "PLANNER_HOLD": 1992,
+      "ALIGNING": 35,
+      "HT_PATH_BLOCKED": 156,
+      "EMPTY_PATH": 269,
+      "HT_COMMAND_BLOCKED": 39,
+      "HT_MAP_STALE": 31,
+      "GEOMETRY_COMMAND_BLOCKED": 1
+    },
+    "longest_no_translation_command_s": 35.79987363815307,
+    "last_translation_s": 600.001,
+    "distance_last60_m": 15.525015936255016
+  },
+  "scheduling": {
+    "cycles": 455,
+    "failed_all_timeout_with_unattempted_extra_targets": 0,
+    "first_starved_s": null,
+    "last_starved_s": null,
+    "post60_cycles": 404,
+    "post60_starved_cycles": 0,
+    "post60_recovery_attempts": 180,
+    "most_common_starved_goals": [],
+    "limitations": "Targets minus primary combines recovery and optional backtrack. Search logs show queued alternatives were not attempted, not that they are feasible. This audit cannot attribute the different initial trajectory to a single variable or prove physical coverage."
+  }
+}
