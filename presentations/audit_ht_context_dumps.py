@@ -5,6 +5,7 @@ import hashlib
 import json
 from pathlib import Path
 import sys
+import zipfile
 
 import numpy as np
 from scipy.ndimage import distance_transform_edt, uniform_filter, maximum_filter
@@ -16,10 +17,21 @@ from grid_map_msgs.msg import GridMap
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('trial',type=Path);parser.add_argument('--output',type=Path,required=True)
-    parser.add_argument('--verify-model',action='store_true');args=parser.parse_args()
+    parser.add_argument('--verify-model',action='store_true')
+    parser.add_argument('--record-damaged-contexts',action='store_true',
+                        help='Retain and list unreadable NPZs; overall audit stays failed')
+    args=parser.parse_args()
     origin=json.loads((args.trial/'current/measurement_started.json').read_text())['wall_time']
-    duration=json.loads((args.trial/'summary.json').read_text())['duration_s'];wanted={};events=[]
+    duration=json.loads((args.trial/'summary.json').read_text())['duration_s'];wanted={};events=[];damaged=[]
     for file in sorted((args.trial/'current/inference_context').glob('*.npz')):
+        try:
+            with np.load(file) as header:
+                header.files
+        except zipfile.BadZipFile as error:
+            if not args.record_damaged_contexts:raise
+            damaged.append(dict(file=str(file),bytes=file.stat().st_size,
+                sha256=hashlib.sha256(file.read_bytes()).hexdigest(),error=str(error)))
+            continue
         with np.load(file) as d:
             stamp=float(d['source_stamp'])
             if not 0<=stamp-origin<duration:continue
@@ -69,13 +81,15 @@ def main():
                 result=torch.softmax(model(tensor),dim=2)[0,:,1].numpy();result[:,d['occupied']]=0
                 error=float(np.max(np.abs(result-d['probabilities'])))
                 models.append(dict(file=events[i]['file'],maximum_absolute_error=error,passed=error<=1e-6,weights_sha256=actual))
+    valid_checks=bool(events) and all(all(e['checks'].values()) for e in events) and all(r['passed'] for r in models)
     result=dict(source=str(args.trial.resolve()),checked_contexts=len(events),paired_exact_source_maps=len(paired),
-                all_checks_passed=bool(events) and all(all(e['checks'].values()) for e in events) and all(r['passed'] for r in models),
+                all_checks_passed=valid_checks and not damaged,
+                readable_context_checks_passed=valid_checks,damaged_contexts=damaged,
                 model_replays=models,events=events,
                 caveat='Only saved10s inference samples, not every map. Verifies recording/model/mask consistency, not physical truth or route safety.')
     args.output.parent.mkdir(parents=True,exist_ok=True);args.output.write_text(json.dumps(result,indent=2)+'\n')
     print(json.dumps({k:v for k,v in result.items() if k!='events'},indent=2))
-    if not result['all_checks_passed']:raise SystemExit(1)
+    if not valid_checks or (damaged and not args.record_damaged_contexts):raise SystemExit(1)
 
 
 if __name__=='__main__':main()

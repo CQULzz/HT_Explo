@@ -1,0 +1,521 @@
+{
+  "duration_s": 600.0,
+  "completed_timer": true,
+  "node_restarts": 0,
+  "runtime_failures": [],
+  "summary": {
+    "duration_s": 600.0,
+    "startup_wait_s": 5.61,
+    "sample_count": 1201,
+    "odom_count": 118663,
+    "cmd_count": 11999,
+    "waypoint_count": 599,
+    "path_count": 486,
+    "registered_scans": 2983,
+    "scan_gap_max_s": 0.4129456849768758,
+    "distance_m": 168.77,
+    "net_displacement_m": 19.19,
+    "visited_1m_xy_cells": 133,
+    "mean_odom_speed_mps": 0.2854912572855953,
+    "moving_fraction": 0.6536219816819318,
+    "zero_cmd_fraction": 0.32389675270607826,
+    "forward_cmd_fraction": 0.6169858451290591,
+    "reverse_cmd_fraction": 0.03663613655287261,
+    "median_waypoint_distance_m": 0.755,
+    "short_path_fraction": 0.2514571190674438,
+    "planner_runtime_median_s": 0.6759999990463257,
+    "planner_runtime_p95_s": 1.5399999618530273,
+    "planner_runtime_max_s": 1.8880000114440918,
+    "planner_runtime_count": 473,
+    "exploration_finished": false,
+    "ht_status_callbacks": {
+      "HT_ASSISTED": 1034,
+      "NO_EXECUTABLE_ROUTE": 34,
+      "HT_MAP_STALE": 4
+    },
+    "ht_map_count": 1126,
+    "ht_map_gap_max_s": 2.239016117004212,
+    "ht_map_age_max_s": 3.299934955033569,
+    "start_pose_xyyaw": [
+      0.0,
+      0.0,
+      0.0005999999702908098
+    ],
+    "measurement_origin": "first TARE /runtime after odometry and registered scan",
+    "registered_scans_total_in_window": 2983
+  },
+  "external_metrics": {
+    "scan_selection": "source_second",
+    "observed_free_volume_m3": 2169.875,
+    "processed_volume_scans": 600,
+    "skipped_volume_scans": 0,
+    "recorded_scans_in_source_time_window": 600,
+    "sensor_position_source": "nearest sensor-frame state_estimation (common to both systems)",
+    "pose_time_offset_max_s": 2.384185791015625e-07,
+    "command_samples": 11999,
+    "fully_stopped_fraction": 0.14734561213434452,
+    "stationary_turn_fraction": 0.179514959579965,
+    "reverse_command_fraction": 0.03666972247687307,
+    "max_abs_linear_command_mps": 0.5,
+    "max_abs_yaw_command_rps": 0.8,
+    "longest_zero_command_s": 3.5996044158935545,
+    "follower_status_samples": {
+      "TURNING": 2154,
+      "DRIVING": 8077,
+      "GOAL_REACHED": 745,
+      "ALIGNING": 103,
+      "PLANNER_HOLD": 418,
+      "GEOMETRY_COMMAND_BLOCKED": 4,
+      "EMPTY_PATH": 277,
+      "HT_COMMAND_BLOCKED": 43,
+      "HT_PATH_BLOCKED": 162,
+      "HT_MAP_STALE": 16
+    },
+    "longest_no_translation_command_s": 5.6147997856140135,
+    "last_translation_s": 600.001,
+    "distance_last60_m": 14.825500000000005
+  },
+  "target_selection_audit": {
+    "logged_plan_rows": 345,
+    "new_goal_rows": 75,
+    "new_goal_zero_reported_gain_rows": 46,
+    "new_goal_recovery_rows": 27,
+    "guide_log_counts": {
+      "9.45,-0.45": 6,
+      "18.15,0.15": 3,
+      "13.65,2.55": 22,
+      "2.85,0.15": 33,
+      "2.25,3.45": 18,
+      "1.35,12.45": 22,
+      "3.75,11.85": 1,
+      "15.45,-3.45": 38,
+      "4.35,16.05": 6,
+      "9.15,-11.25": 40,
+      "23.85,-3.15": 16,
+      "2.55,9.75": 35,
+      "23.85,9.15": 19,
+      "11.25,-5.25": 7,
+      "11.25,-9.15": 79
+    },
+    "note": "Throttled log rows, not all planning cycles. Gain is the viewpoint coverage estimate, not measured new free volume. Older builds used a gain0 placeholder for held goals; use the external observed-volume union to assess real progress.",
+    "guide_events": [
+      {
+        "time_s": 12.699945211410522,
+        "log": "[tare_planner_node-1] [INFO] [1792343744.163809940] [tare_planner_node]: HT guide selected: (18.15,0.15) global=1 remaining=15.19m"
+      },
+      {
+        "time_s": 16.7312593460083,
+        "log": "[tare_planner_node-1] [INFO] [1792343748.195124156] [tare_planner_node]: HT guide selected: (13.65,2.55) global=0 remaining=10.68m"
+      },
+      {
+        "time_s": 52.080286502838135,
+        "log": "[tare_planner_node-1] [INFO] [1792343783.544151359] [tare_planner_node]: HT guide selected: (2.85,0.15) global=0 remaining=10.62m"
+      },
+      {
+        "time_s": 108.18399286270142,
+        "log": "[tare_planner_node-1] [INFO] [1792343839.647857648] [tare_planner_node]: HT guide selected: (2.25,3.45) global=1 remaining=13.05m"
+      },
+      {
+        "time_s": 141.15180444717407,
+        "log": "[tare_planner_node-1] [INFO] [1792343872.615669266] [tare_planner_node]: HT guide selected: (1.35,12.45) global=1 remaining=15.95m"
+      },
+      {
+        "time_s": 178.9941918849945,
+        "log": "[tare_planner_node-1] [INFO] [1792343910.458056621] [tare_planner_node]: HT guide selected: (3.75,11.85) global=1 remaining=10.78m"
+      },
+      {
+        "time_s": 180.96140813827515,
+        "log": "[tare_planner_node-1] [INFO] [1792343912.425272870] [tare_planner_node]: HT guide selected: (15.45,-3.45) global=1 remaining=11.93m"
+      },
+      {
+        "time_s": 246.8354275226593,
+        "log": "[tare_planner_node-1] [WARN] [1792343978.299292301] [tare_planner_node]: HT global guide stalled: (15.45,-3.45), best_remaining=11.93m idle=61.0s stationary=0.0s; cooldown=180.0s and release local goal"
+      },
+      {
+        "time_s": 246.83547449111938,
+        "log": "[tare_planner_node-1] [INFO] [1792343978.299339403] [tare_planner_node]: HT guide selected: (4.35,16.05) global=1 remaining=13.85m"
+      },
+      {
+        "time_s": 257.6072211265564,
+        "log": "[tare_planner_node-1] [INFO] [1792343989.071086030] [tare_planner_node]: HT guide selected: (9.15,-11.25) global=1 remaining=15.50m"
+      },
+      {
+        "time_s": 297.34500312805176,
+        "log": "[tare_planner_node-1] [INFO] [1792344028.808867993] [tare_planner_node]: HT guide selected: (23.85,-3.15) global=1 remaining=15.25m"
+      },
+      {
+        "time_s": 328.0833616256714,
+        "log": "[tare_planner_node-1] [INFO] [1792344059.547226368] [tare_planner_node]: HT guide selected: (2.55,9.75) global=1 remaining=19.87m"
+      },
+      {
+        "time_s": 389.86389541625977,
+        "log": "[tare_planner_node-1] [WARN] [1792344121.327760235] [tare_planner_node]: HT global guide stalled: (2.55,9.75), best_remaining=19.87m idle=60.8s stationary=0.0s; cooldown=180.0s and release local goal"
+      },
+      {
+        "time_s": 389.863933801651,
+        "log": "[tare_planner_node-1] [INFO] [1792344121.327798609] [tare_planner_node]: HT guide selected: (23.85,9.15) global=1 remaining=14.22m"
+      },
+      {
+        "time_s": 422.94234108924866,
+        "log": "[tare_planner_node-1] [INFO] [1792344154.406205830] [tare_planner_node]: HT guide selected: (11.25,-5.25) global=1 remaining=14.71m"
+      },
+      {
+        "time_s": 435.2760109901428,
+        "log": "[tare_planner_node-1] [INFO] [1792344166.739875774] [tare_planner_node]: HT guide selected: (11.25,-9.15) global=1 remaining=13.35m"
+      },
+      {
+        "time_s": 571.776599407196,
+        "log": "[tare_planner_node-1] [WARN] [1792344303.240464121] [tare_planner_node]: HT global guide stalled: (11.25,-9.15), best_remaining=6.46m idle=61.9s stationary=0.0s; cooldown=180.0s and release local goal"
+      },
+      {
+        "time_s": 571.7767610549927,
+        "log": "[tare_planner_node-1] [INFO] [1792344303.240625813] [tare_planner_node]: HT guide selected: (9.15,-11.25) global=1 remaining=10.24m"
+      }
+    ],
+    "global_stall_releases": 3,
+    "accepted_execution_rejections": [
+      {
+        "time_s": 77.87596201896667,
+        "log": "[tare_planner_node-1] [WARN] [1792343809.339826875] [tare_planner_node]: Execution rejected HT edge (11.82,7.46)->(11.80,7.47); replan with 6s edge cooldown"
+      },
+      {
+        "time_s": 177.9402186870575,
+        "log": "[tare_planner_node-1] [WARN] [1792343909.404083605] [tare_planner_node]: Execution rejected HT edge (4.74,1.12)->(4.63,1.06); replan with 6s edge cooldown"
+      },
+      {
+        "time_s": 235.99015879631042,
+        "log": "[tare_planner_node-1] [WARN] [1792343967.454023621] [tare_planner_node]: Execution rejected HT edge (3.40,5.48)->(3.28,5.44); replan with 6s edge cooldown"
+      },
+      {
+        "time_s": 283.1115417480469,
+        "log": "[tare_planner_node-1] [WARN] [1792344014.575406629] [tare_planner_node]: Execution rejected HT edge (7.38,-1.10)->(7.50,-0.99); replan with 6s edge cooldown"
+      },
+      {
+        "time_s": 287.29014682769775,
+        "log": "[tare_planner_node-1] [WARN] [1792344018.754011716] [tare_planner_node]: Execution rejected HT edge (8.27,-1.19)->(8.40,-1.14); replan with 6s edge cooldown"
+      },
+      {
+        "time_s": 341.0402889251709,
+        "log": "[tare_planner_node-1] [WARN] [1792344072.504153639] [tare_planner_node]: Execution rejected HT edge (24.01,1.44)->(24.02,1.45); replan with 6s edge cooldown"
+      },
+      {
+        "time_s": 409.0901391506195,
+        "log": "[tare_planner_node-1] [WARN] [1792344140.554003962] [tare_planner_node]: Execution rejected HT edge (27.60,1.01)->(27.49,0.95); replan with 6s edge cooldown"
+      },
+      {
+        "time_s": 417.17756748199463,
+        "log": "[tare_planner_node-1] [WARN] [1792344148.641432272] [tare_planner_node]: Execution rejected HT edge (25.76,1.05)->(25.67,0.93); replan with 6s edge cooldown"
+      },
+      {
+        "time_s": 423.14793491363525,
+        "log": "[tare_planner_node-1] [WARN] [1792344154.611799835] [tare_planner_node]: Execution rejected HT edge (24.31,1.20)->(24.19,1.15); replan with 6s edge cooldown"
+      },
+      {
+        "time_s": 444.2695405483246,
+        "log": "[tare_planner_node-1] [WARN] [1792344175.733405259] [tare_planner_node]: Execution rejected HT edge (22.22,-1.44)->(22.34,-1.47); replan with 6s edge cooldown"
+      },
+      {
+        "time_s": 455.9335606098175,
+        "log": "[tare_planner_node-1] [WARN] [1792344187.397425499] [tare_planner_node]: Execution rejected HT edge (23.50,-3.65)->(23.48,-3.61); replan with 6s edge cooldown"
+      },
+      {
+        "time_s": 495.3300447463989,
+        "log": "[tare_planner_node-1] [WARN] [1792344226.793909571] [tare_planner_node]: Execution rejected HT edge (21.79,-7.18)->(21.75,-7.03); replan with 6s edge cooldown"
+      },
+      {
+        "time_s": 517.7921206951141,
+        "log": "[tare_planner_node-1] [WARN] [1792344249.255985407] [tare_planner_node]: Execution rejected HT edge (17.21,-6.96)->(17.21,-6.96); replan with 6s edge cooldown"
+      }
+    ]
+  },
+  "mission_audit": {
+    "first_exploration_finished_sample_s": null,
+    "sampled_mission_counts": {
+      "EXPLORING": 579,
+      "BLOCKED": 21
+    },
+    "first_completed_sample_s": null,
+    "last_sampled_mission": "EXPLORING",
+    "last_sampled_execution_status": "HT_ASSISTED",
+    "final_distance_to_measurement_start_m": 19.18626240308414,
+    "meaning": "Exploration finished is a return-home trigger. Only mission COMPLETED confirms the home radius, low-speed and dwell checks; neither establishes ground-truth full coverage."
+  },
+  "source_aligned_input_delivery": {
+    "exact_source_stamp_checkpoints": 58,
+    "source_stamp_tolerance_s": 0.0001,
+    "count_offset_distribution": {
+      "41": 58
+    },
+    "constant_offset_in_observed_window": true,
+    "first_checkpoint": {
+      "source_stamp_s": 1792343741.80792,
+      "probe_count": 181,
+      "mapper_received_count": 140
+    },
+    "last_checkpoint": {
+      "source_stamp_s": 1792344330.7937386,
+      "probe_count": 3109,
+      "mapper_received_count": 3068
+    },
+    "meaning": "A constant offset supports no net relative input loss between the full-rate external observer and mapper in this matched window. It does not prove the simulator published continuously or that neither subscriber missed the same message."
+  },
+  "sampled_map_age_s": {
+    "count": 600,
+    "median": 0.7471067905426025,
+    "p95": 2.0144333600997926,
+    "max": 3.435926675796509
+  },
+  "sampled_scan_age_s": {
+    "count": 600,
+    "median": 0.10456287860870361,
+    "p95": 0.20250024795532226,
+    "max": 0.28250598907470703
+  },
+  "map_age_over3s_samples": 4,
+  "sampled_follower_status_counts": {
+    "DRIVING": 401,
+    "TURNING": 116,
+    "GOAL_REACHED": 32,
+    "PLANNER_HOLD": 20,
+    "EMPTY_PATH": 14,
+    "HT_PATH_BLOCKED": 7,
+    "ALIGNING": 5,
+    "HT_COMMAND_BLOCKED": 4,
+    "HT_MAP_STALE": 1
+  },
+  "longest_fully_zero_sampled_intervals": [
+    {
+      "start_s": 52.503,
+      "end_s": 56.502,
+      "duration_s": 3.9990000000000023
+    },
+    {
+      "start_s": 223.503,
+      "end_s": 227.005,
+      "duration_s": 3.5020000000000095
+    },
+    {
+      "start_s": 312.502,
+      "end_s": 315.503,
+      "duration_s": 3.0009999999999764
+    },
+    {
+      "start_s": 416.0,
+      "end_s": 418.503,
+      "duration_s": 2.502999999999986
+    },
+    {
+      "start_s": 404.503,
+      "end_s": 407.004,
+      "duration_s": 2.501000000000033
+    },
+    {
+      "start_s": 516.505,
+      "end_s": 519.001,
+      "duration_s": 2.495999999999981
+    },
+    {
+      "start_s": 318.5,
+      "end_s": 320.505,
+      "duration_s": 2.0049999999999955
+    },
+    {
+      "start_s": 134.5,
+      "end_s": 136.503,
+      "duration_s": 2.002999999999986
+    },
+    {
+      "start_s": 455.002,
+      "end_s": 457.004,
+      "duration_s": 2.0020000000000095
+    },
+    {
+      "start_s": 290.503,
+      "end_s": 292.503,
+      "duration_s": 2.0
+    },
+    {
+      "start_s": 583.0,
+      "end_s": 585.0,
+      "duration_s": 2.0
+    },
+    {
+      "start_s": 178.0,
+      "end_s": 179.503,
+      "duration_s": 1.502999999999986
+    },
+    {
+      "start_s": 33.001,
+      "end_s": 34.501,
+      "duration_s": 1.5
+    },
+    {
+      "start_s": 40.501,
+      "end_s": 42.001,
+      "duration_s": 1.5
+    },
+    {
+      "start_s": 71.001,
+      "end_s": 72.501,
+      "duration_s": 1.5
+    }
+  ],
+  "longest_no_actual_translation_sampled_intervals": [
+    {
+      "start_s": 53.004,
+      "end_s": 58.501,
+      "duration_s": 5.497
+    },
+    {
+      "start_s": 114.003,
+      "end_s": 119.004,
+      "duration_s": 5.001000000000005
+    },
+    {
+      "start_s": 380.501,
+      "end_s": 385.501,
+      "duration_s": 5.0
+    },
+    {
+      "start_s": 541.001,
+      "end_s": 545.504,
+      "duration_s": 4.503000000000043
+    },
+    {
+      "start_s": 78.503,
+      "end_s": 83.003,
+      "duration_s": 4.5
+    },
+    {
+      "start_s": 571.504,
+      "end_s": 576.004,
+      "duration_s": 4.5
+    },
+    {
+      "start_s": 152.002,
+      "end_s": 156.501,
+      "duration_s": 4.498999999999995
+    },
+    {
+      "start_s": 219.0,
+      "end_s": 223.003,
+      "duration_s": 4.002999999999986
+    },
+    {
+      "start_s": 475.501,
+      "end_s": 479.503,
+      "duration_s": 4.0020000000000095
+    },
+    {
+      "start_s": 135.002,
+      "end_s": 139.003,
+      "duration_s": 4.000999999999976
+    },
+    {
+      "start_s": 291.001,
+      "end_s": 295.001,
+      "duration_s": 4.0
+    },
+    {
+      "start_s": 517.001,
+      "end_s": 521.001,
+      "duration_s": 4.0
+    },
+    {
+      "start_s": 422.503,
+      "end_s": 426.502,
+      "duration_s": 3.9990000000000236
+    },
+    {
+      "start_s": 71.503,
+      "end_s": 75.501,
+      "duration_s": 3.9980000000000047
+    },
+    {
+      "start_s": 435.003,
+      "end_s": 438.506,
+      "duration_s": 3.502999999999986
+    }
+  ],
+  "process_memory": {
+    "elevation": {
+      "peak_summed_rss_mb": 498.26171875,
+      "minute5to10_median_rss_mb": 498.2421875,
+      "last5min_median_rss_mb": 498.2421875,
+      "median_rss_change_mb": 0.0
+    },
+    "health": {
+      "peak_summed_rss_mb": 304.203125,
+      "minute5to10_median_rss_mb": 297.51171875,
+      "last5min_median_rss_mb": 297.51171875,
+      "median_rss_change_mb": 0.0
+    },
+    "ht_bridge": {
+      "peak_summed_rss_mb": 400.89453125,
+      "minute5to10_median_rss_mb": 361.59765625,
+      "last5min_median_rss_mb": 361.59765625,
+      "median_rss_change_mb": 0.0
+    },
+    "probe": {
+      "peak_summed_rss_mb": 87.06640625,
+      "minute5to10_median_rss_mb": 83.82421875,
+      "last5min_median_rss_mb": 83.82421875,
+      "median_rss_change_mb": 0.0
+    },
+    "record": {
+      "peak_summed_rss_mb": 98.86328125,
+      "minute5to10_median_rss_mb": 98.85546875,
+      "last5min_median_rss_mb": 98.85546875,
+      "median_rss_change_mb": 0.0
+    },
+    "sim": {
+      "peak_summed_rss_mb": 1641.74609375,
+      "minute5to10_median_rss_mb": 1613.6171875,
+      "last5min_median_rss_mb": 1613.6171875,
+      "median_rss_change_mb": 0.0
+    },
+    "tare": {
+      "peak_summed_rss_mb": 1119.7734375,
+      "minute5to10_median_rss_mb": 1119.7734375,
+      "last5min_median_rss_mb": 1119.7734375,
+      "median_rss_change_mb": 0.0
+    },
+    "xytheta_follower": {
+      "peak_summed_rss_mb": 146.6796875,
+      "minute5to10_median_rss_mb": 139.859375,
+      "last5min_median_rss_mb": 139.859375,
+      "median_rss_change_mb": 0.0
+    }
+  },
+  "segments": [
+    {
+      "start_s": 0,
+      "end_s": 600,
+      "distance_m": 168.76964529058117,
+      "fully_stopped_sample_fraction": 0.145,
+      "stationary_turn_sample_fraction": 0.17916666666666667,
+      "map_age": {
+        "count": 600,
+        "median": 0.7471067905426025,
+        "p95": 2.0144333600997926,
+        "max": 3.435926675796509
+      },
+      "reported_planner_runtime_sampled_s": {
+        "count": 1200,
+        "median": 0.686,
+        "p95": 1.533,
+        "max": 1.888
+      },
+      "cumulative_visited_1m_xy_cells": 133,
+      "observed_free_volume_gain_m3": 2169.875
+    }
+  ],
+  "scenario": "indoor",
+  "limitations": [
+    "One indoor run; not a real-vehicle safety guarantee.",
+    "A running node is not proof of exploration progress.",
+    "RSS sums can double-count shared pages. GPU total includes the desktop.",
+    "Probe ages and stop states are sampled1Hz and0.5s; full control messages retained in MCAP.",
+    "Reported planner runtime is not end-to-end latency."
+  ]
+}

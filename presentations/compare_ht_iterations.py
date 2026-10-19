@@ -25,7 +25,7 @@ def rows(path):
         return list(csv.DictReader(stream))
 
 
-def load(spec):
+def load(spec, include_cleanup_issues=False):
     label, separator, raw = spec.partition('=')
     if not separator or not label:
         raise ValueError('Expected LABEL=FOLDER')
@@ -35,8 +35,11 @@ def load(spec):
     validation = read(folder/'suite_validation.json')
     if summary['duration_s'] != 600 or manifest['planned_duration_s'] != 600:
         raise ValueError('Not a complete600s iteration: '+str(folder))
-    if not (folder/'COMPLETED.json').exists() or not all(validation['checks'].values()):
+    failed=[k for k,v in validation['checks'].items() if not v]
+    if not (folder/'COMPLETED.json').exists() or (failed and
+            (not include_cleanup_issues or set(failed)!={'no_child_or_cleanup_exception'})):
         raise ValueError('Recording validation failed: '+str(folder))
+    if failed:label+='（退出诊断异常）'
     metric = read(folder/'metric_definition.json')
     mission = read(folder/'mission_audit.json')
     motion_path = datafile(folder, 'timeseries.csv')
@@ -47,6 +50,7 @@ def load(spec):
     counts = mission['sampled_mission_counts']
     total = sum(counts.values())
     result = dict(label=label, folder=str(folder), scenario=manifest['scenario'],
+                  failed_recording_checks=failed,
                   git_head=manifest['git_head'], duration_s=summary['duration_s'],
                   speed_cap_mps=manifest['speed_cap_mps'],
                   measurement_start_pose_xyyaw=summary['start_pose_xyyaw'],
@@ -66,10 +70,12 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--run', action='append', required=True, help='LABEL=FOLDER')
     parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--include-cleanup-issues',action='store_true',
+                        help='Explicitly label full600s trials with cleanup exceptions; other failed checks remain forbidden')
     args = parser.parse_args()
     if len(args.run)<2:
         raise ValueError('Need at least two versions')
-    runs = [load(spec) for spec in args.run]
+    runs = [load(spec,args.include_cleanup_issues) for spec in args.run]
     first = runs[0]
     for row in runs[1:]:
         if row[0]['scenario'] != first[0]['scenario'] or row[0]['speed_cap_mps'] != first[0]['speed_cap_mps']:
@@ -127,6 +133,8 @@ def main():
               '视频、原始MCAP与地图快照在各运行目录；历史结果中的精选归档可能只含视频、CSV和末段快照。']
     for r in results:
         lines.append(f'\n- {r["label"]}：`{r["folder"]}`')
+        if r['failed_recording_checks']:
+            lines.append('  采集未全部通过：'+', '.join(r['failed_recording_checks'])+'；完整保留异常，不能称为通过稳定性验收。')
     (out/'REPORT.md').write_text('\n'.join(lines)+'\n')
     print(out)
 

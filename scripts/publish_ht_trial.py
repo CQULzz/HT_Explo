@@ -32,10 +32,13 @@ def main():
     parser.add_argument('--title', required=True)
     parser.add_argument('--receipt', type=Path, required=True)
     parser.add_argument('--dry-run', action='store_true')
+    parser.add_argument('--recording-issues-note',type=Path,
+                        help='Publish a full600s capture with cleanup exceptions, retaining failed status; requires archived issue JSON')
     args = parser.parse_args()
     suite, archive = args.suite.resolve(), args.archive.resolve()
     state = json.loads((suite / 'suite.json').read_text())
-    if state['state'] != 'COMPLETED' or state['duration_s'] < 600:
+    allowed_states=['COMPLETED']+(['COMPLETED_WITH_ISSUES'] if args.recording_issues_note else [])
+    if state['state'] not in allowed_states or state['duration_s'] < 600:
         raise ValueError('Only a completed >=600s suite is eligible; retain partial runs separately.')
     if args.receipt.exists():
         raise FileExistsError('Do not overwrite a publication receipt.')
@@ -43,11 +46,20 @@ def main():
     for name, expected in tracked.items():
         if sha256(archive / name) != expected:
             raise ValueError('Archive checksum mismatch: ' + name)
+    validation_issues={}
+    if args.recording_issues_note:
+        issue_path=args.recording_issues_note.resolve()
+        if not issue_path.is_relative_to(archive) or str(issue_path.relative_to(archive)) not in tracked:
+            raise ValueError('Recording issue note must be inside the checksum-verified archive.')
+        issue_note=json.loads(issue_path.read_text())
     for run in state['runs']:
         trial = suite / run['scenario']
         validation = json.loads((trial / 'suite_validation.json').read_text())
-        if run['state'] != 'RECORDED' or not all(validation['checks'].values()):
+        failed=[k for k,v in validation['checks'].items() if not v]
+        permitted_issue=args.recording_issues_note and run['state']=='RECORDED_WITH_ISSUES' and set(failed)=={'no_child_or_cleanup_exception'}
+        if not permitted_issue and (run['state'] != 'RECORDED' or failed):
             raise ValueError('Collection validation failed: ' + run['scenario'])
+        if failed:validation_issues[run['scenario']]=dict(failed_checks=failed,lifecycle_errors=validation['lifecycle_errors'])
         if json.loads((trial / 'manifest.json').read_text())['git_head'] != state['git_head']:
             raise ValueError('Suite contains inconsistent candidate commits.')
     candidate = state['git_head']
@@ -122,6 +134,9 @@ def main():
                'result_archive': str(archive), 'release': f'https://github.com/{REPO}/releases/tag/{args.tag}',
                'recording_scope': 'Full published HT/control/odom/status; source-second laser samples; periodic map snapshots, not all raw laser/CuPy frames.',
                'assets': [{'name': p.name, 'bytes': p.stat().st_size, 'sha256': sha256(p)} for p in transport]}
+    if validation_issues:
+        receipt.update(publication_status='RECORDED_WITH_ISSUES',validation_issues=validation_issues,
+                       recording_issues_note=issue_note)
     proof = temp / (args.tag + '-SHA256.json')
     proof.write_text(json.dumps(receipt, ensure_ascii=False, indent=2) + '\n')
     transport.append(proof)
