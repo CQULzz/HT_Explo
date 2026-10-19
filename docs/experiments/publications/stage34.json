@@ -1,0 +1,72 @@
+{
+  "tag": "ht-stage-20261019-checked-connections",
+  "tested_commit": "391fa0f98fc2a0adab2c018b4c5a1c7c29efff91",
+  "raw_suite": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_checked_connections_10min_2026-10-19_01-14-58",
+  "result_archive": "/home/lzz/my test/HT_Explo-fixposition/docs/results/ht_checked_connections_10min_2026-10-19",
+  "release": "https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261019-checked-connections",
+  "recording_scope": "Full published HT/control/odom/status; source-second laser samples; periodic map snapshots, not all raw laser/CuPy frames.",
+  "assets": [
+    {
+      "name": "ht-stage-20261019-checked-connections-raw.tar",
+      "bytes": 1631989760,
+      "sha256": "cd133532b54a3cf9036f4580c4b3915de420489cb7e0ae256911589b15f7402e"
+    },
+    {
+      "name": "ht-stage-20261019-checked-connections-raw-files.json",
+      "bytes": 38366,
+      "sha256": "78503487b1517b7d5eeb9ead14bc2c23ff8a4627304db2522c933dd10057c8be"
+    },
+    {
+      "name": "ht-stage-20261019-checked-connections-results.tar",
+      "bytes": 29450240,
+      "sha256": "9d7686c7aa3fe58bc999386588e08a7f99252ed9b976532eaeb0abd26ad844bb"
+    },
+    {
+      "name": "ht-stage-20261019-checked-connections-results-files.json",
+      "bytes": 19067,
+      "sha256": "10568614efbc965b9ed2438de0b56f0893c2e05a25f647e5b76bdb88b1442c2f"
+    },
+    {
+      "name": "ht-stage-20261019-checked-connections-indoor.mp4",
+      "bytes": 13068029,
+      "sha256": "5c581227826bf03716daf50b5779ee9a08582f66c3283397f9e6d832e34d81a1"
+    }
+  ],
+  "publication_status": "RECORDED_WITH_ISSUES",
+  "validation_issues": {
+    "indoor": {
+      "failed_checks": [
+        "no_child_or_cleanup_exception"
+      ],
+      "lifecycle_errors": {
+        "ht_bridge.log": [
+          "Traceback (most recent call last):"
+        ]
+      }
+    }
+  },
+  "recording_issues_note": {
+    "publication_status": "RECORDED_WITH_ISSUES",
+    "duration_s": 600,
+    "failed_checks": [
+      "no_child_or_cleanup_exception"
+    ],
+    "lifecycle_errors": {
+      "ht_bridge.log": [
+        "Traceback (most recent call last):"
+      ]
+    },
+    "damaged_contexts": [
+      {
+        "file": "presentations/scheduled_results/ht_checked_connections_10min_2026-10-19_01-14-58/indoor/current/inference_context/1792344330_174747904.npz",
+        "bytes": 252184,
+        "sha256": "ad58c394486d01cb15c1d7da4484a564bb6bed31a25d6233a93815dcd9cedcd6",
+        "error": "File is not a zip file"
+      }
+    ],
+    "readable_contexts": 57,
+    "readable_context_checks_passed": true,
+    "measurement_origin": 1792343731.4638648,
+    "interpretation": "Full600s navigation and video captured; final in-window diagnostic NPZ unreadable at shutdown. Preserve damaged bytes and original failed validation. Not an all-checks-passed trial. SIGINT interruption of non-atomic np.savez is the cause candidate to reproduce before fixing."
+  }
+}

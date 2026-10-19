@@ -51,6 +51,7 @@ def main():
  if args.mode=='restore':
   if not entry or raw.exists():raise ValueError('Missing index or source already exists')
   archive=Path(entry['archive'])
+  if not archive.is_file():raise ValueError('Local raw was removed under the retention policy; download the verified complete release: '+entry['release'])
   if digest(archive)!=entry['archive_sha256']:raise ValueError('Compressed archive SHA mismatch')
   verify_archive(archive,raw,entry['inventory'])
   # Only our checked archive is trusted; absolute links must reproduce internal
