@@ -218,7 +218,7 @@ def main():
             scene=row['scenario']
             report.write(f'\n### {NAMES[scene]}末段实际HT\n\n![八方向HT]({scene}/late_ht.png)\n\n![考虑车体足迹的HT硬门槛]({scene}/late_ht_footprint.png)\n\n[同期接收的相机画面]({scene}/late_camera.jpg) · [原始图层快照]({scene}/late_map_snapshot.npz) · [时间与坐标元数据]({scene}/late_map_snapshot.json)\n\n')
         report.write(f'全部视频按15fps、{state["duration_s"]}秒裁剪，时长校验允许1帧误差，完整解码通过；实际帧数和时长见各组video_validation.json。各组共有源文件的{len(common)}项哈希一致，各组自身冻结文件核验见suite_validation.json。\n\n')
-        report.write('相机年龄是图像接收后的年龄；相机仿真时间戳与导航墙钟不同，不能把该数值解释为传感器端到端延迟。原始MCAP、全高程历史和输入诊断保存在suite.json所列本地目录；本次只发布选取的数据与视频。\n')
+        report.write('相机年龄是图像接收后的年龄；相机仿真时间戳与导航墙钟不同，不能把该数值解释为传感器端到端延迟。本导出目录只含精选数据与视频；原始MCAP、全高程历史和输入诊断见suite.json所列目录，GitHub完整备份状态以本轮Release及发布校验回执为准。\n')
     for p in temp.rglob('*.csv'):p.write_bytes(p.read_bytes().replace(b'\r\n',b'\n'))
     (temp/'summary.json').write_text(json.dumps(dict(duration_s=state['duration_s'],scenes=summaries,
         shared_source_hashes={key:first[key] for key in sorted(common)},source_folder=str(job)),ensure_ascii=False,indent=2)+'\n')

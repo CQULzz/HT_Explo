@@ -2,7 +2,7 @@
   "schema_version": 1,
   "updated_at": "2026-10-19",
   "branch": "codex/ht8dir-v1",
-  "status": "阶段35退出诊断修复，13项检查通过；600秒169.10m/2674.750m³，导航仍391fa0f，整体收益/重复多环境仍需核查",
+  "status": "阶段36同冻结版车库600秒187.25m/7900.375m³，13项采集通过；室内/车库已测，地图时效和其余环境仍待验证",
   "latest_archive_commit": "1cdb922",
   "latest_planner_change": "43069a7b11b8028b53f6eae0d6bdc53c13e8affd",
   "stages": [
@@ -616,6 +616,23 @@
       ],
       "control_commit": "391fa0f98fc2a0adab2c018b4c5a1c7c29efff91",
       "ht_bridge_commit": "445b5c1490d6bb198c35bee23e95fc0f7781407e"
+    },
+    {
+      "id": "stage-36",
+      "number": 36,
+      "sha": "7b4c3589366c6a0bb4f8f1984c14951aa446d1ad",
+      "tag": "ht-stage-20261019-frozen-garage",
+      "title": "冻结版本车库600秒与历史统一口径对比",
+      "kind": "多环境验证",
+      "change": "导航/桥接保持阶段35版本，独立车库600秒；历史体积按相同源秒口径重新评估，导出说明纠错",
+      "features": "记录完整600秒，冻结62个共同文件相同；实际几何分析读取车库0.7m余量",
+      "validation": "187.25m/7900.375m³，13项采集通过；60份上下文CRC、58份同源核对、3份模型重算、视频通过",
+      "known_issues": "仍71次搜索超时，最长全零4.95s，地图最大4.117s；单次历史对比不能归因或证明普遍优越，校园/森林/隧道待测",
+      "evidence": [
+        "docs/results/ht_frozen_garage_10min_2026-10-19/REPORT.md"
+      ],
+      "control_commit": "391fa0f98fc2a0adab2c018b4c5a1c7c29efff91",
+      "ht_bridge_commit": "445b5c1490d6bb198c35bee23e95fc0f7781407e"
     }
   ],
   "historical_commits": [
@@ -1153,6 +1170,6 @@
   ],
   "latest_planner_code": "391fa0f98fc2a0adab2c018b4c5a1c7c29efff91",
   "latest_ht_bridge_code": "445b5c1490d6bb198c35bee23e95fc0f7781407e",
-  "latest_verified_trial_code": "445b5c1490d6bb198c35bee23e95fc0f7781407e",
-  "latest_recorded_trial_code": "445b5c1490d6bb198c35bee23e95fc0f7781407e"
+  "latest_verified_trial_code": "7b4c3589366c6a0bb4f8f1984c14951aa446d1ad",
+  "latest_recorded_trial_code": "7b4c3589366c6a0bb4f8f1984c14951aa446d1ad"
 }

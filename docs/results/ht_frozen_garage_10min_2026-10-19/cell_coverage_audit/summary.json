@@ -1,0 +1,45 @@
+{
+  "source": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_frozen_garage_10min_2026-10-19_11-33-38/garage",
+  "rows": 9624,
+  "transitions": 65,
+  "to_covered": 20,
+  "covered_reasons": {
+    "NO_GAIN_WITH_CANDIDATES": 20
+  },
+  "first_internal_completion_log_s": null,
+  "last_transition_window": [],
+  "deferred_unique_cells": 9,
+  "deferred_then_freshly_discharged": [
+    {
+      "cell": 886145,
+      "deferred_s": 80.90555238723755,
+      "discharged_s": 135.69486713409424,
+      "new_state": 2.0,
+      "reason": "NO_GAIN_WITH_CANDIDATES"
+    },
+    {
+      "cell": 886265,
+      "deferred_s": 126.91860342025757,
+      "discharged_s": 337.9384779930115,
+      "new_state": 1.0,
+      "reason": "SELECTED_REOPEN"
+    },
+    {
+      "cell": 886264,
+      "deferred_s": 126.91856002807617,
+      "discharged_s": 369.88609409332275,
+      "new_state": 1.0,
+      "reason": "SELECTED_REOPEN"
+    }
+  ],
+  "unresolved_gain_covered_without_evaluation": [],
+  "tour_and_local_complete_with_pending": [],
+  "tracked_final_state_counts": {
+    "0": 2,
+    "2": 19,
+    "1": 25
+  },
+  "last_known_unseen_with_gain": [],
+  "unseen_with_gain_unique_cells": 0,
+  "limitations": "Logs UpdateCellStatus decisions only. Does not include external SetCellStatus calls, exact sensor coverage truth, or distinguish geometric vs line-of-sight/corner-connectivity causes of absent candidates. -5s setup window included to retain first measured cycle transitions. Final tracked cells are not the whole global grid."
+}

@@ -1,0 +1,72 @@
+{
+  "runs": [
+    {
+      "label": "10月17日历史HT（体积统一重算）",
+      "folder": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_frozen_garage_10min_2026-10-19_11-33-38/historical_garage_comparable",
+      "scenario": "garage",
+      "failed_recording_checks": [],
+      "git_head": "6d6998f00f5fa9358a7c212b41da6f395ba492a5",
+      "duration_s": 600.0,
+      "speed_cap_mps": 0.5,
+      "measurement_start_pose_xyyaw": [
+        0.3705328702926636,
+        3.1625614166259766,
+        1.649914503097534
+      ],
+      "distance_m": 189.57,
+      "observed_free_volume_m3": 4028.25,
+      "final_mission": "EXPLORING",
+      "completed_at_s": null,
+      "blocked_sample_fraction": 0.03833333333333333,
+      "runtime_p95_s": 1.059000015258789,
+      "source_sha256": {
+        "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_frozen_garage_10min_2026-10-19_11-33-38/historical_garage_comparable/timeseries.csv": "99f8fa4fdc847806bbce38330ade003130d00418c2bbfe4add3e0e98c25cc9bc",
+        "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_frozen_garage_10min_2026-10-19_11-33-38/historical_garage_comparable/observation_volume.csv": "f6b89bac44d6224d6322c09ee6c24d2f2ad4d6ab844f86a752dd1a38c1949897",
+        "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_frozen_garage_10min_2026-10-19_11-33-38/historical_garage_comparable/manifest.json": "845d17358326dfe0004d00e5d733c3710a7204db2ad1523e06ca33ad771b54c7",
+        "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_frozen_garage_10min_2026-10-19_11-33-38/historical_garage_comparable/metric_definition.json": "5bbbc1cdd875a80f67ec2efceb6d131f6f80c8c5d888a2b371599b0ea6caa84c",
+        "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_frozen_garage_10min_2026-10-19_11-33-38/historical_garage_comparable/suite_validation.json": "1ad5968789644b306ab5875a906e71aab050acbcc9fc9af211313a26b4b1af97"
+      }
+    },
+    {
+      "label": "阶段36同版车库",
+      "folder": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_frozen_garage_10min_2026-10-19_11-33-38/garage",
+      "scenario": "garage",
+      "failed_recording_checks": [],
+      "git_head": "7b4c3589366c6a0bb4f8f1984c14951aa446d1ad",
+      "duration_s": 600.0,
+      "speed_cap_mps": 0.5,
+      "measurement_start_pose_xyyaw": [
+        0.37072426080703735,
+        3.1604325771331787,
+        1.6511648893356323
+      ],
+      "distance_m": 187.25,
+      "observed_free_volume_m3": 7900.375,
+      "final_mission": "EXPLORING",
+      "completed_at_s": null,
+      "blocked_sample_fraction": 0.021666666666666667,
+      "runtime_p95_s": 0.9110000133514404,
+      "source_sha256": {
+        "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_frozen_garage_10min_2026-10-19_11-33-38/garage/current/timeseries.csv": "2a700d1dee1e2c158345c6ec1e6303aa96a045a4883641513509fdcb627dabba",
+        "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_frozen_garage_10min_2026-10-19_11-33-38/garage/current/observation_volume.csv": "3477a288a0f1384c81216b874cde4e7711b9453be902b450672acfa9833e2b7a",
+        "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_frozen_garage_10min_2026-10-19_11-33-38/garage/manifest.json": "bd6be58eb1a84bcf39d38ce6bad121f24dddbf6073b6fb3ef85ed2c12f0db067",
+        "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_frozen_garage_10min_2026-10-19_11-33-38/garage/metric_definition.json": "5bbbc1cdd875a80f67ec2efceb6d131f6f80c8c5d888a2b371599b0ea6caa84c",
+        "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_frozen_garage_10min_2026-10-19_11-33-38/garage/suite_validation.json": "382882b23177ac0a2ad180b8f5ba0f03aea8239a373a53e5633859df9cca8f5e"
+      }
+    }
+  ],
+  "metric_definition": {
+    "voxel_size_m": 0.5,
+    "ray_sample_step_m": 0.25,
+    "max_range_m": 15,
+    "endpoint_exclusion_m": 0.25,
+    "scan_recording": "first source-stamped scan per wall-clock source second",
+    "selection": "one recorded scan per absolute source second, filtered to the measurement window; no second measurement-bin downsampling",
+    "definition": "Approximate cumulative union of observed free voxels; not ground truth or official coverage.",
+    "delivery_audit": "Sampled bag cannot establish loss of unsaved input frames; compare full-rate observer and mapper callback counters."
+  },
+  "measurement_start_pose_tolerance": {
+    "position_m": 0.05,
+    "yaw_rad": 0.02
+  }
+}

@@ -1,0 +1,247 @@
+{
+  "tested_git_head": "7b4c3589366c6a0bb4f8f1984c14951aa446d1ad",
+  "raw_run": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_frozen_garage_10min_2026-10-19_11-33-38",
+  "recording_scope": "All control/status and odometry, full-rate published HT maps and TARE collision geometry; original-stamped scans1Hz; exact-stamp map triplets and network inputs/outputs every10s; camera15fps. Raw CuPy and scans are not fully bagged.",
+  "mission": {
+    "first_exploration_finished_sample_s": null,
+    "sampled_mission_counts": {
+      "EXPLORING": 587,
+      "BLOCKED": 13
+    },
+    "first_completed_sample_s": null,
+    "last_sampled_mission": "EXPLORING",
+    "last_sampled_execution_status": "HT_ASSISTED",
+    "final_distance_to_measurement_start_m": 54.743196253050485,
+    "meaning": "Exploration finished is a return-home trigger. Only mission COMPLETED confirms the home radius, low-speed and dwell checks; neither establishes ground-truth full coverage."
+  },
+  "metrics": {
+    "scan_selection": "source_second",
+    "observed_free_volume_m3": 7900.375,
+    "processed_volume_scans": 600,
+    "skipped_volume_scans": 0,
+    "recorded_scans_in_source_time_window": 600,
+    "sensor_position_source": "nearest sensor-frame state_estimation (common to both systems)",
+    "pose_time_offset_max_s": 2.384185791015625e-07,
+    "command_samples": 12000,
+    "fully_stopped_fraction": 0.07,
+    "stationary_turn_fraction": 0.21725,
+    "reverse_command_fraction": 0.0085,
+    "max_abs_linear_command_mps": 0.5,
+    "max_abs_yaw_command_rps": 0.8,
+    "longest_zero_command_s": 4.9500730514526365,
+    "follower_status_samples": {
+      "TURNING": 2607,
+      "ALIGNING": 60,
+      "DRIVING": 8553,
+      "GOAL_REACHED": 432,
+      "HT_MAP_STALE": 20,
+      "PLANNER_HOLD": 256,
+      "GEOMETRY_COMMAND_BLOCKED": 2,
+      "HT_PATH_BLOCKED": 1,
+      "EMPTY_PATH": 43,
+      "PATH_STALE": 26
+    },
+    "longest_no_translation_command_s": 7.450134801864624,
+    "last_translation_s": 599.502,
+    "distance_last60_m": 20.805000000000007
+  },
+  "geometry": {
+    "radius_m": 0.8414213562373094,
+    "collision_point_threshold": 1,
+    "configured_height_window_m": [
+      -0.5,
+      0.5
+    ],
+    "configured_margin_m": 0.7,
+    "first_observed_margin_overlap": null,
+    "overlap_samples": 0,
+    "moving_predictions_inside_margin": 0,
+    "samples": 542,
+    "limitations": "Uses bag arrival order, latest received odometry/command and measured collision-cloud points in robot height slice. Does not reproduce planner collision-grid bounds or exact callback state. Predicted arc uses last received constant Twist, not controller internal candidate or simulator braking. Margin overlap is not physical vehicle contact. Sample lag/point noise may contribute; cannot separate them without independent truth."
+  },
+  "blocked_command_audit": {
+    "source": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_frozen_garage_10min_2026-10-19_11-33-38/garage",
+    "status_counts": {
+      "TURNING": 2607,
+      "ALIGNING": 60,
+      "DRIVING": 8553,
+      "GOAL_REACHED": 432,
+      "HT_MAP_STALE": 20,
+      "PLANNER_HOLD": 256,
+      "GEOMETRY_COMMAND_BLOCKED": 2,
+      "HT_PATH_BLOCKED": 1,
+      "EMPTY_PATH": 43,
+      "PATH_STALE": 26
+    },
+    "paired_status_counts": {
+      "GOAL_REACHED": 432,
+      "DRIVING": 2,
+      "HT_MAP_STALE": 20,
+      "PLANNER_HOLD": 256,
+      "GEOMETRY_COMMAND_BLOCKED": 2,
+      "TURNING": 4,
+      "ALIGNING": 1,
+      "HT_PATH_BLOCKED": 1,
+      "EMPTY_PATH": 43,
+      "PATH_STALE": 26
+    },
+    "unmatched_command_rejections": 0,
+    "blocked_nonzero_count": 0,
+    "events": [],
+    "geometry_nonzero_count": 0,
+    "geometry_events": [],
+    "unmatched_geometry_rejections": {
+      "GEOMETRY_COMMAND_BLOCKED": 0
+    },
+    "caveat": "Matches each late hold to its preceding command within20ms in publication order; reports unmatched events separately. Single-follower runs only. Does not infer internal map/odom callback ordering."
+  },
+  "search": {
+    "count": 793,
+    "termination": {
+      "REACHED": 722,
+      "TIME_LIMIT": 71
+    },
+    "direct_connections": 680,
+    "elapsed_s": {
+      "p50": 0.000481,
+      "p95": 0.150709,
+      "max": 0.163868
+    },
+    "expanded_max": 1440.0,
+    "geometry_cpu_wall_fraction": 0.8463344511097629,
+    "rejection_counts": {
+      "geometry_reject": 7021.0,
+      "ht_reject": 119750.0,
+      "memory_reject": 0.0,
+      "reserve_reject": 0.0
+    }
+  },
+  "scheduling": {
+    "cycles": 537,
+    "failed_all_timeout_with_unattempted_extra_targets": 0,
+    "first_starved_s": null,
+    "last_starved_s": null,
+    "post60_cycles": 484,
+    "post60_starved_cycles": 0,
+    "post60_recovery_attempts": 82,
+    "most_common_starved_goals": [],
+    "limitations": "Targets minus primary combines recovery and optional backtrack. Search logs show queued alternatives were not attempted, not that they are feasible. This audit cannot attribute the different initial trajectory to a single variable or prove physical coverage."
+  },
+  "checks": {
+    "timer_completed": true,
+    "measured_duration_matches": true,
+    "source_hashes_unchanged": true,
+    "enough_samples": true,
+    "no_runtime_parent_failure": true,
+    "no_live_descendants": true,
+    "no_forced_shutdown": true,
+    "video_full_decode_passed": true,
+    "video_duration_matches": true,
+    "video_fps_matches": true,
+    "analysis_passed": true,
+    "no_child_or_cleanup_exception": true,
+    "blas_workers_bounded": true
+  },
+  "video": {
+    "encode_returncode": 0,
+    "fps": 15,
+    "requested_duration_s": 600,
+    "trim_offset_s": 53.83042120933533,
+    "source_file": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_frozen_garage_10min_2026-10-19_11-33-38/garage/camera_15fps.mp4",
+    "full_decode_returncode": 0,
+    "decoded_frames": 8999,
+    "duration_s": 599.9333333333333,
+    "duration_matches": true,
+    "bytes": 9286152,
+    "sha256": "9f81bed58eeda5bb66f618cd659a31e0cc20cf762997b0da1e5fce22d452969b"
+  },
+  "configuration": {
+    "tested_commit": "7b4c3589366c6a0bb4f8f1984c14951aa446d1ad",
+    "navigation_control_commit": "391fa0f98fc2a0adab2c018b4c5a1c7c29efff91",
+    "ht_bridge_commit": "445b5c1490d6bb198c35bee23e95fc0f7781407e",
+    "indoor_reference_commit": "445b5c1490d6bb198c35bee23e95fc0f7781407e",
+    "shared_entries_identical": 62,
+    "scene_specific_only": [
+      "/home/lzz/my test/autonomous_exploration_development_environment/src/vehicle_simulator/world/garage.world",
+      "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/config/garage.yaml",
+      "/home/lzz/my test/HT_Explo-fixposition/install_standalone/tare_planner/share/tare_planner/garage.yaml"
+    ],
+    "historical_garage_reference_commit": "6d6998f00f5fa9358a7c212b41da6f395ba492a5",
+    "historical_common_changed": {
+      "/home/lzz/my test/HT_Explo-fixposition/install_standalone/tare_planner/lib/tare_planner/tare_planner_node": {
+        "before": "a956042037d3c3ad094ed145302037569beb5e0de7deed52b7e5f2503412c2f9",
+        "after": "b1639be7a911136f5bbc3e7072c9690a7cd10083d7a133974a5a7f1b5de7767d"
+      },
+      "/home/lzz/my test/HT_Explo-fixposition/install_standalone/tare_planner/lib/tare_planner/xytheta_follower": {
+        "before": "464be585c64d59c680899f66f4eaacaae49844a59f9465644e232946841b0507",
+        "after": "138db9b8f3c43c3b1fd4fb3c7becf9322a5646488f4af16bd339a63af5c9a3c0"
+      },
+      "/home/lzz/my test/HT_Explo-fixposition/presentations/run_ht_endurance.py": {
+        "before": "3cbb879c255a018c2e229fca10eb6f08628ee0cab4a60a82cfee8e1ab32d0f06",
+        "after": "d253462b5c0938fda659a6646a7ea8b3224d5f956c34ed4796bade188ba274ba"
+      },
+      "/home/lzz/my test/HT_Explo-fixposition/presentations/run_scheduled_comparison.py": {
+        "before": "c55f6be4f82f6177eeb12852f81ab502e075da063c356382c6b2fa71efa64d89",
+        "after": "a48438252701f4454ff8b308444fc8bc541abd541b2bb352e96ab3d707642f73"
+      },
+      "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/config/ht.yaml": {
+        "before": "08abdce7ca214f0e3bfa69241ddc2e030d5bc543287dfc23d1bb377908cc29e1",
+        "after": "7f0c5a50d6ebb30b9b66eec024bb7d1352a1b16424b049aa3bef95f1e8f3dbbd"
+      },
+      "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/include/ht_cost/exploration_progress.h": {
+        "before": "4b13b37ee57d5acecb9fb02a9d1de86524ee892b60371b2a485d24eacc9da115",
+        "after": "43eced1c1bd510cfe868bbbfb96256b70f9bb22294410330cf92123d8d31d331"
+      },
+      "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/include/ht_cost/target_commitment.h": {
+        "before": "e8adb707d9d8b604ba03c632b66595d9d1de836e9a8386fa58650176d9a4a9b5",
+        "after": "4e6ab1ea2c487cd9782c7b4aa7a68bb2c71cf1f363b02c4bce24e4a588fa7d9f"
+      },
+      "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/src/ht_cost/xytheta_follower.cpp": {
+        "before": "b3daf2fbc9b0dc9e6d54327b845c4294a66113b479c1da4ff8f16472c0234283",
+        "after": "51d7446f2cdbab9d32fcca4ae3c90d2cace5bbab6b732931461eca53590a8388"
+      },
+      "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/src/local_coverage_planner/ht_route.cpp": {
+        "before": "ad62b9057f04fc1b964946a4d19c2ef98eb5a9c5e4eb8cb67dffa0f5b9c0b424",
+        "after": "77ef3b0434502929e3998d9f2e3381e49e586d75ae7f73d0638c8ea3468ea290"
+      },
+      "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp": {
+        "before": "a25b654101e80a2d4277b27be731f1beb7c4a35e6827c5885697be027a192301",
+        "after": "22301f4544ec275fa082aaa223e2ae1550c3298cb011d0a346bbad2f72f5552c"
+      },
+      "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp": {
+        "before": "57cbc201ed04c789bffd9253fafdb4311209e6cb17064917636375b957d866d8",
+        "after": "ee2624d3e37891cf314706f14a6dea862b729a722e3d9d67c00378ccb8308afe"
+      },
+      "/home/lzz/my test/HT_Explo-fixposition/tools/ht_cupy_bridge/cpu_threads.py": {
+        "before": "42fec5e91ffc87c617df0ca9837c1236d488bf1854f9450859818d14341f5394",
+        "after": "8ac124e744c2a821f679369bdd667c2ea0d866fda1d721078835d79a3cc08834"
+      },
+      "/home/lzz/my test/HT_Explo-fixposition/tools/ht_cupy_bridge/cupy_to_ht.py": {
+        "before": "1971e967becbab43851eea3870869a99b3a5314b52a5d13fcf83d192bd9955cb",
+        "after": "3f634fcf15b6b1a78e127bf5b50ccdf42e07d7e14e3cb04a0a1d1cfd089b525c"
+      },
+      "/home/lzz/my test/HT_Explo-fixposition/tools/ht_cupy_bridge/elevation_quality.py": {
+        "before": "dd9f5b5db9783137cac8391bcfa35de5a8c0d3f97985fd0ebeb4bce4613d4b81",
+        "after": "ef957426d28a6b9a2d3ec8e8aaa25c48222c05f21534c055164ead9bc7ac369c"
+      },
+      "/home/lzz/my test/HT_Explo-fixposition/tools/ht_cupy_bridge/historical_elevation.py": {
+        "before": "232ab871b749d18b38b7fc1e34cd48c4d67ca1876c53267561ad61e04c7bdce8",
+        "after": "0c4ec96bc65c5a9cfebde96d546e529715b9af8c4c68db6726bd08674f0476c9"
+      },
+      "/home/lzz/my test/HT_Explo-fixposition/tools/ht_cupy_bridge/ht_trial.yaml": {
+        "before": "a6821e1180a3c48ca1b80adb42d8f1f880958286e53cfd5fce511036a371f87f",
+        "after": "5d9c0ea5010ccbc603caae7a8e225f19d5893e133d4bbb31b88ec4e9555862b3"
+      }
+    },
+    "limitations": "Same current control/model/bridge as stage35, different scene-specific world/configuration. Historical garage changed multiple components; the comparison cannot identify one fix effect."
+  },
+  "context_integrity": {
+    "completed_npz_files": 60,
+    "all_completed_npz_readable": true,
+    "history_snapshot_crc_passed": true,
+    "damaged_files": [],
+    "remaining_partial_files": [],
+    "passed": true,
+    "limitations": "ZIP CRC and final-file completeness only; semantic map/model agreement is checked separately."
+  }
+}

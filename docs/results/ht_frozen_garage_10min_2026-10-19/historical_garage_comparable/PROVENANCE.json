@@ -1,0 +1,50 @@
+{
+  "original_archive": "/home/lzz/my test/HT_Explo-fixposition/docs/results/ht_multiscene_10min_2026-10-17/garage",
+  "original_raw": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_multiscene_10min_2026-10-17_11-37-52/garage",
+  "original_metric_definition": {
+    "voxel_size_m": 0.5,
+    "ray_sample_step_m": 0.25,
+    "max_range_m": 15,
+    "endpoint_exclusion_m": 0.25,
+    "scan_recording": "first source-stamped scan per wall-clock source second",
+    "selection": "at most one recorded scan per measurement second; bins may be missing",
+    "definition": "Approximate cumulative union of observed free voxels; not ground truth or official coverage.",
+    "delivery_audit": "Sampled bag cannot establish loss of unsaved input frames; compare full-rate observer and mapper callback counters."
+  },
+  "recomputed_metric": {
+    "scan_selection": "source_second",
+    "observed_free_volume_m3": 4028.25,
+    "processed_volume_scans": 600,
+    "skipped_volume_scans": 0,
+    "recorded_scans_in_source_time_window": 600,
+    "sensor_position_source": "nearest sensor-frame state_estimation (common to both systems)",
+    "pose_time_offset_max_s": 2.384185791015625e-07,
+    "command_samples": 12000,
+    "fully_stopped_fraction": 0.11466666666666667,
+    "stationary_turn_fraction": 0.1495,
+    "reverse_command_fraction": 0.0,
+    "max_abs_linear_command_mps": 0.5,
+    "max_abs_yaw_command_rps": 0.8,
+    "longest_zero_command_s": 4.999973583221435,
+    "follower_status_samples": {
+      "DRIVING": 8821,
+      "HT_MAP_STALE": 55,
+      "PLANNER_HOLD": 418,
+      "PATH_STALE": 60,
+      "GOAL_REACHED": 644,
+      "TURNING": 1794,
+      "HT_COMMAND_BLOCKED": 9,
+      "ALIGNING": 199
+    },
+    "longest_no_translation_command_s": 8.800022649765015,
+    "last_translation_s": 599.505,
+    "distance_last60_m": 15.067000000000007
+  },
+  "bag_sha256": {
+    "evidence_bag/evidence_bag_0.mcap": "7a9bf509052b010b9bc46c3401df83b3509b8c60851903994a30208742606883",
+    "evidence_bag/evidence_bag_1.mcap": "3e0bef3ef33f28a2636aeb0aef84f3031ddcf3a83c04c2bde264dea1db70afdd",
+    "evidence_bag/evidence_bag_2.mcap": "89fb423000564464e9f6a5c37c4452bf364071e8905761be4fc2dbf077b9aeaa",
+    "evidence_bag/metadata.yaml": "82b10d566c09ad1dfb6cb77543f326bd4fab034cb34505277921164011feea9b"
+  },
+  "scope": "Derived comparison only. Old experiment/report/sealed archive are unchanged; simulated trajectory and commands are not rerun."
+}
