@@ -27,6 +27,7 @@ LocalCoveragePlanner::LocalCoveragePlanner(rclcpp::Node::SharedPtr nh)
     : node_(nh),lookahead_point_update_(false), use_frontier_(true),
       local_coverage_complete_(false) {
   parameters_.ReadParameters(nh);
+  tare_order_pub_=nh->create_publisher<std_msgs::msg::String>("/tare_tsp_order",10);
   ht_path_pub_=nh->create_publisher<nav_msgs::msg::Path>("/ht_xytheta_path",rclcpp::QoS(1).reliable());
   ht_rejection_sub_=nh->create_subscription<nav_msgs::msg::Path>("/ht_execution_rejected_edge",5,
     [this](nav_msgs::msg::Path::ConstSharedPtr msg) {
@@ -383,6 +384,8 @@ exploration_path_ns::ExplorationPath LocalCoveragePlanner::SolveTSP(
     std::vector<int> &ordered_viewpoint_indices)
 
 {
+  if (viewpoint_manager_->HT()->tareCoverage()) { ++tare_tsp_calls_; return SolveTareTSP(selected_viewpoint_indices, ordered_viewpoint_indices); }
+
   if (viewpoint_manager_->HT()->enabled())
     return SolveHTTSP(selected_viewpoint_indices, ordered_viewpoint_indices);
   // nav_msgs::msg::Path tsp_path;
@@ -643,6 +646,21 @@ exploration_path_ns::ExplorationPath
 LocalCoveragePlanner::SolveLocalCoverageProblem(
     const exploration_path_ns::ExplorationPath &global_path,
     int uncovered_point_num, int uncovered_frontier_point_num) {
+  if (viewpoint_manager_->HT()->tareCoverage()) {
+    ht_output_path_.poses.clear();
+    const auto before=tare_tsp_calls_;
+    auto route=SolveTareCoverageProblem(global_path, uncovered_point_num, uncovered_frontier_point_num);
+    std_msgs::msg::String order;order.data="[";
+    for(size_t i=0;i<last_selected_viewpoint_indices_.size();++i) {
+      if(i) order.data+=",";order.data+=std::to_string(last_selected_viewpoint_indices_[i]);
+    }
+    order.data+="]";tare_order_pub_->publish(order);
+    RCLCPP_INFO(node_->get_logger(),"TARE_COVERAGE native=1 tsp_calls=%lu iterations=%d selected=%zu route_nodes=%zu route_length=%.3f complete=%d",
+      static_cast<unsigned long>(tare_tsp_calls_-before),parameters_.kLocalPathOptimizationItrMax,
+      last_selected_viewpoint_indices_.size(),route.nodes_.size(),route.GetLength(),local_coverage_complete_);
+    return route;
+  }
+
   exploration_path_ns::ExplorationPath local_path;
 
   find_path_runtime_ = 0;

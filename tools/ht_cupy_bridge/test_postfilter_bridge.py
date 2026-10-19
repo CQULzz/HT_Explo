@@ -54,6 +54,9 @@ class PostfilterBridgeTest(unittest.TestCase):
                 result=output.messages[0]
                 self.assertEqual(result.header.stamp,source.header.stamp)
                 def layer(name):return np.asarray(result.data[result.layers.index(name)].data).reshape((241,241),order='F')
+                self.assertEqual(len(result.layers),12)
+                self.assertAlmostEqual(float(layer('ht_elevation')[120,120]),0.,places=6)
+                self.assertTrue(np.isnan(layer('ht_elevation')[120,139]))
                 self.assertEqual(layer('ht_valid')[120,120],1.)
                 self.assertEqual(layer('ht_obstacle')[120,139],1.)
                 for k in range(8):self.assertEqual(layer(f'ht_dir_{k}')[120,139],0.)

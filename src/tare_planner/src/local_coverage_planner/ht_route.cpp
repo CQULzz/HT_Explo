@@ -302,7 +302,7 @@ exploration_path_ns::ExplorationPath LocalCoveragePlanner::SolveHTTSP(
     return result;
 }
 
-exploration_path_ns::ExplorationPath LocalCoveragePlanner::PlanHTReturn(const Eigen::Vector3d& target) {
+exploration_path_ns::ExplorationPath LocalCoveragePlanner::PlanHTReturn(const Eigen::Vector3d& target,double search_seconds) {
   ScopedSearchRuntime measured{find_path_runtime_};
   using namespace exploration_path_ns;
   ExplorationPath result;
@@ -321,8 +321,14 @@ exploration_path_ns::ExplorationPath LocalCoveragePlanner::PlanHTReturn(const Ei
     (void)v;
     return true;
   };
+  auto config=xytheta_config_;
+  if(ht->tareCoverage()) config.try_direct_connection=true;
+  if(search_seconds>=0) config.max_search_seconds=std::min(config.max_search_seconds,search_seconds);
   const auto plan=ht_cost_ns::planXYTheta(start,{target.x(),target.y(),target.z()},
-                                         xytheta_config_,valid);
+                                         config,valid);
+  RCLCPP_INFO(node_->get_logger(),"HT_WAYPOINT_SEARCH target=(%.3f,%.3f) reached=%d termination=%s poses=%zu expanded=%d direct=%d pruned=%zu",
+    target.x(),target.y(),plan.reached,ht_cost_ns::terminationName(plan.termination),plan.poses.size(),plan.expanded,
+    plan.direct_connection,static_cast<size_t>(plan.dominated_edges_pruned));
   if (!plan.reached || plan.poses.size()<2) {
     RCLCPP_WARN_THROTTLE(node_->get_logger(),*node_->get_clock(),3000,
       "HT return search failed: robot=(%.3f,%.3f) checkpoint=(%.3f,%.3f) distance=%.3f reached=%d poses=%zu expanded=%d",

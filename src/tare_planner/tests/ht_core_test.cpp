@@ -7,6 +7,7 @@
 #include "ht_cost/exploration_progress.h"
 #include "ht_cost/heading_reserve.h"
 #include "ht_cost/search_schedule.h"
+#include "ht_cost/tare_waypoint_route.h"
 #include <iostream>
 #include <stdexcept>
 using namespace ht_cost_ns;
@@ -17,6 +18,19 @@ void check(bool condition) {
 }
 void near(double a,double b) { check(std::abs(a-b)<1e-5); }
 int main() {
+  // U-shaped native route: a remote target must not be clipped diagonally.
+  const std::vector<Point> u{{0,0,0},{0,3,0},{3,3,0},{3,0,0}};
+  auto branch=tareBranch(u,{true,false,false,false},{3,0,0});
+  check(branch.size()==4);auto prefix=tarePrefix(branch,4.);near(prefix.x,1.);near(prefix.y,3.);
+  auto backward=tareBranch({{3,0,0},{3,3,0},{0,3,0},{0,0,0}},
+                           {false,false,false,true},{3,0,0});
+  check(backward.size()==4);near(tarePrefix(backward,4.).x,1.);
+  check(tareBranch(u,{true,false,false,false},{8,8,0}).empty());
+  auto loop=tareBranch({{0,0,0},{0,3,0},{3,3,0},{3,0,0},{0,0,0}},
+                        {true,false,false,false,true},{3,0,0});
+  check(loop.size()==2);near(tarePrefix(loop,1.).x,1.);near(tarePrefix(loop,1.).y,0.);
+  check(tareBranch(u,{true},{3,0,0}).empty());
+
   // Captured35s stop: open local recovery behind the vehicle takes thousands
   // of graph validity queries. A checked spin/straight connection reaches it
   // without spending those graph expansions or weakening the predicate.

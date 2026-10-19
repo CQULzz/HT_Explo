@@ -1,0 +1,177 @@
+exploration_path_ns::ExplorationPath
+LocalCoveragePlanner::SolveLocalCoverageProblem(
+    const exploration_path_ns::ExplorationPath &global_path,
+    int uncovered_point_num, int uncovered_frontier_point_num) {
+  exploration_path_ns::ExplorationPath local_path;
+
+  find_path_runtime_ = 0;
+  viewpoint_sampling_runtime_ = 0;
+  tsp_runtime_ = 0;
+
+  local_coverage_complete_ = false;
+
+  misc_utils_ns::Timer find_path_timer("find path");
+  find_path_timer.Start();
+
+  std::vector<int> navigation_viewpoint_indices;
+  GetNavigationViewPointIndices(global_path, navigation_viewpoint_indices);
+
+  find_path_timer.Stop(false);
+  find_path_runtime_ += find_path_timer.GetDuration(kRuntimeUnit);
+
+  // Sampling viewpoints
+  misc_utils_ns::Timer viewpoint_sampling_timer("viewpoint sampling");
+  viewpoint_sampling_timer.Start();
+
+  std::vector<bool> covered(uncovered_point_num, false);
+  std::vector<bool> frontier_covered(uncovered_frontier_point_num, false);
+
+  std::vector<int> pre_selected_viewpoint_array_indices;
+  std::vector<int> reused_viewpoint_indices;
+  for (auto &viewpoint_array_ind : last_selected_viewpoint_array_indices_) {
+    if (viewpoint_manager_->ViewPointVisited(viewpoint_array_ind, true) ||
+        !viewpoint_manager_->IsViewPointCandidate(viewpoint_array_ind, true)) {
+      continue;
+    }
+    int covered_point_num = viewpoint_manager_->GetViewPointCoveredPointNum(
+        covered, viewpoint_array_ind, true);
+    if (covered_point_num >= parameters_.kMinAddPointNum) {
+      reused_viewpoint_indices.push_back(
+          viewpoint_manager_->GetViewPointInd(viewpoint_array_ind));
+    } else if (use_frontier_) {
+      int covered_frontier_point_num =
+          viewpoint_manager_->GetViewPointCoveredFrontierPointNum(
+              frontier_covered, viewpoint_array_ind, true);
+      if (covered_frontier_point_num >= parameters_.kMinAddFrontierPointNum) {
+        reused_viewpoint_indices.push_back(
+            viewpoint_manager_->GetViewPointInd(viewpoint_array_ind));
+      }
+    }
+  }
+
+  for (const auto &ind : reused_viewpoint_indices) {
+    int viewpoint_array_ind = viewpoint_manager_->GetViewPointArrayInd(ind);
+    pre_selected_viewpoint_array_indices.push_back(viewpoint_array_ind);
+  }
+  for (const auto &ind : navigation_viewpoint_indices) {
+    int array_ind = viewpoint_manager_->GetViewPointArrayInd(ind);
+    pre_selected_viewpoint_array_indices.push_back(array_ind);
+  }
+
+  // Update coverage
+  for (auto &viewpoint_array_ind : pre_selected_viewpoint_array_indices) {
+    // Update covered points and frontiers
+    UpdateViewPointCoveredPoint(covered, viewpoint_array_ind, true);
+    if (use_frontier_) {
+      UpdateViewPointCoveredFrontierPoint(frontier_covered, viewpoint_array_ind,
+                                          true);
+    }
+  }
+
+  // Enqueue candidate viewpoints
+  std::vector<std::pair<int, int>> queue;
+  std::vector<std::pair<int, int>> frontier_queue;
+  EnqueueViewpointCandidates(queue, frontier_queue, covered, frontier_covered,
+                             pre_selected_viewpoint_array_indices);
+
+  viewpoint_sampling_timer.Stop(false, kRuntimeUnit);
+  viewpoint_sampling_runtime_ +=
+      viewpoint_sampling_timer.GetDuration(kRuntimeUnit);
+
+  std::vector<int> ordered_viewpoint_indices;
+  if (!queue.empty() && queue[0].first > parameters_.kMinAddPointNum) {
+    double min_path_length = DBL_MAX;
+    for (int itr = 0; itr < parameters_.kLocalPathOptimizationItrMax; itr++) {
+      std::vector<int> selected_viewpoint_indices_itr;
+
+      // Select from the queue
+      misc_utils_ns::Timer select_viewpoint_timer("select viewpoints");
+      select_viewpoint_timer.Start();
+      SelectViewPoint(queue, covered, selected_viewpoint_indices_itr, false);
+      SelectViewPointFromFrontierQueue(frontier_queue, frontier_covered,
+                                       selected_viewpoint_indices_itr);
+
+      // Add viewpoints from last planning cycle
+      for (const auto &ind : reused_viewpoint_indices) {
+        selected_viewpoint_indices_itr.push_back(ind);
+      }
+      // Add viewpoints for navigation
+      for (const auto &ind : navigation_viewpoint_indices) {
+        selected_viewpoint_indices_itr.push_back(ind);
+      }
+
+      misc_utils_ns::UniquifyIntVector(selected_viewpoint_indices_itr);
+
+      select_viewpoint_timer.Stop(false, kRuntimeUnit);
+      viewpoint_sampling_runtime_ +=
+          select_viewpoint_timer.GetDuration(kRuntimeUnit);
+
+      // Solve the TSP problem
+      exploration_path_ns::ExplorationPath local_path_itr;
+      local_path_itr =
+          SolveTSP(selected_viewpoint_indices_itr, ordered_viewpoint_indices);
+
+      double path_length = local_path_itr.GetLength();
+      if (!local_path_itr.nodes_.empty() && path_length < min_path_length)
+
+      {
+        min_path_length = path_length;
+        local_path = local_path_itr;
+        last_selected_viewpoint_indices_ = ordered_viewpoint_indices;
+      }
+    }
+  } else {
+    misc_utils_ns::Timer select_viewpoint_timer("viewpoint sampling");
+    select_viewpoint_timer.Start();
+
+    // std::cout << "entering tsp routine" << std::endl;
+    std::vector<int> selected_viewpoint_indices_itr;
+
+    // Add viewpoints from last planning cycle
+    for (const auto &ind : reused_viewpoint_indices) {
+      selected_viewpoint_indices_itr.push_back(ind);
+    }
+    SelectViewPointFromFrontierQueue(frontier_queue, frontier_covered,
+                                     selected_viewpoint_indices_itr);
+
+    if (selected_viewpoint_indices_itr.empty()) {
+      local_coverage_complete_ = true;
+    }
+
+    // Add viewpoints for navigation
+    for (const auto &ind : navigation_viewpoint_indices) {
+      selected_viewpoint_indices_itr.push_back(ind);
+    }
+
+    misc_utils_ns::UniquifyIntVector(selected_viewpoint_indices_itr);
+
+    select_viewpoint_timer.Stop(false, kRuntimeUnit);
+    viewpoint_sampling_runtime_ +=
+        select_viewpoint_timer.GetDuration(kRuntimeUnit);
+
+    local_path =
+        SolveTSP(selected_viewpoint_indices_itr, ordered_viewpoint_indices);
+
+    last_selected_viewpoint_indices_ = ordered_viewpoint_indices;
+  }
+
+  last_selected_viewpoint_array_indices_.clear();
+  for (const auto &ind : last_selected_viewpoint_indices_) {
+    int array_ind = viewpoint_manager_->GetViewPointArrayInd(ind);
+    last_selected_viewpoint_array_indices_.push_back(array_ind);
+  }
+
+  int viewpoint_num = viewpoint_manager_->GetViewPointNum();
+  for (int i = 0; i < viewpoint_num; i++) {
+    viewpoint_manager_->SetViewPointSelected(i, false, true);
+  }
+  for (const auto &viewpoint_index : last_selected_viewpoint_indices_) {
+    if (viewpoint_index != robot_viewpoint_ind_ &&
+        viewpoint_index != start_viewpoint_ind_ &&
+        viewpoint_index != end_viewpoint_ind_ &&
+        viewpoint_index != lookahead_viewpoint_ind_) {
+      viewpoint_manager_->SetViewPointSelected(viewpoint_index, true);
+    }
+  }
+  return local_path;
+}

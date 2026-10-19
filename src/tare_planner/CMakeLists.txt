@@ -108,11 +108,11 @@ add_library(viewpoint_manager src/viewpoint_manager/viewpoint_manager.cpp)
 ament_target_dependencies(viewpoint_manager rclcpp std_msgs nav_msgs geometry_msgs sensor_msgs tf2_ros tf2_geometry_msgs tf2)
 target_link_libraries(viewpoint_manager ${catkin_LIBRARIES} rolling_grid viewpoint grid_world ht_cost)
 
-add_library(local_coverage_planner src/local_coverage_planner/local_coverage_planner.cpp src/local_coverage_planner/ht_route.cpp)
+add_library(local_coverage_planner src/local_coverage_planner/tare_original.cpp src/local_coverage_planner/local_coverage_planner.cpp src/local_coverage_planner/ht_route.cpp)
 ament_target_dependencies(local_coverage_planner rclcpp std_msgs nav_msgs geometry_msgs sensor_msgs tf2_ros tf2_geometry_msgs tf2)
 target_link_libraries(local_coverage_planner ${catkin_LIBRARIES} viewpoint_manager tsp_solver)
 
-add_library(grid_world src/grid_world/grid_world.cpp)
+add_library(grid_world src/grid_world/tare_original.cpp src/grid_world/grid_world.cpp)
 ament_target_dependencies(grid_world rclcpp std_msgs nav_msgs geometry_msgs sensor_msgs tf2_ros tf2_geometry_msgs tf2)
 target_link_libraries(grid_world ${catkin_LIBRARIES} viewpoint_manager tsp_solver keypose_graph exploration_path)
 
@@ -140,7 +140,7 @@ add_library(tare_visualizer src/tare_visualizer/tare_visualizer.cpp)
 ament_target_dependencies(tare_visualizer rclcpp std_msgs nav_msgs geometry_msgs sensor_msgs tf2_ros tf2_geometry_msgs tf2 pcl_ros pcl_conversions visualization_msgs)
 target_link_libraries(tare_visualizer ${catkin_LIBRARIES} ${PCL_LIBRARIES})
 
-add_library(sensor_coverage_planner_ground src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp)
+add_library(sensor_coverage_planner_ground src/sensor_coverage_planner/tare_waypoint_router.cpp src/sensor_coverage_planner/tare_original.cpp src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp)
 ament_target_dependencies(sensor_coverage_planner_ground rclcpp std_msgs nav_msgs geometry_msgs sensor_msgs tf2_ros tf2_geometry_msgs tf2)
 target_link_libraries(sensor_coverage_planner_ground ${catkin_LIBRARIES} graph planning_env keypose_graph viewpoint_manager pointcloud_manager grid_world local_coverage_planner tare_visualizer)
 

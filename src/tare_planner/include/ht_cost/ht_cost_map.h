@@ -8,12 +8,18 @@
 #include <tf2_ros/transform_listener.h>
 #include <mutex>
 #include <memory>
+#include <map>
 
 namespace ht_cost_ns {
 class HtCostMap {
  public:
   explicit HtCostMap(rclcpp::Node::SharedPtr node,bool publish_permission=true);
   bool enabled() const { return enabled_; }
+  bool tareCoverage() const { return enabled_ && tare_coverage_; }
+  struct TerrainCell { double x=0,y=0,height=std::numeric_limits<double>::quiet_NaN(),stamp=0; bool feasible=false; };
+  std::vector<TerrainCell> terrainWindow(double x,double y,double radius);
+  // Unknown historical guidance cells stay optimistic; execution is strict.
+  bool terrainAdmissible(double x,double y);
   void beginCycle();
   bool ready() const;
   std::string status() const;
@@ -49,7 +55,7 @@ class HtCostMap {
   bool require_reversible_motion_=false;
   bool configuration_scores_=false;
   double fallback_lookahead_=0.5, fallback_speed_=0.2;
-  bool enabled_=false, calibrated_=false;
+  bool enabled_=false, calibrated_=false, tare_coverage_=true;
   double min_probability_=0.5, timeout_=1, step_=0.02, lookahead_=2;
   double footprint_radius_=0.6, heading_offset_=0;
   double reached_distance_=0.3;
@@ -57,6 +63,8 @@ class HtCostMap {
   std::string frame_;
   std::string latest_error_="HT_MAP_MISSING", cycle_error_="HT_MAP_MISSING";
   std::mutex mutex_;
+  bool collect_terrain_=false;
+  std::map<std::pair<int,int>,TerrainCell> terrain_history_;
   std::shared_ptr<Map> latest_, cycle_;
   tf2_ros::Buffer buffer_;
   std::unique_ptr<tf2_ros::TransformListener> listener_;

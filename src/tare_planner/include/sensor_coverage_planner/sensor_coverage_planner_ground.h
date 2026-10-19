@@ -253,6 +253,11 @@ private:
   rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr local_tsp_path_publisher_;
   rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr exploration_path_publisher_;
   rclcpp::Publisher<geometry_msgs::msg::PointStamped>::SharedPtr waypoint_pub_;
+  rclcpp::Publisher<geometry_msgs::msg::PointStamped>::SharedPtr tare_waypoint_pub_,ht_route_goal_pub_;
+  rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr tare_route_pub_,tare_branch_pub_;
+  geometry_msgs::msg::Point tare_command_waypoint_;
+  bool tare_native_lookahead_update_=false;
+  bool RouteTareWaypoint(const exploration_path_ns::ExplorationPath& route);
   rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr exploration_finish_pub_;
   rclcpp::Publisher<std_msgs::msg::Int32MultiArray>::SharedPtr
       runtime_breakdown_pub_;
@@ -309,6 +314,9 @@ private:
   exploration_path_ns::ExplorationPath ConcatenateGlobalLocalPath(
       const exploration_path_ns::ExplorationPath &global_path,
       const exploration_path_ns::ExplorationPath &local_path);
+  exploration_path_ns::ExplorationPath ConcatenateTarePath(
+      const exploration_path_ns::ExplorationPath &global_path,
+      const exploration_path_ns::ExplorationPath &local_path);
 
   void PublishRuntime();
   double GetRobotToHomeDistance();
@@ -316,6 +324,10 @@ private:
   void PublishWaypoint();
   bool
   GetLookAheadPoint(const exploration_path_ns::ExplorationPath &local_path,
+                    const exploration_path_ns::ExplorationPath &global_path,
+                    Eigen::Vector3d &lookahead_point);
+  bool
+  GetTareLookAheadPoint(const exploration_path_ns::ExplorationPath &local_path,
                     const exploration_path_ns::ExplorationPath &global_path,
                     Eigen::Vector3d &lookahead_point);
 

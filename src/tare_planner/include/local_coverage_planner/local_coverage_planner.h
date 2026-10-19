@@ -15,6 +15,7 @@
 
 #include <rclcpp/rclcpp.hpp>
 #include <nav_msgs/msg/path.hpp>
+#include <std_msgs/msg/string.hpp>
 
 #include "grid_world/grid_world.h"
 #include "exploration_path/exploration_path.h"
@@ -63,7 +64,10 @@ public:
   exploration_path_ns::ExplorationPath
   SolveLocalCoverageProblem(const exploration_path_ns::ExplorationPath& global_path, int uncovered_point_num,
                             int uncovered_frontier_point_num = 0);
-  exploration_path_ns::ExplorationPath PlanHTReturn(const Eigen::Vector3d& target);
+  exploration_path_ns::ExplorationPath
+  SolveTareCoverageProblem(const exploration_path_ns::ExplorationPath& global_path, int uncovered_point_num,
+                            int uncovered_frontier_point_num = 0);
+  exploration_path_ns::ExplorationPath PlanHTReturn(const Eigen::Vector3d& target,double search_seconds=-1.);
   double ReturnCheckpointRadius() const {
     // Search may stop goal_radius from the checkpoint; the follower consumes
     // its last pose within 0.12 m. Include 0.03 m numerical/tracking margin.
@@ -124,9 +128,12 @@ private:
                                         std::vector<int>& selected_viewpoint_indices);
   exploration_path_ns::ExplorationPath SolveTSP(const std::vector<int>& selected_viewpoint_indices,
                                                 std::vector<int>& ordered_viewpoint_indices);
+  exploration_path_ns::ExplorationPath SolveTareTSP(const std::vector<int>& selected_viewpoint_indices,
+                                                std::vector<int>& ordered_viewpoint_indices);
 
   exploration_path_ns::ExplorationPath SolveHTTSP(const std::vector<int>& selected,
                                                   std::vector<int>& ordered);
+  uint64_t tare_tsp_calls_=0;
   double ht_last_cost_ = 0;
   double ht_cycle_search_seconds_=0.35;
   double ht_tracking_margin_=0.12;
@@ -146,6 +153,7 @@ private:
   ht_cost_ns::XYThetaConfig xytheta_config_;
   rclcpp::Node::SharedPtr node_;
   rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr ht_path_pub_;
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr tare_order_pub_;
   rclcpp::Subscription<nav_msgs::msg::Path>::SharedPtr ht_rejection_sub_;
   nav_msgs::msg::Path ht_candidate_path_,ht_output_path_;
   // viewpoint_manager_ns::ViewPointManager::Ptr viewpoint_manager_;

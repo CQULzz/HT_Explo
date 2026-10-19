@@ -11,6 +11,11 @@ HtCostMap::HtCostMap(rclcpp::Node::SharedPtr node,bool publish_permission)
   : clock_(node->get_clock()), logger_(node->get_logger()),
     buffer_(clock_) {
   enabled_=node->declare_parameter<bool>("ht_enabled",false);
+  const auto mode=node->declare_parameter<std::string>("ht_exploration_mode","tare_waypoint");
+  if (mode!="tare_waypoint" && mode!="legacy_xytheta_greedy")
+    throw std::invalid_argument("Unknown HT exploration mode");
+  tare_coverage_=mode=="tare_waypoint";
+  collect_terrain_=publish_permission && enabled_ && tare_coverage_;
   calibrated_=node->declare_parameter<bool>("ht_directions_calibrated",false);
   min_probability_=node->declare_parameter<double>("ht_min_probability",0.5);
   timeout_=node->declare_parameter<double>("ht_map_timeout",1.0);
@@ -116,6 +121,8 @@ void HtCostMap::receive(grid_map_msgs::msg::GridMap::ConstSharedPtr msg) {
     if (!grid.exists("ht_valid")) throw std::runtime_error("Missing ht_valid");
     if (configuration_scores_ && (!grid.exists("ht_observation_valid") || !grid.exists("ht_obstacle")))
       throw std::runtime_error("Configuration HT requires separate physical observation and obstacle layers");
+    if (collect_terrain_ && !grid.exists("ht_elevation"))
+      throw std::runtime_error("TARE waypoint mode requires same-source ht_elevation");
     tf2::Transform transform;
     transform.setIdentity();
     if (msg->header.frame_id != frame_) {
@@ -142,6 +149,9 @@ void HtCostMap::receive(grid_map_msgs::msg::GridMap::ConstSharedPtr msg) {
     std::vector<unsigned char> physical_valid(size);
     std::vector<unsigned char> occupied(size,0);
     const bool separate_observation=grid.exists("ht_observation_valid");
+    struct Aggregate { double x=0,y=0,z=0; int count=0; bool feasible=false; };
+    std::map<std::pair<int,int>,Aggregate> terrain;
+
     for (grid_map::GridMapIterator it(grid); !it.isPastEnd(); ++it) {
       grid_map::Position pos;
       grid.getPosition(*it,pos);
@@ -172,6 +182,23 @@ void HtCostMap::receive(grid_map_msgs::msg::GridMap::ConstSharedPtr msg) {
         }
       }
     }
+    // Collapse fine cells once per message; average observed ground only.
+    // Coarse feasibility is existential over all 8 headings, never their minimum.
+    if (collect_terrain_) for (grid_map::GridMapIterator it(grid); !it.isPastEnd(); ++it) {
+      const float observed=grid.at("ht_observation_valid",*it);
+      const float scored=grid.at("ht_valid",*it);
+      if (!std::isfinite(observed) || observed<.5 || !std::isfinite(scored) || scored<.5) continue;
+      grid_map::Position p;grid.getPosition(*it,p);
+      auto world=transform*tf2::Vector3(p.x(),p.y(),0);
+      auto& a=terrain[{static_cast<int>(std::floor(world.x()/.2)),static_cast<int>(std::floor(world.y()/.2))}];
+      a.x=world.x();a.y=world.y();
+      for(int k=0;k<8;++k) {
+        const float score=grid.at("ht_dir_"+std::to_string(k),*it);
+        a.feasible=a.feasible || (std::isfinite(score) && score>=min_probability_);
+      }
+      const float z=grid.at("ht_elevation",*it);
+      if (grid.at("ht_obstacle",*it)<.5 && std::isfinite(z)) {a.z+=z+transform.getOrigin().z();++a.count;}
+    }
     // Physical obstacle/observation cells require a body footprint. Vehicle
     // configuration scores already describe a vehicle trial at a reference
     // position and heading; dilating them treats neighbouring *configurations*
@@ -201,12 +228,31 @@ void HtCostMap::receive(grid_map_msgs::msg::GridMap::ConstSharedPtr msg) {
     }
     if (!out->wellFormed()) throw std::runtime_error("Invalid HT map geometry");
     std::lock_guard<std::mutex> lock(mutex_);
+    for (const auto& entry:terrain) {
+      auto& cell=terrain_history_[entry.first];const auto& a=entry.second;
+      if(out->stamp<cell.stamp) continue;
+      cell.x=a.x;cell.y=a.y;cell.stamp=out->stamp;cell.feasible=a.feasible;
+      cell.height=a.count ? a.z/a.count : std::numeric_limits<double>::quiet_NaN();
+    }
     latest_=std::move(out);latest_error_.clear();
   } catch (const std::exception& e) {
     std::lock_guard<std::mutex> lock(mutex_);
     latest_.reset();latest_error_=std::string("HT_MAP_REJECTED: ")+e.what();
     RCLCPP_WARN_THROTTLE(logger_,*clock_,2000,"HT map rejected: %s",e.what());
   }
+}
+std::vector<HtCostMap::TerrainCell> HtCostMap::terrainWindow(double x,double y,double radius) {
+  std::lock_guard<std::mutex> lock(mutex_);std::vector<TerrainCell> result;
+  for(const auto& entry:terrain_history_) {
+    const auto& c=entry.second;
+    if(std::abs(c.x-x)<=radius && std::abs(c.y-y)<=radius && std::isfinite(c.height)) result.push_back(c);
+  }
+  return result;
+}
+bool HtCostMap::terrainAdmissible(double x,double y) {
+  std::lock_guard<std::mutex> lock(mutex_);
+  auto it=terrain_history_.find({static_cast<int>(std::floor(x/.2)),static_cast<int>(std::floor(y/.2))});
+  return it==terrain_history_.end() || it->second.feasible;
 }
 void HtCostMap::beginCycle() {
   std::lock_guard<std::mutex> lock(mutex_);

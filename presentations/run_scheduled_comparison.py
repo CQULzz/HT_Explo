@@ -159,7 +159,7 @@ def run_trial(trial,variant,duration,scenario='garage'):
         raise ValueError('Unsupported installed simulation scenario: '+scenario)
     ros=Path('/opt/ros/jazzy/setup.bash')
     cmu=CMU/'install/setup.bash'
-    sim=source(ros,cmu)+f' exec ros2 launch {q(BRIDGE/"cmu_xytheta.launch.py")} world_name:={scenario}'
+    sim=source(ros,cmu)+f' exec ros2 launch {q(BRIDGE/"cmu_xytheta.launch.py")} world_name:={scenario} use_terrain_analysis:={str(variant=="original").lower()}'
     trial.start('sim',sim)
     time.sleep(10);trial.check()
     stage=source(ros,cmu)+f' python3 {q(HERE/"stage_garage_pose.py")} --scenario {scenario}'

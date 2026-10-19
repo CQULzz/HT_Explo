@@ -1,6 +1,7 @@
 /**:
   ros__parameters:
     ht_enabled: true
+    ht_exploration_mode: tare_waypoint  # Upstream TARE coverage/TSP; HT routes its waypoint only.
     ht_directions_calibrated: false
     ht_topic: /ht_traversability/global_local
     ht_min_probability: 0.5  # Every queried vehicle-reference score must meet this hard threshold.

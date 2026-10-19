@@ -537,6 +537,8 @@ int GridWorld::GetCellStatusCount(grid_world_ns::CellStatus status)
 
 void GridWorld::UpdateCellStatus(const std::shared_ptr<viewpoint_manager_ns::ViewPointManager>& viewpoint_manager)
 {
+  if (viewpoint_manager->HT()->tareCoverage()) return UpdateTareCellStatus(viewpoint_manager);
+
   int exploring_count = 0;
   int unseen_count = 0;
   int covered_count = 0;
@@ -768,6 +770,8 @@ exploration_path_ns::ExplorationPath GridWorld::SolveGlobalTSP(
     const std::shared_ptr<viewpoint_manager_ns::ViewPointManager>& viewpoint_manager,
     std::vector<int>& ordered_cell_indices, const std::shared_ptr<keypose_graph_ns::KeyposeGraph>& keypose_graph)
 {
+  if (viewpoint_manager->HT()->tareCoverage()) return SolveTareGlobalTSP(viewpoint_manager, ordered_cell_indices, keypose_graph);
+
   /****** Get the node on keypose graph associated with the robot position *****/
   double min_dist_to_robot = DBL_MAX;
   geometry_msgs::msg::Point global_path_robot_position = robot_position_;

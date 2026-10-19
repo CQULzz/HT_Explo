@@ -437,6 +437,10 @@ bool SensorCoveragePlanner3D::initialize() {
       std::bind(&SensorCoveragePlanner3D::ResetWaypointCallback, this,
                 std::placeholders::_1));
 
+  tare_waypoint_pub_=this->create_publisher<geometry_msgs::msg::PointStamped>("/tare_native_waypoint",10);
+  ht_route_goal_pub_=this->create_publisher<geometry_msgs::msg::PointStamped>("/ht_route_goal",10);
+  tare_route_pub_=this->create_publisher<nav_msgs::msg::Path>("/tare_coverage_route",10);
+  tare_branch_pub_=this->create_publisher<nav_msgs::msg::Path>("/tare_route_branch",10);
   global_path_full_publisher_ =
       this->create_publisher<nav_msgs::msg::Path>("global_path_full", 1);
   global_path_publisher_ =
@@ -727,11 +731,17 @@ int SensorCoveragePlanner3D::UpdateViewPoints() {
   misc_utils_ns::Timer viewpoint_manager_update_timer(
       "update viewpoint manager");
   viewpoint_manager_update_timer.Start();
-  if (kUseTerrainHeight) {
+  if (viewpoint_manager_->HT()->tareCoverage()) {
+    auto terrain=std::make_shared<pcl::PointCloud<pcl::PointXYZI>>();
+    for(const auto& c:viewpoint_manager_->HT()->terrainWindow(robot_position_.x,robot_position_.y,40.)) {
+      pcl::PointXYZI p;p.x=c.x;p.y=c.y;p.z=c.height;p.intensity=0;terrain->push_back(p);
+    }
+    viewpoint_manager_->SetViewPointHeightWithTerrain(terrain);
+  } else if (kUseTerrainHeight) {
     viewpoint_manager_->SetViewPointHeightWithTerrain(
         large_terrain_cloud_->cloud_);
   }
-  if (kCheckTerrainCollision) {
+  if (kCheckTerrainCollision && !viewpoint_manager_->HT()->tareCoverage()) {
     *(collision_cloud_->cloud_) += *(terrain_collision_cloud_->cloud_);
     *(collision_cloud_->cloud_) += *(terrain_ext_collision_cloud_->cloud_);
   }
@@ -966,13 +976,13 @@ void SensorCoveragePlanner3D::LocalPlanning(
     exploration_path_ns::ExplorationPath &local_path) {
   misc_utils_ns::Timer local_tsp_timer("Local planning");
   local_tsp_timer.Start();
-  if (exploration_finished_ && viewpoint_manager_->HT()->enabled()) {
+  if (exploration_finished_ && viewpoint_manager_->HT()->enabled() && !viewpoint_manager_->HT()->tareCoverage()) {
     // The return search below owns the output path. Coverage-goal search here
     // is discarded and needlessly delays each return planning cycle.
     local_path.Reset();local_coverage_planner_->ClearHTPath();
     local_tsp_timer.Stop(false);return;
   }
-  if (lookahead_point_update_) {
+  if (viewpoint_manager_->HT()->tareCoverage() ? tare_native_lookahead_update_ : lookahead_point_update_) {
     local_coverage_planner_->SetLookAheadPoint(lookahead_point_);
   }
   local_path = local_coverage_planner_->SolveLocalCoverageProblem(
@@ -1000,6 +1010,8 @@ exploration_path_ns::ExplorationPath
 SensorCoveragePlanner3D::ConcatenateGlobalLocalPath(
     const exploration_path_ns::ExplorationPath &global_path,
     const exploration_path_ns::ExplorationPath &local_path) {
+  if (viewpoint_manager_->HT()->tareCoverage()) return ConcatenateTarePath(global_path, local_path);
+
   exploration_path_ns::ExplorationPath full_path;
   if (exploration_finished_) {
     local_coverage_planner_->ClearHTPath();
@@ -1078,6 +1090,14 @@ bool SensorCoveragePlanner3D::GetLookAheadPoint(
     const exploration_path_ns::ExplorationPath &local_path,
     const exploration_path_ns::ExplorationPath &global_path,
     Eigen::Vector3d &lookahead_point) {
+  if (viewpoint_manager_->HT()->tareCoverage()) {
+    // Upstream false means a global-route fallback, not necessarily no goal.
+    // Preserve that flag for its next TSP while validating the actual output.
+    lookahead_point=Eigen::Vector3d::Constant(std::numeric_limits<double>::quiet_NaN());
+    tare_native_lookahead_update_=GetTareLookAheadPoint(local_path,global_path,lookahead_point);
+    return lookahead_point.allFinite();
+  }
+
   fallback_commanded_=false;startup_commanded_=false;
   if (viewpoint_manager_->HT()->enabled() || exploration_finished_) {
     auto ht=viewpoint_manager_->HT();
@@ -1475,6 +1495,8 @@ void SensorCoveragePlanner3D::PublishWaypoint() {
   if (force_hold_ || stopped_ || at_return_goal || !lookahead_point_update_) {
     waypoint.point=robot_position_;
     fallback_commanded_=false;startup_commanded_=false;
+  } else if (viewpoint_manager_->HT()->tareCoverage()) {
+    waypoint.point=tare_command_waypoint_;
   } else if (viewpoint_manager_->HT()->enabled() || exploration_finished_) {
     waypoint.point.x=lookahead_point_.x();waypoint.point.y=lookahead_point_.y();waypoint.point.z=lookahead_point_.z();
   } else {
@@ -1722,7 +1744,7 @@ void SensorCoveragePlanner3D::execute() {
         c.output_target,c.output_gain,c.output_frontier,local_coverage_planner_->GetHTPath().poses.size(),grid_world_->PendingHTCoverageCells());
     }
 
-    const bool unresolved_ht_coverage=ht->enabled() && grid_world_->PendingHTCoverageCells()>0;
+    const bool unresolved_ht_coverage=ht->enabled() && !ht->tareCoverage() && grid_world_->PendingHTCoverageCells()>0;
     if (unresolved_ht_coverage && grid_world_->IsReturningHome() &&
         local_coverage_planner_->IsLocalCoverageComplete())
       RCLCPP_WARN_THROTTLE(this->get_logger(),*this->get_clock(),3000,
@@ -1746,6 +1768,12 @@ void SensorCoveragePlanner3D::execute() {
     ht->beginCycle();
     lookahead_point_update_ =
         GetLookAheadPoint(exploration_path_, global_path, lookahead_point_);
+    if (ht->tareCoverage()) {
+      // Native tour and native lookahead remain untouched. Only execution
+      // success gates permission; it cannot choose another coverage target.
+      const bool native_valid=lookahead_point_update_;
+      lookahead_point_update_=RouteTareWaypoint(tare_native_lookahead_update_ ? exploration_path_ : global_path) && native_valid;
+    }
     last_plan_=this->now().seconds();
     PublishWaypoint();
     local_coverage_planner_->PublishHTPath();

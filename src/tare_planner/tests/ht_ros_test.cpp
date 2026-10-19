@@ -18,12 +18,14 @@ class HtRosTest : public ::testing::Test {
   std::unique_ptr<ht_cost_ns::HtCostMap> ht;
   rclcpp::Publisher<grid_map_msgs::msg::GridMap>::SharedPtr pub;
   virtual std::string scoreSemantics() const {return "point";}
+  virtual std::string explorationMode() const {return "legacy_xytheta_greedy";}
 
   void SetUp() override {
     if (!rclcpp::ok()) rclcpp::init(0, nullptr);
     rclcpp::NodeOptions options;
     options.parameter_overrides({
       rclcpp::Parameter("ht_enabled", true),
+      rclcpp::Parameter("ht_exploration_mode",explorationMode()),
       rclcpp::Parameter("ht_directions_calibrated", true),
       rclcpp::Parameter("ht_topic", "/ht_test_map"),
       rclcpp::Parameter("ht_score_semantics",scoreSemantics()),
@@ -301,7 +303,7 @@ TEST_F(HtRosTest, CapturedSafeRootNeedsFinerHeadingSearchToEscape) {
 
 TEST_F(HtRosTest, ReversibleMotionRejectsAOneWayEntranceWithoutChangingRawScores) {
   rclcpp::NodeOptions options;
-  options.parameter_overrides({rclcpp::Parameter("ht_enabled",true),
+  options.parameter_overrides({rclcpp::Parameter("ht_enabled",true),rclcpp::Parameter("ht_exploration_mode","legacy_xytheta_greedy"),
     rclcpp::Parameter("ht_directions_calibrated",true),
     rclcpp::Parameter("ht_topic","/ht_test_map"),
     rclcpp::Parameter("ht_require_reversible_motion",true),
@@ -469,7 +471,7 @@ TEST_F(HtRosTest, UnknownAndObservedRiskBothBlockEdges) {
 TEST_F(HtRosTest, StrictPolicyAllowsOnlyKnownOrBoundedStartup) {
   ht.reset();node.reset();
   rclcpp::NodeOptions options;
-  options.parameter_overrides({rclcpp::Parameter("ht_enabled",true),
+  options.parameter_overrides({rclcpp::Parameter("ht_enabled",true),rclcpp::Parameter("ht_exploration_mode","legacy_xytheta_greedy"),
     rclcpp::Parameter("ht_directions_calibrated",true),rclcpp::Parameter("ht_unknown_policy","strict"),
     rclcpp::Parameter("ht_topic","/ht_test_map")});
   node=std::make_shared<rclcpp::Node>("ht_strict_test",options);
@@ -513,4 +515,36 @@ TEST_F(HtRosTest, HeadingSweepChecksIntermediateDirectionsAndWrapsAtPi) {
   EXPECT_EQ(ht->poseSupport(0,0,ht_cost_ns::kPi/2),ht_cost_ns::Support::KNOWN);
   EXPECT_EQ(ht->motionSupport({0,0,0},{0,0,ht_cost_ns::kPi/2}),ht_cost_ns::Support::BLOCKED);
   EXPECT_EQ(ht->motionSupport({0,0,3.1},{0,0,-3.1}),ht_cost_ns::Support::KNOWN);
+}
+
+class TareTerrainTest : public HtRosTest {
+ protected:
+  std::string scoreSemantics() const override {return "configuration";}
+  std::string explorationMode() const override {return "tare_waypoint";}
+};
+TEST_F(TareTerrainTest, RequiresSameSourceElevationAndUsesAnyHeading) {
+  EXPECT_TRUE(ht->tareCoverage());
+  auto map=grid();send(map);EXPECT_FALSE(ht->ready());
+  map.add("ht_elevation",.12f);
+  for(int k=0;k<8;++k)map["ht_dir_"+std::to_string(k)].setConstant(.1f);
+  map["ht_dir_3"].setConstant(.9f);send(map);ASSERT_TRUE(ht->ready());
+  auto history=ht->terrainWindow(0,0,4);ASSERT_FALSE(history.empty());
+  for(const auto& c:history) {EXPECT_NEAR(c.height,.12,1e-6);EXPECT_TRUE(c.feasible);EXPECT_TRUE(ht->terrainAdmissible(c.x,c.y));}
+  for(int k=0;k<8;++k)map["ht_dir_"+std::to_string(k)].setConstant(.1f);
+  map.setTimestamp(node->now().nanoseconds());send(map);
+  for(const auto& c:ht->terrainWindow(0,0,4)) EXPECT_FALSE(ht->terrainAdmissible(c.x,c.y));
+  EXPECT_TRUE(ht->terrainAdmissible(100,100)); // Optimistic guidance, never execution permission.
+  EXPECT_FALSE(ht->permits(ht->poseSupport(100,100,0)));
+  map["ht_obstacle"].setConstant(1.f);map["ht_elevation"].setConstant(10.f);
+  map.setTimestamp(node->now().nanoseconds());send(map);
+  EXPECT_TRUE(ht->terrainWindow(0,0,4).empty()); // Wall top cannot become ground.
+}
+TEST_F(TareTerrainTest, WorldCoordinatesAndHistorySurviveRollingWindow) {
+  auto map=grid();map.add("ht_elevation",.23f);map.setPosition(grid_map::Position(7.,-4.));send(map);
+  auto old=ht->terrainWindow(7,-4,1);ASSERT_FALSE(old.empty());
+  for(const auto& c:old) {EXPECT_NEAR(c.height,.23,1e-6);EXPECT_GT(c.x,5.9);EXPECT_LT(c.y,-2.9);}
+  map.setPosition(grid_map::Position(30,30));map["ht_elevation"].setConstant(.45f);
+  map.setTimestamp(node->now().nanoseconds());send(map);
+  EXPECT_EQ(ht->terrainWindow(7,-4,1).size(),old.size());
+  for(const auto& c:ht->terrainWindow(30,30,1)) EXPECT_NEAR(c.height,.45,1e-6);
 }

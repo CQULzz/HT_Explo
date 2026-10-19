@@ -147,7 +147,7 @@ class PendingCell : public ::testing::Test {
     if(!rclcpp::ok())rclcpp::init(0,nullptr);
     rclcpp::NodeOptions options;
     options.arguments({"--ros-args","--params-file",HT_SOURCE_ROOT "/config/indoor.yaml"});
-    options.parameter_overrides({rclcpp::Parameter("ht_enabled",htMode())});
+    options.parameter_overrides({rclcpp::Parameter("ht_enabled",htMode()),rclcpp::Parameter("ht_exploration_mode","legacy_xytheta_greedy")});
     auto node=std::make_shared<rclcpp::Node>("tare_planner_node",options);
     for(const auto& entry:node->get_node_parameters_interface()->get_parameter_overrides())
       if(entry.first.rfind("ht_",0)!=0 && !node->has_parameter(entry.first))node->declare_parameter(entry.first,entry.second);

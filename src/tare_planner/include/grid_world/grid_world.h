@@ -316,9 +316,14 @@ public:
   void Reset();
   int GetCellStatusCount(grid_world_ns::CellStatus status);
   void UpdateCellStatus(const std::shared_ptr<viewpoint_manager_ns::ViewPointManager>& viewpoint_manager);
+  void UpdateTareCellStatus(const std::shared_ptr<viewpoint_manager_ns::ViewPointManager>& viewpoint_manager);
   size_t PendingHTCoverageCells() const {return ht_pending_gain_cells_.size();}
   exploration_path_ns::ExplorationPath
   SolveGlobalTSP(const std::shared_ptr<viewpoint_manager_ns::ViewPointManager>& viewpoint_manager,
+                 std::vector<int>& ordered_cell_indices,
+                 const std::shared_ptr<keypose_graph_ns::KeyposeGraph>& keypose_graph = nullptr);
+  exploration_path_ns::ExplorationPath
+  SolveTareGlobalTSP(const std::shared_ptr<viewpoint_manager_ns::ViewPointManager>& viewpoint_manager,
                  std::vector<int>& ordered_cell_indices,
                  const std::shared_ptr<keypose_graph_ns::KeyposeGraph>& keypose_graph = nullptr);
 

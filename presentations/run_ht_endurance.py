@@ -117,6 +117,13 @@ def main():
              ROOT/'src/tare_planner/src/local_coverage_planner/ht_route.cpp',
              ROOT/'src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp',
              ROOT/'src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp']
+    paths += [ROOT/'src/tare_planner/src/local_coverage_planner/tare_original.cpp',
+              ROOT/'src/tare_planner/src/grid_world/tare_original.cpp',
+              ROOT/'src/tare_planner/src/sensor_coverage_planner/tare_original.cpp',
+              ROOT/'src/tare_planner/src/sensor_coverage_planner/tare_waypoint_router.cpp',
+              ROOT/'src/tare_planner/include/ht_cost/tare_waypoint_route.h',
+              ROOT/'src/tare_planner/include/sensor_coverage_planner/sensor_coverage_planner_ground.h',
+              ROOT/'src/tare_planner/CMakeLists.txt']
     paths += [Path(__file__), Path(__file__).with_name('run_scheduled_comparison.py'),
               Path(__file__).with_name('summarize_ht_endurance.py'),
               Path(__file__).with_name('summarize_tare_ht_pair.py'),
@@ -144,6 +151,8 @@ def main():
                     planned_duration_s=args.duration, scenario=args.scenario, domain=args.domain,
                     video_fps=args.video_fps, cupy_timing_profile=os.environ.get('HT_PROFILE_CUPY')=='1',
                     speed_cap_mps=.5, preflight=preflight(),
+                    ht_exploration_mode=json.loads((BRIDGE/'ht_trial.yaml').read_text())['/**']['ros__parameters'].get('ht_exploration_mode','tare_waypoint'),
+                    simulation_terrain_isolated=True,
                     ht_score_semantics=json.loads((BRIDGE/'ht_trial.yaml').read_text())['/**']['ros__parameters'].get('ht_score_semantics','point'),
                     git_head=subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
                     evidence_policy=f'All control/status and odometry, full-rate published HT maps and TARE collision geometry; original-stamped scans1Hz; exact-stamp map triplets and network inputs/outputs every10s; camera{args.video_fps}fps. Raw CuPy and scans are not fully bagged.',
@@ -153,7 +162,7 @@ def main():
     for p in [Path(__file__), Path(__file__).with_name('endurance_probe.py')]:
         shutil.copy2(p, folder/p.name)
     topics = ['/endurance/registered_scan', '/state_estimation', '/state_estimation_at_scan',
-              '/tf', '/tf_static', '/cmd_vel', '/way_point', '/ht_xytheta_path',
+              '/tf', '/tf_static', '/cmd_vel', '/way_point', '/ht_xytheta_path', '/tare_native_waypoint', '/ht_route_goal', '/tare_coverage_route', '/tare_route_branch', '/tare_tsp_order',
               '/ht_execution_status', '/ht_follower_status', '/ht_execution_rejected_edge',
               '/ht_navigation_allowed', '/mission_state', '/mission_completed', '/runtime', '/runtime_breakdown', '/exploration_finish',
               '/ht_traversability/global_local', '/collision_cloud', '/viewpoint_in_collision_cloud_', '/viewpoint_vis_cloud']

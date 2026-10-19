@@ -894,7 +894,7 @@ void ViewPointManager::CheckViewPointConnectivity()
       }
       // A blocked diagonal is an edge failure: another parent may still
       // reach this neighbor, so do not mark it checked on this attempt.
-      if (ht_map_->enabled() && !HTConnectionSupported(cur_ind, neighbor_ind)) continue;
+      if (ht_map_->enabled() && !ht_map_->tareCoverage() && !HTConnectionSupported(cur_ind, neighbor_ind)) continue;
       if (!checked[neighbor_ind] && !ViewPointInCollision(neighbor_ind) && ViewPointInLineOfSight(neighbor_ind))
       {
         if (std::abs(GetViewPointHeight(cur_ind) - GetViewPointHeight(neighbor_ind)) < vp_.kConnectivityHeightDiffThr)
@@ -1298,7 +1298,10 @@ int ViewPointManager::GetViewPointCandidate()
   for (int i = 0; i < vp_.kViewPointNumber; i++)
   {
     SetViewPointCandidate(i, false);
-    if (!ViewPointInCollision(i) && ViewPointInLineOfSight(i) && ViewPointConnected(i))
+    const auto terrain_position=GetViewPointPosition(i);
+    const bool terrain_allowed=!ht_map_->tareCoverage() ||
+      ht_map_->terrainAdmissible(terrain_position.x,terrain_position.y);
+    if (terrain_allowed && !ViewPointInCollision(i) && ViewPointInLineOfSight(i) && ViewPointConnected(i))
     {
       SetViewPointCandidate(i, true);
       candidate_indices_.push_back(i);
@@ -1333,7 +1336,7 @@ int ViewPointManager::GetViewPointCandidate()
 
   // Construct a graph of all the viewpoints
   GetCandidateViewPointGraph(candidate_viewpoint_graph_, candidate_viewpoint_dist_, candidate_viewpoint_position_);
-  if (ht_map_->enabled()) {
+  if (ht_map_->enabled() && !ht_map_->tareCoverage()) {
     candidate_ht_dist_ = candidate_viewpoint_dist_;
     for (size_t i=0;i<candidate_viewpoint_graph_.size();++i) {
       const auto& a=candidate_viewpoint_position_[i];
@@ -1542,7 +1545,7 @@ void ViewPointManager::GetCandidateViewPointGraph(std::vector<std::vector<int>>&
       int neighbor_ind = connected_neighbor_indices_[cur_ind][j];
       double neighbor_dist = connected_neighbor_dist_[cur_ind][j];
       if (IsViewPointCandidate(neighbor_ind) &&
-          (!ht_map_->enabled() || HTConnectionSupported(cur_ind, neighbor_ind)))
+          (!ht_map_->enabled() || ht_map_->tareCoverage() || HTConnectionSupported(cur_ind, neighbor_ind)))
       {
         graph[i].push_back(graph_index_map_[neighbor_ind]);
         dist[i].push_back(neighbor_dist);
