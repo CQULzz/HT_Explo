@@ -1,0 +1,270 @@
+{
+  "tested_git_head": "6fc754903f0e7c9aafe4b2a2b13c3fa24266551a",
+  "raw_run": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_successor_pruning_10min_2026-10-20_01-07-11",
+  "recording_scope": "All control/status and odometry, full-rate published HT maps and TARE collision geometry; original-stamped scans1Hz; exact-stamp map triplets and network inputs/outputs every10s; camera15fps. Raw CuPy and scans are not fully bagged.",
+  "metrics": {
+    "scan_selection": "source_second",
+    "observed_free_volume_m3": 6483.0,
+    "processed_volume_scans": 600,
+    "skipped_volume_scans": 0,
+    "recorded_scans_in_source_time_window": 600,
+    "sensor_position_source": "nearest sensor-frame state_estimation (common to both systems)",
+    "pose_time_offset_max_s": 2.384185791015625e-07,
+    "command_samples": 12000,
+    "fully_stopped_fraction": 0.04841666666666666,
+    "stationary_turn_fraction": 0.1955,
+    "reverse_command_fraction": 0.0,
+    "max_abs_linear_command_mps": 0.5,
+    "max_abs_yaw_command_rps": 0.8,
+    "longest_zero_command_s": 1.0999839782714844,
+    "follower_status_samples": {
+      "TURNING": 2346,
+      "ALIGNING": 67,
+      "DRIVING": 9073,
+      "GOAL_REACHED": 476,
+      "HT_PATH_BLOCKED": 2,
+      "EMPTY_PATH": 33,
+      "GEOMETRY_COMMAND_BLOCKED": 3
+    },
+    "longest_no_translation_command_s": 4.949820804595947,
+    "last_translation_s": 600.002,
+    "distance_last60_m": 19.260023999999987
+  },
+  "mission": {
+    "first_exploration_finished_sample_s": null,
+    "sampled_mission_counts": {
+      "EXPLORING": 600
+    },
+    "first_completed_sample_s": null,
+    "last_sampled_mission": "EXPLORING",
+    "last_sampled_execution_status": "HT_ASSISTED",
+    "final_distance_to_measurement_start_m": 34.61104066623829,
+    "meaning": "Exploration finished is a return-home trigger. Only mission COMPLETED confirms the home radius, low-speed and dwell checks; neither establishes ground-truth full coverage."
+  },
+  "search": {
+    "count": 912,
+    "termination": {
+      "REACHED": 847,
+      "TIME_LIMIT": 65
+    },
+    "direct_connections": 767,
+    "dominated_edges_pruned": 1048111.0,
+    "geometry_queries": 1072626.0,
+    "elapsed_s": {
+      "p50": 0.0007134999999999999,
+      "p95": 0.09998565,
+      "max": 0.157162
+    },
+    "expanded_max": 3936.0,
+    "geometry_cpu_wall_fraction": 0.8941974902552159,
+    "rejection_counts": {
+      "geometry_reject": 29546.0,
+      "ht_reject": 87478.0,
+      "memory_reject": 0.0,
+      "reserve_reject": 0.0
+    }
+  },
+  "geometry": {
+    "radius_m": 0.8414213562373094,
+    "collision_point_threshold": 1,
+    "configured_height_window_m": [
+      -0.5,
+      0.5
+    ],
+    "configured_margin_m": 0.7,
+    "first_observed_margin_overlap": null,
+    "overlap_samples": 0,
+    "moving_predictions_inside_margin": 1,
+    "samples": 585,
+    "limitations": "Uses bag arrival order, latest received odometry/command and measured collision-cloud points in robot height slice. Does not reproduce planner collision-grid bounds or exact callback state. Predicted arc uses last received constant Twist, not controller internal candidate or simulator braking. Margin overlap is not physical vehicle contact. Sample lag/point noise may contribute; cannot separate them without independent truth."
+  },
+  "blocked_command_audit": {
+    "source": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_successor_pruning_10min_2026-10-20_01-07-11/garage",
+    "status_counts": {
+      "TURNING": 2346,
+      "ALIGNING": 67,
+      "DRIVING": 9073,
+      "GOAL_REACHED": 476,
+      "HT_PATH_BLOCKED": 2,
+      "EMPTY_PATH": 33,
+      "GEOMETRY_COMMAND_BLOCKED": 3
+    },
+    "paired_status_counts": {
+      "GOAL_REACHED": 476,
+      "HT_PATH_BLOCKED": 2,
+      "EMPTY_PATH": 33,
+      "GEOMETRY_COMMAND_BLOCKED": 3
+    },
+    "unmatched_command_rejections": 0,
+    "blocked_nonzero_count": 0,
+    "events": [],
+    "geometry_nonzero_count": 0,
+    "geometry_events": [],
+    "unmatched_geometry_rejections": {
+      "GEOMETRY_COMMAND_BLOCKED": 0
+    },
+    "caveat": "Matches each late hold to its preceding command within20ms in publication order; reports unmatched events separately. Single-follower runs only. Does not infer internal map/odom callback ordering."
+  },
+  "checks": {
+    "timer_completed": true,
+    "measured_duration_matches": true,
+    "source_hashes_unchanged": true,
+    "enough_samples": true,
+    "no_runtime_parent_failure": true,
+    "no_live_descendants": true,
+    "no_forced_shutdown": true,
+    "video_full_decode_passed": true,
+    "video_duration_matches": true,
+    "video_fps_matches": true,
+    "analysis_passed": true,
+    "no_child_or_cleanup_exception": true,
+    "blas_workers_bounded": true
+  },
+  "video": {
+    "encode_returncode": 0,
+    "fps": 15,
+    "requested_duration_s": 600,
+    "trim_offset_s": 51.106868743896484,
+    "source_file": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_successor_pruning_10min_2026-10-20_01-07-11/garage/camera_15fps.mp4",
+    "full_decode_returncode": 0,
+    "decoded_frames": 9000,
+    "duration_s": 600.0,
+    "duration_matches": true,
+    "bytes": 9404367,
+    "sha256": "55e93ed2907291e7dee2ca4b1e30f08a850ed875e0ab97fe04b19f9fc28a9793"
+  },
+  "configuration": {
+    "reference_commit": "16bdbe4cb1fddd632d061a5710c3e7b294971891",
+    "candidate_commit": "6fc754903f0e7c9aafe4b2a2b13c3fa24266551a",
+    "effective_parameters_equal": {
+      "planner_parameters.yaml": true,
+      "follower_parameters.yaml": true
+    },
+    "changed_manifest_entries": {
+      "/home/lzz/my test/HT_Explo-fixposition/install_standalone/tare_planner/lib/tare_planner/tare_planner_node": {
+        "before": "c769aec1dd31b093f320234b7bf4ca02dfea83d55374ec916d9abe9f58f7be7e",
+        "after": "386f5d94a9a27f0ade088254811c486fd9685f829736ff31d311dc1c1d0790f3"
+      },
+      "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/include/ht_cost/xytheta_planner.h": {
+        "before": "f526aa1a28c1cfea6d44f7d08fb9e1f9dc943e91da2bce6466c9ea6ed55f9742",
+        "after": "6f72624ca3f47164e882f87b3737148a3d90ad8cac0a24bccbde689027d4aa63"
+      },
+      "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/src/local_coverage_planner/ht_route.cpp": {
+        "before": "77ef3b0434502929e3998d9f2e3381e49e586d75ae7f73d0638c8ea3468ea290",
+        "after": "4c9434ca89df1e07433c78e09dbd787f7a5ef97c5745b50d3cc87591b6cf20ca"
+      }
+    },
+    "unchanged_entries": 62,
+    "scope": "Same endpoint-key/cost dominance rule moved before costly validity checks; no fusion/model/controller/candidate/utility/key/control/sampling/threshold/budget changes. Accepted search edges still receive the original hard checks. Wall-time-limited trajectories can differ."
+  },
+  "context_integrity": {
+    "completed_npz_files": 61,
+    "all_completed_npz_readable": true,
+    "history_snapshot_crc_passed": true,
+    "damaged_files": [],
+    "remaining_partial_files": [],
+    "passed": true,
+    "limitations": "ZIP CRC and final-file completeness only; semantic map/model agreement is checked separately."
+  },
+  "ht_map_age_s": {
+    "count": 600,
+    "median": 0.4727292060852051,
+    "p95": 0.602300465106964,
+    "max": 1.5741064548492432
+  },
+  "guide_handoff": {
+    "source": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_successor_pruning_10min_2026-10-20_01-07-11/garage",
+    "log_sha256": "fdca351af1ac2f9406f6100277c3433787f73d50b60c108b696a8923a11237fc",
+    "guide_switches": 5,
+    "global_switches_last_known_pending": 3,
+    "late_300_540_switches": 3,
+    "delegated_pending_cycles": 254,
+    "global_state_rows": 509,
+    "logged_plan_rows": 400,
+    "zero_gain_plan_rows": 328,
+    "limitations": "Old task assignment inferred from nearest logged cell center; not exact internal tour replay. Last cell status is historical evidence, not physical coverage truth. Pending-goal switches may be legitimate stalls/completion or bootstrap promotion; counts alone do not establish a bug. New task rows are per planning callback, old plan rows throttled. The cumulative source-second free-voxel union must be audited separately."
+  },
+  "efficiency": [
+    {
+      "label": "阶段36",
+      "source": "/home/lzz/my test/HT_Explo-fixposition/docs/results/ht_frozen_garage_10min_2026-10-19/garage",
+      "volume_m3": 7900.375,
+      "cumulative_decreases": 0,
+      "repeat_entry_fraction": 0.14977973568281938,
+      "last60_gain_m3": 174.625,
+      "per_minute_gain_m3": [
+        2296.75,
+        941.2414688243293,
+        148.38353117567067,
+        378.14053703246555,
+        1192.4001854892294,
+        436.334277478305,
+        652.1426075758245,
+        398.9302617316889,
+        1281.4271306924866,
+        174.625
+      ],
+      "guide_selected_events": 10,
+      "input_sha256": {
+        "docs/results/ht_frozen_garage_10min_2026-10-19/garage/timeseries.csv": "2a700d1dee1e2c158345c6ec1e6303aa96a045a4883641513509fdcb627dabba",
+        "docs/results/ht_frozen_garage_10min_2026-10-19/garage/observation_volume.csv": "e7d8a7f5c71980696fb7a9c9c4d02d160aa039126c75a6797fddcdcdec4e7f85",
+        "docs/results/ht_frozen_garage_10min_2026-10-19/garage/target_selection_audit.json": "8d7cede3a132431b5010750af6fa0c82b7f7a1dda1e3bc9a99bafdb983ed34dc",
+        "docs/results/ht_frozen_garage_10min_2026-10-19/garage/endurance_audit.json": "204101b211abbc3ebc1c11fedb16291e1a32fcaa497e7b9b77de14d3ec9072b9"
+      }
+    },
+    {
+      "label": "阶段38",
+      "source": "/home/lzz/my test/HT_Explo-fixposition/docs/results/ht_guide_handoff_10min_2026-10-19/garage",
+      "volume_m3": 5807.0,
+      "cumulative_decreases": 0,
+      "repeat_entry_fraction": 0.1469387755102041,
+      "last60_gain_m3": 553.75,
+      "per_minute_gain_m3": [
+        2148.206320071556,
+        109.70398816627403,
+        811.7146917621699,
+        538.0,
+        1140.5361125022328,
+        357.913474825943,
+        10.925412671824233,
+        132.04259313277635,
+        4.2074068672236535,
+        553.75
+      ],
+      "guide_selected_events": 7,
+      "input_sha256": {
+        "docs/results/ht_guide_handoff_10min_2026-10-19/garage/timeseries.csv": "f971420251bcaed59002b6e8e90fc46e13e9ddafe0116e85a60e4a1f54fc7fc4",
+        "docs/results/ht_guide_handoff_10min_2026-10-19/garage/observation_volume.csv": "35da9c351dff1ee0953f3194d0fd1b32bbd35e4370e2fb1c26047a6f346b0926",
+        "docs/results/ht_guide_handoff_10min_2026-10-19/garage/target_selection_audit.json": "0a4367e9cbf249e9f1600ab5c15ea4c21c2651628581a8ed9323c14fdbf361b2",
+        "docs/results/ht_guide_handoff_10min_2026-10-19/garage/endurance_audit.json": "3a5429ca7282f1c8b9c4dc6afa6f9ae29908ad158cfa23eb7fdc169bdaa2eef6"
+      }
+    },
+    {
+      "label": "阶段39",
+      "source": "/home/lzz/my test/HT_Explo-fixposition/docs/results/ht_successor_pruning_10min_2026-10-20/garage",
+      "volume_m3": 6483.0,
+      "cumulative_decreases": 0,
+      "repeat_entry_fraction": 0.12875536480686695,
+      "last60_gain_m3": 274.5147229274753,
+      "per_minute_gain_m3": [
+        1956.9216237052406,
+        685.4042621517533,
+        730.6741141430061,
+        1104.751184759547,
+        299.1690738143843,
+        2.579741426068722,
+        167.96907854840083,
+        300.28092145159917,
+        960.7352770725247,
+        274.5147229274753
+      ],
+      "guide_selected_events": 6,
+      "input_sha256": {
+        "docs/results/ht_successor_pruning_10min_2026-10-20/garage/timeseries.csv": "8ecbc7cafd677ce3ed1bedfad91bbbe151268e9dbe8f5dfafab97f099d24a4b2",
+        "docs/results/ht_successor_pruning_10min_2026-10-20/garage/observation_volume.csv": "d843dff44b58230b2fa730e1463d6779cac367145993a3adffb250d17f47a77c",
+        "docs/results/ht_successor_pruning_10min_2026-10-20/garage/target_selection_audit.json": "1d49acbd378e305174b23bbe6e6a0bfe4e1122c50028daeb97342c215ae7dfef",
+        "docs/results/ht_successor_pruning_10min_2026-10-20/garage/endurance_audit.json": "6d54c15cf1c489a9b3b04699e8ad8e3fe07fe69cd88394c47b8d48c913a75055"
+      }
+    }
+  ]
+}

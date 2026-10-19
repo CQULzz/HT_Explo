@@ -14,7 +14,9 @@ def rows(path):
 
 def main():
     parser=argparse.ArgumentParser();parser.add_argument('--run',action='append',required=True)
-    parser.add_argument('--output',type=Path,required=True);args=parser.parse_args()
+    parser.add_argument('--output',type=Path,required=True)
+    parser.add_argument('--title',default='车库同条件600秒：阶段38修复任务交接；对照阶段36/37')
+    parser.add_argument('--stem',default='guide_handoff_comparison');args=parser.parse_args()
     args.output.mkdir(parents=True,exist_ok=True)
     plt.rcParams.update({'font.family':'Noto Sans CJK JP','axes.unicode_minus':False})
     fig,axes=plt.subplots(2,3,figsize=(19,11),layout='constrained');colors=['#718298','#dc842a','#158773']
@@ -62,8 +64,8 @@ def main():
     axes[0,2].set_xticks(np.arange(10)+.24,[f'{i}–{i+1}' for i in range(10)])
     axes[1,2].set_xticks(np.arange(3)+.24,['1m格重复进入','原地转向','完全停车'])
     axes[1,0].set_aspect('equal',adjustable='datalim')
-    fig.suptitle('车库同条件600秒：阶段38修复任务交接；对照阶段36/37\n每版本一轮，含全部退步；体积是0.5m自由体素并集估计，回访受格边界抖动影响',fontsize=15)
-    for suffix in ['png','pdf']:fig.savefig(args.output/('guide_handoff_comparison.'+suffix),dpi=160,bbox_inches='tight')
+    fig.suptitle(args.title+'\n每版本一轮，含全部退步；体积是0.5m自由体素并集估计，回访受格边界抖动影响',fontsize=15)
+    for suffix in ['png','pdf']:fig.savefig(args.output/(args.stem+'.'+suffix),dpi=160,bbox_inches='tight')
     plt.close(fig)
     (args.output/'plot_evidence.json').write_text(json.dumps(evidence,ensure_ascii=False,indent=2)+'\n')
 

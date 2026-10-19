@@ -43,11 +43,15 @@ elif [[ "${1:-}" == '--serial-mapper' ]]; then
   ht_playlist="$ht_repo_root/docs/results/ht_serial_mapper_10min_2026-10-19/videos.m3u"
   printf '阶段37：地图调度修复，车库完整10分钟；179.78米，4522.625立方米。\n'
   printf '地图/路径过期0，最长停车1.15秒；但观测体积较阶段36退步42.8%%，转向和回访增加。\n'
-else
+elif [[ "${1:-}" == '--guide-handoff' ]]; then
   ht_playlist="$ht_repo_root/docs/results/ht_guide_handoff_10min_2026-10-19/videos.m3u"
   printf '阶段38：任务交接修复，车库完整10分钟；202.58米，5807立方米。\n'
   printf '较37体积+28.4%%、回访减少，仍低于36且搜索超时增加。\n'
-  printf '上一轮加 --serial-mapper；阶段36加 --frozen-garage；图册见下载目录的查看脚本。\n'
+else
+  ht_playlist="$ht_repo_root/docs/results/ht_successor_pruning_10min_2026-10-20/videos.m3u"
+  printf '阶段39：搜索支配边剪枝，车库完整10分钟；199.69米，6483立方米。\n'
+  printf '体积较38提高11.6%%，超时81到65；末分钟新增/完全停车仍有退步，尚未追平TARE。\n'
+  printf '阶段38加 --guide-handoff；阶段37加 --serial-mapper；阶段36加 --frozen-garage。\n'
 fi
 if [[ ! -f "$ht_playlist" ]] || ! rg -q '^[^#[:space:]]' "$ht_playlist"; then
   printf '未找到完整视频播放列表：%s\n' "$ht_playlist"

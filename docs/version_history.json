@@ -2,7 +2,7 @@
   "schema_version": 1,
   "updated_at": "2026-10-19",
   "branch": "codex/ht8dir-v1",
-  "status": "阶段38全局/局部任务交接修复：完整车库600秒202.58m/5807m³，13项采集与4项CTest通过；代码、25页图册、全部已录制数据和视频已上传且远端SHA256/大小核对通过。本机保留37/38。体积较37提高28.4%，但仍低于36且超时47→81，整体探索问题未全部解决。",
+  "status": "阶段39完整600秒已测，搜索支配边剪枝；体积较38+11.6%，TIME_LIMIT 65次；单目标覆盖/直线引导结构未改，没有同控制约束的新原版TARE配对，不证明追平TARE。全数据待本轮发布校验",
   "latest_archive_commit": "172d5a0d8f66c414d648cb17d710b3b996d6a424",
   "latest_planner_change": "43069a7b11b8028b53f6eae0d6bdc53c13e8affd",
   "stages": [
@@ -667,6 +667,23 @@
       ],
       "control_commit": "16bdbe4cb1fddd632d061a5710c3e7b294971891",
       "ht_bridge_commit": "445b5c1490d6bb198c35bee23e95fc0f7781407e"
+    },
+    {
+      "id": "stage-39",
+      "number": 39,
+      "sha": "6fc754903f0e7c9aafe4b2a2b13c3fa24266551a",
+      "tag": "ht-stage-20261020-successor-pruning",
+      "title": "XYθ支配边提前剪枝，减少注定丢弃的硬检查",
+      "kind": "搜索开销优化与TARE差距分析",
+      "change": "相同终点键/代价支配检查放到HT/几何检查前，接受边仍逐段硬验证；预算/候选/覆盖评分不变",
+      "features": "冻结公开输入固定256展开查询减少约67%；18组合成实际成功路线代价/逐姿态相同。预算内4目标新旧仍均超时，保留反例",
+      "validation": "完整车库600秒199.69m/6483.000m³，13项采集及4项CTest通过；剪枝1048111条",
+      "known_issues": "体积较38+11.6%，TIME_LIMIT 65次；单目标覆盖/直线引导结构未改，没有同控制约束的新原版TARE配对，不证明追平TARE",
+      "evidence": [
+        "docs/results/ht_successor_pruning_10min_2026-10-20/REPORT.md"
+      ],
+      "control_commit": "6fc754903f0e7c9aafe4b2a2b13c3fa24266551a",
+      "ht_bridge_commit": "445b5c1490d6bb198c35bee23e95fc0f7781407e"
     }
   ],
   "historical_commits": [
@@ -1202,9 +1219,9 @@
       "original_subject": "Archive command rejection proof, failed indoor trials and returned-home tunnel video"
     }
   ],
-  "latest_planner_code": "16bdbe4cb1fddd632d061a5710c3e7b294971891",
+  "latest_planner_code": "6fc754903f0e7c9aafe4b2a2b13c3fa24266551a",
   "latest_ht_bridge_code": "445b5c1490d6bb198c35bee23e95fc0f7781407e",
-  "latest_verified_trial_code": "16bdbe4cb1fddd632d061a5710c3e7b294971891",
-  "latest_recorded_trial_code": "16bdbe4cb1fddd632d061a5710c3e7b294971891",
+  "latest_verified_trial_code": "6fc754903f0e7c9aafe4b2a2b13c3fa24266551a",
+  "latest_recorded_trial_code": "6fc754903f0e7c9aafe4b2a2b13c3fa24266551a",
   "latest_cupy_node_code": "d6d87878a4e8982e3a4850a5a17f8e1be1608a24"
 }

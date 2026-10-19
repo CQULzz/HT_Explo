@@ -1,0 +1,54 @@
+{
+  "trial": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_guide_handoff_10min_2026-10-19_14-37-26/garage",
+  "chosen_search": {
+    "target": "777",
+    "goal": "(16.570798,21.760414)",
+    "gain": "0.0",
+    "recovery": "0",
+    "backtrack": "0",
+    "ht_stamp": "1792392305.536841154",
+    "termination": "TIME_LIMIT",
+    "elapsed_s": "0.191323",
+    "budget_s": "0.150000",
+    "expanded": "128",
+    "expansion_limit": "8000",
+    "geometry_queries": "6124",
+    "geometry_s": "0.183834",
+    "geometry_reject": "294",
+    "ht_reject": "41",
+    "memory_reject": "0",
+    "reserve_reject": "0",
+    "direct": "0",
+    "log": "[tare_planner_node-1] [INFO] [1792392306.458399501] [tare_planner_node]: HT_SEARCH_AUDIT target=777 goal=(16.570798,21.760414) gain=0.0 recovery=0 backtrack=0 ht_stamp=1792392305.536841154 termination=TIME_LIMIT elapsed_s=0.191323 budget_s=0.150000 expanded=128 expansion_limit=8000 geometry_queries=6124 geometry_s=0.183834 geometry_reject=294 ht_reject=41 memory_reject=0 reserve_reject=0 direct=0",
+    "t_s": 384.06277990341187
+  },
+  "robot": [
+    15.596904754638672,
+    25.37972068786621,
+    0.8770562410354614,
+    -3.0564918518066406
+  ],
+  "ht_source_stamp": 1792392305.5368412,
+  "ht_received_time_s": 383.482768535614,
+  "messages": {
+    "/collision_cloud": {
+      "recorded_time_s": 383.7709627151489,
+      "stamp": 1792392306.1560826,
+      "frame": "map",
+      "points": 39456
+    },
+    "/viewpoint_in_collision_cloud_": {
+      "recorded_time_s": 383.76085233688354,
+      "stamp": 1792392306.1563761,
+      "frame": "map",
+      "points": 131
+    },
+    "/viewpoint_vis_cloud": {
+      "recorded_time_s": 382.86606431007385,
+      "stamp": 1792392305.2616513,
+      "frame": "map",
+      "points": 452
+    }
+  },
+  "limitations": "Exact logged HT source stamp; latest recorded clouds/odom before post-search log. Bag arrival ordering does not reconstruct the planner callback order or exact rolling origin. Static stopped interval reduces motion mismatch but is not exact-state replay."
+}

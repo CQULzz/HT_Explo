@@ -1,0 +1,6003 @@
+{
+  "source": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_successor_pruning_10min_2026-10-20_01-07-11/garage",
+  "bag_file": null,
+  "score_semantics": "configuration",
+  "final_pose": [
+    34.76200485229492,
+    -0.7036733031272888,
+    0.7634023427963255
+  ],
+  "final_field": {
+    "map_stamp": 1792430291.0175204,
+    "heading_bin": 1,
+    "row": 117,
+    "col": 117,
+    "status": "KNOWN",
+    "reference_probability": 0.999902606010437,
+    "min_body_p": 0.01872757449746132,
+    "reverse_status": "KNOWN",
+    "reversible_pose": true,
+    "reversible_heading_pairs": 4
+  },
+  "ht_map_messages": 1218,
+  "known_to_blocked_changes": [],
+  "return_margin_losses": [
+    {
+      "time_s": 272.68459606170654,
+      "cause": "pose_update_on_same_map",
+      "before_pose": [
+        12.945636749267578,
+        32.455936431884766,
+        -1.1783535480499268
+      ],
+      "pose": [
+        12.945636749267578,
+        32.455936431884766,
+        -1.1755535602569582
+      ],
+      "before": {
+        "map_stamp": 1792429963.475234,
+        "heading_bin": 6,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9997245669364929,
+        "min_body_p": 0.5246484279632568,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 3
+      },
+      "after": {
+        "map_stamp": 1792429963.475234,
+        "heading_bin": 7,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9997885823249817,
+        "min_body_p": 0.9944367408752441,
+        "reverse_status": "BLOCKED",
+        "reversible_pose": false,
+        "reversible_heading_pairs": 3
+      },
+      "last_cmd": {
+        "time_s": 272.6750416755676,
+        "v": 0.0,
+        "w": 0.5599999999999998,
+        "recorded_pose": [
+          12.945636749267578,
+          32.455936431884766,
+          -1.1811535358428955
+        ],
+        "recorded_field_now": {
+          "map_stamp": 1792429963.475234,
+          "heading_bin": 6,
+          "row": 120,
+          "col": 120,
+          "status": "KNOWN",
+          "reference_probability": 0.9997245669364929,
+          "min_body_p": 0.5246484279632568,
+          "reverse_status": "KNOWN",
+          "reversible_pose": true,
+          "reversible_heading_pairs": 3
+        },
+        "constant_command_preview": {
+          "map_stamp": 1792429963.475234,
+          "heading_bin": 7,
+          "row": 120,
+          "col": 120,
+          "status": "KNOWN",
+          "reference_probability": 0.9997885823249817,
+          "min_body_p": 0.9944367408752441,
+          "reverse_status": "BLOCKED",
+          "reversible_pose": false,
+          "reversible_heading_pairs": 3
+        },
+        "preview_horizon_s": 0.5666666666666665
+      }
+    }
+  ],
+  "follower_status_changes": [
+    {
+      "time_s": 1.2243242263793945,
+      "status": "ALIGNING",
+      "pose": [
+        0.3700859546661377,
+        3.1682348251342773,
+        2.0738813877105713
+      ],
+      "field": {
+        "map_stamp": 1792429692.5615299,
+        "heading_bin": 3,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9997193217277527,
+        "min_body_p": 0.9881688952445984,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 1.2745165824890137,
+      "status": "DRIVING",
+      "pose": [
+        0.3700859546661377,
+        3.1682348251342773,
+        2.0762155055999756
+      ],
+      "field": {
+        "map_stamp": 1792429692.5615299,
+        "heading_bin": 3,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9997193217277527,
+        "min_body_p": 0.9881688952445984,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 8.5243501663208,
+      "status": "GOAL_REACHED",
+      "pose": [
+        -1.3727669715881348,
+        6.073090553283691,
+        2.1116206645965576
+      ],
+      "field": {
+        "map_stamp": 1792429699.5715287,
+        "heading_bin": 3,
+        "row": 125,
+        "col": 113,
+        "status": "KNOWN",
+        "reference_probability": 0.9997757077217102,
+        "min_body_p": 0.9995396137237549,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 9.074654817581177,
+      "status": "TURNING",
+      "pose": [
+        -1.3727669715881348,
+        6.073090553283691,
+        2.111620664596558
+      ],
+      "field": {
+        "map_stamp": 1792429699.9615266,
+        "heading_bin": 3,
+        "row": 122,
+        "col": 118,
+        "status": "KNOWN",
+        "reference_probability": 0.9997758269309998,
+        "min_body_p": 0.9997100234031677,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 10.37454628944397,
+      "status": "ALIGNING",
+      "pose": [
+        -1.3727669715881348,
+        6.073090553283691,
+        1.6320260763168335
+      ],
+      "field": {
+        "map_stamp": 1792429701.561537,
+        "heading_bin": 2,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9997965693473816,
+        "min_body_p": 0.9997567534446716,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 10.424463987350464,
+      "status": "DRIVING",
+      "pose": [
+        -1.3727669715881348,
+        6.073090553283691,
+        1.6295500993728638
+      ],
+      "field": {
+        "map_stamp": 1792429701.561537,
+        "heading_bin": 2,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9997965693473816,
+        "min_body_p": 0.9997567534446716,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 16.024290561676025,
+      "status": "GOAL_REACHED",
+      "pose": [
+        -1.4276639223098755,
+        8.467630386352539,
+        1.5931602716445923
+      ],
+      "field": {
+        "map_stamp": 1792429706.9774199,
+        "heading_bin": 2,
+        "row": 120,
+        "col": 112,
+        "status": "KNOWN",
+        "reference_probability": 0.9998433589935303,
+        "min_body_p": 0.9997805953025818,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 16.17465353012085,
+      "status": "TURNING",
+      "pose": [
+        -1.4276639223098755,
+        8.467630386352539,
+        1.593160271644592
+      ],
+      "field": {
+        "map_stamp": 1792429706.9774199,
+        "heading_bin": 2,
+        "row": 120,
+        "col": 112,
+        "status": "KNOWN",
+        "reference_probability": 0.9998433589935303,
+        "min_body_p": 0.9997805953025818,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 18.57447862625122,
+      "status": "ALIGNING",
+      "pose": [
+        -1.4276639223098755,
+        8.467630386352539,
+        3.0229694843292236
+      ],
+      "field": {
+        "map_stamp": 1792429709.5702677,
+        "heading_bin": 4,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.999906063079834,
+        "min_body_p": 0.9998736381530762,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 18.62446904182434,
+      "status": "DRIVING",
+      "pose": [
+        -1.4276639223098755,
+        8.467630386352539,
+        3.024988889694214
+      ],
+      "field": {
+        "map_stamp": 1792429709.5702677,
+        "heading_bin": 4,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.999906063079834,
+        "min_body_p": 0.9998736381530762,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 21.924747228622437,
+      "status": "TURNING",
+      "pose": [
+        -2.5949060916900635,
+        8.59005355834961,
+        2.545630693435669
+      ],
+      "field": {
+        "map_stamp": 1792429712.9702742,
+        "heading_bin": 3,
+        "row": 122,
+        "col": 119,
+        "status": "KNOWN",
+        "reference_probability": 0.9998527765274048,
+        "min_body_p": 0.9997583031654358,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 22.57460904121399,
+      "status": "ALIGNING",
+      "pose": [
+        -2.5949060916900635,
+        8.59005355834961,
+        2.2599308490753174
+      ],
+      "field": {
+        "map_stamp": 1792429713.5702732,
+        "heading_bin": 3,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998568296432495,
+        "min_body_p": 0.9997634291648865,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 22.624505043029785,
+      "status": "DRIVING",
+      "pose": [
+        -2.5949060916900635,
+        8.59005355834961,
+        2.2590317726135254
+      ],
+      "field": {
+        "map_stamp": 1792429713.5702732,
+        "heading_bin": 3,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998568296432495,
+        "min_body_p": 0.9997634291648865,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 30.674391746520996,
+      "status": "GOAL_REACHED",
+      "pose": [
+        -1.4719643592834473,
+        12.075287818908691,
+        1.1460176706314087
+      ],
+      "field": {
+        "map_stamp": 1792429721.580273,
+        "heading_bin": 1,
+        "row": 116,
+        "col": 111,
+        "status": "KNOWN",
+        "reference_probability": 0.9999033212661743,
+        "min_body_p": 0.9997879862785339,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 31.2244074344635,
+      "status": "TURNING",
+      "pose": [
+        -1.4719643592834473,
+        12.075287818908691,
+        1.1460176706314085
+      ],
+      "field": {
+        "map_stamp": 1792429722.5752742,
+        "heading_bin": 1,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9999089241027832,
+        "min_body_p": 0.9998546838760376,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 32.62432837486267,
+      "status": "ALIGNING",
+      "pose": [
+        -1.4719643592834473,
+        12.075287818908691,
+        0.5242581963539124
+      ],
+      "field": {
+        "map_stamp": 1792429723.5752609,
+        "heading_bin": 1,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9999077320098877,
+        "min_body_p": 0.9998708963394165,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 32.67441201210022,
+      "status": "DRIVING",
+      "pose": [
+        -1.4719643592834473,
+        12.075287818908691,
+        0.5219258666038514
+      ],
+      "field": {
+        "map_stamp": 1792429723.975269,
+        "heading_bin": 1,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9999067783355713,
+        "min_body_p": 0.999869704246521,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 39.22442293167114,
+      "status": "TURNING",
+      "pose": [
+        0.9886265993118286,
+        13.40576171875,
+        0.9990963339805603
+      ],
+      "field": {
+        "map_stamp": 1792429729.9752624,
+        "heading_bin": 1,
+        "row": 116,
+        "col": 118,
+        "status": "KNOWN",
+        "reference_probability": 0.9999113082885742,
+        "min_body_p": 0.9998266100883484,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 40.474353551864624,
+      "status": "ALIGNING",
+      "pose": [
+        0.9886265993118286,
+        13.40576171875,
+        1.5495607852935793
+      ],
+      "field": {
+        "map_stamp": 1792429731.5902832,
+        "heading_bin": 2,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998733997344971,
+        "min_body_p": 0.999810516834259,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 40.524380683898926,
+      "status": "DRIVING",
+      "pose": [
+        0.9886265993118286,
+        13.40576171875,
+        1.5518722534179688
+      ],
+      "field": {
+        "map_stamp": 1792429731.5902832,
+        "heading_bin": 2,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998733997344971,
+        "min_body_p": 0.999810516834259,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 43.92440223693848,
+      "status": "TURNING",
+      "pose": [
+        0.9445396065711975,
+        14.627418518066406,
+        2.1012213230133057
+      ],
+      "field": {
+        "map_stamp": 1792429734.975262,
+        "heading_bin": 3,
+        "row": 121,
+        "col": 118,
+        "status": "KNOWN",
+        "reference_probability": 0.9998683929443359,
+        "min_body_p": 0.9998118281364441,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 45.074347734451294,
+      "status": "ALIGNING",
+      "pose": [
+        0.9445396065711975,
+        14.627418518066406,
+        2.6583974361419678
+      ],
+      "field": {
+        "map_stamp": 1792429735.9752576,
+        "heading_bin": 3,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998654127120972,
+        "min_body_p": 0.9998375177383423,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 45.124412536621094,
+      "status": "DRIVING",
+      "pose": [
+        0.9445396065711975,
+        14.627418518066406,
+        2.660440683364868
+      ],
+      "field": {
+        "map_stamp": 1792429735.9752576,
+        "heading_bin": 3,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998654127120972,
+        "min_body_p": 0.9998375177383423,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 51.174320697784424,
+      "status": "TURNING",
+      "pose": [
+        -1.3621406555175781,
+        15.708434104919434,
+        -3.0767862796783447
+      ],
+      "field": {
+        "map_stamp": 1792429741.9902592,
+        "heading_bin": 4,
+        "row": 124,
+        "col": 118,
+        "status": "KNOWN",
+        "reference_probability": 0.9998975992202759,
+        "min_body_p": 0.999836802482605,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 53.27459120750427,
+      "status": "DRIVING",
+      "pose": [
+        -1.3621406555175781,
+        15.708434104919434,
+        -1.6663837432861333
+      ],
+      "field": {
+        "map_stamp": 1792429744.5852742,
+        "heading_bin": 6,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998691082000732,
+        "min_body_p": 0.999805748462677,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 55.82429051399231,
+      "status": "GOAL_REACHED",
+      "pose": [
+        -1.4239318370819092,
+        14.673047065734863,
+        -1.6282281875610354
+      ],
+      "field": {
+        "map_stamp": 1792429746.985282,
+        "heading_bin": 6,
+        "row": 121,
+        "col": 126,
+        "status": "KNOWN",
+        "reference_probability": 0.9998772144317627,
+        "min_body_p": 0.999815046787262,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 55.9743218421936,
+      "status": "DRIVING",
+      "pose": [
+        -1.4239318370819092,
+        14.673047065734863,
+        -1.6282281875610352
+      ],
+      "field": {
+        "map_stamp": 1792429746.985282,
+        "heading_bin": 6,
+        "row": 121,
+        "col": 126,
+        "status": "KNOWN",
+        "reference_probability": 0.9998772144317627,
+        "min_body_p": 0.999815046787262,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 63.62434148788452,
+      "status": "GOAL_REACHED",
+      "pose": [
+        -1.429732322692871,
+        11.086634635925293,
+        -1.572346091270447
+      ],
+      "field": {
+        "map_stamp": 1792429754.590262,
+        "heading_bin": 6,
+        "row": 120,
+        "col": 129,
+        "status": "KNOWN",
+        "reference_probability": 0.9999046325683594,
+        "min_body_p": 0.9997730851173401,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 64.02440404891968,
+      "status": "TURNING",
+      "pose": [
+        -1.429732322692871,
+        11.086634635925293,
+        -1.5723460912704468
+      ],
+      "field": {
+        "map_stamp": 1792429754.990263,
+        "heading_bin": 6,
+        "row": 120,
+        "col": 123,
+        "status": "KNOWN",
+        "reference_probability": 0.9998999834060669,
+        "min_body_p": 0.9998080134391785,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 65.07437586784363,
+      "status": "ALIGNING",
+      "pose": [
+        -1.429732322692871,
+        11.086634635925293,
+        -1.2967344522476199
+      ],
+      "field": {
+        "map_stamp": 1792429756.0002704,
+        "heading_bin": 6,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998890161514282,
+        "min_body_p": 0.9998421669006348,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 65.12436962127686,
+      "status": "DRIVING",
+      "pose": [
+        -1.429732322692871,
+        11.086634635925293,
+        -1.294296622276306
+      ],
+      "field": {
+        "map_stamp": 1792429756.0002704,
+        "heading_bin": 6,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998890161514282,
+        "min_body_p": 0.9998421669006348,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 73.92462038993835,
+      "status": "TURNING",
+      "pose": [
+        -0.20139659941196442,
+        7.359452247619629,
+        -0.7490132451057435
+      ],
+      "field": {
+        "map_stamp": 1792429764.99026,
+        "heading_bin": 7,
+        "row": 119,
+        "col": 122,
+        "status": "KNOWN",
+        "reference_probability": 0.9998762607574463,
+        "min_body_p": 0.9998302459716797,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 76.67450857162476,
+      "status": "ALIGNING",
+      "pose": [
+        -0.20130471885204315,
+        7.359367370605469,
+        1.2197957038879392
+      ],
+      "field": {
+        "map_stamp": 1792429767.5902638,
+        "heading_bin": 2,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9997780919075012,
+        "min_body_p": 0.9997223019599915,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 76.72459244728088,
+      "status": "DRIVING",
+      "pose": [
+        -0.20130471885204315,
+        7.359367370605469,
+        1.2221012115478518
+      ],
+      "field": {
+        "map_stamp": 1792429767.9902651,
+        "heading_bin": 2,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.999777615070343,
+        "min_body_p": 0.9997115731239319,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 84.67446875572205,
+      "status": "GOAL_REACHED",
+      "pose": [
+        0.938820481300354,
+        10.871898651123047,
+        1.2571146488189693
+      ],
+      "field": {
+        "map_stamp": 1792429775.5902698,
+        "heading_bin": 2,
+        "row": 117,
+        "col": 110,
+        "status": "KNOWN",
+        "reference_probability": 0.999847412109375,
+        "min_body_p": 0.9998014569282532,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 84.97441411018372,
+      "status": "DRIVING",
+      "pose": [
+        0.938820481300354,
+        10.871898651123047,
+        1.2571146488189695
+      ],
+      "field": {
+        "map_stamp": 1792429775.9952796,
+        "heading_bin": 2,
+        "row": 119,
+        "col": 116,
+        "status": "KNOWN",
+        "reference_probability": 0.9998515844345093,
+        "min_body_p": 0.9998261332511902,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 100.62432360649109,
+      "status": "GOAL_REACHED",
+      "pose": [
+        3.3372108936309814,
+        18.069570541381836,
+        1.2491375207900997
+      ],
+      "field": {
+        "map_stamp": 1792429791.400276,
+        "heading_bin": 2,
+        "row": 117,
+        "col": 111,
+        "status": "KNOWN",
+        "reference_probability": 0.9998948574066162,
+        "min_body_p": 0.9997971653938293,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 101.22447848320007,
+      "status": "TURNING",
+      "pose": [
+        3.3372108936309814,
+        18.069570541381836,
+        1.2491375207901003
+      ],
+      "field": {
+        "map_stamp": 1792429792.0002632,
+        "heading_bin": 2,
+        "row": 118,
+        "col": 117,
+        "status": "KNOWN",
+        "reference_probability": 0.9998928308486938,
+        "min_body_p": 0.9998250603675842,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 103.7243857383728,
+      "status": "ALIGNING",
+      "pose": [
+        3.3372108936309814,
+        18.069570541381836,
+        -0.25757157802581787
+      ],
+      "field": {
+        "map_stamp": 1792429794.6002886,
+        "heading_bin": 0,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998608827590942,
+        "min_body_p": 0.9997572302818298,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 103.77432465553284,
+      "status": "DRIVING",
+      "pose": [
+        3.3372108936309814,
+        18.069570541381836,
+        -0.2598258256912231
+      ],
+      "field": {
+        "map_stamp": 1792429795.0102594,
+        "heading_bin": 0,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998577833175659,
+        "min_body_p": 0.999745786190033,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 111.72434544563293,
+      "status": "GOAL_REACHED",
+      "pose": [
+        6.872017860412598,
+        16.99798011779785,
+        -0.29451751708984375
+      ],
+      "field": {
+        "map_stamp": 1792429802.4052954,
+        "heading_bin": 0,
+        "row": 110,
+        "col": 123,
+        "status": "KNOWN",
+        "reference_probability": 0.9999020099639893,
+        "min_body_p": 0.9997023940086365,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 112.27433013916016,
+      "status": "DRIVING",
+      "pose": [
+        6.872017860412598,
+        16.99798011779785,
+        -0.29451751708984364
+      ],
+      "field": {
+        "map_stamp": 1792429803.0002754,
+        "heading_bin": 0,
+        "row": 115,
+        "col": 122,
+        "status": "KNOWN",
+        "reference_probability": 0.999901294708252,
+        "min_body_p": 0.9998137354850769,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 115.17427611351013,
+      "status": "GOAL_REACHED",
+      "pose": [
+        8.051825523376465,
+        16.967927932739258,
+        -0.002549521392211318
+      ],
+      "field": {
+        "map_stamp": 1792429806.0233738,
+        "heading_bin": 0,
+        "row": 110,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998937845230103,
+        "min_body_p": 0.9996801614761353,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 116.27451062202454,
+      "status": "DRIVING",
+      "pose": [
+        8.051825523376465,
+        16.967927932739258,
+        -0.0025495213922113184
+      ],
+      "field": {
+        "map_stamp": 1792429807.609126,
+        "heading_bin": 0,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998894929885864,
+        "min_body_p": 0.9998515844345093,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 119.97429656982422,
+      "status": "TURNING",
+      "pose": [
+        9.423787117004395,
+        16.992830276489258,
+        0.5133931636810303
+      ],
+      "field": {
+        "map_stamp": 1792429811.0191245,
+        "heading_bin": 1,
+        "row": 118,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.999887228012085,
+        "min_body_p": 0.9998600482940674,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 120.9743640422821,
+      "status": "ALIGNING",
+      "pose": [
+        9.423787117004395,
+        16.992830276489258,
+        1.070933222770691
+      ],
+      "field": {
+        "map_stamp": 1792429812.0091183,
+        "heading_bin": 1,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.999887228012085,
+        "min_body_p": 0.9998782873153687,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 121.02431774139404,
+      "status": "TURNING",
+      "pose": [
+        9.423787117004395,
+        16.992830276489258,
+        1.073083758354187
+      ],
+      "field": {
+        "map_stamp": 1792429812.0091183,
+        "heading_bin": 1,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.999887228012085,
+        "min_body_p": 0.9998782873153687,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 121.12431907653809,
+      "status": "ALIGNING",
+      "pose": [
+        9.423787117004395,
+        16.992830276489258,
+        1.083602786064148
+      ],
+      "field": {
+        "map_stamp": 1792429812.0091183,
+        "heading_bin": 1,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.999887228012085,
+        "min_body_p": 0.9998782873153687,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 121.17434573173523,
+      "status": "DRIVING",
+      "pose": [
+        9.423787117004395,
+        16.992830276489258,
+        1.0859726667404175
+      ],
+      "field": {
+        "map_stamp": 1792429812.0091183,
+        "heading_bin": 1,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.999887228012085,
+        "min_body_p": 0.9998782873153687,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 126.72436332702637,
+      "status": "GOAL_REACHED",
+      "pose": [
+        10.52681827545166,
+        19.27849578857422,
+        1.1215089559555051
+      ],
+      "field": {
+        "map_stamp": 1792429817.4140787,
+        "heading_bin": 1,
+        "row": 115,
+        "col": 110,
+        "status": "KNOWN",
+        "reference_probability": 0.9999103546142578,
+        "min_body_p": 0.999772846698761,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 127.27426815032959,
+      "status": "TURNING",
+      "pose": [
+        10.52681827545166,
+        19.27849578857422,
+        1.1215089559555051
+      ],
+      "field": {
+        "map_stamp": 1792429818.41919,
+        "heading_bin": 1,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9999136924743652,
+        "min_body_p": 0.9998594522476196,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 129.4242708683014,
+      "status": "ALIGNING",
+      "pose": [
+        10.52681827545166,
+        19.27849578857422,
+        0.10774485766887666
+      ],
+      "field": {
+        "map_stamp": 1792429820.4402547,
+        "heading_bin": 0,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998635053634644,
+        "min_body_p": 0.9997966885566711,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 129.47439122200012,
+      "status": "DRIVING",
+      "pose": [
+        10.52681827545166,
+        19.27849578857422,
+        0.1056463271379471
+      ],
+      "field": {
+        "map_stamp": 1792429820.4402547,
+        "heading_bin": 0,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998635053634644,
+        "min_body_p": 0.9997966885566711,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 132.2243936061859,
+      "status": "GOAL_REACHED",
+      "pose": [
+        11.661264419555664,
+        19.360523223876953,
+        0.07063695043325424
+      ],
+      "field": {
+        "map_stamp": 1792429823.4402356,
+        "heading_bin": 0,
+        "row": 115,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.999883770942688,
+        "min_body_p": 0.9998157620429993,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 132.27439045906067,
+      "status": "TURNING",
+      "pose": [
+        11.661264419555664,
+        19.360523223876953,
+        0.07063695043325426
+      ],
+      "field": {
+        "map_stamp": 1792429823.4402356,
+        "heading_bin": 0,
+        "row": 115,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.999883770942688,
+        "min_body_p": 0.9998157620429993,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 132.52441596984863,
+      "status": "DRIVING",
+      "pose": [
+        11.661264419555664,
+        19.360523223876953,
+        0.0256369411945343
+      ],
+      "field": {
+        "map_stamp": 1792429823.4402356,
+        "heading_bin": 0,
+        "row": 115,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.999883770942688,
+        "min_body_p": 0.9998157620429993,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 133.37439584732056,
+      "status": "TURNING",
+      "pose": [
+        11.75879192352295,
+        19.3375301361084,
+        -0.5527638792991638
+      ],
+      "field": {
+        "map_stamp": 1792429824.4302568,
+        "heading_bin": 7,
+        "row": 119,
+        "col": 121,
+        "status": "KNOWN",
+        "reference_probability": 0.9998353719711304,
+        "min_body_p": 0.9997729659080505,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 133.8744673728943,
+      "status": "ALIGNING",
+      "pose": [
+        11.75879192352295,
+        19.3375301361084,
+        -0.7280637025833131
+      ],
+      "field": {
+        "map_stamp": 1792429825.0302668,
+        "heading_bin": 7,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998369216918945,
+        "min_body_p": 0.99979168176651,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 133.92437434196472,
+      "status": "DRIVING",
+      "pose": [
+        11.75879192352295,
+        19.3375301361084,
+        -0.7290638685226439
+      ],
+      "field": {
+        "map_stamp": 1792429825.0302668,
+        "heading_bin": 7,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998369216918945,
+        "min_body_p": 0.99979168176651,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 133.97445583343506,
+      "status": "TURNING",
+      "pose": [
+        11.759723663330078,
+        19.33669090270996,
+        -0.7330639362335207
+      ],
+      "field": {
+        "map_stamp": 1792429825.0302668,
+        "heading_bin": 7,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998369216918945,
+        "min_body_p": 0.99979168176651,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 134.02439665794373,
+      "status": "ALIGNING",
+      "pose": [
+        11.759723663330078,
+        19.33669090270996,
+        -0.7385076284408569
+      ],
+      "field": {
+        "map_stamp": 1792429825.0302668,
+        "heading_bin": 7,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998369216918945,
+        "min_body_p": 0.99979168176651,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 134.07447957992554,
+      "status": "DRIVING",
+      "pose": [
+        11.759723663330078,
+        19.33669090270996,
+        -0.740951418876648
+      ],
+      "field": {
+        "map_stamp": 1792429825.0302668,
+        "heading_bin": 7,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998369216918945,
+        "min_body_p": 0.99979168176651,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 141.0743281841278,
+      "status": "GOAL_REACHED",
+      "pose": [
+        14.086331367492676,
+        17.050579071044922,
+        -0.7769830822944638
+      ],
+      "field": {
+        "map_stamp": 1792429832.0402677,
+        "heading_bin": 7,
+        "row": 114,
+        "col": 126,
+        "status": "KNOWN",
+        "reference_probability": 0.9998308420181274,
+        "min_body_p": 0.9997394680976868,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 141.27457857131958,
+      "status": "TURNING",
+      "pose": [
+        14.086331367492676,
+        17.050579071044922,
+        -0.7769830822944641
+      ],
+      "field": {
+        "map_stamp": 1792429832.4352925,
+        "heading_bin": 7,
+        "row": 118,
+        "col": 121,
+        "status": "KNOWN",
+        "reference_probability": 0.9998321533203125,
+        "min_body_p": 0.9997770190238953,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 144.6744396686554,
+      "status": "ALIGNING",
+      "pose": [
+        14.086331367492676,
+        17.050579071044922,
+        1.4605764150619511
+      ],
+      "field": {
+        "map_stamp": 1792429835.445263,
+        "heading_bin": 2,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.999876856803894,
+        "min_body_p": 0.9997783303260803,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 144.72432446479797,
+      "status": "DRIVING",
+      "pose": [
+        14.086331367492676,
+        17.050579071044922,
+        1.462636351585388
+      ],
+      "field": {
+        "map_stamp": 1792429835.445263,
+        "heading_bin": 2,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.999876856803894,
+        "min_body_p": 0.9997783303260803,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 147.97438287734985,
+      "status": "TURNING",
+      "pose": [
+        14.196490287780762,
+        18.1922607421875,
+        0.9861481189727783
+      ],
+      "field": {
+        "map_stamp": 1792429839.0452125,
+        "heading_bin": 1,
+        "row": 119,
+        "col": 118,
+        "status": "KNOWN",
+        "reference_probability": 0.9998900890350342,
+        "min_body_p": 0.9998335838317871,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 150.1244204044342,
+      "status": "DRIVING",
+      "pose": [
+        14.196490287780762,
+        18.1922607421875,
+        -0.4394168555736541
+      ],
+      "field": {
+        "map_stamp": 1792429841.0352352,
+        "heading_bin": 7,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998278617858887,
+        "min_body_p": 0.9997802376747131,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 155.7242932319641,
+      "status": "GOAL_REACHED",
+      "pose": [
+        16.473499298095703,
+        17.01814079284668,
+        -0.4767577350139618
+      ],
+      "field": {
+        "map_stamp": 1792429847.0352361,
+        "heading_bin": 7,
+        "row": 116,
+        "col": 122,
+        "status": "KNOWN",
+        "reference_probability": 0.999852180480957,
+        "min_body_p": 0.9997649788856506,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 156.27444076538086,
+      "status": "TURNING",
+      "pose": [
+        16.473499298095703,
+        17.01814079284668,
+        -0.47675773501396185
+      ],
+      "field": {
+        "map_stamp": 1792429847.4452093,
+        "heading_bin": 7,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998526573181152,
+        "min_body_p": 0.9997875094413757,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 159.3243591785431,
+      "status": "ALIGNING",
+      "pose": [
+        16.473499298095703,
+        17.01814079284668,
+        1.4492481946945193
+      ],
+      "field": {
+        "map_stamp": 1792429850.4402835,
+        "heading_bin": 2,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998718500137329,
+        "min_body_p": 0.9997283816337585,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 159.37429928779602,
+      "status": "DRIVING",
+      "pose": [
+        16.473499298095703,
+        17.01814079284668,
+        1.4516431093215945
+      ],
+      "field": {
+        "map_stamp": 1792429850.4402835,
+        "heading_bin": 2,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998718500137329,
+        "min_body_p": 0.9997283816337585,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 161.9242765903473,
+      "status": "GOAL_REACHED",
+      "pose": [
+        16.560476303100586,
+        18.05129623413086,
+        1.4888113737106325
+      ],
+      "field": {
+        "map_stamp": 1792429853.0452144,
+        "heading_bin": 2,
+        "row": 119,
+        "col": 113,
+        "status": "KNOWN",
+        "reference_probability": 0.9998692274093628,
+        "min_body_p": 0.9997698664665222,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 162.12434792518616,
+      "status": "TURNING",
+      "pose": [
+        16.560476303100586,
+        18.05129623413086,
+        1.4888113737106323
+      ],
+      "field": {
+        "map_stamp": 1792429853.0452144,
+        "heading_bin": 2,
+        "row": 119,
+        "col": 113,
+        "status": "KNOWN",
+        "reference_probability": 0.9998692274093628,
+        "min_body_p": 0.9997698664665222,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 163.9243288040161,
+      "status": "ALIGNING",
+      "pose": [
+        16.560476303100586,
+        18.05129623413086,
+        0.5364216566085815
+      ],
+      "field": {
+        "map_stamp": 1792429855.035243,
+        "heading_bin": 1,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9999006986618042,
+        "min_body_p": 0.9998764991760254,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 163.97438979148865,
+      "status": "DRIVING",
+      "pose": [
+        16.560476303100586,
+        18.05129623413086,
+        0.5359299182891846
+      ],
+      "field": {
+        "map_stamp": 1792429855.035243,
+        "heading_bin": 1,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9999006986618042,
+        "min_body_p": 0.9998764991760254,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 169.7243230342865,
+      "status": "GOAL_REACHED",
+      "pose": [
+        18.874771118164062,
+        19.316219329833984,
+        0.49961784482002275
+      ],
+      "field": {
+        "map_stamp": 1792429860.4402683,
+        "heading_bin": 1,
+        "row": 111,
+        "col": 115,
+        "status": "KNOWN",
+        "reference_probability": 0.9998965263366699,
+        "min_body_p": 0.9997406601905823,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 170.27467155456543,
+      "status": "DRIVING",
+      "pose": [
+        18.874771118164062,
+        19.316219329833984,
+        0.49961784482002264
+      ],
+      "field": {
+        "map_stamp": 1792429861.440268,
+        "heading_bin": 1,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9999033212661743,
+        "min_body_p": 0.9998446702957153,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 171.62450313568115,
+      "status": "ALIGNING",
+      "pose": [
+        19.045001983642578,
+        19.488008499145508,
+        1.0599174499511714
+      ],
+      "field": {
+        "map_stamp": 1792429862.4402578,
+        "heading_bin": 1,
+        "row": 118,
+        "col": 117,
+        "status": "KNOWN",
+        "reference_probability": 0.9999001026153564,
+        "min_body_p": 0.9998643398284912,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 172.02432417869568,
+      "status": "TURNING",
+      "pose": [
+        19.045063018798828,
+        19.488117218017578,
+        1.0600174665451048
+      ],
+      "field": {
+        "map_stamp": 1792429863.035237,
+        "heading_bin": 1,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9999016523361206,
+        "min_body_p": 0.9998700618743896,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 172.17431092262268,
+      "status": "ALIGNING",
+      "pose": [
+        19.045063018798828,
+        19.488117218017578,
+        1.0744417905807497
+      ],
+      "field": {
+        "map_stamp": 1792429863.035237,
+        "heading_bin": 1,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9999016523361206,
+        "min_body_p": 0.9998700618743896,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 172.22437143325806,
+      "status": "DRIVING",
+      "pose": [
+        19.045063018798828,
+        19.488117218017578,
+        1.0768653154373167
+      ],
+      "field": {
+        "map_stamp": 1792429863.4402654,
+        "heading_bin": 1,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9999021291732788,
+        "min_body_p": 0.9998763799667358,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 177.57434010505676,
+      "status": "GOAL_REACHED",
+      "pose": [
+        20.123632431030273,
+        21.67403221130371,
+        1.112821102142334
+      ],
+      "field": {
+        "map_stamp": 1792429868.440262,
+        "heading_bin": 1,
+        "row": 116,
+        "col": 113,
+        "status": "KNOWN",
+        "reference_probability": 0.9998780488967896,
+        "min_body_p": 0.9998148083686829,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 178.02447986602783,
+      "status": "TURNING",
+      "pose": [
+        20.123632431030273,
+        21.67403221130371,
+        1.1128211021423342
+      ],
+      "field": {
+        "map_stamp": 1792429869.0402534,
+        "heading_bin": 1,
+        "row": 118,
+        "col": 118,
+        "status": "KNOWN",
+        "reference_probability": 0.999884843826294,
+        "min_body_p": 0.9998475313186646,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 181.12443947792053,
+      "status": "ALIGNING",
+      "pose": [
+        20.123632431030273,
+        21.67403221130371,
+        3.0776772499084473
+      ],
+      "field": {
+        "map_stamp": 1792429872.0402572,
+        "heading_bin": 4,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9999022483825684,
+        "min_body_p": 0.9998242259025574,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 181.17444682121277,
+      "status": "DRIVING",
+      "pose": [
+        20.123632431030273,
+        21.67403221130371,
+        3.0803210735321045
+      ],
+      "field": {
+        "map_stamp": 1792429872.0402572,
+        "heading_bin": 4,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9999022483825684,
+        "min_body_p": 0.9998242259025574,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 190.924307346344,
+      "status": "GOAL_REACHED",
+      "pose": [
+        15.488715171813965,
+        21.767688751220703,
+        3.1370363235473633
+      ],
+      "field": {
+        "map_stamp": 1792429882.0552454,
+        "heading_bin": 4,
+        "row": 127,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9999313354492188,
+        "min_body_p": 0.9998332262039185,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 190.97474884986877,
+      "status": "DRIVING",
+      "pose": [
+        15.488715171813965,
+        21.767688751220703,
+        3.1370363235473633
+      ],
+      "field": {
+        "map_stamp": 1792429882.0552454,
+        "heading_bin": 4,
+        "row": 127,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9999313354492188,
+        "min_body_p": 0.9998332262039185,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 199.07434034347534,
+      "status": "GOAL_REACHED",
+      "pose": [
+        11.864860534667969,
+        22.93738555908203,
+        2.8270421028137207
+      ],
+      "field": {
+        "map_stamp": 1792429890.05025,
+        "heading_bin": 4,
+        "row": 128,
+        "col": 118,
+        "status": "KNOWN",
+        "reference_probability": 0.9999006986618042,
+        "min_body_p": 0.9998552799224854,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 199.2245488166809,
+      "status": "TURNING",
+      "pose": [
+        11.864860534667969,
+        22.93738555908203,
+        2.8270421028137207
+      ],
+      "field": {
+        "map_stamp": 1792429890.4502578,
+        "heading_bin": 4,
+        "row": 122,
+        "col": 119,
+        "status": "KNOWN",
+        "reference_probability": 0.999900221824646,
+        "min_body_p": 0.9998677968978882,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 201.32447719573975,
+      "status": "ALIGNING",
+      "pose": [
+        11.864860534667969,
+        22.93738555908203,
+        1.6290516853332515
+      ],
+      "field": {
+        "map_stamp": 1792429892.4501967,
+        "heading_bin": 2,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998742341995239,
+        "min_body_p": 0.9997881054878235,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 201.3744261264801,
+      "status": "DRIVING",
+      "pose": [
+        11.864860534667969,
+        22.93738555908203,
+        1.628051519393921
+      ],
+      "field": {
+        "map_stamp": 1792429892.4501967,
+        "heading_bin": 2,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998742341995239,
+        "min_body_p": 0.9997881054878235,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 208.9243643283844,
+      "status": "GOAL_REACHED",
+      "pose": [
+        11.772592544555664,
+        26.470949172973633,
+        1.5965332984924319
+      ],
+      "field": {
+        "map_stamp": 1792429900.0502176,
+        "heading_bin": 2,
+        "row": 120,
+        "col": 113,
+        "status": "KNOWN",
+        "reference_probability": 0.9998854398727417,
+        "min_body_p": 0.9997062087059021,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 209.27465057373047,
+      "status": "DRIVING",
+      "pose": [
+        11.772592544555664,
+        26.470949172973633,
+        1.5965332984924319
+      ],
+      "field": {
+        "map_stamp": 1792429900.4501994,
+        "heading_bin": 2,
+        "row": 120,
+        "col": 119,
+        "status": "KNOWN",
+        "reference_probability": 0.9998892545700073,
+        "min_body_p": 0.9997532963752747,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 214.97507333755493,
+      "status": "TURNING",
+      "pose": [
+        11.745549201965332,
+        28.843494415283203,
+        2.0839884281158447
+      ],
+      "field": {
+        "map_stamp": 1792429906.050215,
+        "heading_bin": 3,
+        "row": 120,
+        "col": 117,
+        "status": "KNOWN",
+        "reference_probability": 0.9998793601989746,
+        "min_body_p": 0.9998239874839783,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 215.92474150657654,
+      "status": "ALIGNING",
+      "pose": [
+        11.745549201965332,
+        28.843494415283203,
+        2.585613965988159
+      ],
+      "field": {
+        "map_stamp": 1792429907.050216,
+        "heading_bin": 3,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998776912689209,
+        "min_body_p": 0.9998401403427124,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 215.9748101234436,
+      "status": "TURNING",
+      "pose": [
+        11.745549201965332,
+        28.843494415283203,
+        2.587900400161743
+      ],
+      "field": {
+        "map_stamp": 1792429907.050216,
+        "heading_bin": 3,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998776912689209,
+        "min_body_p": 0.9998401403427124,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 216.07481265068054,
+      "status": "ALIGNING",
+      "pose": [
+        11.745549201965332,
+        28.843494415283203,
+        2.5982143878936768
+      ],
+      "field": {
+        "map_stamp": 1792429907.050216,
+        "heading_bin": 3,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998776912689209,
+        "min_body_p": 0.9998401403427124,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 216.12478351593018,
+      "status": "DRIVING",
+      "pose": [
+        11.745549201965332,
+        28.843494415283203,
+        2.60024094581604
+      ],
+      "field": {
+        "map_stamp": 1792429907.050216,
+        "heading_bin": 3,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998776912689209,
+        "min_body_p": 0.9998401403427124,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 221.82431650161743,
+      "status": "GOAL_REACHED",
+      "pose": [
+        9.466080665588379,
+        30.114830017089844,
+        2.6337549686431885
+      ],
+      "field": {
+        "map_stamp": 1792429913.0502467,
+        "heading_bin": 3,
+        "row": 125,
+        "col": 117,
+        "status": "KNOWN",
+        "reference_probability": 0.9998445510864258,
+        "min_body_p": 0.9997708201408386,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 222.32465028762817,
+      "status": "TURNING",
+      "pose": [
+        9.466080665588379,
+        30.114830017089844,
+        2.6337549686431885
+      ],
+      "field": {
+        "map_stamp": 1792429913.0502467,
+        "heading_bin": 3,
+        "row": 125,
+        "col": 117,
+        "status": "KNOWN",
+        "reference_probability": 0.9998445510864258,
+        "min_body_p": 0.9997708201408386,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 225.1743941307068,
+      "status": "ALIGNING",
+      "pose": [
+        9.466080665588379,
+        30.114830017089844,
+        0.8545372486114502
+      ],
+      "field": {
+        "map_stamp": 1792429916.0652454,
+        "heading_bin": 1,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9999126195907593,
+        "min_body_p": 0.9997430443763733,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 225.2243583202362,
+      "status": "DRIVING",
+      "pose": [
+        9.466080665588379,
+        30.114830017089844,
+        0.8521447181701661
+      ],
+      "field": {
+        "map_stamp": 1792429916.0652454,
+        "heading_bin": 1,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9999126195907593,
+        "min_body_p": 0.9997430443763733,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 232.22450494766235,
+      "status": "GOAL_REACHED",
+      "pose": [
+        11.699094772338867,
+        32.49266052246094,
+        0.8162858486175537
+      ],
+      "field": {
+        "map_stamp": 1792429923.0802364,
+        "heading_bin": 1,
+        "row": 112,
+        "col": 112,
+        "status": "KNOWN",
+        "reference_probability": 0.9998857975006104,
+        "min_body_p": 0.9998244643211365,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 232.2746558189392,
+      "status": "TURNING",
+      "pose": [
+        11.700807571411133,
+        32.494483947753906,
+        0.816288411617279
+      ],
+      "field": {
+        "map_stamp": 1792429923.0802364,
+        "heading_bin": 1,
+        "row": 112,
+        "col": 112,
+        "status": "KNOWN",
+        "reference_probability": 0.9998857975006104,
+        "min_body_p": 0.9998244643211365,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 234.72478818893433,
+      "status": "ALIGNING",
+      "pose": [
+        11.700807571411133,
+        32.494483947753906,
+        2.2950761318206787
+      ],
+      "field": {
+        "map_stamp": 1792429926.0702465,
+        "heading_bin": 3,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998562335968018,
+        "min_body_p": 0.9998179078102112,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 234.77444171905518,
+      "status": "DRIVING",
+      "pose": [
+        11.700807571411133,
+        32.494483947753906,
+        2.2959752082824707
+      ],
+      "field": {
+        "map_stamp": 1792429926.0702465,
+        "heading_bin": 3,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998562335968018,
+        "min_body_p": 0.9998179078102112,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 241.82429218292236,
+      "status": "GOAL_REACHED",
+      "pose": [
+        9.446521759033203,
+        34.8873176574707,
+        2.327167272567749
+      ],
+      "field": {
+        "map_stamp": 1792429933.0802486,
+        "heading_bin": 3,
+        "row": 124,
+        "col": 116,
+        "status": "KNOWN",
+        "reference_probability": 0.9998736381530762,
+        "min_body_p": 0.9997809529304504,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 242.32430243492126,
+      "status": "TURNING",
+      "pose": [
+        9.446521759033203,
+        34.8873176574707,
+        2.327167272567749
+      ],
+      "field": {
+        "map_stamp": 1792429933.4802794,
+        "heading_bin": 3,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998711347579956,
+        "min_body_p": 0.9998113512992859,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 244.77434396743774,
+      "status": "ALIGNING",
+      "pose": [
+        9.446521759033203,
+        34.8873176574707,
+        0.8543120026588442
+      ],
+      "field": {
+        "map_stamp": 1792429936.0702522,
+        "heading_bin": 1,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998914003372192,
+        "min_body_p": 0.9997844099998474,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 244.8242907524109,
+      "status": "DRIVING",
+      "pose": [
+        9.446521759033203,
+        34.8873176574707,
+        0.8538065552711488
+      ],
+      "field": {
+        "map_stamp": 1792429936.0702522,
+        "heading_bin": 1,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998914003372192,
+        "min_body_p": 0.9997844099998474,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 251.9742875099182,
+      "status": "GOAL_REACHED",
+      "pose": [
+        11.697510719299316,
+        37.290653228759766,
+        0.818152129650116
+      ],
+      "field": {
+        "map_stamp": 1792429943.0702393,
+        "heading_bin": 1,
+        "row": 115,
+        "col": 114,
+        "status": "KNOWN",
+        "reference_probability": 0.9999017715454102,
+        "min_body_p": 0.9998447895050049,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 252.17451572418213,
+      "status": "TURNING",
+      "pose": [
+        11.697510719299316,
+        37.290653228759766,
+        0.818152129650116
+      ],
+      "field": {
+        "map_stamp": 1792429943.0702393,
+        "heading_bin": 1,
+        "row": 115,
+        "col": 114,
+        "status": "KNOWN",
+        "reference_probability": 0.9999017715454102,
+        "min_body_p": 0.9998447895050049,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 254.72454452514648,
+      "status": "ALIGNING",
+      "pose": [
+        11.697510719299316,
+        37.290653228759766,
+        -0.7177079319953918
+      ],
+      "field": {
+        "map_stamp": 1792429945.470243,
+        "heading_bin": 7,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998421669006348,
+        "min_body_p": 0.9997732043266296,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 254.7746946811676,
+      "status": "DRIVING",
+      "pose": [
+        11.697510719299316,
+        37.290653228759766,
+        -0.7199925780296326
+      ],
+      "field": {
+        "map_stamp": 1792429946.0702338,
+        "heading_bin": 7,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998433589935303,
+        "min_body_p": 0.9997718930244446,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 261.92426109313965,
+      "status": "GOAL_REACHED",
+      "pose": [
+        14.098797798156738,
+        35.035003662109375,
+        -0.7536855936050414
+      ],
+      "field": {
+        "map_stamp": 1792429953.075247,
+        "heading_bin": 7,
+        "row": 115,
+        "col": 125,
+        "status": "KNOWN",
+        "reference_probability": 0.9998152852058411,
+        "min_body_p": 0.9997888207435608,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 262.1744179725647,
+      "status": "TURNING",
+      "pose": [
+        14.098797798156738,
+        35.035003662109375,
+        -0.7536855936050417
+      ],
+      "field": {
+        "map_stamp": 1792429953.075247,
+        "heading_bin": 7,
+        "row": 115,
+        "col": 125,
+        "status": "KNOWN",
+        "reference_probability": 0.9998152852058411,
+        "min_body_p": 0.9997888207435608,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 264.3743107318878,
+      "status": "DRIVING",
+      "pose": [
+        14.098797798156738,
+        35.035003662109375,
+        -1.963202953338623
+      ],
+      "field": {
+        "map_stamp": 1792429955.4852378,
+        "heading_bin": 6,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998793601989746,
+        "min_body_p": 0.9998493194580078,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 270.97455954551697,
+      "status": "TURNING",
+      "pose": [
+        12.945636749267578,
+        32.455936431884766,
+        -1.488154411315918
+      ],
+      "field": {
+        "map_stamp": 1792429962.0752597,
+        "heading_bin": 6,
+        "row": 121,
+        "col": 122,
+        "status": "KNOWN",
+        "reference_probability": 0.9997367262840271,
+        "min_body_p": 0.6053867340087891,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 3
+      }
+    },
+    {
+      "time_s": 271.6247236728668,
+      "status": "ALIGNING",
+      "pose": [
+        12.945636749267578,
+        32.455936431884766,
+        -1.2021546363830564
+      ],
+      "field": {
+        "map_stamp": 1792429962.4752593,
+        "heading_bin": 6,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9997352957725525,
+        "min_body_p": 0.545527458190918,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 3
+      }
+    },
+    {
+      "time_s": 271.7246251106262,
+      "status": "TURNING",
+      "pose": [
+        12.945636749267578,
+        32.455936431884766,
+        -1.2031548023223875
+      ],
+      "field": {
+        "map_stamp": 1792429963.075254,
+        "heading_bin": 6,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9997298121452332,
+        "min_body_p": 0.5292301774024963,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 3
+      }
+    },
+    {
+      "time_s": 272.1749544143677,
+      "status": "ALIGNING",
+      "pose": [
+        12.945636749267578,
+        32.455936431884766,
+        -1.2961535453796384
+      ],
+      "field": {
+        "map_stamp": 1792429963.075254,
+        "heading_bin": 6,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9997298121452332,
+        "min_body_p": 0.5292301774024963,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 3
+      }
+    },
+    {
+      "time_s": 272.27481508255005,
+      "status": "TURNING",
+      "pose": [
+        12.945636749267578,
+        32.455936431884766,
+        -1.2971537113189695
+      ],
+      "field": {
+        "map_stamp": 1792429963.475234,
+        "heading_bin": 6,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9997245669364929,
+        "min_body_p": 0.5246484279632568,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 3
+      }
+    },
+    {
+      "time_s": 275.874400138855,
+      "status": "ALIGNING",
+      "pose": [
+        12.945636749267578,
+        32.455936431884766,
+        1.0815078020095823
+      ],
+      "field": {
+        "map_stamp": 1792429967.0852592,
+        "heading_bin": 1,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998201727867126,
+        "min_body_p": 0.4084976613521576,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 3
+      }
+    },
+    {
+      "time_s": 275.9243700504303,
+      "status": "DRIVING",
+      "pose": [
+        12.945636749267578,
+        32.455936431884766,
+        1.0837560892105105
+      ],
+      "field": {
+        "map_stamp": 1792429967.0852592,
+        "heading_bin": 1,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998201727867126,
+        "min_body_p": 0.4084976613521576,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 3
+      }
+    },
+    {
+      "time_s": 278.17446756362915,
+      "status": "HT_PATH_BLOCKED",
+      "pose": [
+        13.65603256225586,
+        32.94780731201172,
+        0.2482272386550903
+      ],
+      "field": {
+        "map_stamp": 1792429969.0752552,
+        "heading_bin": 0,
+        "row": 110,
+        "col": 116,
+        "status": "KNOWN",
+        "reference_probability": 0.9999041557312012,
+        "min_body_p": 0.03940529003739357,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 3
+      }
+    },
+    {
+      "time_s": 278.224237203598,
+      "status": "EMPTY_PATH",
+      "pose": [
+        13.65603256225586,
+        32.94780731201172,
+        0.24822723865509033
+      ],
+      "field": {
+        "map_stamp": 1792429969.4752972,
+        "heading_bin": 0,
+        "row": 116,
+        "col": 119,
+        "status": "KNOWN",
+        "reference_probability": 0.9999035596847534,
+        "min_body_p": 0.039678484201431274,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 3
+      }
+    },
+    {
+      "time_s": 279.02471351623535,
+      "status": "TURNING",
+      "pose": [
+        13.65603256225586,
+        32.94780731201172,
+        0.24822723865509033
+      ],
+      "field": {
+        "map_stamp": 1792429970.085278,
+        "heading_bin": 0,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9999011754989624,
+        "min_body_p": 0.038644399493932724,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 3
+      }
+    },
+    {
+      "time_s": 279.8248567581177,
+      "status": "DRIVING",
+      "pose": [
+        13.65603256225586,
+        32.94780731201172,
+        0.40793648362159723
+      ],
+      "field": {
+        "map_stamp": 1792429971.075261,
+        "heading_bin": 1,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9996002316474915,
+        "min_body_p": 0.003687444608658552,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 3
+      }
+    },
+    {
+      "time_s": 289.9250764846802,
+      "status": "TURNING",
+      "pose": [
+        16.6340274810791,
+        30.042593002319336,
+        -1.3584653139114382
+      ],
+      "field": {
+        "map_stamp": 1792429981.0752492,
+        "heading_bin": 6,
+        "row": 119,
+        "col": 122,
+        "status": "KNOWN",
+        "reference_probability": 0.9998794794082642,
+        "min_body_p": 0.9998351335525513,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 290.7249376773834,
+      "status": "ALIGNING",
+      "pose": [
+        16.6340274810791,
+        30.042593002319336,
+        -1.5846196413040166
+      ],
+      "field": {
+        "map_stamp": 1792429981.47527,
+        "heading_bin": 6,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998774528503418,
+        "min_body_p": 0.9998511075973511,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 290.7750189304352,
+      "status": "DRIVING",
+      "pose": [
+        16.6340274810791,
+        30.042593002319336,
+        -1.5868881940841677
+      ],
+      "field": {
+        "map_stamp": 1792429982.085243,
+        "heading_bin": 6,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998754262924194,
+        "min_body_p": 0.999853253364563,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 295.67437267303467,
+      "status": "GOAL_REACHED",
+      "pose": [
+        16.57069969177246,
+        27.87534523010254,
+        -1.5766599178314207
+      ],
+      "field": {
+        "map_stamp": 1792429986.4802132,
+        "heading_bin": 6,
+        "row": 120,
+        "col": 130,
+        "status": "KNOWN",
+        "reference_probability": 0.9998948574066162,
+        "min_body_p": 0.9997116923332214,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 296.12499594688416,
+      "status": "DRIVING",
+      "pose": [
+        16.57069969177246,
+        27.87534523010254,
+        -1.5766599178314211
+      ],
+      "field": {
+        "map_stamp": 1792429987.0752332,
+        "heading_bin": 6,
+        "row": 120,
+        "col": 124,
+        "status": "KNOWN",
+        "reference_probability": 0.9998927116394043,
+        "min_body_p": 0.999808132648468,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 299.02439618110657,
+      "status": "GOAL_REACHED",
+      "pose": [
+        16.57013511657715,
+        26.665115356445312,
+        -1.571147322654724
+      ],
+      "field": {
+        "map_stamp": 1792429990.0902433,
+        "heading_bin": 6,
+        "row": 120,
+        "col": 129,
+        "status": "KNOWN",
+        "reference_probability": 0.999862551689148,
+        "min_body_p": 0.9998052716255188,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 299.07538318634033,
+      "status": "DRIVING",
+      "pose": [
+        16.57013511657715,
+        26.665115356445312,
+        -1.5711473226547241
+      ],
+      "field": {
+        "map_stamp": 1792429990.0902433,
+        "heading_bin": 6,
+        "row": 120,
+        "col": 129,
+        "status": "KNOWN",
+        "reference_probability": 0.999862551689148,
+        "min_body_p": 0.9998052716255188,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 301.92435789108276,
+      "status": "GOAL_REACHED",
+      "pose": [
+        16.57013511657715,
+        25.479890823364258,
+        -1.5709726810455322
+      ],
+      "field": {
+        "map_stamp": 1792429993.0802627,
+        "heading_bin": 6,
+        "row": 120,
+        "col": 127,
+        "status": "KNOWN",
+        "reference_probability": 0.9998660087585449,
+        "min_body_p": 0.9998186230659485,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 302.1757688522339,
+      "status": "TURNING",
+      "pose": [
+        16.57013511657715,
+        25.479890823364258,
+        -1.5709726810455322
+      ],
+      "field": {
+        "map_stamp": 1792429993.0802627,
+        "heading_bin": 6,
+        "row": 120,
+        "col": 127,
+        "status": "KNOWN",
+        "reference_probability": 0.9998660087585449,
+        "min_body_p": 0.9998186230659485,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 304.57534527778625,
+      "status": "ALIGNING",
+      "pose": [
+        16.57013511657715,
+        25.479890823364258,
+        -3.0114059448242188
+      ],
+      "field": {
+        "map_stamp": 1792429995.4802778,
+        "heading_bin": 4,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998915195465088,
+        "min_body_p": 0.9998053908348083,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 304.62549471855164,
+      "status": "DRIVING",
+      "pose": [
+        16.57013511657715,
+        25.479890823364258,
+        -3.0138497352600098
+      ],
+      "field": {
+        "map_stamp": 1792429995.4802778,
+        "heading_bin": 4,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998915195465088,
+        "min_body_p": 0.9998053908348083,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 307.3243103027344,
+      "status": "GOAL_REACHED",
+      "pose": [
+        15.464899063110352,
+        25.3769474029541,
+        -3.050278425216675
+      ],
+      "field": {
+        "map_stamp": 1792429998.4802456,
+        "heading_bin": 4,
+        "row": 126,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9999066591262817,
+        "min_body_p": 0.999488353729248,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 308.17576479911804,
+      "status": "TURNING",
+      "pose": [
+        15.464899063110352,
+        25.3769474029541,
+        -3.050278425216675
+      ],
+      "field": {
+        "map_stamp": 1792429999.0802486,
+        "heading_bin": 4,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9999064207077026,
+        "min_body_p": 0.9995225667953491,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 310.7257080078125,
+      "status": "ALIGNING",
+      "pose": [
+        15.464899063110352,
+        25.3769474029541,
+        1.6841540336608887
+      ],
+      "field": {
+        "map_stamp": 1792430002.0852544,
+        "heading_bin": 2,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998589754104614,
+        "min_body_p": 0.05261483043432236,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 310.7755904197693,
+      "status": "DRIVING",
+      "pose": [
+        15.464899063110352,
+        25.3769474029541,
+        1.6839406490325926
+      ],
+      "field": {
+        "map_stamp": 1792430002.0852544,
+        "heading_bin": 2,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998589754104614,
+        "min_body_p": 0.05261483043432236,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 315.9242973327637,
+      "status": "GOAL_REACHED",
+      "pose": [
+        15.371209144592285,
+        27.66533660888672,
+        1.5806936025619505
+      ],
+      "field": {
+        "map_stamp": 1792430007.0902863,
+        "heading_bin": 2,
+        "row": 121,
+        "col": 113,
+        "status": "KNOWN",
+        "reference_probability": 0.9998959302902222,
+        "min_body_p": 0.9984978437423706,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 316.17550897598267,
+      "status": "DRIVING",
+      "pose": [
+        15.371209144592285,
+        27.66533660888672,
+        1.5806936025619502
+      ],
+      "field": {
+        "map_stamp": 1792430007.0902863,
+        "heading_bin": 2,
+        "row": 121,
+        "col": 113,
+        "status": "KNOWN",
+        "reference_probability": 0.9998959302902222,
+        "min_body_p": 0.9984978437423706,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 319.0243344306946,
+      "status": "GOAL_REACHED",
+      "pose": [
+        15.370139122009277,
+        28.850561141967773,
+        1.5713675022125244
+      ],
+      "field": {
+        "map_stamp": 1792430010.0902474,
+        "heading_bin": 2,
+        "row": 120,
+        "col": 112,
+        "status": "KNOWN",
+        "reference_probability": 0.9999048709869385,
+        "min_body_p": 0.9982908368110657,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 319.2252571582794,
+      "status": "DRIVING",
+      "pose": [
+        15.370139122009277,
+        28.850561141967773,
+        1.5713675022125244
+      ],
+      "field": {
+        "map_stamp": 1792430010.0902474,
+        "heading_bin": 2,
+        "row": 120,
+        "col": 112,
+        "status": "KNOWN",
+        "reference_probability": 0.9999048709869385,
+        "min_body_p": 0.9982908368110657,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 322.124361038208,
+      "status": "GOAL_REACHED",
+      "pose": [
+        15.370138168334961,
+        30.060791015625,
+        1.5709887742996218
+      ],
+      "field": {
+        "map_stamp": 1792430013.1002078,
+        "heading_bin": 2,
+        "row": 120,
+        "col": 111,
+        "status": "KNOWN",
+        "reference_probability": 0.9998748302459717,
+        "min_body_p": 0.9985194802284241,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 322.17477774620056,
+      "status": "TURNING",
+      "pose": [
+        15.370138168334961,
+        30.060791015625,
+        1.5709887742996218
+      ],
+      "field": {
+        "map_stamp": 1792430013.1002078,
+        "heading_bin": 2,
+        "row": 120,
+        "col": 111,
+        "status": "KNOWN",
+        "reference_probability": 0.9998748302459717,
+        "min_body_p": 0.9985194802284241,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 323.67510652542114,
+      "status": "ALIGNING",
+      "pose": [
+        15.370138168334961,
+        30.060791015625,
+        0.8612470626831054
+      ],
+      "field": {
+        "map_stamp": 1792430015.1002076,
+        "heading_bin": 1,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998980760574341,
+        "min_body_p": 0.005435608793050051,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 323.72489404678345,
+      "status": "DRIVING",
+      "pose": [
+        15.370138168334961,
+        30.060791015625,
+        0.8608477115631105
+      ],
+      "field": {
+        "map_stamp": 1792430015.1002076,
+        "heading_bin": 1,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998980760574341,
+        "min_body_p": 0.005435608793050051,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 327.6243803501129,
+      "status": "GOAL_REACHED",
+      "pose": [
+        16.49840545654297,
+        31.29026985168457,
+        0.8274415731430051
+      ],
+      "field": {
+        "map_stamp": 1792430018.4952712,
+        "heading_bin": 1,
+        "row": 114,
+        "col": 113,
+        "status": "KNOWN",
+        "reference_probability": 0.9998880624771118,
+        "min_body_p": 0.9998290538787842,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 328.22533321380615,
+      "status": "TURNING",
+      "pose": [
+        16.49840545654297,
+        31.29026985168457,
+        0.8274415731430054
+      ],
+      "field": {
+        "map_stamp": 1792430019.0952506,
+        "heading_bin": 1,
+        "row": 118,
+        "col": 118,
+        "status": "KNOWN",
+        "reference_probability": 0.9998903274536133,
+        "min_body_p": 0.9998506307601929,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 329.6748700141907,
+      "status": "ALIGNING",
+      "pose": [
+        16.49840545654297,
+        31.29026985168457,
+        1.4773093461990354
+      ],
+      "field": {
+        "map_stamp": 1792430020.4952614,
+        "heading_bin": 2,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.999860405921936,
+        "min_body_p": 0.9998236298561096,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 329.72487807273865,
+      "status": "DRIVING",
+      "pose": [
+        16.49840545654297,
+        31.29026985168457,
+        1.4797495603561401
+      ],
+      "field": {
+        "map_stamp": 1792430021.0952523,
+        "heading_bin": 2,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998620748519897,
+        "min_body_p": 0.9998182654380798,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 332.62431621551514,
+      "status": "GOAL_REACHED",
+      "pose": [
+        16.564054489135742,
+        32.45697784423828,
+        1.5163383483886719
+      ],
+      "field": {
+        "map_stamp": 1792430023.4952536,
+        "heading_bin": 2,
+        "row": 119,
+        "col": 110,
+        "status": "KNOWN",
+        "reference_probability": 0.9998379945755005,
+        "min_body_p": 0.9997488856315613,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 333.1249496936798,
+      "status": "TURNING",
+      "pose": [
+        16.564054489135742,
+        32.45697784423828,
+        1.516338348388672
+      ],
+      "field": {
+        "map_stamp": 1792430024.0952442,
+        "heading_bin": 2,
+        "row": 119,
+        "col": 117,
+        "status": "KNOWN",
+        "reference_probability": 0.9998400211334229,
+        "min_body_p": 0.9998262524604797,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 335.6249792575836,
+      "status": "ALIGNING",
+      "pose": [
+        16.564054489135742,
+        32.45697784423828,
+        3.0126688480377197
+      ],
+      "field": {
+        "map_stamp": 1792430026.495254,
+        "heading_bin": 4,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.999901533126831,
+        "min_body_p": 0.9998303651809692,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 335.6748549938202,
+      "status": "DRIVING",
+      "pose": [
+        16.564054489135742,
+        32.45697784423828,
+        3.0148980617523193
+      ],
+      "field": {
+        "map_stamp": 1792430026.495254,
+        "heading_bin": 4,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.999901533126831,
+        "min_body_p": 0.9998303651809692,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 338.3747980594635,
+      "status": "GOAL_REACHED",
+      "pose": [
+        15.478869438171387,
+        32.55837631225586,
+        3.0503928661346436
+      ],
+      "field": {
+        "map_stamp": 1792430029.0952528,
+        "heading_bin": 4,
+        "row": 132,
+        "col": 119,
+        "status": "KNOWN",
+        "reference_probability": 0.9998927116394043,
+        "min_body_p": 0.9996703863143921,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 338.9746370315552,
+      "status": "DRIVING",
+      "pose": [
+        15.478869438171387,
+        32.55837631225586,
+        3.0503928661346436
+      ],
+      "field": {
+        "map_stamp": 1792430029.5154183,
+        "heading_bin": 4,
+        "row": 126,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998946189880371,
+        "min_body_p": 0.9997064471244812,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 343.1243751049042,
+      "status": "HT_PATH_BLOCKED",
+      "pose": [
+        13.713310241699219,
+        32.95066452026367,
+        -2.9890403747558594
+      ],
+      "field": {
+        "map_stamp": 1792430034.1050365,
+        "heading_bin": 4,
+        "row": 129,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9995508790016174,
+        "min_body_p": 0.005690513178706169,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 3
+      }
+    },
+    {
+      "time_s": 343.1742777824402,
+      "status": "EMPTY_PATH",
+      "pose": [
+        13.713310241699219,
+        32.95066452026367,
+        -2.9890403747558594
+      ],
+      "field": {
+        "map_stamp": 1792430034.1050365,
+        "heading_bin": 4,
+        "row": 129,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9995508790016174,
+        "min_body_p": 0.005690513178706169,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 3
+      }
+    },
+    {
+      "time_s": 344.02447724342346,
+      "status": "TURNING",
+      "pose": [
+        13.713310241699219,
+        32.95066452026367,
+        -2.9890403747558594
+      ],
+      "field": {
+        "map_stamp": 1792430035.1050148,
+        "heading_bin": 4,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9995693564414978,
+        "min_body_p": 0.0057573686353862286,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 3
+      }
+    },
+    {
+      "time_s": 345.32451581954956,
+      "status": "ALIGNING",
+      "pose": [
+        13.713310241699219,
+        32.95066452026367,
+        2.90990948677063
+      ],
+      "field": {
+        "map_stamp": 1792430036.51503,
+        "heading_bin": 4,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9996474981307983,
+        "min_body_p": 0.005746379494667053,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 3
+      }
+    },
+    {
+      "time_s": 345.3745319843292,
+      "status": "DRIVING",
+      "pose": [
+        13.713310241699219,
+        32.95066452026367,
+        2.907630205154419
+      ],
+      "field": {
+        "map_stamp": 1792430036.51503,
+        "heading_bin": 4,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9996474981307983,
+        "min_body_p": 0.005746379494667053,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 3
+      }
+    },
+    {
+      "time_s": 352.874361038208,
+      "status": "GOAL_REACHED",
+      "pose": [
+        11.817540168762207,
+        30.274934768676758,
+        -1.9894192218780518
+      ],
+      "field": {
+        "map_stamp": 1792430044.1050208,
+        "heading_bin": 5,
+        "row": 122,
+        "col": 125,
+        "status": "KNOWN",
+        "reference_probability": 0.9998520612716675,
+        "min_body_p": 0.9997944235801697,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 353.02488374710083,
+      "status": "DRIVING",
+      "pose": [
+        11.817540168762207,
+        30.274934768676758,
+        -1.989419221878052
+      ],
+      "field": {
+        "map_stamp": 1792430044.1050208,
+        "heading_bin": 5,
+        "row": 122,
+        "col": 125,
+        "status": "KNOWN",
+        "reference_probability": 0.9998520612716675,
+        "min_body_p": 0.9997944235801697,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 358.8746907711029,
+      "status": "GOAL_REACHED",
+      "pose": [
+        10.619885444641113,
+        27.868330001831055,
+        -2.0323987007141113
+      ],
+      "field": {
+        "map_stamp": 1792430050.1050348,
+        "heading_bin": 5,
+        "row": 123,
+        "col": 126,
+        "status": "KNOWN",
+        "reference_probability": 0.999839186668396,
+        "min_body_p": 0.9997373223304749,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 359.92531156539917,
+      "status": "TURNING",
+      "pose": [
+        10.619885444641113,
+        27.868330001831055,
+        -2.0323987007141113
+      ],
+      "field": {
+        "map_stamp": 1792430050.5251648,
+        "heading_bin": 5,
+        "row": 121,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998399019241333,
+        "min_body_p": 0.9997767806053162,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 361.2752802371979,
+      "status": "DRIVING",
+      "pose": [
+        10.619885444641113,
+        27.868330001831055,
+        -1.6202696561813352
+      ],
+      "field": {
+        "map_stamp": 1792430052.5271468,
+        "heading_bin": 6,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998821020126343,
+        "min_body_p": 0.9998416900634766,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 370.02436923980713,
+      "status": "TURNING",
+      "pose": [
+        9.41015911102295,
+        24.206504821777344,
+        -1.4067978858947756
+      ],
+      "field": {
+        "map_stamp": 1792430060.9476764,
+        "heading_bin": 6,
+        "row": 120,
+        "col": 123,
+        "status": "KNOWN",
+        "reference_probability": 0.9998667240142822,
+        "min_body_p": 0.9998279809951782,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 371.02447962760925,
+      "status": "ALIGNING",
+      "pose": [
+        9.41015911102295,
+        24.206504821777344,
+        -0.8588474392890931
+      ],
+      "field": {
+        "map_stamp": 1792430061.9376998,
+        "heading_bin": 7,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998440742492676,
+        "min_body_p": 0.9997981190681458,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 371.07447052001953,
+      "status": "TURNING",
+      "pose": [
+        9.41015911102295,
+        24.206504821777344,
+        -0.856364905834198
+      ],
+      "field": {
+        "map_stamp": 1792430061.9376998,
+        "heading_bin": 7,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998440742492676,
+        "min_body_p": 0.9997981190681458,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 371.2245726585388,
+      "status": "ALIGNING",
+      "pose": [
+        9.41015911102295,
+        24.206504821777344,
+        -0.8393608927726747
+      ],
+      "field": {
+        "map_stamp": 1792430062.5476463,
+        "heading_bin": 7,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998445510864258,
+        "min_body_p": 0.9998010993003845,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 371.2746033668518,
+      "status": "DRIVING",
+      "pose": [
+        9.41015911102295,
+        24.206504821777344,
+        -0.83698445558548
+      ],
+      "field": {
+        "map_stamp": 1792430062.5476463,
+        "heading_bin": 7,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998445510864258,
+        "min_body_p": 0.9998010993003845,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 378.37427592277527,
+      "status": "GOAL_REACHED",
+      "pose": [
+        11.700175285339355,
+        21.840423583984375,
+        -0.8013834357261659
+      ],
+      "field": {
+        "map_stamp": 1792430069.6068106,
+        "heading_bin": 7,
+        "row": 115,
+        "col": 124,
+        "status": "KNOWN",
+        "reference_probability": 0.9998378753662109,
+        "min_body_p": 0.9997931122779846,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 379.0743656158447,
+      "status": "DRIVING",
+      "pose": [
+        11.700175285339355,
+        21.840423583984375,
+        -0.8013834357261658
+      ],
+      "field": {
+        "map_stamp": 1792430070.0168002,
+        "heading_bin": 7,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998400211334229,
+        "min_body_p": 0.9998001456260681,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 394.9244887828827,
+      "status": "TURNING",
+      "pose": [
+        14.190611839294434,
+        15.899609565734863,
+        -1.0550861358642578
+      ],
+      "field": {
+        "map_stamp": 1792430086.0307727,
+        "heading_bin": 7,
+        "row": 119,
+        "col": 123,
+        "status": "KNOWN",
+        "reference_probability": 0.999811589717865,
+        "min_body_p": 0.9997808337211609,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 395.62439918518066,
+      "status": "ALIGNING",
+      "pose": [
+        14.190611839294434,
+        15.899609565734863,
+        -0.8570674657821656
+      ],
+      "field": {
+        "map_stamp": 1792430086.4307032,
+        "heading_bin": 7,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998192191123962,
+        "min_body_p": 0.9997946619987488,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 395.6744854450226,
+      "status": "DRIVING",
+      "pose": [
+        14.190611839294434,
+        15.899609565734863,
+        -0.8548275232315062
+      ],
+      "field": {
+        "map_stamp": 1792430086.4307032,
+        "heading_bin": 7,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998192191123962,
+        "min_body_p": 0.9997946619987488,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 402.9742844104767,
+      "status": "GOAL_REACHED",
+      "pose": [
+        16.499780654907227,
+        13.443034172058105,
+        -0.8162299990653992
+      ],
+      "field": {
+        "map_stamp": 1792430094.036923,
+        "heading_bin": 7,
+        "row": 115,
+        "col": 126,
+        "status": "KNOWN",
+        "reference_probability": 0.9998196959495544,
+        "min_body_p": 0.9997987151145935,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 403.27436876296997,
+      "status": "TURNING",
+      "pose": [
+        16.499780654907227,
+        13.443034172058105,
+        -0.8162299990653992
+      ],
+      "field": {
+        "map_stamp": 1792430094.036923,
+        "heading_bin": 7,
+        "row": 115,
+        "col": 126,
+        "status": "KNOWN",
+        "reference_probability": 0.9998196959495544,
+        "min_body_p": 0.9997987151145935,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 404.77441143989563,
+      "status": "ALIGNING",
+      "pose": [
+        16.499780654907227,
+        13.443034172058105,
+        -0.09592831134796144
+      ],
+      "field": {
+        "map_stamp": 1792430096.0369344,
+        "heading_bin": 0,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998685121536255,
+        "min_body_p": 0.9998325109481812,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 404.82429575920105,
+      "status": "DRIVING",
+      "pose": [
+        16.499780654907227,
+        13.443034172058105,
+        -0.09362637996673585
+      ],
+      "field": {
+        "map_stamp": 1792430096.0369344,
+        "heading_bin": 0,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998685121536255,
+        "min_body_p": 0.9998325109481812,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 407.72426557540894,
+      "status": "GOAL_REACHED",
+      "pose": [
+        17.66676902770996,
+        13.374152183532715,
+        -0.05741767585277556
+      ],
+      "field": {
+        "map_stamp": 1792430099.0369277,
+        "heading_bin": 0,
+        "row": 115,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998993873596191,
+        "min_body_p": 0.9998151659965515,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 408.0244016647339,
+      "status": "TURNING",
+      "pose": [
+        17.66676902770996,
+        13.374152183532715,
+        -0.05741767585277556
+      ],
+      "field": {
+        "map_stamp": 1792430099.0369277,
+        "heading_bin": 0,
+        "row": 115,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998993873596191,
+        "min_body_p": 0.9998151659965515,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 409.92430877685547,
+      "status": "DRIVING",
+      "pose": [
+        17.66676902770996,
+        13.374152183532715,
+        -1.037848711013794
+      ],
+      "field": {
+        "map_stamp": 1792430101.0369444,
+        "heading_bin": 7,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998461008071899,
+        "min_body_p": 0.9997912049293518,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 409.9743163585663,
+      "status": "ALIGNING",
+      "pose": [
+        17.66739845275879,
+        13.373074531555176,
+        -1.0433216094970705
+      ],
+      "field": {
+        "map_stamp": 1792430101.0369444,
+        "heading_bin": 7,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998461008071899,
+        "min_body_p": 0.9997912049293518,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 410.02432012557983,
+      "status": "DRIVING",
+      "pose": [
+        17.66739845275879,
+        13.373074531555176,
+        -1.045795202255249
+      ],
+      "field": {
+        "map_stamp": 1792430101.0369444,
+        "heading_bin": 7,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998461008071899,
+        "min_body_p": 0.9997912049293518,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 415.7742760181427,
+      "status": "GOAL_REACHED",
+      "pose": [
+        18.923948287963867,
+        11.05359935760498,
+        -1.0751147270202637
+      ],
+      "field": {
+        "map_stamp": 1792430107.041925,
+        "heading_bin": 7,
+        "row": 118,
+        "col": 125,
+        "status": "KNOWN",
+        "reference_probability": 0.999861478805542,
+        "min_body_p": 0.9997629523277283,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 416.024377822876,
+      "status": "DRIVING",
+      "pose": [
+        18.923948287963867,
+        11.05359935760498,
+        -1.0751147270202634
+      ],
+      "field": {
+        "map_stamp": 1792430107.041925,
+        "heading_bin": 7,
+        "row": 118,
+        "col": 125,
+        "status": "KNOWN",
+        "reference_probability": 0.999861478805542,
+        "min_body_p": 0.9997629523277283,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 422.8247141838074,
+      "status": "GOAL_REACHED",
+      "pose": [
+        17.819358825683594,
+        8.653538703918457,
+        -2.0944881439208984
+      ],
+      "field": {
+        "map_stamp": 1792430114.0419364,
+        "heading_bin": 5,
+        "row": 123,
+        "col": 125,
+        "status": "KNOWN",
+        "reference_probability": 0.9997896552085876,
+        "min_body_p": 0.9997065663337708,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 423.82484579086304,
+      "status": "TURNING",
+      "pose": [
+        17.819358825683594,
+        8.653538703918457,
+        -2.0944881439208984
+      ],
+      "field": {
+        "map_stamp": 1792430114.0419364,
+        "heading_bin": 5,
+        "row": 123,
+        "col": 125,
+        "status": "KNOWN",
+        "reference_probability": 0.9997896552085876,
+        "min_body_p": 0.9997065663337708,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 425.32481956481934,
+      "status": "ALIGNING",
+      "pose": [
+        17.819358825683594,
+        8.653538703918457,
+        -1.6448562145233157
+      ],
+      "field": {
+        "map_stamp": 1792430116.4526699,
+        "heading_bin": 6,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998742341995239,
+        "min_body_p": 0.9998408555984497,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 425.37468361854553,
+      "status": "DRIVING",
+      "pose": [
+        17.819358825683594,
+        8.653538703918457,
+        -1.6427497863769533
+      ],
+      "field": {
+        "map_stamp": 1792430116.4526699,
+        "heading_bin": 6,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998742341995239,
+        "min_body_p": 0.9998408555984497,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 430.6242916584015,
+      "status": "GOAL_REACHED",
+      "pose": [
+        17.770376205444336,
+        6.266879081726074,
+        -1.5737812519073489
+      ],
+      "field": {
+        "map_stamp": 1792430121.4526699,
+        "heading_bin": 6,
+        "row": 120,
+        "col": 130,
+        "status": "KNOWN",
+        "reference_probability": 0.999849796295166,
+        "min_body_p": 0.9996274709701538,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 430.974844455719,
+      "status": "DRIVING",
+      "pose": [
+        17.770376205444336,
+        6.266879081726074,
+        -1.5737812519073486
+      ],
+      "field": {
+        "map_stamp": 1792430122.062668,
+        "heading_bin": 6,
+        "row": 120,
+        "col": 124,
+        "status": "KNOWN",
+        "reference_probability": 0.999859094619751,
+        "min_body_p": 0.9998103976249695,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 433.82429599761963,
+      "status": "GOAL_REACHED",
+      "pose": [
+        17.770103454589844,
+        5.07935905456543,
+        -1.5711789131164549
+      ],
+      "field": {
+        "map_stamp": 1792430125.052681,
+        "heading_bin": 6,
+        "row": 120,
+        "col": 126,
+        "status": "KNOWN",
+        "reference_probability": 0.9998712539672852,
+        "min_body_p": 0.9998252987861633,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 434.0748233795166,
+      "status": "DRIVING",
+      "pose": [
+        17.770103454589844,
+        5.07935905456543,
+        -1.5711789131164549
+      ],
+      "field": {
+        "map_stamp": 1792430125.052681,
+        "heading_bin": 6,
+        "row": 120,
+        "col": 126,
+        "status": "KNOWN",
+        "reference_probability": 0.9998712539672852,
+        "min_body_p": 0.9998252987861633,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 436.9743230342865,
+      "status": "GOAL_REACHED",
+      "pose": [
+        17.770103454589844,
+        3.8668384552001953,
+        -1.570864200592041
+      ],
+      "field": {
+        "map_stamp": 1792430128.0576665,
+        "heading_bin": 6,
+        "row": 120,
+        "col": 128,
+        "status": "KNOWN",
+        "reference_probability": 0.999891996383667,
+        "min_body_p": 0.99982750415802,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 437.0752775669098,
+      "status": "DRIVING",
+      "pose": [
+        17.770103454589844,
+        3.8668384552001953,
+        -1.5708642005920412
+      ],
+      "field": {
+        "map_stamp": 1792430128.0576665,
+        "heading_bin": 6,
+        "row": 120,
+        "col": 128,
+        "status": "KNOWN",
+        "reference_probability": 0.999891996383667,
+        "min_body_p": 0.99982750415802,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 439.9743893146515,
+      "status": "GOAL_REACHED",
+      "pose": [
+        17.770103454589844,
+        2.679443359375,
+        -1.5708596706390379
+      ],
+      "field": {
+        "map_stamp": 1792430130.457675,
+        "heading_bin": 6,
+        "row": 120,
+        "col": 134,
+        "status": "KNOWN",
+        "reference_probability": 0.9998425245285034,
+        "min_body_p": 0.9997914433479309,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 440.9246063232422,
+      "status": "DRIVING",
+      "pose": [
+        17.770103454589844,
+        2.679443359375,
+        -1.5708596706390383
+      ],
+      "field": {
+        "map_stamp": 1792430132.0956526,
+        "heading_bin": 6,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.999860405921936,
+        "min_body_p": 0.9998530149459839,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 443.82487988471985,
+      "status": "GOAL_REACHED",
+      "pose": [
+        17.770103454589844,
+        1.4674229621887207,
+        -1.5708634853363035
+      ],
+      "field": {
+        "map_stamp": 1792430135.1056967,
+        "heading_bin": 6,
+        "row": 120,
+        "col": 126,
+        "status": "KNOWN",
+        "reference_probability": 0.9998832941055298,
+        "min_body_p": 0.9998131394386292,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 444.1769142150879,
+      "status": "DRIVING",
+      "pose": [
+        17.770103454589844,
+        1.4674229621887207,
+        -1.5708634853363035
+      ],
+      "field": {
+        "map_stamp": 1792430135.1056967,
+        "heading_bin": 6,
+        "row": 120,
+        "col": 126,
+        "status": "KNOWN",
+        "reference_probability": 0.9998832941055298,
+        "min_body_p": 0.9998131394386292,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 451.82429337501526,
+      "status": "GOAL_REACHED",
+      "pose": [
+        17.770103454589844,
+        -2.1167306900024414,
+        -1.5708589553833008
+      ],
+      "field": {
+        "map_stamp": 1792430143.1057813,
+        "heading_bin": 6,
+        "row": 120,
+        "col": 126,
+        "status": "KNOWN",
+        "reference_probability": 0.9998834133148193,
+        "min_body_p": 0.9998300075531006,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 451.92468452453613,
+      "status": "TURNING",
+      "pose": [
+        17.770103454589844,
+        -2.1167306900024414,
+        -1.5708589553833006
+      ],
+      "field": {
+        "map_stamp": 1792430143.1057813,
+        "heading_bin": 6,
+        "row": 120,
+        "col": 126,
+        "status": "KNOWN",
+        "reference_probability": 0.9998834133148193,
+        "min_body_p": 0.9998300075531006,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 454.324747800827,
+      "status": "ALIGNING",
+      "pose": [
+        17.770103454589844,
+        -2.1167306900024414,
+        -0.13170018792152405
+      ],
+      "field": {
+        "map_stamp": 1792430144.925941,
+        "heading_bin": 0,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.999870777130127,
+        "min_body_p": 0.999798595905304,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 454.37473940849304,
+      "status": "DRIVING",
+      "pose": [
+        17.770103454589844,
+        -2.1167306900024414,
+        -0.12953892350196838
+      ],
+      "field": {
+        "map_stamp": 1792430144.925941,
+        "heading_bin": 0,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.999870777130127,
+        "min_body_p": 0.999798595905304,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 456.6748881340027,
+      "status": "GEOMETRY_COMMAND_BLOCKED",
+      "pose": [
+        18.678428649902344,
+        -2.2042644023895264,
+        -0.09409189224243164
+      ],
+      "field": {
+        "map_stamp": 1792430147.9407582,
+        "heading_bin": 0,
+        "row": 116,
+        "col": 121,
+        "status": "KNOWN",
+        "reference_probability": 0.9998781681060791,
+        "min_body_p": 0.9968053102493286,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 456.7244825363159,
+      "status": "DRIVING",
+      "pose": [
+        18.678428649902344,
+        -2.2042644023895264,
+        -0.09409189224243163
+      ],
+      "field": {
+        "map_stamp": 1792430147.9407582,
+        "heading_bin": 0,
+        "row": 116,
+        "col": 121,
+        "status": "KNOWN",
+        "reference_probability": 0.9998781681060791,
+        "min_body_p": 0.9968053102493286,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 462.97434425354004,
+      "status": "GOAL_REACHED",
+      "pose": [
+        21.27899169921875,
+        -3.391925573348999,
+        -0.4089557826519012
+      ],
+      "field": {
+        "map_stamp": 1792430154.0409117,
+        "heading_bin": 7,
+        "row": 113,
+        "col": 123,
+        "status": "KNOWN",
+        "reference_probability": 0.9998608827590942,
+        "min_body_p": 0.9996893405914307,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 463.1256079673767,
+      "status": "TURNING",
+      "pose": [
+        21.27899169921875,
+        -3.391925573348999,
+        -0.40895578265190125
+      ],
+      "field": {
+        "map_stamp": 1792430154.0409117,
+        "heading_bin": 7,
+        "row": 113,
+        "col": 123,
+        "status": "KNOWN",
+        "reference_probability": 0.9998608827590942,
+        "min_body_p": 0.9996893405914307,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 467.1250913143158,
+      "status": "ALIGNING",
+      "pose": [
+        21.27899169921875,
+        -3.391925573348999,
+        -3.0923495292663574
+      ],
+      "field": {
+        "map_stamp": 1792430158.0258877,
+        "heading_bin": 4,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9999027252197266,
+        "min_body_p": 0.9976853132247925,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 467.1747341156006,
+      "status": "DRIVING",
+      "pose": [
+        21.27899169921875,
+        -3.391925573348999,
+        -3.095062255859375
+      ],
+      "field": {
+        "map_stamp": 1792430158.4359071,
+        "heading_bin": 4,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9999017715454102,
+        "min_body_p": 0.9974310994148254,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 474.52432918548584,
+      "status": "GOAL_REACHED",
+      "pose": [
+        17.86711311340332,
+        -3.4306957721710205,
+        -3.1305739879608154
+      ],
+      "field": {
+        "map_stamp": 1792430165.448116,
+        "heading_bin": 4,
+        "row": 129,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998761415481567,
+        "min_body_p": 0.999808132648468,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 474.9754159450531,
+      "status": "TURNING",
+      "pose": [
+        17.86711311340332,
+        -3.4306957721710205,
+        -3.1305739879608154
+      ],
+      "field": {
+        "map_stamp": 1792430166.0581653,
+        "heading_bin": 4,
+        "row": 123,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.999884843826294,
+        "min_body_p": 0.9998444318771362,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 477.42525339126587,
+      "status": "DRIVING",
+      "pose": [
+        17.86711311340332,
+        -3.4306957721710205,
+        -1.6875407695770268
+      ],
+      "field": {
+        "map_stamp": 1792430168.4481337,
+        "heading_bin": 6,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998724460601807,
+        "min_body_p": 0.9998262524604797,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 479.7255952358246,
+      "status": "GEOMETRY_COMMAND_BLOCKED",
+      "pose": [
+        17.795562744140625,
+        -4.309154987335205,
+        -1.6497771739959717
+      ],
+      "field": {
+        "map_stamp": 1792430170.4744656,
+        "heading_bin": 6,
+        "row": 121,
+        "col": 130,
+        "status": "KNOWN",
+        "reference_probability": 0.9998899698257446,
+        "min_body_p": 0.9987389445304871,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 479.77453899383545,
+      "status": "DRIVING",
+      "pose": [
+        17.795562744140625,
+        -4.309154987335205,
+        -1.6497771739959717
+      ],
+      "field": {
+        "map_stamp": 1792430171.0557647,
+        "heading_bin": 6,
+        "row": 120,
+        "col": 124,
+        "status": "KNOWN",
+        "reference_probability": 0.9998890161514282,
+        "min_body_p": 0.998801589012146,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 480.02559995651245,
+      "status": "TURNING",
+      "pose": [
+        17.794654846191406,
+        -4.320744514465332,
+        -1.640753984451294
+      ],
+      "field": {
+        "map_stamp": 1792430171.0557647,
+        "heading_bin": 6,
+        "row": 120,
+        "col": 125,
+        "status": "KNOWN",
+        "reference_probability": 0.9998793601989746,
+        "min_body_p": 0.998801589012146,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 482.22543692588806,
+      "status": "ALIGNING",
+      "pose": [
+        17.794654846191406,
+        -4.320744514465332,
+        -0.2957320213317871
+      ],
+      "field": {
+        "map_stamp": 1792430173.4657884,
+        "heading_bin": 0,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998583793640137,
+        "min_body_p": 0.9948254823684692,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 482.2750928401947,
+      "status": "DRIVING",
+      "pose": [
+        17.794654846191406,
+        -4.320744514465332,
+        -0.2934378385543823
+      ],
+      "field": {
+        "map_stamp": 1792430173.4657884,
+        "heading_bin": 0,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998583793640137,
+        "min_body_p": 0.9948254823684692,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 485.8761339187622,
+      "status": "TURNING",
+      "pose": [
+        19.056745529174805,
+        -4.629144668579102,
+        0.2559198737144471
+      ],
+      "field": {
+        "map_stamp": 1792430177.0685985,
+        "heading_bin": 0,
+        "row": 118,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998921155929565,
+        "min_body_p": 0.9886114001274109,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 487.8805923461914,
+      "status": "DRIVING",
+      "pose": [
+        19.056745529174805,
+        -4.629144668579102,
+        1.6077888011932373
+      ],
+      "field": {
+        "map_stamp": 1792430179.0785818,
+        "heading_bin": 2,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.940125048160553,
+        "min_body_p": 0.0013376947026699781,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 490.5744140148163,
+      "status": "GOAL_REACHED",
+      "pose": [
+        18.977577209472656,
+        -3.5328774452209473,
+        1.644712209701538
+      ],
+      "field": {
+        "map_stamp": 1792430181.5272212,
+        "heading_bin": 2,
+        "row": 120,
+        "col": 111,
+        "status": "KNOWN",
+        "reference_probability": 0.9998766183853149,
+        "min_body_p": 0.9997784495353699,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 490.9776268005371,
+      "status": "TURNING",
+      "pose": [
+        18.977577209472656,
+        -3.5328774452209473,
+        1.644712209701538
+      ],
+      "field": {
+        "map_stamp": 1792430181.927221,
+        "heading_bin": 2,
+        "row": 120,
+        "col": 117,
+        "status": "KNOWN",
+        "reference_probability": 0.9998733997344971,
+        "min_body_p": 0.9998074173927307,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 494.52604055404663,
+      "status": "ALIGNING",
+      "pose": [
+        18.977577209472656,
+        -3.5328774452209473,
+        -0.711484670639038
+      ],
+      "field": {
+        "map_stamp": 1792430185.5272195,
+        "heading_bin": 7,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998511075973511,
+        "min_body_p": 0.9997417330741882,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 494.57587695121765,
+      "status": "DRIVING",
+      "pose": [
+        18.977577209472656,
+        -3.5328774452209473,
+        -0.712484836578369
+      ],
+      "field": {
+        "map_stamp": 1792430185.5272195,
+        "heading_bin": 7,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998511075973511,
+        "min_body_p": 0.9997417330741882,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 497.8259720802307,
+      "status": "GEOMETRY_COMMAND_BLOCKED",
+      "pose": [
+        19.997737884521484,
+        -4.472690582275391,
+        -0.7454140782356263
+      ],
+      "field": {
+        "map_stamp": 1792430188.9372106,
+        "heading_bin": 7,
+        "row": 115,
+        "col": 124,
+        "status": "KNOWN",
+        "reference_probability": 0.999835729598999,
+        "min_body_p": 0.9961852431297302,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 497.8747043609619,
+      "status": "DRIVING",
+      "pose": [
+        19.997737884521484,
+        -4.472690582275391,
+        -0.7454140782356263
+      ],
+      "field": {
+        "map_stamp": 1792430188.9372106,
+        "heading_bin": 7,
+        "row": 115,
+        "col": 124,
+        "status": "KNOWN",
+        "reference_probability": 0.999835729598999,
+        "min_body_p": 0.9961852431297302,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 498.0255455970764,
+      "status": "TURNING",
+      "pose": [
+        20.001399993896484,
+        -4.476083278656006,
+        -0.7424010634422302
+      ],
+      "field": {
+        "map_stamp": 1792430188.9372106,
+        "heading_bin": 7,
+        "row": 115,
+        "col": 124,
+        "status": "KNOWN",
+        "reference_probability": 0.999835729598999,
+        "min_body_p": 0.9961852431297302,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 501.22516202926636,
+      "status": "ALIGNING",
+      "pose": [
+        20.001399993896484,
+        -4.476083278656006,
+        1.374427914619446
+      ],
+      "field": {
+        "map_stamp": 1792430192.5372682,
+        "heading_bin": 2,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998637437820435,
+        "min_body_p": 0.001058099209330976,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 501.27536368370056,
+      "status": "DRIVING",
+      "pose": [
+        20.001399993896484,
+        -4.476083278656006,
+        1.3766022920608518
+      ],
+      "field": {
+        "map_stamp": 1792430192.5372682,
+        "heading_bin": 2,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998637437820435,
+        "min_body_p": 0.001058099209330976,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 503.6743824481964,
+      "status": "GOAL_REACHED",
+      "pose": [
+        20.155139923095703,
+        -3.5259475708007812,
+        1.4127691984176636
+      ],
+      "field": {
+        "map_stamp": 1792430194.9272153,
+        "heading_bin": 2,
+        "row": 120,
+        "col": 116,
+        "status": "KNOWN",
+        "reference_probability": 0.9998608827590942,
+        "min_body_p": 0.9998148083686829,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 504.02545523643494,
+      "status": "DRIVING",
+      "pose": [
+        20.155139923095703,
+        -3.5259475708007812,
+        1.4127691984176638
+      ],
+      "field": {
+        "map_stamp": 1792430194.9272153,
+        "heading_bin": 2,
+        "row": 120,
+        "col": 116,
+        "status": "KNOWN",
+        "reference_probability": 0.9998608827590942,
+        "min_body_p": 0.9998148083686829,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 506.1763405799866,
+      "status": "TURNING",
+      "pose": [
+        19.940654754638672,
+        -3.0141310691833496,
+        2.2309646606445312
+      ],
+      "field": {
+        "map_stamp": 1792430196.527231,
+        "heading_bin": 3,
+        "row": 125,
+        "col": 112,
+        "status": "KNOWN",
+        "reference_probability": 0.999872088432312,
+        "min_body_p": 0.9987704157829285,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 509.47548604011536,
+      "status": "ALIGNING",
+      "pose": [
+        19.940654754638672,
+        -3.0141310691833496,
+        -0.1194580569863319
+      ],
+      "field": {
+        "map_stamp": 1792430200.5473278,
+        "heading_bin": 0,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998657703399658,
+        "min_body_p": 0.9981912970542908,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 509.5256299972534,
+      "status": "DRIVING",
+      "pose": [
+        19.940654754638672,
+        -3.0141310691833496,
+        -0.12189476937055592
+      ],
+      "field": {
+        "map_stamp": 1792430200.5473278,
+        "heading_bin": 0,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998657703399658,
+        "min_body_p": 0.9981912970542908,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 515.1243612766266,
+      "status": "GOAL_REACHED",
+      "pose": [
+        22.47041130065918,
+        -3.415889263153076,
+        -0.15795990824699405
+      ],
+      "field": {
+        "map_stamp": 1792430205.9473197,
+        "heading_bin": 0,
+        "row": 111,
+        "col": 121,
+        "status": "KNOWN",
+        "reference_probability": 0.9998960494995117,
+        "min_body_p": 0.9996721744537354,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 515.9750230312347,
+      "status": "TURNING",
+      "pose": [
+        22.47041130065918,
+        -3.415889263153076,
+        -0.157959908246994
+      ],
+      "field": {
+        "map_stamp": 1792430206.9473355,
+        "heading_bin": 0,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.999901294708252,
+        "min_body_p": 0.9997963309288025,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 516.6250243186951,
+      "status": "DRIVING",
+      "pose": [
+        22.47041130065918,
+        -3.415889263153076,
+        -0.04914182424545289
+      ],
+      "field": {
+        "map_stamp": 1792430207.5473125,
+        "heading_bin": 0,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998980760574341,
+        "min_body_p": 0.9998107552528381,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 519.4742736816406,
+      "status": "GOAL_REACHED",
+      "pose": [
+        23.657934188842773,
+        -3.430572509765625,
+        -0.010732950642704964
+      ],
+      "field": {
+        "map_stamp": 1792430210.547333,
+        "heading_bin": 0,
+        "row": 112,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998787641525269,
+        "min_body_p": 0.9997146725654602,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 519.9750804901123,
+      "status": "DRIVING",
+      "pose": [
+        23.657934188842773,
+        -3.430572509765625,
+        -0.01073295064270496
+      ],
+      "field": {
+        "map_stamp": 1792430210.9473264,
+        "heading_bin": 0,
+        "row": 118,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998800754547119,
+        "min_body_p": 0.9997832179069519,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 522.8742640018463,
+      "status": "GOAL_REACHED",
+      "pose": [
+        24.870664596557617,
+        -3.431710720062256,
+        -0.000517099630087614
+      ],
+      "field": {
+        "map_stamp": 1792430213.952383,
+        "heading_bin": 0,
+        "row": 113,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.999902606010437,
+        "min_body_p": 0.9997801184654236,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 522.9249093532562,
+      "status": "DRIVING",
+      "pose": [
+        24.870664596557617,
+        -3.431710720062256,
+        -0.0005170996300876141
+      ],
+      "field": {
+        "map_stamp": 1792430213.952383,
+        "heading_bin": 0,
+        "row": 113,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.999902606010437,
+        "min_body_p": 0.9997801184654236,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 525.7743079662323,
+      "status": "GOAL_REACHED",
+      "pose": [
+        26.05838966369629,
+        -3.4317574501037598,
+        -4.9611349822953343e-05
+      ],
+      "field": {
+        "map_stamp": 1792430216.962371,
+        "heading_bin": 0,
+        "row": 114,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9999033212661743,
+        "min_body_p": 0.9997739195823669,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 526.2248742580414,
+      "status": "DRIVING",
+      "pose": [
+        26.05838966369629,
+        -3.4317574501037598,
+        -4.9611349822953343e-05
+      ],
+      "field": {
+        "map_stamp": 1792430217.5623689,
+        "heading_bin": 0,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998979568481445,
+        "min_body_p": 0.9998101592063904,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 531.524341583252,
+      "status": "GOAL_REACHED",
+      "pose": [
+        28.471376419067383,
+        -3.4317574501037598,
+        -3.0179196983226568e-05
+      ],
+      "field": {
+        "map_stamp": 1792430222.552379,
+        "heading_bin": 0,
+        "row": 111,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998936653137207,
+        "min_body_p": 0.9997785687446594,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 532.1744618415833,
+      "status": "DRIVING",
+      "pose": [
+        28.471376419067383,
+        -3.4317574501037598,
+        -3.017919698322657e-05
+      ],
+      "field": {
+        "map_stamp": 1792430222.952376,
+        "heading_bin": 0,
+        "row": 117,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.999895453453064,
+        "min_body_p": 0.9998132586479187,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 537.9743995666504,
+      "status": "TURNING",
+      "pose": [
+        30.8940372467041,
+        -3.4073994159698486,
+        0.4650226533412934
+      ],
+      "field": {
+        "map_stamp": 1792430228.952367,
+        "heading_bin": 1,
+        "row": 117,
+        "col": 119,
+        "status": "KNOWN",
+        "reference_probability": 0.9998958110809326,
+        "min_body_p": 0.9998664855957031,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 538.9743778705597,
+      "status": "ALIGNING",
+      "pose": [
+        30.8940372467041,
+        -3.4073994159698486,
+        0.7973602414131166
+      ],
+      "field": {
+        "map_stamp": 1792430229.952377,
+        "heading_bin": 1,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998986721038818,
+        "min_body_p": 0.9998822212219238,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 539.0243849754333,
+      "status": "TURNING",
+      "pose": [
+        30.8940372467041,
+        -3.4073994159698486,
+        0.7973602414131166
+      ],
+      "field": {
+        "map_stamp": 1792430229.952377,
+        "heading_bin": 1,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998986721038818,
+        "min_body_p": 0.9998822212219238,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 539.8743205070496,
+      "status": "DRIVING",
+      "pose": [
+        30.8940372467041,
+        -3.4073994159698486,
+        0.9712365269660949
+      ],
+      "field": {
+        "map_stamp": 1792430230.9523747,
+        "heading_bin": 1,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998989105224609,
+        "min_body_p": 0.9998745918273926,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 547.8742716312408,
+      "status": "GOAL_REACHED",
+      "pose": [
+        29.80695152282715,
+        0.07990439236164093,
+        1.9662630558013916
+      ],
+      "field": {
+        "map_stamp": 1792430238.9646857,
+        "heading_bin": 3,
+        "row": 123,
+        "col": 114,
+        "status": "KNOWN",
+        "reference_probability": 0.9998539686203003,
+        "min_body_p": 0.9994623064994812,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 548.025365114212,
+      "status": "TURNING",
+      "pose": [
+        29.80695152282715,
+        0.07990439236164093,
+        1.9662630558013916
+      ],
+      "field": {
+        "map_stamp": 1792430238.9646857,
+        "heading_bin": 3,
+        "row": 123,
+        "col": 114,
+        "status": "KNOWN",
+        "reference_probability": 0.9998539686203003,
+        "min_body_p": 0.9994623064994812,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 549.8787906169891,
+      "status": "ALIGNING",
+      "pose": [
+        29.80695152282715,
+        0.07990439236164093,
+        1.1682032346725464
+      ],
+      "field": {
+        "map_stamp": 1792430239.964664,
+        "heading_bin": 1,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998793601989746,
+        "min_body_p": 0.1390688419342041,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 549.9250524044037,
+      "status": "DRIVING",
+      "pose": [
+        29.80695152282715,
+        0.07990439236164093,
+        1.1663750410079956
+      ],
+      "field": {
+        "map_stamp": 1792430239.964664,
+        "heading_bin": 1,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998793601989746,
+        "min_body_p": 0.1390688419342041,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 555.6744902133942,
+      "status": "GOAL_REACHED",
+      "pose": [
+        30.922719955444336,
+        2.4670357704162598,
+        1.1331310272216797
+      ],
+      "field": {
+        "map_stamp": 1792430246.985756,
+        "heading_bin": 1,
+        "row": 119,
+        "col": 117,
+        "status": "KNOWN",
+        "reference_probability": 0.9999185800552368,
+        "min_body_p": 0.9998412132263184,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 556.2248389720917,
+      "status": "TURNING",
+      "pose": [
+        30.922719955444336,
+        2.4670357704162598,
+        1.13313102722168
+      ],
+      "field": {
+        "map_stamp": 1792430247.575782,
+        "heading_bin": 1,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.999915361404419,
+        "min_body_p": 0.9998551607131958,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 557.52494764328,
+      "status": "ALIGNING",
+      "pose": [
+        30.922719955444336,
+        2.4670357704162598,
+        0.5764145851135254
+      ],
+      "field": {
+        "map_stamp": 1792430248.5757754,
+        "heading_bin": 1,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9999083280563354,
+        "min_body_p": 0.9998719692230225,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 557.6249601840973,
+      "status": "TURNING",
+      "pose": [
+        30.922719955444336,
+        2.4670357704162598,
+        0.5773597359657288
+      ],
+      "field": {
+        "map_stamp": 1792430248.5757754,
+        "heading_bin": 1,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9999083280563354,
+        "min_body_p": 0.9998719692230225,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 558.0251517295837,
+      "status": "DRIVING",
+      "pose": [
+        30.922719955444336,
+        2.4670357704162598,
+        0.6426612734794617
+      ],
+      "field": {
+        "map_stamp": 1792430248.975744,
+        "heading_bin": 1,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9999053478240967,
+        "min_body_p": 0.9998661279678345,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 562.2254817485809,
+      "status": "TURNING",
+      "pose": [
+        32.322669982910156,
+        2.0357580184936523,
+        -1.3031350374221802
+      ],
+      "field": {
+        "map_stamp": 1792430253.580764,
+        "heading_bin": 6,
+        "row": 119,
+        "col": 121,
+        "status": "KNOWN",
+        "reference_probability": 0.9998891353607178,
+        "min_body_p": 0.9997658133506775,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 565.0248756408691,
+      "status": "ALIGNING",
+      "pose": [
+        32.322669982910156,
+        2.0357580184936523,
+        2.9739441871643066
+      ],
+      "field": {
+        "map_stamp": 1792430255.9757478,
+        "heading_bin": 4,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998996257781982,
+        "min_body_p": 0.9998015761375427,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 565.074848651886,
+      "status": "DRIVING",
+      "pose": [
+        32.322669982910156,
+        2.0357580184936523,
+        2.9715147018432617
+      ],
+      "field": {
+        "map_stamp": 1792430255.9757478,
+        "heading_bin": 4,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998996257781982,
+        "min_body_p": 0.9998015761375427,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 570.5743279457092,
+      "status": "GOAL_REACHED",
+      "pose": [
+        29.865034103393555,
+        2.5483760833740234,
+        2.935427188873291
+      ],
+      "field": {
+        "map_stamp": 1792430261.5807583,
+        "heading_bin": 4,
+        "row": 128,
+        "col": 118,
+        "status": "KNOWN",
+        "reference_probability": 0.999894380569458,
+        "min_body_p": 0.9997608065605164,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 571.0262248516083,
+      "status": "TURNING",
+      "pose": [
+        29.865034103393555,
+        2.5483760833740234,
+        2.935427188873291
+      ],
+      "field": {
+        "map_stamp": 1792430261.9807515,
+        "heading_bin": 4,
+        "row": 122,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998975992202759,
+        "min_body_p": 0.9997976422309875,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 573.7257015705109,
+      "status": "ALIGNING",
+      "pose": [
+        29.865034103393555,
+        2.5483760833740234,
+        -1.685836315155029
+      ],
+      "field": {
+        "map_stamp": 1792430264.98578,
+        "heading_bin": 6,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.999870777130127,
+        "min_body_p": 0.9996531009674072,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 573.774995803833,
+      "status": "DRIVING",
+      "pose": [
+        29.865034103393555,
+        2.5483760833740234,
+        -1.6839931011199951
+      ],
+      "field": {
+        "map_stamp": 1792430264.98578,
+        "heading_bin": 6,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.999870777130127,
+        "min_body_p": 0.9996531009674072,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 576.9760234355927,
+      "status": "TURNING",
+      "pose": [
+        29.802642822265625,
+        1.4689308404922485,
+        -1.136942505836487
+      ],
+      "field": {
+        "map_stamp": 1792430267.9858162,
+        "heading_bin": 7,
+        "row": 120,
+        "col": 122,
+        "status": "KNOWN",
+        "reference_probability": 0.9998538494110107,
+        "min_body_p": 0.7384863495826721,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 579.025209903717,
+      "status": "ALIGNING",
+      "pose": [
+        29.802642822265625,
+        1.4689308404922485,
+        0.26852810382843023
+      ],
+      "field": {
+        "map_stamp": 1792430269.9907627,
+        "heading_bin": 0,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998637437820435,
+        "min_body_p": 0.003066638484597206,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 579.0748679637909,
+      "status": "DRIVING",
+      "pose": [
+        29.802642822265625,
+        1.4689308404922485,
+        0.2694121599197388
+      ],
+      "field": {
+        "map_stamp": 1792430269.9907627,
+        "heading_bin": 0,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.9998637437820435,
+        "min_body_p": 0.003066638484597206,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 586.824268579483,
+      "status": "GOAL_REACHED",
+      "pose": [
+        33.276126861572266,
+        2.5393195152282715,
+        0.29891073703765864
+      ],
+      "field": {
+        "map_stamp": 1792430277.9907634,
+        "heading_bin": 0,
+        "row": 114,
+        "col": 118,
+        "status": "KNOWN",
+        "reference_probability": 0.999893069267273,
+        "min_body_p": 0.9997853636741638,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 587.0248947143555,
+      "status": "TURNING",
+      "pose": [
+        33.276126861572266,
+        2.5393195152282715,
+        0.29891073703765864
+      ],
+      "field": {
+        "map_stamp": 1792430277.9907634,
+        "heading_bin": 0,
+        "row": 114,
+        "col": 118,
+        "status": "KNOWN",
+        "reference_probability": 0.999893069267273,
+        "min_body_p": 0.9997853636741638,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 587.4251484870911,
+      "status": "DRIVING",
+      "pose": [
+        33.276126861572266,
+        2.5393195152282715,
+        0.19061070680618283
+      ],
+      "field": {
+        "map_stamp": 1792430278.5907962,
+        "heading_bin": 0,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.999891996383667,
+        "min_body_p": 0.9998102784156799,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 596.1251380443573,
+      "status": "TURNING",
+      "pose": [
+        34.630821228027344,
+        -0.8278082609176636,
+        -1.0812592506408694
+      ],
+      "field": {
+        "map_stamp": 1792430287.0025067,
+        "heading_bin": 7,
+        "row": 120,
+        "col": 124,
+        "status": "KNOWN",
+        "reference_probability": 0.9506857991218567,
+        "min_body_p": 0.004285903647542,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 599.124906539917,
+      "status": "ALIGNING",
+      "pose": [
+        34.630821228027344,
+        -0.8278082609176636,
+        0.7266250848770142
+      ],
+      "field": {
+        "map_stamp": 1792430290.0025494,
+        "heading_bin": 1,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.999882698059082,
+        "min_body_p": 0.019654083997011185,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    },
+    {
+      "time_s": 599.1748125553131,
+      "status": "DRIVING",
+      "pose": [
+        34.630821228027344,
+        -0.8278082609176636,
+        0.7290712594985961
+      ],
+      "field": {
+        "map_stamp": 1792430290.0025494,
+        "heading_bin": 1,
+        "row": 120,
+        "col": 120,
+        "status": "KNOWN",
+        "reference_probability": 0.999882698059082,
+        "min_body_p": 0.019654083997011185,
+        "reverse_status": "KNOWN",
+        "reversible_pose": true,
+        "reversible_heading_pairs": 4
+      }
+    }
+  ],
+  "caveat": "Uses bag reception ordering, not the exact subscriber callback ordering. Raw pose admissibility excludes map freshness/startup prior; uses manifest score semantics with0.5/0.6m/map-frame identity-channel settings. In configuration mode min_body_p is a diagnostic over neighbouring configurations, not the gate score. Pose changes and field changes are separated on identical inputs to that comparison."
+}

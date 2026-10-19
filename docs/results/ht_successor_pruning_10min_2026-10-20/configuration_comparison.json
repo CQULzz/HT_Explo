@@ -1,0 +1,24 @@
+{
+  "reference_commit": "16bdbe4cb1fddd632d061a5710c3e7b294971891",
+  "candidate_commit": "6fc754903f0e7c9aafe4b2a2b13c3fa24266551a",
+  "effective_parameters_equal": {
+    "planner_parameters.yaml": true,
+    "follower_parameters.yaml": true
+  },
+  "changed_manifest_entries": {
+    "/home/lzz/my test/HT_Explo-fixposition/install_standalone/tare_planner/lib/tare_planner/tare_planner_node": {
+      "before": "c769aec1dd31b093f320234b7bf4ca02dfea83d55374ec916d9abe9f58f7be7e",
+      "after": "386f5d94a9a27f0ade088254811c486fd9685f829736ff31d311dc1c1d0790f3"
+    },
+    "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/include/ht_cost/xytheta_planner.h": {
+      "before": "f526aa1a28c1cfea6d44f7d08fb9e1f9dc943e91da2bce6466c9ea6ed55f9742",
+      "after": "6f72624ca3f47164e882f87b3737148a3d90ad8cac0a24bccbde689027d4aa63"
+    },
+    "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/src/local_coverage_planner/ht_route.cpp": {
+      "before": "77ef3b0434502929e3998d9f2e3381e49e586d75ae7f73d0638c8ea3468ea290",
+      "after": "4c9434ca89df1e07433c78e09dbd787f7a5ef97c5745b50d3cc87591b6cf20ca"
+    }
+  },
+  "unchanged_entries": 62,
+  "scope": "Same endpoint-key/cost dominance rule moved before costly validity checks; no fusion/model/controller/candidate/utility/key/control/sampling/threshold/budget changes. Accepted search edges still receive the original hard checks. Wall-time-limited trajectories can differ."
+}

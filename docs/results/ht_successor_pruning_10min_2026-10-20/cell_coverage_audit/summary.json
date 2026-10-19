@@ -1,0 +1,38 @@
+{
+  "source": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_successor_pruning_10min_2026-10-20_01-07-11/garage",
+  "rows": 10131,
+  "transitions": 58,
+  "to_covered": 16,
+  "covered_reasons": {
+    "NO_GAIN_WITH_CANDIDATES": 16
+  },
+  "first_internal_completion_log_s": null,
+  "last_transition_window": [],
+  "deferred_unique_cells": 14,
+  "deferred_then_freshly_discharged": [
+    {
+      "cell": 886145,
+      "deferred_s": 79.89416909217834,
+      "discharged_s": 281.9599606990814,
+      "new_state": 1.0,
+      "reason": "SELECTED_REOPEN"
+    },
+    {
+      "cell": 885782,
+      "deferred_s": 298.878080368042,
+      "discharged_s": 444.0565230846405,
+      "new_state": 2.0,
+      "reason": "NO_GAIN_WITH_CANDIDATES"
+    }
+  ],
+  "unresolved_gain_covered_without_evaluation": [],
+  "tour_and_local_complete_with_pending": [],
+  "tracked_final_state_counts": {
+    "0": 2,
+    "2": 15,
+    "1": 26
+  },
+  "last_known_unseen_with_gain": [],
+  "unseen_with_gain_unique_cells": 0,
+  "limitations": "Logs UpdateCellStatus decisions only. Does not include external SetCellStatus calls, exact sensor coverage truth, or distinguish geometric vs line-of-sight/corner-connectivity causes of absent candidates. -5s setup window included to retain first measured cycle transitions. Final tracked cells are not the whole global grid."
+}

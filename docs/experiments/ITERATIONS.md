@@ -43,7 +43,9 @@
 
 阶段38 `16bdbe4`：以全局任务ID/EXPLORING状态保持引导，修复巡游列表与局部委派语义错位。车库600秒202.58m/5807.000m³；相比37体积+28.4%、末分钟新增8.375→553.750m³、回访29.2%→14.7%，引导切换34→6。仍低于36、超时47→81、最长停车1.15→1.40s。[报告](../results/ht_guide_handoff_10min_2026-10-19/REPORT.md) · [25页图册](../results/ht_guide_handoff_10min_2026-10-19/history/all_comparisons.pdf) · [完整数据/视频](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261019-guide-handoff)。
 
-## 当前问题与证据状态（阶段38车库已完整实测）
+阶段39 `6fc7549`：终点键/成本支配检查前移，所有可接受边仍逐段硬验证。车库600秒199.69m/6483m³，体积较38+11.6%、超时81→65；但末分钟新增553.750→274.515m³、完全停车3.73%→4.84%。13项采集/4项CTest通过。[报告](../results/ht_successor_pruning_10min_2026-10-20/REPORT.md) · [完整数据/视频](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261020-successor-pruning) · [为何落后TARE](../analysis/2026-10-20_tare_gap.md)。单目标与欧氏引导结构未改，没有同控制约束新原版配对，不宣称追平。
+
+## 当前问题与证据状态（阶段39车库已完整实测）
 
 | 问题 | 证据与当前状态 | 后续核查 |
 |---|---|---|

@@ -1,0 +1,112 @@
+diff --git a/src/tare_planner/include/ht_cost/xytheta_planner.h b/src/tare_planner/include/ht_cost/xytheta_planner.h
+index 05cc281..2cfd71a 100644
+--- a/src/tare_planner/include/ht_cost/xytheta_planner.h
++++ b/src/tare_planner/include/ht_cost/xytheta_planner.h
+@@ -64,6 +64,7 @@ struct XYThetaPlan {
+   std::vector<Pose2> poses;
+   double seconds=std::numeric_limits<double>::infinity();
+   int expanded=0;
++  int dominated_edges_pruned=0;
+   bool reached=false;
+   bool direct_connection=false;
+   XYThetaTermination termination=XYThetaTermination::INVALID_INPUT;
+@@ -233,8 +234,7 @@ XYThetaPlan planXYTheta(Pose2 start,Point goal,const XYThetaConfig& cfg,Valid va
+           next.y-=control.v/control.omega*(std::cos(pose.yaw+dtheta)-std::cos(pose.yaw));
+         }
+         next.yaw=wrapYaw(pose.yaw+dtheta);
+-        if (std::hypot(next.x-start.x,next.y-start.y)>cfg.max_radius ||
+-            !valid(pose,next,control.v)) {feasible=false;break;}
++        if (std::hypot(next.x-start.x,next.y-start.y)>cfg.max_radius) {feasible=false;break;}
+         samples.push_back(next);pose=next;
+       }
+       if (!feasible) continue;
+@@ -244,7 +244,21 @@ XYThetaPlan planXYTheta(Pose2 start,Point goal,const XYThetaConfig& cfg,Valid va
+       const double cost=control.duration*(control.v<0?1.15:1.0);
+       const double candidate=current.g+cost;
+       auto old=best.find(next_key);
+-      if (old!=best.end() && candidate>=old->second-1e-9) continue;
++      // This edge was already discarded by the original search if its
++      // endpoint key had an equal or cheaper route. Make that same decision
++      // before the costly HT/geometry oracle. No quantization, cost or key
++      // changes: every edge that can enter the search is still sampled and
++      // hard-checked in its original order. Valid must be a query, not a map
++      // update or other side effect on which future decisions depend.
++      if (old!=best.end() && candidate>=old->second-1e-9) {
++        ++out.dominated_edges_pruned;continue;
++      }
++      Pose2 previous=current.pose;
++      for (const auto& sample:samples) {
++        if (!valid(previous,sample,control.v)) {feasible=false;break;}
++        previous=sample;
++      }
++      if (!feasible) continue;
+       best[next_key]=candidate;
+       const int next_index=static_cast<int>(states.size());
+       states.push_back({pose,std::move(samples),index,candidate});
+diff --git a/src/tare_planner/src/local_coverage_planner/ht_route.cpp b/src/tare_planner/src/local_coverage_planner/ht_route.cpp
+index ce4a860..f14f0d3 100644
+--- a/src/tare_planner/src/local_coverage_planner/ht_route.cpp
++++ b/src/tare_planner/src/local_coverage_planner/ht_route.cpp
+@@ -239,10 +239,10 @@ exploration_path_ns::ExplorationPath LocalCoveragePlanner::SolveHTTSP(
+     const auto plan=ht_cost_ns::planXYTheta(start,{goal.x,goal.y,goal.z},config,valid);
+     const double query_seconds=std::chrono::duration<double>(std::chrono::steady_clock::now()-query_started).count();
+     RCLCPP_INFO(node_->get_logger(),
+-      "HT_SEARCH_AUDIT target=%d goal=(%.6f,%.6f) gain=%.1f recovery=%d backtrack=%d ht_stamp=%.9f termination=%s elapsed_s=%.6f budget_s=%.6f expanded=%d expansion_limit=%d geometry_queries=%d geometry_s=%.6f geometry_reject=%d ht_reject=%d memory_reject=%d reserve_reject=%d direct=%d",
++      "HT_SEARCH_AUDIT target=%d goal=(%.6f,%.6f) gain=%.1f recovery=%d backtrack=%d ht_stamp=%.9f termination=%s elapsed_s=%.6f budget_s=%.6f expanded=%d expansion_limit=%d geometry_queries=%d geometry_s=%.6f geometry_reject=%d ht_reject=%d memory_reject=%d reserve_reject=%d direct=%d dominated_pruned=%d",
+       target.id,goal.x,goal.y,target.gain,target.recovery,target.backtrack,ht->cycleStamp(),
+       ht_cost_ns::terminationName(plan.termination),query_seconds,config.max_search_seconds,plan.expanded,
+-      config.max_expansions,geometry_queries,geometry_seconds,geometry_rejections,ht_rejections,memory_rejections,reserve_rejections,plan.direct_connection);
++      config.max_expansions,geometry_queries,geometry_seconds,geometry_rejections,ht_rejections,memory_rejections,reserve_rejections,plan.direct_connection,plan.dominated_edges_pruned);
+     if (!plan.reached || plan.poses.size()<2) {
+       if (target.id==committed_id) ht_commitment_.reject(now);
+       RCLCPP_INFO_THROTTLE(node_->get_logger(),*node_->get_clock(),3000,
+diff --git a/src/tare_planner/tests/geometry_pose_test.cpp b/src/tare_planner/tests/geometry_pose_test.cpp
+index b5fb88d..bc53148 100644
+--- a/src/tare_planner/tests/geometry_pose_test.cpp
++++ b/src/tare_planner/tests/geometry_pose_test.cpp
+@@ -2,6 +2,45 @@
+ #include "viewpoint_manager/viewpoint_manager.h"
+ #include <fstream>
+ #include <sstream>
++#include "../../../docs/fixes/evidence/2026-10-20_successor_pruning/baseline_search.h"
++
++TEST(SearchPruning, SameAcceptedRoutesWithFewerHardQueries) {
++  using namespace ht_cost_ns;
++  XYThetaConfig config;config.headings=32;config.turn_angles={kPi/16,kPi/8};
++  config.max_search_seconds=10;config.max_expansions=256;config.goal_radius=.35;
++  size_t old_queries=0,new_queries=0,pruned=0,reached_cases=0;
++  for (double yaw:{0.,.7,1.6}) for (Point goal:std::vector<Point>{{2,0,0},{1,1,0},{-2,0,0}})
++    for (bool direct:{false,true}) {
++      config.try_direct_connection=direct;
++      // A wall with an opening and an orientation-dependent patch require
++      // intermediate edge validation, rather than endpoint-only acceptance.
++      auto admissible=[](Pose2,Pose2 b,double) {
++        if (b.x>.7 && b.x<1.2 && b.y<.5) return false;
++        if (b.x<-.5 && std::cos(b.yaw)<-.3) return false;
++        return true;
++      };
++      auto original=planXYThetaBaseline(Pose2{0,0,yaw},goal,config,
++        [&](Pose2 a,Pose2 b,double v){++old_queries;return admissible(a,b,v);});
++      auto optimized=planXYTheta(Pose2{0,0,yaw},goal,config,
++        [&](Pose2 a,Pose2 b,double v){++new_queries;return admissible(a,b,v);});
++      ASSERT_EQ(original.termination,optimized.termination);
++      ASSERT_EQ(original.expanded,optimized.expanded);
++      ASSERT_EQ(original.poses.size(),optimized.poses.size());
++      if (original.reached) {
++        ++reached_cases;
++        ASSERT_DOUBLE_EQ(original.seconds,optimized.seconds);
++        for (size_t i=0;i<original.poses.size();++i) {
++          EXPECT_DOUBLE_EQ(original.poses[i].x,optimized.poses[i].x);
++          EXPECT_DOUBLE_EQ(original.poses[i].y,optimized.poses[i].y);
++          EXPECT_DOUBLE_EQ(original.poses[i].yaw,optimized.poses[i].yaw);
++        }
++      }
++      pruned+=optimized.dominated_edges_pruned;
++    }
++  EXPECT_GT(pruned,0u);
++  EXPECT_GT(reached_cases,0u);
++  EXPECT_LT(new_queries,old_queries);
++}
+ 
+ TEST(GeometryPose, CapturedContinuousRootDoesNotInheritNeighbourCollision) {
+   if (!rclcpp::ok()) rclcpp::init(0,nullptr);

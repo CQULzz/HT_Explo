@@ -1,0 +1,68 @@
+{
+  "source": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_multiscene_10min_2026-10-17_11-37-52/garage",
+  "original": {
+    "observed_free_volume_m3": 4027.375,
+    "processed_volume_scans": 569,
+    "skipped_volume_scans": 0,
+    "recorded_scans_in_source_time_window": 600,
+    "sensor_position_source": "nearest sensor-frame state_estimation (common to both systems)",
+    "pose_time_offset_max_s": 2.384185791015625e-07,
+    "command_samples": 12000,
+    "fully_stopped_fraction": 0.11466666666666667,
+    "stationary_turn_fraction": 0.1495,
+    "reverse_command_fraction": 0.0,
+    "max_abs_linear_command_mps": 0.5,
+    "max_abs_yaw_command_rps": 0.8,
+    "longest_zero_command_s": 4.999973583221435,
+    "follower_status_samples": {
+      "DRIVING": 8821,
+      "HT_MAP_STALE": 55,
+      "PLANNER_HOLD": 418,
+      "PATH_STALE": 60,
+      "GOAL_REACHED": 644,
+      "TURNING": 1794,
+      "HT_COMMAND_BLOCKED": 9,
+      "ALIGNING": 199
+    },
+    "longest_no_translation_command_s": 8.800022649765015,
+    "last_translation_s": 599.505,
+    "distance_last60_m": 15.067000000000007
+  },
+  "recomputed": {
+    "scan_selection": "source_second",
+    "observed_free_volume_m3": 4028.25,
+    "processed_volume_scans": 600,
+    "skipped_volume_scans": 0,
+    "recorded_scans_in_source_time_window": 600,
+    "sensor_position_source": "nearest sensor-frame state_estimation (common to both systems)",
+    "pose_time_offset_max_s": 2.384185791015625e-07,
+    "command_samples": 12000,
+    "fully_stopped_fraction": 0.11466666666666667,
+    "stationary_turn_fraction": 0.1495,
+    "reverse_command_fraction": 0.0,
+    "max_abs_linear_command_mps": 0.5,
+    "max_abs_yaw_command_rps": 0.8,
+    "longest_zero_command_s": 4.999973583221435,
+    "follower_status_samples": {
+      "DRIVING": 8821,
+      "HT_MAP_STALE": 55,
+      "PLANNER_HOLD": 418,
+      "PATH_STALE": 60,
+      "GOAL_REACHED": 644,
+      "TURNING": 1794,
+      "HT_COMMAND_BLOCKED": 9,
+      "ALIGNING": 199
+    },
+    "longest_no_translation_command_s": 8.800022649765015,
+    "last_translation_s": 599.505,
+    "distance_last60_m": 15.067000000000007
+  },
+  "evaluator_sha256": "679203aab69b3a4ec1b21718f2b7b9dfa9d0fa8f6c7f1b93231c4b0f74ca68f0",
+  "input_sha256": {
+    "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_multiscene_10min_2026-10-17_11-37-52/garage/evidence_bag/metadata.yaml": "82b10d566c09ad1dfb6cb77543f326bd4fab034cb34505277921164011feea9b",
+    "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_multiscene_10min_2026-10-17_11-37-52/garage/current/measurement_started.json": "a08f24a5c69bee74a08c472bfbf4ea3d00373025d9c2d388b13bbd52fda516b6",
+    "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_multiscene_10min_2026-10-17_11-37-52/garage/current/timeseries.csv": "99f8fa4fdc847806bbce38330ade003130d00418c2bbfe4add3e0e98c25cc9bc"
+  },
+  "selection": "Keep first recorded scan in each absolute source second inside the measurement window; do not downsample again in origin-relative seconds.",
+  "scope": "Offline evaluation only. Original simulation outputs and reports are unchanged."
+}
