@@ -81,15 +81,17 @@ def main():
                 result=torch.softmax(model(tensor),dim=2)[0,:,1].numpy();result[:,d['occupied']]=0
                 error=float(np.max(np.abs(result-d['probabilities'])))
                 models.append(dict(file=events[i]['file'],maximum_absolute_error=error,passed=error<=1e-6,weights_sha256=actual))
+    partials=[dict(file=str(p),bytes=p.stat().st_size,sha256=hashlib.sha256(p.read_bytes()).hexdigest())
+              for p in sorted((args.trial/'current/inference_context').glob('*.partial'))]
     valid_checks=bool(events) and all(all(e['checks'].values()) for e in events) and all(r['passed'] for r in models)
     result=dict(source=str(args.trial.resolve()),checked_contexts=len(events),paired_exact_source_maps=len(paired),
-                all_checks_passed=valid_checks and not damaged,
-                readable_context_checks_passed=valid_checks,damaged_contexts=damaged,
+                all_checks_passed=valid_checks and not damaged and not partials,
+                readable_context_checks_passed=valid_checks,damaged_contexts=damaged,partial_contexts=partials,
                 model_replays=models,events=events,
                 caveat='Only saved10s inference samples, not every map. Verifies recording/model/mask consistency, not physical truth or route safety.')
     args.output.parent.mkdir(parents=True,exist_ok=True);args.output.write_text(json.dumps(result,indent=2)+'\n')
     print(json.dumps({k:v for k,v in result.items() if k!='events'},indent=2))
-    if not valid_checks or (damaged and not args.record_damaged_contexts):raise SystemExit(1)
+    if not valid_checks or ((damaged or partials) and not args.record_damaged_contexts):raise SystemExit(1)
 
 
 if __name__=='__main__':main()

@@ -6,6 +6,7 @@ from collections import deque
 from array import array as FloatArray
 import json
 import os
+import signal
 from pathlib import Path
 import time
 
@@ -16,6 +17,8 @@ import rclpy
 from grid_map_msgs.msg import GridMap
 from rclpy.node import Node
 from rclpy.qos import QoSProfile, ReliabilityPolicy
+from rclpy.signals import SignalHandlerOptions
+from rclpy.executors import ExternalShutdownException, SingleThreadedExecutor
 from nav_msgs.msg import Odometry
 from std_msgs.msg import Float32MultiArray, MultiArrayDimension, MultiArrayLayout
 
@@ -25,6 +28,7 @@ from elevation_quality import preprocess_elevation, retain_recent_obstacle_edges
 from local_surface import SurfaceReferenceEstimator
 from cpu_threads import configure_cpu_threads
 from ht_support import prepare_ht_context, preserve_rejected_obstacles
+from inference_context_io import GracefulStop, save_immutable_npz
 
 
 class CupyToHt(Node):
@@ -247,8 +251,7 @@ class CupyToHt(Node):
             filename = directory / f'{stamp_key[0]}_{stamp_key[1]:09d}.npz'
             # A source stamp identifies immutable inference inputs. Never
             # replace an earlier context if a node is accidentally restarted.
-            with filename.open('xb') as stream:
-                np.savez_compressed(stream, source_stamp=stamp_s,
+            save_immutable_npz(filename, source_stamp=stamp_s,
                     geometry=[center_x, center_y, resolution], height=height,
                     raw_history=raw_history, observed=observed, rejected=rejected,
                     quality_rejected=quality.rejected_mask, obstacle_context=obstacle_context,
@@ -282,20 +285,35 @@ class CupyToHt(Node):
 
 
 def main():
-    rclpy.init()
-    node = CupyToHt()
+    # Default SIGINT raises inside callbacks and can tear a diagnostic ZIP.
+    # Request exit, finish this callback, then save history before shutdown.
+    rclpy.init(signal_handler_options=SignalHandlerOptions.NO)
+    stop = GracefulStop()
+    previous = signal.signal(signal.SIGINT, stop.request)
+    node = None
+    executor = SingleThreadedExecutor()
     try:
-        rclpy.spin(node)
-    except KeyboardInterrupt:
+        node = CupyToHt()
+        executor.add_node(node)
+        while rclpy.ok() and not stop.requested:
+            executor.spin_once(timeout_sec=.1)
+    except (KeyboardInterrupt, ExternalShutdownException):
         pass
     finally:
-        if node.history is not None and os.environ.get("HT_HISTORY_DUMP"):
-            node.history.save(os.environ["HT_HISTORY_DUMP"])
-            node.get_logger().info(f"Saved global historical elevation to {os.environ['HT_HISTORY_DUMP']}")
-        if os.environ.get('HT_DIAGNOSTICS_DUMP'):
-            Path(os.environ['HT_DIAGNOSTICS_DUMP']).write_text(json.dumps(node.diagnostics, indent=2)+'\n')
-        node.destroy_node()
-        rclpy.try_shutdown()
+        try:
+            if node is not None:
+                if node.history is not None and os.environ.get("HT_HISTORY_DUMP"):
+                    node.history.save(os.environ["HT_HISTORY_DUMP"])
+                    node.get_logger().info(f"Saved global historical elevation to {os.environ['HT_HISTORY_DUMP']}")
+                if os.environ.get('HT_DIAGNOSTICS_DUMP'):
+                    Path(os.environ['HT_DIAGNOSTICS_DUMP']).write_text(json.dumps(node.diagnostics, indent=2)+'\n')
+                node.destroy_node()
+        finally:
+            try:
+                executor.shutdown()
+                rclpy.try_shutdown()
+            finally:
+                signal.signal(signal.SIGINT, previous)
 
 
 if __name__ == "__main__":
