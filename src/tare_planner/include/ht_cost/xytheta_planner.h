@@ -64,6 +64,7 @@ struct XYThetaPlan {
   std::vector<Pose2> poses;
   double seconds=std::numeric_limits<double>::infinity();
   int expanded=0;
+  int dominated_edges_pruned=0;
   bool reached=false;
   bool direct_connection=false;
   XYThetaTermination termination=XYThetaTermination::INVALID_INPUT;
@@ -233,8 +234,7 @@ XYThetaPlan planXYTheta(Pose2 start,Point goal,const XYThetaConfig& cfg,Valid va
           next.y-=control.v/control.omega*(std::cos(pose.yaw+dtheta)-std::cos(pose.yaw));
         }
         next.yaw=wrapYaw(pose.yaw+dtheta);
-        if (std::hypot(next.x-start.x,next.y-start.y)>cfg.max_radius ||
-            !valid(pose,next,control.v)) {feasible=false;break;}
+        if (std::hypot(next.x-start.x,next.y-start.y)>cfg.max_radius) {feasible=false;break;}
         samples.push_back(next);pose=next;
       }
       if (!feasible) continue;
@@ -244,7 +244,21 @@ XYThetaPlan planXYTheta(Pose2 start,Point goal,const XYThetaConfig& cfg,Valid va
       const double cost=control.duration*(control.v<0?1.15:1.0);
       const double candidate=current.g+cost;
       auto old=best.find(next_key);
-      if (old!=best.end() && candidate>=old->second-1e-9) continue;
+      // This edge was already discarded by the original search if its
+      // endpoint key had an equal or cheaper route. Make that same decision
+      // before the costly HT/geometry oracle. No quantization, cost or key
+      // changes: every edge that can enter the search is still sampled and
+      // hard-checked in its original order. Valid must be a query, not a map
+      // update or other side effect on which future decisions depend.
+      if (old!=best.end() && candidate>=old->second-1e-9) {
+        ++out.dominated_edges_pruned;continue;
+      }
+      Pose2 previous=current.pose;
+      for (const auto& sample:samples) {
+        if (!valid(previous,sample,control.v)) {feasible=false;break;}
+        previous=sample;
+      }
+      if (!feasible) continue;
       best[next_key]=candidate;
       const int next_index=static_cast<int>(states.size());
       states.push_back({pose,std::move(samples),index,candidate});

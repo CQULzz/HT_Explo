@@ -2,6 +2,45 @@
 #include "viewpoint_manager/viewpoint_manager.h"
 #include <fstream>
 #include <sstream>
+#include "../../../docs/fixes/evidence/2026-10-20_successor_pruning/baseline_search.h"
+
+TEST(SearchPruning, SameAcceptedRoutesWithFewerHardQueries) {
+  using namespace ht_cost_ns;
+  XYThetaConfig config;config.headings=32;config.turn_angles={kPi/16,kPi/8};
+  config.max_search_seconds=10;config.max_expansions=256;config.goal_radius=.35;
+  size_t old_queries=0,new_queries=0,pruned=0,reached_cases=0;
+  for (double yaw:{0.,.7,1.6}) for (Point goal:std::vector<Point>{{2,0,0},{1,1,0},{-2,0,0}})
+    for (bool direct:{false,true}) {
+      config.try_direct_connection=direct;
+      // A wall with an opening and an orientation-dependent patch require
+      // intermediate edge validation, rather than endpoint-only acceptance.
+      auto admissible=[](Pose2,Pose2 b,double) {
+        if (b.x>.7 && b.x<1.2 && b.y<.5) return false;
+        if (b.x<-.5 && std::cos(b.yaw)<-.3) return false;
+        return true;
+      };
+      auto original=planXYThetaBaseline(Pose2{0,0,yaw},goal,config,
+        [&](Pose2 a,Pose2 b,double v){++old_queries;return admissible(a,b,v);});
+      auto optimized=planXYTheta(Pose2{0,0,yaw},goal,config,
+        [&](Pose2 a,Pose2 b,double v){++new_queries;return admissible(a,b,v);});
+      ASSERT_EQ(original.termination,optimized.termination);
+      ASSERT_EQ(original.expanded,optimized.expanded);
+      ASSERT_EQ(original.poses.size(),optimized.poses.size());
+      if (original.reached) {
+        ++reached_cases;
+        ASSERT_DOUBLE_EQ(original.seconds,optimized.seconds);
+        for (size_t i=0;i<original.poses.size();++i) {
+          EXPECT_DOUBLE_EQ(original.poses[i].x,optimized.poses[i].x);
+          EXPECT_DOUBLE_EQ(original.poses[i].y,optimized.poses[i].y);
+          EXPECT_DOUBLE_EQ(original.poses[i].yaw,optimized.poses[i].yaw);
+        }
+      }
+      pruned+=optimized.dominated_edges_pruned;
+    }
+  EXPECT_GT(pruned,0u);
+  EXPECT_GT(reached_cases,0u);
+  EXPECT_LT(new_queries,old_queries);
+}
 
 TEST(GeometryPose, CapturedContinuousRootDoesNotInheritNeighbourCollision) {
   if (!rclcpp::ok()) rclcpp::init(0,nullptr);

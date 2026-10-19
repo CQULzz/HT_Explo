@@ -239,10 +239,10 @@ exploration_path_ns::ExplorationPath LocalCoveragePlanner::SolveHTTSP(
     const auto plan=ht_cost_ns::planXYTheta(start,{goal.x,goal.y,goal.z},config,valid);
     const double query_seconds=std::chrono::duration<double>(std::chrono::steady_clock::now()-query_started).count();
     RCLCPP_INFO(node_->get_logger(),
-      "HT_SEARCH_AUDIT target=%d goal=(%.6f,%.6f) gain=%.1f recovery=%d backtrack=%d ht_stamp=%.9f termination=%s elapsed_s=%.6f budget_s=%.6f expanded=%d expansion_limit=%d geometry_queries=%d geometry_s=%.6f geometry_reject=%d ht_reject=%d memory_reject=%d reserve_reject=%d direct=%d",
+      "HT_SEARCH_AUDIT target=%d goal=(%.6f,%.6f) gain=%.1f recovery=%d backtrack=%d ht_stamp=%.9f termination=%s elapsed_s=%.6f budget_s=%.6f expanded=%d expansion_limit=%d geometry_queries=%d geometry_s=%.6f geometry_reject=%d ht_reject=%d memory_reject=%d reserve_reject=%d direct=%d dominated_pruned=%d",
       target.id,goal.x,goal.y,target.gain,target.recovery,target.backtrack,ht->cycleStamp(),
       ht_cost_ns::terminationName(plan.termination),query_seconds,config.max_search_seconds,plan.expanded,
-      config.max_expansions,geometry_queries,geometry_seconds,geometry_rejections,ht_rejections,memory_rejections,reserve_rejections,plan.direct_connection);
+      config.max_expansions,geometry_queries,geometry_seconds,geometry_rejections,ht_rejections,memory_rejections,reserve_rejections,plan.direct_connection,plan.dominated_edges_pruned);
     if (!plan.reached || plan.poses.size()<2) {
       if (target.id==committed_id) ht_commitment_.reject(now);
       RCLCPP_INFO_THROTTLE(node_->get_logger(),*node_->get_clock(),3000,
