@@ -1,0 +1,191 @@
+/**
+ * @file local_coverage_planner.h
+ * @author Chao Cao (ccao1@andrew.cmu.edu)
+ * @brief Class that ensures coverage in the surroundings of the robot
+ * @version 0.1
+ * @date 2021-05-30
+ *
+ * @copyright Copyright (c) 2021
+ *
+ */
+#pragma once
+
+#include <Eigen/Core>
+#include <set>
+
+#include <rclcpp/rclcpp.hpp>
+#include <nav_msgs/msg/path.hpp>
+#include <std_msgs/msg/string.hpp>
+
+#include "grid_world/grid_world.h"
+#include "exploration_path/exploration_path.h"
+#include "viewpoint_manager/viewpoint_manager.h"
+#include "ht_cost/xytheta_planner.h"
+#include "ht_cost/target_commitment.h"
+#include "ht_cost/exploration_progress.h"
+#include "ht_cost/heading_reserve.h"
+
+namespace local_coverage_planner_ns
+{
+struct LocalCoveragePlannerParameter
+{
+  int kMinAddPointNum;
+  int kMinAddFrontierPointNum;
+  int kGreedyViewPointSampleRange;
+  int kLocalPathOptimizationItrMax;
+
+  bool ReadParameters(rclcpp::Node::SharedPtr nh);
+};
+class LocalCoveragePlanner
+{
+public:
+  explicit LocalCoveragePlanner(rclcpp::Node::SharedPtr nh);
+  ~LocalCoveragePlanner() = default;
+
+  // Update representation
+  void SetRobotPosition(const Eigen::Vector3d& robot_position)
+  {
+    robot_position_ = robot_position;
+  }
+  void SetRobotYaw(double yaw) { robot_yaw_=yaw; }
+  void SetHTGlobalTaskQuery(std::function<bool(int)> query) {ht_global_task_pending_=std::move(query);}
+  void SetViewPointManager(std::shared_ptr<viewpoint_manager_ns::ViewPointManager> const& viewpoint_manager)
+  {
+    viewpoint_manager_ = viewpoint_manager;
+    use_frontier_ = viewpoint_manager_->UseFrontier();
+  }
+
+  // Local coverage
+  void SetLookAheadPoint(const Eigen::Vector3d& lookahead_point)
+  {
+    lookahead_point_ = lookahead_point;
+    lookahead_point_update_ = true;
+  }
+  exploration_path_ns::ExplorationPath
+  SolveLocalCoverageProblem(const exploration_path_ns::ExplorationPath& global_path, int uncovered_point_num,
+                            int uncovered_frontier_point_num = 0);
+  exploration_path_ns::ExplorationPath
+  SolveTareCoverageProblem(const exploration_path_ns::ExplorationPath& global_path, int uncovered_point_num,
+                            int uncovered_frontier_point_num = 0);
+  exploration_path_ns::ExplorationPath PlanHTReturn(const Eigen::Vector3d& target,double search_seconds=-1.);
+  double ReturnCheckpointRadius() const {
+    // Search may stop goal_radius from the checkpoint; the follower consumes
+    // its last pose within 0.12 m. Include 0.03 m numerical/tracking margin.
+    return std::max(viewpoint_manager_->HT()->reachedDistance(),xytheta_config_.goal_radius+0.15);
+  }
+  void PublishHTPath();
+  const nav_msgs::msg::Path& GetHTPath() const { return ht_output_path_; }
+  void ClearHTPath() { ht_output_path_.poses.clear(); }
+
+  // Runtime
+  int GetFindPathRuntime()
+  {
+    return find_path_runtime_;
+  }
+  int GetViewPointSamplingRuntime()
+  {
+    return viewpoint_sampling_runtime_;
+  }
+  int GetTSPRuntime()
+  {
+    return tsp_runtime_;
+  }
+
+  bool IsLocalCoverageComplete()
+  {
+    return local_coverage_complete_;
+  }
+  struct CompletionAudit {
+    int navigation=0,reused=0,queue=0,queue_best=0,frontier_queue=0;
+    int virtually_covered=0,virtually_covered_frontier=0;
+    int raw_gain_candidates=0,raw_frontier_candidates=0;
+    int min_points=0,min_frontier=0,output_target=-1,output_gain=0,output_frontier=0;
+  };
+  const CompletionAudit& GetCompletionAudit() const { return completion_audit_; }
+
+  // Visualization
+  void GetSelectedViewPointVisCloud(pcl::PointCloud<pcl::PointXYZI>::Ptr& cloud);
+
+private:
+  int GetBoundaryViewpointIndex(const exploration_path_ns::ExplorationPath& global_path);
+  void GetBoundaryViewpointIndices(exploration_path_ns::ExplorationPath global_path);
+  void GetNavigationViewPointIndices(exploration_path_ns::ExplorationPath global_path,
+                                     std::vector<int>& navigation_viewpoint_indices);
+  void UpdateViewPointCoveredPoint(std::vector<bool>& point_list, int viewpoint_index, bool use_array_ind = false);
+  void UpdateViewPointCoveredFrontierPoint(std::vector<bool>& frontier_point_list, int viewpoint_index,
+                                           bool use_array_ind = false);
+
+  void EnqueueViewpointCandidates(std::vector<std::pair<int, int>>& cover_point_queue,
+                                  std::vector<std::pair<int, int>>& frontier_queue,
+                                  const std::vector<bool>& covered_point_list,
+                                  const std::vector<bool>& covered_frontier_point_list,
+                                  const std::vector<int>& selected_viewpoint_array_indices);
+
+  void SelectViewPoint(const std::vector<std::pair<int, int>>& queue, const std::vector<bool>& covered,
+                       std::vector<int>& selected_viewpoint_indices, bool use_frontier = false);
+  void SelectViewPointFromFrontierQueue(std::vector<std::pair<int, int>>& frontier_queue,
+                                        std::vector<bool>& frontier_covered,
+                                        std::vector<int>& selected_viewpoint_indices);
+  exploration_path_ns::ExplorationPath SolveTSP(const std::vector<int>& selected_viewpoint_indices,
+                                                std::vector<int>& ordered_viewpoint_indices);
+  exploration_path_ns::ExplorationPath SolveTareTSP(const std::vector<int>& selected_viewpoint_indices,
+                                                std::vector<int>& ordered_viewpoint_indices);
+
+  exploration_path_ns::ExplorationPath SolveHTTSP(const std::vector<int>& selected,
+                                                  std::vector<int>& ordered);
+  uint64_t tare_tsp_calls_=0;
+  double ht_last_cost_ = 0;
+  double ht_cycle_search_seconds_=0.35;
+  double ht_tracking_margin_=0.12;
+  double ht_heading_margin_=0.05;
+  double robot_yaw_=0;
+  int ht_previous_target_=-1;
+  int ht_candidate_target_=-1,ht_output_target_=-1;
+  ht_cost_ns::TargetCommitment ht_commitment_;
+  ht_cost_ns::ExecutionFailureMemory ht_execution_failures_;
+  Eigen::Vector3d ht_global_guide_=Eigen::Vector3d::Zero();
+  bool ht_has_global_guide_=false;
+  bool ht_guide_is_global_=false;
+  ht_cost_ns::GuideProgress ht_guide_progress_;
+  std::function<bool(int)> ht_global_task_pending_;
+  ht_cost_ns::ExplorationVisits ht_visits_;
+  bool SetHTGuide(const Eigen::Vector3d& guide,bool global,double now,int task_id=-1);
+  ht_cost_ns::XYThetaConfig xytheta_config_;
+  rclcpp::Node::SharedPtr node_;
+  rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr ht_path_pub_;
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr tare_order_pub_;
+  rclcpp::Subscription<nav_msgs::msg::Path>::SharedPtr ht_rejection_sub_;
+  nav_msgs::msg::Path ht_candidate_path_,ht_output_path_;
+  // viewpoint_manager_ns::ViewPointManager::Ptr viewpoint_manager_;
+  static bool SortPairInRev(const std::pair<int, int>& a, const std::pair<int, int>& b)
+  {
+    return (a.first > b.first);
+  }
+
+  LocalCoveragePlannerParameter parameters_;
+  std::shared_ptr<viewpoint_manager_ns::ViewPointManager> viewpoint_manager_;
+
+  Eigen::Vector3d robot_position_;
+  Eigen::Vector3d lookahead_point_;
+
+  bool lookahead_point_update_;
+  bool use_frontier_;
+  bool local_coverage_complete_;
+  CompletionAudit completion_audit_;
+
+  // Viewpoint indices
+  int robot_viewpoint_ind_;
+  int start_viewpoint_ind_;
+  int end_viewpoint_ind_;
+  int lookahead_viewpoint_ind_;
+
+  // Runtime
+  int find_path_runtime_=0;
+  int viewpoint_sampling_runtime_=0;
+  int tsp_runtime_=0;
+  static const std::string kRuntimeUnit;
+
+  std::vector<int> last_selected_viewpoint_indices_;
+  std::vector<int> last_selected_viewpoint_array_indices_;
+};
+}  // namespace local_coverage_planner_ns

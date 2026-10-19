@@ -1,3 +1,11 @@
+# 阶段40：原TARE顺序与HT路由
+
+阶段40已按先行计划恢复原TARE多视点覆盖/TSP，HT只路由当前航点。完整车库600秒192.93m/8467.000m³，较39体积+30.6%。XYθ搜索超时42次；最长完全停车0.75s，末60秒新增731.724m³/移动20.80m；末尾EXPLORING。 [报告](docs/results/ht_tare_waypoint_10min_2026-10-20/REPORT.md)，[视频](docs/results/ht_tare_waypoint_10min_2026-10-20/garage/camera_h264.mp4)，[历次图册](docs/results/ht_tare_waypoint_10min_2026-10-20/history/index.html)。全原始数据待Release远端校验；不宣称追平原版。
+
+构造回归另有失败：HT删点后原BFS仍标记另一侧连通/候选，但实际最短路为空。近家rush-home也存在前视无输出时被包装层错误拦住的源条件反例；本轮没有触发返航。
+
+---
+
 # HT_Explo：HT方向可通过性与XYθ探索规划
 
 **[每轮实验：改动、提升、缺陷与原始数据](docs/experiments/ITERATIONS.md)** · **[版本总览：每版改动、功能、验证和问题](VERSIONS.md)** · [阶段标签](https://github.com/CQULzz/HT_Explo/tags) · [发布说明](https://github.com/CQULzz/HT_Explo/releases)

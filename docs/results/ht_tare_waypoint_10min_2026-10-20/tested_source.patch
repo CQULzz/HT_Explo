@@ -1,0 +1,2183 @@
+diff --git a/presentations/run_ht_endurance.py b/presentations/run_ht_endurance.py
+index a301337..f6f65c8 100644
+--- a/presentations/run_ht_endurance.py
++++ b/presentations/run_ht_endurance.py
+@@ -117,6 +117,13 @@ def main():
+              ROOT/'src/tare_planner/src/local_coverage_planner/ht_route.cpp',
+              ROOT/'src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp',
+              ROOT/'src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp']
++    paths += [ROOT/'src/tare_planner/src/local_coverage_planner/tare_original.cpp',
++              ROOT/'src/tare_planner/src/grid_world/tare_original.cpp',
++              ROOT/'src/tare_planner/src/sensor_coverage_planner/tare_original.cpp',
++              ROOT/'src/tare_planner/src/sensor_coverage_planner/tare_waypoint_router.cpp',
++              ROOT/'src/tare_planner/include/ht_cost/tare_waypoint_route.h',
++              ROOT/'src/tare_planner/include/sensor_coverage_planner/sensor_coverage_planner_ground.h',
++              ROOT/'src/tare_planner/CMakeLists.txt']
+     paths += [Path(__file__), Path(__file__).with_name('run_scheduled_comparison.py'),
+               Path(__file__).with_name('summarize_ht_endurance.py'),
+               Path(__file__).with_name('summarize_tare_ht_pair.py'),
+@@ -144,6 +151,8 @@ def main():
+                     planned_duration_s=args.duration, scenario=args.scenario, domain=args.domain,
+                     video_fps=args.video_fps, cupy_timing_profile=os.environ.get('HT_PROFILE_CUPY')=='1',
+                     speed_cap_mps=.5, preflight=preflight(),
++                    ht_exploration_mode=json.loads((BRIDGE/'ht_trial.yaml').read_text())['/**']['ros__parameters'].get('ht_exploration_mode','tare_waypoint'),
++                    simulation_terrain_isolated=True,
+                     ht_score_semantics=json.loads((BRIDGE/'ht_trial.yaml').read_text())['/**']['ros__parameters'].get('ht_score_semantics','point'),
+                     git_head=subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
+                     evidence_policy=f'All control/status and odometry, full-rate published HT maps and TARE collision geometry; original-stamped scans1Hz; exact-stamp map triplets and network inputs/outputs every10s; camera{args.video_fps}fps. Raw CuPy and scans are not fully bagged.',
+@@ -153,7 +162,7 @@ def main():
+     for p in [Path(__file__), Path(__file__).with_name('endurance_probe.py')]:
+         shutil.copy2(p, folder/p.name)
+     topics = ['/endurance/registered_scan', '/state_estimation', '/state_estimation_at_scan',
+-              '/tf', '/tf_static', '/cmd_vel', '/way_point', '/ht_xytheta_path',
++              '/tf', '/tf_static', '/cmd_vel', '/way_point', '/ht_xytheta_path', '/tare_native_waypoint', '/ht_route_goal', '/tare_coverage_route', '/tare_route_branch', '/tare_tsp_order',
+               '/ht_execution_status', '/ht_follower_status', '/ht_execution_rejected_edge',
+               '/ht_navigation_allowed', '/mission_state', '/mission_completed', '/runtime', '/runtime_breakdown', '/exploration_finish',
+               '/ht_traversability/global_local', '/collision_cloud', '/viewpoint_in_collision_cloud_', '/viewpoint_vis_cloud']
+diff --git a/presentations/run_scheduled_comparison.py b/presentations/run_scheduled_comparison.py
+index a1a5199..d308ace 100644
+--- a/presentations/run_scheduled_comparison.py
++++ b/presentations/run_scheduled_comparison.py
+@@ -159,7 +159,7 @@ def run_trial(trial,variant,duration,scenario='garage'):
+         raise ValueError('Unsupported installed simulation scenario: '+scenario)
+     ros=Path('/opt/ros/jazzy/setup.bash')
+     cmu=CMU/'install/setup.bash'
+-    sim=source(ros,cmu)+f' exec ros2 launch {q(BRIDGE/"cmu_xytheta.launch.py")} world_name:={scenario}'
++    sim=source(ros,cmu)+f' exec ros2 launch {q(BRIDGE/"cmu_xytheta.launch.py")} world_name:={scenario} use_terrain_analysis:={str(variant=="original").lower()}'
+     trial.start('sim',sim)
+     time.sleep(10);trial.check()
+     stage=source(ros,cmu)+f' python3 {q(HERE/"stage_garage_pose.py")} --scenario {scenario}'
+diff --git a/src/tare_planner/CMakeLists.txt b/src/tare_planner/CMakeLists.txt
+index 8ca326a..91e20e4 100644
+--- a/src/tare_planner/CMakeLists.txt
++++ b/src/tare_planner/CMakeLists.txt
+@@ -108,11 +108,11 @@ add_library(viewpoint_manager src/viewpoint_manager/viewpoint_manager.cpp)
+ ament_target_dependencies(viewpoint_manager rclcpp std_msgs nav_msgs geometry_msgs sensor_msgs tf2_ros tf2_geometry_msgs tf2)
+ target_link_libraries(viewpoint_manager ${catkin_LIBRARIES} rolling_grid viewpoint grid_world ht_cost)
+ 
+-add_library(local_coverage_planner src/local_coverage_planner/local_coverage_planner.cpp src/local_coverage_planner/ht_route.cpp)
++add_library(local_coverage_planner src/local_coverage_planner/tare_original.cpp src/local_coverage_planner/local_coverage_planner.cpp src/local_coverage_planner/ht_route.cpp)
+ ament_target_dependencies(local_coverage_planner rclcpp std_msgs nav_msgs geometry_msgs sensor_msgs tf2_ros tf2_geometry_msgs tf2)
+ target_link_libraries(local_coverage_planner ${catkin_LIBRARIES} viewpoint_manager tsp_solver)
+ 
+-add_library(grid_world src/grid_world/grid_world.cpp)
++add_library(grid_world src/grid_world/tare_original.cpp src/grid_world/grid_world.cpp)
+ ament_target_dependencies(grid_world rclcpp std_msgs nav_msgs geometry_msgs sensor_msgs tf2_ros tf2_geometry_msgs tf2)
+ target_link_libraries(grid_world ${catkin_LIBRARIES} viewpoint_manager tsp_solver keypose_graph exploration_path)
+ 
+@@ -140,7 +140,7 @@ add_library(tare_visualizer src/tare_visualizer/tare_visualizer.cpp)
+ ament_target_dependencies(tare_visualizer rclcpp std_msgs nav_msgs geometry_msgs sensor_msgs tf2_ros tf2_geometry_msgs tf2 pcl_ros pcl_conversions visualization_msgs)
+ target_link_libraries(tare_visualizer ${catkin_LIBRARIES} ${PCL_LIBRARIES})
+ 
+-add_library(sensor_coverage_planner_ground src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp)
++add_library(sensor_coverage_planner_ground src/sensor_coverage_planner/tare_waypoint_router.cpp src/sensor_coverage_planner/tare_original.cpp src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp)
+ ament_target_dependencies(sensor_coverage_planner_ground rclcpp std_msgs nav_msgs geometry_msgs sensor_msgs tf2_ros tf2_geometry_msgs tf2)
+ target_link_libraries(sensor_coverage_planner_ground ${catkin_LIBRARIES} graph planning_env keypose_graph viewpoint_manager pointcloud_manager grid_world local_coverage_planner tare_visualizer)
+ 
+diff --git a/src/tare_planner/config/ht.yaml b/src/tare_planner/config/ht.yaml
+index ae1edbf..9091513 100644
+--- a/src/tare_planner/config/ht.yaml
++++ b/src/tare_planner/config/ht.yaml
+@@ -1,6 +1,7 @@
+ /**:
+   ros__parameters:
+     ht_enabled: true
++    ht_exploration_mode: tare_waypoint  # Upstream TARE coverage/TSP; HT routes its waypoint only.
+     ht_directions_calibrated: false
+     ht_topic: /ht_traversability/global_local
+     ht_min_probability: 0.5  # Every queried vehicle-reference score must meet this hard threshold.
+diff --git a/src/tare_planner/include/grid_world/grid_world.h b/src/tare_planner/include/grid_world/grid_world.h
+index f3c04ce..9a2572c 100644
+--- a/src/tare_planner/include/grid_world/grid_world.h
++++ b/src/tare_planner/include/grid_world/grid_world.h
+@@ -316,11 +316,16 @@ public:
+   void Reset();
+   int GetCellStatusCount(grid_world_ns::CellStatus status);
+   void UpdateCellStatus(const std::shared_ptr<viewpoint_manager_ns::ViewPointManager>& viewpoint_manager);
++  void UpdateTareCellStatus(const std::shared_ptr<viewpoint_manager_ns::ViewPointManager>& viewpoint_manager);
+   size_t PendingHTCoverageCells() const {return ht_pending_gain_cells_.size();}
+   exploration_path_ns::ExplorationPath
+   SolveGlobalTSP(const std::shared_ptr<viewpoint_manager_ns::ViewPointManager>& viewpoint_manager,
+                  std::vector<int>& ordered_cell_indices,
+                  const std::shared_ptr<keypose_graph_ns::KeyposeGraph>& keypose_graph = nullptr);
++  exploration_path_ns::ExplorationPath
++  SolveTareGlobalTSP(const std::shared_ptr<viewpoint_manager_ns::ViewPointManager>& viewpoint_manager,
++                 std::vector<int>& ordered_cell_indices,
++                 const std::shared_ptr<keypose_graph_ns::KeyposeGraph>& keypose_graph = nullptr);
+ 
+   inline void SetCurKeyposeGraphNodeInd(int node_ind)
+   {
+diff --git a/src/tare_planner/include/ht_cost/ht_cost_map.h b/src/tare_planner/include/ht_cost/ht_cost_map.h
+index c737468..ca9e368 100644
+--- a/src/tare_planner/include/ht_cost/ht_cost_map.h
++++ b/src/tare_planner/include/ht_cost/ht_cost_map.h
+@@ -8,12 +8,18 @@
+ #include <tf2_ros/transform_listener.h>
+ #include <mutex>
+ #include <memory>
++#include <map>
+ 
+ namespace ht_cost_ns {
+ class HtCostMap {
+  public:
+   explicit HtCostMap(rclcpp::Node::SharedPtr node,bool publish_permission=true);
+   bool enabled() const { return enabled_; }
++  bool tareCoverage() const { return enabled_ && tare_coverage_; }
++  struct TerrainCell { double x=0,y=0,height=std::numeric_limits<double>::quiet_NaN(),stamp=0; bool feasible=false; };
++  std::vector<TerrainCell> terrainWindow(double x,double y,double radius);
++  // Unknown historical guidance cells stay optimistic; execution is strict.
++  bool terrainAdmissible(double x,double y);
+   void beginCycle();
+   bool ready() const;
+   std::string status() const;
+@@ -49,7 +55,7 @@ class HtCostMap {
+   bool require_reversible_motion_=false;
+   bool configuration_scores_=false;
+   double fallback_lookahead_=0.5, fallback_speed_=0.2;
+-  bool enabled_=false, calibrated_=false;
++  bool enabled_=false, calibrated_=false, tare_coverage_=true;
+   double min_probability_=0.5, timeout_=1, step_=0.02, lookahead_=2;
+   double footprint_radius_=0.6, heading_offset_=0;
+   double reached_distance_=0.3;
+@@ -57,6 +63,8 @@ class HtCostMap {
+   std::string frame_;
+   std::string latest_error_="HT_MAP_MISSING", cycle_error_="HT_MAP_MISSING";
+   std::mutex mutex_;
++  bool collect_terrain_=false;
++  std::map<std::pair<int,int>,TerrainCell> terrain_history_;
+   std::shared_ptr<Map> latest_, cycle_;
+   tf2_ros::Buffer buffer_;
+   std::unique_ptr<tf2_ros::TransformListener> listener_;
+diff --git a/src/tare_planner/include/ht_cost/tare_waypoint_route.h b/src/tare_planner/include/ht_cost/tare_waypoint_route.h
+new file mode 100644
+index 0000000..08f71a0
+--- /dev/null
++++ b/src/tare_planner/include/ht_cost/tare_waypoint_route.h
+@@ -0,0 +1,34 @@
++#pragma once
++#include "ht_cost/ht_cost_core.h"
++namespace ht_cost_ns {
++// A TARE tour can contain the robot twice (a closed local TSP). Choose a
++// contiguous branch ending at the exact native lookahead; never clip toward
++// a remote endpoint through a bend in the tour.
++inline std::vector<Point> tareBranch(const std::vector<Point>& route,
++                                     const std::vector<bool>& robots,Point target) {
++  std::vector<Point> best;double best_length=std::numeric_limits<double>::infinity();
++  if(route.size()!=robots.size()) return best;
++  for(size_t start=0;start<route.size();++start) if(robots[start]) for(int dir:{-1,1}) {
++    std::vector<Point> branch{route[start]};double length=0;
++    for(int i=static_cast<int>(start)+dir;i>=0 && i<static_cast<int>(route.size());i+=dir) {
++      const auto& a=branch.back();const auto& b=route[i];
++      length+=std::hypot(b.x-a.x,b.y-a.y);branch.push_back(b);
++      if(std::hypot(b.x-target.x,b.y-target.y)<1e-5) {
++        if(length<best_length) {best_length=length;best=branch;}break;
++      }
++      if(robots[i]) break;
++    }
++  }
++  return best;
++}
++inline Point tarePrefix(const std::vector<Point>& branch,double length) {
++  if(branch.empty() || !std::isfinite(length) || length<0) return {};
++  for(size_t i=1;i<branch.size();++i) {
++    const auto& a=branch[i-1];const auto& b=branch[i];
++    const double d=std::hypot(b.x-a.x,b.y-a.y);
++    if(d>1e-9 && d>=length) {const double t=length/d;return {a.x+t*(b.x-a.x),a.y+t*(b.y-a.y),a.z+t*(b.z-a.z)};}
++    length-=d;
++  }
++  return branch.back();
++}
++}
+diff --git a/src/tare_planner/include/local_coverage_planner/local_coverage_planner.h b/src/tare_planner/include/local_coverage_planner/local_coverage_planner.h
+index c51e8bc..b028699 100644
+--- a/src/tare_planner/include/local_coverage_planner/local_coverage_planner.h
++++ b/src/tare_planner/include/local_coverage_planner/local_coverage_planner.h
+@@ -15,6 +15,7 @@
+ 
+ #include <rclcpp/rclcpp.hpp>
+ #include <nav_msgs/msg/path.hpp>
++#include <std_msgs/msg/string.hpp>
+ 
+ #include "grid_world/grid_world.h"
+ #include "exploration_path/exploration_path.h"
+@@ -63,7 +64,10 @@ public:
+   exploration_path_ns::ExplorationPath
+   SolveLocalCoverageProblem(const exploration_path_ns::ExplorationPath& global_path, int uncovered_point_num,
+                             int uncovered_frontier_point_num = 0);
+-  exploration_path_ns::ExplorationPath PlanHTReturn(const Eigen::Vector3d& target);
++  exploration_path_ns::ExplorationPath
++  SolveTareCoverageProblem(const exploration_path_ns::ExplorationPath& global_path, int uncovered_point_num,
++                            int uncovered_frontier_point_num = 0);
++  exploration_path_ns::ExplorationPath PlanHTReturn(const Eigen::Vector3d& target,double search_seconds=-1.);
+   double ReturnCheckpointRadius() const {
+     // Search may stop goal_radius from the checkpoint; the follower consumes
+     // its last pose within 0.12 m. Include 0.03 m numerical/tracking margin.
+@@ -124,9 +128,12 @@ private:
+                                         std::vector<int>& selected_viewpoint_indices);
+   exploration_path_ns::ExplorationPath SolveTSP(const std::vector<int>& selected_viewpoint_indices,
+                                                 std::vector<int>& ordered_viewpoint_indices);
++  exploration_path_ns::ExplorationPath SolveTareTSP(const std::vector<int>& selected_viewpoint_indices,
++                                                std::vector<int>& ordered_viewpoint_indices);
+ 
+   exploration_path_ns::ExplorationPath SolveHTTSP(const std::vector<int>& selected,
+                                                   std::vector<int>& ordered);
++  uint64_t tare_tsp_calls_=0;
+   double ht_last_cost_ = 0;
+   double ht_cycle_search_seconds_=0.35;
+   double ht_tracking_margin_=0.12;
+@@ -146,6 +153,7 @@ private:
+   ht_cost_ns::XYThetaConfig xytheta_config_;
+   rclcpp::Node::SharedPtr node_;
+   rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr ht_path_pub_;
++  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr tare_order_pub_;
+   rclcpp::Subscription<nav_msgs::msg::Path>::SharedPtr ht_rejection_sub_;
+   nav_msgs::msg::Path ht_candidate_path_,ht_output_path_;
+   // viewpoint_manager_ns::ViewPointManager::Ptr viewpoint_manager_;
+diff --git a/src/tare_planner/include/sensor_coverage_planner/sensor_coverage_planner_ground.h b/src/tare_planner/include/sensor_coverage_planner/sensor_coverage_planner_ground.h
+index cf4b0a4..d23e959 100644
+--- a/src/tare_planner/include/sensor_coverage_planner/sensor_coverage_planner_ground.h
++++ b/src/tare_planner/include/sensor_coverage_planner/sensor_coverage_planner_ground.h
+@@ -253,6 +253,11 @@ private:
+   rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr local_tsp_path_publisher_;
+   rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr exploration_path_publisher_;
+   rclcpp::Publisher<geometry_msgs::msg::PointStamped>::SharedPtr waypoint_pub_;
++  rclcpp::Publisher<geometry_msgs::msg::PointStamped>::SharedPtr tare_waypoint_pub_,ht_route_goal_pub_;
++  rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr tare_route_pub_,tare_branch_pub_;
++  geometry_msgs::msg::Point tare_command_waypoint_;
++  bool tare_native_lookahead_update_=false;
++  bool RouteTareWaypoint(const exploration_path_ns::ExplorationPath& route);
+   rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr exploration_finish_pub_;
+   rclcpp::Publisher<std_msgs::msg::Int32MultiArray>::SharedPtr
+       runtime_breakdown_pub_;
+@@ -309,6 +314,9 @@ private:
+   exploration_path_ns::ExplorationPath ConcatenateGlobalLocalPath(
+       const exploration_path_ns::ExplorationPath &global_path,
+       const exploration_path_ns::ExplorationPath &local_path);
++  exploration_path_ns::ExplorationPath ConcatenateTarePath(
++      const exploration_path_ns::ExplorationPath &global_path,
++      const exploration_path_ns::ExplorationPath &local_path);
+ 
+   void PublishRuntime();
+   double GetRobotToHomeDistance();
+@@ -318,6 +326,10 @@ private:
+   GetLookAheadPoint(const exploration_path_ns::ExplorationPath &local_path,
+                     const exploration_path_ns::ExplorationPath &global_path,
+                     Eigen::Vector3d &lookahead_point);
++  bool
++  GetTareLookAheadPoint(const exploration_path_ns::ExplorationPath &local_path,
++                    const exploration_path_ns::ExplorationPath &global_path,
++                    Eigen::Vector3d &lookahead_point);
+ 
+   void PrintExplorationStatus(std::string status, bool clear_last_line = true);
+   void CountDirectionChange();
+diff --git a/src/tare_planner/src/grid_world/grid_world.cpp b/src/tare_planner/src/grid_world/grid_world.cpp
+index 4c4c7f9..54398ef 100644
+--- a/src/tare_planner/src/grid_world/grid_world.cpp
++++ b/src/tare_planner/src/grid_world/grid_world.cpp
+@@ -537,6 +537,8 @@ int GridWorld::GetCellStatusCount(grid_world_ns::CellStatus status)
+ 
+ void GridWorld::UpdateCellStatus(const std::shared_ptr<viewpoint_manager_ns::ViewPointManager>& viewpoint_manager)
+ {
++  if (viewpoint_manager->HT()->tareCoverage()) return UpdateTareCellStatus(viewpoint_manager);
++
+   int exploring_count = 0;
+   int unseen_count = 0;
+   int covered_count = 0;
+@@ -768,6 +770,8 @@ exploration_path_ns::ExplorationPath GridWorld::SolveGlobalTSP(
+     const std::shared_ptr<viewpoint_manager_ns::ViewPointManager>& viewpoint_manager,
+     std::vector<int>& ordered_cell_indices, const std::shared_ptr<keypose_graph_ns::KeyposeGraph>& keypose_graph)
+ {
++  if (viewpoint_manager->HT()->tareCoverage()) return SolveTareGlobalTSP(viewpoint_manager, ordered_cell_indices, keypose_graph);
++
+   /****** Get the node on keypose graph associated with the robot position *****/
+   double min_dist_to_robot = DBL_MAX;
+   geometry_msgs::msg::Point global_path_robot_position = robot_position_;
+diff --git a/src/tare_planner/src/grid_world/tare_original.cpp b/src/tare_planner/src/grid_world/tare_original.cpp
+new file mode 100644
+index 0000000..b7a4e68
+--- /dev/null
++++ b/src/tare_planner/src/grid_world/tare_original.cpp
+@@ -0,0 +1,451 @@
++// Upstream TARE ROS2 baseline b6760adb4280b379567c76f4e684ce628e28ef71.
++// Function bodies preserved; only method names differ. See docs/plans/2026-10-20_tare_ht_waypoint_plan.md.
++#include "grid_world/grid_world.h"
++#include "viewpoint_manager/viewpoint_manager.h"
++namespace grid_world_ns {
++void GridWorld::UpdateTareCellStatus(const std::shared_ptr<viewpoint_manager_ns::ViewPointManager>& viewpoint_manager)
++{
++  int exploring_count = 0;
++  int unseen_count = 0;
++  int covered_count = 0;
++  for (int i = 0; i < subspaces_->GetCellNumber(); ++i)
++  {
++    if (subspaces_->GetCell(i).GetStatus() == CellStatus::EXPLORING)
++    {
++      exploring_count++;
++    }
++    else if (subspaces_->GetCell(i).GetStatus() == CellStatus::UNSEEN)
++    {
++      unseen_count++;
++    }
++    else if (subspaces_->GetCell(i).GetStatus() == CellStatus::COVERED)
++    {
++      covered_count++;
++    }
++  }
++
++  for (const auto& cell_ind : neighbor_cell_indices_)
++  {
++    subspaces_->GetCell(cell_ind).ClearViewPointIndices();
++  }
++  for (const auto& viewpoint_ind : viewpoint_manager->candidate_indices_)
++  {
++    geometry_msgs::msg::Point viewpoint_position = viewpoint_manager->GetViewPointPosition(viewpoint_ind);
++    Eigen::Vector3i sub =
++        subspaces_->Pos2Sub(Eigen::Vector3d(viewpoint_position.x, viewpoint_position.y, viewpoint_position.z));
++    if (subspaces_->InRange(sub))
++    {
++      int cell_ind = subspaces_->Sub2Ind(sub);
++      AddViewPointToCell(cell_ind, viewpoint_ind);
++      viewpoint_manager->SetViewPointCellInd(viewpoint_ind, cell_ind);
++    }
++    else
++    {
++      RCLCPP_ERROR_STREAM(rclcpp::get_logger("standalone_logger"), "subspace sub out of bound: " << sub.transpose());
++    }
++  }
++
++  for (const auto& cell_ind : neighbor_cell_indices_)
++  {
++    if (subspaces_->GetCell(cell_ind).GetStatus() == CellStatus::COVERED_BY_OTHERS)
++    {
++      continue;
++    }
++    int candidate_count = 0;
++    int selected_viewpoint_count = 0;
++    int above_big_threshold_count = 0;
++    int above_small_threshold_count = 0;
++    int above_frontier_threshold_count = 0;
++    int highest_score_viewpoint_ind = -1;
++    int highest_score = -1;
++    for (const auto& viewpoint_ind : subspaces_->GetCell(cell_ind).GetViewPointIndices())
++    {
++      MY_ASSERT(viewpoint_manager->IsViewPointCandidate(viewpoint_ind));
++      candidate_count++;
++      if (viewpoint_manager->ViewPointSelected(viewpoint_ind))
++      {
++        selected_viewpoint_count++;
++      }
++      if (viewpoint_manager->ViewPointVisited(viewpoint_ind))
++      {
++        continue;
++      }
++      int score = viewpoint_manager->GetViewPointCoveredPointNum(viewpoint_ind);
++      int frontier_score = viewpoint_manager->GetViewPointCoveredFrontierPointNum(viewpoint_ind);
++      if (score > highest_score)
++      {
++        highest_score = score;
++        highest_score_viewpoint_ind = viewpoint_ind;
++      }
++      if (score > kMinAddPointNumSmall)
++      {
++        above_small_threshold_count++;
++      }
++      if (score > kMinAddPointNumBig)
++      {
++        above_big_threshold_count++;
++      }
++      if (frontier_score > kMinAddFrontierPointNum)
++      {
++        above_frontier_threshold_count++;
++      }
++    }
++    // Exploring to Covered
++    if (subspaces_->GetCell(cell_ind).GetStatus() == CellStatus::EXPLORING &&
++        above_frontier_threshold_count < kCellExploringToCoveredThr &&
++        above_small_threshold_count < kCellExploringToCoveredThr && selected_viewpoint_count == 0 &&
++        candidate_count > 0)
++    {
++      subspaces_->GetCell(cell_ind).SetStatus(CellStatus::COVERED);
++    }
++    // Covered to Exploring
++    else if (subspaces_->GetCell(cell_ind).GetStatus() == CellStatus::COVERED &&
++             (above_big_threshold_count >= kCellCoveredToExploringThr ||
++              above_frontier_threshold_count >= kCellCoveredToExploringThr))
++    {
++      subspaces_->GetCell(cell_ind).SetStatus(CellStatus::EXPLORING);
++      almost_covered_cell_indices_.push_back(cell_ind);
++    }
++    // Exploring to Almost covered
++    else if (subspaces_->GetCell(cell_ind).GetStatus() == CellStatus::EXPLORING && selected_viewpoint_count == 0 &&
++             candidate_count > 0)
++    {
++      almost_covered_cell_indices_.push_back(cell_ind);
++    }
++    else if (subspaces_->GetCell(cell_ind).GetStatus() != CellStatus::COVERED && selected_viewpoint_count > 0)
++    {
++      subspaces_->GetCell(cell_ind).SetStatus(CellStatus::EXPLORING);
++      almost_covered_cell_indices_.erase(
++          std::remove(almost_covered_cell_indices_.begin(), almost_covered_cell_indices_.end(), cell_ind),
++          almost_covered_cell_indices_.end());
++    }
++    else if (subspaces_->GetCell(cell_ind).GetStatus() == CellStatus::EXPLORING && candidate_count == 0)
++    {
++      // First visit
++      if (subspaces_->GetCell(cell_ind).GetVisitCount() == 1 &&
++          subspaces_->GetCell(cell_ind).GetGraphNodeIndices().empty())
++      {
++        subspaces_->GetCell(cell_ind).SetStatus(CellStatus::COVERED);
++      }
++      else
++      {
++        geometry_msgs::msg::Point cell_position = subspaces_->GetCell(cell_ind).GetPosition();
++        double xy_dist_to_robot = misc_utils_ns::PointXYDist<geometry_msgs::msg::Point, geometry_msgs::msg::Point>(
++            cell_position, robot_position_);
++        double z_dist_to_robot = std::abs(cell_position.z - robot_position_.z);
++        if (xy_dist_to_robot < kCellSize && z_dist_to_robot < kCellHeight * 0.8)
++        {
++          subspaces_->GetCell(cell_ind).SetStatus(CellStatus::COVERED);
++        }
++      }
++    }
++
++    if (subspaces_->GetCell(cell_ind).GetStatus() == CellStatus::EXPLORING && candidate_count > 0)
++    {
++      subspaces_->GetCell(cell_ind).SetRobotPosition(robot_position_);
++      subspaces_->GetCell(cell_ind).SetKeyposeID(cur_keypose_id_);
++    }
++  }
++  for (const auto& cell_ind : almost_covered_cell_indices_)
++  {
++    if (std::find(neighbor_cell_indices_.begin(), neighbor_cell_indices_.end(), cell_ind) ==
++        neighbor_cell_indices_.end())
++    {
++      subspaces_->GetCell(cell_ind).SetStatus(CellStatus::COVERED);
++      almost_covered_cell_indices_.erase(
++          std::remove(almost_covered_cell_indices_.begin(), almost_covered_cell_indices_.end(), cell_ind),
++          almost_covered_cell_indices_.end());
++    }
++  }
++}
++
++exploration_path_ns::ExplorationPath GridWorld::SolveTareGlobalTSP(
++    const std::shared_ptr<viewpoint_manager_ns::ViewPointManager>& viewpoint_manager,
++    std::vector<int>& ordered_cell_indices, const std::shared_ptr<keypose_graph_ns::KeyposeGraph>& keypose_graph)
++{
++  /****** Get the node on keypose graph associated with the robot position *****/
++  double min_dist_to_robot = DBL_MAX;
++  geometry_msgs::msg::Point global_path_robot_position = robot_position_;
++  Eigen::Vector3d eigen_robot_position(robot_position_.x, robot_position_.y, robot_position_.z);
++  // Get nearest connected node
++  int closest_node_ind = 0;
++  double closest_node_dist = DBL_MAX;
++  keypose_graph->GetClosestConnectedNodeIndAndDistance(robot_position_, closest_node_ind, closest_node_dist);
++  if (closest_node_dist < kCellSize / 2 && closest_node_ind >= 0 && closest_node_ind < keypose_graph->GetNodeNum())
++  {
++    global_path_robot_position = keypose_graph->GetNodePosition(closest_node_ind);
++  }
++  else if (cur_keypose_graph_node_ind_ >= 0 && cur_keypose_graph_node_ind_ < keypose_graph->GetNodeNum())
++  {
++    // RCLCPP_WARN(rclcpp::get_logger("standalone_logger"), "GridWorld::SolveGlobalTSP: using nearest keypose node for
++    // robot position");
++    global_path_robot_position = keypose_graph->GetNodePosition(cur_keypose_graph_node_ind_);
++  }
++  else
++  {
++    // RCLCPP_WARN(rclcpp::get_logger("standalone_logger"), "GridWorld::SolveGlobalTSP: using neighbor cell roadmap
++    // connection points for robot position");
++    for (int i = 0; i < neighbor_cell_indices_.size(); i++)
++    {
++      int cell_ind = neighbor_cell_indices_[i];
++      if (subspaces_->GetCell(cell_ind).IsRoadmapConnectionPointSet())
++      {
++        Eigen::Vector3d roadmap_connection_point = subspaces_->GetCell(cell_ind).GetRoadmapConnectionPoint();
++        if (viewpoint_manager->InLocalPlanningHorizon(roadmap_connection_point))
++        {
++          double dist_to_robot = (roadmap_connection_point - eigen_robot_position).norm();
++          if (dist_to_robot < min_dist_to_robot)
++          {
++            min_dist_to_robot = dist_to_robot;
++            global_path_robot_position.x = roadmap_connection_point.x();
++            global_path_robot_position.y = roadmap_connection_point.y();
++            global_path_robot_position.z = roadmap_connection_point.z();
++          }
++        }
++      }
++    }
++  }
++
++  /****** Get all the connected exploring cells *****/
++  exploration_path_ns::ExplorationPath global_path;
++  std::vector<geometry_msgs::msg::Point> exploring_cell_positions;
++  std::vector<int> exploring_cell_indices;
++  for (int i = 0; i < subspaces_->GetCellNumber(); i++)
++  {
++    if (subspaces_->GetCell(i).GetStatus() == CellStatus::EXPLORING)
++    {
++      if (std::find(neighbor_cell_indices_.begin(), neighbor_cell_indices_.end(), i) == neighbor_cell_indices_.end() ||
++          (subspaces_->GetCell(i).GetViewPointIndices().empty() && subspaces_->GetCell(i).GetVisitCount() > 1))
++      {
++        if (!use_keypose_graph_ || keypose_graph == nullptr || keypose_graph->GetNodeNum() == 0)
++        {
++          // Use straight line connection
++          exploring_cell_positions.push_back(GetCellPosition(i));
++          exploring_cell_indices.push_back(i);
++        }
++        else
++        {
++          Eigen::Vector3d connection_point = subspaces_->GetCell(i).GetRoadmapConnectionPoint();
++          geometry_msgs::msg::Point connection_point_geo;
++          connection_point_geo.x = connection_point.x();
++          connection_point_geo.y = connection_point.y();
++          connection_point_geo.z = connection_point.z();
++
++          bool reachable = false;
++          if (keypose_graph->IsPositionReachable(connection_point_geo))
++          {
++            reachable = true;
++          }
++          else
++          {
++            // Check all the keypose graph nodes within this cell to see if there are any connected nodes
++            double min_dist = DBL_MAX;
++            double min_dist_node_ind = -1;
++            for (const auto& node_ind : subspaces_->GetCell(i).GetGraphNodeIndices())
++            {
++              geometry_msgs::msg::Point node_position = keypose_graph->GetNodePosition(node_ind);
++              double dist = misc_utils_ns::PointXYZDist<geometry_msgs::msg::Point, geometry_msgs::msg::Point>(
++                  node_position, connection_point_geo);
++              if (dist < min_dist)
++              {
++                min_dist = dist;
++                min_dist_node_ind = node_ind;
++              }
++            }
++            if (min_dist_node_ind >= 0 && min_dist_node_ind < keypose_graph->GetNodeNum())
++            {
++              reachable = true;
++              connection_point_geo = keypose_graph->GetNodePosition(min_dist_node_ind);
++            }
++          }
++          if (reachable)
++          {
++            exploring_cell_positions.push_back(connection_point_geo);
++            exploring_cell_indices.push_back(i);
++          }
++        }
++      }
++    }
++  }
++
++  /****** Return home ******/
++  if (exploring_cell_indices.empty())
++  {
++    return_home_ = true;
++
++    geometry_msgs::msg::Point home_position;
++
++    nav_msgs::msg::Path return_home_path;
++    if (!use_keypose_graph_ || keypose_graph == nullptr || keypose_graph->GetNodeNum() == 0)
++    {
++      geometry_msgs::msg::PoseStamped robot_pose;
++      robot_pose.pose.position = robot_position_;
++
++      geometry_msgs::msg::PoseStamped home_pose;
++      home_pose.pose.position = home_position;
++      return_home_path.poses.push_back(robot_pose);
++      return_home_path.poses.push_back(home_pose);
++    }
++    else
++    {
++      home_position = keypose_graph->GetFirstKeyposePosition();
++      keypose_graph->GetShortestPath(global_path_robot_position, home_position, true, return_home_path, false);
++      if (return_home_path.poses.size() >= 2)
++      {
++        global_path.FromPath(return_home_path);
++        global_path.nodes_.front().type_ = exploration_path_ns::NodeType::ROBOT;
++
++        for (int i = 1; i < global_path.nodes_.size() - 1; i++)
++        {
++          global_path.nodes_[i].type_ = exploration_path_ns::NodeType::GLOBAL_VIA_POINT;
++        }
++        global_path.nodes_.back().type_ = exploration_path_ns::NodeType::HOME;
++        // Make it a loop
++        for (int i = global_path.nodes_.size() - 2; i >= 0; i--)
++        {
++          global_path.Append(global_path.nodes_[i]);
++        }
++      }
++      else
++      {
++        // RCLCPP_ERROR(this->get_logger(), "Cannot find path home");
++        // TODO: find a path
++      }
++    }
++    return global_path;
++  }
++
++  return_home_ = false;
++
++  // Put the current robot position in the end
++  exploring_cell_positions.push_back(global_path_robot_position);
++  exploring_cell_indices.push_back(-1);
++
++  /******* Construct the distance matrix *****/
++  std::vector<std::vector<int>> distance_matrix(exploring_cell_positions.size(),
++                                                std::vector<int>(exploring_cell_positions.size(), 0));
++  for (int i = 0; i < exploring_cell_positions.size(); i++)
++  {
++    for (int j = 0; j < i; j++)
++    {
++      if (!use_keypose_graph_ || keypose_graph == nullptr || keypose_graph->GetNodeNum() == 0)
++      {
++        // Use straight line connection
++        distance_matrix[i][j] =
++            static_cast<int>(10 * misc_utils_ns::PointXYZDist<geometry_msgs::msg::Point, geometry_msgs::msg::Point>(
++                                      exploring_cell_positions[i], exploring_cell_positions[j]));
++      }
++      else
++      {
++        // Use keypose graph
++        nav_msgs::msg::Path path_tmp;
++        distance_matrix[i][j] =
++            static_cast<int>(10 * keypose_graph->GetShortestPath(exploring_cell_positions[i],
++                                                                 exploring_cell_positions[j], false, path_tmp, false));
++      }
++    }
++  }
++
++  for (int i = 0; i < exploring_cell_positions.size(); i++)
++  {
++    for (int j = i + 1; j < exploring_cell_positions.size(); j++)
++    {
++      distance_matrix[i][j] = distance_matrix[j][i];
++    }
++  }
++
++  /****** Solve the TSP ******/
++  tsp_solver_ns::DataModel data_model;
++  data_model.distance_matrix = distance_matrix;
++  data_model.depot = exploring_cell_positions.size() - 1;
++
++  tsp_solver_ns::TSPSolver tsp_solver(data_model);
++  tsp_solver.Solve();
++  std::vector<int> node_index;
++  tsp_solver.getSolutionNodeIndex(node_index, false);
++
++  ordered_cell_indices.clear();
++
++  // Add the first node in the end to make it a loop
++  if (!node_index.empty())
++  {
++    node_index.push_back(node_index[0]);
++  }
++
++  if (!use_keypose_graph_ || keypose_graph == nullptr || keypose_graph->GetNodeNum() == 0)
++  {
++    for (int i = 0; i < node_index.size(); i++)
++    {
++      int cell_ind = node_index[i];
++      geometry_msgs::msg::PoseStamped pose;
++      pose.pose.position = exploring_cell_positions[cell_ind];
++      exploration_path_ns::Node node(exploring_cell_positions[cell_ind],
++                                     exploration_path_ns::NodeType::GLOBAL_VIEWPOINT);
++      node.global_subspace_index_ = exploring_cell_indices[cell_ind];
++      global_path.Append(node);
++      ordered_cell_indices.push_back(exploring_cell_indices[cell_ind]);
++    }
++  }
++  else
++  {
++    geometry_msgs::msg::Point cur_position;
++    geometry_msgs::msg::Point next_position;
++    int cur_keypose_id;
++    int next_keypose_id;
++    int cur_ind;
++    int next_ind;
++
++    for (int i = 0; i < node_index.size() - 1; i++)
++    {
++      cur_ind = node_index[i];
++      next_ind = node_index[i + 1];
++      cur_position = exploring_cell_positions[cur_ind];
++      next_position = exploring_cell_positions[next_ind];
++
++      nav_msgs::msg::Path keypose_path;
++      keypose_graph->GetShortestPath(cur_position, next_position, true, keypose_path, false);
++
++      exploration_path_ns::Node node(Eigen::Vector3d(cur_position.x, cur_position.y, cur_position.z));
++      if (i == 0)
++      {
++        node.type_ = exploration_path_ns::NodeType::ROBOT;
++      }
++      else
++      {
++        node.type_ = exploration_path_ns::NodeType::GLOBAL_VIEWPOINT;
++      }
++      node.global_subspace_index_ = exploring_cell_indices[cur_ind];
++      global_path.Append(node);
++
++      ordered_cell_indices.push_back(exploring_cell_indices[cur_ind]);
++
++      // Fill in the path in between
++      if (keypose_path.poses.size() >= 2)
++      {
++        for (int j = 1; j < keypose_path.poses.size() - 1; j++)
++        {
++          geometry_msgs::msg::Point node_position;
++          node_position = keypose_path.poses[j].pose.position;
++          exploration_path_ns::Node keypose_node(node_position, exploration_path_ns::NodeType::GLOBAL_VIA_POINT);
++          keypose_node.keypose_graph_node_ind_ = static_cast<int>(keypose_path.poses[i].pose.orientation.x);
++          global_path.Append(keypose_node);
++        }
++      }
++    }
++    // Append the robot node to the end
++    if (!global_path.nodes_.empty())
++    {
++      global_path.Append(global_path.nodes_[0]);
++    }
++  }
++
++  // std::cout << "path order: ";
++  // for (int i = 0; i < ordered_cell_indices.size(); i++)
++  // {
++  //   std::cout << ordered_cell_indices[i] << " -> ";
++  // }
++  // std::cout << std::endl;
++
++  return global_path;
++}
++}
+diff --git a/src/tare_planner/src/ht_cost/ht_cost_map.cpp b/src/tare_planner/src/ht_cost/ht_cost_map.cpp
+index a6cb290..1042450 100644
+--- a/src/tare_planner/src/ht_cost/ht_cost_map.cpp
++++ b/src/tare_planner/src/ht_cost/ht_cost_map.cpp
+@@ -11,6 +11,11 @@ HtCostMap::HtCostMap(rclcpp::Node::SharedPtr node,bool publish_permission)
+   : clock_(node->get_clock()), logger_(node->get_logger()),
+     buffer_(clock_) {
+   enabled_=node->declare_parameter<bool>("ht_enabled",false);
++  const auto mode=node->declare_parameter<std::string>("ht_exploration_mode","tare_waypoint");
++  if (mode!="tare_waypoint" && mode!="legacy_xytheta_greedy")
++    throw std::invalid_argument("Unknown HT exploration mode");
++  tare_coverage_=mode=="tare_waypoint";
++  collect_terrain_=publish_permission && enabled_ && tare_coverage_;
+   calibrated_=node->declare_parameter<bool>("ht_directions_calibrated",false);
+   min_probability_=node->declare_parameter<double>("ht_min_probability",0.5);
+   timeout_=node->declare_parameter<double>("ht_map_timeout",1.0);
+@@ -116,6 +121,8 @@ void HtCostMap::receive(grid_map_msgs::msg::GridMap::ConstSharedPtr msg) {
+     if (!grid.exists("ht_valid")) throw std::runtime_error("Missing ht_valid");
+     if (configuration_scores_ && (!grid.exists("ht_observation_valid") || !grid.exists("ht_obstacle")))
+       throw std::runtime_error("Configuration HT requires separate physical observation and obstacle layers");
++    if (collect_terrain_ && !grid.exists("ht_elevation"))
++      throw std::runtime_error("TARE waypoint mode requires same-source ht_elevation");
+     tf2::Transform transform;
+     transform.setIdentity();
+     if (msg->header.frame_id != frame_) {
+@@ -142,6 +149,9 @@ void HtCostMap::receive(grid_map_msgs::msg::GridMap::ConstSharedPtr msg) {
+     std::vector<unsigned char> physical_valid(size);
+     std::vector<unsigned char> occupied(size,0);
+     const bool separate_observation=grid.exists("ht_observation_valid");
++    struct Aggregate { double x=0,y=0,z=0; int count=0; bool feasible=false; };
++    std::map<std::pair<int,int>,Aggregate> terrain;
++
+     for (grid_map::GridMapIterator it(grid); !it.isPastEnd(); ++it) {
+       grid_map::Position pos;
+       grid.getPosition(*it,pos);
+@@ -172,6 +182,23 @@ void HtCostMap::receive(grid_map_msgs::msg::GridMap::ConstSharedPtr msg) {
+         }
+       }
+     }
++    // Collapse fine cells once per message; average observed ground only.
++    // Coarse feasibility is existential over all 8 headings, never their minimum.
++    if (collect_terrain_) for (grid_map::GridMapIterator it(grid); !it.isPastEnd(); ++it) {
++      const float observed=grid.at("ht_observation_valid",*it);
++      const float scored=grid.at("ht_valid",*it);
++      if (!std::isfinite(observed) || observed<.5 || !std::isfinite(scored) || scored<.5) continue;
++      grid_map::Position p;grid.getPosition(*it,p);
++      auto world=transform*tf2::Vector3(p.x(),p.y(),0);
++      auto& a=terrain[{static_cast<int>(std::floor(world.x()/.2)),static_cast<int>(std::floor(world.y()/.2))}];
++      a.x=world.x();a.y=world.y();
++      for(int k=0;k<8;++k) {
++        const float score=grid.at("ht_dir_"+std::to_string(k),*it);
++        a.feasible=a.feasible || (std::isfinite(score) && score>=min_probability_);
++      }
++      const float z=grid.at("ht_elevation",*it);
++      if (grid.at("ht_obstacle",*it)<.5 && std::isfinite(z)) {a.z+=z+transform.getOrigin().z();++a.count;}
++    }
+     // Physical obstacle/observation cells require a body footprint. Vehicle
+     // configuration scores already describe a vehicle trial at a reference
+     // position and heading; dilating them treats neighbouring *configurations*
+@@ -201,6 +228,12 @@ void HtCostMap::receive(grid_map_msgs::msg::GridMap::ConstSharedPtr msg) {
+     }
+     if (!out->wellFormed()) throw std::runtime_error("Invalid HT map geometry");
+     std::lock_guard<std::mutex> lock(mutex_);
++    for (const auto& entry:terrain) {
++      auto& cell=terrain_history_[entry.first];const auto& a=entry.second;
++      if(out->stamp<cell.stamp) continue;
++      cell.x=a.x;cell.y=a.y;cell.stamp=out->stamp;cell.feasible=a.feasible;
++      cell.height=a.count ? a.z/a.count : std::numeric_limits<double>::quiet_NaN();
++    }
+     latest_=std::move(out);latest_error_.clear();
+   } catch (const std::exception& e) {
+     std::lock_guard<std::mutex> lock(mutex_);
+@@ -208,6 +241,19 @@ void HtCostMap::receive(grid_map_msgs::msg::GridMap::ConstSharedPtr msg) {
+     RCLCPP_WARN_THROTTLE(logger_,*clock_,2000,"HT map rejected: %s",e.what());
+   }
+ }
++std::vector<HtCostMap::TerrainCell> HtCostMap::terrainWindow(double x,double y,double radius) {
++  std::lock_guard<std::mutex> lock(mutex_);std::vector<TerrainCell> result;
++  for(const auto& entry:terrain_history_) {
++    const auto& c=entry.second;
++    if(std::abs(c.x-x)<=radius && std::abs(c.y-y)<=radius && std::isfinite(c.height)) result.push_back(c);
++  }
++  return result;
++}
++bool HtCostMap::terrainAdmissible(double x,double y) {
++  std::lock_guard<std::mutex> lock(mutex_);
++  auto it=terrain_history_.find({static_cast<int>(std::floor(x/.2)),static_cast<int>(std::floor(y/.2))});
++  return it==terrain_history_.end() || it->second.feasible;
++}
+ void HtCostMap::beginCycle() {
+   std::lock_guard<std::mutex> lock(mutex_);
+   cycle_=latest_;cycle_error_=latest_error_;
+diff --git a/src/tare_planner/src/local_coverage_planner/ht_route.cpp b/src/tare_planner/src/local_coverage_planner/ht_route.cpp
+index f14f0d3..a20852d 100644
+--- a/src/tare_planner/src/local_coverage_planner/ht_route.cpp
++++ b/src/tare_planner/src/local_coverage_planner/ht_route.cpp
+@@ -302,7 +302,7 @@ exploration_path_ns::ExplorationPath LocalCoveragePlanner::SolveHTTSP(
+     return result;
+ }
+ 
+-exploration_path_ns::ExplorationPath LocalCoveragePlanner::PlanHTReturn(const Eigen::Vector3d& target) {
++exploration_path_ns::ExplorationPath LocalCoveragePlanner::PlanHTReturn(const Eigen::Vector3d& target,double search_seconds) {
+   ScopedSearchRuntime measured{find_path_runtime_};
+   using namespace exploration_path_ns;
+   ExplorationPath result;
+@@ -321,8 +321,14 @@ exploration_path_ns::ExplorationPath LocalCoveragePlanner::PlanHTReturn(const Ei
+     (void)v;
+     return true;
+   };
++  auto config=xytheta_config_;
++  if(ht->tareCoverage()) config.try_direct_connection=true;
++  if(search_seconds>=0) config.max_search_seconds=std::min(config.max_search_seconds,search_seconds);
+   const auto plan=ht_cost_ns::planXYTheta(start,{target.x(),target.y(),target.z()},
+-                                         xytheta_config_,valid);
++                                         config,valid);
++  RCLCPP_INFO(node_->get_logger(),"HT_WAYPOINT_SEARCH target=(%.3f,%.3f) reached=%d termination=%s poses=%zu expanded=%d direct=%d pruned=%zu",
++    target.x(),target.y(),plan.reached,ht_cost_ns::terminationName(plan.termination),plan.poses.size(),plan.expanded,
++    plan.direct_connection,static_cast<size_t>(plan.dominated_edges_pruned));
+   if (!plan.reached || plan.poses.size()<2) {
+     RCLCPP_WARN_THROTTLE(node_->get_logger(),*node_->get_clock(),3000,
+       "HT return search failed: robot=(%.3f,%.3f) checkpoint=(%.3f,%.3f) distance=%.3f reached=%d poses=%zu expanded=%d",
+diff --git a/src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp b/src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp
+index c532f05..83be985 100644
+--- a/src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp
++++ b/src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp
+@@ -27,6 +27,7 @@ LocalCoveragePlanner::LocalCoveragePlanner(rclcpp::Node::SharedPtr nh)
+     : node_(nh),lookahead_point_update_(false), use_frontier_(true),
+       local_coverage_complete_(false) {
+   parameters_.ReadParameters(nh);
++  tare_order_pub_=nh->create_publisher<std_msgs::msg::String>("/tare_tsp_order",10);
+   ht_path_pub_=nh->create_publisher<nav_msgs::msg::Path>("/ht_xytheta_path",rclcpp::QoS(1).reliable());
+   ht_rejection_sub_=nh->create_subscription<nav_msgs::msg::Path>("/ht_execution_rejected_edge",5,
+     [this](nav_msgs::msg::Path::ConstSharedPtr msg) {
+@@ -383,6 +384,8 @@ exploration_path_ns::ExplorationPath LocalCoveragePlanner::SolveTSP(
+     std::vector<int> &ordered_viewpoint_indices)
+ 
+ {
++  if (viewpoint_manager_->HT()->tareCoverage()) { ++tare_tsp_calls_; return SolveTareTSP(selected_viewpoint_indices, ordered_viewpoint_indices); }
++
+   if (viewpoint_manager_->HT()->enabled())
+     return SolveHTTSP(selected_viewpoint_indices, ordered_viewpoint_indices);
+   // nav_msgs::msg::Path tsp_path;
+@@ -643,6 +646,21 @@ exploration_path_ns::ExplorationPath
+ LocalCoveragePlanner::SolveLocalCoverageProblem(
+     const exploration_path_ns::ExplorationPath &global_path,
+     int uncovered_point_num, int uncovered_frontier_point_num) {
++  if (viewpoint_manager_->HT()->tareCoverage()) {
++    ht_output_path_.poses.clear();
++    const auto before=tare_tsp_calls_;
++    auto route=SolveTareCoverageProblem(global_path, uncovered_point_num, uncovered_frontier_point_num);
++    std_msgs::msg::String order;order.data="[";
++    for(size_t i=0;i<last_selected_viewpoint_indices_.size();++i) {
++      if(i) order.data+=",";order.data+=std::to_string(last_selected_viewpoint_indices_[i]);
++    }
++    order.data+="]";tare_order_pub_->publish(order);
++    RCLCPP_INFO(node_->get_logger(),"TARE_COVERAGE native=1 tsp_calls=%lu iterations=%d selected=%zu route_nodes=%zu route_length=%.3f complete=%d",
++      static_cast<unsigned long>(tare_tsp_calls_-before),parameters_.kLocalPathOptimizationItrMax,
++      last_selected_viewpoint_indices_.size(),route.nodes_.size(),route.GetLength(),local_coverage_complete_);
++    return route;
++  }
++
+   exploration_path_ns::ExplorationPath local_path;
+ 
+   find_path_runtime_ = 0;
+diff --git a/src/tare_planner/src/local_coverage_planner/tare_original.cpp b/src/tare_planner/src/local_coverage_planner/tare_original.cpp
+new file mode 100644
+index 0000000..f44f333
+--- /dev/null
++++ b/src/tare_planner/src/local_coverage_planner/tare_original.cpp
+@@ -0,0 +1,441 @@
++// Upstream TARE ROS2 baseline b6760adb4280b379567c76f4e684ce628e28ef71.
++// Function bodies preserved; only method names differ. See docs/plans/2026-10-20_tare_ht_waypoint_plan.md.
++#include "local_coverage_planner/local_coverage_planner.h"
++namespace local_coverage_planner_ns {
++exploration_path_ns::ExplorationPath LocalCoveragePlanner::SolveTareTSP(
++    const std::vector<int> &selected_viewpoint_indices,
++    std::vector<int> &ordered_viewpoint_indices)
++
++{
++  // nav_msgs::msg::Path tsp_path;
++  exploration_path_ns::ExplorationPath tsp_path;
++
++  if (selected_viewpoint_indices.empty()) {
++    return tsp_path;
++  }
++
++  // Get start and end index
++  int start_ind = selected_viewpoint_indices.size() - 1;
++  int end_ind = selected_viewpoint_indices.size() - 1;
++  int robot_ind = 0;
++  int lookahead_ind = 0;
++
++  for (int i = 0; i < selected_viewpoint_indices.size(); i++) {
++    if (selected_viewpoint_indices[i] == start_viewpoint_ind_) {
++      start_ind = i;
++    }
++    if (selected_viewpoint_indices[i] == end_viewpoint_ind_) {
++      end_ind = i;
++    }
++    if (selected_viewpoint_indices[i] == robot_viewpoint_ind_) {
++      robot_ind = i;
++    }
++    if (selected_viewpoint_indices[i] == lookahead_viewpoint_ind_) {
++      lookahead_ind = i;
++    }
++  }
++
++  bool has_start_end_dummy = start_ind != end_ind;
++  bool has_robot_lookahead_dummy = robot_ind != lookahead_ind;
++
++  // Get distance matrix
++  int node_size;
++  if (has_start_end_dummy && has_robot_lookahead_dummy) {
++    node_size = selected_viewpoint_indices.size() + 2;
++  } else if (has_start_end_dummy || has_robot_lookahead_dummy) {
++    node_size = selected_viewpoint_indices.size() + 1;
++  } else {
++    node_size = selected_viewpoint_indices.size();
++  }
++  misc_utils_ns::Timer find_path_timer("find path");
++  find_path_timer.Start();
++  std::vector<std::vector<int>> distance_matrix(node_size,
++                                                std::vector<int>(node_size, 0));
++  std::vector<int> tmp;
++  for (int i = 0; i < selected_viewpoint_indices.size(); i++) {
++    int from_ind = selected_viewpoint_indices[i];
++    // int from_graph_idx = graph_index_map_[from_ind];
++    for (int j = 0; j < i; j++) {
++      int to_ind = selected_viewpoint_indices[j];
++      nav_msgs::msg::Path path =
++          viewpoint_manager_->GetViewPointShortestPath(from_ind, to_ind);
++      double path_length = misc_utils_ns::GetPathLength(path);
++      //   int to_graph_idx = graph_index_map_[to_ind];
++      //   double path_length =
++      //       misc_utils_ns::AStarSearch(candidate_viewpoint_graph_,
++      //       candidate_viewpoint_dist_,
++      //                                  candidate_viewpoint_position_,
++      //                                  from_graph_idx, to_graph_idx, false,
++      //                                  tmp);
++      distance_matrix[i][j] = static_cast<int>(10 * path_length);
++    }
++  }
++
++  for (int i = 0; i < selected_viewpoint_indices.size(); i++) {
++    for (int j = i + 1; j < selected_viewpoint_indices.size(); j++) {
++      distance_matrix[i][j] = distance_matrix[j][i];
++    }
++  }
++
++  // Add a dummy node to connect the start and end nodes
++  if (has_start_end_dummy && has_robot_lookahead_dummy) {
++    int start_end_dummy_node_ind = node_size - 1;
++    int robot_lookahead_dummy_node_ind = node_size - 2;
++    for (int i = 0; i < selected_viewpoint_indices.size(); i++) {
++      if (i == start_ind || i == end_ind) {
++        distance_matrix[i][start_end_dummy_node_ind] = 0;
++        distance_matrix[start_end_dummy_node_ind][i] = 0;
++      } else {
++        distance_matrix[i][start_end_dummy_node_ind] = 9999;
++        distance_matrix[start_end_dummy_node_ind][i] = 9999;
++      }
++      if (i == robot_ind || i == lookahead_ind) {
++        distance_matrix[i][robot_lookahead_dummy_node_ind] = 0;
++        distance_matrix[robot_lookahead_dummy_node_ind][i] = 0;
++      } else {
++        distance_matrix[i][robot_lookahead_dummy_node_ind] = 9999;
++        distance_matrix[robot_lookahead_dummy_node_ind][i] = 9999;
++      }
++    }
++
++    distance_matrix[start_end_dummy_node_ind][robot_lookahead_dummy_node_ind] =
++        9999;
++    distance_matrix[robot_lookahead_dummy_node_ind][start_end_dummy_node_ind] =
++        9999;
++  } else if (has_start_end_dummy) {
++    int end_node_ind = node_size - 1;
++    for (int i = 0; i < selected_viewpoint_indices.size(); i++) {
++      if (i == start_ind || i == end_ind) {
++        distance_matrix[i][end_node_ind] = 0;
++        distance_matrix[end_node_ind][i] = 0;
++      } else {
++        distance_matrix[i][end_node_ind] = 9999;
++        distance_matrix[end_node_ind][i] = 9999;
++      }
++    }
++  } else if (has_robot_lookahead_dummy) {
++    int end_node_ind = node_size - 1;
++    for (int i = 0; i < selected_viewpoint_indices.size(); i++) {
++      if (i == robot_ind || i == lookahead_ind) {
++        distance_matrix[i][end_node_ind] = 0;
++        distance_matrix[end_node_ind][i] = 0;
++      } else {
++        distance_matrix[i][end_node_ind] = 9999;
++        distance_matrix[end_node_ind][i] = 9999;
++      }
++    }
++  }
++
++  find_path_timer.Stop(false);
++  find_path_runtime_ += find_path_timer.GetDuration(kRuntimeUnit);
++
++  misc_utils_ns::Timer tsp_timer("tsp");
++  tsp_timer.Start();
++
++  tsp_solver_ns::DataModel data;
++  data.distance_matrix = distance_matrix;
++  data.depot = start_ind;
++
++  tsp_solver_ns::TSPSolver tsp_solver(data);
++  tsp_solver.Solve();
++
++  std::vector<int> path_index;
++  if (has_start_end_dummy) {
++    tsp_solver.getSolutionNodeIndex(path_index, true);
++  } else {
++    tsp_solver.getSolutionNodeIndex(path_index, false);
++  }
++
++  // Get rid of the dummy node connecting the robot and lookahead point
++  for (int i = 0; i < path_index.size(); i++) {
++    if (path_index[i] >= selected_viewpoint_indices.size() ||
++        path_index[i] < 0) {
++      path_index.erase(path_index.begin() + i);
++      i--;
++    }
++  }
++
++  ordered_viewpoint_indices.clear();
++  for (int i = 0; i < path_index.size(); i++) {
++    ordered_viewpoint_indices.push_back(
++        selected_viewpoint_indices[path_index[i]]);
++  }
++
++  // Add the end node index
++  if (start_ind == end_ind && !path_index.empty()) {
++    path_index.push_back(path_index[0]);
++  }
++
++  tsp_timer.Stop(false);
++  tsp_runtime_ += tsp_timer.GetDuration(kRuntimeUnit);
++
++  if (path_index.size() > 1) {
++    int cur_ind;
++    int next_ind;
++    int from_graph_idx;
++    int to_graph_idx;
++
++    for (int i = 0; i < path_index.size() - 1; i++) {
++      cur_ind = selected_viewpoint_indices[path_index[i]];
++      next_ind = selected_viewpoint_indices[path_index[i + 1]];
++
++      //   from_graph_idx = graph_index_map_[cur_ind];
++      //   to_graph_idx = graph_index_map_[next_ind];
++
++      // Add viewpoint node
++      // int cur_array_ind = grid_->GetArrayInd(cur_ind);
++      // geometry_msgs::msg::Point cur_node_position =
++      // viewpoints_[cur_array_ind].GetPosition();
++      geometry_msgs::msg::Point cur_node_position =
++          viewpoint_manager_->GetViewPointPosition(cur_ind);
++      exploration_path_ns::Node cur_node(
++          cur_node_position, exploration_path_ns::NodeType::LOCAL_VIEWPOINT);
++      cur_node.local_viewpoint_ind_ = cur_ind;
++      if (cur_ind == robot_viewpoint_ind_) {
++        cur_node.type_ = exploration_path_ns::NodeType::ROBOT;
++      } else if (cur_ind == lookahead_viewpoint_ind_) {
++        int covered_point_num =
++            viewpoint_manager_->GetViewPointCoveredPointNum(cur_ind);
++        int covered_frontier_num =
++            viewpoint_manager_->GetViewPointCoveredFrontierPointNum(cur_ind);
++        if (covered_point_num > parameters_.kMinAddPointNum ||
++            covered_frontier_num > parameters_.kMinAddFrontierPointNum) {
++          cur_node.type_ = exploration_path_ns::NodeType::LOCAL_VIEWPOINT;
++        } else {
++          cur_node.type_ = exploration_path_ns::NodeType::LOOKAHEAD_POINT;
++        }
++      } else if (cur_ind == start_viewpoint_ind_) {
++        cur_node.type_ = exploration_path_ns::NodeType::LOCAL_PATH_START;
++      } else if (cur_ind == end_viewpoint_ind_) {
++        cur_node.type_ = exploration_path_ns::NodeType::LOCAL_PATH_END;
++      }
++      tsp_path.Append(cur_node);
++
++      nav_msgs::msg::Path path_between_viewpoints =
++          viewpoint_manager_->GetViewPointShortestPath(cur_ind, next_ind);
++
++      //   std::vector<int> path_graph_indices;
++      //   misc_utils_ns::AStarSearch(candidate_viewpoint_graph_,
++      //   candidate_viewpoint_dist_, candidate_viewpoint_position_,
++      //                              from_graph_idx, to_graph_idx, true,
++      //                              path_graph_indices);
++      // Add viapoint nodes;
++      //   if (path_graph_indices.size() > 2)
++      if (path_between_viewpoints.poses.size() > 2) {
++        // for (int j = 1; j < path_graph_indices.size() - 1; j++)
++        for (int j = 1; j < path_between_viewpoints.poses.size() - 1; j++) {
++          //   int graph_idx = path_graph_indices[j];
++          //   int ind = candidate_indices_[graph_idx];
++          exploration_path_ns::Node node;
++          node.type_ = exploration_path_ns::NodeType::LOCAL_VIA_POINT;
++          node.local_viewpoint_ind_ = -1;
++          //   geometry_msgs::msg::Point node_position =
++          //   viewpoint_manager_->GetViewPointPosition(ind); node.position_.x()
++          //   = node_position.x; node.position_.y() = node_position.y;
++          //   node.position_.z() = node_position.z;
++          node.position_.x() = path_between_viewpoints.poses[j].pose.position.x;
++          node.position_.y() = path_between_viewpoints.poses[j].pose.position.y;
++          node.position_.z() = path_between_viewpoints.poses[j].pose.position.z;
++          tsp_path.Append(node);
++        }
++      }
++
++      geometry_msgs::msg::Point next_node_position =
++          viewpoint_manager_->GetViewPointPosition(next_ind);
++      exploration_path_ns::Node next_node(
++          next_node_position, exploration_path_ns::NodeType::LOCAL_VIEWPOINT);
++      next_node.local_viewpoint_ind_ = next_ind;
++      if (next_ind == robot_viewpoint_ind_) {
++        next_node.type_ = exploration_path_ns::NodeType::ROBOT;
++      } else if (next_ind == lookahead_viewpoint_ind_) {
++        next_node.type_ = exploration_path_ns::NodeType::LOOKAHEAD_POINT;
++      } else if (next_ind == start_viewpoint_ind_) {
++        next_node.type_ = exploration_path_ns::NodeType::LOCAL_PATH_START;
++      } else if (next_ind == end_viewpoint_ind_) {
++        next_node.type_ = exploration_path_ns::NodeType::LOCAL_PATH_END;
++      }
++      tsp_path.Append(next_node);
++    }
++  }
++
++  return tsp_path;
++}
++
++exploration_path_ns::ExplorationPath
++LocalCoveragePlanner::SolveTareCoverageProblem(
++    const exploration_path_ns::ExplorationPath &global_path,
++    int uncovered_point_num, int uncovered_frontier_point_num) {
++  exploration_path_ns::ExplorationPath local_path;
++
++  find_path_runtime_ = 0;
++  viewpoint_sampling_runtime_ = 0;
++  tsp_runtime_ = 0;
++
++  local_coverage_complete_ = false;
++
++  misc_utils_ns::Timer find_path_timer("find path");
++  find_path_timer.Start();
++
++  std::vector<int> navigation_viewpoint_indices;
++  GetNavigationViewPointIndices(global_path, navigation_viewpoint_indices);
++
++  find_path_timer.Stop(false);
++  find_path_runtime_ += find_path_timer.GetDuration(kRuntimeUnit);
++
++  // Sampling viewpoints
++  misc_utils_ns::Timer viewpoint_sampling_timer("viewpoint sampling");
++  viewpoint_sampling_timer.Start();
++
++  std::vector<bool> covered(uncovered_point_num, false);
++  std::vector<bool> frontier_covered(uncovered_frontier_point_num, false);
++
++  std::vector<int> pre_selected_viewpoint_array_indices;
++  std::vector<int> reused_viewpoint_indices;
++  for (auto &viewpoint_array_ind : last_selected_viewpoint_array_indices_) {
++    if (viewpoint_manager_->ViewPointVisited(viewpoint_array_ind, true) ||
++        !viewpoint_manager_->IsViewPointCandidate(viewpoint_array_ind, true)) {
++      continue;
++    }
++    int covered_point_num = viewpoint_manager_->GetViewPointCoveredPointNum(
++        covered, viewpoint_array_ind, true);
++    if (covered_point_num >= parameters_.kMinAddPointNum) {
++      reused_viewpoint_indices.push_back(
++          viewpoint_manager_->GetViewPointInd(viewpoint_array_ind));
++    } else if (use_frontier_) {
++      int covered_frontier_point_num =
++          viewpoint_manager_->GetViewPointCoveredFrontierPointNum(
++              frontier_covered, viewpoint_array_ind, true);
++      if (covered_frontier_point_num >= parameters_.kMinAddFrontierPointNum) {
++        reused_viewpoint_indices.push_back(
++            viewpoint_manager_->GetViewPointInd(viewpoint_array_ind));
++      }
++    }
++  }
++
++  for (const auto &ind : reused_viewpoint_indices) {
++    int viewpoint_array_ind = viewpoint_manager_->GetViewPointArrayInd(ind);
++    pre_selected_viewpoint_array_indices.push_back(viewpoint_array_ind);
++  }
++  for (const auto &ind : navigation_viewpoint_indices) {
++    int array_ind = viewpoint_manager_->GetViewPointArrayInd(ind);
++    pre_selected_viewpoint_array_indices.push_back(array_ind);
++  }
++
++  // Update coverage
++  for (auto &viewpoint_array_ind : pre_selected_viewpoint_array_indices) {
++    // Update covered points and frontiers
++    UpdateViewPointCoveredPoint(covered, viewpoint_array_ind, true);
++    if (use_frontier_) {
++      UpdateViewPointCoveredFrontierPoint(frontier_covered, viewpoint_array_ind,
++                                          true);
++    }
++  }
++
++  // Enqueue candidate viewpoints
++  std::vector<std::pair<int, int>> queue;
++  std::vector<std::pair<int, int>> frontier_queue;
++  EnqueueViewpointCandidates(queue, frontier_queue, covered, frontier_covered,
++                             pre_selected_viewpoint_array_indices);
++
++  viewpoint_sampling_timer.Stop(false, kRuntimeUnit);
++  viewpoint_sampling_runtime_ +=
++      viewpoint_sampling_timer.GetDuration(kRuntimeUnit);
++
++  std::vector<int> ordered_viewpoint_indices;
++  if (!queue.empty() && queue[0].first > parameters_.kMinAddPointNum) {
++    double min_path_length = DBL_MAX;
++    for (int itr = 0; itr < parameters_.kLocalPathOptimizationItrMax; itr++) {
++      std::vector<int> selected_viewpoint_indices_itr;
++
++      // Select from the queue
++      misc_utils_ns::Timer select_viewpoint_timer("select viewpoints");
++      select_viewpoint_timer.Start();
++      SelectViewPoint(queue, covered, selected_viewpoint_indices_itr, false);
++      SelectViewPointFromFrontierQueue(frontier_queue, frontier_covered,
++                                       selected_viewpoint_indices_itr);
++
++      // Add viewpoints from last planning cycle
++      for (const auto &ind : reused_viewpoint_indices) {
++        selected_viewpoint_indices_itr.push_back(ind);
++      }
++      // Add viewpoints for navigation
++      for (const auto &ind : navigation_viewpoint_indices) {
++        selected_viewpoint_indices_itr.push_back(ind);
++      }
++
++      misc_utils_ns::UniquifyIntVector(selected_viewpoint_indices_itr);
++
++      select_viewpoint_timer.Stop(false, kRuntimeUnit);
++      viewpoint_sampling_runtime_ +=
++          select_viewpoint_timer.GetDuration(kRuntimeUnit);
++
++      // Solve the TSP problem
++      exploration_path_ns::ExplorationPath local_path_itr;
++      local_path_itr =
++          SolveTSP(selected_viewpoint_indices_itr, ordered_viewpoint_indices);
++
++      double path_length = local_path_itr.GetLength();
++      if (!local_path_itr.nodes_.empty() && path_length < min_path_length)
++
++      {
++        min_path_length = path_length;
++        local_path = local_path_itr;
++        last_selected_viewpoint_indices_ = ordered_viewpoint_indices;
++      }
++    }
++  } else {
++    misc_utils_ns::Timer select_viewpoint_timer("viewpoint sampling");
++    select_viewpoint_timer.Start();
++
++    // std::cout << "entering tsp routine" << std::endl;
++    std::vector<int> selected_viewpoint_indices_itr;
++
++    // Add viewpoints from last planning cycle
++    for (const auto &ind : reused_viewpoint_indices) {
++      selected_viewpoint_indices_itr.push_back(ind);
++    }
++    SelectViewPointFromFrontierQueue(frontier_queue, frontier_covered,
++                                     selected_viewpoint_indices_itr);
++
++    if (selected_viewpoint_indices_itr.empty()) {
++      local_coverage_complete_ = true;
++    }
++
++    // Add viewpoints for navigation
++    for (const auto &ind : navigation_viewpoint_indices) {
++      selected_viewpoint_indices_itr.push_back(ind);
++    }
++
++    misc_utils_ns::UniquifyIntVector(selected_viewpoint_indices_itr);
++
++    select_viewpoint_timer.Stop(false, kRuntimeUnit);
++    viewpoint_sampling_runtime_ +=
++        select_viewpoint_timer.GetDuration(kRuntimeUnit);
++
++    local_path =
++        SolveTSP(selected_viewpoint_indices_itr, ordered_viewpoint_indices);
++
++    last_selected_viewpoint_indices_ = ordered_viewpoint_indices;
++  }
++
++  last_selected_viewpoint_array_indices_.clear();
++  for (const auto &ind : last_selected_viewpoint_indices_) {
++    int array_ind = viewpoint_manager_->GetViewPointArrayInd(ind);
++    last_selected_viewpoint_array_indices_.push_back(array_ind);
++  }
++
++  int viewpoint_num = viewpoint_manager_->GetViewPointNum();
++  for (int i = 0; i < viewpoint_num; i++) {
++    viewpoint_manager_->SetViewPointSelected(i, false, true);
++  }
++  for (const auto &viewpoint_index : last_selected_viewpoint_indices_) {
++    if (viewpoint_index != robot_viewpoint_ind_ &&
++        viewpoint_index != start_viewpoint_ind_ &&
++        viewpoint_index != end_viewpoint_ind_ &&
++        viewpoint_index != lookahead_viewpoint_ind_) {
++      viewpoint_manager_->SetViewPointSelected(viewpoint_index, true);
++    }
++  }
++  return local_path;
++}
++}
+diff --git a/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp b/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp
+index cbe544e..53dce1e 100644
+--- a/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp
++++ b/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp
+@@ -437,6 +437,10 @@ bool SensorCoveragePlanner3D::initialize() {
+       std::bind(&SensorCoveragePlanner3D::ResetWaypointCallback, this,
+                 std::placeholders::_1));
+ 
++  tare_waypoint_pub_=this->create_publisher<geometry_msgs::msg::PointStamped>("/tare_native_waypoint",10);
++  ht_route_goal_pub_=this->create_publisher<geometry_msgs::msg::PointStamped>("/ht_route_goal",10);
++  tare_route_pub_=this->create_publisher<nav_msgs::msg::Path>("/tare_coverage_route",10);
++  tare_branch_pub_=this->create_publisher<nav_msgs::msg::Path>("/tare_route_branch",10);
+   global_path_full_publisher_ =
+       this->create_publisher<nav_msgs::msg::Path>("global_path_full", 1);
+   global_path_publisher_ =
+@@ -727,11 +731,17 @@ int SensorCoveragePlanner3D::UpdateViewPoints() {
+   misc_utils_ns::Timer viewpoint_manager_update_timer(
+       "update viewpoint manager");
+   viewpoint_manager_update_timer.Start();
+-  if (kUseTerrainHeight) {
++  if (viewpoint_manager_->HT()->tareCoverage()) {
++    auto terrain=std::make_shared<pcl::PointCloud<pcl::PointXYZI>>();
++    for(const auto& c:viewpoint_manager_->HT()->terrainWindow(robot_position_.x,robot_position_.y,40.)) {
++      pcl::PointXYZI p;p.x=c.x;p.y=c.y;p.z=c.height;p.intensity=0;terrain->push_back(p);
++    }
++    viewpoint_manager_->SetViewPointHeightWithTerrain(terrain);
++  } else if (kUseTerrainHeight) {
+     viewpoint_manager_->SetViewPointHeightWithTerrain(
+         large_terrain_cloud_->cloud_);
+   }
+-  if (kCheckTerrainCollision) {
++  if (kCheckTerrainCollision && !viewpoint_manager_->HT()->tareCoverage()) {
+     *(collision_cloud_->cloud_) += *(terrain_collision_cloud_->cloud_);
+     *(collision_cloud_->cloud_) += *(terrain_ext_collision_cloud_->cloud_);
+   }
+@@ -966,13 +976,13 @@ void SensorCoveragePlanner3D::LocalPlanning(
+     exploration_path_ns::ExplorationPath &local_path) {
+   misc_utils_ns::Timer local_tsp_timer("Local planning");
+   local_tsp_timer.Start();
+-  if (exploration_finished_ && viewpoint_manager_->HT()->enabled()) {
++  if (exploration_finished_ && viewpoint_manager_->HT()->enabled() && !viewpoint_manager_->HT()->tareCoverage()) {
+     // The return search below owns the output path. Coverage-goal search here
+     // is discarded and needlessly delays each return planning cycle.
+     local_path.Reset();local_coverage_planner_->ClearHTPath();
+     local_tsp_timer.Stop(false);return;
+   }
+-  if (lookahead_point_update_) {
++  if (viewpoint_manager_->HT()->tareCoverage() ? tare_native_lookahead_update_ : lookahead_point_update_) {
+     local_coverage_planner_->SetLookAheadPoint(lookahead_point_);
+   }
+   local_path = local_coverage_planner_->SolveLocalCoverageProblem(
+@@ -1000,6 +1010,8 @@ exploration_path_ns::ExplorationPath
+ SensorCoveragePlanner3D::ConcatenateGlobalLocalPath(
+     const exploration_path_ns::ExplorationPath &global_path,
+     const exploration_path_ns::ExplorationPath &local_path) {
++  if (viewpoint_manager_->HT()->tareCoverage()) return ConcatenateTarePath(global_path, local_path);
++
+   exploration_path_ns::ExplorationPath full_path;
+   if (exploration_finished_) {
+     local_coverage_planner_->ClearHTPath();
+@@ -1078,6 +1090,14 @@ bool SensorCoveragePlanner3D::GetLookAheadPoint(
+     const exploration_path_ns::ExplorationPath &local_path,
+     const exploration_path_ns::ExplorationPath &global_path,
+     Eigen::Vector3d &lookahead_point) {
++  if (viewpoint_manager_->HT()->tareCoverage()) {
++    // Upstream false means a global-route fallback, not necessarily no goal.
++    // Preserve that flag for its next TSP while validating the actual output.
++    lookahead_point=Eigen::Vector3d::Constant(std::numeric_limits<double>::quiet_NaN());
++    tare_native_lookahead_update_=GetTareLookAheadPoint(local_path,global_path,lookahead_point);
++    return lookahead_point.allFinite();
++  }
++
+   fallback_commanded_=false;startup_commanded_=false;
+   if (viewpoint_manager_->HT()->enabled() || exploration_finished_) {
+     auto ht=viewpoint_manager_->HT();
+@@ -1475,6 +1495,8 @@ void SensorCoveragePlanner3D::PublishWaypoint() {
+   if (force_hold_ || stopped_ || at_return_goal || !lookahead_point_update_) {
+     waypoint.point=robot_position_;
+     fallback_commanded_=false;startup_commanded_=false;
++  } else if (viewpoint_manager_->HT()->tareCoverage()) {
++    waypoint.point=tare_command_waypoint_;
+   } else if (viewpoint_manager_->HT()->enabled() || exploration_finished_) {
+     waypoint.point.x=lookahead_point_.x();waypoint.point.y=lookahead_point_.y();waypoint.point.z=lookahead_point_.z();
+   } else {
+@@ -1722,7 +1744,7 @@ void SensorCoveragePlanner3D::execute() {
+         c.output_target,c.output_gain,c.output_frontier,local_coverage_planner_->GetHTPath().poses.size(),grid_world_->PendingHTCoverageCells());
+     }
+ 
+-    const bool unresolved_ht_coverage=ht->enabled() && grid_world_->PendingHTCoverageCells()>0;
++    const bool unresolved_ht_coverage=ht->enabled() && !ht->tareCoverage() && grid_world_->PendingHTCoverageCells()>0;
+     if (unresolved_ht_coverage && grid_world_->IsReturningHome() &&
+         local_coverage_planner_->IsLocalCoverageComplete())
+       RCLCPP_WARN_THROTTLE(this->get_logger(),*this->get_clock(),3000,
+@@ -1746,6 +1768,12 @@ void SensorCoveragePlanner3D::execute() {
+     ht->beginCycle();
+     lookahead_point_update_ =
+         GetLookAheadPoint(exploration_path_, global_path, lookahead_point_);
++    if (ht->tareCoverage()) {
++      // Native tour and native lookahead remain untouched. Only execution
++      // success gates permission; it cannot choose another coverage target.
++      const bool native_valid=lookahead_point_update_;
++      lookahead_point_update_=RouteTareWaypoint(tare_native_lookahead_update_ ? exploration_path_ : global_path) && native_valid;
++    }
+     last_plan_=this->now().seconds();
+     PublishWaypoint();
+     local_coverage_planner_->PublishHTPath();
+diff --git a/src/tare_planner/src/sensor_coverage_planner/tare_original.cpp b/src/tare_planner/src/sensor_coverage_planner/tare_original.cpp
+new file mode 100644
+index 0000000..5ed4f01
+--- /dev/null
++++ b/src/tare_planner/src/sensor_coverage_planner/tare_original.cpp
+@@ -0,0 +1,374 @@
++// Upstream TARE ROS2 baseline b6760adb4280b379567c76f4e684ce628e28ef71.
++// Function bodies preserved; only method names differ. See docs/plans/2026-10-20_tare_ht_waypoint_plan.md.
++#include "sensor_coverage_planner/sensor_coverage_planner_ground.h"
++namespace sensor_coverage_planner_3d_ns {
++exploration_path_ns::ExplorationPath
++SensorCoveragePlanner3D::ConcatenateTarePath(
++    const exploration_path_ns::ExplorationPath &global_path,
++    const exploration_path_ns::ExplorationPath &local_path) {
++  exploration_path_ns::ExplorationPath full_path;
++  if (exploration_finished_ && near_home_ && kRushHome) {
++    exploration_path_ns::Node node;
++    node.position_.x() = robot_position_.x;
++    node.position_.y() = robot_position_.y;
++    node.position_.z() = robot_position_.z;
++    node.type_ = exploration_path_ns::NodeType::ROBOT;
++    full_path.nodes_.push_back(node);
++    node.position_ = initial_position_;
++    node.type_ = exploration_path_ns::NodeType::HOME;
++    full_path.nodes_.push_back(node);
++    return full_path;
++  }
++
++  double global_path_length = global_path.GetLength();
++  double local_path_length = local_path.GetLength();
++  if (global_path_length < 3 && local_path_length < 5) {
++    return full_path;
++  } else {
++    full_path = local_path;
++    if (local_path.nodes_.front().type_ ==
++            exploration_path_ns::NodeType::LOCAL_PATH_END &&
++        local_path.nodes_.back().type_ ==
++            exploration_path_ns::NodeType::LOCAL_PATH_START) {
++      full_path.Reverse();
++    } else if (local_path.nodes_.front().type_ ==
++                   exploration_path_ns::NodeType::LOCAL_PATH_START &&
++               local_path.nodes_.back() == local_path.nodes_.front()) {
++      full_path.nodes_.back().type_ =
++          exploration_path_ns::NodeType::LOCAL_PATH_END;
++    } else if (local_path.nodes_.front().type_ ==
++                   exploration_path_ns::NodeType::LOCAL_PATH_END &&
++               local_path.nodes_.back() == local_path.nodes_.front()) {
++      full_path.nodes_.front().type_ =
++          exploration_path_ns::NodeType::LOCAL_PATH_START;
++    }
++  }
++
++  return full_path;
++}
++
++bool SensorCoveragePlanner3D::GetTareLookAheadPoint(
++    const exploration_path_ns::ExplorationPath &local_path,
++    const exploration_path_ns::ExplorationPath &global_path,
++    Eigen::Vector3d &lookahead_point) {
++  Eigen::Vector3d robot_position(robot_position_.x, robot_position_.y,
++                                 robot_position_.z);
++
++  // Determine which direction to follow on the global path
++  double dist_from_start = 0.0;
++  for (int i = 1; i < global_path.nodes_.size(); i++) {
++    dist_from_start +=
++        (global_path.nodes_[i - 1].position_ - global_path.nodes_[i].position_)
++            .norm();
++    if (global_path.nodes_[i].type_ ==
++        exploration_path_ns::NodeType::GLOBAL_VIEWPOINT) {
++      break;
++    }
++  }
++
++  double dist_from_end = 0.0;
++  for (int i = global_path.nodes_.size() - 2; i > 0; i--) {
++    dist_from_end +=
++        (global_path.nodes_[i + 1].position_ - global_path.nodes_[i].position_)
++            .norm();
++    if (global_path.nodes_[i].type_ ==
++        exploration_path_ns::NodeType::GLOBAL_VIEWPOINT) {
++      break;
++    }
++  }
++
++  bool local_path_too_short = true;
++  for (int i = 0; i < local_path.nodes_.size(); i++) {
++    double dist_to_robot =
++        (robot_position - local_path.nodes_[i].position_).norm();
++    if (dist_to_robot > kLookAheadDistance / 5) {
++      local_path_too_short = false;
++      break;
++    }
++  }
++  if (local_path.GetNodeNum() < 1 || local_path_too_short) {
++    if (dist_from_start < dist_from_end) {
++      double dist_from_robot = 0.0;
++      for (int i = 1; i < global_path.nodes_.size(); i++) {
++        dist_from_robot += (global_path.nodes_[i - 1].position_ -
++                            global_path.nodes_[i].position_)
++                               .norm();
++        if (dist_from_robot > kLookAheadDistance / 2) {
++          lookahead_point = global_path.nodes_[i].position_;
++          break;
++        }
++      }
++    } else {
++      double dist_from_robot = 0.0;
++      for (int i = global_path.nodes_.size() - 2; i > 0; i--) {
++        dist_from_robot += (global_path.nodes_[i + 1].position_ -
++                            global_path.nodes_[i].position_)
++                               .norm();
++        if (dist_from_robot > kLookAheadDistance / 2) {
++          lookahead_point = global_path.nodes_[i].position_;
++          break;
++        }
++      }
++    }
++    return false;
++  }
++
++  bool has_lookahead = false;
++  bool dir = true;
++  int robot_i = 0;
++  int lookahead_i = 0;
++  for (int i = 0; i < local_path.nodes_.size(); i++) {
++    if (local_path.nodes_[i].type_ == exploration_path_ns::NodeType::ROBOT) {
++      robot_i = i;
++    }
++    if (local_path.nodes_[i].type_ ==
++        exploration_path_ns::NodeType::LOOKAHEAD_POINT) {
++      has_lookahead = true;
++      lookahead_i = i;
++    }
++  }
++
++  if (reset_waypoint_) {
++    has_lookahead = false;
++  }
++
++  int forward_viewpoint_count = 0;
++  int backward_viewpoint_count = 0;
++
++  bool local_loop = false;
++  if (local_path.nodes_.front() == local_path.nodes_.back() &&
++      local_path.nodes_.front().type_ == exploration_path_ns::NodeType::ROBOT) {
++    local_loop = true;
++  }
++
++  if (local_loop) {
++    robot_i = 0;
++  }
++  for (int i = robot_i + 1; i < local_path.GetNodeNum(); i++) {
++    if (local_path.nodes_[i].type_ ==
++        exploration_path_ns::NodeType::LOCAL_VIEWPOINT) {
++      forward_viewpoint_count++;
++    }
++  }
++  if (local_loop) {
++    robot_i = local_path.nodes_.size() - 1;
++  }
++  for (int i = robot_i - 1; i >= 0; i--) {
++    if (local_path.nodes_[i].type_ ==
++        exploration_path_ns::NodeType::LOCAL_VIEWPOINT) {
++      backward_viewpoint_count++;
++    }
++  }
++
++  Eigen::Vector3d forward_lookahead_point = robot_position;
++  Eigen::Vector3d backward_lookahead_point = robot_position;
++
++  bool has_forward = false;
++  bool has_backward = false;
++
++  if (local_loop) {
++    robot_i = 0;
++  }
++  bool forward_lookahead_point_in_los = true;
++  bool backward_lookahead_point_in_los = true;
++  double length_from_robot = 0.0;
++  for (int i = robot_i + 1; i < local_path.GetNodeNum(); i++) {
++    length_from_robot +=
++        (local_path.nodes_[i].position_ - local_path.nodes_[i - 1].position_)
++            .norm();
++    double dist_to_robot =
++        (local_path.nodes_[i].position_ - robot_position).norm();
++    bool in_line_of_sight = true;
++    if (i < local_path.GetNodeNum() - 1) {
++      in_line_of_sight = viewpoint_manager_->InCurrentFrameLineOfSight(
++          local_path.nodes_[i + 1].position_);
++    }
++    if ((length_from_robot > kLookAheadDistance ||
++         (kUseLineOfSightLookAheadPoint && !in_line_of_sight) ||
++         local_path.nodes_[i].type_ ==
++             exploration_path_ns::NodeType::LOCAL_VIEWPOINT ||
++         local_path.nodes_[i].type_ ==
++             exploration_path_ns::NodeType::LOCAL_PATH_START ||
++         local_path.nodes_[i].type_ ==
++             exploration_path_ns::NodeType::LOCAL_PATH_END ||
++         i == local_path.GetNodeNum() - 1))
++
++    {
++      if (kUseLineOfSightLookAheadPoint && !in_line_of_sight) {
++        forward_lookahead_point_in_los = false;
++      }
++      forward_lookahead_point = local_path.nodes_[i].position_;
++      has_forward = true;
++      break;
++    }
++  }
++  if (local_loop) {
++    robot_i = local_path.nodes_.size() - 1;
++  }
++  length_from_robot = 0.0;
++  for (int i = robot_i - 1; i >= 0; i--) {
++    length_from_robot +=
++        (local_path.nodes_[i].position_ - local_path.nodes_[i + 1].position_)
++            .norm();
++    double dist_to_robot =
++        (local_path.nodes_[i].position_ - robot_position).norm();
++    bool in_line_of_sight = true;
++    if (i > 0) {
++      in_line_of_sight = viewpoint_manager_->InCurrentFrameLineOfSight(
++          local_path.nodes_[i - 1].position_);
++    }
++    if ((length_from_robot > kLookAheadDistance ||
++         (kUseLineOfSightLookAheadPoint && !in_line_of_sight) ||
++         local_path.nodes_[i].type_ ==
++             exploration_path_ns::NodeType::LOCAL_VIEWPOINT ||
++         local_path.nodes_[i].type_ ==
++             exploration_path_ns::NodeType::LOCAL_PATH_START ||
++         local_path.nodes_[i].type_ ==
++             exploration_path_ns::NodeType::LOCAL_PATH_END ||
++         i == 0))
++
++    {
++      if (kUseLineOfSightLookAheadPoint && !in_line_of_sight) {
++        backward_lookahead_point_in_los = false;
++      }
++      backward_lookahead_point = local_path.nodes_[i].position_;
++      has_backward = true;
++      break;
++    }
++  }
++
++  if (forward_viewpoint_count > 0 && !has_forward) {
++    std::cout << "forward viewpoint count > 0 but does not have forward "
++                 "lookahead point"
++              << std::endl;
++    exit(1);
++  }
++  if (backward_viewpoint_count > 0 && !has_backward) {
++    std::cout << "backward viewpoint count > 0 but does not have backward "
++                 "lookahead point"
++              << std::endl;
++    exit(1);
++  }
++
++  double dx = lookahead_point_direction_.x();
++  double dy = lookahead_point_direction_.y();
++
++  if (reset_waypoint_) {
++    reset_waypoint_ = false;
++    double lx = 1.0;
++    double ly = 0.0;
++
++    dx = cos(robot_yaw_) * lx - sin(robot_yaw_) * ly;
++    dy = sin(robot_yaw_) * lx + cos(robot_yaw_) * ly;
++  }
++
++  double forward_angle_score = -2;
++  double backward_angle_score = -2;
++  double lookahead_angle_score = -2;
++
++  double dist_robot_to_lookahead = 0.0;
++  if (has_forward) {
++    Eigen::Vector3d forward_diff = forward_lookahead_point - robot_position;
++    forward_diff.z() = 0.0;
++    forward_diff = forward_diff.normalized();
++    forward_angle_score = dx * forward_diff.x() + dy * forward_diff.y();
++  }
++  if (has_backward) {
++    Eigen::Vector3d backward_diff = backward_lookahead_point - robot_position;
++    backward_diff.z() = 0.0;
++    backward_diff = backward_diff.normalized();
++    backward_angle_score = dx * backward_diff.x() + dy * backward_diff.y();
++  }
++  if (has_lookahead) {
++    Eigen::Vector3d prev_lookahead_point =
++        local_path.nodes_[lookahead_i].position_;
++    dist_robot_to_lookahead = (robot_position - prev_lookahead_point).norm();
++    Eigen::Vector3d diff = prev_lookahead_point - robot_position;
++    diff.z() = 0.0;
++    diff = diff.normalized();
++    lookahead_angle_score = dx * diff.x() + dy * diff.y();
++  }
++
++  lookahead_point_cloud_->cloud_->clear();
++
++  if (forward_viewpoint_count == 0 && backward_viewpoint_count == 0) {
++    relocation_ = true;
++  } else {
++    relocation_ = false;
++  }
++  if (relocation_) {
++    if (use_momentum_ && kUseMomentum) {
++      if (forward_angle_score > backward_angle_score) {
++        lookahead_point = forward_lookahead_point;
++      } else {
++        lookahead_point = backward_lookahead_point;
++      }
++    } else {
++      // follow the shorter distance one
++      if (dist_from_start < dist_from_end &&
++          local_path.nodes_.front().type_ !=
++              exploration_path_ns::NodeType::ROBOT) {
++        lookahead_point = backward_lookahead_point;
++      } else if (dist_from_end < dist_from_start &&
++                 local_path.nodes_.back().type_ !=
++                     exploration_path_ns::NodeType::ROBOT) {
++        lookahead_point = forward_lookahead_point;
++      } else {
++        lookahead_point = forward_angle_score > backward_angle_score
++                              ? forward_lookahead_point
++                              : backward_lookahead_point;
++      }
++    }
++  } else if (has_lookahead && lookahead_angle_score > 0 &&
++             dist_robot_to_lookahead > kLookAheadDistance / 2 &&
++             viewpoint_manager_->InLocalPlanningHorizon(
++                 local_path.nodes_[lookahead_i].position_))
++
++  {
++    lookahead_point = local_path.nodes_[lookahead_i].position_;
++  } else {
++    if (forward_angle_score > backward_angle_score) {
++      if (forward_viewpoint_count > 0) {
++        lookahead_point = forward_lookahead_point;
++      } else {
++        lookahead_point = backward_lookahead_point;
++      }
++    } else {
++      if (backward_viewpoint_count > 0) {
++        lookahead_point = backward_lookahead_point;
++      } else {
++        lookahead_point = forward_lookahead_point;
++      }
++    }
++  }
++
++  if ((lookahead_point == forward_lookahead_point &&
++       !forward_lookahead_point_in_los) ||
++      (lookahead_point == backward_lookahead_point &&
++       !backward_lookahead_point_in_los)) {
++    lookahead_point_in_line_of_sight_ = false;
++  } else {
++    lookahead_point_in_line_of_sight_ = true;
++  }
++
++  lookahead_point_direction_ = lookahead_point - robot_position;
++  lookahead_point_direction_.z() = 0.0;
++  lookahead_point_direction_.normalize();
++
++  pcl::PointXYZI point;
++  point.x = lookahead_point.x();
++  point.y = lookahead_point.y();
++  point.z = lookahead_point.z();
++  point.intensity = 1.0;
++  lookahead_point_cloud_->cloud_->points.push_back(point);
++
++  if (has_lookahead) {
++    point.x = local_path.nodes_[lookahead_i].position_.x();
++    point.y = local_path.nodes_[lookahead_i].position_.y();
++    point.z = local_path.nodes_[lookahead_i].position_.z();
++    point.intensity = 0;
++    lookahead_point_cloud_->cloud_->points.push_back(point);
++  }
++  return true;
++}
++}
+diff --git a/src/tare_planner/src/sensor_coverage_planner/tare_waypoint_router.cpp b/src/tare_planner/src/sensor_coverage_planner/tare_waypoint_router.cpp
+new file mode 100644
+index 0000000..1d5bfe0
+--- /dev/null
++++ b/src/tare_planner/src/sensor_coverage_planner/tare_waypoint_router.cpp
+@@ -0,0 +1,64 @@
++#include "sensor_coverage_planner/sensor_coverage_planner_ground.h"
++#include "ht_cost/tare_waypoint_route.h"
++namespace sensor_coverage_planner_3d_ns {
++bool SensorCoveragePlanner3D::RouteTareWaypoint(const exploration_path_ns::ExplorationPath& route) {
++  using ht_cost_ns::Point;
++  auto visual=route.GetPath();visual.header.frame_id="map";visual.header.stamp=now();
++  tare_route_pub_->publish(visual);
++  local_coverage_planner_->ClearHTPath();
++  if(!lookahead_point_update_ || route.nodes_.empty()) return false;
++  std::vector<Point> points;std::vector<bool> robots;
++  for(const auto& n:route.nodes_) {
++    points.push_back({n.position_.x(),n.position_.y(),n.position_.z()});
++    robots.push_back(n.type_==exploration_path_ns::NodeType::ROBOT);
++  }
++  const Point raw{lookahead_point_.x(),lookahead_point_.y(),lookahead_point_.z()};
++  auto branch=ht_cost_ns::tareBranch(points,robots,raw);
++  // Native rush-home path has a ROBOT anchor and HOME endpoint as well.
++  if(branch.empty()) {
++    RCLCPP_WARN(get_logger(),"TARE_ROUTE missing native branch; holding without changing TSP goal");return false;
++  }
++  // Match upstream PublishWaypoint's extension and rush-home rule. The zero
++  // distance guard prevents its undefined dx/r case without selecting a goal.
++  Point native=raw;
++  if(exploration_finished_ && near_home_ && kRushHome) {
++    native={initial_position_.x(),initial_position_.y(),initial_position_.z()};
++  } else {
++    double dx=raw.x-robot_position_.x,dy=raw.y-robot_position_.y;
++    const double d=std::hypot(dx,dy);
++    const double extension=lookahead_point_in_line_of_sight_ ? kExtendWayPointDistanceBig:kExtendWayPointDistanceSmall;
++    if(kExtendWayPoint && d>1e-6 && d<extension) {
++      native.x=robot_position_.x+dx/d*extension;native.y=robot_position_.y+dy/d*extension;
++    }
++  }
++  geometry_msgs::msg::PointStamped goal;goal.header=visual.header;
++  goal.point.x=native.x;goal.point.y=native.y;goal.point.z=native.z;tare_command_waypoint_=goal.point;tare_waypoint_pub_->publish(goal);
++  if(std::hypot(native.x-branch.back().x,native.y-branch.back().y)>1e-6) branch.push_back(native);
++  nav_msgs::msg::Path selected;selected.header=visual.header;
++  for(const auto& p:branch) {geometry_msgs::msg::PoseStamped pose;pose.header=visual.header;
++    pose.pose.position.x=p.x;pose.pose.position.y=p.y;pose.pose.position.z=p.z;pose.pose.orientation.w=1;
++    selected.poses.push_back(pose);}
++  tare_branch_pub_->publish(selected);
++  const auto started=std::chrono::steady_clock::now();
++  double previous_x=std::numeric_limits<double>::quiet_NaN(),previous_y=previous_x;
++  for(double length:{4.,3.,2.,1.}) {
++    const auto p=ht_cost_ns::tarePrefix(branch,length);
++    if(std::hypot(p.x-previous_x,p.y-previous_y)<1e-6) continue;
++    previous_x=p.x;previous_y=p.y;
++    if(std::hypot(p.x-robot_position_.x,p.y-robot_position_.y)<.4) continue;
++    bool supported=false;
++    for(int k=0;k<8;++k) if(viewpoint_manager_->HT()->permits(
++      viewpoint_manager_->HT()->poseSupport(p.x,p.y,k*ht_cost_ns::kPi/4))) {supported=true;break;}
++    if(!supported) continue;
++    const double remaining=.35-std::chrono::duration<double>(std::chrono::steady_clock::now()-started).count();
++    if(remaining<=0) break;
++    auto path=local_coverage_planner_->PlanHTReturn(Eigen::Vector3d(p.x,p.y,p.z),remaining);
++    goal.point.x=p.x;goal.point.y=p.y;goal.point.z=p.z;ht_route_goal_pub_->publish(goal);
++    RCLCPP_INFO(get_logger(),"TARE_ROUTE native=(%.3f,%.3f) lookahead=(%.3f,%.3f) local=(%.3f,%.3f) prefix=%.1f branch=%zu poses=%zu success=%d",
++      native.x,native.y,raw.x,raw.y,p.x,p.y,length,branch.size(),path.nodes_.size(),!path.nodes_.empty());
++    if(!path.nodes_.empty()) return true;
++  }
++  RCLCPP_WARN(get_logger(),"TARE_ROUTE failed same-goal prefixes; holding native=(%.3f,%.3f)",native.x,native.y);
++  return false;
++}
++}
+diff --git a/src/tare_planner/src/viewpoint_manager/viewpoint_manager.cpp b/src/tare_planner/src/viewpoint_manager/viewpoint_manager.cpp
+index 75eca22..1715b5c 100644
+--- a/src/tare_planner/src/viewpoint_manager/viewpoint_manager.cpp
++++ b/src/tare_planner/src/viewpoint_manager/viewpoint_manager.cpp
+@@ -894,7 +894,7 @@ void ViewPointManager::CheckViewPointConnectivity()
+       }
+       // A blocked diagonal is an edge failure: another parent may still
+       // reach this neighbor, so do not mark it checked on this attempt.
+-      if (ht_map_->enabled() && !HTConnectionSupported(cur_ind, neighbor_ind)) continue;
++      if (ht_map_->enabled() && !ht_map_->tareCoverage() && !HTConnectionSupported(cur_ind, neighbor_ind)) continue;
+       if (!checked[neighbor_ind] && !ViewPointInCollision(neighbor_ind) && ViewPointInLineOfSight(neighbor_ind))
+       {
+         if (std::abs(GetViewPointHeight(cur_ind) - GetViewPointHeight(neighbor_ind)) < vp_.kConnectivityHeightDiffThr)
+@@ -1298,7 +1298,10 @@ int ViewPointManager::GetViewPointCandidate()
+   for (int i = 0; i < vp_.kViewPointNumber; i++)
+   {
+     SetViewPointCandidate(i, false);
+-    if (!ViewPointInCollision(i) && ViewPointInLineOfSight(i) && ViewPointConnected(i))
++    const auto terrain_position=GetViewPointPosition(i);
++    const bool terrain_allowed=!ht_map_->tareCoverage() ||
++      ht_map_->terrainAdmissible(terrain_position.x,terrain_position.y);
++    if (terrain_allowed && !ViewPointInCollision(i) && ViewPointInLineOfSight(i) && ViewPointConnected(i))
+     {
+       SetViewPointCandidate(i, true);
+       candidate_indices_.push_back(i);
+@@ -1333,7 +1336,7 @@ int ViewPointManager::GetViewPointCandidate()
+ 
+   // Construct a graph of all the viewpoints
+   GetCandidateViewPointGraph(candidate_viewpoint_graph_, candidate_viewpoint_dist_, candidate_viewpoint_position_);
+-  if (ht_map_->enabled()) {
++  if (ht_map_->enabled() && !ht_map_->tareCoverage()) {
+     candidate_ht_dist_ = candidate_viewpoint_dist_;
+     for (size_t i=0;i<candidate_viewpoint_graph_.size();++i) {
+       const auto& a=candidate_viewpoint_position_[i];
+@@ -1542,7 +1545,7 @@ void ViewPointManager::GetCandidateViewPointGraph(std::vector<std::vector<int>>&
+       int neighbor_ind = connected_neighbor_indices_[cur_ind][j];
+       double neighbor_dist = connected_neighbor_dist_[cur_ind][j];
+       if (IsViewPointCandidate(neighbor_ind) &&
+-          (!ht_map_->enabled() || HTConnectionSupported(cur_ind, neighbor_ind)))
++          (!ht_map_->enabled() || ht_map_->tareCoverage() || HTConnectionSupported(cur_ind, neighbor_ind)))
+       {
+         graph[i].push_back(graph_index_map_[neighbor_ind]);
+         dist[i].push_back(neighbor_dist);
+diff --git a/src/tare_planner/tests/geometry_pose_test.cpp b/src/tare_planner/tests/geometry_pose_test.cpp
+index bc53148..96308fc 100644
+--- a/src/tare_planner/tests/geometry_pose_test.cpp
++++ b/src/tare_planner/tests/geometry_pose_test.cpp
+@@ -147,7 +147,7 @@ class PendingCell : public ::testing::Test {
+     if(!rclcpp::ok())rclcpp::init(0,nullptr);
+     rclcpp::NodeOptions options;
+     options.arguments({"--ros-args","--params-file",HT_SOURCE_ROOT "/config/indoor.yaml"});
+-    options.parameter_overrides({rclcpp::Parameter("ht_enabled",htMode())});
++    options.parameter_overrides({rclcpp::Parameter("ht_enabled",htMode()),rclcpp::Parameter("ht_exploration_mode","legacy_xytheta_greedy")});
+     auto node=std::make_shared<rclcpp::Node>("tare_planner_node",options);
+     for(const auto& entry:node->get_node_parameters_interface()->get_parameter_overrides())
+       if(entry.first.rfind("ht_",0)!=0 && !node->has_parameter(entry.first))node->declare_parameter(entry.first,entry.second);
+diff --git a/src/tare_planner/tests/ht_core_test.cpp b/src/tare_planner/tests/ht_core_test.cpp
+index 438caf0..404ab74 100644
+--- a/src/tare_planner/tests/ht_core_test.cpp
++++ b/src/tare_planner/tests/ht_core_test.cpp
+@@ -7,6 +7,7 @@
+ #include "ht_cost/exploration_progress.h"
+ #include "ht_cost/heading_reserve.h"
+ #include "ht_cost/search_schedule.h"
++#include "ht_cost/tare_waypoint_route.h"
+ #include <iostream>
+ #include <stdexcept>
+ using namespace ht_cost_ns;
+@@ -17,6 +18,19 @@ void check(bool condition) {
+ }
+ void near(double a,double b) { check(std::abs(a-b)<1e-5); }
+ int main() {
++  // U-shaped native route: a remote target must not be clipped diagonally.
++  const std::vector<Point> u{{0,0,0},{0,3,0},{3,3,0},{3,0,0}};
++  auto branch=tareBranch(u,{true,false,false,false},{3,0,0});
++  check(branch.size()==4);auto prefix=tarePrefix(branch,4.);near(prefix.x,1.);near(prefix.y,3.);
++  auto backward=tareBranch({{3,0,0},{3,3,0},{0,3,0},{0,0,0}},
++                           {false,false,false,true},{3,0,0});
++  check(backward.size()==4);near(tarePrefix(backward,4.).x,1.);
++  check(tareBranch(u,{true,false,false,false},{8,8,0}).empty());
++  auto loop=tareBranch({{0,0,0},{0,3,0},{3,3,0},{3,0,0},{0,0,0}},
++                        {true,false,false,false,true},{3,0,0});
++  check(loop.size()==2);near(tarePrefix(loop,1.).x,1.);near(tarePrefix(loop,1.).y,0.);
++  check(tareBranch(u,{true},{3,0,0}).empty());
++
+   // Captured35s stop: open local recovery behind the vehicle takes thousands
+   // of graph validity queries. A checked spin/straight connection reaches it
+   // without spending those graph expansions or weakening the predicate.
+diff --git a/src/tare_planner/tests/ht_ros_test.cpp b/src/tare_planner/tests/ht_ros_test.cpp
+index 1ba59c5..73fe287 100644
+--- a/src/tare_planner/tests/ht_ros_test.cpp
++++ b/src/tare_planner/tests/ht_ros_test.cpp
+@@ -18,12 +18,14 @@ class HtRosTest : public ::testing::Test {
+   std::unique_ptr<ht_cost_ns::HtCostMap> ht;
+   rclcpp::Publisher<grid_map_msgs::msg::GridMap>::SharedPtr pub;
+   virtual std::string scoreSemantics() const {return "point";}
++  virtual std::string explorationMode() const {return "legacy_xytheta_greedy";}
+ 
+   void SetUp() override {
+     if (!rclcpp::ok()) rclcpp::init(0, nullptr);
+     rclcpp::NodeOptions options;
+     options.parameter_overrides({
+       rclcpp::Parameter("ht_enabled", true),
++      rclcpp::Parameter("ht_exploration_mode",explorationMode()),
+       rclcpp::Parameter("ht_directions_calibrated", true),
+       rclcpp::Parameter("ht_topic", "/ht_test_map"),
+       rclcpp::Parameter("ht_score_semantics",scoreSemantics()),
+@@ -301,7 +303,7 @@ TEST_F(HtRosTest, CapturedSafeRootNeedsFinerHeadingSearchToEscape) {
+ 
+ TEST_F(HtRosTest, ReversibleMotionRejectsAOneWayEntranceWithoutChangingRawScores) {
+   rclcpp::NodeOptions options;
+-  options.parameter_overrides({rclcpp::Parameter("ht_enabled",true),
++  options.parameter_overrides({rclcpp::Parameter("ht_enabled",true),rclcpp::Parameter("ht_exploration_mode","legacy_xytheta_greedy"),
+     rclcpp::Parameter("ht_directions_calibrated",true),
+     rclcpp::Parameter("ht_topic","/ht_test_map"),
+     rclcpp::Parameter("ht_require_reversible_motion",true),
+@@ -469,7 +471,7 @@ TEST_F(HtRosTest, UnknownAndObservedRiskBothBlockEdges) {
+ TEST_F(HtRosTest, StrictPolicyAllowsOnlyKnownOrBoundedStartup) {
+   ht.reset();node.reset();
+   rclcpp::NodeOptions options;
+-  options.parameter_overrides({rclcpp::Parameter("ht_enabled",true),
++  options.parameter_overrides({rclcpp::Parameter("ht_enabled",true),rclcpp::Parameter("ht_exploration_mode","legacy_xytheta_greedy"),
+     rclcpp::Parameter("ht_directions_calibrated",true),rclcpp::Parameter("ht_unknown_policy","strict"),
+     rclcpp::Parameter("ht_topic","/ht_test_map")});
+   node=std::make_shared<rclcpp::Node>("ht_strict_test",options);
+@@ -514,3 +516,35 @@ TEST_F(HtRosTest, HeadingSweepChecksIntermediateDirectionsAndWrapsAtPi) {
+   EXPECT_EQ(ht->motionSupport({0,0,0},{0,0,ht_cost_ns::kPi/2}),ht_cost_ns::Support::BLOCKED);
+   EXPECT_EQ(ht->motionSupport({0,0,3.1},{0,0,-3.1}),ht_cost_ns::Support::KNOWN);
+ }
++
++class TareTerrainTest : public HtRosTest {
++ protected:
++  std::string scoreSemantics() const override {return "configuration";}
++  std::string explorationMode() const override {return "tare_waypoint";}
++};
++TEST_F(TareTerrainTest, RequiresSameSourceElevationAndUsesAnyHeading) {
++  EXPECT_TRUE(ht->tareCoverage());
++  auto map=grid();send(map);EXPECT_FALSE(ht->ready());
++  map.add("ht_elevation",.12f);
++  for(int k=0;k<8;++k)map["ht_dir_"+std::to_string(k)].setConstant(.1f);
++  map["ht_dir_3"].setConstant(.9f);send(map);ASSERT_TRUE(ht->ready());
++  auto history=ht->terrainWindow(0,0,4);ASSERT_FALSE(history.empty());
++  for(const auto& c:history) {EXPECT_NEAR(c.height,.12,1e-6);EXPECT_TRUE(c.feasible);EXPECT_TRUE(ht->terrainAdmissible(c.x,c.y));}
++  for(int k=0;k<8;++k)map["ht_dir_"+std::to_string(k)].setConstant(.1f);
++  map.setTimestamp(node->now().nanoseconds());send(map);
++  for(const auto& c:ht->terrainWindow(0,0,4)) EXPECT_FALSE(ht->terrainAdmissible(c.x,c.y));
++  EXPECT_TRUE(ht->terrainAdmissible(100,100)); // Optimistic guidance, never execution permission.
++  EXPECT_FALSE(ht->permits(ht->poseSupport(100,100,0)));
++  map["ht_obstacle"].setConstant(1.f);map["ht_elevation"].setConstant(10.f);
++  map.setTimestamp(node->now().nanoseconds());send(map);
++  EXPECT_TRUE(ht->terrainWindow(0,0,4).empty()); // Wall top cannot become ground.
++}
++TEST_F(TareTerrainTest, WorldCoordinatesAndHistorySurviveRollingWindow) {
++  auto map=grid();map.add("ht_elevation",.23f);map.setPosition(grid_map::Position(7.,-4.));send(map);
++  auto old=ht->terrainWindow(7,-4,1);ASSERT_FALSE(old.empty());
++  for(const auto& c:old) {EXPECT_NEAR(c.height,.23,1e-6);EXPECT_GT(c.x,5.9);EXPECT_LT(c.y,-2.9);}
++  map.setPosition(grid_map::Position(30,30));map["ht_elevation"].setConstant(.45f);
++  map.setTimestamp(node->now().nanoseconds());send(map);
++  EXPECT_EQ(ht->terrainWindow(7,-4,1).size(),old.size());
++  for(const auto& c:ht->terrainWindow(30,30,1)) EXPECT_NEAR(c.height,.45,1e-6);
++}
+diff --git a/tools/ht_cupy_bridge/cmu_xytheta.launch.py b/tools/ht_cupy_bridge/cmu_xytheta.launch.py
+index b3721c3..b6a4511 100644
+--- a/tools/ht_cupy_bridge/cmu_xytheta.launch.py
++++ b/tools/ht_cupy_bridge/cmu_xytheta.launch.py
+@@ -1,10 +1,16 @@
+-"""CMU simulation sensing stack without CMU's competing /cmd_vel controller."""
++"""CMU sensing/physics without CMU's competing /cmd_vel controller.
++
++The vehicle simulator needs its own ground-height/attitude estimate. In HT
++mode it is kept on private simulation topics; TARE never consumes those maps.
++"""
+ import os
+ from ament_index_python.packages import get_package_share_directory
+ from launch import LaunchDescription
+-from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
++from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, GroupAction
+ from launch.launch_description_sources import PythonLaunchDescriptionSource, FrontendLaunchDescriptionSource
+ from launch.substitutions import LaunchConfiguration
++from launch.conditions import IfCondition, UnlessCondition
++from launch_ros.actions import SetRemap
+ 
+ 
+ def include(package, filename):
+@@ -12,15 +18,24 @@ def include(package, filename):
+         get_package_share_directory(package), "launch", filename)))
+ 
+ 
+-def generate_launch_description():
++def physics():
+     vehicle = IncludeLaunchDescription(
+         PythonLaunchDescriptionSource(os.path.join(os.path.dirname(__file__), "cmu_vehicle_downward.launch.py")),
+         launch_arguments={"world_name": LaunchConfiguration("world_name"),
+                           "gui": "false", "use_sim_time": "false"}.items())
++    return [include("terrain_analysis", "terrain_analysis.launch"),
++            include("terrain_analysis_ext", "terrain_analysis_ext.launch"), vehicle]
++
++
++def generate_launch_description():
+     return LaunchDescription([
+         DeclareLaunchArgument("world_name", default_value="garage"),
+-        include("terrain_analysis", "terrain_analysis.launch"),
+-        include("terrain_analysis_ext", "terrain_analysis_ext.launch"),
++        DeclareLaunchArgument("use_terrain_analysis", default_value="false",
++                              description="Expose CMU terrain to navigation (upstream baseline only)"),
++        GroupAction(condition=IfCondition(LaunchConfiguration("use_terrain_analysis")), actions=physics()),
++        GroupAction(condition=UnlessCondition(LaunchConfiguration("use_terrain_analysis")), actions=[
++            SetRemap(src="/terrain_map", dst="/simulation/terrain_map"),
++            SetRemap(src="/terrain_map_ext", dst="/simulation/terrain_map_ext"),
++            *physics()]),
+         include("sensor_scan_generation", "sensor_scan_generation.launch"),
+-        vehicle,
+     ])
+diff --git a/tools/ht_cupy_bridge/cupy_to_ht.py b/tools/ht_cupy_bridge/cupy_to_ht.py
+index a71d5a0..80858cf 100644
+--- a/tools/ht_cupy_bridge/cupy_to_ht.py
++++ b/tools/ht_cupy_bridge/cupy_to_ht.py
+@@ -216,19 +216,23 @@ class CupyToHt(Node):
+         result.info.length_x = output_side * resolution
+         result.info.length_y = output_side * resolution
+         # Keep measured obstacle geometry distinct from learned vehicle scores.
+-        result.layers = [f"ht_dir_{k}" for k in range(8)] + ["ht_valid", "ht_observation_valid", "ht_obstacle"]
++        result.layers = [f"ht_dir_{k}" for k in range(8)] + ["ht_valid", "ht_observation_valid", "ht_obstacle", "ht_elevation"]
+         result.basic_layers = ["ht_valid"]
+         result.outer_start_index = 0
+         result.inner_start_index = 0
+-        for k in range(11):
++        for k in range(12):
+             if k < 8:
+                 layer = np.where(support, probabilities[k], np.nan).astype(np.float32)
+             elif k == 8:
+                 layer = support.astype(np.float32)
+             elif k == 9:
+                 layer = physical_support.astype(np.float32)
+-            else:
++            elif k == 10:
+                 layer = occupied.astype(np.float32)
++            else:
++                # Same world geometry, crop and physical observations as HT.
++                layer = np.where(physical_support & ~occupied,
++                                 elevation[25:-25, 25:-25], np.nan).astype(np.float32)
+             data = Float32MultiArray()
+             data.layout = MultiArrayLayout(
+                 dim=[
+diff --git a/tools/ht_cupy_bridge/ht_trial.yaml b/tools/ht_cupy_bridge/ht_trial.yaml
+index ec6c57d..50c9389 100644
+--- a/tools/ht_cupy_bridge/ht_trial.yaml
++++ b/tools/ht_cupy_bridge/ht_trial.yaml
+@@ -1 +1 @@
+-{"/**":{"ros__parameters":{"ht_enabled":true,"ht_directions_calibrated":true,"ht_map_timeout":3.0,"ht_score_semantics":"configuration","ht_require_reversible_motion":false,"xytheta_headings":32,"xytheta_heading_margin":0.0}}}
++{"/**": {"ros__parameters": {"ht_enabled": true, "ht_directions_calibrated": true, "ht_map_timeout": 3.0, "ht_score_semantics": "configuration", "ht_require_reversible_motion": false, "xytheta_headings": 32, "xytheta_heading_margin": 0.0, "ht_exploration_mode": "tare_waypoint"}}}
+diff --git a/tools/ht_cupy_bridge/test_postfilter_bridge.py b/tools/ht_cupy_bridge/test_postfilter_bridge.py
+index 9c51187..6a03431 100644
+--- a/tools/ht_cupy_bridge/test_postfilter_bridge.py
++++ b/tools/ht_cupy_bridge/test_postfilter_bridge.py
+@@ -54,6 +54,9 @@ class PostfilterBridgeTest(unittest.TestCase):
+                 result=output.messages[0]
+                 self.assertEqual(result.header.stamp,source.header.stamp)
+                 def layer(name):return np.asarray(result.data[result.layers.index(name)].data).reshape((241,241),order='F')
++                self.assertEqual(len(result.layers),12)
++                self.assertAlmostEqual(float(layer('ht_elevation')[120,120]),0.,places=6)
++                self.assertTrue(np.isnan(layer('ht_elevation')[120,139]))
+                 self.assertEqual(layer('ht_valid')[120,120],1.)
+                 self.assertEqual(layer('ht_obstacle')[120,139],1.)
+                 for k in range(8):self.assertEqual(layer(f'ht_dir_{k}')[120,139],0.)

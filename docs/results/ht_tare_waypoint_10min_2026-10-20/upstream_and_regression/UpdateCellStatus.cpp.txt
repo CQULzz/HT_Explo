@@ -1,0 +1,155 @@
+void GridWorld::UpdateCellStatus(const std::shared_ptr<viewpoint_manager_ns::ViewPointManager>& viewpoint_manager)
+{
+  int exploring_count = 0;
+  int unseen_count = 0;
+  int covered_count = 0;
+  for (int i = 0; i < subspaces_->GetCellNumber(); ++i)
+  {
+    if (subspaces_->GetCell(i).GetStatus() == CellStatus::EXPLORING)
+    {
+      exploring_count++;
+    }
+    else if (subspaces_->GetCell(i).GetStatus() == CellStatus::UNSEEN)
+    {
+      unseen_count++;
+    }
+    else if (subspaces_->GetCell(i).GetStatus() == CellStatus::COVERED)
+    {
+      covered_count++;
+    }
+  }
+
+  for (const auto& cell_ind : neighbor_cell_indices_)
+  {
+    subspaces_->GetCell(cell_ind).ClearViewPointIndices();
+  }
+  for (const auto& viewpoint_ind : viewpoint_manager->candidate_indices_)
+  {
+    geometry_msgs::msg::Point viewpoint_position = viewpoint_manager->GetViewPointPosition(viewpoint_ind);
+    Eigen::Vector3i sub =
+        subspaces_->Pos2Sub(Eigen::Vector3d(viewpoint_position.x, viewpoint_position.y, viewpoint_position.z));
+    if (subspaces_->InRange(sub))
+    {
+      int cell_ind = subspaces_->Sub2Ind(sub);
+      AddViewPointToCell(cell_ind, viewpoint_ind);
+      viewpoint_manager->SetViewPointCellInd(viewpoint_ind, cell_ind);
+    }
+    else
+    {
+      RCLCPP_ERROR_STREAM(rclcpp::get_logger("standalone_logger"), "subspace sub out of bound: " << sub.transpose());
+    }
+  }
+
+  for (const auto& cell_ind : neighbor_cell_indices_)
+  {
+    if (subspaces_->GetCell(cell_ind).GetStatus() == CellStatus::COVERED_BY_OTHERS)
+    {
+      continue;
+    }
+    int candidate_count = 0;
+    int selected_viewpoint_count = 0;
+    int above_big_threshold_count = 0;
+    int above_small_threshold_count = 0;
+    int above_frontier_threshold_count = 0;
+    int highest_score_viewpoint_ind = -1;
+    int highest_score = -1;
+    for (const auto& viewpoint_ind : subspaces_->GetCell(cell_ind).GetViewPointIndices())
+    {
+      MY_ASSERT(viewpoint_manager->IsViewPointCandidate(viewpoint_ind));
+      candidate_count++;
+      if (viewpoint_manager->ViewPointSelected(viewpoint_ind))
+      {
+        selected_viewpoint_count++;
+      }
+      if (viewpoint_manager->ViewPointVisited(viewpoint_ind))
+      {
+        continue;
+      }
+      int score = viewpoint_manager->GetViewPointCoveredPointNum(viewpoint_ind);
+      int frontier_score = viewpoint_manager->GetViewPointCoveredFrontierPointNum(viewpoint_ind);
+      if (score > highest_score)
+      {
+        highest_score = score;
+        highest_score_viewpoint_ind = viewpoint_ind;
+      }
+      if (score > kMinAddPointNumSmall)
+      {
+        above_small_threshold_count++;
+      }
+      if (score > kMinAddPointNumBig)
+      {
+        above_big_threshold_count++;
+      }
+      if (frontier_score > kMinAddFrontierPointNum)
+      {
+        above_frontier_threshold_count++;
+      }
+    }
+    // Exploring to Covered
+    if (subspaces_->GetCell(cell_ind).GetStatus() == CellStatus::EXPLORING &&
+        above_frontier_threshold_count < kCellExploringToCoveredThr &&
+        above_small_threshold_count < kCellExploringToCoveredThr && selected_viewpoint_count == 0 &&
+        candidate_count > 0)
+    {
+      subspaces_->GetCell(cell_ind).SetStatus(CellStatus::COVERED);
+    }
+    // Covered to Exploring
+    else if (subspaces_->GetCell(cell_ind).GetStatus() == CellStatus::COVERED &&
+             (above_big_threshold_count >= kCellCoveredToExploringThr ||
+              above_frontier_threshold_count >= kCellCoveredToExploringThr))
+    {
+      subspaces_->GetCell(cell_ind).SetStatus(CellStatus::EXPLORING);
+      almost_covered_cell_indices_.push_back(cell_ind);
+    }
+    // Exploring to Almost covered
+    else if (subspaces_->GetCell(cell_ind).GetStatus() == CellStatus::EXPLORING && selected_viewpoint_count == 0 &&
+             candidate_count > 0)
+    {
+      almost_covered_cell_indices_.push_back(cell_ind);
+    }
+    else if (subspaces_->GetCell(cell_ind).GetStatus() != CellStatus::COVERED && selected_viewpoint_count > 0)
+    {
+      subspaces_->GetCell(cell_ind).SetStatus(CellStatus::EXPLORING);
+      almost_covered_cell_indices_.erase(
+          std::remove(almost_covered_cell_indices_.begin(), almost_covered_cell_indices_.end(), cell_ind),
+          almost_covered_cell_indices_.end());
+    }
+    else if (subspaces_->GetCell(cell_ind).GetStatus() == CellStatus::EXPLORING && candidate_count == 0)
+    {
+      // First visit
+      if (subspaces_->GetCell(cell_ind).GetVisitCount() == 1 &&
+          subspaces_->GetCell(cell_ind).GetGraphNodeIndices().empty())
+      {
+        subspaces_->GetCell(cell_ind).SetStatus(CellStatus::COVERED);
+      }
+      else
+      {
+        geometry_msgs::msg::Point cell_position = subspaces_->GetCell(cell_ind).GetPosition();
+        double xy_dist_to_robot = misc_utils_ns::PointXYDist<geometry_msgs::msg::Point, geometry_msgs::msg::Point>(
+            cell_position, robot_position_);
+        double z_dist_to_robot = std::abs(cell_position.z - robot_position_.z);
+        if (xy_dist_to_robot < kCellSize && z_dist_to_robot < kCellHeight * 0.8)
+        {
+          subspaces_->GetCell(cell_ind).SetStatus(CellStatus::COVERED);
+        }
+      }
+    }
+
+    if (subspaces_->GetCell(cell_ind).GetStatus() == CellStatus::EXPLORING && candidate_count > 0)
+    {
+      subspaces_->GetCell(cell_ind).SetRobotPosition(robot_position_);
+      subspaces_->GetCell(cell_ind).SetKeyposeID(cur_keypose_id_);
+    }
+  }
+  for (const auto& cell_ind : almost_covered_cell_indices_)
+  {
+    if (std::find(neighbor_cell_indices_.begin(), neighbor_cell_indices_.end(), cell_ind) ==
+        neighbor_cell_indices_.end())
+    {
+      subspaces_->GetCell(cell_ind).SetStatus(CellStatus::COVERED);
+      almost_covered_cell_indices_.erase(
+          std::remove(almost_covered_cell_indices_.begin(), almost_covered_cell_indices_.end(), cell_ind),
+          almost_covered_cell_indices_.end());
+    }
+  }
+}

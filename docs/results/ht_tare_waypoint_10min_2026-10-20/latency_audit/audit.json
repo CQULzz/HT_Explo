@@ -1,0 +1,497 @@
+{
+  "source": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_tare_waypoint_10min_2026-10-20_02-01-41/garage",
+  "tested_commit": "42966cb22b0f719df035391f3850b9a654f161e1",
+  "mapper_profiles": {
+    "map_lock/update_pose": {
+      "wait_s": {
+        "count": 5997,
+        "p50": 6.190384738147259e-07,
+        "p95": 1.2792414054274557e-06,
+        "max": 3.213598392903805e-05
+      },
+      "hold_s": {
+        "count": 5997,
+        "p50": 0.002879847015719861,
+        "p95": 0.006640997808426617,
+        "max": 0.07754245400428772
+      },
+      "cpu_s": {
+        "count": 5997,
+        "p50": 0.0027377529999998984,
+        "p95": 0.006025162000000605,
+        "max": 0.04371599200000098
+      }
+    },
+    "map_lock/update_time": {
+      "wait_s": {
+        "count": 5995,
+        "p50": 2.720043994486332e-07,
+        "p95": 5.712558049708606e-07,
+        "max": 5.213951226323843e-06
+      },
+      "hold_s": {
+        "count": 5995,
+        "p50": 3.9484002627432346e-05,
+        "p95": 0.00016318337875418366,
+        "max": 0.002951605012640357
+      },
+      "cpu_s": {
+        "count": 5995,
+        "p50": 3.911599999995019e-05,
+        "p95": 9.070709999932091e-05,
+        "max": 0.0006654519999997888
+      }
+    },
+    "map_lock/pointcloud_callback": {
+      "wait_s": {
+        "count": 2995,
+        "p50": 1.1069932952523232e-06,
+        "p95": 1.98917114175856e-06,
+        "max": 2.0167033653706312e-05
+      },
+      "hold_s": {
+        "count": 2995,
+        "p50": 0.002292238990776241,
+        "p95": 0.005319670896278694,
+        "max": 0.04191671003354713
+      },
+      "cpu_s": {
+        "count": 2995,
+        "p50": 0.0022436200000002238,
+        "p95": 0.004887100299999547,
+        "max": 0.025976950999999637
+      }
+    },
+    "map_lock/publish_map": {
+      "wait_s": {
+        "count": 1200,
+        "p50": 4.6996865421533585e-07,
+        "p95": 8.971866918727754e-07,
+        "max": 7.97200482338667e-06
+      },
+      "hold_s": {
+        "count": 1200,
+        "p50": 0.0011983845033682883,
+        "p95": 0.0022974229912506414,
+        "max": 0.01526061404729262
+      },
+      "cpu_s": {
+        "count": 1200,
+        "p50": 0.0011808904999996983,
+        "p95": 0.002033688550000434,
+        "max": 0.009238514999999836
+      }
+    },
+    "map_lock/update_variance": {
+      "wait_s": {
+        "count": 3000,
+        "p50": 4.880130290985107e-07,
+        "p95": 9.400944691151375e-07,
+        "max": 5.044974386692047e-06
+      },
+      "hold_s": {
+        "count": 3000,
+        "p50": 0.00017332099378108978,
+        "p95": 0.0005034260218963002,
+        "max": 0.004881959001068026
+      },
+      "cpu_s": {
+        "count": 3000,
+        "p50": 0.00016887749999927593,
+        "p95": 0.0002711484499945626,
+        "max": 0.0014899279999998072
+      }
+    },
+    "callback/pose": {
+      "elapsed_s": {
+        "count": 5997,
+        "p50": 0.003052690008189529,
+        "p95": 0.006946075207088143,
+        "max": 0.07861495297402143
+      },
+      "cpu_s": {
+        "count": 5997,
+        "p50": 0.0029033500000004153,
+        "p95": 0.006281887800003537,
+        "max": 0.0447834320000009
+      }
+    },
+    "callback/time": {
+      "elapsed_s": {
+        "count": 5995,
+        "p50": 6.710202433168888e-05,
+        "p95": 0.00033783878898248137,
+        "max": 0.003331238985992968
+      },
+      "cpu_s": {
+        "count": 5995,
+        "p50": 6.700500000000886e-05,
+        "p95": 0.00014725640000072817,
+        "max": 0.0011045089999992541
+      }
+    },
+    "callback/scan": {
+      "elapsed_s": {
+        "count": 2995,
+        "p50": 0.0037335550296120346,
+        "p95": 0.00698840920231305,
+        "max": 0.05114340397994965
+      },
+      "cpu_s": {
+        "count": 2995,
+        "p50": 0.0030486359999990498,
+        "p95": 0.005958344400000114,
+        "max": 0.030508269000000254
+      }
+    },
+    "callback/publish/elevation_map_raw": {
+      "elapsed_s": {
+        "count": 1200,
+        "p50": 0.0018850030028261244,
+        "p95": 0.0033815644244896245,
+        "max": 0.11551658000098541
+      },
+      "cpu_s": {
+        "count": 1200,
+        "p50": 0.0018565554999998568,
+        "p95": 0.003153898650003306,
+        "max": 0.015326045000000121
+      }
+    },
+    "callback/variance": {
+      "elapsed_s": {
+        "count": 3000,
+        "p50": 0.0002485075092408806,
+        "p95": 0.0006015030259732143,
+        "max": 0.006550468970090151
+      },
+      "cpu_s": {
+        "count": 3000,
+        "p50": 0.00024124550000070855,
+        "p95": 0.0003777425500006259,
+        "max": 0.0019047889999992407
+      }
+    }
+  },
+  "ht_profiles": {
+    "source_age_at_callback_s": {
+      "count": 1191,
+      "p50": 0.1157231330871582,
+      "p95": 0.2081923484802246,
+      "max": 0.6430034637451172
+    },
+    "fusion_and_quality_s": {
+      "count": 1191,
+      "p50": 0.07891594897955656,
+      "p95": 0.09208696850691922,
+      "max": 0.5734216799610294
+    },
+    "support_and_history_publish_s": {
+      "count": 1191,
+      "p50": 0.005903571029193699,
+      "p95": 0.008913608500733972,
+      "max": 0.04818457301007584
+    },
+    "network_inference_s": {
+      "count": 1191,
+      "p50": 0.15970963495783508,
+      "p95": 0.2357294935209211,
+      "max": 1.0119523119647056
+    },
+    "ht_serialize_publish_s": {
+      "count": 1191,
+      "p50": 0.0024361200048588216,
+      "p95": 0.004458616516785696,
+      "max": 0.005500055965967476
+    },
+    "elapsed_s": {
+      "count": 1191,
+      "p50": 0.25050284998724237,
+      "p95": 0.3604350574896671,
+      "max": 1.1774205240071751
+    }
+  },
+  "planner_breakdown_s": {
+    "representation": {
+      "count": 592,
+      "p50": 0.2365,
+      "p95": 0.339,
+      "max": 1.156
+    },
+    "viewpoint_sampling": {
+      "count": 592,
+      "p50": 0.0,
+      "p95": 0.0,
+      "max": 0.003
+    },
+    "local_search": {
+      "count": 592,
+      "p50": 0.002,
+      "p95": 0.153,
+      "max": 0.195
+    },
+    "global_TSP": {
+      "count": 592,
+      "p50": 0.02,
+      "p95": 0.026,
+      "max": 0.091
+    },
+    "trajectory": {
+      "count": 592,
+      "p50": 0.0,
+      "p95": 0.0,
+      "max": 0.0
+    },
+    "overall": {
+      "count": 592,
+      "p50": 0.27,
+      "p95": 0.458,
+      "max": 1.188
+    }
+  },
+  "largest_lock_waits": [],
+  "largest_critical_sections": [
+    {
+      "kind": "map_lock",
+      "operation": "update_pose",
+      "started_monotonic": 286142.815927057,
+      "acquired_monotonic": 286142.815932732,
+      "released_monotonic": 286142.893475186,
+      "wait_s": 5.675014108419418e-06,
+      "hold_s": 0.07754245400428772,
+      "cpu_s": 0.04371599200000098,
+      "wall_time": 1792433049.8352,
+      "thread": 126309925267264
+    },
+    {
+      "kind": "map_lock",
+      "operation": "update_pose",
+      "started_monotonic": 286143.030713998,
+      "acquired_monotonic": 286143.030720784,
+      "released_monotonic": 286143.097570878,
+      "wait_s": 6.785965524613857e-06,
+      "hold_s": 0.06685009400825948,
+      "cpu_s": 0.03539976199999906,
+      "wall_time": 1792433050.0392885,
+      "thread": 126309925267264
+    },
+    {
+      "kind": "map_lock",
+      "operation": "update_pose",
+      "started_monotonic": 286142.616263825,
+      "acquired_monotonic": 286142.616269307,
+      "released_monotonic": 286142.680363711,
+      "wait_s": 5.48199750483036e-06,
+      "hold_s": 0.06409440404968336,
+      "cpu_s": 0.036518212000000716,
+      "wall_time": 1792433049.6220815,
+      "thread": 126309925267264
+    },
+    {
+      "kind": "map_lock",
+      "operation": "update_pose",
+      "started_monotonic": 286142.962434427,
+      "acquired_monotonic": 286142.962438365,
+      "released_monotonic": 286143.021917119,
+      "wait_s": 3.937981091439724e-06,
+      "hold_s": 0.05947875400306657,
+      "cpu_s": 0.03355609299999962,
+      "wall_time": 1792433049.9636338,
+      "thread": 126309925267264
+    },
+    {
+      "kind": "map_lock",
+      "operation": "update_pose",
+      "started_monotonic": 286096.041137148,
+      "acquired_monotonic": 286096.041143099,
+      "released_monotonic": 286096.096036386,
+      "wait_s": 5.951034836471081e-06,
+      "hold_s": 0.054893286956939846,
+      "cpu_s": 0.03597369500000003,
+      "wall_time": 1792433003.0377595,
+      "thread": 126309925267264
+    },
+    {
+      "kind": "map_lock",
+      "operation": "update_pose",
+      "started_monotonic": 286143.152054116,
+      "acquired_monotonic": 286143.15205727,
+      "released_monotonic": 286143.206282972,
+      "wait_s": 3.1539821065962315e-06,
+      "hold_s": 0.05422570201335475,
+      "cpu_s": 0.03310562900000136,
+      "wall_time": 1792433050.1480021,
+      "thread": 126309925267264
+    },
+    {
+      "kind": "map_lock",
+      "operation": "update_pose",
+      "started_monotonic": 286143.377177917,
+      "acquired_monotonic": 286143.377185757,
+      "released_monotonic": 286143.430540247,
+      "wait_s": 7.839989848434925e-06,
+      "hold_s": 0.05335449002450332,
+      "cpu_s": 0.030360345000000066,
+      "wall_time": 1792433050.372237,
+      "thread": 126309925267264
+    },
+    {
+      "kind": "map_lock",
+      "operation": "update_pose",
+      "started_monotonic": 286085.934858976,
+      "acquired_monotonic": 286085.934863251,
+      "released_monotonic": 286085.98398134,
+      "wait_s": 4.2750034481287e-06,
+      "hold_s": 0.04911808902397752,
+      "cpu_s": 0.030886631000000442,
+      "wall_time": 1792432992.925706,
+      "thread": 126309925267264
+    },
+    {
+      "kind": "map_lock",
+      "operation": "update_pose",
+      "started_monotonic": 286142.752477227,
+      "acquired_monotonic": 286142.75248315,
+      "released_monotonic": 286142.800848335,
+      "wait_s": 5.9229787439107895e-06,
+      "hold_s": 0.04836518503725529,
+      "cpu_s": 0.028067307000000596,
+      "wall_time": 1792433049.742572,
+      "thread": 126309925267264
+    },
+    {
+      "kind": "map_lock",
+      "operation": "update_pose",
+      "started_monotonic": 286142.539955159,
+      "acquired_monotonic": 286142.539958547,
+      "released_monotonic": 286142.585714758,
+      "wait_s": 3.3879769034683704e-06,
+      "hold_s": 0.045756211038678885,
+      "cpu_s": 0.025991540999999785,
+      "wall_time": 1792433049.5274327,
+      "thread": 126309925267264
+    },
+    {
+      "kind": "map_lock",
+      "operation": "update_pose",
+      "started_monotonic": 286143.215602649,
+      "acquired_monotonic": 286143.215605721,
+      "released_monotonic": 286143.259226795,
+      "wait_s": 3.071967512369156e-06,
+      "hold_s": 0.043621074000839144,
+      "cpu_s": 0.027880889999998715,
+      "wall_time": 1792433050.2009401,
+      "thread": 126309925267264
+    },
+    {
+      "kind": "map_lock",
+      "operation": "pointcloud_callback",
+      "started_monotonic": 286120.294273231,
+      "acquired_monotonic": 286120.294279332,
+      "released_monotonic": 286120.336196042,
+      "wait_s": 6.100977770984173e-06,
+      "hold_s": 0.04191671003354713,
+      "cpu_s": 0.025976950999999637,
+      "wall_time": 1792433027.277911,
+      "thread": 126309925267264
+    },
+    {
+      "kind": "map_lock",
+      "operation": "update_pose",
+      "started_monotonic": 286096.11925757,
+      "acquired_monotonic": 286096.119261388,
+      "released_monotonic": 286096.160246507,
+      "wait_s": 3.818015102297068e-06,
+      "hold_s": 0.04098511894699186,
+      "cpu_s": 0.026549686999999267,
+      "wall_time": 1792433003.101956,
+      "thread": 126309925267264
+    },
+    {
+      "kind": "map_lock",
+      "operation": "update_pose",
+      "started_monotonic": 286096.319552319,
+      "acquired_monotonic": 286096.319554645,
+      "released_monotonic": 286096.360440676,
+      "wait_s": 2.3259781301021576e-06,
+      "hold_s": 0.04088603099808097,
+      "cpu_s": 0.02674658100000027,
+      "wall_time": 1792433003.3021498,
+      "thread": 126309925267264
+    },
+    {
+      "kind": "map_lock",
+      "operation": "pointcloud_callback",
+      "started_monotonic": 286377.484396001,
+      "acquired_monotonic": 286377.484401887,
+      "released_monotonic": 286377.525029982,
+      "wait_s": 5.886016879230738e-06,
+      "hold_s": 0.040628094982821494,
+      "cpu_s": 0.02383174700000268,
+      "wall_time": 1792433284.4667459,
+      "thread": 126309925267264
+    },
+    {
+      "kind": "map_lock",
+      "operation": "pointcloud_callback",
+      "started_monotonic": 286143.32691757,
+      "acquired_monotonic": 286143.326930192,
+      "released_monotonic": 286143.367508077,
+      "wait_s": 1.2621982023119926e-05,
+      "hold_s": 0.040577884996309876,
+      "cpu_s": 0.024680553999999688,
+      "wall_time": 1792433050.3092213,
+      "thread": 126309925267264
+    },
+    {
+      "kind": "map_lock",
+      "operation": "pointcloud_callback",
+      "started_monotonic": 286142.704257372,
+      "acquired_monotonic": 286142.704267637,
+      "released_monotonic": 286142.744423783,
+      "wait_s": 1.026497920975089e-05,
+      "hold_s": 0.04015614598756656,
+      "cpu_s": 0.02194269800000015,
+      "wall_time": 1792433049.686154,
+      "thread": 126309925267264
+    },
+    {
+      "kind": "map_lock",
+      "operation": "update_pose",
+      "started_monotonic": 286085.61559134,
+      "acquired_monotonic": 286085.615593953,
+      "released_monotonic": 286085.655677448,
+      "wait_s": 2.6130001060664654e-06,
+      "hold_s": 0.04008349502691999,
+      "cpu_s": 0.02777681199999993,
+      "wall_time": 1792432992.597395,
+      "thread": 126309925267264
+    },
+    {
+      "kind": "map_lock",
+      "operation": "update_pose",
+      "started_monotonic": 286363.830881114,
+      "acquired_monotonic": 286363.830883575,
+      "released_monotonic": 286363.870748779,
+      "wait_s": 2.461019903421402e-06,
+      "hold_s": 0.039865203958470374,
+      "cpu_s": 0.027870367000002005,
+      "wall_time": 1792433270.8124576,
+      "thread": 126309925267264
+    },
+    {
+      "kind": "map_lock",
+      "operation": "update_pose",
+      "started_monotonic": 286095.856216019,
+      "acquired_monotonic": 286095.85621808,
+      "released_monotonic": 286095.895513274,
+      "wait_s": 2.0609586499631405e-06,
+      "hold_s": 0.039295194030273706,
+      "cpu_s": 0.02660196899999967,
+      "wall_time": 1792433002.8372226,
+      "thread": 126309925267264
+    }
+  ],
+  "stale_health_samples": [],
+  "limitations": "Timing wrapper adds recording overhead. Lock hold includes async GPU synchronization, Python/CPU and scheduling; low thread CPU does not prove GPU compute bottleneck. Overlap proves a holder occupied the same lock, not what caused its long wall time. Runtime breakdown uses existing node integer millisecond counters and may overlap components; bag receipt order is not exact subscriber callback order."
+}

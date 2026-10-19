@@ -1,0 +1,117 @@
+{
+  "reference_commit": "6fc754903f0e7c9aafe4b2a2b13c3fa24266551a",
+  "candidate_commit": "42966cb22b0f719df035391f3850b9a654f161e1",
+  "parameter_changes": {
+    "planner_parameters.yaml": {
+      "ht_exploration_mode": {
+        "before": null,
+        "after": "tare_waypoint"
+      }
+    },
+    "follower_parameters.yaml": {
+      "ht_exploration_mode": {
+        "before": null,
+        "after": "tare_waypoint"
+      }
+    }
+  },
+  "source_changes": {
+    "/home/lzz/my test/HT_Explo-fixposition/tools/ht_cupy_bridge/ht_trial.yaml": {
+      "before": "5d9c0ea5010ccbc603caae7a8e225f19d5893e133d4bbb31b88ec4e9555862b3",
+      "after": "0f4236f8ed88e9e3dc921558479975bdc47dadff79df5b03deee49cb97f3e8eb"
+    },
+    "/home/lzz/my test/HT_Explo-fixposition/tools/ht_cupy_bridge/cupy_to_ht.py": {
+      "before": "3f634fcf15b6b1a78e127bf5b50ccdf42e07d7e14e3cb04a0a1d1cfd089b525c",
+      "after": "18820ce11eae41d29ad3cf9d3cf5b1e82d78e7c48fc837a6a2688b83cfc2f621"
+    },
+    "/home/lzz/my test/HT_Explo-fixposition/install_standalone/tare_planner/lib/tare_planner/xytheta_follower": {
+      "before": "138db9b8f3c43c3b1fd4fb3c7becf9322a5646488f4af16bd339a63af5c9a3c0",
+      "after": "b8c3ce8a4fcde0e68546b16a01318992855e4077d2e5d36240fe9fff7dc4e173"
+    },
+    "/home/lzz/my test/HT_Explo-fixposition/install_standalone/tare_planner/lib/tare_planner/tare_planner_node": {
+      "before": "386f5d94a9a27f0ade088254811c486fd9685f829736ff31d311dc1c1d0790f3",
+      "after": "9fe9553ad459ed55fbf832d1433386f196daa334ba081becc733819e7cae902d"
+    },
+    "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/config/ht.yaml": {
+      "before": "7f0c5a50d6ebb30b9b66eec024bb7d1352a1b16424b049aa3bef95f1e8f3dbbd",
+      "after": "b593dd212a0ce60b2a02bf6f77484d605be139c0c39faa00bfdb825566f3ac89"
+    },
+    "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/src/ht_cost/ht_cost_map.cpp": {
+      "before": "47e423b2b4d754f430deffbb1c584053e681506b08c30bc3629ad9bbc1fc2ff4",
+      "after": "c4e1f6bbd75f789e41ee1ba5037bd561cf7e5cece809d0b5848c29d96390c027"
+    },
+    "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/include/ht_cost/ht_cost_map.h": {
+      "before": "37c4f838195b6ce2a4a61d783cf14a87a99bbe886c53c9ad12d26ad90002eb29",
+      "after": "7c1c6d2ea67b614db7cc9b489ae888928f07cc415950f0aa5ac6d8306566aa99"
+    },
+    "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/include/local_coverage_planner/local_coverage_planner.h": {
+      "before": "10e69bd804ec3219f9ee69d6ce024be017f93bcd97cb7bedc68e906e8664a430",
+      "after": "f3e30b42ea8c3f74d7d6dd92ca1e42e7814e68d7ebf02321be687af01452dd40"
+    },
+    "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/src/viewpoint_manager/viewpoint_manager.cpp": {
+      "before": "851acd323936cfbf32c7df8c40dfc7f89a7c769ed1d24ead6b223a0770e6629c",
+      "after": "932b5bb0b3b8ecde82fbf47b2ac97f5f7e06b6a15b7f57fe95ed285c4113a565"
+    },
+    "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/src/grid_world/grid_world.cpp": {
+      "before": "9db39d25365192102bb30a455adc9d68ad344e2b50da97b3a12156576f8768f9",
+      "after": "4f056524d14f11d4c2f1929babad2dcb0e554b9ca85ff1087088546f1b4d99f0"
+    },
+    "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/include/grid_world/grid_world.h": {
+      "before": "f78e55657796ee0698b5fed0cf0fb61b115e8bf0c87b40bad4de972365f4034d",
+      "after": "fe2d7fa094723471998dc9ef0bc19705148f7a3391d0f410ed35894540ff5ca9"
+    },
+    "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/src/local_coverage_planner/ht_route.cpp": {
+      "before": "4c9434ca89df1e07433c78e09dbd787f7a5ef97c5745b50d3cc87591b6cf20ca",
+      "after": "e302820aeaf27293575c5f875d57c50080504ca521ccb86bfbd8595759cf0cee"
+    },
+    "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp": {
+      "before": "aa88c5af669e703c5182959487808d76fbc46b0935ddfe7d897a8d34a126de8d",
+      "after": "157963526bc97be9aaa2952add703463f999e5a8d719b7c32cc320bb46fc92bc"
+    },
+    "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp": {
+      "before": "1cd24a354b2cccdba3ccbf70162dc4b6c4bde3a69c7ae3f01dfaf5020303a922",
+      "after": "42bfba2fe5e3874805d77a56a268175111441dac610c248723738c60af6d2688"
+    },
+    "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/src/local_coverage_planner/tare_original.cpp": {
+      "before": null,
+      "after": "ebe01226254b0a5187ad5a8031b2b76734aa5216f227eb5ed82815ef511bd226"
+    },
+    "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/src/grid_world/tare_original.cpp": {
+      "before": null,
+      "after": "8f8fb3df90e969c8566d48ffd83228e7fabcdd9ae2fae41d9db72b6fe341d989"
+    },
+    "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/src/sensor_coverage_planner/tare_original.cpp": {
+      "before": null,
+      "after": "a1b487fc8f8e64b1908daf85215ebb5ba683332d0ebd34030cf9a6e80c1a2d75"
+    },
+    "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/src/sensor_coverage_planner/tare_waypoint_router.cpp": {
+      "before": null,
+      "after": "67365bdc11bb807dc365b0f0880ed16dba23865cd27c083816fe363803b6be80"
+    },
+    "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/include/ht_cost/tare_waypoint_route.h": {
+      "before": null,
+      "after": "36f9e4d95512b894a3ae18b4e4a3d1dd28ec6f1d20a68b7a8ac770f7509465c3"
+    },
+    "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/include/sensor_coverage_planner/sensor_coverage_planner_ground.h": {
+      "before": null,
+      "after": "9cc11564e9a1ad6af2a1ea195d96dc577f1fc8fb6d315fddc7f89bc5f90939fe"
+    },
+    "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/CMakeLists.txt": {
+      "before": null,
+      "after": "d206eb13fdf55675b411aa791b58ac20eae11c976290a3f853a32cb792442b63"
+    },
+    "/home/lzz/my test/HT_Explo-fixposition/presentations/run_ht_endurance.py": {
+      "before": "d253462b5c0938fda659a6646a7ea8b3224d5f956c34ed4796bade188ba274ba",
+      "after": "5506d5b04f407f381fca213355ad92774572d4ace49b8c878929c6417a063b26"
+    },
+    "/home/lzz/my test/HT_Explo-fixposition/presentations/run_scheduled_comparison.py": {
+      "before": "a48438252701f4454ff8b308444fc8bc541abd541b2bb352e96ab3d707642f73",
+      "after": "712c9d23451efa22367c83da5c4fbaa6bc355ca472e4efdd78768dd33ce99e7f"
+    },
+    "/home/lzz/my test/HT_Explo-fixposition/tools/ht_cupy_bridge/cmu_xytheta.launch.py": {
+      "before": "e7ede55813d4b831e55ec7ebd2ea9c6de8496ad9d45bd010eacf2b1e19deb25e",
+      "after": "aa0268bec6c066e223a8306d732545ffe9b0e3997cdb8401a05961b37d0ebf12"
+    }
+  },
+  "note": "Architecture/terrain input change. Same motion limits and garage scenario; do not claim a single isolated micro-optimization."
+}

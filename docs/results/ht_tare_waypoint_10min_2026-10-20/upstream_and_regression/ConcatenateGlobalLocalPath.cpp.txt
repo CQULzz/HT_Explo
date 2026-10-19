@@ -1,0 +1,44 @@
+exploration_path_ns::ExplorationPath
+SensorCoveragePlanner3D::ConcatenateGlobalLocalPath(
+    const exploration_path_ns::ExplorationPath &global_path,
+    const exploration_path_ns::ExplorationPath &local_path) {
+  exploration_path_ns::ExplorationPath full_path;
+  if (exploration_finished_ && near_home_ && kRushHome) {
+    exploration_path_ns::Node node;
+    node.position_.x() = robot_position_.x;
+    node.position_.y() = robot_position_.y;
+    node.position_.z() = robot_position_.z;
+    node.type_ = exploration_path_ns::NodeType::ROBOT;
+    full_path.nodes_.push_back(node);
+    node.position_ = initial_position_;
+    node.type_ = exploration_path_ns::NodeType::HOME;
+    full_path.nodes_.push_back(node);
+    return full_path;
+  }
+
+  double global_path_length = global_path.GetLength();
+  double local_path_length = local_path.GetLength();
+  if (global_path_length < 3 && local_path_length < 5) {
+    return full_path;
+  } else {
+    full_path = local_path;
+    if (local_path.nodes_.front().type_ ==
+            exploration_path_ns::NodeType::LOCAL_PATH_END &&
+        local_path.nodes_.back().type_ ==
+            exploration_path_ns::NodeType::LOCAL_PATH_START) {
+      full_path.Reverse();
+    } else if (local_path.nodes_.front().type_ ==
+                   exploration_path_ns::NodeType::LOCAL_PATH_START &&
+               local_path.nodes_.back() == local_path.nodes_.front()) {
+      full_path.nodes_.back().type_ =
+          exploration_path_ns::NodeType::LOCAL_PATH_END;
+    } else if (local_path.nodes_.front().type_ ==
+                   exploration_path_ns::NodeType::LOCAL_PATH_END &&
+               local_path.nodes_.back() == local_path.nodes_.front()) {
+      full_path.nodes_.front().type_ =
+          exploration_path_ns::NodeType::LOCAL_PATH_START;
+    }
+  }
+
+  return full_path;
+}

@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-10-19",
+  "updated_at": "2026-10-20",
   "branch": "codex/ht8dir-v1",
-  "status": "阶段39完整车库600秒199.69m/6483m³、65次搜索超时，13项采集与4项CTest通过；代码、报告图册、全部已录制数据与视频已上传并核对远端大小/SHA256，本机保留38/39。多视点覆盖/拓扑接力尚未恢复，控制约束一致的新原版配对尚缺，不证明追平TARE。",
+  "status": "阶段40原TARE覆盖/TSP+HT航点路由600秒完成，数据待发布核验；XYθ搜索超时42次；最长完全停车0.75s，末60秒新增731.724m³/移动20.80m；末尾EXPLORING。",
   "latest_archive_commit": "726497d35232569cf361e9fd04273c74650f222a",
-  "latest_planner_change": "43069a7b11b8028b53f6eae0d6bdc53c13e8affd",
+  "latest_planner_change": "42966cb22b0f719df035391f3850b9a654f161e1",
   "stages": [
     {
       "id": "stage-01",
@@ -684,6 +684,23 @@
       ],
       "control_commit": "6fc754903f0e7c9aafe4b2a2b13c3fa24266551a",
       "ht_bridge_commit": "445b5c1490d6bb198c35bee23e95fc0f7781407e"
+    },
+    {
+      "id": "stage-40",
+      "number": 40,
+      "sha": "42966cb22b0f719df035391f3850b9a654f161e1",
+      "tag": "ht-stage-20261020-tare-waypoint",
+      "title": "原TARE覆盖/TSP访问顺序 + HT航点XYθ路由",
+      "kind": "恢复原探索架构，替换地形与局部执行",
+      "change": "六个核心函数体与原ROS2基线一致，保留多视点TSP与原航点延伸；HT只规划当前航点/原路线前缀",
+      "features": "同源历史高程供视点高度；隔离模拟器地形；记录TSP顺序、原航点、局部前缀与实际XYθ路线",
+      "validation": "完整车库600秒192.93m/8467.000m³；13项采集、4项CTest；接口检查True",
+      "known_issues": "XYθ搜索超时42次；最长完全停车0.75s，末60秒新增731.724m³/移动20.80m；末尾EXPLORING。 单次运行；未补齐同运动约束新原版配对；不保证全局SE2可达或实车安全 构造回归另有失败：HT删点后原BFS仍标记另一侧连通/候选，但实际最短路为空。近家rush-home也存在前视无输出时被包装层错误拦住的源条件反例；本轮没有触发返航。",
+      "evidence": [
+        "docs/results/ht_tare_waypoint_10min_2026-10-20/REPORT.md"
+      ],
+      "control_commit": "42966cb22b0f719df035391f3850b9a654f161e1",
+      "ht_bridge_commit": "42966cb22b0f719df035391f3850b9a654f161e1"
     }
   ],
   "historical_commits": [
@@ -1219,9 +1236,9 @@
       "original_subject": "Archive command rejection proof, failed indoor trials and returned-home tunnel video"
     }
   ],
-  "latest_planner_code": "6fc754903f0e7c9aafe4b2a2b13c3fa24266551a",
-  "latest_ht_bridge_code": "445b5c1490d6bb198c35bee23e95fc0f7781407e",
-  "latest_verified_trial_code": "6fc754903f0e7c9aafe4b2a2b13c3fa24266551a",
-  "latest_recorded_trial_code": "6fc754903f0e7c9aafe4b2a2b13c3fa24266551a",
+  "latest_planner_code": "42966cb22b0f719df035391f3850b9a654f161e1",
+  "latest_ht_bridge_code": "42966cb22b0f719df035391f3850b9a654f161e1",
+  "latest_verified_trial_code": "42966cb22b0f719df035391f3850b9a654f161e1",
+  "latest_recorded_trial_code": "42966cb22b0f719df035391f3850b9a654f161e1",
   "latest_cupy_node_code": "d6d87878a4e8982e3a4850a5a17f8e1be1608a24"
 }
