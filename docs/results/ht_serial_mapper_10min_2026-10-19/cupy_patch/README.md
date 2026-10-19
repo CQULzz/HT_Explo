@@ -1,0 +1,9 @@
+# CuPy地图执行器调度修复
+
+此补丁属于独立的elevation_mapping_cupy工作区。HT运行时不导入本目录，不把两个工作区合并，也不从相邻工作区借用TARE编译结果。
+
+地图操作改用SingleThreadedExecutor；TF由独立子节点和SingleThreadedExecutor线程接收，主回调等待TF时仍能接收到新变换。所有原有融合公式、模型、可靠队列深度30、点云/地图时间戳、观测年龄、定时频率保持。现有地图互斥锁仍保留，离线预载TF流程不创建额外线程。
+
+目标相对路径：`src/elevation_mapping_cupy_2204/elevation_mapping_cupy/script/elevation_mapping_cupy/elevation_mapping_ros.py`。本机安装脚本是独立副本；也须安装同版`install/elevation_mapping_cupy/lib/elevation_mapping_cupy/elevation_mapping_node`。Python包模块在本机为源文件链接。标准构建安装可更新目标，本次已将同一完整模块安装为可执行脚本，两个文件哈希一致。
+
+本目录包含完整新模块、相对阶段36源文件的patch和前后哈希清单。更新其他机器时先核对manifest，存在其他改动则合并patch而非覆盖。必要条件：ROS Jazzy环境和该独立工作区现有CuPy依赖；未改变依赖或添加HT运行时依赖。

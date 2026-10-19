@@ -1,0 +1,1193 @@
+{
+  "schema_version": 1,
+  "updated_at": "2026-10-19",
+  "branch": "codex/ht8dir-v1",
+  "status": "阶段37地图调度修复，车库600秒179.78m/4522.625m³，地图年龄P950.842s/最大1.840s；完成多角度图后按用户要求停止",
+  "latest_archive_commit": "b52d36e",
+  "latest_planner_change": "43069a7b11b8028b53f6eae0d6bdc53c13e8affd",
+  "stages": [
+    {
+      "id": "stage-01",
+      "number": 1,
+      "sha": "46f9642221ff7e251e601818a45fe041831b928c",
+      "tag": "ht-stage-20260914-ht8dir",
+      "title": "八方向HT软代价初版",
+      "kind": "功能",
+      "change": "将HT八方向概率接入有向边代价、最短路与局部TSP；保留TARE覆盖采样和全局引导。",
+      "features": "按边的移动方向计算长度、风险和未知长度代价，输出经检查的短航点。",
+      "validation": "初始归档以本地核心检查为主；后续Jazzy构建发现包识别、OR-Tools和起点停滞问题。",
+      "known_issues": "低概率仍可能被选中；没有真实XYθ状态搜索、车体朝向连续性或真实HT闭环部署证明。",
+      "evidence": [
+        "release_manifest.json",
+        "VALIDATION.md"
+      ],
+      "control_commit": "46f9642221ff7e251e601818a45fe041831b928c"
+    },
+    {
+      "id": "stage-02",
+      "number": 2,
+      "sha": "c4b7a41d3ae3466c8b5eb043c8f1f3f81b3c9e8d",
+      "tag": "ht-stage-20260915-jazzy",
+      "title": "Jazzy编译与起点停滞修复",
+      "kind": "功能",
+      "change": "修复包识别、Eigen/GridMap与OR-Tools依赖；跳过过近的起始锚点，补输入校验及故障注入工具。",
+      "features": "可在CMU Garage闭环移动，异常地图输入能停车并恢复。",
+      "validation": "约135秒故障注入试跑行驶40.56米；41项核心、9项ROS检查通过。",
+      "known_issues": "使用合成八方向地图，未运行真实HT网络；仍是软代价与旧控制链路，未完成全域探索。",
+      "evidence": [
+        "VALIDATION.md"
+      ],
+      "control_commit": "c4b7a41d3ae3466c8b5eb043c8f1f3f81b3c9e8d"
+    },
+    {
+      "id": "stage-03",
+      "number": 3,
+      "sha": "a6c015a3a3f703d0b0acb880ed0230e08d49f9bd",
+      "tag": "ht-stage-20260920-corner",
+      "title": "旧有向图拐角修复与重复实验",
+      "kind": "功能",
+      "change": "增加gridEdgeSupported和共用连通检查，拒绝切角；保留修复前失败轮并归档复测。",
+      "features": "修复旧图允许而执行端拒绝的特定对角边，具备重复运行、统计及绘图工具。",
+      "validation": "修复后3轮各300秒未见原219秒持续停滞；52项核心、9项ROS、3项统计检查通过。",
+      "known_issues": "HT为80×80米、0.5米栅格、八方向全0.9的合成输入；不是学习模型收益，9轮均未完成全域探索。",
+      "evidence": [
+        "EXPERIMENT_REPORT.md",
+        "experiments/results/garage_corner_fix_20260920/README.md"
+      ],
+      "control_commit": "df8815c61a22a76d0314d372e4c280ac233ee23c"
+    },
+    {
+      "id": "stage-04",
+      "number": 4,
+      "sha": "4315dd9deaed24245d6fbdd3c8ebe8726f74b476",
+      "tag": "ht-stage-20260921-real-ht",
+      "title": "真实HT推理与通过性评测工具",
+      "kind": "评测与接口",
+      "change": "增加固定通过性评测、数据/模型审计、配对推理和真实学生模型山地闭环。",
+      "features": "将真实八方向预测接入雷达观测高程，区分模型误放/误拒、路线选择和实际车辆通过。",
+      "validation": "山地各2轮60秒中，HT平均新增表面体素550.5，基线606.5，未显示探索提升；暴露HT提前返回造成返航遗漏。",
+      "known_issues": "传感器适配且地形来自训练域；旧软代价、近地盲区和返航问题仍在，不能以离线准确率代替闭环效果。",
+      "evidence": [
+        "experiments/traversability/README.md",
+        "experiments/traversability/evidence/REPORT.md",
+        "experiments/results/mountain_live_20260921/REPORT.md"
+      ],
+      "control_commit": "df8815c61a22a76d0314d372e4c280ac233ee23c"
+    },
+    {
+      "id": "stage-05",
+      "number": 5,
+      "sha": "29f80bc76789a7075f4dfb987cb2e51bfbb56add",
+      "tag": "ht-stage-20260922-return",
+      "title": "起点先验、降级预算与返航状态",
+      "kind": "功能",
+      "change": "固定起点并限制缺测先验，累计未知降级预算；补任务状态、到家停车确认、返航拼接和单调检查点。",
+      "features": "区分探索结束与真正返航完成；地图故障时停车，恢复后继续；提供可复用回归验证。",
+      "validation": "限定山地小场景中一组基线/HT均到家完成；另有地图暂停6秒恢复检查。",
+      "known_issues": "小样本且HT运行有约52秒几何降级，不能称为纯HT或全域完成；仍是软风险代价与CMU控制器，非当前XYθ。",
+      "evidence": [
+        "docs/HT_TARE_REMEDIATION_IMPLEMENTED.md",
+        "experiments/results/remediation_stock_20260922/REPORT.md",
+        "experiments/results/remediation_map_outage_20260922/REPORT.md"
+      ],
+      "control_commit": "b8477101476bfbff09c97f22190fa0c7c40ee54c"
+    },
+    {
+      "id": "stage-06",
+      "number": 6,
+      "sha": "d63b9b8db2c9aecea20aa2390fc89cfc0fd5ed30",
+      "tag": "ht-stage-20261010-drivers",
+      "title": "Fixposition与Helios32驱动接入",
+      "kind": "功能",
+      "change": "将Fixposition、RoboSense驱动源码及依赖纳入本工作区，补实车配置和启动接线。",
+      "features": "提供定位/里程计与Helios32点云输入入口，工作区构建不依赖相邻驱动工作区。",
+      "validation": "源码、配置及构建接线按仓库留档；不是完整实车探索验收。",
+      "known_issues": "硬件IP、雷达型号、TF/外参、时间同步、方向标定和底盘控制仍需实车确认；有驱动不等于已能安全实车探索。",
+      "evidence": [
+        "THIRD_PARTY.md",
+        "src/tare_planner/launch/explore_ht_fixposition.launch.py",
+        "src/tare_planner/config/rslidar_helios32.yaml"
+      ],
+      "control_commit": "d63b9b8db2c9aecea20aa2390fc89cfc0fd5ed30"
+    },
+    {
+      "id": "stage-07",
+      "number": 7,
+      "sha": "087c42d45801a34a355cac936488efe19141768d",
+      "tag": "ht-stage-20261011-campus",
+      "title": "Campus地图传输与前瞻航点",
+      "kind": "功能",
+      "change": "HT地图改可靠订阅；只沿已检查且近乎直线的路段跨过近航点；补倒车和探索局限审计。",
+      "features": "改善大地图送达和CMU路径末端频繁减速，旧控制器继续实际控车。",
+      "validation": "15分钟367.85米、该轮HT_MAP_STALE为0；另5分钟对照零线速占比11.2%→5.8%。",
+      "known_issues": "长测倒车占48.4%，另一短测79.3%；旧长测缺XY轨迹/探索体积。此时没有实际XYθ闭环，不能用里程代表探索效果。",
+      "evidence": [
+        "validation/results/HT_long_run_report_2026-10-11.md"
+      ],
+      "control_commit": "83b44a37c2e905022c1d396a738092eabdaa3aee"
+    },
+    {
+      "id": "stage-08",
+      "number": 8,
+      "sha": "8398f538450a21c4ee9d65d17193ee084eacee03",
+      "tag": "ht-stage-20261015-elevation-xytheta",
+      "title": "实际XYθ硬约束规划与分层历史高程",
+      "kind": "功能",
+      "change": "322ec85一次归档此前本地XYθ、历史高程工作及当日修复：引入Hybrid A*和独立执行器，修正坐标翻转、固定世界索引、分层高程和真实观测时间。",
+      "features": "从odom位姿到目标视点规划前进/倒车/原地旋转路径；P≥0.5硬门槛、默认严格未知；全局历史高程裁局部窗口供HT推理。",
+      "validation": "180秒实际HT控车仅行驶14.35米；对应窗口接收984帧、成功融合窗口983帧；225组地图时间戳一致。",
+      "known_issues": "运动连续性差、旧许可1.5秒超时导致大量停车，目标反复切换；仍有噪声/未知区，未完成探索或实车验证。10月12日只是本地实验日期，不是独立Git发布。",
+      "evidence": [
+        "docs/XYTHETA_EXPERIMENT_2026-10-12.md",
+        "docs/HISTORICAL_ELEVATION_EXPERIMENT_2026-10-12.md",
+        "docs/ELEVATION_MAPPING_FIXES_2026-10-15.md",
+        "docs/results/ht_validation_2026-10-15/REPORT.md"
+      ],
+      "control_commit": "322ec85c728c5900d3e47f22b4c3c5a4e6bccc99"
+    },
+    {
+      "id": "stage-09",
+      "number": 9,
+      "sha": "dbce623161087fcaac865b1d4db5305d1cfe2c9c",
+      "tag": "ht-stage-20261015-goal-continuity",
+      "title": "目标保持与执行器独立校验",
+      "kind": "功能",
+      "change": "按世界位置保持目标、停滞冷却、稳定全局引导、候选预筛和侧向恢复；跟踪器独立读取新鲜HT图校验路径。",
+      "features": "减少目标尚未完成时反向切换；HT启用时旧Bool许可年龄不再单独触发停车，地图/扫描/定位/路径时效和显式禁止仍有效。",
+      "validation": "一轮180秒56.54米，目标方向反转9→0；149项核心、13项HT ROS和4项跟踪器检查通过。",
+      "known_issues": "同代码后续复跑29.76米、102秒后长期停车，故不能把这次56.54米视为稳定通过。仍有规划/执行采样不一致。 2026-10-18复核确认本阶段含晚HT拦截仍发布非零候选Twist的缺陷，阶段21修正；历史记录保留，不能由原通过项推断该晚分支正确停车。",
+      "evidence": [
+        "docs/xytheta_execution_continuity.md",
+        "docs/results/ht_continuity_2026-10-15/REPORT.md",
+        "docs/results/ht_repeat_2026-10-15/REPORT.md"
+      ],
+      "control_commit": "dbce623161087fcaac865b1d4db5305d1cfe2c9c"
+    },
+    {
+      "id": "stage-10",
+      "number": 10,
+      "sha": "0b842e4ab71a1ed0249cc32da923a0f51940106a",
+      "tag": "ht-garage-repeat-20261015-1225",
+      "title": "同版本复跑失败与完整数据发布",
+      "kind": "失败复跑归档",
+      "change": "新增完整视频、CSV/快照/录包下载与校验清单；697ae2e随后补GitHub下载和SHA-256复核。",
+      "features": "可以复现并查看约102秒后的失败全过程，保留原Release附件链接。",
+      "validation": "180秒29.76米，最后60秒0米；HT_PATH_BLOCKED对应1562个零速指令样本。",
+      "known_issues": "这是失败证据归档，不是算法修复；控车仍为dbce623。上层HT_ASSISTED不代表执行端允许运动。 2026-10-18复核确认本阶段含晚HT拦截仍发布非零候选Twist的缺陷，阶段21修正；历史记录保留，不能由原通过项推断该晚分支正确停车。",
+      "evidence": [
+        "docs/results/ht_repeat_2026-10-15/REPORT.md",
+        "docs/results/ht_repeat_2026-10-15/github_upload_verification.json"
+      ],
+      "control_commit": "dbce623161087fcaac865b1d4db5305d1cfe2c9c"
+    },
+    {
+      "id": "stage-11",
+      "number": 11,
+      "sha": "919d826f340c11e34421a738e80d2a2e85066eb9",
+      "tag": "ht-stage-20261016-swept-check",
+      "title": "统一运动段检查与执行拒绝反馈",
+      "kind": "功能",
+      "change": "3912e37使规划、发布前和执行共用motionSupport及经过栅格检查；拒绝边反馈、6秒冷却重规划；后续提交补两轮视频/统计。",
+      "features": "消除已复现的规划通过/执行拒绝循环；检查车头变化、倒车方向和前约1米路径；不放宽HT门槛或未知策略。",
+      "validation": "冻结原停车地图：旧路一致拒绝、重规划41姿态；155项核心、15项HT ROS、5项跟踪器检查通过。两轮180秒57.87/63.45米，最长完全零速1.65/1.50秒。",
+      "known_issues": "只解决特定持续拒绝循环；仍有转向、回访与短暂停顿，短测不保证全局探索完成；最新长测进一步证实长期推进不足。 2026-10-18复核确认本阶段含晚HT拦截仍发布非零候选Twist的缺陷，阶段21修正；历史记录保留，不能由原通过项推断该晚分支正确停车。",
+      "evidence": [
+        "docs/results/ht_swept_gate_2026-10-16/REPORT.md"
+      ],
+      "control_commit": "3912e37df7541799c354bf568ff8f3d5b0383aab"
+    },
+    {
+      "id": "stage-12",
+      "number": 12,
+      "sha": "07ab0067dc7f47dc6eb7e5e2b9924f79f2ed9a24",
+      "tag": "ht-stage-20261016-tare-compare",
+      "title": "最新原版TARE配对评测",
+      "kind": "对比评测归档",
+      "change": "增加同场景/同前进目标的独立配对运行、公共自由体积统计、对比图和分屏视频。",
+      "features": "明确量化原版与当前完整系统差距；与上阶段相比没有再升级运动规划算法。",
+      "validation": "180秒原版/HT里程81.08/54.52米，估计自由体积6242.625/3224.625m³；HT体积约为原版51.7%。",
+      "known_issues": "每组一次且倒车/角速度/加速度未完全对齐，是端到端比较；HT转向、停车和回访更多，未追平原版。 2026-10-18复核确认本阶段含晚HT拦截仍发布非零候选Twist的缺陷，阶段21修正；历史记录保留，不能由原通过项推断该晚分支正确停车。",
+      "evidence": [
+        "docs/results/tare_ht_pair_2026-10-16/REPORT.md"
+      ],
+      "control_commit": "3912e37df7541799c354bf568ff8f3d5b0383aab"
+    },
+    {
+      "id": "stage-13",
+      "number": 13,
+      "sha": "6bd5407b781771b0460ed1533eaee6d500c91bc4",
+      "tag": "ht-stage-20261016-endurance",
+      "title": "60分钟长测：运行连续但探索停滞",
+      "kind": "长测归档",
+      "change": "新增长测启动、健康与资源记录、抽样录包、源时间戳计数审计、分析工具及报告/视频；实验运行树基线为07ab006。",
+      "features": "可检验长期资源增长、输入延迟、运动拒绝反馈与探索增益；被测规划算法与上阶段相同。",
+      "validation": "60分钟993.48米，无被测进程意外退出或重启；后40分钟又走约650米，仅增2.5m³估计自由空间，最后10分钟为0。",
+      "known_issues": "未通过持续有效探索验证；全局引导长期不变、重复回访，网卡掉线时发生约13秒输入中断；内存未失控但持续扩图上界未验证。 2026-10-18复核确认本阶段含晚HT拦截仍发布非零候选Twist的缺陷，阶段21修正；历史记录保留，不能由原通过项推断该晚分支正确停车。",
+      "evidence": [
+        "docs/results/ht_endurance_2026-10-16/REPORT.md",
+        "docs/results/ht_endurance_2026-10-16/validation_checks.json"
+      ],
+      "control_commit": "3912e37df7541799c354bf568ff8f3d5b0383aab"
+    },
+    {
+      "id": "stage-14",
+      "number": 14,
+      "sha": "9393e7da7d1eeabf04a4325593834304f236e405",
+      "tag": "ht-stage-20261016-progress-memory",
+      "title": "全局停滞恢复与返航容差修正",
+      "kind": "规划修复与回归",
+      "change": "全局引导独立进展计时、180秒失败冷却、世界坐标重复访问记忆；修正恢复评分、返航检查点到达容差及无用探索搜索。",
+      "features": "局部目标完成不再掩盖全局停滞；零收益主目标不能压住所有恢复候选；保留HT硬门槛、严格未知和速度上限。",
+      "validation": "242项核心、15项ROS和5项跟踪测试通过。两轮20/25分钟；最新同期20分钟估计观测6498m³，对照3293.875m³；第10–20分钟增益1654.125m³，对照26.375m³。25分钟447.50米、294格，最终EXPLORING。",
+      "known_issues": "第一轮返航BLOCKED；补容差回归后，25分钟轮未触发返航。后续阶段15的60分钟记录验证了一次返回完成，但活动期仍有低增益回访、短时地图过期和关停清理报错；无实车或真值全覆盖验收。 2026-10-18复核确认本阶段含晚HT拦截仍发布非零候选Twist的缺陷，阶段21修正；历史记录保留，不能由原通过项推断该晚分支正确停车。",
+      "evidence": [
+        "docs/results/ht_progress_fix_2026-10-16/REPORT.md",
+        "docs/results/ht_progress_fix_2026-10-16/same_duration_metrics.json",
+        "docs/results/ht_progress_fix_2026-10-16/return_fix_trial/validation_checks.json"
+      ],
+      "control_commit": "c85ad1f004bbaceae14cd65351be38c3a9e61273"
+    },
+    {
+      "id": "stage-15",
+      "number": 15,
+      "sha": "3fe5b9b5ee23c7a3cc8ec7a0243cdd2d09891a38",
+      "tag": "ht-stage-20261017-endurance-return",
+      "title": "60分钟复测：返回完成但仍有回访",
+      "kind": "长测证据归档",
+      "change": "对阶段14核心代码进行同Garage连续60分钟记录，补活动/等待分段控制、返航、低收益回访、地图时效及主动关停审计；不新增导航算法。",
+      "features": "首次在本次最新规划代码的长测中观察到TARE触发返航并通过到家、低速和停稳条件，任务完成后保持停车；明确区分末尾正常等待与中途低收益回访。",
+      "validation": "44分28秒左右COMPLETED，距记录起点0.291米；共768.57米、371个轨迹格、6513.750m³近似观测，对照旧60分钟为3296.375m³。7201个轨迹采样、72000条录包控制指令；14项哈希不变，视频完整解码通过。",
+      "known_issues": "活动约44.5分钟，余下15.5分钟为完成后等待，不是主动探索60分钟。中途7.38分钟行驶106.17米仅增2.125m³；地图年龄最高3.37秒，1Hz检查3次超过3秒。主动SIGINT后CMU部分节点关停异常；无运行期意外退出记录。单场景一轮、非真值全覆盖或实车证明。 2026-10-18复核确认本阶段含晚HT拦截仍发布非零候选Twist的缺陷，阶段21修正；历史记录保留，不能由原通过项推断该晚分支正确停车。",
+      "evidence": [
+        "docs/results/ht_endurance_progress_2026-10-17/REPORT.md",
+        "docs/results/ht_endurance_progress_2026-10-17/validation_checks.json",
+        "docs/results/ht_endurance_progress_2026-10-17/return_search_audit.json",
+        "docs/results/ht_endurance_progress_2026-10-17/shutdown_event_audit.json"
+      ],
+      "control_commit": "c85ad1f004bbaceae14cd65351be38c3a9e61273"
+    },
+    {
+      "id": "stage-16",
+      "number": 16,
+      "sha": "bd0c2c24f7eac383a3d8120b312fa4eb499c3199",
+      "tag": "ht-stage-20261017-crossguide-lifecycle",
+      "title": "跨目标记忆与正常关停修复（短测验证）",
+      "kind": "功能",
+      "change": "全局引导进展跨目标切换保留；零收益到达目标暂缓回访；拆分CuPy发布调度，修复CMU/CuPy/Gazebo关停及完成状态显示。",
+      "features": "A→B→A不再重置A的停滞预算；新收益可绕过恢复目标冷却；工作区独立，HT硬门槛、严格未知、3秒时效和0.5m/s上限保留。",
+      "validation": "260核心、15 ROS、6跟踪器、8 CuPy/调度及2关停集成测试通过；第四轮仿真关停回归所有子节点正常退出，无残留。首轮复测中发现额外BLAS线程争用，主动中止并保留证据；后续见阶段17。",
+      "known_issues": "短测不证明7.4分钟低收益回访已消除；新长测早期仍采样到超过3秒的地图年龄峰值。远端引导仍是距离启发，无完整全局可执行图；未做实车验证。 2026-10-18复核确认本阶段含晚HT拦截仍发布非零候选Twist的缺陷，阶段21修正；历史记录保留，不能由原通过项推断该晚分支正确停车。",
+      "evidence": [
+        "docs/fixes/2026-10-17_endurance_followup.md",
+        "docs/results/ht_followup_smoke_2026-10-17/REPORT.md"
+      ],
+      "control_commit": "bd0c2c24f7eac383a3d8120b312fa4eb499c3199"
+    },
+    {
+      "id": "stage-17",
+      "number": 17,
+      "sha": "f1c84854ccc147d40d7f9120c9713ba5e11c736c",
+      "tag": "ht-stage-20261017-blas-threads",
+      "title": "限制BLAS空转线程与分段计时（数值回归）",
+      "kind": "实时性",
+      "change": "单独限制HT桥接的BLAS库为1线程，保留PyTorch2线程；记录实际线程池和融合/支撑准备/网络/发布耗时。",
+      "features": "消除周期性小矩阵拟合唤醒28个BLAS工作线程后大量空转的争用；不修改网络权重、HT门槛、未知策略和速度。",
+      "validation": "诊断默认配置0.653墙钟秒消耗7.695 CPU秒；BLAS单线程0.611墙钟秒消耗0.0105 CPU秒。地面参考最大差0；固定权重HT联合回归硬门槛逐格一致，另有3项参考面与6项融合回归通过。原计划60分钟按用户新要求改为五环境各10分钟，见阶段18。",
+      "known_issues": "该CPU诊断不等于整张HT地图提速700倍，也不是整车长测通过；约17分钟诊断轮主动中止，不作为完成60分钟记录。尚不能证明60分钟稳定性；五环境10分钟记录进行中，见阶段18。 2026-10-18复核确认本阶段含晚HT拦截仍发布非零候选Twist的缺陷，阶段21修正；历史记录保留，不能由原通过项推断该晚分支正确停车。",
+      "evidence": [
+        "docs/results/ht_blas_contention_2026-10-17/REPORT.md",
+        "docs/fixes/2026-10-17_endurance_followup.md"
+      ],
+      "control_commit": "f1c84854ccc147d40d7f9120c9713ba5e11c736c"
+    },
+    {
+      "id": "stage-18",
+      "number": 18,
+      "sha": "6d6998f00f5fa9358a7c212b41da6f395ba492a5",
+      "tag": "ht-stage-20261017-multiscene-10min",
+      "title": "五环境各10分钟与15fps录像（已完成记录）",
+      "kind": "实验工具",
+      "change": "参数化仿真/规划场景，串行运行Garage、Campus、Indoor、Forest、Tunnel各600秒；原生相机960×540、15fps，裁剪初始化、编码和完整解码核验。",
+      "features": "各组独立地图与进程，独立视频/数据/资源审计，完成一组退出与编码后才进入下一组；底部状态条显示时间、速度、任务和地图/相机年龄，提供播放列表和预览。",
+      "validation": "五环境均记录600秒，五段H.264完整解码及13项采集/进程验证通过；车库189.57m、校园199.76m、森林168.09m持续推进；室内3.11m与隧道26.33m持续受阻。视频599.933至600秒，允许1帧误差。",
+      "known_issues": "室内0.6m候选视点漏掉窄走廊安全区域；隧道返航目标周围足迹含未知格，未到家；地图年龄仍有超过3秒的尾延迟，森林激光平均4.02Hz。10分钟独立重启测试不代表连续一小时、实车或全覆盖通过。 2026-10-18复核确认本阶段含晚HT拦截仍发布非零候选Twist的缺陷，阶段21修正；历史记录保留，不能由原通过项推断该晚分支正确停车。",
+      "evidence": [
+        "docs/experiments/ht_multiscene_10min.md",
+        "docs/results/ht_multiscene_10min_2026-10-17/REPORT.md"
+      ],
+      "control_commit": "f1c84854ccc147d40d7f9120c9713ba5e11c736c",
+      "validation_commit": "2d74d9c7d4e2d68f9fef9fe653a94aa8aa0196a8"
+    },
+    {
+      "id": "stage-19",
+      "number": 19,
+      "sha": "f3d1eeedae814f99d0db94673c7abadc8eaf7439",
+      "tag": "ht-stage-20261017-indoor-viewpoints",
+      "title": "室内视点细化：恢复推进，仍有停顿回访",
+      "kind": "场景参数修复",
+      "change": "室内视点从50×50、0.6m改为100×100、0.3m，保持30×30m范围；原HT分辨率、概率阈值、足迹半径、运动学搜索和控制速度不变。",
+      "features": "为窄HT支撑带提供候选端点，保留原参数失败视频；新增实际栅格、足迹硬门槛、时间戳与配置归档。",
+      "validation": "独立600秒补测、9000帧完整解码及13项采集/进程核验通过。里程3.11→145.28m，近似观测347.875→1900.25m³，全零指令98.2%→23.0%；运行中实际参数读取与源哈希证明仅室内视点配置不同。",
+      "known_issues": "仍有最长39.80秒停车和2.3%倒车；第6至7.5分钟行驶22.94m仅增8.375m³，低收益回访未消失。活跃搜索耗时P95为1.576秒、HT年龄最大4.67秒。隧道返航未知足迹问题未解决；每配置一次，不能视为所有场景通过。 2026-10-18复核确认本阶段含晚HT拦截仍发布非零候选Twist的缺陷，阶段21修正；历史记录保留，不能由原通过项推断该晚分支正确停车。",
+      "evidence": [
+        "docs/results/ht_indoor_sampling_comparison_2026-10-17/REPORT.md",
+        "docs/results/ht_indoor_viewpoint_10min_2026-10-17/REPORT.md",
+        "docs/results/ht_multiscene_10min_2026-10-17/indoor/diagnostics/README.md"
+      ],
+      "control_commit": "f1c84854ccc147d40d7f9120c9713ba5e11c736c",
+      "scene_configuration_commit": "f3d1eeedae814f99d0db94673c7abadc8eaf7439",
+      "validation_commit": "2d74d9c7d4e2d68f9fef9fe653a94aa8aa0196a8"
+    },
+    {
+      "id": "stage-20",
+      "number": 20,
+      "sha": "dee873db9a25778eb67060100025bea2f619c0ee",
+      "tag": "ht-stage-20261017-context-recovery",
+      "title": "观测支撑与停滞恢复：返航通过，探索仍有退步",
+      "kind": "功能与闭环验证",
+      "change": "区分网络上下文与车体观测支撑；按实际观测时间保留拒绝，有限坏高度仅作八方向禁行上下文；增加12秒原地停滞释放、有限回退和0.35秒共享搜索预算，CPU改4线程channels-last。",
+      "features": "避免网络缺测重复膨胀及旧方差反复否定历史；保留HT硬阈值、真实未知和碰撞检查，支持安全回退及实际返航。",
+      "validation": "311核心、17ROS、6跟踪及53Python回归通过；隧道/室内各600秒、两段15fps视频完整解码及各13项采集核验通过。均COMPLETED；等长前缀最长全零指令145.95→4.30秒、39.80→4.65秒；室内规划P95 1.576→1.004秒。",
+      "known_issues": "室内约215秒触发返航，总近似观测1900.250→1106.750m³（下降41.8%）；任务收尾不是全覆盖证明。室内HT年龄最大5.01秒，两场景各8个1Hz样本超过3秒。森林约4Hz本轮未重测，其他三场景未重跑。保留约195秒失败诊断；每配置仅一次、无实车或长期稳定性验收。 2026-10-18复核确认本阶段含晚HT拦截仍发布非零候选Twist的缺陷，阶段21修正；历史记录保留，不能由原通过项推断该晚分支正确停车。",
+      "evidence": [
+        "docs/fixes/2026-10-17_context_recovery.md",
+        "docs/results/ht_recovery_comparison_2026-10-17/REPORT.md",
+        "docs/results/ht_recovery_10min_2026-10-17/REPORT.md",
+        "docs/results/ht_context_diagnostics_2026-10-17/REPORT.md"
+      ],
+      "control_commit": "73cae0b24e72575b8592e772fd818f85ab91a9a6",
+      "bridge_commit": "dee873db9a25778eb67060100025bea2f619c0ee",
+      "archive_commit": "9fb2b63ca50a059e4c184f223aaa97e896b185b6"
+    },
+    {
+      "id": "stage-21",
+      "number": 21,
+      "sha": "67ade71c10caa8a8923b9fe9c663d10a9ec75568",
+      "tag": "ht-stage-20261018-zero-hold",
+      "title": "拦截命令归零与32航向：修正缺陷，仍有停滞",
+      "kind": "执行错误修复与原因审计",
+      "change": "停车函数清空实际待发Twist全部六个分量；搜索16改32航向；按绝对源秒评估采样包，防止重复分秒丢帧；增加完成队列和全频HT证据记录。",
+      "features": "HT晚拒绝真正发零速度，保留原硬门槛；同一真实快照上32航向找到16漏掉的HT路线；区分完成、无路、地图时效与评估误差。",
+      "validation": "旧晚拒绝回归失败、新实现通过；384核心、21ROS、8跟踪回归通过，4个真实快照均参与。最终室内/隧道各600秒、各13项采集核验及完整解码通过，19次晚拒绝均发零。室内6.64m/432.875m³仍BLOCKED；隧道79.00m/621.375m³约230.53秒返航完成。",
+      "known_issues": "室内29.967秒同一世界位姿，中心HT概率仍约0.999846，8个此前神经预测无效但物理已观测的邻格变成有效低概率，进入足迹硬门槛后拒绝起点。该接口仍未修改，不能直接判定噪声、模型错误或重复膨胀；32航向不是闭环稳定性通过。原215秒收尾未复现、完成条件未改；无实车或更长验收。",
+      "evidence": [
+        "docs/fixes/2026-10-18_late_hold_zero_twist.md",
+        "docs/results/ht_completion_cause_audit_2026-10-18/REPORT.md",
+        "docs/results/ht_zero_twist_only_10min_2026-10-18/REPORT.md",
+        "docs/results/ht_zero_twist_fine_heading_10min_2026-10-18/REPORT.md"
+      ],
+      "control_commit": "8e8d2b768a2e8e347ba4de315df1c68c9079c8ad",
+      "metric_commit": "37f0d42f75220a7098baf2167da61bf38e47fa59",
+      "resolution_commit": "67ade71c10caa8a8923b9fe9c663d10a9ec75568",
+      "archive_commit": "b15c06a9d4c476c1e5f6b8e04ad5bcbe9988ecdd"
+    },
+    {
+      "id": "stage-22",
+      "number": 22,
+      "sha": "12d85d871ce84bcab1191a20bbea6e1748449cd5",
+      "tag": "ht-stage-20261018-mixed-turns",
+      "title": "混合转角与旋转跟踪：室内仍停滞",
+      "kind": "实验候选",
+      "change": "32航向保留11.25°与22.5°两种原地转向；跟踪器锁定旋转终点，完成旋转并降至角速度阈值后才平移。",
+      "features": "32航向保留11.25°与22.5°两种原地转向；跟踪器锁定旋转终点，完成旋转并降至角速度阈值后才平移。",
+      "validation": "390项核心、21地图/规划、10跟踪器回归通过，四个历史快照均参与；完整600秒记录；17.82m、778.000m³，最终BLOCKED，约74秒后无持续推进。",
+      "known_issues": "比单转角6.64m有所推进，但未解决起点/出口拒绝；同一停止快照54次查询全部无路，不能称为稳定通过。",
+      "evidence": [
+        "docs/results/ht_mixed_turns_10min_2026-10-18/REPORT.md"
+      ],
+      "control_commit": "12d85d871ce84bcab1191a20bbea6e1748449cd5",
+      "archive_commit": "68746deee9c0fc586c11bb9954a117bbaa136284"
+    },
+    {
+      "id": "stage-23",
+      "number": 23,
+      "sha": "149566de09c48a528140b6ec950c08c5fa29539c",
+      "tag": "ht-stage-20261018-configuration-gate",
+      "title": "HT配置得分与物理障碍分层：恢复推进，仍有短停",
+      "kind": "实验候选",
+      "change": "新增独立ht_obstacle层；HT参考位置/车头方向得分按0.5硬门槛查询，实测障碍和缺测仍保留0.6m足迹检查；修正启动先验混用观测支持的额外漏洞。",
+      "features": "新增独立ht_obstacle层；HT参考位置/车头方向得分按0.5硬门槛查询，实测障碍和缺测仍保留0.6m足迹检查；修正启动先验混用观测支持的额外漏洞。",
+      "validation": "390项核心、25地图/规划、11跟踪器回归及5实际快照通过；室内完整600秒134.00m、3170.500m³，BLOCKED抽样7.8%，212次晚拦截均发零。",
+      "known_issues": "最终约2秒BLOCKED，未观察其未来恢复；最长全零6.20s，HT地图年龄最大约5.996s，规划P95 1.616s。无探索完成或多场景/实车稳定性结论。",
+      "evidence": [
+        "docs/results/ht_configuration_gate_10min_2026-10-18/REPORT.md"
+      ],
+      "control_commit": "149566de09c48a528140b6ec950c08c5fa29539c",
+      "archive_commit": "68746deee9c0fc586c11bb9954a117bbaa136284"
+    },
+    {
+      "id": "stage-24",
+      "number": 24,
+      "sha": "bada7bad52fca98a3eb0942c1bc3d9c0a7d84185",
+      "tag": "ht-stage-20261018-latency-diagnosis",
+      "title": "同规则室内诊断复跑：发现几何根状态拒绝",
+      "kind": "失败复测与诊断",
+      "change": "只增加CuPy锁/回调和已有规划分项录制",
+      "features": "区分计算、排队、粗视点碰撞与实际车位查询",
+      "validation": "完整600秒23.86m、993.125m³，最终BLOCKED；13项采集检查通过，21次晚拒绝全部发零",
+      "known_issues": "约80秒后几何层禁止根状态；时效和表示更新耗时仍存在，阶段23单轮改善未稳定复现",
+      "evidence": [
+        "docs/results/ht_latency_diagnosis_10min_2026-10-18/REPORT.md"
+      ],
+      "control_commit": "149566de09c48a528140b6ec950c08c5fa29539c"
+    },
+    {
+      "id": "stage-25",
+      "number": 25,
+      "sha": "43069a7b11b8028b53f6eae0d6bdc53c13e8affd",
+      "tag": "ht-stage-20261018-continuous-geometry",
+      "title": "连续位姿几何检查：旧反例修正，仍有HT未知停滞",
+      "kind": "实测候选",
+      "change": "实际位置查询实测碰撞点云；保留安全距离并加栅格余量；修正碰撞显示与计时",
+      "features": "不再继承邻覆盖视点碰撞标记，真正碰撞根状态仍拒绝",
+      "validation": "390核心、25ROS、11执行器及真实几何回归通过；完整600秒65.80m、1959.875m³，25次晚拒绝均发零",
+      "known_issues": "264秒后HT未知导致长期停车；一处融合后有限高度拒绝产生全窗口未知；图龄长尾和覆盖统计耗时仍存在",
+      "evidence": [
+        "docs/results/ht_continuous_geometry_10min_2026-10-18/REPORT.md"
+      ],
+      "control_commit": "43069a7b11b8028b53f6eae0d6bdc53c13e8affd"
+    },
+    {
+      "id": "stage-26",
+      "number": 26,
+      "sha": "22c2749f395af8bb5dc6705b1e92548acf69494e",
+      "tag": "ht-stage-20261018-postfilter-obstacles",
+      "title": "有限质量拒绝高度保留为硬障碍：里程增加但体积退步",
+      "kind": "实测候选",
+      "change": "统一源/融合后有限质量拒绝高度的硬障碍上下文；新增完整网络输入输出记录",
+      "features": "不再由有限拒绝高度制造全窗口未知，拒绝格仍八方向强制零",
+      "validation": "7项支撑+实际模型ROS集成通过；600秒116.15m、1258m³；58份上下文同源逐值一致、3份模型重放差0；128次晚拒绝均发零",
+      "known_issues": "最终95秒无路停车；比上轮体积下降35.8%，不能以里程增加宣称探索提升；图龄长尾和几何记录缺失仍待解决",
+      "evidence": [
+        "docs/results/ht_postfilter_obstacles_10min_2026-10-18/REPORT.md"
+      ],
+      "control_commit": "43069a7b11b8028b53f6eae0d6bdc53c13e8affd",
+      "ht_bridge_commit": "22c2749f395af8bb5dc6705b1e92548acf69494e"
+    },
+    {
+      "id": "stage-27",
+      "number": 27,
+      "sha": "4721764fa77eb634f4a0ba50b1381a05b3790195",
+      "tag": "ht-stage-20261018-geometry-index",
+      "title": "等价连续碰撞查询提速：仍因执行进入几何边界停滞",
+      "kind": "实测候选",
+      "change": "固定高度XY索引与边界3D回退；逐搜索终止原因、可靠几何录包",
+      "features": "6561真实查询输出一致/微基准3.68倍；800边界及搜索退出回归",
+      "validation": "完整600秒41.9m/815.625m³；最终BLOCKED；最后60秒480次几何INVALID_START；59份模型上下文一致",
+      "known_issues": "比上一轮里程与体积退步；136.5s后停滞；规划几何/HT与执行只检查HT不一致；贴边余量不足、图龄长尾",
+      "evidence": [
+        "docs/results/ht_geometry_index_10min_2026-10-18/REPORT.md"
+      ],
+      "control_commit": "4721764fa77eb634f4a0ba50b1381a05b3790195",
+      "ht_bridge_commit": "22c2749f395af8bb5dc6705b1e92548acf69494e"
+    },
+    {
+      "id": "stage-28",
+      "number": 28,
+      "sha": "65efef749493fdfac0960f7b98013ec666d4efff",
+      "tag": "ht-stage-20261018-execution-geometry",
+      "title": "执行几何与跟踪余量：600秒内部完成并返航，覆盖待核验",
+      "kind": "实测候选",
+      "change": "执行端检查同一实测几何，平移预留0.12m跟踪余量，显式共享场景安全参数",
+      "features": "几何缺失/过期/碰撞实际发零并反馈对应计划；HT保持硬约束",
+      "validation": "全部CTest及16项控制器ROS回归通过；600秒117.66m/2292.75m³；352.425秒返航完成；307份几何样本无半径重叠；58份上下文一致",
+      "known_issues": "内部完成不证明全场景覆盖；体积低于阶段23约27.7%；图龄最大3.563s；几何拦截闭环未触发，多环境/重复/动力学仍待测",
+      "evidence": [
+        "docs/results/ht_execution_geometry_10min_2026-10-18/REPORT.md"
+      ],
+      "control_commit": "65efef749493fdfac0960f7b98013ec666d4efff",
+      "ht_bridge_commit": "22c2749f395af8bb5dc6705b1e92548acf69494e"
+    },
+    {
+      "id": "stage-29",
+      "number": 29,
+      "sha": "b6010156cc26431cc23bac33ac543982f7d5e4c1",
+      "tag": "ht-stage-20261018-cell-audit",
+      "title": "逐单元审计：正收益任务未登记/移出邻域被核销",
+      "kind": "诊断实测候选",
+      "change": "覆盖状态分支记录，修正vector遍历删除的迭代器失效",
+      "features": "重建单元状态与内部完成触发的时间线；保存实际C++两个最小失败复现",
+      "validation": "完整600秒133.17m/2025.125m³，517.244秒内部返航完成；(24,0)正收益移出邻域核销紧接触发结束；13项采集通过",
+      "known_issues": "正收益任务遗漏规则尚待修正；体积比阶段28少11.7%；图龄4.096s，16次路径不连续，多环境/真值覆盖未验收",
+      "evidence": [
+        "docs/results/ht_cell_audit_10min_2026-10-18/REPORT.md"
+      ],
+      "control_commit": "b6010156cc26431cc23bac33ac543982f7d5e4c1",
+      "ht_bridge_commit": "22c2749f395af8bb5dc6705b1e92548acf69494e"
+    },
+    {
+      "id": "stage-30",
+      "number": 30,
+      "sha": "ce7202bb14fa493d6ee2e4cb68dd8d56b32aef0b",
+      "tag": "ht-stage-20261018-pending-gain",
+      "title": "正收益全局任务保留：600秒169.57m/3321.25m³仍探索",
+      "kind": "实测候选",
+      "change": "按收益登记UNSEEN，全局保留仍有收益的任务，防止移出邻域核销",
+      "features": "HT/物理硬门槛不变；原零收益覆盖/已覆盖滞回/非HT保持",
+      "validation": "4个CTest目标与10项新状态回归通过；600秒169.57m/3321.25m³；最后60秒17.829m；有收益UNSEEN33→0、almost移出核销5→0",
+      "known_issues": "102次TIME_LIMIT；五次无候选覆盖分支仍需修正，3次此前刚有收益；1次地图超时和4次路径超时，重复/多环境/真值覆盖仍未验收",
+      "evidence": [
+        "docs/results/ht_pending_gain_tasks_10min_2026-10-18/REPORT.md"
+      ],
+      "control_commit": "ce7202bb14fa493d6ee2e4cb68dd8d56b32aef0b",
+      "ht_bridge_commit": "22c2749f395af8bb5dc6705b1e92548acf69494e"
+    },
+    {
+      "id": "stage-31",
+      "number": 31,
+      "sha": "b05ed9e717a3e430cc6243ed61666b5120f76e5b",
+      "tag": "ht-stage-20261019-deferred-gain",
+      "title": "候选缺失保留有效收益：核销正确但体积退步",
+      "kind": "实测候选",
+      "change": "记录最后有效收益、候选缺失延期，有效评估核销及完成守卫",
+      "features": "不凭候选暂缺报覆盖；零收益导航/既有滞回/非HT保持",
+      "validation": "18项几何/状态回归及4个CTest目标通过；600秒162.71m/2703.875m³；19单元延期、4次重新评估解除登记、无候选误核销0；实际拦截全零",
+      "known_issues": "体积比阶段30下降18.6%；81次TIME_LIMIT及地图/路径时效；末刻EMPTY_PATH零速度，未验证后续恢复；真值/重复/多环境未验收",
+      "evidence": [
+        "docs/results/ht_deferred_gain_tasks_10min_2026-10-19/REPORT.md"
+      ],
+      "control_commit": "b05ed9e717a3e430cc6243ed61666b5120f76e5b",
+      "ht_bridge_commit": "22c2749f395af8bb5dc6705b1e92548acf69494e"
+    },
+    {
+      "id": "stage-32",
+      "number": 32,
+      "sha": "867ba1f5d40c813291bbb148fad2d5fc5b8907d1",
+      "tag": "ht-stage-20261019-deferred-repeat",
+      "title": "相同导航程序复测：早期长期停滞",
+      "kind": "失败复测",
+      "change": "导航未改，63份哈希一致；追加重复验证与恢复目标调度审计",
+      "features": "记录相同导航二进制也会长期停滞的反例",
+      "validation": "室内完整600秒5.66m/419.750m³；末分钟0m；482轮排队替代目标无搜索机会；视频600秒完整解码、13项采集核验",
+      "known_issues": "14秒后无平移，恢复预算饥饿；尚未证明替代路线可达，覆盖真值/多环境未验收",
+      "evidence": [
+        "docs/results/ht_deferred_gain_repeat_10min_2026-10-19/REPORT.md"
+      ],
+      "control_commit": "b05ed9e717a3e430cc6243ed61666b5120f76e5b",
+      "ht_bridge_commit": "22c2749f395af8bb5dc6705b1e92548acf69494e"
+    },
+    {
+      "id": "stage-33",
+      "number": 33,
+      "sha": "ba7942ce176378d68b0eeab99a4f4bb9a5e68913",
+      "tag": "ht-stage-20261019-recovery-slot",
+      "title": "普通恢复目标提前搜索",
+      "kind": "实测候选",
+      "change": "首个主要目标后插入普通恢复搜索，保留硬约束和原预算",
+      "features": "避免主要目标反复超时挤占普通恢复，记录实际恢复/回退尝试",
+      "validation": "4个CTest通过；室内600秒151.57m/2480.000m³；末分钟15.525m，13项采集核验/完整视频通过",
+      "known_issues": "仍有232次搜索超时，最长全零35.800s；地图/路径时效、真值覆盖/重复多环境未全部验收",
+      "evidence": [
+        "docs/results/ht_recovery_search_slot_10min_2026-10-19/REPORT.md"
+      ],
+      "control_commit": "ba7942ce176378d68b0eeab99a4f4bb9a5e68913",
+      "ht_bridge_commit": "22c2749f395af8bb5dc6705b1e92548acf69494e"
+    },
+    {
+      "id": "stage-34",
+      "number": 34,
+      "sha": "391fa0f98fc2a0adab2c018b4c5a1c7c29efff91",
+      "tag": "ht-stage-20261019-checked-connections",
+      "title": "先验算简单SE2连接，再做图搜索",
+      "kind": "采集异常的完整600秒候选",
+      "change": "共用预算、逐段通过原谓词的转向+前进/倒车连接，受阻回原搜索",
+      "features": "避免简单局部恢复也展开数千状态点；记录direct标记",
+      "validation": "4个CTest通过；室内600秒168.77m/2169.875m³，直接连接513/754；末分钟14.826m，视频完整、12/13项采集核验（退出快照损坏）",
+      "known_issues": "退出时一份NPZ损坏，12/13采集检查通过；体积较阶段33下降12.5%；仍42次超时、地图/路径时效及重复/多环境未验收",
+      "evidence": [
+        "docs/results/ht_checked_connections_10min_2026-10-19/REPORT.md"
+      ],
+      "control_commit": "391fa0f98fc2a0adab2c018b4c5a1c7c29efff91",
+      "ht_bridge_commit": "22c2749f395af8bb5dc6705b1e92548acf69494e"
+    },
+    {
+      "id": "stage-35",
+      "number": 35,
+      "sha": "445b5c1490d6bb198c35bee23e95fc0f7781407e",
+      "tag": "ht-stage-20261019-atomic-context",
+      "title": "诊断写入与完整退出，同导航二进制复测",
+      "kind": "实测候选",
+      "change": "SIGINT等待回调完成，诊断NPZ原子发布并严格审计半文件",
+      "features": "旧中断ZIP错误复现后修复，保留既有导航/模型/门槛",
+      "validation": "5项针对性回归通过；600秒169.10m/2674.750m³；13项采集检查通过，坏文件/partial为0，视频完整",
+      "known_issues": "仍51次超时，最长全零4.200s；整体收益、地图时效/重复多环境未全部验收",
+      "evidence": [
+        "docs/results/ht_atomic_context_10min_2026-10-19/REPORT.md"
+      ],
+      "control_commit": "391fa0f98fc2a0adab2c018b4c5a1c7c29efff91",
+      "ht_bridge_commit": "445b5c1490d6bb198c35bee23e95fc0f7781407e"
+    },
+    {
+      "id": "stage-36",
+      "number": 36,
+      "sha": "7b4c3589366c6a0bb4f8f1984c14951aa446d1ad",
+      "tag": "ht-stage-20261019-frozen-garage",
+      "title": "冻结版本车库600秒与历史统一口径对比",
+      "kind": "多环境验证",
+      "change": "导航/桥接保持阶段35版本，独立车库600秒；历史体积按相同源秒口径重新评估，导出说明纠错",
+      "features": "记录完整600秒，冻结62个共同文件相同；实际几何分析读取车库0.7m余量",
+      "validation": "187.25m/7900.375m³，13项采集通过；60份上下文CRC、58份同源核对、3份模型重算、视频通过",
+      "known_issues": "仍71次搜索超时，最长全零4.95s，地图最大4.117s；单次历史对比不能归因或证明普遍优越，校园/森林/隧道待测",
+      "evidence": [
+        "docs/results/ht_frozen_garage_10min_2026-10-19/REPORT.md"
+      ],
+      "control_commit": "391fa0f98fc2a0adab2c018b4c5a1c7c29efff91",
+      "ht_bridge_commit": "445b5c1490d6bb198c35bee23e95fc0f7781407e"
+    },
+    {
+      "id": "stage-37",
+      "number": 37,
+      "sha": "d6d87878a4e8982e3a4850a5a17f8e1be1608a24",
+      "tag": "ht-stage-20261019-serial-mapper",
+      "title": "地图串行执行与独立TF接收，修复调度长等待",
+      "kind": "建图调度修复",
+      "change": "CuPy主执行器改为单线程，TF由独立子节点/单线程接收；融合与安全门槛保留",
+      "features": "真实TF回放复现原四线程P95 1.106s，修复布局.0021s；实际ROS等待未来TF及关闭回归通过",
+      "validation": "完整车库600秒179.78m/4522.625m³，13项采集通过，HT年龄P950.842s/最大1.840s",
+      "known_issues": "探索体积较阶段36下降42.8%，原地转向21.7%→27.0%，回访增加；仍47次搜索超时。仅单轮车库验证，不代表多环境或实车稳定。",
+      "evidence": [
+        "docs/results/ht_serial_mapper_10min_2026-10-19/REPORT.md"
+      ],
+      "control_commit": "391fa0f98fc2a0adab2c018b4c5a1c7c29efff91",
+      "ht_bridge_commit": "445b5c1490d6bb198c35bee23e95fc0f7781407e"
+    }
+  ],
+  "historical_commits": [
+    {
+      "sha": "46f9642221ff7e251e601818a45fe041831b928c",
+      "short": "46f9642",
+      "date": "2026-09-14",
+      "type": "规划原型",
+      "change": "八方向有向软风险代价和局部TSP",
+      "function_and_issues": "可输出保守短航点；无实际XYθ、低概率仍可被选择。",
+      "original_subject": "Add HT 8-direction cost integration for ROS2 TARE"
+    },
+    {
+      "sha": "c4b7a41d3ae3466c8b5eb043c8f1f3f81b3c9e8d",
+      "short": "c4b7a41",
+      "date": "2026-09-15",
+      "type": "构建与规划修复",
+      "change": "Jazzy/OR-Tools、输入校验、起点航点停滞修复",
+      "function_and_issues": "合成地图运动/故障恢复通过；不证明真实HT探索效果。",
+      "original_subject": "Fix Jazzy builds and HT waypoint stalls in CMU simulation"
+    },
+    {
+      "sha": "e1afe895b3e7856861be12196ba8b07a912befbf",
+      "short": "e1afe89",
+      "date": "2026-09-20",
+      "type": "失败实验归档",
+      "change": "六轮Garage对照与切角诊断",
+      "function_and_issues": "保留HT一轮约219秒停滞；该提交尚未修复。",
+      "original_subject": "Record six CMU garage exploration trials and diagnose HT corner stall"
+    },
+    {
+      "sha": "df8815c61a22a76d0314d372e4c280ac233ee23c",
+      "short": "df8815c",
+      "date": "2026-09-20",
+      "type": "规划修复",
+      "change": "拒绝图上的切角边，共用连通检查",
+      "function_and_issues": "修复旧有向图特定不一致；仍为合成HT输入评测。",
+      "original_subject": "Prevent HT corner-cutting edges from producing unexecutable routes"
+    },
+    {
+      "sha": "a6c015a3a3f703d0b0acb880ed0230e08d49f9bd",
+      "short": "a6c015a",
+      "date": "2026-09-20",
+      "type": "复测归档",
+      "change": "补三轮修复后对照及独立重算",
+      "function_and_issues": "短测不再持续卡住；均未探索完成。",
+      "original_subject": "Publish post-fix exploration comparison and reproducible measurements"
+    },
+    {
+      "sha": "60fda52dcc55342dacd81de94f9591af98ae14b8",
+      "short": "60fda52",
+      "date": "2026-09-21",
+      "type": "评测工具",
+      "change": "固定通过性分类与路线选择评测",
+      "function_and_issues": "可接真实标签CSV；合成测试不是模型精度。",
+      "original_subject": "Add deterministic traversability scoring benchmark and labeled-data evaluation"
+    },
+    {
+      "sha": "f7a7ae1b0f71aed548a48958e819dfc09aaad837",
+      "short": "f7a7ae1",
+      "date": "2026-09-21",
+      "type": "数据格式",
+      "change": "统一生成CSV换行",
+      "function_and_issues": "无规划功能变化，指标数值不变。",
+      "original_subject": "Normalize generated benchmark CSV line endings"
+    },
+    {
+      "sha": "54f53240eaf1ff77931f80c78854ced2b63e3234",
+      "short": "54f5324",
+      "date": "2026-09-21",
+      "type": "证据审计",
+      "change": "核对模型、标签、历史曲线和数据划分",
+      "function_and_issues": "离线结果存在泛化与标签溯源边界，不能当闭环效果。",
+      "original_subject": "Audit supplied traversability datasets and archived model evidence"
+    },
+    {
+      "sha": "f4577e8ea0661b4eb2861ecc4751bbdeb150a618",
+      "short": "f4577e8",
+      "date": "2026-09-21",
+      "type": "模型评测",
+      "change": "配对Scout检查点推理与筛选指标",
+      "function_and_issues": "形成误放/误拒和对照图；不是导航策略升级。",
+      "original_subject": "Run paired Scout checkpoint inference with screening metrics and plots"
+    },
+    {
+      "sha": "4315dd9deaed24245d6fbdd3c8ebe8726f74b476",
+      "short": "4315dd9",
+      "date": "2026-09-21",
+      "type": "闭环实验工具",
+      "change": "真实八方向学生模型与在线雷达高程山地试验",
+      "function_and_issues": "两组各2次未显示HT探索提升，并发现HT返航遗漏。",
+      "original_subject": "Evaluate real eight-direction HT with TARE on a lidar-observed mountain scene"
+    },
+    {
+      "sha": "05f2bd64dff42dfb35dc6a73b349cbdb4c06ce49",
+      "short": "05f2bd6",
+      "date": "2026-09-22",
+      "type": "方案文档",
+      "change": "记录起点盲区、降级和返航整改计划",
+      "function_and_issues": "仅方案，不表示功能已实现或验证。",
+      "original_subject": "Document HT fallback and return-home remediation plan"
+    },
+    {
+      "sha": "3912524be6184d9cd860ae28c24b3ee622dae346",
+      "short": "3912524",
+      "date": "2026-09-22",
+      "type": "任务与执行修复",
+      "change": "固定起点、缺测先验/降级预算、到家停车确认与返航接线",
+      "function_and_issues": "实现任务状态与约束；后续仍需修正返航节点反复吸附。",
+      "original_subject": "Fix HT startup support, bounded unknown fallback, and verified return-home completion"
+    },
+    {
+      "sha": "b8477101476bfbff09c97f22190fa0c7c40ee54c",
+      "short": "b847710",
+      "date": "2026-09-22",
+      "type": "返航修复",
+      "change": "返航检查点只向前推进，补地图暂停用例",
+      "function_and_issues": "避免返航反复选回已通过点；不保证动态封路可脱困。",
+      "original_subject": "Persist return checkpoints to prevent resnapping oscillation; add map outage fixture"
+    },
+    {
+      "sha": "29f80bc76789a7075f4dfb987cb2e51bfbb56add",
+      "short": "29f80bc",
+      "date": "2026-09-22",
+      "type": "验证归档",
+      "change": "归档小场景完成和地图失联恢复结果、可复用检查",
+      "function_and_issues": "小样本通过不代表大范围探索或实车能力。",
+      "original_subject": "Archive closed-loop completion and map outage recovery checks with reusable verification"
+    },
+    {
+      "sha": "d63b9b8db2c9aecea20aa2390fc89cfc0fd5ed30",
+      "short": "d63b9b8",
+      "date": "2026-10-10",
+      "type": "硬件输入接入",
+      "change": "纳入Fixposition、RoboSense源码及独立工作区配置",
+      "function_and_issues": "提供定位/点云接线；未完成实车标定及任务验收。",
+      "original_subject": "Vendor Fixposition and Helios drivers for standalone HT workspace"
+    },
+    {
+      "sha": "83b44a37c2e905022c1d396a738092eabdaa3aee",
+      "short": "83b44a3",
+      "date": "2026-10-11",
+      "type": "传输与航点修复",
+      "change": "可靠地图订阅、受检直线前瞻和长测工具",
+      "function_and_issues": "改善送达和近航点停顿；仍用CMU控制器。",
+      "original_subject": "Improve HT map delivery and Campus waypoint continuity"
+    },
+    {
+      "sha": "087c42d45801a34a355cac936488efe19141768d",
+      "short": "087c42d",
+      "date": "2026-10-11",
+      "type": "问题审计",
+      "change": "补大量倒行和探索指标缺失说明",
+      "function_and_issues": "不改规划算法；不能把旧15分钟里程当覆盖率。",
+      "original_subject": "Document reverse driving and exploration limits in Campus trial"
+    },
+    {
+      "sha": "322ec85c728c5900d3e47f22b4c3c5a4e6bccc99",
+      "short": "322ec85",
+      "date": "2026-10-15",
+      "type": "规划与高程改造",
+      "change": "归档实际XYθ硬约束/跟踪器、历史裁图及坐标/分层/时效修复",
+      "function_and_issues": "本地10月12–15日工作一次提交；180秒仅14.35米且停车多。",
+      "original_subject": "Fix elevation coordinates and layered history; add reproducible HT validation video"
+    },
+    {
+      "sha": "8398f538450a21c4ee9d65d17193ee084eacee03",
+      "short": "8398f53",
+      "date": "2026-10-15",
+      "type": "实验与可视化",
+      "change": "归档实时控车结果、许可超时与视频状态审计",
+      "function_and_issues": "无新规划算法；揭示执行衔接停顿仍未解决。",
+      "original_subject": "Record live HT validation and expose execution pauses in video audit"
+    },
+    {
+      "sha": "dbce623161087fcaac865b1d4db5305d1cfe2c9c",
+      "short": "dbce623",
+      "date": "2026-10-15",
+      "type": "目标与执行修复",
+      "change": "目标承诺、恢复候选、执行器独立HT校验",
+      "function_and_issues": "一轮56.54米，后续同版29.76米失败；未稳定通过。",
+      "original_subject": "Keep XYtheta exploration goals stable and validate execution independently"
+    },
+    {
+      "sha": "0b842e4ab71a1ed0249cc32da923a0f51940106a",
+      "short": "0b842e4",
+      "date": "2026-10-15",
+      "type": "失败复跑发布",
+      "change": "完整复跑失败视频、实验包和原始MCAP入口",
+      "function_and_issues": "约102秒停车保留；控车代码仍dbce623。",
+      "original_subject": "Publish complete Garage repeat results and prepare downloadable video assets"
+    },
+    {
+      "sha": "697ae2e82859f0381ee6455d39617159eb97295a",
+      "short": "697ae2e",
+      "date": "2026-10-15",
+      "type": "发布验证",
+      "change": "补远端附件大小/哈希和下载视频复核",
+      "function_and_issues": "不改变算法，也不修复102秒停车。",
+      "original_subject": "Verify published experiment assets and downloaded video integrity"
+    },
+    {
+      "sha": "3912e37df7541799c354bf568ff8f3d5b0383aab",
+      "short": "3912e37",
+      "date": "2026-10-16",
+      "type": "规划执行一致性修复",
+      "change": "共用motionSupport和扫掠检查、失败运动反馈与6秒冷却",
+      "function_and_issues": "修复已复现拒绝循环；仍不保证探索推进。",
+      "original_subject": "Unify swept HT motion checks and replan rejected execution edges"
+    },
+    {
+      "sha": "352526b9be0835d28a43e45d8ebf87d9db6efa66",
+      "short": "352526b",
+      "date": "2026-10-16",
+      "type": "回归与视频归档",
+      "change": "原停止地图C++重规划及第一轮180秒证据",
+      "function_and_issues": "57.87米，最长零速1.65秒；不等于完成探索。",
+      "original_subject": "Add recorded-stop regression and Garage validation video"
+    },
+    {
+      "sha": "919d826f340c11e34421a738e80d2a2e85066eb9",
+      "short": "919d826",
+      "date": "2026-10-16",
+      "type": "重复验证归档",
+      "change": "第二轮180秒、连续零速审计及三轮对比",
+      "function_and_issues": "63.45米，最长零速1.50秒；算法仍3912e37。",
+      "original_subject": "Document repeated Garage runs and continuous-stop audit"
+    },
+    {
+      "sha": "07ab0067dc7f47dc6eb7e5e2b9924f79f2ed9a24",
+      "short": "07ab006",
+      "date": "2026-10-16",
+      "type": "原版对比评测",
+      "change": "统一自由体积口径、CSV/曲线/对比视频",
+      "function_and_issues": "当前HT探索效率落后原版；非完全匹配控制器消融。",
+      "original_subject": "Compare original TARE and current HT with common observation-volume metrics"
+    },
+    {
+      "sha": "6bd5407b781771b0460ed1533eaee6d500c91bc4",
+      "short": "6bd5407",
+      "date": "2026-10-16",
+      "type": "长测归档",
+      "change": "60分钟监测脚本、统计、视频与失败结论",
+      "function_and_issues": "无核心规划升级；揭示持续运动下长期探索停滞。",
+      "original_subject": "Archive 60-minute HT endurance run and document exploration stagnation"
+    },
+    {
+      "sha": "d9eabd7b6c91f9c4ff160b9969f1ec7196225742",
+      "short": "d9eabd7",
+      "date": "2026-10-16",
+      "type": "版本文档",
+      "change": "标注13阶段的改动、功能、验证与问题",
+      "function_and_issues": "仅历史说明，无导航功能变更。",
+      "original_subject": "Document 13 HT milestones with features, validation and known failures"
+    },
+    {
+      "sha": "71a27484ebda62700aa4466d0f91a46ee9ebbfe0",
+      "short": "71a2748",
+      "date": "2026-10-16",
+      "type": "版本发布工具",
+      "change": "通过仓库限定Actions同步中文Releases",
+      "function_and_issues": "保留已有标签及附件，无导航功能变更。",
+      "original_subject": "Publish checked-in HT milestone notes through repository-scoped Actions"
+    },
+    {
+      "sha": "7f1c253feccb1b7ec4b4912f70312d7b308e3a20",
+      "short": "7f1c253",
+      "date": "2026-10-16",
+      "type": "全局进展与恢复修复",
+      "change": "引导独立停滞检测、失败冷却、重复访问记忆和恢复评分",
+      "function_and_issues": "20分钟探索明显改善，但末尾返航BLOCKED。",
+      "original_subject": "Track global guide stalls across local goals and penalize repeated recovery visits"
+    },
+    {
+      "sha": "c85ad1f004bbaceae14cd65351be38c3a9e61273",
+      "short": "c85ad1f",
+      "date": "2026-10-16",
+      "type": "返航与恢复边界修正",
+      "change": "对齐返航检查点到达容差、移除返航无用探索搜索",
+      "function_and_issues": "242核心及20ROS/跟踪测试通过；最新25分钟未触发返航，闭环仍待验。",
+      "original_subject": "Align return checkpoint tolerance with XYtheta search and tracking acceptance"
+    },
+    {
+      "sha": "9393e7da7d1eeabf04a4325593834304f236e405",
+      "short": "9393e7d",
+      "date": "2026-10-16",
+      "type": "两轮证据归档",
+      "change": "等时长比较、CSV、任务审计及可解码视频",
+      "function_and_issues": "最新25分钟447.50米、294格；没有把运行定时结束写成完成探索。",
+      "original_subject": "Archive global progress recovery trials with equal-duration metrics and return limitations"
+    },
+    {
+      "sha": "2fcf5d2b741b43313f7f1b9b3c9fe98fd46c518d",
+      "short": "2fcf5d2",
+      "date": "2026-10-16",
+      "type": "版本说明",
+      "change": "标注全局进展与返航修正及20/25分钟证据",
+      "function_and_issues": "仅文档维护，无导航变更。",
+      "original_subject": "Describe progress recovery milestone with measured gains and unverified return status"
+    },
+    {
+      "sha": "0a2d5440021117da39ee21abe9b89fba02250c4e",
+      "short": "0a2d544",
+      "date": "2026-10-16",
+      "type": "目录修正",
+      "change": "更新历史覆盖范围和提交数量",
+      "function_and_issues": "仅文档维护；本轮60分钟运行树。",
+      "original_subject": "Update the version catalogue coverage count after progress recovery archive"
+    },
+    {
+      "sha": "3fe5b9b5ee23c7a3cc8ec7a0243cdd2d09891a38",
+      "short": "3fe5b9b",
+      "date": "2026-10-17",
+      "type": "修复后60分钟归档",
+      "change": "返航完成、回访、资源和主动关停审计、图与视频",
+      "function_and_issues": "验证一次返回闭环；中途低增益回访和关停报错仍保留。",
+      "original_subject": "Archive completed 60-minute HT trial with return, revisit, and shutdown audits"
+    },
+    {
+      "sha": "a8fdc8c7f6848ae78d4d3c6eeab9de94e54f1e61",
+      "short": "a8fdc8c",
+      "date": "2026-10-17",
+      "type": "实验解读",
+      "change": "补60分钟返回、低收益回访及主动关停问题说明",
+      "function_and_issues": "仅文档修改，未改变上一轮控制程序。",
+      "original_subject": "Document 60-minute return completion and remaining exploration and shutdown issues"
+    },
+    {
+      "sha": "bd0c2c24f7eac383a3d8120b312fa4eb499c3199",
+      "short": "bd0c2c2",
+      "date": "2026-10-17",
+      "type": "规划与生命周期修复",
+      "change": "全局引导进展跨目标切换保留；零收益到达目标暂缓回访；拆分CuPy发布调度，修复CMU/CuPy/Gazebo关停及完成状态显示。",
+      "function_and_issues": "短回归通过；新长测正在运行，不宣称绕圈或过期全部消失。",
+      "original_subject": "Preserve guide progress across switches and fix map scheduling and shutdown lifecycle"
+    },
+    {
+      "sha": "5ca71da93bd358a1bfc6c713eb8618ed77b88549",
+      "short": "5ca71da",
+      "date": "2026-10-17",
+      "type": "实验工具",
+      "change": "自动核验冻结哈希、子进程关停、完整视频解码和回访区间",
+      "function_and_issues": "只处理实验完成后的数据，不修改控制路径。",
+      "original_subject": "Automate frozen-source, shutdown, video and revisit audits for endurance follow-up"
+    },
+    {
+      "sha": "b5ec87e17bcd3875a02387474e0dfcfddea3ac96",
+      "short": "b5ec87e",
+      "date": "2026-10-17",
+      "type": "版本说明",
+      "change": "标注跨目标与关停修复及长测待验边界",
+      "function_and_issues": "不修改控制程序。",
+      "original_subject": "Label cross-guide and lifecycle fixes with short-test evidence and pending endurance limits"
+    },
+    {
+      "sha": "f1c84854ccc147d40d7f9120c9713ba5e11c736c",
+      "short": "f1c8485",
+      "date": "2026-10-17",
+      "type": "CPU线程争用修复",
+      "change": "单独限制HT桥接的BLAS库为1线程，保留PyTorch2线程；记录实际线程池和融合/支撑准备/网络/发布耗时。",
+      "function_and_issues": "该CPU诊断不等于整张HT地图提速700倍，也不是整车长测通过；约17分钟诊断轮主动中止，不作为完成60分钟记录。新长测的探索效率、地图尾延迟和返回完成仍待结果。",
+      "original_subject": "Bound hidden BLAS worker spin and record actual HT processing stages"
+    },
+    {
+      "sha": "6b5d4321d8ca47d1fc03fb62d0e1a9d1ac76b598",
+      "short": "6b5d432",
+      "date": "2026-10-17",
+      "type": "版本与审计工具",
+      "change": "标注BLAS争用修复，增加等待/导出审计脚本",
+      "function_and_issues": "不改变已冻结的控制程序；原60分钟后被用户调整。",
+      "original_subject": "Document BLAS contention fix and automate audited completion of the replacement endurance run"
+    },
+    {
+      "sha": "6d6998f00f5fa9358a7c212b41da6f395ba492a5",
+      "short": "6d6998f",
+      "date": "2026-10-17",
+      "type": "多场景实验与录像",
+      "change": "参数化仿真/规划场景，串行运行Garage、Campus、Indoor、Forest、Tunnel各600秒；原生相机960×540、15fps，裁剪初始化、编码和完整解码核验。",
+      "function_and_issues": "每环境仅10分钟，不能视作更长时间或实车稳定性证明；仍可能地图过期安全停车或BLOCKED，保留原始记录。不同场景参数与原生起点不同，不是算法优劣的公平对照。",
+      "original_subject": "Run independent ten-minute HT scenes with native 15fps video and exact duration validation"
+    },
+    {
+      "sha": "c086bb1ab21ca88e54e8ed0bf4797892fa6de74d",
+      "short": "c086bb1",
+      "date": "2026-10-17",
+      "type": "版本说明",
+      "change": "标注五环境十分钟录像协议及被替代的小时任务。",
+      "function_and_issues": "文档维护，无规划升级。",
+      "original_subject": "Label user-requested five-scene ten-minute video protocol and superseded hour trial"
+    },
+    {
+      "sha": "f3d1eeedae814f99d0db94673c7abadc8eaf7439",
+      "short": "f3d1eee",
+      "date": "2026-10-17",
+      "type": "室内视点参数与证据归档",
+      "change": "室内视点从50×50、0.6m改为100×100、0.3m，保持30×30m范围；原HT分辨率、概率阈值、足迹半径、运动学搜索和控制速度不变。",
+      "function_and_issues": "仍有最长39.80秒停车和2.3%倒车；第6至7.5分钟行驶22.94m仅增8.375m³，低收益回访未消失。活跃搜索耗时P95为1.576秒、HT年龄最大4.67秒。隧道返航未知足迹问题未解决；每配置一次，不能视为所有场景通过。",
+      "original_subject": "Refine indoor viewpoint sampling while preserving the physical horizon; archive multi-scene evidence"
+    },
+    {
+      "sha": "2d74d9c7d4e2d68f9fef9fe653a94aa8aa0196a8",
+      "short": "2d74d9c",
+      "date": "2026-10-17",
+      "type": "五环境及室内补测证据归档",
+      "change": "归档五环境各600秒及室内细采样600秒，共六段通过完整解码的视频、曲线、配置、日志和诊断。",
+      "function_and_issues": "采集/进程核验通过不等于探索成功；室内改善但仍有低收益回访和最长39.8秒停车，隧道返航仍受阻。",
+      "original_subject": "Archive five ten-minute scenes and indoor sampling follow-up with six verified videos"
+    },
+    {
+      "sha": "deb5d140cb8e47ef58a279914cd21948791c75aa",
+      "short": "deb5d14",
+      "date": "2026-10-17",
+      "type": "版本说明",
+      "change": "标注已完成五环境及室内补测结果和遗留问题。",
+      "function_and_issues": "无控制改动，记录阶段18/19结果。",
+      "original_subject": "Label completed multi-scene results and remaining navigation failures"
+    },
+    {
+      "sha": "73cae0b24e72575b8592e772fd818f85ab91a9a6",
+      "short": "73cae0b",
+      "date": "2026-10-17",
+      "type": "HT语义与规划恢复修复",
+      "change": "区分网络上下文与车体观测支撑；按实际观测时间保留拒绝，有限坏高度仅作八方向禁行上下文；增加12秒原地停滞释放、有限回退和0.35秒共享搜索预算，CPU改4线程channels-last。",
+      "function_and_issues": "第一版诊断仍遇墙面质量拒绝导致上下文失效，约195秒主动停止；由dee873d继续修正，未算600秒通过。",
+      "original_subject": "Separate HT context and physical support; bound recovery stalls and search latency"
+    },
+    {
+      "sha": "dee873db9a25778eb67060100025bea2f619c0ee",
+      "short": "dee873d",
+      "date": "2026-10-17",
+      "type": "观测溯源与禁行上下文修复",
+      "change": "区分真实新观测拒绝与旧方差老化；实际有限坏高度仅作禁行上下文，不融合成地面。",
+      "function_and_issues": "室内约215秒触发返航，总近似观测1900.250→1106.750m³（下降41.8%）；任务收尾不是全覆盖证明。室内HT年龄最大5.01秒，两场景各8个1Hz样本超过3秒。森林约4Hz本轮未重测，其他三场景未重跑。保留约195秒失败诊断；每配置仅一次、无实车或长期稳定性验收。",
+      "original_subject": "fix: preserve observation provenance and block uncertain returns without context halos"
+    },
+    {
+      "sha": "9fb2b63ca50a059e4c184f223aaa97e896b185b6",
+      "short": "9fb2b63",
+      "date": "2026-10-17",
+      "type": "两场景复测与证据归档",
+      "change": "归档两段600秒视频、原始失败、等长任务停车统计、完整前后曲线及播放脚本；补全后续实验SDF冻结清单。",
+      "function_and_issues": "不改变已测控制程序；返航成功而室内观测下降的结果均保留。",
+      "original_subject": "Archive stopped-map regressions and two ten-minute recovery videos with honest before-after metrics"
+    },
+    {
+      "sha": "f8a3aa22129aa00e5c258c0ff8e3db899cf9765d",
+      "short": "f8a3aa2",
+      "date": "2026-10-17",
+      "type": "版本目录维护",
+      "change": "Label stage 20 recovery fixes with returned-home validation and remaining coverage regression",
+      "function_and_issues": "仅文档说明，不改变控制算法。",
+      "original_subject": "Label stage 20 recovery fixes with returned-home validation and remaining coverage regression"
+    },
+    {
+      "sha": "d51cfb53a86e2e849a087dc7fa74e766beb83026",
+      "short": "d51cfb5",
+      "date": "2026-10-17",
+      "type": "版本目录维护",
+      "change": "Update historical catalogue coverage count through the recovery evidence archive",
+      "function_and_issues": "仅文档说明，不改变控制算法。",
+      "original_subject": "Update historical catalogue coverage count through the recovery evidence archive"
+    },
+    {
+      "sha": "9fec0375f8caec2b07a7c0c268f197e1800f5fab",
+      "short": "9fec037",
+      "date": "2026-10-18",
+      "type": "只读完成决策审计",
+      "change": "记录全局与局部队列、HT实际目标收益，不改完成条件。",
+      "function_and_issues": "600秒未复现提前完成，反而遇到HT约束停滞；不能据此确认原215秒收尾错误。",
+      "original_subject": "Instrument completion evidence without changing navigation decisions"
+    },
+    {
+      "sha": "fde37365232f8af219488cafd7d1d6e9f6bf73d8",
+      "short": "fde3736",
+      "date": "2026-10-18",
+      "type": "退路规则候选",
+      "change": "可选同弧正反运动硬检查与全频HT入包。",
+      "function_and_issues": "室内600秒仍卡住；后查存在晚拒绝发非零命令，不能单独归因于退路规则，现默认关闭。",
+      "original_subject": "Trial shared reversible-motion admission after captured directional-sink diagnosis"
+    },
+    {
+      "sha": "966f3ff1921be2eaeee3a4d7b40bf152abbecebc",
+      "short": "966f3ff",
+      "date": "2026-10-18",
+      "type": "航向余量候选",
+      "change": "在后继姿态上检查额外角度余量并使用32航向，保留合法根状态回转。",
+      "function_and_issues": "单项约212秒中止，未算600秒；候选有混杂且失败，余量现默认关闭。",
+      "original_subject": "Reserve heading clearance after captured boundary trap; reject unproven reversible-only default"
+    },
+    {
+      "sha": "77cd87cef62bccc35949deef40dd2c156ef3d112",
+      "short": "77cd87c",
+      "date": "2026-10-18",
+      "type": "联合约束候选",
+      "change": "联合航向余量与同弧退路要求。",
+      "function_and_issues": "室内600秒仍卡住，发现146次拒绝状态旁有非零速度；隧道314.5秒中止，不算600秒。",
+      "original_subject": "Test heading reserve and retrace admission together after separate counterexamples"
+    },
+    {
+      "sha": "8e8d2b768a2e8e347ba4de315df1c68c9079c8ad",
+      "short": "8e8d2b7",
+      "date": "2026-10-18",
+      "type": "实际停车消息修复",
+      "change": "清零待发Twist，新增晚拒绝分支回归并关闭未验证额外约束。",
+      "function_and_issues": "旧回归失败、新回归通过；单独修消息仍有另一类规划停滞。",
+      "original_subject": "Zero the outgoing Twist on late HT rejection; disable unproven admission candidates"
+    },
+    {
+      "sha": "37f0d42f75220a7098baf2167da61bf38e47fa59",
+      "short": "37f0d42",
+      "date": "2026-10-18",
+      "type": "评估一致性与控制审计",
+      "change": "避免对已按绝对秒采样的激光再次分秒；审计实际拒绝指令。",
+      "function_and_issues": "同包576恢复600帧，体积仅增加1m³；该评估错误不能解释停车或此前41.8%差异。",
+      "original_subject": "Avoid double binning sampled endurance scans and audit actual blocked commands"
+    },
+    {
+      "sha": "67ade71c10caa8a8923b9fe9c663d10a9ec75568",
+      "short": "67ade71",
+      "date": "2026-10-18",
+      "type": "有现场依据的航向细化",
+      "change": "用真实冻结快照证明16漏路、32可找HT合法出口，设32搜索航向。",
+      "function_and_issues": "不增加HT通道、不代表所有路径可执行；完整闭环仍有新的禁止起点情形待记录分析。",
+      "original_subject": "Use32 search headings after same-map16-heading escape counterexample"
+    },
+    {
+      "sha": "b15c06a9d4c476c1e5f6b8e04ad5bcbe9988ecdd",
+      "short": "b15c06a",
+      "date": "2026-10-18",
+      "type": "原因审计与六段600秒视频归档",
+      "change": "归档确定的晚拒绝非零命令证据、同图方向边界、两种快照分辨率反例、新有效8格足迹触发及完整失败/成功视频。",
+      "function_and_issues": "只读诊断、退路候选、联合候选、单项发零修复各一段室内600秒，最终室内/隧道各600秒；不把技术采集通过当作探索成功。仅更新离线分析与播放器，不改变已测控制源码。",
+      "original_subject": "Archive command rejection proof, failed indoor trials and returned-home tunnel video"
+    }
+  ],
+  "latest_planner_code": "391fa0f98fc2a0adab2c018b4c5a1c7c29efff91",
+  "latest_ht_bridge_code": "445b5c1490d6bb198c35bee23e95fc0f7781407e",
+  "latest_verified_trial_code": "d6d87878a4e8982e3a4850a5a17f8e1be1608a24",
+  "latest_recorded_trial_code": "d6d87878a4e8982e3a4850a5a17f8e1be1608a24",
+  "latest_cupy_node_code": "d6d87878a4e8982e3a4850a5a17f8e1be1608a24"
+}

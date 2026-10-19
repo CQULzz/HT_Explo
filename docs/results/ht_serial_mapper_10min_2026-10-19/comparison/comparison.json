@@ -1,0 +1,72 @@
+{
+  "runs": [
+    {
+      "label": "阶段36修改前",
+      "folder": "/home/lzz/my test/HT_Explo-fixposition/docs/results/ht_frozen_garage_10min_2026-10-19/garage",
+      "scenario": "garage",
+      "failed_recording_checks": [],
+      "git_head": "7b4c3589366c6a0bb4f8f1984c14951aa446d1ad",
+      "duration_s": 600.0,
+      "speed_cap_mps": 0.5,
+      "measurement_start_pose_xyyaw": [
+        0.37072426080703735,
+        3.1604325771331787,
+        1.6511648893356323
+      ],
+      "distance_m": 187.25,
+      "observed_free_volume_m3": 7900.375,
+      "final_mission": "EXPLORING",
+      "completed_at_s": null,
+      "blocked_sample_fraction": 0.021666666666666667,
+      "runtime_p95_s": 0.9110000133514404,
+      "source_sha256": {
+        "/home/lzz/my test/HT_Explo-fixposition/docs/results/ht_frozen_garage_10min_2026-10-19/garage/timeseries.csv": "2a700d1dee1e2c158345c6ec1e6303aa96a045a4883641513509fdcb627dabba",
+        "/home/lzz/my test/HT_Explo-fixposition/docs/results/ht_frozen_garage_10min_2026-10-19/garage/observation_volume.csv": "e7d8a7f5c71980696fb7a9c9c4d02d160aa039126c75a6797fddcdcdec4e7f85",
+        "/home/lzz/my test/HT_Explo-fixposition/docs/results/ht_frozen_garage_10min_2026-10-19/garage/manifest.json": "bd6be58eb1a84bcf39d38ce6bad121f24dddbf6073b6fb3ef85ed2c12f0db067",
+        "/home/lzz/my test/HT_Explo-fixposition/docs/results/ht_frozen_garage_10min_2026-10-19/garage/metric_definition.json": "5bbbc1cdd875a80f67ec2efceb6d131f6f80c8c5d888a2b371599b0ea6caa84c",
+        "/home/lzz/my test/HT_Explo-fixposition/docs/results/ht_frozen_garage_10min_2026-10-19/garage/suite_validation.json": "382882b23177ac0a2ad180b8f5ba0f03aea8239a373a53e5633859df9cca8f5e"
+      }
+    },
+    {
+      "label": "阶段37地图串行与独立TF",
+      "folder": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_serial_mapper_10min_2026-10-19_13-43-47/garage",
+      "scenario": "garage",
+      "failed_recording_checks": [],
+      "git_head": "d6d87878a4e8982e3a4850a5a17f8e1be1608a24",
+      "duration_s": 600.0,
+      "speed_cap_mps": 0.5,
+      "measurement_start_pose_xyyaw": [
+        0.37073442339897156,
+        3.15809965133667,
+        1.650509476661682
+      ],
+      "distance_m": 179.78,
+      "observed_free_volume_m3": 4522.625,
+      "final_mission": "EXPLORING",
+      "completed_at_s": null,
+      "blocked_sample_fraction": 0.0,
+      "runtime_p95_s": 0.4909999966621399,
+      "source_sha256": {
+        "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_serial_mapper_10min_2026-10-19_13-43-47/garage/current/timeseries.csv": "e4c40d31d7880b980081e03ed21258f17435310b16f7d0effb0ef00457d10b83",
+        "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_serial_mapper_10min_2026-10-19_13-43-47/garage/current/observation_volume.csv": "83d4dd4ffe4999f32352bee63b8b4d3b50ad186273faedea78e82ab59884ad59",
+        "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_serial_mapper_10min_2026-10-19_13-43-47/garage/manifest.json": "857563106ab820368325bd9a900b1894283d2068b8807184ff4857954d89d7d4",
+        "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_serial_mapper_10min_2026-10-19_13-43-47/garage/metric_definition.json": "5bbbc1cdd875a80f67ec2efceb6d131f6f80c8c5d888a2b371599b0ea6caa84c",
+        "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_serial_mapper_10min_2026-10-19_13-43-47/garage/suite_validation.json": "bc42b3a8d65164743fab2e14536c2ae865cba1d0fcce32e77d70b3ad5e6a79a0"
+      }
+    }
+  ],
+  "metric_definition": {
+    "voxel_size_m": 0.5,
+    "ray_sample_step_m": 0.25,
+    "max_range_m": 15,
+    "endpoint_exclusion_m": 0.25,
+    "scan_recording": "first source-stamped scan per wall-clock source second",
+    "selection": "one recorded scan per absolute source second, filtered to the measurement window; no second measurement-bin downsampling",
+    "definition": "Approximate cumulative union of observed free voxels; not ground truth or official coverage.",
+    "delivery_audit": "Sampled bag cannot establish loss of unsaved input frames; compare full-rate observer and mapper callback counters."
+  },
+  "measurement_start_pose_tolerance": {
+    "position_m": 0.05,
+    "yaw_rad": 0.02
+  }
+}

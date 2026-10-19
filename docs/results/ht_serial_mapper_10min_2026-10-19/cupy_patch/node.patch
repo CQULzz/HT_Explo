@@ -1,0 +1,94 @@
+--- a/elevation_mapping_cupy/script/elevation_mapping_cupy/elevation_mapping_ros.py
++++ b/elevation_mapping_cupy/script/elevation_mapping_cupy/elevation_mapping_ros.py
+@@ -84,6 +84,37 @@
+     ))
+ 
+ 
++class TfListenerWorker:
++    """Receive TF independently while serialized map callbacks perform lookups."""
++
++    def __init__(self, buffer, owner):
++        from rclpy.executors import SingleThreadedExecutor
++        from rclpy.parameter import Parameter as RosParameter
++        self.node = Node(
++            "elevation_mapping_tf_listener", context=owner.context,
++            namespace=owner.get_namespace(), use_global_arguments=False,
++            parameter_overrides=[RosParameter(
++                "use_sim_time", value=owner.get_parameter("use_sim_time").value)],
++        )
++        self.listener = TransformListener(buffer, self.node)
++        self.executor = SingleThreadedExecutor(context=owner.context)
++        self.executor.add_node(self.node)
++        self.closed = False
++        self.thread = threading.Thread(
++            target=self.executor.spin, name="elevation-tf-listener")
++        self.thread.start()
++
++    def close(self):
++        if self.closed:
++            return
++        self.closed = True
++        self.executor.shutdown()
++        self.thread.join()
++        self.executor.remove_node(self.node)
++        self.listener.unregister()
++        self.node.destroy_node()
++
++
+ class ElevationMappingNode(Node):
+     def __init__(self) -> None:
+         super().__init__("elevation_mapping")
+@@ -105,6 +136,7 @@
+         self.map_frame = self.config.get("map_frame", self.param.map_frame if hasattr(self.param, "map_frame") else "map")
+         self.base_frame = self.config.get("base_frame", "base_link")
+ 
++        self.tf_worker = None
+         self.offline_tf_bag = os.environ.get("CUPY_OFFLINE_TF_BAG", "")
+         self.tf_buffer = Buffer(cache_time=Duration(seconds=1800.0 if self.offline_tf_bag else 10.0))
+         if self.offline_tf_bag:
+@@ -129,7 +161,8 @@
+             self.tf_listener = None
+             self.get_logger().info(f"Preloaded {count} recorded transforms for offline mapping")
+         else:
+-            self.tf_listener = TransformListener(self.tf_buffer, self)
++            self.tf_worker = TfListenerWorker(self.tf_buffer, self)
++            self.tf_listener = self.tf_worker.listener
+         self.map = ElevationMap(self.param)
+         # Incoming scans and periodic work must be scheduled independently.
+         # Protect the complete map operation (including move_to's center)
+@@ -412,6 +445,11 @@
+         msg.inner_start_index = 0
+         self.map_publishers[name].publish(msg)
+ 
++    def destroy_node(self):
++        if self.tf_worker is not None:
++            self.tf_worker.close()
++        return super().destroy_node()
++
+     @staticmethod
+     def transform_to_arrays(transform) -> tuple[np.ndarray, np.ndarray]:
+         t = transform.transform.translation
+@@ -437,7 +475,7 @@
+ 
+ 
+ def main(args=None) -> None:
+-    from rclpy.executors import ExternalShutdownException, MultiThreadedExecutor
++    from rclpy.executors import ExternalShutdownException, SingleThreadedExecutor
+     from rclpy.signals import SignalHandlerOptions
+     previous_signals = {sig: signal.getsignal(sig) for sig in (signal.SIGINT, signal.SIGTERM)}
+     # A signal requests loop exit first. Keep ROS context valid until worker
+@@ -446,10 +484,11 @@
+         signal.signal(sig, signal.default_int_handler)
+     rclpy.init(args=args, signal_handler_options=SignalHandlerOptions.NO)
+     node = ElevationMappingNode()
+-    executor = MultiThreadedExecutor(num_threads=4)
++    executor = SingleThreadedExecutor()
+     try:
+-        # Separate workers serve TF, scans and timers. Map snapshots/mutations
+-        # stay serialized by the node lock while TF waits occur outside it.
++        # Map operations already share one lock. Run their callbacks serially
++        # to avoid Python executor contention; TF has its own worker so a
++        # bounded lookup can still receive a newly arriving transform.
+         rclpy.spin(node, executor=executor)
+     except (KeyboardInterrupt, ExternalShutdownException):
+         pass
