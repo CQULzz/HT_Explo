@@ -2,7 +2,7 @@
   "schema_version": 1,
   "updated_at": "2026-10-19",
   "branch": "codex/ht8dir-v1",
-  "status": "阶段34验算简单SE2连接：600秒168.77m/2169.875m³，仍需核对停顿/时效与同版重复多环境，不标稳定",
+  "status": "阶段35退出诊断修复，13项检查通过；600秒169.10m/2674.750m³，导航仍391fa0f，整体收益/重复多环境仍需核查",
   "latest_archive_commit": "92d1dca",
   "latest_planner_change": "43069a7b11b8028b53f6eae0d6bdc53c13e8affd",
   "stages": [
@@ -599,6 +599,23 @@
       ],
       "control_commit": "391fa0f98fc2a0adab2c018b4c5a1c7c29efff91",
       "ht_bridge_commit": "22c2749f395af8bb5dc6705b1e92548acf69494e"
+    },
+    {
+      "id": "stage-35",
+      "number": 35,
+      "sha": "445b5c1490d6bb198c35bee23e95fc0f7781407e",
+      "tag": "ht-stage-20261019-atomic-context",
+      "title": "诊断写入与完整退出，同导航二进制复测",
+      "kind": "实测候选",
+      "change": "SIGINT等待回调完成，诊断NPZ原子发布并严格审计半文件",
+      "features": "旧中断ZIP错误复现后修复，保留既有导航/模型/门槛",
+      "validation": "5项针对性回归通过；600秒169.10m/2674.750m³；13项采集检查通过，坏文件/partial为0，视频完整",
+      "known_issues": "仍51次超时，最长全零4.200s；整体收益、地图时效/重复多环境未全部验收",
+      "evidence": [
+        "docs/results/ht_atomic_context_10min_2026-10-19/REPORT.md"
+      ],
+      "control_commit": "391fa0f98fc2a0adab2c018b4c5a1c7c29efff91",
+      "ht_bridge_commit": "445b5c1490d6bb198c35bee23e95fc0f7781407e"
     }
   ],
   "historical_commits": [
@@ -1135,7 +1152,7 @@
     }
   ],
   "latest_planner_code": "391fa0f98fc2a0adab2c018b4c5a1c7c29efff91",
-  "latest_ht_bridge_code": "22c2749f395af8bb5dc6705b1e92548acf69494e",
-  "latest_verified_trial_code": "ba7942ce176378d68b0eeab99a4f4bb9a5e68913",
-  "latest_recorded_trial_code": "391fa0f98fc2a0adab2c018b4c5a1c7c29efff91"
+  "latest_ht_bridge_code": "445b5c1490d6bb198c35bee23e95fc0f7781407e",
+  "latest_verified_trial_code": "445b5c1490d6bb198c35bee23e95fc0f7781407e",
+  "latest_recorded_trial_code": "445b5c1490d6bb198c35bee23e95fc0f7781407e"
 }

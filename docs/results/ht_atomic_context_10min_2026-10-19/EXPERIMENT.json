@@ -1,0 +1,459 @@
+{
+  "tested_git_head": "445b5c1490d6bb198c35bee23e95fc0f7781407e",
+  "raw_run": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42",
+  "recording_scope": "All control/status and odometry, full-rate published HT maps and TARE collision geometry; original-stamped scans1Hz; exact-stamp map triplets and network inputs/outputs every10s; camera15fps. Raw CuPy and scans are not fully bagged.",
+  "last_motion_s": 600.003,
+  "mission": {
+    "first_exploration_finished_sample_s": null,
+    "sampled_mission_counts": {
+      "EXPLORING": 581,
+      "BLOCKED": 19
+    },
+    "first_completed_sample_s": null,
+    "last_sampled_mission": "EXPLORING",
+    "last_sampled_execution_status": "HT_ASSISTED",
+    "final_distance_to_measurement_start_m": 26.00391764715463,
+    "meaning": "Exploration finished is a return-home trigger. Only mission COMPLETED confirms the home radius, low-speed and dwell checks; neither establishes ground-truth full coverage."
+  },
+  "geometry": {
+    "radius_m": 0.6414213562373094,
+    "collision_point_threshold": 1,
+    "first_observed_margin_overlap": null,
+    "overlap_samples": 0,
+    "moving_predictions_inside_margin": 0,
+    "samples": 475,
+    "limitations": "Uses bag arrival order, latest received odometry/command and measured collision-cloud points in robot height slice. Does not reproduce planner collision-grid bounds or exact callback state. Predicted arc uses last received constant Twist, not controller internal candidate or simulator braking. Margin overlap is not physical vehicle contact. Sample lag/point noise may contribute; cannot separate them without independent truth."
+  },
+  "checks": {
+    "timer_completed": true,
+    "measured_duration_matches": true,
+    "source_hashes_unchanged": true,
+    "enough_samples": true,
+    "no_runtime_parent_failure": true,
+    "no_live_descendants": true,
+    "no_forced_shutdown": true,
+    "video_full_decode_passed": true,
+    "video_duration_matches": true,
+    "video_fps_matches": true,
+    "analysis_passed": true,
+    "no_child_or_cleanup_exception": true,
+    "blas_workers_bounded": true
+  },
+  "video": {
+    "encode_returncode": 0,
+    "fps": 15,
+    "requested_duration_s": 600,
+    "trim_offset_s": 33.21814703941345,
+    "source_file": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/camera_15fps.mp4",
+    "full_decode_returncode": 0,
+    "decoded_frames": 8999,
+    "duration_s": 599.9333333333333,
+    "duration_matches": true,
+    "bytes": 13336808,
+    "sha256": "ac9061deeb11001ba0cbeb5f4f5d1c5c853246a0bda64f5b2e9577d740648bb1"
+  },
+  "configuration": {
+    "reference_commit": "391fa0f98fc2a0adab2c018b4c5a1c7c29efff91",
+    "candidate_commit": "445b5c1490d6bb198c35bee23e95fc0f7781407e",
+    "navigation_control_commit": "391fa0f98fc2a0adab2c018b4c5a1c7c29efff91",
+    "effective_parameters_equal": {
+      "planner_parameters.yaml": true,
+      "follower_parameters.yaml": true
+    },
+    "changed_manifest_entries": {
+      "/home/lzz/my test/HT_Explo-fixposition/tools/ht_cupy_bridge/cupy_to_ht.py": {
+        "before": "31329f3ca02b8489582de71de4f88b82b03fba0460cc85e1bed6f1ecf563b9a1",
+        "after": "3f634fcf15b6b1a78e127bf5b50ccdf42e07d7e14e3cb04a0a1d1cfd089b525c"
+      },
+      "/home/lzz/my test/HT_Explo-fixposition/presentations/run_ht_endurance.py": {
+        "before": "42c85de054cdb03e86df8ddec9fb2bfe1989acd3fb7529501bd8cc0e7184aa4b",
+        "after": "d253462b5c0938fda659a6646a7ea8b3224d5f956c34ed4796bade188ba274ba"
+      },
+      "/home/lzz/my test/HT_Explo-fixposition/tools/ht_cupy_bridge/inference_context_io.py": {
+        "before": null,
+        "after": "75ca28ba1ffb7b2256dd5375631eff1523ddf02fcb978d044d0a42be42882f48"
+      }
+    },
+    "unchanged_existing_entries": 62,
+    "environment_change": "User-authorized verified old-raw cleanup reclaimed14.85GB before run; reports/videos and regression fixture retained."
+  },
+  "metrics": {
+    "scan_selection": "source_second",
+    "observed_free_volume_m3": 2674.75,
+    "processed_volume_scans": 600,
+    "skipped_volume_scans": 0,
+    "recorded_scans_in_source_time_window": 600,
+    "sensor_position_source": "nearest sensor-frame state_estimation (common to both systems)",
+    "pose_time_offset_max_s": 2.384185791015625e-07,
+    "command_samples": 11995,
+    "fully_stopped_fraction": 0.1358065860775323,
+    "stationary_turn_fraction": 0.20125052105043767,
+    "reverse_command_fraction": 0.006252605252188412,
+    "max_abs_linear_command_mps": 0.5,
+    "max_abs_yaw_command_rps": 0.8,
+    "longest_zero_command_s": 4.199925708770752,
+    "follower_status_samples": {
+      "TURNING": 2414,
+      "DRIVING": 7952,
+      "HT_MAP_STALE": 13,
+      "PLANNER_HOLD": 388,
+      "GOAL_REACHED": 759,
+      "ALIGNING": 77,
+      "HT_COMMAND_BLOCKED": 38,
+      "HT_PATH_BLOCKED": 83,
+      "EMPTY_PATH": 270,
+      "GEOMETRY_COMMAND_BLOCKED": 1
+    },
+    "longest_no_translation_command_s": 6.70109920501709,
+    "last_translation_s": 600.003,
+    "distance_last60_m": 17.363500000000045
+  },
+  "scheduling": {
+    "cycles": 462,
+    "failed_all_timeout_with_unattempted_extra_targets": 0,
+    "first_starved_s": null,
+    "last_starved_s": null,
+    "post60_cycles": 414,
+    "post60_starved_cycles": 0,
+    "post60_recovery_attempts": 124,
+    "most_common_starved_goals": [],
+    "limitations": "Targets minus primary combines recovery and optional backtrack. Search logs show queued alternatives were not attempted, not that they are feasible. This audit cannot attribute the different initial trajectory to a single variable or prove physical coverage."
+  },
+  "search": {
+    "count": 748,
+    "termination": {
+      "REACHED": 697,
+      "TIME_LIMIT": 51
+    },
+    "direct_connections": 575,
+    "elapsed_s": {
+      "p50": 0.0010155,
+      "p95": 0.10977109999999997,
+      "max": 0.233278
+    },
+    "expanded_max": 896.0,
+    "geometry_cpu_wall_fraction": 0.9176296719749453,
+    "rejection_counts": {
+      "geometry_reject": 22187.0,
+      "ht_reject": 59721.0,
+      "memory_reject": 129.0,
+      "reserve_reject": 0.0
+    }
+  },
+  "context_integrity": {
+    "completed_npz_files": 61,
+    "all_completed_npz_readable": true,
+    "history_snapshot_crc_passed": true,
+    "damaged_files": [],
+    "remaining_partial_files": [],
+    "passed": true,
+    "files": [
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792379398_802582272.npz",
+        "bytes": 1116280,
+        "sha256": "ee9c1e8d3f1054e9a14cc192586ad4b3240b1849edc49d55cb7706694e30beb3"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792379408_804976896.npz",
+        "bytes": 1116148,
+        "sha256": "f937830b19786c3a93a2d4a4a1240cd72f87cbc90f5c9fbd51499af59d5a8a9e"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792379421_448294656.npz",
+        "bytes": 1544939,
+        "sha256": "ca958f431ce7e8c4169c1fbc29008673c3fbcb3b96de53fe2e8320bbc8028809"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792379431_914767360.npz",
+        "bytes": 1811865,
+        "sha256": "f73810740fb3644a4dc55c2968bf34c48d747b0b9259672dba173c918df0bfd6"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792379441_932301824.npz",
+        "bytes": 1854902,
+        "sha256": "6701a50d73fcf51d5e979fe7cb7a35a41d5ea17b93ad80c5fd30c075cc571304"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792379451_954428160.npz",
+        "bytes": 1559397,
+        "sha256": "fbb503d89f0a3354ba2a4f80af3ebd99366d0a55940a8a130a564dfea07afb19"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792379462_361052672.npz",
+        "bytes": 1833070,
+        "sha256": "daa17fd155983d5ef7f7ab668581d50f692577d0543d07cdfe4ba6cb9b255fed"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792379472_433510144.npz",
+        "bytes": 1815862,
+        "sha256": "42e22b622ccb69f66434e4e9ce20965ca235b562214a87d0913a1843800da1b6"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792379482_748383232.npz",
+        "bytes": 1821847,
+        "sha256": "bf374c4f3c58966107e8664cf88cd2e49f4ed61c80c51a97f8d10d8d0f37b999"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792379492_884516096.npz",
+        "bytes": 1885128,
+        "sha256": "485fc1ee05a999c5e7381e35dd06f897502afe5429de899bed5311e3b1e4913c"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792379503_322786816.npz",
+        "bytes": 1901309,
+        "sha256": "06edcd1bb76c0eaa64a5052d03445feac6b3929a23b196c9a622e6d918424bfb"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792379513_392164352.npz",
+        "bytes": 1875264,
+        "sha256": "90d9a1d59fe044ceea8de028f0fa000ecc5dc31a884e0f50aa72a69ccaffaac0"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792379523_792187392.npz",
+        "bytes": 1815454,
+        "sha256": "ef5c6e37bd6cb8e0f5b6c2f74b16197050e91b759d9f39128fbd36c93de33306"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792379533_861380352.npz",
+        "bytes": 1829140,
+        "sha256": "b422bfc27ca9827b8447b8c78b7fdcb4fbd7ed6baf667da34e3d0045e6a9415c"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792379544_291878144.npz",
+        "bytes": 1822354,
+        "sha256": "d605cbd9c4b75bd10fb494c5bf63ca3c0be9fa85f5c9c5650db64bf6888a719c"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792379555_894231808.npz",
+        "bytes": 1807094,
+        "sha256": "fef229253afb58d4264ab25f2b3956ce62900cb4b79d803b646dfc2caee56159"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792379565_953364992.npz",
+        "bytes": 1613850,
+        "sha256": "c531d07d3b4ad59f42835e3baa22c4ce67487d1ed997571983d35d56631c6e9b"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792379576_211263744.npz",
+        "bytes": 1820418,
+        "sha256": "cee6e7f0c8c75d2525ad154d90caa79384ff721b318cd1e4becf399e200c158e"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792379586_310752512.npz",
+        "bytes": 1806082,
+        "sha256": "d19a3aa49517dbd79f1e31b21437354e49fa7ce6b3779184a4ac5cba012e4033"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792379596_537626624.npz",
+        "bytes": 1606907,
+        "sha256": "efcef9365156ff5d4d65411afe9a536953d158cd0941aa2f6e686712818ba23c"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792379606_732745728.npz",
+        "bytes": 1370824,
+        "sha256": "52a9047ab2f046b22d04f072ec62db357e308a814cea1e099e559929d9c764ce"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792379616_818309376.npz",
+        "bytes": 1468048,
+        "sha256": "fc8eb908c368bb173e76cbb3c3373e7d61611a55d3d08bb87867d9c76dc8eb58"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792379626_823336448.npz",
+        "bytes": 1387355,
+        "sha256": "921a5bc940d1338baed9722a2a78bf4caced24973602e40ee515cdc5451c7bd3"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792379636_915940352.npz",
+        "bytes": 1403546,
+        "sha256": "54d494a2c31264695c43073ef0f01d905f83cf5daa3274d958c3724deff39cf2"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792379646_952042496.npz",
+        "bytes": 1413710,
+        "sha256": "c0333ab288c5d964ee237e39d8dfbd83fa487ef25c89dcc586651333d3aa7831"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792379657_155115264.npz",
+        "bytes": 1568770,
+        "sha256": "0d4b3d3f023f3a233cbfbde5dfa0dcfe38fac739d7f499314c1658103407123f"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792379667_430378496.npz",
+        "bytes": 1804076,
+        "sha256": "0e5a430e427a55625b0a6887bec8021adfa9dadf532a576d6611c6010e036fdd"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792379678_926195968.npz",
+        "bytes": 1680235,
+        "sha256": "0f1626ed29d09e980e06d48e7fdf5e3a963968225792f553c7a13b7f663b8799"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792379688_970470144.npz",
+        "bytes": 1611872,
+        "sha256": "16e5826444fa25777cb4c1be19cba696c38a4b697e8ee14a6f014ea93eece74b"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792379699_033627904.npz",
+        "bytes": 1538277,
+        "sha256": "7dbe57c4cfcc9e1a71a5a8d609adaa683d6c43e471641bd314d6be9b8ec1f19a"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792379709_264200704.npz",
+        "bytes": 1838658,
+        "sha256": "7e2d5799a7b18e17caf15a7d055848bfe2f976184283aa771f70807c539774e5"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792379719_309474560.npz",
+        "bytes": 1792121,
+        "sha256": "44bfecbfebef602f3f534bd5c8401cdead07b16a22798ec44577073701b7ca97"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792379729_738554368.npz",
+        "bytes": 1848480,
+        "sha256": "10f6f6f3562ee34558146a75f9692bb8664d67cceb3c3ff2aeda23bd061f0368"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792379739_817206272.npz",
+        "bytes": 1821760,
+        "sha256": "6aaa3f08bddc0401ee199054992e1c1502b2f46383f45efced75fc51606ed724"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792379749_862122752.npz",
+        "bytes": 1865484,
+        "sha256": "db3a7926a740b5b9736427d4b320b8aa4ed08b270df0e2b4d26a2c28f96be1b0"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792379759_900184320.npz",
+        "bytes": 1862797,
+        "sha256": "bd15e96c0ead8b389b4f1d30845dbd020f2b618599a9d6b43c0f04a69d1045c4"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792379769_915383040.npz",
+        "bytes": 1914816,
+        "sha256": "3f3853944bf4652f04d9718f39f1798950e73b433d3e8386498bce9786a92772"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792379780_750348800.npz",
+        "bytes": 1894666,
+        "sha256": "5e5d0dba3366a116c21314dbe2b88dd7c9fcdb15fb7cf8bef0364262594021c4"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792379790_792781568.npz",
+        "bytes": 1823800,
+        "sha256": "cb36baf5941778cadeb70206b42368a612a48d6b289bbe4c67296d446722de44"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792379800_848048384.npz",
+        "bytes": 1852711,
+        "sha256": "63d166870e2158a2a4bdaa1c3176c38284f2f081fe2947e0a30c153222f09a1c"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792379810_905501952.npz",
+        "bytes": 1817421,
+        "sha256": "b6bb37d57c3c12b02e787d6836836378b9ea70425fa8349a17a155fbba2ab83a"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792379820_951572992.npz",
+        "bytes": 1789434,
+        "sha256": "4d179aaf1d6175bb07fb0228dd6fb9980832e0696042318661f8d7e6a25c0083"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792379831_790581760.npz",
+        "bytes": 1515510,
+        "sha256": "c3462c2b39c044c75d2f51ed9a6a3609312abf6266f420557e6015445319cb16"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792379841_799841536.npz",
+        "bytes": 1695866,
+        "sha256": "803985accd986ce4eac178ea433a9dea362bf6847d34cae330be43be0932e79c"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792379851_868564992.npz",
+        "bytes": 1820569,
+        "sha256": "1b5e2e2e578ccf983464e450d0ccea57ee7da8d70e8298cbc79688996e5ee32d"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792379861_875090688.npz",
+        "bytes": 1793762,
+        "sha256": "f5a00812975b73328ccec42938ce7a9925d9dbdd4b4272e45ca9863594830332"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792379871_882454272.npz",
+        "bytes": 1767504,
+        "sha256": "aaf9d763471affbcb65a429edca79d685a43c3f14269f34305fe2533b1f307b1"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792379882_213280768.npz",
+        "bytes": 1552205,
+        "sha256": "061efc3123ba3d19ea7d40e63633fb5ca06548ec4a2bd008b3910d9fc3867fae"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792379892_233294848.npz",
+        "bytes": 1639140,
+        "sha256": "7e1eccadea45be15c340a3b9a195d4d7e6a2306ca721944697b01c8ed4263f0f"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792379902_279880960.npz",
+        "bytes": 1543225,
+        "sha256": "8145fc1ffd1708460e825e73dc0687f83da20a6455cea84d3e23044427b6981a"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792379912_983923456.npz",
+        "bytes": 1776870,
+        "sha256": "17db6726f115055db8efcdbf123ba915d1a331fb9efe74e501d2265d15cd0ea1"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792379923_424768256.npz",
+        "bytes": 1721081,
+        "sha256": "26200926300740edc5772a28751142076ae9ca86d126e50d74b8097648ef98aa"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792379933_432391424.npz",
+        "bytes": 1539601,
+        "sha256": "41c8af5ab2d53a1eb76dfc9c1a2668646bc9fbf7d60e38a275d1f30607e9211a"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792379943_451308032.npz",
+        "bytes": 1751199,
+        "sha256": "b27087b99887fb172ffe2b7b3a85e015ab763822bf7b5fd5435d35ac36d43e85"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792379954_373253632.npz",
+        "bytes": 1774349,
+        "sha256": "6491c001cd4fa844d49ac64bab95db87d7589a397940a24d2e8c4aae18ba77fe"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792379964_398271744.npz",
+        "bytes": 1693512,
+        "sha256": "2c1f628a90cf244f09b11ba5f0821eb05f764e595dd2f80b7478ac558f4f14b9"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792379974_422951168.npz",
+        "bytes": 1624565,
+        "sha256": "8530302dd6812abb6115be55f5e7756e62e284c78d354366c6a1b9d24eae35d8"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792379984_667895040.npz",
+        "bytes": 1678148,
+        "sha256": "9b6eb8b990df6bfe1ba440b16fd5d91f723f53306517b2224e79f738ff088444"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792379994_883266560.npz",
+        "bytes": 1721263,
+        "sha256": "d7748ec638520459d78a62965c9d106165c596efa3c3daae6e2c63a60159f825"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792380005_288295424.npz",
+        "bytes": 1710551,
+        "sha256": "3075622ce7c39b5119ee41e353e032eea6cc6929b886d481d4472b119eadfde3"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor/current/inference_context/1792380015_488264704.npz",
+        "bytes": 1656214,
+        "sha256": "d57dd9d84555cde0c2fb905fc21438cc7794dc082367ee9515d83a23fc9bd164"
+      }
+    ],
+    "limitations": "ZIP CRC and final-file completeness only; semantic map/model agreement is checked separately."
+  }
+}

@@ -1,0 +1,86 @@
+{
+  "source": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_atomic_context_10min_2026-10-19_11-09-42/indoor",
+  "rows": 8291,
+  "transitions": 67,
+  "to_covered": 24,
+  "covered_reasons": {
+    "NO_GAIN_WITH_CANDIDATES": 24
+  },
+  "first_internal_completion_log_s": null,
+  "last_transition_window": [],
+  "deferred_unique_cells": 23,
+  "deferred_then_freshly_discharged": [
+    {
+      "cell": 885901,
+      "deferred_s": 156.69675755500793,
+      "discharged_s": 160.32164192199707,
+      "new_state": 2.0,
+      "reason": "NO_GAIN_WITH_CANDIDATES"
+    },
+    {
+      "cell": 885904,
+      "deferred_s": 29.80966281890869,
+      "discharged_s": 233.93158435821533,
+      "new_state": 2.0,
+      "reason": "NO_GAIN_WITH_CANDIDATES"
+    },
+    {
+      "cell": 885783,
+      "deferred_s": 209.7181043624878,
+      "discharged_s": 237.86446380615234,
+      "new_state": 2.0,
+      "reason": "NO_GAIN_WITH_CANDIDATES"
+    },
+    {
+      "cell": 885902,
+      "deferred_s": 233.93151807785034,
+      "discharged_s": 246.02010917663574,
+      "new_state": 2.0,
+      "reason": "NO_GAIN_WITH_CANDIDATES"
+    },
+    {
+      "cell": 885662,
+      "deferred_s": 207.7115306854248,
+      "discharged_s": 288.15731382369995,
+      "new_state": 2.0,
+      "reason": "NO_GAIN_WITH_CANDIDATES"
+    },
+    {
+      "cell": 885784,
+      "deferred_s": 209.71812057495117,
+      "discharged_s": 331.3741533756256,
+      "new_state": 1.0,
+      "reason": "SELECTED_REOPEN"
+    },
+    {
+      "cell": 886024,
+      "deferred_s": 356.28518629074097,
+      "discharged_s": 429.22891092300415,
+      "new_state": 2.0,
+      "reason": "NO_GAIN_WITH_CANDIDATES"
+    },
+    {
+      "cell": 886025,
+      "deferred_s": 356.28523874282837,
+      "discharged_s": 445.00583124160767,
+      "new_state": 1.0,
+      "reason": "SELECTED_REOPEN"
+    },
+    {
+      "cell": 886267,
+      "deferred_s": 505.8778886795044,
+      "discharged_s": 568.7260346412659,
+      "new_state": 1.0,
+      "reason": "SELECTED_REOPEN"
+    }
+  ],
+  "unresolved_gain_covered_without_evaluation": [],
+  "tour_and_local_complete_with_pending": [],
+  "tracked_final_state_counts": {
+    "2": 19,
+    "1": 19
+  },
+  "last_known_unseen_with_gain": [],
+  "unseen_with_gain_unique_cells": 0,
+  "limitations": "Logs UpdateCellStatus decisions only. Does not include external SetCellStatus calls, exact sensor coverage truth, or distinguish geometric vs line-of-sight/corner-connectivity causes of absent candidates. -5s setup window included to retain first measured cycle transitions. Final tracked cells are not the whole global grid."
+}

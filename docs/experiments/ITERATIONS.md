@@ -27,9 +27,11 @@
 
 | 阶段34 `391fa0f` | 先验算简单SE2连接，受阻继续图搜索 | 168.77 / 2169.875 | EXPLORING；末分钟14.826m，最长全零3.600s | [报告](../results/ht_checked_connections_10min_2026-10-19/REPORT.md) · [数据/视频](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261019-checked-connections) |
 
+| 阶段35 `445b5c1`（导航391fa0f） | 诊断原子写入、SIGINT完成回调后退出 | 169.10 / 2674.750 | EXPLORING；最长全零4.200s，13项采集通过 | [报告](../results/ht_atomic_context_10min_2026-10-19/REPORT.md) · [完整数据/视频](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261019-atomic-context) |
+
 ![同条件四轮对比](../results/ht_pending_gain_tasks_10min_2026-10-18/comparison/comparison.png)
 
-## 当前问题与证据状态（阶段34已完整实测）
+## 当前问题与证据状态（阶段35已完整实测）
 
 | 问题 | 证据与当前状态 | 后续核查 |
 |---|---|---|
@@ -67,3 +69,5 @@
 阶段33：恢复目标提前获得搜索机会，完整600秒151.57m/2480.000m³，末分钟15.525m；总预算/安全门槛未变，仍有232次TIME_LIMIT，最长全零35.800s。应继续同版复测及多环境，不能只选阶段32差轮作为普遍提升依据。
 
 阶段34：固定HT/几何公开输入中，简单恢复路线原需6709/8633次查询；逐段相同检查的连接112/126次通过。完整600秒168.77m/2169.875m³、最后一分钟14.826m；仍有42次TIME_LIMIT、最长全零3.600s。需要同版重复、多环境与地图时效/全局待办核查，不宣称无限稳定。
+
+阶段35：旧SIGINT压缩中断复现BadZipFile/seek of closed file；5项回归通过，完整600秒169.10m/2674.750m³，13项采集/全部诊断CRC通过、无坏文件/partial。导航二进制仍391fa0f；体积变化不能归因于诊断修复。GitHub完整保存、本机最近两轮按用户确认执行，先校验远端再清理。

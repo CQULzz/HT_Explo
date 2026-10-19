@@ -1,0 +1,442 @@
+diff --git a/docs/fixes/2026-10-19_context_shutdown.md b/docs/fixes/2026-10-19_context_shutdown.md
+new file mode 100644
+index 0000000..e03db5d
+--- /dev/null
++++ b/docs/fixes/2026-10-19_context_shutdown.md
+@@ -0,0 +1,18 @@
++# 退出期间诊断NPZ损坏：复现与修正
++
++阶段34录满600秒，视频9000帧完整解码，但退出时源时间598.711秒的诊断文件损坏。57份可读上下文核验通过，overall核验仍failed；原始12/13校验、坏文件和ZipFile析构异常完整保留在阶段34Release。
++
++旧代码直接以最终.npz名字打开文件，再调用np.savez_compressed。SIGINT可在压缩过程中抛KeyboardInterrupt，外层流先关闭、ZipFile析构随后seek，留下BadZipFile和seek of closed file。故障注入在旧流程完整复现同样两种错误，证据见[evidence](evidence/2026-10-19_context_shutdown/old_writer_reproduction.log)。不是据此认定600秒车辆中途崩溃或所有MCAP损坏。
++
++修正只影响诊断写入与退出顺序：
++
++- rclpy不再自动处理SIGINT；信号只设停止请求。保持单线程executor，当前回调完成后退出循环，再保存历史高程图、诊断日志、销毁节点和关闭ROS上下文。不会在正在压缩的回调中抛键盘中断，也不提前关闭rosout。
++- 写入独立.partial文件，并显式管理ZipFile与底层文件关闭顺序；压缩关闭完成后，以同目录hardlink原子发布最终文件名。已有源时间文件绝不覆盖。
++- 异常中断只留下带.partial标记的诊断证据，不宣称完整。上下文审计检查.partial和坏文件，默认严格失败；只有明确异常归档模式才能保留并分析其余可读数据，原失败状态不改。
++- 新IO模块纳入实验源码冻结。HT网络、输入预处理、历史融合、概率门槛、搜索/控制参数和C++导航二进制不变；事件循环和文件IO可能影响实际时序，因此仍需完整600秒复测。
++
++四项文件/信号回归及一项实际bridge main ROS回归通过：数字数组一致、不可覆盖、真实SIGINT发生在数组写入中仍完成快照、显式异常中断不发布半文件、并发最终文件竞争不覆盖。ROS回归使用真实主循环和信号，轻量节点替代网络构造；确认回调、历史图与诊断全部完成，信号恢复且无残留.partial。它不替代真实CuPy+HT闭环600秒。
++
++完整日志见[final_tests.log](evidence/2026-10-19_context_shutdown/final_tests.log)。旧轮没有补造或修复损坏快照，不能被改称全诊断完整。正常SIGINT修正不保证SIGKILL、磁盘故障或断电时仍能产生完整快照；这些情况应留下明确失败证据。
++
++用户已确认GitHub保留全部、本机仅最近两轮。旧轮经远端附件与逐文件SHA256核对后清理，释放约14.85GB；本轮可用磁盘增加，是相较阶段34的环境差异，不能把时延变化完全归因于代码。报告/视频及阶段22回归样本继续保留。
+diff --git a/docs/fixes/evidence/2026-10-19_context_shutdown/final_tests.log b/docs/fixes/evidence/2026-10-19_context_shutdown/final_tests.log
+new file mode 100644
+index 0000000..83d3145
+--- /dev/null
++++ b/docs/fixes/evidence/2026-10-19_context_shutdown/final_tests.log
+@@ -0,0 +1,11 @@
++test_numeric_arrays_roundtrip_without_replacing_an_earlier_stamp (tools.ht_cupy_bridge.test_inference_context_io.ContextIOTest.test_numeric_arrays_roundtrip_without_replacing_an_earlier_stamp) ... ok
++test_publish_failure_preserves_the_existing_final_and_partial_evidence (tools.ht_cupy_bridge.test_inference_context_io.ContextIOTest.test_publish_failure_preserves_the_existing_final_and_partial_evidence) ... ok
++test_raised_interruption_never_advertises_an_incomplete_npz (tools.ht_cupy_bridge.test_inference_context_io.ContextIOTest.test_raised_interruption_never_advertises_an_incomplete_npz) ... ok
++test_sigint_during_array_write_finishes_the_current_snapshot (tools.ht_cupy_bridge.test_inference_context_io.ContextIOTest.test_sigint_during_array_write_finishes_the_current_snapshot) ... ok
++test_actual_main_finishes_callback_and_history_before_context_shutdown (tools.ht_cupy_bridge.test_context_shutdown_ros.BridgeShutdownTest.test_actual_main_finishes_callback_and_history_before_context_shutdown) ... [INFO] [1792379305.583982504] [context_shutdown_regression]: Saved global historical elevation to /tmp/tmp_b3jb9gb/history.npz
++ok
++
++----------------------------------------------------------------------
++Ran 5 tests in 0.097s
++
++OK
+diff --git a/docs/fixes/evidence/2026-10-19_context_shutdown/new_writer_tests.log b/docs/fixes/evidence/2026-10-19_context_shutdown/new_writer_tests.log
+new file mode 100644
+index 0000000..2d1565e
+--- /dev/null
++++ b/docs/fixes/evidence/2026-10-19_context_shutdown/new_writer_tests.log
+@@ -0,0 +1,9 @@
++test_numeric_arrays_roundtrip_without_replacing_an_earlier_stamp (tools.ht_cupy_bridge.test_inference_context_io.ContextIOTest.test_numeric_arrays_roundtrip_without_replacing_an_earlier_stamp) ... ok
++test_publish_failure_preserves_the_existing_final_and_partial_evidence (tools.ht_cupy_bridge.test_inference_context_io.ContextIOTest.test_publish_failure_preserves_the_existing_final_and_partial_evidence) ... ok
++test_raised_interruption_never_advertises_an_incomplete_npz (tools.ht_cupy_bridge.test_inference_context_io.ContextIOTest.test_raised_interruption_never_advertises_an_incomplete_npz) ... ok
++test_sigint_during_array_write_finishes_the_current_snapshot (tools.ht_cupy_bridge.test_inference_context_io.ContextIOTest.test_sigint_during_array_write_finishes_the_current_snapshot) ... ok
++
++----------------------------------------------------------------------
++Ran 4 tests in 0.025s
++
++OK
+diff --git a/docs/fixes/evidence/2026-10-19_context_shutdown/old_writer_reproduction.log b/docs/fixes/evidence/2026-10-19_context_shutdown/old_writer_reproduction.log
+new file mode 100644
+index 0000000..bb62685
+--- /dev/null
++++ b/docs/fixes/evidence/2026-10-19_context_shutdown/old_writer_reproduction.log
+@@ -0,0 +1,3 @@
++BadZipFile File is not a zip file
++unraisable close errors: ['seek of closed file']
++PASS reproduced interrupted non-atomic diagnostic writing
+diff --git a/docs/fixes/evidence/2026-10-19_context_shutdown/reproduce_old_writer.py b/docs/fixes/evidence/2026-10-19_context_shutdown/reproduce_old_writer.py
+new file mode 100644
+index 0000000..833d5e0
+--- /dev/null
++++ b/docs/fixes/evidence/2026-10-19_context_shutdown/reproduce_old_writer.py
+@@ -0,0 +1,23 @@
++from pathlib import Path
++import tempfile,gc,sys
++import numpy as np
++errors=[];sys.unraisablehook=lambda e:errors.append(str(e.exc_value));old=np.lib.format.write_array
++with tempfile.TemporaryDirectory() as directory:
++ p=Path(directory)/'old.npz';calls=0
++ def interrupted(*args,**kwargs):
++  global calls
++  calls+=1;old(*args,**kwargs)
++  if calls==1:raise KeyboardInterrupt('injected shutdown during compression')
++ np.lib.format.write_array=interrupted
++ try:
++  with p.open('xb') as stream:np.savez_compressed(stream,first=np.arange(10000),second=np.zeros(10000))
++ except KeyboardInterrupt:pass
++ finally:np.lib.format.write_array=old
++ gc.collect()
++ try:
++  with np.load(p) as data:data.files
++  print('unexpected readable old file')
++ except Exception as error:print(type(error).__name__,str(error))
++ print('unraisable close errors:',errors)
++ assert errors and any('closed file' in e for e in errors)
++print('PASS reproduced interrupted non-atomic diagnostic writing')
+diff --git a/docs/fixes/evidence/2026-10-19_context_shutdown/ros_shutdown_tests.log b/docs/fixes/evidence/2026-10-19_context_shutdown/ros_shutdown_tests.log
+new file mode 100644
+index 0000000..64b29d3
+--- /dev/null
++++ b/docs/fixes/evidence/2026-10-19_context_shutdown/ros_shutdown_tests.log
+@@ -0,0 +1,7 @@
++test_actual_main_finishes_callback_and_history_before_context_shutdown (tools.ht_cupy_bridge.test_context_shutdown_ros.BridgeShutdownTest.test_actual_main_finishes_callback_and_history_before_context_shutdown) ... [INFO] [1792379248.962951670] [context_shutdown_regression]: Saved global historical elevation to /tmp/tmpjyl_72ck/history.npz
++ok
++
++----------------------------------------------------------------------
++Ran 1 test in 0.059s
++
++OK
+diff --git a/presentations/audit_ht_context_dumps.py b/presentations/audit_ht_context_dumps.py
+index 34e7493..13d6db2 100644
+--- a/presentations/audit_ht_context_dumps.py
++++ b/presentations/audit_ht_context_dumps.py
+@@ -81,15 +81,17 @@ def main():
+                 result=torch.softmax(model(tensor),dim=2)[0,:,1].numpy();result[:,d['occupied']]=0
+                 error=float(np.max(np.abs(result-d['probabilities'])))
+                 models.append(dict(file=events[i]['file'],maximum_absolute_error=error,passed=error<=1e-6,weights_sha256=actual))
++    partials=[dict(file=str(p),bytes=p.stat().st_size,sha256=hashlib.sha256(p.read_bytes()).hexdigest())
++              for p in sorted((args.trial/'current/inference_context').glob('*.partial'))]
+     valid_checks=bool(events) and all(all(e['checks'].values()) for e in events) and all(r['passed'] for r in models)
+     result=dict(source=str(args.trial.resolve()),checked_contexts=len(events),paired_exact_source_maps=len(paired),
+-                all_checks_passed=valid_checks and not damaged,
+-                readable_context_checks_passed=valid_checks,damaged_contexts=damaged,
++                all_checks_passed=valid_checks and not damaged and not partials,
++                readable_context_checks_passed=valid_checks,damaged_contexts=damaged,partial_contexts=partials,
+                 model_replays=models,events=events,
+                 caveat='Only saved10s inference samples, not every map. Verifies recording/model/mask consistency, not physical truth or route safety.')
+     args.output.parent.mkdir(parents=True,exist_ok=True);args.output.write_text(json.dumps(result,indent=2)+'\n')
+     print(json.dumps({k:v for k,v in result.items() if k!='events'},indent=2))
+-    if not valid_checks or (damaged and not args.record_damaged_contexts):raise SystemExit(1)
++    if not valid_checks or ((damaged or partials) and not args.record_damaged_contexts):raise SystemExit(1)
+ 
+ 
+ if __name__=='__main__':main()
+diff --git a/presentations/run_ht_endurance.py b/presentations/run_ht_endurance.py
+index 311dfbf..a301337 100644
+--- a/presentations/run_ht_endurance.py
++++ b/presentations/run_ht_endurance.py
+@@ -124,7 +124,7 @@ def main():
+               ROOT/'src/tare_planner/src/ht_cost/xytheta_follower.cpp',
+               CUPY/'src/elevation_mapping_cupy_2204/elevation_mapping_cupy/script/elevation_mapping_cupy/elevation_mapping_ros.py']
+     paths += [BRIDGE/name for name in ('cmu_xytheta.launch.py','cmu_vehicle_downward.launch.py','gz_sim_direct.launch.py')]
+-    paths += [BRIDGE/name for name in ('cpu_threads.py','model.py','local_surface.py','elevation_quality.py','ht_support.py','capture_replay_maps.py','profile_cupy_runtime.py',
++    paths += [BRIDGE/name for name in ('cpu_threads.py','model.py','local_surface.py','elevation_quality.py','ht_support.py','inference_context_io.py','capture_replay_maps.py','profile_cupy_runtime.py',
+                                      'assets/camera_sensor_mask.sdf','assets/lidar_downward.sdf',
+                                      'assets/robot_sensor_mask.sdf','student_best_epoch_weights.pth')]
+     paths += [CMU/f'src/vehicle_simulator/world/{args.scenario}.world',
+diff --git a/tools/ht_cupy_bridge/cupy_to_ht.py b/tools/ht_cupy_bridge/cupy_to_ht.py
+index 5b43251..a71d5a0 100644
+--- a/tools/ht_cupy_bridge/cupy_to_ht.py
++++ b/tools/ht_cupy_bridge/cupy_to_ht.py
+@@ -6,6 +6,7 @@ from collections import deque
+ from array import array as FloatArray
+ import json
+ import os
++import signal
+ from pathlib import Path
+ import time
+ 
+@@ -16,6 +17,8 @@ import rclpy
+ from grid_map_msgs.msg import GridMap
+ from rclpy.node import Node
+ from rclpy.qos import QoSProfile, ReliabilityPolicy
++from rclpy.signals import SignalHandlerOptions
++from rclpy.executors import ExternalShutdownException, SingleThreadedExecutor
+ from nav_msgs.msg import Odometry
+ from std_msgs.msg import Float32MultiArray, MultiArrayDimension, MultiArrayLayout
+ 
+@@ -25,6 +28,7 @@ from elevation_quality import preprocess_elevation, retain_recent_obstacle_edges
+ from local_surface import SurfaceReferenceEstimator
+ from cpu_threads import configure_cpu_threads
+ from ht_support import prepare_ht_context, preserve_rejected_obstacles
++from inference_context_io import GracefulStop, save_immutable_npz
+ 
+ 
+ class CupyToHt(Node):
+@@ -247,8 +251,7 @@ class CupyToHt(Node):
+             filename = directory / f'{stamp_key[0]}_{stamp_key[1]:09d}.npz'
+             # A source stamp identifies immutable inference inputs. Never
+             # replace an earlier context if a node is accidentally restarted.
+-            with filename.open('xb') as stream:
+-                np.savez_compressed(stream, source_stamp=stamp_s,
++            save_immutable_npz(filename, source_stamp=stamp_s,
+                     geometry=[center_x, center_y, resolution], height=height,
+                     raw_history=raw_history, observed=observed, rejected=rejected,
+                     quality_rejected=quality.rejected_mask, obstacle_context=obstacle_context,
+@@ -282,20 +285,35 @@ class CupyToHt(Node):
+ 
+ 
+ def main():
+-    rclpy.init()
+-    node = CupyToHt()
++    # Default SIGINT raises inside callbacks and can tear a diagnostic ZIP.
++    # Request exit, finish this callback, then save history before shutdown.
++    rclpy.init(signal_handler_options=SignalHandlerOptions.NO)
++    stop = GracefulStop()
++    previous = signal.signal(signal.SIGINT, stop.request)
++    node = None
++    executor = SingleThreadedExecutor()
+     try:
+-        rclpy.spin(node)
+-    except KeyboardInterrupt:
++        node = CupyToHt()
++        executor.add_node(node)
++        while rclpy.ok() and not stop.requested:
++            executor.spin_once(timeout_sec=.1)
++    except (KeyboardInterrupt, ExternalShutdownException):
+         pass
+     finally:
+-        if node.history is not None and os.environ.get("HT_HISTORY_DUMP"):
+-            node.history.save(os.environ["HT_HISTORY_DUMP"])
+-            node.get_logger().info(f"Saved global historical elevation to {os.environ['HT_HISTORY_DUMP']}")
+-        if os.environ.get('HT_DIAGNOSTICS_DUMP'):
+-            Path(os.environ['HT_DIAGNOSTICS_DUMP']).write_text(json.dumps(node.diagnostics, indent=2)+'\n')
+-        node.destroy_node()
+-        rclpy.try_shutdown()
++        try:
++            if node is not None:
++                if node.history is not None and os.environ.get("HT_HISTORY_DUMP"):
++                    node.history.save(os.environ["HT_HISTORY_DUMP"])
++                    node.get_logger().info(f"Saved global historical elevation to {os.environ['HT_HISTORY_DUMP']}")
++                if os.environ.get('HT_DIAGNOSTICS_DUMP'):
++                    Path(os.environ['HT_DIAGNOSTICS_DUMP']).write_text(json.dumps(node.diagnostics, indent=2)+'\n')
++                node.destroy_node()
++        finally:
++            try:
++                executor.shutdown()
++                rclpy.try_shutdown()
++            finally:
++                signal.signal(signal.SIGINT, previous)
+ 
+ 
+ if __name__ == "__main__":
+diff --git a/tools/ht_cupy_bridge/inference_context_io.py b/tools/ht_cupy_bridge/inference_context_io.py
+new file mode 100644
+index 0000000..e88754c
+--- /dev/null
++++ b/tools/ht_cupy_bridge/inference_context_io.py
+@@ -0,0 +1,38 @@
++"""Immutable diagnostic snapshots and deferred graceful-stop requests."""
++import os
++from pathlib import Path
++import uuid
++import zipfile
++
++import numpy as np
++
++
++class GracefulStop:
++    """A signal requests exit after the current callback, without raising in it."""
++    def __init__(self):
++        self.requested = False
++
++    def request(self, signum, frame):
++        self.requested = True
++
++
++def save_immutable_npz(filename, **values):
++    """Publish only a closed NPZ; never replace an earlier source-stamped file.
++
++    Interrupted files retain a .partial suffix for diagnosis. Explicit ZipFile
++    ownership closes it before the underlying stream even on interruption.
++    """
++    filename = Path(filename)
++    if filename.exists():
++        raise FileExistsError(filename)
++    temporary = filename.with_name(filename.name + '.' + uuid.uuid4().hex + '.partial')
++    with temporary.open('xb') as stream:
++        with zipfile.ZipFile(stream, mode='w', compression=zipfile.ZIP_DEFLATED,
++                             allowZip64=True) as archive:
++            for key, value in values.items():
++                with archive.open(key + '.npy', mode='w', force_zip64=True) as target:
++                    np.lib.format.write_array(target, np.asanyarray(value), allow_pickle=False)
++        stream.flush()
++    # Same-directory hardlink publishes atomically and fails if final exists.
++    os.link(temporary, filename)
++    temporary.unlink()
+diff --git a/tools/ht_cupy_bridge/test_context_shutdown_ros.py b/tools/ht_cupy_bridge/test_context_shutdown_ros.py
+new file mode 100644
+index 0000000..5f52175
+--- /dev/null
++++ b/tools/ht_cupy_bridge/test_context_shutdown_ros.py
+@@ -0,0 +1,65 @@
++"""Exercise the actual bridge main-loop shutdown with SIGINT inside a write."""
++import json
++import os
++from pathlib import Path
++import signal
++import tempfile
++import unittest
++from unittest.mock import patch
++
++import numpy as np
++from rclpy.node import Node
++
++import cupy_to_ht as bridge
++from inference_context_io import save_immutable_npz
++
++
++class BridgeShutdownTest(unittest.TestCase):
++    def test_actual_main_finishes_callback_and_history_before_context_shutdown(self):
++        with tempfile.TemporaryDirectory() as directory:
++            output = Path(directory)
++            write_array = np.lib.format.write_array
++            calls = 0
++            before = signal.getsignal(signal.SIGINT)
++
++            def interrupt_first_write(*args, **kwargs):
++                nonlocal calls
++                calls += 1
++                if calls == 1:
++                    os.kill(os.getpid(), signal.SIGINT)
++                return write_array(*args, **kwargs)
++
++            class History:
++                def save(self, path):
++                    save_immutable_npz(path, elevation=np.ones((3, 3)))
++
++            class CallbackNode(Node):
++                def __init__(self):
++                    super().__init__('context_shutdown_regression')
++                    self.history = History()
++                    self.diagnostics = []
++                    self.create_timer(.01, self.write)
++
++                def write(self):
++                    save_immutable_npz(output / 'context.npz', first=np.arange(10000),
++                                       probabilities=np.ones((8, 10, 10)))
++                    self.diagnostics.append({'callback_completed': True})
++
++            with patch.object(bridge, 'CupyToHt', CallbackNode), \
++                    patch.dict(os.environ, HT_HISTORY_DUMP=str(output / 'history.npz'),
++                               HT_DIAGNOSTICS_DUMP=str(output / 'diagnostics.json')), \
++                    patch('numpy.lib.format.write_array', side_effect=interrupt_first_write):
++                bridge.main()
++            self.assertEqual(signal.getsignal(signal.SIGINT), before)
++            self.assertFalse(bridge.rclpy.ok())
++            with np.load(output / 'context.npz') as data:
++                self.assertEqual(data['probabilities'].shape, (8, 10, 10))
++            with np.load(output / 'history.npz') as data:
++                self.assertEqual(data['elevation'].shape, (3, 3))
++            self.assertEqual(json.loads((output / 'diagnostics.json').read_text()),
++                             [{'callback_completed': True}])
++            self.assertEqual(list(output.glob('*.partial')), [])
++
++
++if __name__ == '__main__':
++    unittest.main()
+diff --git a/tools/ht_cupy_bridge/test_inference_context_io.py b/tools/ht_cupy_bridge/test_inference_context_io.py
+new file mode 100644
+index 0000000..7b74c95
+--- /dev/null
++++ b/tools/ht_cupy_bridge/test_inference_context_io.py
+@@ -0,0 +1,90 @@
++import gc
++import os
++from pathlib import Path
++import signal
++import sys
++import tempfile
++import unittest
++from unittest.mock import patch
++
++import numpy as np
++
++from inference_context_io import GracefulStop, save_immutable_npz
++
++
++class ContextIOTest(unittest.TestCase):
++    def test_numeric_arrays_roundtrip_without_replacing_an_earlier_stamp(self):
++        with tempfile.TemporaryDirectory() as directory:
++            path = Path(directory) / 'stamp.npz'
++            expected = dict(source_stamp=12.5, mask=np.eye(8, dtype=bool),
++                            height=np.arange(80, dtype=np.float32).reshape(8, 10))
++            save_immutable_npz(path, **expected)
++            with np.load(path, allow_pickle=False) as data:
++                for name, value in expected.items():
++                    np.testing.assert_array_equal(data[name], value)
++            previous = path.read_bytes()
++            with self.assertRaises(FileExistsError):
++                save_immutable_npz(path, height=np.zeros((8, 10)))
++            self.assertEqual(previous, path.read_bytes())
++            self.assertEqual(list(Path(directory).glob('*.partial')), [])
++
++    def test_sigint_during_array_write_finishes_the_current_snapshot(self):
++        with tempfile.TemporaryDirectory() as directory:
++            path = Path(directory) / 'stamp.npz'
++            stop = GracefulStop()
++            previous = signal.signal(signal.SIGINT, stop.request)
++            write_array = np.lib.format.write_array
++            calls = 0
++
++            def signal_during_write(*args, **kwargs):
++                nonlocal calls
++                calls += 1
++                if calls == 1:
++                    os.kill(os.getpid(), signal.SIGINT)
++                    self.assertTrue(stop.requested)
++                return write_array(*args, **kwargs)
++
++            try:
++                with patch('numpy.lib.format.write_array', side_effect=signal_during_write):
++                    save_immutable_npz(path, first=np.arange(10000), second=np.ones(10000))
++            finally:
++                signal.signal(signal.SIGINT, previous)
++            with np.load(path) as data:
++                self.assertEqual(len(data['first']), 10000)
++                np.testing.assert_array_equal(data['second'], np.ones(10000))
++            self.assertEqual(list(Path(directory).glob('*.partial')), [])
++
++    def test_raised_interruption_never_advertises_an_incomplete_npz(self):
++        with tempfile.TemporaryDirectory() as directory:
++            path = Path(directory) / 'stamp.npz'
++            errors = []
++            previous = sys.unraisablehook
++            sys.unraisablehook = lambda error: errors.append(str(error.exc_value))
++            try:
++                with patch('numpy.lib.format.write_array', side_effect=KeyboardInterrupt):
++                    with self.assertRaises(KeyboardInterrupt):
++                        save_immutable_npz(path, height=np.arange(10000))
++                gc.collect()
++            finally:
++                sys.unraisablehook = previous
++            self.assertFalse(path.exists())
++            self.assertEqual(len(list(Path(directory).glob('*.partial'))), 1)
++            self.assertEqual(errors, [])
++
++    def test_publish_failure_preserves_the_existing_final_and_partial_evidence(self):
++        with tempfile.TemporaryDirectory() as directory:
++            path = Path(directory) / 'stamp.npz'
++
++            def concurrent_final(source, target):
++                Path(target).write_bytes(b'previous immutable data')
++                raise FileExistsError(target)
++
++            with patch('inference_context_io.os.link', side_effect=concurrent_final):
++                with self.assertRaises(FileExistsError):
++                    save_immutable_npz(path, height=np.arange(100))
++            self.assertEqual(path.read_bytes(), b'previous immutable data')
++            self.assertEqual(len(list(Path(directory).glob('*.partial'))), 1)
++
++
++if __name__ == '__main__':
++    unittest.main()
