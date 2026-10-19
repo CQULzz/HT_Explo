@@ -1,0 +1,72 @@
+{
+  "source": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_combined_admission_10min_2026-10-18_01-52-52/indoor",
+  "original": {
+    "observed_free_volume_m3": 1217.25,
+    "processed_volume_scans": 576,
+    "skipped_volume_scans": 0,
+    "recorded_scans_in_source_time_window": 600,
+    "sensor_position_source": "nearest sensor-frame state_estimation (common to both systems)",
+    "pose_time_offset_max_s": 2.384185791015625e-07,
+    "command_samples": 12000,
+    "fully_stopped_fraction": 0.43366666666666664,
+    "stationary_turn_fraction": 0.21616666666666667,
+    "reverse_command_fraction": 0.04225,
+    "max_abs_linear_command_mps": 0.5,
+    "max_abs_yaw_command_rps": 0.8,
+    "longest_zero_command_s": 123.62676191329956,
+    "follower_status_samples": {
+      "DRIVING": 4056,
+      "HT_COMMAND_BLOCKED": 146,
+      "ALIGNING": 153,
+      "TURNING": 2594,
+      "EMPTY_PATH": 679,
+      "HT_PATH_BLOCKED": 137,
+      "PLANNER_HOLD": 3835,
+      "GOAL_REACHED": 332,
+      "HT_MAP_STALE": 16,
+      "HT_CURRENT_POSE_BLOCKED": 52
+    },
+    "longest_no_translation_command_s": 123.62676191329956,
+    "last_translation_s": 476.507,
+    "distance_last60_m": 0.0
+  },
+  "recomputed": {
+    "scan_selection": "source_second",
+    "observed_free_volume_m3": 1218.25,
+    "processed_volume_scans": 600,
+    "skipped_volume_scans": 0,
+    "recorded_scans_in_source_time_window": 600,
+    "sensor_position_source": "nearest sensor-frame state_estimation (common to both systems)",
+    "pose_time_offset_max_s": 2.384185791015625e-07,
+    "command_samples": 12000,
+    "fully_stopped_fraction": 0.43366666666666664,
+    "stationary_turn_fraction": 0.21616666666666667,
+    "reverse_command_fraction": 0.04225,
+    "max_abs_linear_command_mps": 0.5,
+    "max_abs_yaw_command_rps": 0.8,
+    "longest_zero_command_s": 123.62676191329956,
+    "follower_status_samples": {
+      "DRIVING": 4056,
+      "HT_COMMAND_BLOCKED": 146,
+      "ALIGNING": 153,
+      "TURNING": 2594,
+      "EMPTY_PATH": 679,
+      "HT_PATH_BLOCKED": 137,
+      "PLANNER_HOLD": 3835,
+      "GOAL_REACHED": 332,
+      "HT_MAP_STALE": 16,
+      "HT_CURRENT_POSE_BLOCKED": 52
+    },
+    "longest_no_translation_command_s": 123.62676191329956,
+    "last_translation_s": 476.507,
+    "distance_last60_m": 0.0
+  },
+  "evaluator_sha256": "679203aab69b3a4ec1b21718f2b7b9dfa9d0fa8f6c7f1b93231c4b0f74ca68f0",
+  "input_sha256": {
+    "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_combined_admission_10min_2026-10-18_01-52-52/indoor/evidence_bag/metadata.yaml": "2f473a73108ef8971ba43061b568e5a94cbc2c536cc86111d156e280261c4339",
+    "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_combined_admission_10min_2026-10-18_01-52-52/indoor/current/measurement_started.json": "c3d3b3450fad37d389dd3c1d1f69bd3db9b65ffe03876e8d4f147873f499b090",
+    "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_combined_admission_10min_2026-10-18_01-52-52/indoor/current/timeseries.csv": "9041341f0ba2f048f3e03f30bd110fe8cd455b5eeed63c87223915c27e6359a3"
+  },
+  "selection": "Keep first recorded scan in each absolute source second inside the measurement window; do not downsample again in origin-relative seconds.",
+  "scope": "Offline evaluation only. Original simulation outputs and reports are unchanged."
+}

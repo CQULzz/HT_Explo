@@ -1,0 +1,504 @@
+{
+  "tested_git_head": "68701319b333165dd9cd5acf8e226ba52c174434",
+  "raw_run": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24",
+  "recording_scope": "All control/status and odometry, full-rate published HT maps and TARE collision geometry; original-stamped scans1Hz; exact-stamp map triplets and network inputs/outputs every10s; camera15fps. Raw CuPy and scans are not fully bagged.",
+  "metrics": {
+    "scan_selection": "source_second",
+    "observed_free_volume_m3": 8660.125,
+    "processed_volume_scans": 600,
+    "skipped_volume_scans": 0,
+    "recorded_scans_in_source_time_window": 600,
+    "sensor_position_source": "nearest sensor-frame state_estimation (common to both systems)",
+    "pose_time_offset_max_s": 2.384185791015625e-07,
+    "command_samples": 11995,
+    "fully_stopped_fraction": 0.012171738224260108,
+    "stationary_turn_fraction": 0.22842851187994997,
+    "reverse_command_fraction": 0.0,
+    "max_abs_linear_command_mps": 0.5,
+    "max_abs_yaw_command_rps": 0.8,
+    "longest_zero_command_s": 0.2500279426574707,
+    "follower_status_samples": {
+      "TURNING": 2740,
+      "ALIGNING": 146,
+      "DRIVING": 9109
+    },
+    "longest_no_translation_command_s": 5.449963855743408,
+    "last_translation_s": 598.005,
+    "distance_last60_m": 16.555495009980064
+  },
+  "mission": {
+    "first_exploration_finished_sample_s": null,
+    "sampled_mission_counts": {
+      "EXPLORING": 600
+    },
+    "first_completed_sample_s": null,
+    "last_sampled_mission": "EXPLORING",
+    "last_sampled_execution_status": "HT_ASSISTED",
+    "final_distance_to_measurement_start_m": 73.52775543969773,
+    "meaning": "Exploration finished is a return-home trigger. Only mission COMPLETED confirms the home radius, low-speed and dwell checks; neither establishes ground-truth full coverage."
+  },
+  "tare_waypoint": {
+    "message_counts": {
+      "/tare_coverage_route": 592,
+      "/tare_route_branch": 592,
+      "/ht_xytheta_path": 592,
+      "/tare_native_waypoint": 592,
+      "/ht_route_goal": 683,
+      "/way_point": 600,
+      "/ht_navigation_allowed": 600,
+      "/tare_tsp_order": 592,
+      "/state_estimation": 119876
+    },
+    "coverage_cycles": 592,
+    "tsp_calls": {
+      "1": 531,
+      "10": 61
+    },
+    "maximum_ordered_viewpoints": 23,
+    "mean_ordered_viewpoints": 13.08108108108108,
+    "moving_waypoints": 600,
+    "local_goals": 683,
+    "nonempty_executable_paths": 592,
+    "searches": 683,
+    "search_termination": {
+      "REACHED": 592,
+      "TIME_LIMIT": 34,
+      "EXPANSION_LIMIT": 57
+    },
+    "contract_violations": [],
+    "contract_passed": true,
+    "scope": "Sampled/message-level contract, not a proof of global exploration optimality or continuous physical safety."
+  },
+  "geometry": {
+    "radius_m": 0.8414213562373094,
+    "collision_point_threshold": 1,
+    "configured_height_window_m": [
+      -0.5,
+      0.5
+    ],
+    "configured_margin_m": 0.7,
+    "first_observed_margin_overlap": null,
+    "overlap_samples": 0,
+    "moving_predictions_inside_margin": 0,
+    "samples": 592,
+    "limitations": "Uses bag arrival order, latest received odometry/command and measured collision-cloud points in robot height slice. Does not reproduce planner collision-grid bounds or exact callback state. Predicted arc uses last received constant Twist, not controller internal candidate or simulator braking. Margin overlap is not physical vehicle contact. Sample lag/point noise may contribute; cannot separate them without independent truth."
+  },
+  "blocked_command_audit": {
+    "source": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage",
+    "status_counts": {
+      "TURNING": 2740,
+      "ALIGNING": 146,
+      "DRIVING": 9109
+    },
+    "paired_status_counts": {
+      "DRIVING": 5
+    },
+    "unmatched_command_rejections": 0,
+    "blocked_nonzero_count": 0,
+    "events": [],
+    "geometry_nonzero_count": 0,
+    "geometry_events": [],
+    "unmatched_geometry_rejections": {},
+    "caveat": "Matches each late hold to its preceding command within20ms in publication order; reports unmatched events separately. Single-follower runs only. Does not infer internal map/odom callback ordering."
+  },
+  "checks": {
+    "timer_completed": true,
+    "measured_duration_matches": true,
+    "source_hashes_unchanged": true,
+    "enough_samples": true,
+    "no_runtime_parent_failure": true,
+    "no_live_descendants": true,
+    "no_forced_shutdown": true,
+    "video_full_decode_passed": true,
+    "video_duration_matches": true,
+    "video_fps_matches": true,
+    "analysis_passed": true,
+    "no_child_or_cleanup_exception": true,
+    "blas_workers_bounded": true
+  },
+  "video": {
+    "encode_returncode": 0,
+    "fps": 15,
+    "requested_duration_s": 600,
+    "trim_offset_s": 50.670628786087036,
+    "source_file": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/camera_15fps.mp4",
+    "full_decode_returncode": 0,
+    "decoded_frames": 8999,
+    "duration_s": 599.9333333333333,
+    "duration_matches": true,
+    "bytes": 10118346,
+    "sha256": "f211e0b0dc3744bab35d790e79cb8fee733a778d8c1dd58223a7276d050d61dd"
+  },
+  "configuration": {
+    "reference_commit": "42966cb22b0f719df035391f3850b9a654f161e1",
+    "candidate_commit": "68701319b333165dd9cd5acf8e226ba52c174434",
+    "parameter_changes": {
+      "planner_parameters.yaml": {},
+      "follower_parameters.yaml": {}
+    },
+    "source_changes": {
+      "/home/lzz/my test/HT_Explo-fixposition/install_standalone/tare_planner/lib/tare_planner/xytheta_follower": {
+        "before": "b8c3ce8a4fcde0e68546b16a01318992855e4077d2e5d36240fe9fff7dc4e173",
+        "after": "830b823c91ab2adbd52145bf43207e3babe63555dcf3d726df902843a4b6ca02"
+      },
+      "/home/lzz/my test/HT_Explo-fixposition/install_standalone/tare_planner/lib/tare_planner/tare_planner_node": {
+        "before": "9fe9553ad459ed55fbf832d1433386f196daa334ba081becc733819e7cae902d",
+        "after": "dd2580785007917a2f9e5cf287605e65b81853e64acb820f0eb6d7f70efcbe92"
+      },
+      "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/src/ht_cost/ht_cost_map.cpp": {
+        "before": "c4e1f6bbd75f789e41ee1ba5037bd561cf7e5cece809d0b5848c29d96390c027",
+        "after": "ce45ea77a30841cbdba5b8c9e58a309ca914e1ce9c636b966f59aa02e881be42"
+      },
+      "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/include/ht_cost/ht_cost_map.h": {
+        "before": "7c1c6d2ea67b614db7cc9b489ae888928f07cc415950f0aa5ac6d8306566aa99",
+        "after": "4793508a2c174be4db1ac4b4a8181312923953592e1ab94e61615fb81f25b08d"
+      },
+      "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/src/viewpoint_manager/viewpoint_manager.cpp": {
+        "before": "932b5bb0b3b8ecde82fbf47b2ac97f5f7e06b6a15b7f57fe95ed285c4113a565",
+        "after": "d957b925c2baee1cdd5e27bb068b08b7b3737abfa6df3ad132340d470afc872d"
+      },
+      "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/include/viewpoint_manager/viewpoint_manager.h": {
+        "before": "7d7a8eb247eca71736a9e4dabea6ca028c74e7575389df7d5696ee41446bf2e4",
+        "after": "e4c701e2ae66e35a8071641729a93ada294c5a12a6d55c427da1cef1abf6b61d"
+      },
+      "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp": {
+        "before": "42bfba2fe5e3874805d77a56a268175111441dac610c248723738c60af6d2688",
+        "after": "9388e625ccdf375646d8b6da41e5d7fc7d24171c955ac3c05566e6b42ef52bcc"
+      },
+      "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/include/ht_cost/tare_waypoint_route.h": {
+        "before": "36f9e4d95512b894a3ae18b4e4a3d1dd28ec6f1d20a68b7a8ac770f7509465c3",
+        "after": "3d391fc1b7f7e799ae263304d728ff421ac9e8b950ce5fe9d7d2336d96416d66"
+      },
+      "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/CMakeLists.txt": {
+        "before": "d206eb13fdf55675b411aa791b58ac20eae11c976290a3f853a32cb792442b63",
+        "after": "d66eaa8a4edc63a1591a481a889074543c6b9e67c1ea8f21bff52bb80ce212e1"
+      }
+    },
+    "note": "All actual ROS parameters match stage40. Terrain graph snapshot and native HOME priority corrected; original six TARE method bodies unchanged."
+  },
+  "context_integrity": {
+    "completed_npz_files": 61,
+    "all_completed_npz_readable": true,
+    "history_snapshot_crc_passed": true,
+    "damaged_files": [],
+    "remaining_partial_files": [],
+    "passed": true,
+    "files": [
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792434600_714746880.npz",
+        "bytes": 1565319,
+        "sha256": "e39a87c3c55d6f2c7b2ec0e2ce47e08be7d19df20e3c1b2f35c5e2217652f977"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792434610_729800960.npz",
+        "bytes": 1569013,
+        "sha256": "b9197546c91fcae2c88ef5c1a3c3ede5943c7ec8ba99ebb7e2aedd54c01540cf"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792434620_814969856.npz",
+        "bytes": 1917930,
+        "sha256": "d21de1bb697933449ca5e83bc3bc0496ccfe00884dd6e831a23920b1f1f158ef"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792434630_819158528.npz",
+        "bytes": 1916533,
+        "sha256": "c5ed8f85dd39449b80116246994a56a48d6adeb35bf55d4b98871f1897091413"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792434640_819192320.npz",
+        "bytes": 1938200,
+        "sha256": "157bbe45dc011169ca1236717342dc4a18c8a8690d51718ae72265f88b23dd3f"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792434650_834139648.npz",
+        "bytes": 1922456,
+        "sha256": "2f8869ed788573913f6450ca7f3401151c057b5f51b0c7b477e84cf76290d5b2"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792434661_224152064.npz",
+        "bytes": 1896652,
+        "sha256": "64dae0d529b218ecc1d82a64afb94e81ddfc8051197f2f3c8526819a2e71623d"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792434671_234171392.npz",
+        "bytes": 1908879,
+        "sha256": "9ebd0328d0d6b4553c5e82bec9e3f44fff08eb8b9c2a27e4a761dd6afe44ec51"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792434681_834154752.npz",
+        "bytes": 1903775,
+        "sha256": "9106eee19af23e12c8cf184a04cba5503c41020d9568eefa52b9db11ae5221e2"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792434691_839178240.npz",
+        "bytes": 1935481,
+        "sha256": "3313374c66c3493ea12192bae3d87e1ab775451d21e54943bebb1917c10a1df6"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792434702_239150080.npz",
+        "bytes": 1946674,
+        "sha256": "3318d7b0f3bbd49bb6fdc07507aeda8690e940e2d3c700ff2c2960cbd4ed1885"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792434712_244100352.npz",
+        "bytes": 1951288,
+        "sha256": "7a6c256277c585804c6a837ff52ac5aae9737a277029b54a5e07a596d92b8f29"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792434722_249167360.npz",
+        "bytes": 1951501,
+        "sha256": "e683c6f4a024bff74daee7d8a83f790ea991b44f2ff679e88dbfe0f06212c555"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792434732_849161984.npz",
+        "bytes": 1969312,
+        "sha256": "a11127bd5841bfb4d151a22cbe6a3aee3a5a0a7c404746c4a6e634151574bd91"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792434742_854135040.npz",
+        "bytes": 1931013,
+        "sha256": "443f3fd829179ca6796e431164685a90074d1b971b37c89ebe1b5db84ac14627"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792434752_869159424.npz",
+        "bytes": 1954419,
+        "sha256": "e785778582f109008add71f9bc7fb8a94d1625adcfad56a0f173b955bc308093"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792434763_264162048.npz",
+        "bytes": 1924777,
+        "sha256": "ac751a6873b8f87d51f3f08a319f7675486bdd6536d28bf7fb33cb3e3dd8e2a1"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792434773_269167104.npz",
+        "bytes": 1920364,
+        "sha256": "bf55b6803898700d0f8f72320ca2c328755052b8d734310efb5f21d3541d6630"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792434783_874159360.npz",
+        "bytes": 1907629,
+        "sha256": "761e5a2cf74cfe5c0c42f2f98648a406e45b26a507f172b411982cc2b86efcf2"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792434794_274144768.npz",
+        "bytes": 1890291,
+        "sha256": "68a64d59a2c262aa1755cb0a53e8893e7b6211e6fadfaf8fa16ea14e03a34f42"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792434804_279164672.npz",
+        "bytes": 1914468,
+        "sha256": "a95b87f0b9bdb476943261e10e16112adf461c81097b6968121916f8510ab7e6"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792434814_284175872.npz",
+        "bytes": 1942126,
+        "sha256": "42a0a3a638218e11555c1f00fe8cf1da73b8b65dfcc3defc331ce947093b05b6"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792434824_289699584.npz",
+        "bytes": 1946166,
+        "sha256": "2cab134e8026aecbc07f330f0774388509871494834c3df6c4737aa1a122f27e"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792434834_294663936.npz",
+        "bytes": 1923948,
+        "sha256": "b56aa2e4232a1ea76e02d2d231cd5925a58e38a693832d08ff6b3504a39ea4f5"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792434844_299695616.npz",
+        "bytes": 1938554,
+        "sha256": "1d9f7ab8942a6374c1531580dcde0d05d3cb921ac35679272112ad5417b0a646"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792434854_336119296.npz",
+        "bytes": 1858271,
+        "sha256": "dcd867c36b0cb2ef412e15b74191e254f6f9226dfff88f09985c0d2734ef8e40"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792434864_736111360.npz",
+        "bytes": 1882293,
+        "sha256": "5e9a449f52ab00077f3bd4f1398639321d48863b7432f968f3d04363e1aef86f"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792434874_741069568.npz",
+        "bytes": 1902058,
+        "sha256": "6cd90619f0defabe3dd24dd2f2c534d58a76197b0c90376f6fbc498b61dc0157"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792434885_341078272.npz",
+        "bytes": 1903435,
+        "sha256": "200b0cf28115ce08c3f44a46ca9c23486af6afb45eda594b6bc73769bd6f0df4"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792434895_346115072.npz",
+        "bytes": 1881726,
+        "sha256": "0eb846da46f537cea8c2d36876127312e6a99bcf4e571bd7ad3e3e860681cfd0"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792434905_351120640.npz",
+        "bytes": 1901447,
+        "sha256": "e0ba9c0129c0cc94336a937e19b644d62420e35930188e8c4399af11ee916887"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792434915_751109376.npz",
+        "bytes": 1858206,
+        "sha256": "793a6a969699faab9e3733f166d9ad8f07fe5e62460e10572c864c4214f4a4db"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792434925_766101760.npz",
+        "bytes": 1863372,
+        "sha256": "718c4f823813d83b68985ee21e0459c74a0ef360540f175f6be0553b86acc68b"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792434936_361115648.npz",
+        "bytes": 1883371,
+        "sha256": "1da7850f9be60f06f4e0c54c594280fe4f3f6961da50f86c95a709f7e66405f5"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792434946_361131776.npz",
+        "bytes": 1924699,
+        "sha256": "b410af480a70c76371a52aa72c37a18af46b806d7037a3607e5bc1ce6be577a2"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792434956_366110720.npz",
+        "bytes": 1914402,
+        "sha256": "52f51b0cb0d6112f825a41a2313f7f3ca0ad629c72ed6f44fcf3c17736aa6777"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792434966_776113920.npz",
+        "bytes": 1888440,
+        "sha256": "c09704af7391ceeec3ce540a9f3b666e4094d2c6fce129b203f88b7acfd27b32"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792434976_776131840.npz",
+        "bytes": 1899449,
+        "sha256": "cc25d5896e955cbc78ac2fbd1a1f87529ec2ebf588088a4dedc84ad158cf8cc2"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792434987_176124672.npz",
+        "bytes": 1870809,
+        "sha256": "de32f86db54db023dadbc20acc0e7a266949e8773272ac23322e744e1ef68448"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792434997_376101376.npz",
+        "bytes": 1907863,
+        "sha256": "ce5e1c16b6a424a0cb720689e405c9e930c8f54c81453c7689cc5f7b519035e5"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792435007_786125824.npz",
+        "bytes": 1926704,
+        "sha256": "3b46712a1a52cada5d6c521dc96e5cd19b46db3e7b7f872d5cf1dff09989c658"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792435018_191094528.npz",
+        "bytes": 1935949,
+        "sha256": "1eed4db5e90d91182b9a70779dfddcb9ad36128a451b8b76ae042283483a6cd6"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792435028_791073024.npz",
+        "bytes": 1899338,
+        "sha256": "e2cc740011bee695c58121fcf5500c94a3bde2a2c937c9195f6db4b540a8a06b"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792435038_795481856.npz",
+        "bytes": 1907871,
+        "sha256": "87fd7fc06b57b87f83225e0706fb6fa4e31e8ee42b78cfe1b8942702f937f93f"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792435048_802541312.npz",
+        "bytes": 1922974,
+        "sha256": "a5894a0ecb130b54b7fd526577f819394c1558c0a3cc49a2cf3e7ed4cf8078cd"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792435059_285851904.npz",
+        "bytes": 1896574,
+        "sha256": "07ffb984fed5e336b1674beda3b629dc407b54c4a1304c877a6a7875e474ce6d"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792435069_864457472.npz",
+        "bytes": 1914541,
+        "sha256": "3bafb9ccab1f95570bff90d76aaa2dcdab24d48e0b70abd6274859ea4b092347"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792435079_869457664.npz",
+        "bytes": 1914002,
+        "sha256": "d31fe4c73a83f12e25bfae273125365bbf86adcfbd1041fb597e7eafefd4a8a0"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792435090_327179520.npz",
+        "bytes": 1905033,
+        "sha256": "89aba5069d33d0f4906c7ee1aa0ee897a2964fc950b72eaca9fb1b389deb94a0"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792435100_332162816.npz",
+        "bytes": 1906834,
+        "sha256": "aa6f006adb86fc083f4c58b9d42d9cafd0e9eb24e74f7e6335f6f2edce355569"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792435110_332167168.npz",
+        "bytes": 1939724,
+        "sha256": "ef24a5160d7fcaa715dcb9fa2296e29ab4d9c4cee192435877554a336a9675c2"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792435120_339442944.npz",
+        "bytes": 1912337,
+        "sha256": "a8860b923731eefc3d454261df79d78c54b530c40d8a8d1c05335324f5e49acd"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792435130_344395520.npz",
+        "bytes": 1888915,
+        "sha256": "f40fffcefa66485df23d9494d3ecc7933a643698b20950c9fc1f3bc1e36c7891"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792435140_349455872.npz",
+        "bytes": 1918760,
+        "sha256": "6923e4fdd5dd662f4511a0c58aef335434c33b39df040b15f20a4772d0910738"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792435150_354451712.npz",
+        "bytes": 1915792,
+        "sha256": "0313df063548cb4a532703f7cb2a7f6ef19d532e619da10c68d2092b3497addb"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792435160_764448256.npz",
+        "bytes": 1928451,
+        "sha256": "5d6e9fe9ac7afc85c9db5602984aebf2b92efc611fd42cdccd3ebfb6a305ab04"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792435171_359443968.npz",
+        "bytes": 1908274,
+        "sha256": "8634af982c6c2650a9b4b7c65e679aaa6892afa915ad63d019a8b93292023f42"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792435181_759427840.npz",
+        "bytes": 1909257,
+        "sha256": "38e412c1463f652b437eb9060e2c911ac9932f3e78a9a89077719f45c903222f"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792435191_774429952.npz",
+        "bytes": 1945349,
+        "sha256": "a41df9dd1de8307af6ca90d378d25e01a1711910d483cb6beaf099f579db8459"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792435202_369432064.npz",
+        "bytes": 1955472,
+        "sha256": "5a991bc29fe17a647692294f2428ddccc1b9d6e3f24d7120e6f4b11e7ca257f9"
+      },
+      {
+        "file": "presentations/scheduled_results/ht_tare_boundaries_10min_2026-10-20_02-29-24/garage/current/inference_context/1792435212_369437696.npz",
+        "bytes": 1923724,
+        "sha256": "c8d69d5f69984d4e3f419d48e8065133a9a8fe0fbd4c58ece7e3a93e7dccfe94"
+      }
+    ],
+    "limitations": "ZIP CRC and final-file completeness only; semantic map/model agreement is checked separately."
+  },
+  "ht_map_age_s": {
+    "count": 600,
+    "median": 0.6394894123077393,
+    "p95": 0.7430419325828552,
+    "max": 1.2456417083740234
+  },
+  "last60_gain_m3": 671.6452191288017,
+  "volume_pct_vs40": 2.2809141372386987,
+  "volume_pct_vs39": 33.58206077433288
+}

@@ -1,0 +1,16 @@
+subscribers:
+  cmu_scan:
+    topic_name: /registered_scan
+    data_type: pointcloud
+    registered_cloud_sensor_frame: sensor
+    qos_reliability: reliable
+    queue_depth: 30
+publishers:
+  elevation_map_raw:
+    layers:
+    - elevation
+    - variance
+    - observation_age
+    basic_layers:
+    - elevation
+    fps: 2.0

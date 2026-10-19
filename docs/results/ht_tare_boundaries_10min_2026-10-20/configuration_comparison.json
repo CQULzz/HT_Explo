@@ -1,0 +1,47 @@
+{
+  "reference_commit": "42966cb22b0f719df035391f3850b9a654f161e1",
+  "candidate_commit": "68701319b333165dd9cd5acf8e226ba52c174434",
+  "parameter_changes": {
+    "planner_parameters.yaml": {},
+    "follower_parameters.yaml": {}
+  },
+  "source_changes": {
+    "/home/lzz/my test/HT_Explo-fixposition/install_standalone/tare_planner/lib/tare_planner/xytheta_follower": {
+      "before": "b8c3ce8a4fcde0e68546b16a01318992855e4077d2e5d36240fe9fff7dc4e173",
+      "after": "830b823c91ab2adbd52145bf43207e3babe63555dcf3d726df902843a4b6ca02"
+    },
+    "/home/lzz/my test/HT_Explo-fixposition/install_standalone/tare_planner/lib/tare_planner/tare_planner_node": {
+      "before": "9fe9553ad459ed55fbf832d1433386f196daa334ba081becc733819e7cae902d",
+      "after": "dd2580785007917a2f9e5cf287605e65b81853e64acb820f0eb6d7f70efcbe92"
+    },
+    "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/src/ht_cost/ht_cost_map.cpp": {
+      "before": "c4e1f6bbd75f789e41ee1ba5037bd561cf7e5cece809d0b5848c29d96390c027",
+      "after": "ce45ea77a30841cbdba5b8c9e58a309ca914e1ce9c636b966f59aa02e881be42"
+    },
+    "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/include/ht_cost/ht_cost_map.h": {
+      "before": "7c1c6d2ea67b614db7cc9b489ae888928f07cc415950f0aa5ac6d8306566aa99",
+      "after": "4793508a2c174be4db1ac4b4a8181312923953592e1ab94e61615fb81f25b08d"
+    },
+    "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/src/viewpoint_manager/viewpoint_manager.cpp": {
+      "before": "932b5bb0b3b8ecde82fbf47b2ac97f5f7e06b6a15b7f57fe95ed285c4113a565",
+      "after": "d957b925c2baee1cdd5e27bb068b08b7b3737abfa6df3ad132340d470afc872d"
+    },
+    "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/include/viewpoint_manager/viewpoint_manager.h": {
+      "before": "7d7a8eb247eca71736a9e4dabea6ca028c74e7575389df7d5696ee41446bf2e4",
+      "after": "e4c701e2ae66e35a8071641729a93ada294c5a12a6d55c427da1cef1abf6b61d"
+    },
+    "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp": {
+      "before": "42bfba2fe5e3874805d77a56a268175111441dac610c248723738c60af6d2688",
+      "after": "9388e625ccdf375646d8b6da41e5d7fc7d24171c955ac3c05566e6b42ef52bcc"
+    },
+    "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/include/ht_cost/tare_waypoint_route.h": {
+      "before": "36f9e4d95512b894a3ae18b4e4a3d1dd28ec6f1d20a68b7a8ac770f7509465c3",
+      "after": "3d391fc1b7f7e799ae263304d728ff421ac9e8b950ce5fe9d7d2336d96416d66"
+    },
+    "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/CMakeLists.txt": {
+      "before": "d206eb13fdf55675b411aa791b58ac20eae11c976290a3f853a32cb792442b63",
+      "after": "d66eaa8a4edc63a1591a481a889074543c6b9e67c1ea8f21bff52bb80ce212e1"
+    }
+  },
+  "note": "All actual ROS parameters match stage40. Terrain graph snapshot and native HOME priority corrected; original six TARE method bodies unchanged."
+}

@@ -20,7 +20,7 @@ def main():
  data=[load(v) for v in a.run];colors=['#63768a','#e09335','#187e78'];plt.rcParams.update({'font.family':'Noto Sans CJK JP','axes.unicode_minus':False,'axes.spines.top':False,'axes.spines.right':False})
  fig,axes=plt.subplots(2,3,figsize=(17,9),layout='constrained');minute=np.arange(0,601,60)
  for i,(r,c) in enumerate(zip(data,colors)):
-  axes[0,0].plot(r['vt']/60,r['v'],color=c,label=r['label'],lw=2);axes[0,0].annotate(f"{r['v'][-1]:.0f}",(10,r['v'][-1]),xytext=(-5,5),textcoords='offset points',ha='right',color=c)
+  axes[0,0].plot(r['vt']/60,r['v'],color=c,label=r['label'],lw=2);axes[0,0].annotate(f"{r['v'][-1]:.0f}",(10,r['v'][-1]),xytext=(-5,-12 if i==1 else 5),textcoords='offset points',ha='right',color=c)
   marginal=np.diff(np.interp(minute,r['vt'],r['v']));axes[0,1].bar(np.arange(1,11)+(i-(len(data)-1)/2)*.24,marginal,width=.23,color=c,label=r['label'])
   axes[0,2].plot(r['t']/60,r['d'],color=c,label=r['label'],lw=2)
   bins=np.arange(0,601,10);values=[np.mean(r['speed'][(r['t']>=lo)&(r['t']<hi)]) for lo,hi in zip(bins,bins[1:])]
@@ -28,8 +28,8 @@ def main():
   ev=r['e'];fractions=[1-ev['fully_stopped_fraction']-ev['stationary_turn_fraction']-ev['reverse_command_fraction'],ev['reverse_command_fraction'],ev['stationary_turn_fraction'],ev['fully_stopped_fraction']];bottom=0
   for value,label,color in zip(fractions,['前进','倒车','原地转向/对齐','完全停车'],['#187e78','#718eb5','#e5ab42','#bb514f']):
    axes[1,1].bar(i,value,bottom=bottom,color=color,label=label if i==0 else None);bottom+=value
-  sampled=np.interp(r['vt'],r['t'],r['d']);axes[1,2].plot(sampled,r['v']-r['v'][0],lw=2,color=c,label=r['label'])
- for ax,title,xlabel,ylabel in [(axes[0,0],'累计观测自由体积','时间 / 分钟','m³'),(axes[0,1],'每分钟新增观测','第几分钟','m³'),(axes[0,2],'实际累计里程','时间 / 分钟','m'),(axes[1,0],'平均平移速度（每10秒）','时间 / 分钟','m/s'),(axes[1,2],'扣除首帧后新增观测与里程','实际里程 / m','m³')]:
+  sampled=np.interp(r['vt'],r['t'],r['d']);initial=r['v'][np.flatnonzero(r['v']>0)[0]];axes[1,2].plot(sampled,np.maximum(0,r['v']-initial),lw=2,color=c,label=r['label'])
+ for ax,title,xlabel,ylabel in [(axes[0,0],'累计观测自由体积','时间 / 分钟','m³'),(axes[0,1],'每分钟新增观测','第几分钟','m³'),(axes[0,2],'实际累计里程','时间 / 分钟','m'),(axes[1,0],'平均平移速度（每10秒）','时间 / 分钟','m/s'),(axes[1,2],'扣除首个观测帧后的新增量','实际里程 / m','m³')]:
   ax.set(title=title,xlabel=xlabel,ylabel=ylabel);ax.grid(alpha=.2);ax.legend(fontsize=8)
  axes[1,1].set(title='全部控制指令的运动组成',xticks=range(len(data)),xticklabels=[r['label'] for r in data],ylim=(0,1.08),ylabel='比例');axes[1,1].legend(fontsize=8,loc='upper center')
  fig.suptitle('同车库、同运动上限、完整600秒：原TARE访问顺序与HT局部路由\n每版本一次闭环；近似观测量，不是物理覆盖真值或单项因果收益',fontsize=15)

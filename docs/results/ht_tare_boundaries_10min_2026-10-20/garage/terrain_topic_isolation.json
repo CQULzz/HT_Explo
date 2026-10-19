@@ -1,0 +1,29 @@
+{
+  "/terrain_map": {
+    "publishers": [],
+    "subscribers": [
+      "tare_planner_node"
+    ]
+  },
+  "/terrain_map_ext": {
+    "publishers": [],
+    "subscribers": [
+      "tare_planner_node"
+    ]
+  },
+  "/simulation/terrain_map": {
+    "publishers": [
+      "terrainAnalysis"
+    ],
+    "subscribers": [
+      "terrainAnalysisExt",
+      "vehicleSimulator"
+    ]
+  },
+  "/simulation/terrain_map_ext": {
+    "publishers": [
+      "terrainAnalysisExt"
+    ],
+    "subscribers": []
+  }
+}
