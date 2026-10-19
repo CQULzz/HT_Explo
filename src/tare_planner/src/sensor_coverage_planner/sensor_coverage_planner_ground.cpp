@@ -10,6 +10,7 @@
  */
 
 #include "sensor_coverage_planner/sensor_coverage_planner_ground.h"
+#include "ht_cost/tare_waypoint_route.h"
 #include "graph/graph.h"
 #include <memory>
 #include <tf2/LinearMath/Matrix3x3.h>
@@ -1095,6 +1096,11 @@ bool SensorCoveragePlanner3D::GetLookAheadPoint(
     // Preserve that flag for its next TSP while validating the actual output.
     lookahead_point=Eigen::Vector3d::Constant(std::numeric_limits<double>::quiet_NaN());
     tare_native_lookahead_update_=GetTareLookAheadPoint(local_path,global_path,lookahead_point);
+    const auto goal=ht_cost_ns::effectiveTareLookahead(
+      {lookahead_point.x(),lookahead_point.y(),lookahead_point.z()},
+      exploration_finished_ && near_home_ && kRushHome,
+      {initial_position_.x(),initial_position_.y(),initial_position_.z()});
+    lookahead_point=Eigen::Vector3d(goal.x,goal.y,goal.z);
     return lookahead_point.allFinite();
   }
 
@@ -1731,7 +1737,7 @@ void SensorCoveragePlanner3D::execute() {
     double current_time = this->now().seconds();
     double delta_time = current_time - start_time_;
 
-    if (viewpoint_manager_->HT()->enabled() && !exploration_finished_) {
+    if (viewpoint_manager_->HT()->enabled() && !viewpoint_manager_->HT()->tareCoverage() && !exploration_finished_) {
       const auto& g=grid_world_->GetTourAudit();
       const auto& c=local_coverage_planner_->GetCompletionAudit();
       RCLCPP_INFO(this->get_logger(),
@@ -1743,6 +1749,11 @@ void SensorCoveragePlanner3D::execute() {
         c.raw_gain_candidates,c.raw_frontier_candidates,c.min_points,c.min_frontier,
         c.output_target,c.output_gain,c.output_frontier,local_coverage_planner_->GetHTPath().poses.size(),grid_world_->PendingHTCoverageCells());
     }
+
+    if(ht->tareCoverage() && !exploration_finished_)
+      RCLCPP_INFO(get_logger(),"TARE_COMPLETION global_return=%d local_complete=%d global_order_nodes=%zu local_route_nodes=%zu uncovered=%d frontier=%d",
+        grid_world_->IsReturningHome(),local_coverage_planner_->IsLocalCoverageComplete(),
+        global_cell_tsp_order.size(),local_path.nodes_.size(),uncovered_point_num,uncovered_frontier_point_num);
 
     const bool unresolved_ht_coverage=ht->enabled() && !ht->tareCoverage() && grid_world_->PendingHTCoverageCells()>0;
     if (unresolved_ht_coverage && grid_world_->IsReturningHome() &&
@@ -1772,7 +1783,8 @@ void SensorCoveragePlanner3D::execute() {
       // Native tour and native lookahead remain untouched. Only execution
       // success gates permission; it cannot choose another coverage target.
       const bool native_valid=lookahead_point_update_;
-      lookahead_point_update_=RouteTareWaypoint(tare_native_lookahead_update_ ? exploration_path_ : global_path) && native_valid;
+      lookahead_point_update_=RouteTareWaypoint((tare_native_lookahead_update_ ||
+        (exploration_finished_ && near_home_ && kRushHome)) ? exploration_path_ : global_path) && native_valid;
     }
     last_plan_=this->now().seconds();
     PublishWaypoint();

@@ -20,6 +20,7 @@ class HtCostMap {
   std::vector<TerrainCell> terrainWindow(double x,double y,double radius);
   // Unknown historical guidance cells stay optimistic; execution is strict.
   bool terrainAdmissible(double x,double y);
+  std::vector<bool> terrainAdmissible(const std::vector<Point>& points);
   void beginCycle();
   bool ready() const;
   std::string status() const;

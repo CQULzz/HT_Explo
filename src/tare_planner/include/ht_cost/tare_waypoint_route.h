@@ -1,6 +1,9 @@
 #pragma once
 #include "ht_cost/ht_cost_core.h"
 namespace ht_cost_ns {
+inline Point effectiveTareLookahead(Point raw,bool rush_home,Point home) {
+  return rush_home ? home : raw;
+}
 // A TARE tour can contain the robot twice (a closed local TSP). Choose a
 // contiguous branch ending at the exact native lookahead; never clip toward
 // a remote endpoint through a bend in the tour.

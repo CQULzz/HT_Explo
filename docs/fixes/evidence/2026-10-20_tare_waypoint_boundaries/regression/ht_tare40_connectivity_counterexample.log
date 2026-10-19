@@ -1,0 +1,28 @@
+Running main() from /opt/ros/jazzy/src/gtest_vendor/src/gtest_main.cc
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from TareTerrainConnectivity
+[ RUN      ] TareTerrainConnectivity.KnownBlockedBandCannotYieldConnectedCandidate
+[INFO] [1792433609.322427402] [tare_planner_node]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0 scores=configuration
+BAND_PROBE target_connected=1 target_candidate=1
+BAND_PROBE falsely_connected_shortest_path_poses=0
+/tmp/ht_tare_connectivity_probe.cpp:47: Failure
+Value of: manager.ViewPointConnected(target)
+  Actual: true
+Expected: false
+
+/tmp/ht_tare_connectivity_probe.cpp:47: Failure
+Value of: manager.IsViewPointCandidate(target)
+  Actual: true
+Expected: false
+
+[  FAILED  ] TareTerrainConnectivity.KnownBlockedBandCannotYieldConnectedCandidate (1164 ms)
+[----------] 1 test from TareTerrainConnectivity (1164 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (1164 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] TareTerrainConnectivity.KnownBlockedBandCannotYieldConnectedCandidate
+
+ 1 FAILED TEST

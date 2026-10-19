@@ -254,6 +254,14 @@ bool HtCostMap::terrainAdmissible(double x,double y) {
   auto it=terrain_history_.find({static_cast<int>(std::floor(x/.2)),static_cast<int>(std::floor(y/.2))});
   return it==terrain_history_.end() || it->second.feasible;
 }
+std::vector<bool> HtCostMap::terrainAdmissible(const std::vector<Point>& points) {
+  std::lock_guard<std::mutex> lock(mutex_);std::vector<bool> allowed;allowed.reserve(points.size());
+  for(const auto& p:points) {
+    auto it=terrain_history_.find({static_cast<int>(std::floor(p.x/.2)),static_cast<int>(std::floor(p.y/.2))});
+    allowed.push_back(it==terrain_history_.end() || it->second.feasible);
+  }
+  return allowed;
+}
 void HtCostMap::beginCycle() {
   std::lock_guard<std::mutex> lock(mutex_);
   cycle_=latest_;cycle_error_=latest_error_;

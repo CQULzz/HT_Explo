@@ -832,10 +832,18 @@ bool ViewPointManager::InRobotFOV(const Eigen::Vector3d& position)
   return InFOV(position, robot_position_);
 }
 
+void ViewPointManager::RefreshHTTerrainMask() {
+  std::vector<ht_cost_ns::Point> points;points.reserve(vp_.kViewPointNumber);
+  for(int i=0;i<vp_.kViewPointNumber;++i) {
+    const auto p=GetViewPointPosition(i);points.push_back({p.x,p.y,p.z});
+  }
+  ht_terrain_allowed_=ht_map_->terrainAdmissible(points);
+}
 void ViewPointManager::CheckViewPointConnectivity()
 {
   if (!initialized_)
     return;
+  if(ht_map_->tareCoverage()) RefreshHTTerrainMask();
   Eigen::Vector3i robot_sub = GetViewPointSub(robot_position_);
   MY_ASSERT(grid_->InRange(robot_sub));
   int robot_ind = grid_->Sub2Ind(robot_sub);
@@ -891,6 +899,11 @@ void ViewPointManager::CheckViewPointConnectivity()
       {
         std::cout << "ViewPointManager::CheckViewPointConnectivity: neighbor ind out of bound" << std::endl;
         continue;
+      }
+      if(ht_map_->tareCoverage() && !ht_terrain_allowed_[neighbor_ind]) {
+        // Vertex removal must be seen by connectivity and candidate building
+        // on the same snapshot. It is not an edge-dependent geometry failure.
+        checked[neighbor_ind]=true;continue;
       }
       // A blocked diagonal is an edge failure: another parent may still
       // reach this neighbor, so do not mark it checked on this attempt.
@@ -1291,6 +1304,8 @@ void ViewPointManager::UpdateViewPointCoveredFrontierPoint(std::vector<bool>& fr
 
 int ViewPointManager::GetViewPointCandidate()
 {
+  if(ht_map_->tareCoverage() && ht_terrain_allowed_.size()!=static_cast<size_t>(vp_.kViewPointNumber))
+    RefreshHTTerrainMask();
   viewpoint_candidate_cloud_->clear();
   viewpoint_in_collision_cloud_->clear();
   candidate_indices_.clear();
@@ -1298,9 +1313,7 @@ int ViewPointManager::GetViewPointCandidate()
   for (int i = 0; i < vp_.kViewPointNumber; i++)
   {
     SetViewPointCandidate(i, false);
-    const auto terrain_position=GetViewPointPosition(i);
-    const bool terrain_allowed=!ht_map_->tareCoverage() ||
-      ht_map_->terrainAdmissible(terrain_position.x,terrain_position.y);
+    const bool terrain_allowed=!ht_map_->tareCoverage() || ht_terrain_allowed_[i];
     if (terrain_allowed && !ViewPointInCollision(i) && ViewPointInLineOfSight(i) && ViewPointConnected(i))
     {
       SetViewPointCandidate(i, true);

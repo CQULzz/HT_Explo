@@ -18,6 +18,17 @@ void check(bool condition) {
 }
 void near(double a,double b) { check(std::abs(a-b)<1e-5); }
 int main() {
+  // Upstream rush-home publishes HOME even if native lookahead returns false
+  // and leaves the output absent inside its 8/5 m local-short threshold.
+  const Point no_lookahead{NAN,NAN,NAN},home_goal{0,0,.75};
+  const auto effective=effectiveTareLookahead(no_lookahead,true,home_goal);
+  near(effective.x,0);near(effective.y,0);near(effective.z,.75);
+  check(!std::isfinite(effectiveTareLookahead(no_lookahead,false,home_goal).x));
+  near(effectiveTareLookahead({5,2,.75},true,home_goal).x,0);
+  near(effectiveTareLookahead({5,2,.75},false,home_goal).x,5);
+  const auto home_goal_branch=tareBranch({{1.2,0,.75},effective},{true,false},home_goal);
+  check(home_goal_branch.size()==2);near(tarePrefix(home_goal_branch,4.).x,0);
+
   // U-shaped native route: a remote target must not be clipped diagonally.
   const std::vector<Point> u{{0,0,0},{0,3,0},{3,3,0},{3,0,0}};
   auto branch=tareBranch(u,{true,false,false,false},{3,0,0});

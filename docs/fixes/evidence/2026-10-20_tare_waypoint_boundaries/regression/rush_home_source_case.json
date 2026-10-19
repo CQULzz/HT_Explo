@@ -1,0 +1,20 @@
+{
+  "assessment": "source-condition counterexample, not observed during the 600s EXPLORING trial",
+  "robot_distance_home_m": 1.2,
+  "native_rush_home": true,
+  "near_home_threshold_m": 10.0,
+  "lookahead_distance_m": 8.0,
+  "local_route": [
+    "ROBOT",
+    "HOME"
+  ],
+  "global_route": [
+    "ROBOT",
+    "HOME"
+  ],
+  "local_route_too_short": true,
+  "global_fallback_never_assigns_goal": true,
+  "native_publish_waypoint": "HOME regardless of GetLookAheadPoint return flag",
+  "candidate_wrapper": "unassigned nonfinite lookahead -> no HT route -> hold",
+  "expected": "retain original rush-home priority before local routing"
+}

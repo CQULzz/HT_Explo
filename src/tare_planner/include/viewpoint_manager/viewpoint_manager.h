@@ -152,6 +152,8 @@ public:
   bool InFOVAndRange(const Eigen::Vector3d& point_position, const Eigen::Vector3d& viewpoint_position);
   bool InRobotFOV(const Eigen::Vector3d& position);
   void CheckViewPointConnectivity();
+  void RefreshHTTerrainMask();
+  std::vector<bool> ht_terrain_allowed_;
   void UpdateViewPointVisited(const std::vector<Eigen::Vector3d>& positions);
   void UpdateViewPointVisited(std::shared_ptr<grid_world_ns::GridWorld> const& grid_world);
   void SetViewPointHeightWithTerrain(const pcl::PointCloud<pcl::PointXYZI>::Ptr& terrain_cloud,
