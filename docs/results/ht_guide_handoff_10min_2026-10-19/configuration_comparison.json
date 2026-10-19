@@ -1,0 +1,32 @@
+{
+  "reference_commit": "d6d87878a4e8982e3a4850a5a17f8e1be1608a24",
+  "candidate_commit": "16bdbe4cb1fddd632d061a5710c3e7b294971891",
+  "effective_parameters_equal": {
+    "planner_parameters.yaml": true,
+    "follower_parameters.yaml": true
+  },
+  "changed_manifest_entries": {
+    "/home/lzz/my test/HT_Explo-fixposition/install_standalone/tare_planner/lib/tare_planner/tare_planner_node": {
+      "before": "b1639be7a911136f5bbc3e7072c9690a7cd10083d7a133974a5a7f1b5de7767d",
+      "after": "c769aec1dd31b093f320234b7bf4ca02dfea83d55374ec916d9abe9f58f7be7e"
+    },
+    "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/include/local_coverage_planner/local_coverage_planner.h": {
+      "before": "e15fe21737d2cf8614e49f124db018eb7bb311ad496f340e5bf5fdbd14264acf",
+      "after": "10e69bd804ec3219f9ee69d6ce024be017f93bcd97cb7bedc68e906e8664a430"
+    },
+    "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/include/ht_cost/exploration_progress.h": {
+      "before": "43eced1c1bd510cfe868bbbfb96256b70f9bb22294410330cf92123d8d31d331",
+      "after": "69de16bd26e6e0e8e8bab827c4a9dce463667f99026dd5c7fd280166f252c1b5"
+    },
+    "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp": {
+      "before": "22301f4544ec275fa082aaa223e2ae1550c3298cb011d0a346bbad2f72f5552c",
+      "after": "aa88c5af669e703c5182959487808d76fbc46b0935ddfe7d897a8d34a126de8d"
+    },
+    "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp": {
+      "before": "ee2624d3e37891cf314706f14a6dea862b729a722e3d9d67c00378ccb8308afe",
+      "after": "1cd24a354b2cccdba3ccbf70162dc4b6c4bde3a69c7ae3f01dfaf5020303a922"
+    }
+  },
+  "unchanged_entries": 60,
+  "scope": "Four navigation sources/headers and planner binary changed. HT, mapper, follower, model, rates and all effective parameters unchanged. Task identity and world status preserve pending guidance through tour omission; progress watchdog retained."
+}

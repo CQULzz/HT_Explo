@@ -1,0 +1,14 @@
+{
+  "radius_m": 0.8414213562373094,
+  "collision_point_threshold": 1,
+  "configured_height_window_m": [
+    -0.5,
+    0.5
+  ],
+  "configured_margin_m": 0.7,
+  "first_observed_margin_overlap": null,
+  "overlap_samples": 0,
+  "moving_predictions_inside_margin": 0,
+  "samples": 577,
+  "limitations": "Uses bag arrival order, latest received odometry/command and measured collision-cloud points in robot height slice. Does not reproduce planner collision-grid bounds or exact callback state. Predicted arc uses last received constant Twist, not controller internal candidate or simulator braking. Margin overlap is not physical vehicle contact. Sample lag/point noise may contribute; cannot separate them without independent truth."
+}

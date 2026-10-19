@@ -1,0 +1,277 @@
+{
+  "tested_git_head": "16bdbe4cb1fddd632d061a5710c3e7b294971891",
+  "raw_run": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_guide_handoff_10min_2026-10-19_14-37-26",
+  "recording_scope": "All control/status and odometry, full-rate published HT maps and TARE collision geometry; original-stamped scans1Hz; exact-stamp map triplets and network inputs/outputs every10s; camera15fps. Raw CuPy and scans are not fully bagged.",
+  "metrics": {
+    "scan_selection": "source_second",
+    "observed_free_volume_m3": 5807.0,
+    "processed_volume_scans": 600,
+    "skipped_volume_scans": 0,
+    "recorded_scans_in_source_time_window": 600,
+    "sensor_position_source": "nearest sensor-frame state_estimation (common to both systems)",
+    "pose_time_offset_max_s": 2.384185791015625e-07,
+    "command_samples": 11995,
+    "fully_stopped_fraction": 0.037348895373072115,
+    "stationary_turn_fraction": 0.20291788245102127,
+    "reverse_command_fraction": 0.0,
+    "max_abs_linear_command_mps": 0.5,
+    "max_abs_yaw_command_rps": 0.8,
+    "longest_zero_command_s": 1.4002881526947022,
+    "follower_status_samples": {
+      "TURNING": 2434,
+      "ALIGNING": 67,
+      "DRIVING": 9113,
+      "GOAL_REACHED": 347,
+      "GEOMETRY_COMMAND_BLOCKED": 1,
+      "EMPTY_PATH": 32,
+      "HT_PATH_BLOCKED": 1
+    },
+    "longest_no_translation_command_s": 4.350297260284424,
+    "last_translation_s": 600.001,
+    "distance_last60_m": 21.660499999999985
+  },
+  "mission": {
+    "first_exploration_finished_sample_s": null,
+    "sampled_mission_counts": {
+      "EXPLORING": 600
+    },
+    "first_completed_sample_s": null,
+    "last_sampled_mission": "EXPLORING",
+    "last_sampled_execution_status": "HT_ASSISTED",
+    "final_distance_to_measurement_start_m": 33.316000630327764,
+    "meaning": "Exploration finished is a return-home trigger. Only mission COMPLETED confirms the home radius, low-speed and dwell checks; neither establishes ground-truth full coverage."
+  },
+  "search": {
+    "count": 884,
+    "termination": {
+      "REACHED": 803,
+      "TIME_LIMIT": 81
+    },
+    "direct_connections": 749,
+    "elapsed_s": {
+      "p50": 0.000625,
+      "p95": 0.1514093,
+      "max": 0.204867
+    },
+    "expanded_max": 1184.0,
+    "geometry_cpu_wall_fraction": 0.8987845093959801,
+    "rejection_counts": {
+      "geometry_reject": 12499.0,
+      "ht_reject": 75870.0,
+      "memory_reject": 0.0,
+      "reserve_reject": 0.0
+    }
+  },
+  "geometry": {
+    "radius_m": 0.8414213562373094,
+    "collision_point_threshold": 1,
+    "configured_height_window_m": [
+      -0.5,
+      0.5
+    ],
+    "configured_margin_m": 0.7,
+    "first_observed_margin_overlap": null,
+    "overlap_samples": 0,
+    "moving_predictions_inside_margin": 0,
+    "samples": 577,
+    "limitations": "Uses bag arrival order, latest received odometry/command and measured collision-cloud points in robot height slice. Does not reproduce planner collision-grid bounds or exact callback state. Predicted arc uses last received constant Twist, not controller internal candidate or simulator braking. Margin overlap is not physical vehicle contact. Sample lag/point noise may contribute; cannot separate them without independent truth."
+  },
+  "blocked_command_audit": {
+    "source": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_guide_handoff_10min_2026-10-19_14-37-26/garage",
+    "status_counts": {
+      "TURNING": 2434,
+      "ALIGNING": 67,
+      "DRIVING": 9113,
+      "GOAL_REACHED": 347,
+      "GEOMETRY_COMMAND_BLOCKED": 1,
+      "EMPTY_PATH": 32,
+      "HT_PATH_BLOCKED": 1
+    },
+    "paired_status_counts": {
+      "GOAL_REACHED": 347,
+      "DRIVING": 2,
+      "GEOMETRY_COMMAND_BLOCKED": 1,
+      "EMPTY_PATH": 32,
+      "HT_PATH_BLOCKED": 1
+    },
+    "unmatched_command_rejections": 0,
+    "blocked_nonzero_count": 0,
+    "events": [],
+    "geometry_nonzero_count": 0,
+    "geometry_events": [],
+    "unmatched_geometry_rejections": {
+      "GEOMETRY_COMMAND_BLOCKED": 0
+    },
+    "caveat": "Matches each late hold to its preceding command within20ms in publication order; reports unmatched events separately. Single-follower runs only. Does not infer internal map/odom callback ordering."
+  },
+  "checks": {
+    "timer_completed": true,
+    "measured_duration_matches": true,
+    "source_hashes_unchanged": true,
+    "enough_samples": true,
+    "no_runtime_parent_failure": true,
+    "no_live_descendants": true,
+    "no_forced_shutdown": true,
+    "video_full_decode_passed": true,
+    "video_duration_matches": true,
+    "video_fps_matches": true,
+    "analysis_passed": true,
+    "no_child_or_cleanup_exception": true,
+    "blas_workers_bounded": true
+  },
+  "video": {
+    "encode_returncode": 0,
+    "fps": 15,
+    "requested_duration_s": 600,
+    "trim_offset_s": 53.062034130096436,
+    "source_file": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_guide_handoff_10min_2026-10-19_14-37-26/garage/camera_15fps.mp4",
+    "full_decode_returncode": 0,
+    "decoded_frames": 9000,
+    "duration_s": 600.0,
+    "duration_matches": true,
+    "bytes": 8982784,
+    "sha256": "f6943e419baf3f564c016f5b37e5887a1fa0704148fae5e939d7890aba07adba"
+  },
+  "configuration": {
+    "reference_commit": "d6d87878a4e8982e3a4850a5a17f8e1be1608a24",
+    "candidate_commit": "16bdbe4cb1fddd632d061a5710c3e7b294971891",
+    "effective_parameters_equal": {
+      "planner_parameters.yaml": true,
+      "follower_parameters.yaml": true
+    },
+    "changed_manifest_entries": {
+      "/home/lzz/my test/HT_Explo-fixposition/install_standalone/tare_planner/lib/tare_planner/tare_planner_node": {
+        "before": "b1639be7a911136f5bbc3e7072c9690a7cd10083d7a133974a5a7f1b5de7767d",
+        "after": "c769aec1dd31b093f320234b7bf4ca02dfea83d55374ec916d9abe9f58f7be7e"
+      },
+      "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/include/local_coverage_planner/local_coverage_planner.h": {
+        "before": "e15fe21737d2cf8614e49f124db018eb7bb311ad496f340e5bf5fdbd14264acf",
+        "after": "10e69bd804ec3219f9ee69d6ce024be017f93bcd97cb7bedc68e906e8664a430"
+      },
+      "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/include/ht_cost/exploration_progress.h": {
+        "before": "43eced1c1bd510cfe868bbbfb96256b70f9bb22294410330cf92123d8d31d331",
+        "after": "69de16bd26e6e0e8e8bab827c4a9dce463667f99026dd5c7fd280166f252c1b5"
+      },
+      "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp": {
+        "before": "22301f4544ec275fa082aaa223e2ae1550c3298cb011d0a346bbad2f72f5552c",
+        "after": "aa88c5af669e703c5182959487808d76fbc46b0935ddfe7d897a8d34a126de8d"
+      },
+      "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp": {
+        "before": "ee2624d3e37891cf314706f14a6dea862b729a722e3d9d67c00378ccb8308afe",
+        "after": "1cd24a354b2cccdba3ccbf70162dc4b6c4bde3a69c7ae3f01dfaf5020303a922"
+      }
+    },
+    "unchanged_entries": 60,
+    "scope": "Four navigation sources/headers and planner binary changed. HT, mapper, follower, model, rates and all effective parameters unchanged. Task identity and world status preserve pending guidance through tour omission; progress watchdog retained."
+  },
+  "context_integrity": {
+    "completed_npz_files": 61,
+    "all_completed_npz_readable": true,
+    "history_snapshot_crc_passed": true,
+    "damaged_files": [],
+    "remaining_partial_files": [],
+    "passed": true,
+    "limitations": "ZIP CRC and final-file completeness only; semantic map/model agreement is checked separately."
+  },
+  "ht_map_age_s": {
+    "count": 600,
+    "median": 0.726473331451416,
+    "p95": 0.8221019864082336,
+    "max": 1.78965425491333
+  },
+  "guide_handoff": {
+    "source": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_guide_handoff_10min_2026-10-19_14-37-26/garage",
+    "log_sha256": "328bd5c7c0154e0ad66f3b7073987ce88101bb459fe8d0691263b9553c06713d",
+    "guide_switches": 6,
+    "global_switches_last_known_pending": 3,
+    "late_300_540_switches": 4,
+    "delegated_pending_cycles": 221,
+    "global_state_rows": 476,
+    "logged_plan_rows": 394,
+    "zero_gain_plan_rows": 306,
+    "limitations": "Old task assignment inferred from nearest logged cell center; not exact internal tour replay. Last cell status is historical evidence, not physical coverage truth. Pending-goal switches may be legitimate stalls/completion or bootstrap promotion; counts alone do not establish a bug. New task rows are per planning callback, old plan rows throttled. The cumulative source-second free-voxel union must be audited separately."
+  },
+  "efficiency": [
+    {
+      "label": "阶段36",
+      "source": "/home/lzz/my test/HT_Explo-fixposition/docs/results/ht_frozen_garage_10min_2026-10-19/garage",
+      "volume_m3": 7900.375,
+      "cumulative_decreases": 0,
+      "repeat_entry_fraction": 0.14977973568281938,
+      "last60_gain_m3": 174.625,
+      "per_minute_gain_m3": [
+        2296.75,
+        941.2414688243293,
+        148.38353117567067,
+        378.14053703246555,
+        1192.4001854892294,
+        436.334277478305,
+        652.1426075758245,
+        398.9302617316889,
+        1281.4271306924866,
+        174.625
+      ],
+      "guide_selected_events": 10,
+      "input_sha256": {
+        "docs/results/ht_frozen_garage_10min_2026-10-19/garage/timeseries.csv": "2a700d1dee1e2c158345c6ec1e6303aa96a045a4883641513509fdcb627dabba",
+        "docs/results/ht_frozen_garage_10min_2026-10-19/garage/observation_volume.csv": "e7d8a7f5c71980696fb7a9c9c4d02d160aa039126c75a6797fddcdcdec4e7f85",
+        "docs/results/ht_frozen_garage_10min_2026-10-19/garage/target_selection_audit.json": "8d7cede3a132431b5010750af6fa0c82b7f7a1dda1e3bc9a99bafdb983ed34dc",
+        "docs/results/ht_frozen_garage_10min_2026-10-19/garage/endurance_audit.json": "204101b211abbc3ebc1c11fedb16291e1a32fcaa497e7b9b77de14d3ec9072b9"
+      }
+    },
+    {
+      "label": "阶段37",
+      "source": "/home/lzz/my test/HT_Explo-fixposition/docs/results/ht_serial_mapper_10min_2026-10-19/garage",
+      "volume_m3": 4522.625,
+      "cumulative_decreases": 0,
+      "repeat_entry_fraction": 0.2916666666666667,
+      "last60_gain_m3": 8.375,
+      "per_minute_gain_m3": [
+        1846.875,
+        883.199746495462,
+        584.3735186020845,
+        515.7563505864746,
+        249.41496003019893,
+        433.63042428578,
+        0.625,
+        0.125,
+        0.25,
+        8.375
+      ],
+      "guide_selected_events": 35,
+      "input_sha256": {
+        "docs/results/ht_serial_mapper_10min_2026-10-19/garage/timeseries.csv": "e4c40d31d7880b980081e03ed21258f17435310b16f7d0effb0ef00457d10b83",
+        "docs/results/ht_serial_mapper_10min_2026-10-19/garage/observation_volume.csv": "1b1de6ac2cf4e420645e9474eee68a77d43f73f48828508b61d628eed8ee9a67",
+        "docs/results/ht_serial_mapper_10min_2026-10-19/garage/target_selection_audit.json": "6f5e26d8fbcd5bf861f5eee9eb1b3f52b135185a8f1030ccdb4ee44f60949e74",
+        "docs/results/ht_serial_mapper_10min_2026-10-19/garage/endurance_audit.json": "541f6e0957927dc578486a541e628f15405b3856756412e2b089a9daed06b220"
+      }
+    },
+    {
+      "label": "阶段38",
+      "source": "/home/lzz/my test/HT_Explo-fixposition/docs/results/ht_guide_handoff_10min_2026-10-19/garage",
+      "volume_m3": 5807.0,
+      "cumulative_decreases": 0,
+      "repeat_entry_fraction": 0.1469387755102041,
+      "last60_gain_m3": 553.75,
+      "per_minute_gain_m3": [
+        2148.206320071556,
+        109.70398816627403,
+        811.7146917621699,
+        538.0,
+        1140.5361125022328,
+        357.913474825943,
+        10.925412671824233,
+        132.04259313277635,
+        4.2074068672236535,
+        553.75
+      ],
+      "guide_selected_events": 7,
+      "input_sha256": {
+        "docs/results/ht_guide_handoff_10min_2026-10-19/garage/timeseries.csv": "f971420251bcaed59002b6e8e90fc46e13e9ddafe0116e85a60e4a1f54fc7fc4",
+        "docs/results/ht_guide_handoff_10min_2026-10-19/garage/observation_volume.csv": "35da9c351dff1ee0953f3194d0fd1b32bbd35e4370e2fb1c26047a6f346b0926",
+        "docs/results/ht_guide_handoff_10min_2026-10-19/garage/target_selection_audit.json": "0a4367e9cbf249e9f1600ab5c15ea4c21c2651628581a8ed9323c14fdbf361b2",
+        "docs/results/ht_guide_handoff_10min_2026-10-19/garage/endurance_audit.json": "3a5429ca7282f1c8b9c4dc6afa6f9ae29908ad158cfa23eb7fdc169bdaa2eef6"
+      }
+    }
+  ]
+}

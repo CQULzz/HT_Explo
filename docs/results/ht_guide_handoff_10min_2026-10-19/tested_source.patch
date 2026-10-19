@@ -1,0 +1,178 @@
+diff --git a/src/tare_planner/include/ht_cost/exploration_progress.h b/src/tare_planner/include/ht_cost/exploration_progress.h
+index af7ec89..e971239 100644
+--- a/src/tare_planner/include/ht_cost/exploration_progress.h
++++ b/src/tare_planner/include/ht_cost/exploration_progress.h
+@@ -1,6 +1,7 @@
+ #pragma once
+ #include "ht_cost/target_commitment.h"
+ #include <map>
++#include <functional>
+ 
+ namespace ht_cost_ns {
+ // Independent of short local-goal commitments. Completing a local goal must
+@@ -8,6 +9,7 @@ namespace ht_cost_ns {
+ struct GuideProgress {
+   enum class Event { None, Reached, Stalled };
+   Point goal{};
++  int task_id=-1;
+   bool active=false, previous_healthy=false;
+   double best_distance=0, idle_seconds=0, last_observed=0;
+   double stall_seconds=60, cooldown_seconds=180, identity_radius=2;
+@@ -32,13 +34,21 @@ struct GuideProgress {
+       if (now<c.until && TargetCommitment::distance(p,c.goal)<identity_radius) return true;
+     return false;
+   }
+-  bool select(Point p,Point robot,double now) {
++  // The tour omits tasks delegated to the local horizon. Its membership is
++  // not coverage evidence. Prefer the owning world's task state when known.
++  bool taskStillPending(bool in_tour,const std::function<bool(int)>& pending) const {
++    return task_id>=0 && pending ? pending(task_id):in_tour;
++  }
++  bool select(Point p,Point robot,double now,int selected_task=-1) {
+     if (cooling(p,now)) return false;
+-    if (active && TargetCommitment::distance(p,goal)<identity_radius) return true;
++    if (active && TargetCommitment::distance(p,goal)<identity_radius) {
++      if (selected_task>=0) task_id=selected_task;
++      return true;
++    }
+     if (active) remember(now);
+     history.erase(std::remove_if(history.begin(),history.end(),
+       [&](const History& h){return now<h.last_seen || now-h.last_seen>=4*cooldown_seconds;}),history.end());
+-    goal=p;active=true;best_distance=TargetCommitment::distance(robot,p);
++    goal=p;task_id=selected_task;active=true;best_distance=TargetCommitment::distance(robot,p);
+     idle_seconds=0;last_observed=now;previous_healthy=false;
+     stationary_seconds=0;stationary_anchor=robot;
+     // Changing A -> B -> A must not erase A's failed attempts. Only time
+diff --git a/src/tare_planner/include/local_coverage_planner/local_coverage_planner.h b/src/tare_planner/include/local_coverage_planner/local_coverage_planner.h
+index 7b6c723..c51e8bc 100644
+--- a/src/tare_planner/include/local_coverage_planner/local_coverage_planner.h
++++ b/src/tare_planner/include/local_coverage_planner/local_coverage_planner.h
+@@ -47,6 +47,7 @@ public:
+     robot_position_ = robot_position;
+   }
+   void SetRobotYaw(double yaw) { robot_yaw_=yaw; }
++  void SetHTGlobalTaskQuery(std::function<bool(int)> query) {ht_global_task_pending_=std::move(query);}
+   void SetViewPointManager(std::shared_ptr<viewpoint_manager_ns::ViewPointManager> const& viewpoint_manager)
+   {
+     viewpoint_manager_ = viewpoint_manager;
+@@ -139,8 +140,9 @@ private:
+   bool ht_has_global_guide_=false;
+   bool ht_guide_is_global_=false;
+   ht_cost_ns::GuideProgress ht_guide_progress_;
++  std::function<bool(int)> ht_global_task_pending_;
+   ht_cost_ns::ExplorationVisits ht_visits_;
+-  bool SetHTGuide(const Eigen::Vector3d& guide,bool global,double now);
++  bool SetHTGuide(const Eigen::Vector3d& guide,bool global,double now,int task_id=-1);
+   ht_cost_ns::XYThetaConfig xytheta_config_;
+   rclcpp::Node::SharedPtr node_;
+   rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr ht_path_pub_;
+diff --git a/src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp b/src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp
+index ce6a3f0..c532f05 100644
+--- a/src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp
++++ b/src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp
+@@ -93,18 +93,18 @@ LocalCoveragePlanner::LocalCoveragePlanner(rclcpp::Node::SharedPtr nh)
+     RCLCPP_INFO(node_->get_logger(),"XYtheta motion angle=%.3f deg (independent of heading bins)",angle);
+ }
+ 
+-bool LocalCoveragePlanner::SetHTGuide(const Eigen::Vector3d& guide,bool global,double now) {
++bool LocalCoveragePlanner::SetHTGuide(const Eigen::Vector3d& guide,bool global,double now,int task_id) {
+   const bool changed=!ht_guide_progress_.active ||
+     (guide-Eigen::Vector3d(ht_guide_progress_.goal.x,ht_guide_progress_.goal.y,
+                          ht_guide_progress_.goal.z)).head<2>().norm()>=ht_guide_progress_.identity_radius;
+   if (!ht_guide_progress_.select({guide.x(),guide.y(),guide.z()},
+-      {robot_position_.x(),robot_position_.y(),robot_position_.z()},now)) return false;
++      {robot_position_.x(),robot_position_.y(),robot_position_.z()},now,task_id)) return false;
+   ht_global_guide_=Eigen::Vector3d(ht_guide_progress_.goal.x,ht_guide_progress_.goal.y,ht_guide_progress_.goal.z);
+   ht_has_global_guide_=true;ht_guide_is_global_=global;
+   if (changed) {
+     ht_commitment_.reject(now);ht_previous_target_=-1;
+-    RCLCPP_INFO(node_->get_logger(),"HT guide selected: (%.2f,%.2f) global=%d remaining=%.2fm",
+-      ht_global_guide_.x(),ht_global_guide_.y(),global,ht_guide_progress_.best_distance);
++    RCLCPP_INFO(node_->get_logger(),"HT guide selected: (%.2f,%.2f) global=%d remaining=%.2fm task=%d",
++      ht_global_guide_.x(),ht_global_guide_.y(),global,ht_guide_progress_.best_distance,ht_guide_progress_.task_id);
+   }
+   return true;
+ }
+@@ -685,22 +685,32 @@ LocalCoveragePlanner::SolveLocalCoverageProblem(
+       if ((n.position_-ht_global_guide_).head<2>().norm()<ht_guide_progress_.identity_radius)
+         guide_present=true;
+     }
+-    // Promote bootstrap guidance when the real global tour becomes available.
+-    if ((ht_guide_is_global_ && !guide_present) ||
++    const bool task_pending=ht_guide_progress_.taskStillPending(guide_present,ht_global_task_pending_);
++    if (ht_has_global_guide_ && ht_guide_is_global_) {
++      RCLCPP_INFO(node_->get_logger(),
++        "HT_GUIDE_TASK task=%d in_tour=%d pending=%d idle=%.3f goal=(%.6f,%.6f)",
++        ht_guide_progress_.task_id,guide_present,task_pending,ht_guide_progress_.idle_seconds,
++        ht_global_guide_.x(),ht_global_guide_.y());
++    }
++    // Keep a pending world task through delegation to local planning. The
++    // independent progress watchdog above still releases stalled guides.
++    // Bootstrap guides have no task identity and may be promoted as before.
++    if ((ht_guide_is_global_ && !task_pending) ||
+         (!ht_guide_is_global_ && has_global_destination)) {
+       ht_has_global_guide_=false;ht_guide_progress_.active=false;
+     }
+     if (!ht_has_global_guide_) {
+       double best_distance=std::numeric_limits<double>::infinity();
++      int selected_task=-1;
+       for (const auto& n:global_path.nodes_) {
+         if (n.type_!=exploration_path_ns::NodeType::GLOBAL_VIEWPOINT) continue;
+         const double d=(n.position_-robot_position_).head<2>().norm();
+         const ht_cost_ns::Point p{n.position_.x(),n.position_.y(),n.position_.z()};
+         if (d>1.0 && d<best_distance && !ht_guide_progress_.cooling(p,now)) {
+-          best_distance=d;ht_global_guide_=n.position_;
++          best_distance=d;ht_global_guide_=n.position_;selected_task=n.global_subspace_index_;
+         }
+       }
+-      if (std::isfinite(best_distance)) SetHTGuide(ht_global_guide_,true,now);
++      if (std::isfinite(best_distance)) SetHTGuide(ht_global_guide_,true,now,selected_task);
+       if (!ht_has_global_guide_) {
+         int boundary=-1;double nearest=std::numeric_limits<double>::infinity();
+         for (int id:navigation_viewpoint_indices) {
+diff --git a/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp b/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp
+index e57d9a5..cbe544e 100644
+--- a/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp
++++ b/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp
+@@ -305,6 +305,9 @@ void SensorCoveragePlanner3D::InitializeData() {
+       std::make_shared<local_coverage_planner_ns::LocalCoveragePlanner>(
+           shared_from_this());
+   local_coverage_planner_->SetViewPointManager(viewpoint_manager_);
++  local_coverage_planner_->SetHTGlobalTaskQuery([world=grid_world_](int cell) {
++    return world->GetCellStatus(cell)==grid_world_ns::CellStatus::EXPLORING;
++  });
+ 
+   visualizer_ =
+       std::make_shared<tare_visualizer_ns::TAREVisualizer>(shared_from_this());
+diff --git a/src/tare_planner/tests/ht_core_test.cpp b/src/tare_planner/tests/ht_core_test.cpp
+index 9df7d73..438caf0 100644
+--- a/src/tare_planner/tests/ht_core_test.cpp
++++ b/src/tare_planner/tests/ht_core_test.cpp
+@@ -220,6 +220,27 @@ int main() {
+   near(alternating.idle_seconds,0);
+   alternating.observe({19.5,0,0},401,true);
+   check(!alternating.select({20,0,0},{19.5,0,0},402));
++  // A -> local delegation -> A is one pending world task, not a reason to
++  // turn toward B. Tour omissions must preserve progress and local commitment.
++  GuideProgress delegated;
++  delegated.stationary_stall_seconds=0;
++  check(delegated.select({20,0,0},{0,0,0},0,42));
++  bool pending=true;
++  auto task_state=[&](int id){check(id==42);return pending;};
++  for (int t=1;t<=61;++t) {
++    const bool in_tour=(t/8)%2==0;
++    check(delegated.taskStillPending(in_tour,task_state));
++    // Keeping the goal does not waive its independent no-progress timeout.
++    const auto event=delegated.observe({0,0,0},t,true);
++    check(event==(t==61?GuideProgress::Event::Stalled:GuideProgress::Event::None));
++  }
++  check(!delegated.active);check(delegated.cooling({20,0,0},62));
++  pending=false;
++  check(!delegated.taskStillPending(true,task_state)); // stale tour after coverage
++  GuideProgress legacy_guide;
++  check(legacy_guide.select({0,20,0},{0,0,0},0));
++  check(!legacy_guide.taskStillPending(false,task_state)); // no task identity
++  check(legacy_guide.taskStillPending(true,{}));
+   GuideProgress stopped;
+   check(stopped.select({20,0,0},{0,0,0},0));
+   for(int t=1;t<13;++t) check(stopped.observe({0,0,0},t,true)==GuideProgress::Event::None);

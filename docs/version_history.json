@@ -2,7 +2,7 @@
   "schema_version": 1,
   "updated_at": "2026-10-19",
   "branch": "codex/ht8dir-v1",
-  "status": "阶段37地图调度修复后完整车库600秒：过期状态0、最长停车1.15s，但体积下降42.8%、回访增加；多角度图完成后按用户要求停止",
+  "status": "阶段38：修复全局/局部任务交接，车库600秒202.58m/5807.000m³；相对37改善但仍未追平36，搜索超时增多，完整数据待本轮远端发布校验",
   "latest_archive_commit": "61de16e",
   "latest_planner_change": "43069a7b11b8028b53f6eae0d6bdc53c13e8affd",
   "stages": [
@@ -650,6 +650,23 @@
       ],
       "control_commit": "391fa0f98fc2a0adab2c018b4c5a1c7c29efff91",
       "ht_bridge_commit": "445b5c1490d6bb198c35bee23e95fc0f7781407e"
+    },
+    {
+      "id": "stage-38",
+      "number": 38,
+      "sha": "16bdbe4cb1fddd632d061a5710c3e7b294971891",
+      "tag": "ht-stage-20261019-guide-handoff",
+      "title": "全局待办与局部委派交接保持，减少目标反复切换",
+      "kind": "探索目标交接修复",
+      "change": "按全局单元任务ID及EXPLORING状态保留引导，不把退出巡游列表当作任务完成；原进展超时与硬约束保留",
+      "features": "交替tour委派、任务真实解除、无进展超时与旧行为回退回归通过；新增逐周期任务日志",
+      "validation": "完整车库600秒202.58m/5807.000m³，末分钟新增553.750m³；13项采集及4项CTest通过",
+      "known_issues": "对比37体积+28.4%、转向27%→20.3%、重复进入29.2%→14.7%；但低于36的7900.375m³，超时47→81、最长停车1.15→1.40s。仅单轮，整体效率/跨场景/实车仍未解决",
+      "evidence": [
+        "docs/results/ht_guide_handoff_10min_2026-10-19/REPORT.md"
+      ],
+      "control_commit": "16bdbe4cb1fddd632d061a5710c3e7b294971891",
+      "ht_bridge_commit": "445b5c1490d6bb198c35bee23e95fc0f7781407e"
     }
   ],
   "historical_commits": [
@@ -1185,9 +1202,9 @@
       "original_subject": "Archive command rejection proof, failed indoor trials and returned-home tunnel video"
     }
   ],
-  "latest_planner_code": "391fa0f98fc2a0adab2c018b4c5a1c7c29efff91",
+  "latest_planner_code": "16bdbe4cb1fddd632d061a5710c3e7b294971891",
   "latest_ht_bridge_code": "445b5c1490d6bb198c35bee23e95fc0f7781407e",
-  "latest_verified_trial_code": "d6d87878a4e8982e3a4850a5a17f8e1be1608a24",
-  "latest_recorded_trial_code": "d6d87878a4e8982e3a4850a5a17f8e1be1608a24",
+  "latest_verified_trial_code": "16bdbe4cb1fddd632d061a5710c3e7b294971891",
+  "latest_recorded_trial_code": "16bdbe4cb1fddd632d061a5710c3e7b294971891",
   "latest_cupy_node_code": "d6d87878a4e8982e3a4850a5a17f8e1be1608a24"
 }

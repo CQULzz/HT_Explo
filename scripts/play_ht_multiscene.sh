@@ -39,12 +39,15 @@ elif [[ "${1:-}" == '--frozen-garage' ]]; then
   ht_playlist="$ht_repo_root/docs/results/ht_frozen_garage_10min_2026-10-19/videos.m3u"
   printf '阶段36：同冻结版本车库完整10分钟；187.25米，7900.375立方米。\n'
   printf '末分钟20.805米，最长全零4.95秒；仍有71次搜索超时、地图和路径过期，尚未稳定。\n'
-else
+elif [[ "${1:-}" == '--serial-mapper' ]]; then
   ht_playlist="$ht_repo_root/docs/results/ht_serial_mapper_10min_2026-10-19/videos.m3u"
-  printf '最新阶段37：地图调度修复，车库完整10分钟；179.78米，4522.625立方米。\n'
+  printf '阶段37：地图调度修复，车库完整10分钟；179.78米，4522.625立方米。\n'
   printf '地图/路径过期0，最长停车1.15秒；但观测体积较阶段36退步42.8%%，转向和回访增加。\n'
-  printf '本次已停止自动迭代；完整对比图见下载目录的“查看HT历次修改对比图.sh”。\n'
-  printf '修改前阶段36加 --frozen-garage，室内阶段35加 --atomic-context；历史五环境加 --previous。\n'
+else
+  ht_playlist="$ht_repo_root/docs/results/ht_guide_handoff_10min_2026-10-19/videos.m3u"
+  printf '阶段38：任务交接修复，车库完整10分钟；202.58米，5807立方米。\n'
+  printf '较37体积+28.4%%、回访减少，仍低于36且搜索超时增加。\n'
+  printf '上一轮加 --serial-mapper；阶段36加 --frozen-garage；图册见下载目录的查看脚本。\n'
 fi
 if [[ ! -f "$ht_playlist" ]] || ! rg -q '^[^#[:space:]]' "$ht_playlist"; then
   printf '未找到完整视频播放列表：%s\n' "$ht_playlist"

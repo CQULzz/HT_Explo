@@ -1,0 +1,66 @@
+{
+  "source": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_multiscene_10min_2026-10-17_11-37-52/campus",
+  "original": {
+    "observed_free_volume_m3": 9336.625,
+    "processed_volume_scans": 600,
+    "skipped_volume_scans": 0,
+    "recorded_scans_in_source_time_window": 600,
+    "sensor_position_source": "nearest sensor-frame state_estimation (common to both systems)",
+    "pose_time_offset_max_s": 2.384185791015625e-07,
+    "command_samples": 12000,
+    "fully_stopped_fraction": 0.09816666666666667,
+    "stationary_turn_fraction": 0.12541666666666668,
+    "reverse_command_fraction": 0.0,
+    "max_abs_linear_command_mps": 0.5,
+    "max_abs_yaw_command_rps": 0.8,
+    "longest_zero_command_s": 2.0499878406524656,
+    "follower_status_samples": {
+      "DRIVING": 9308,
+      "GOAL_REACHED": 864,
+      "TURNING": 1505,
+      "ALIGNING": 130,
+      "PLANNER_HOLD": 168,
+      "HT_MAP_STALE": 16,
+      "HT_COMMAND_BLOCKED": 9
+    },
+    "longest_no_translation_command_s": 5.150009441375732,
+    "last_translation_s": 600.006,
+    "distance_last60_m": 23.492425742574284
+  },
+  "recomputed": {
+    "scan_selection": "source_second",
+    "observed_free_volume_m3": 9336.625,
+    "processed_volume_scans": 600,
+    "skipped_volume_scans": 0,
+    "recorded_scans_in_source_time_window": 600,
+    "sensor_position_source": "nearest sensor-frame state_estimation (common to both systems)",
+    "pose_time_offset_max_s": 2.384185791015625e-07,
+    "command_samples": 12000,
+    "fully_stopped_fraction": 0.09816666666666667,
+    "stationary_turn_fraction": 0.12541666666666668,
+    "reverse_command_fraction": 0.0,
+    "max_abs_linear_command_mps": 0.5,
+    "max_abs_yaw_command_rps": 0.8,
+    "longest_zero_command_s": 2.0499878406524656,
+    "follower_status_samples": {
+      "DRIVING": 9308,
+      "GOAL_REACHED": 864,
+      "TURNING": 1505,
+      "ALIGNING": 130,
+      "PLANNER_HOLD": 168,
+      "HT_MAP_STALE": 16,
+      "HT_COMMAND_BLOCKED": 9
+    },
+    "longest_no_translation_command_s": 5.150009441375732,
+    "last_translation_s": 600.006,
+    "distance_last60_m": 23.492425742574284
+  },
+  "evaluator_sha256": "679203aab69b3a4ec1b21718f2b7b9dfa9d0fa8f6c7f1b93231c4b0f74ca68f0",
+  "input_sha256": {
+    "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_multiscene_10min_2026-10-17_11-37-52/campus/evidence_bag/metadata.yaml": "0d23c40641bcce8d2cf483356271aab3e616a4b540b292301a114cd5122b534f",
+    "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_multiscene_10min_2026-10-17_11-37-52/campus/current/measurement_started.json": "01951241e6588706c552c0e6d32d576fa20f4c17dfc1588ff19cb0ebed42b76c",
+    "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_multiscene_10min_2026-10-17_11-37-52/campus/current/timeseries.csv": "afdb2152b2bc0f6e9c0000b6ccc25644ddec7d8ea2f8f7179e090d12bbb5909f"
+  },
+  "selection": "Keep first recorded scan in each absolute source second inside the measurement window; do not downsample again in origin-relative seconds.",
+  "scope": "Offline evaluation only. Original simulation outputs and reports are unchanged."
+}
