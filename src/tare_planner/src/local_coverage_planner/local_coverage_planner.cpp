@@ -93,18 +93,18 @@ LocalCoveragePlanner::LocalCoveragePlanner(rclcpp::Node::SharedPtr nh)
     RCLCPP_INFO(node_->get_logger(),"XYtheta motion angle=%.3f deg (independent of heading bins)",angle);
 }
 
-bool LocalCoveragePlanner::SetHTGuide(const Eigen::Vector3d& guide,bool global,double now) {
+bool LocalCoveragePlanner::SetHTGuide(const Eigen::Vector3d& guide,bool global,double now,int task_id) {
   const bool changed=!ht_guide_progress_.active ||
     (guide-Eigen::Vector3d(ht_guide_progress_.goal.x,ht_guide_progress_.goal.y,
                          ht_guide_progress_.goal.z)).head<2>().norm()>=ht_guide_progress_.identity_radius;
   if (!ht_guide_progress_.select({guide.x(),guide.y(),guide.z()},
-      {robot_position_.x(),robot_position_.y(),robot_position_.z()},now)) return false;
+      {robot_position_.x(),robot_position_.y(),robot_position_.z()},now,task_id)) return false;
   ht_global_guide_=Eigen::Vector3d(ht_guide_progress_.goal.x,ht_guide_progress_.goal.y,ht_guide_progress_.goal.z);
   ht_has_global_guide_=true;ht_guide_is_global_=global;
   if (changed) {
     ht_commitment_.reject(now);ht_previous_target_=-1;
-    RCLCPP_INFO(node_->get_logger(),"HT guide selected: (%.2f,%.2f) global=%d remaining=%.2fm",
-      ht_global_guide_.x(),ht_global_guide_.y(),global,ht_guide_progress_.best_distance);
+    RCLCPP_INFO(node_->get_logger(),"HT guide selected: (%.2f,%.2f) global=%d remaining=%.2fm task=%d",
+      ht_global_guide_.x(),ht_global_guide_.y(),global,ht_guide_progress_.best_distance,ht_guide_progress_.task_id);
   }
   return true;
 }
@@ -685,22 +685,32 @@ LocalCoveragePlanner::SolveLocalCoverageProblem(
       if ((n.position_-ht_global_guide_).head<2>().norm()<ht_guide_progress_.identity_radius)
         guide_present=true;
     }
-    // Promote bootstrap guidance when the real global tour becomes available.
-    if ((ht_guide_is_global_ && !guide_present) ||
+    const bool task_pending=ht_guide_progress_.taskStillPending(guide_present,ht_global_task_pending_);
+    if (ht_has_global_guide_ && ht_guide_is_global_) {
+      RCLCPP_INFO(node_->get_logger(),
+        "HT_GUIDE_TASK task=%d in_tour=%d pending=%d idle=%.3f goal=(%.6f,%.6f)",
+        ht_guide_progress_.task_id,guide_present,task_pending,ht_guide_progress_.idle_seconds,
+        ht_global_guide_.x(),ht_global_guide_.y());
+    }
+    // Keep a pending world task through delegation to local planning. The
+    // independent progress watchdog above still releases stalled guides.
+    // Bootstrap guides have no task identity and may be promoted as before.
+    if ((ht_guide_is_global_ && !task_pending) ||
         (!ht_guide_is_global_ && has_global_destination)) {
       ht_has_global_guide_=false;ht_guide_progress_.active=false;
     }
     if (!ht_has_global_guide_) {
       double best_distance=std::numeric_limits<double>::infinity();
+      int selected_task=-1;
       for (const auto& n:global_path.nodes_) {
         if (n.type_!=exploration_path_ns::NodeType::GLOBAL_VIEWPOINT) continue;
         const double d=(n.position_-robot_position_).head<2>().norm();
         const ht_cost_ns::Point p{n.position_.x(),n.position_.y(),n.position_.z()};
         if (d>1.0 && d<best_distance && !ht_guide_progress_.cooling(p,now)) {
-          best_distance=d;ht_global_guide_=n.position_;
+          best_distance=d;ht_global_guide_=n.position_;selected_task=n.global_subspace_index_;
         }
       }
-      if (std::isfinite(best_distance)) SetHTGuide(ht_global_guide_,true,now);
+      if (std::isfinite(best_distance)) SetHTGuide(ht_global_guide_,true,now,selected_task);
       if (!ht_has_global_guide_) {
         int boundary=-1;double nearest=std::numeric_limits<double>::infinity();
         for (int id:navigation_viewpoint_indices) {

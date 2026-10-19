@@ -1,6 +1,7 @@
 #pragma once
 #include "ht_cost/target_commitment.h"
 #include <map>
+#include <functional>
 
 namespace ht_cost_ns {
 // Independent of short local-goal commitments. Completing a local goal must
@@ -8,6 +9,7 @@ namespace ht_cost_ns {
 struct GuideProgress {
   enum class Event { None, Reached, Stalled };
   Point goal{};
+  int task_id=-1;
   bool active=false, previous_healthy=false;
   double best_distance=0, idle_seconds=0, last_observed=0;
   double stall_seconds=60, cooldown_seconds=180, identity_radius=2;
@@ -32,13 +34,21 @@ struct GuideProgress {
       if (now<c.until && TargetCommitment::distance(p,c.goal)<identity_radius) return true;
     return false;
   }
-  bool select(Point p,Point robot,double now) {
+  // The tour omits tasks delegated to the local horizon. Its membership is
+  // not coverage evidence. Prefer the owning world's task state when known.
+  bool taskStillPending(bool in_tour,const std::function<bool(int)>& pending) const {
+    return task_id>=0 && pending ? pending(task_id):in_tour;
+  }
+  bool select(Point p,Point robot,double now,int selected_task=-1) {
     if (cooling(p,now)) return false;
-    if (active && TargetCommitment::distance(p,goal)<identity_radius) return true;
+    if (active && TargetCommitment::distance(p,goal)<identity_radius) {
+      if (selected_task>=0) task_id=selected_task;
+      return true;
+    }
     if (active) remember(now);
     history.erase(std::remove_if(history.begin(),history.end(),
       [&](const History& h){return now<h.last_seen || now-h.last_seen>=4*cooldown_seconds;}),history.end());
-    goal=p;active=true;best_distance=TargetCommitment::distance(robot,p);
+    goal=p;task_id=selected_task;active=true;best_distance=TargetCommitment::distance(robot,p);
     idle_seconds=0;last_observed=now;previous_healthy=false;
     stationary_seconds=0;stationary_anchor=robot;
     // Changing A -> B -> A must not erase A's failed attempts. Only time

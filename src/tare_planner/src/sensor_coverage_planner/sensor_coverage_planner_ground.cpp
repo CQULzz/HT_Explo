@@ -305,6 +305,9 @@ void SensorCoveragePlanner3D::InitializeData() {
       std::make_shared<local_coverage_planner_ns::LocalCoveragePlanner>(
           shared_from_this());
   local_coverage_planner_->SetViewPointManager(viewpoint_manager_);
+  local_coverage_planner_->SetHTGlobalTaskQuery([world=grid_world_](int cell) {
+    return world->GetCellStatus(cell)==grid_world_ns::CellStatus::EXPLORING;
+  });
 
   visualizer_ =
       std::make_shared<tare_visualizer_ns::TAREVisualizer>(shared_from_this());

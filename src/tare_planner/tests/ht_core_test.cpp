@@ -220,6 +220,27 @@ int main() {
   near(alternating.idle_seconds,0);
   alternating.observe({19.5,0,0},401,true);
   check(!alternating.select({20,0,0},{19.5,0,0},402));
+  // A -> local delegation -> A is one pending world task, not a reason to
+  // turn toward B. Tour omissions must preserve progress and local commitment.
+  GuideProgress delegated;
+  delegated.stationary_stall_seconds=0;
+  check(delegated.select({20,0,0},{0,0,0},0,42));
+  bool pending=true;
+  auto task_state=[&](int id){check(id==42);return pending;};
+  for (int t=1;t<=61;++t) {
+    const bool in_tour=(t/8)%2==0;
+    check(delegated.taskStillPending(in_tour,task_state));
+    // Keeping the goal does not waive its independent no-progress timeout.
+    const auto event=delegated.observe({0,0,0},t,true);
+    check(event==(t==61?GuideProgress::Event::Stalled:GuideProgress::Event::None));
+  }
+  check(!delegated.active);check(delegated.cooling({20,0,0},62));
+  pending=false;
+  check(!delegated.taskStillPending(true,task_state)); // stale tour after coverage
+  GuideProgress legacy_guide;
+  check(legacy_guide.select({0,20,0},{0,0,0},0));
+  check(!legacy_guide.taskStillPending(false,task_state)); // no task identity
+  check(legacy_guide.taskStillPending(true,{}));
   GuideProgress stopped;
   check(stopped.select({20,0,0},{0,0,0},0));
   for(int t=1;t<13;++t) check(stopped.observe({0,0,0},t,true)==GuideProgress::Event::None);

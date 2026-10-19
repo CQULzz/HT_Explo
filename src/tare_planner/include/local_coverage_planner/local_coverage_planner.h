@@ -47,6 +47,7 @@ public:
     robot_position_ = robot_position;
   }
   void SetRobotYaw(double yaw) { robot_yaw_=yaw; }
+  void SetHTGlobalTaskQuery(std::function<bool(int)> query) {ht_global_task_pending_=std::move(query);}
   void SetViewPointManager(std::shared_ptr<viewpoint_manager_ns::ViewPointManager> const& viewpoint_manager)
   {
     viewpoint_manager_ = viewpoint_manager;
@@ -139,8 +140,9 @@ private:
   bool ht_has_global_guide_=false;
   bool ht_guide_is_global_=false;
   ht_cost_ns::GuideProgress ht_guide_progress_;
+  std::function<bool(int)> ht_global_task_pending_;
   ht_cost_ns::ExplorationVisits ht_visits_;
-  bool SetHTGuide(const Eigen::Vector3d& guide,bool global,double now);
+  bool SetHTGuide(const Eigen::Vector3d& guide,bool global,double now,int task_id=-1);
   ht_cost_ns::XYThetaConfig xytheta_config_;
   rclcpp::Node::SharedPtr node_;
   rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr ht_path_pub_;
