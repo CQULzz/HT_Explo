@@ -26,11 +26,16 @@ elif [[ "${1:-}" == '--deferred-gain' ]]; then
   ht_playlist="$ht_repo_root/docs/results/ht_deferred_gain_tasks_10min_2026-10-19/videos.m3u"
 elif [[ "${1:-}" == '--deferred-repeat' ]]; then
   ht_playlist="$ht_repo_root/docs/results/ht_deferred_gain_repeat_10min_2026-10-19/videos.m3u"
-else
+elif [[ "${1:-}" == '--recovery-slot' ]]; then
   ht_playlist="$ht_repo_root/docs/results/ht_recovery_search_slot_10min_2026-10-19/videos.m3u"
-  printf '最新阶段33室内完整10分钟：普通恢复提前搜索；151.57米，2480立方米。\n'
-  printf '末分钟仍行驶15.525米；仍有35.8秒长停车和232次搜索超时，尚未稳定。\n'
-  printf '失败复测阶段32加 --deferred-repeat；阶段31加 --deferred-gain；阶段30加 --pending-gain；历史五环境加 --previous。\n'
+elif [[ "${1:-}" == '--checked-connections' ]]; then
+  ht_playlist="$ht_repo_root/docs/results/ht_checked_connections_10min_2026-10-19/videos.m3u"
+  printf '阶段34完整视频，但退出时一份诊断NPZ损坏，原失败记录保留。\n'
+else
+  ht_playlist="$ht_repo_root/docs/results/ht_atomic_context_10min_2026-10-19/videos.m3u"
+  printf '最新阶段35室内完整10分钟：退出诊断修复；169.10米，2674.75立方米。\n'
+  printf '末分钟17.364米，最长全零4.2秒；仍有51次搜索超时和13条地图过期状态，尚未稳定。\n'
+  printf '阶段34加 --checked-connections，阶段33加 --recovery-slot；阶段30加 --pending-gain；历史五环境加 --previous。\n'
 fi
 if [[ ! -f "$ht_playlist" ]] || ! rg -q '^[^#[:space:]]' "$ht_playlist"; then
   printf '未找到完整视频播放列表：%s\n' "$ht_playlist"
