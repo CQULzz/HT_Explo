@@ -1,0 +1,59 @@
+{
+  "source_suite_state": "RUNNING",
+  "source_finalized": false,
+  "derived_state": "INTERRUPTED_OR_UNFINALIZED",
+  "planned_duration_per_scene_s": 600,
+  "runs": [
+    {
+      "scenario": "garage",
+      "source_state": "RECORDED",
+      "measured_duration_s": 600.0,
+      "last_reported_progress_s": 599.8,
+      "complete_requested_duration": true,
+      "validated_recording": true,
+      "started": true,
+      "error": null
+    },
+    {
+      "scenario": "campus",
+      "source_state": "RECORDED",
+      "measured_duration_s": 600.0,
+      "last_reported_progress_s": 600,
+      "complete_requested_duration": true,
+      "validated_recording": true,
+      "started": true,
+      "error": null
+    },
+    {
+      "scenario": "indoor",
+      "source_state": "FAILED",
+      "measured_duration_s": null,
+      "last_reported_progress_s": 569.5,
+      "complete_requested_duration": false,
+      "validated_recording": false,
+      "started": true,
+      "error": ""
+    },
+    {
+      "scenario": "forest",
+      "source_state": "PENDING",
+      "measured_duration_s": null,
+      "last_reported_progress_s": null,
+      "complete_requested_duration": false,
+      "validated_recording": false,
+      "started": false,
+      "error": null
+    },
+    {
+      "scenario": "tunnel",
+      "source_state": "PENDING",
+      "measured_duration_s": null,
+      "last_reported_progress_s": null,
+      "complete_requested_duration": false,
+      "validated_recording": false,
+      "started": false,
+      "error": null
+    }
+  ],
+  "note": "Derived evidence only. Progress is not a measured duration; source suite.json is retained verbatim. No failed or missing scene is padded/restarted."
+}

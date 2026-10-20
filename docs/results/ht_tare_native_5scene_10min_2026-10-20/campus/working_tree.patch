@@ -1,0 +1,33 @@
+diff --git a/presentations/finalize_tare_multiscene.py b/presentations/finalize_tare_multiscene.py
+index aa18593..b9d599e 100644
+--- a/presentations/finalize_tare_multiscene.py
++++ b/presentations/finalize_tare_multiscene.py
+@@ -72,6 +72,15 @@ def main():
+             scene=row['scenario'];r=audits[scene].get('routing') or {}
+             f.write(f'| {scene} | {r.get("coverage_cycles","未知")} | {r.get("maximum_ordered_viewpoints","未知")} | {r.get("nonempty_executable_paths","未知")} | {len(r.get("contract_violations",[])) if r else "未知"} | {r.get("contract_passed",False)} |\n')
+         f.write('\n未移动或没有路线时，分工检查可能不满足“有实际执行样本”的通过条件；不能把空样本当作通过。各场景只有一次600秒记录，统计与检查仅限本批记录。\n\n![多维度诊断](multiscene_diagnostics.png)\n\n[PDF图表](multiscene_diagnostics.pdf) · [同场景车库历史比较](garage_history/tare_architecture_comparison.png)\n\n')
++        f.write('| 场景 | 附加审计非零退出项 | CMU导航地形隔离 | 实际HT探索模式 |\n|---|---|---|---|\n')
++        import yaml
++        for row in state['runs']:
++            scene=row['scenario'];trial=suite/scene
++            failed=[r['script'] for r in audits[scene].get('audits',[]) if r['returncode']]
++            isolation=read(trial/'terrain_topic_isolation.json') if (trial/'terrain_topic_isolation.json').exists() else {}
++            params=yaml.safe_load((trial/'planner_parameters.yaml').read_text()) if (trial/'planner_parameters.yaml').exists() else {}
++            mode=(params or {}).get('/tare_planner_node',{}).get('ros__parameters',{}).get('ht_exploration_mode','未采到')
++            f.write(f'| {scene} | {", ".join(failed) or "无"} | {isolation.get("navigation_cmu_terrain_isolated","未知")} | {mode} |\n')
+         f.write('累计观测体积是0.5米体素的采样激光射线自由空间并集，不是真值覆盖率。每组起点/场景参数不同，跨场景体积不作为算法优劣排名；没有新增原版TARE同限制对照或实车验证。完整数据是否已上传，以本批Release远端校验回执为准。\n')
+         for row in state['runs']:
+             scene=row['scenario'];f.write(f'\n### {scene} 的原访问顺序与HT路线\n\n![分工审计]({scene}/tare_waypoint_audit/architecture.png)\n\n![实际规划快照]({scene}/tare_waypoint_audit/routes.png)\n')
+diff --git a/scripts/finalize_legacy_ht_archive.sh b/scripts/finalize_legacy_ht_archive.sh
+index f46ca27..ccb4f87 100644
+--- a/scripts/finalize_legacy_ht_archive.sh
++++ b/scripts/finalize_legacy_ht_archive.sh
+@@ -3,6 +3,8 @@
+ set -euo pipefail
+ task_repo=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
+ cd -- "$task_repo"
++exec 9> "$task_repo/.git/ht-results-publication.lock"
++flock -x 9
+ if [[ $(git branch --show-current) != codex/ht8dir-v1 ]]; then
+   echo 'Refuse to publish from an unexpected branch.' >&2
+   exit 1

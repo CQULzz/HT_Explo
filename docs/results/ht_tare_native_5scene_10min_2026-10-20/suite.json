@@ -1,0 +1,91 @@
+{
+  "started_at": "2026-10-20T19:39:38.437357+08:00",
+  "duration_s": 600,
+  "git_head": "dccfcc93232f0f27f9ae2d63b59ae93c4c1168c4",
+  "job": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_tare_native_5scene_10min_2026-10-20_19-39-37",
+  "state": "RUNNING",
+  "runs": [
+    {
+      "scenario": "garage",
+      "state": "RECORDED",
+      "runner_pid": 6944,
+      "watcher_pid": 6945,
+      "elapsed_measurement_s": 599.8,
+      "checks": {
+        "timer_completed": true,
+        "measured_duration_matches": true,
+        "source_hashes_unchanged": true,
+        "enough_samples": true,
+        "no_runtime_parent_failure": true,
+        "no_live_descendants": true,
+        "no_forced_shutdown": true,
+        "video_full_decode_passed": true,
+        "video_duration_matches": true,
+        "video_fps_matches": true,
+        "analysis_passed": true,
+        "no_child_or_cleanup_exception": true,
+        "blas_workers_bounded": true
+      },
+      "video_ok": true,
+      "metrics": {
+        "distance_m": 189.99,
+        "visited_1m_xy_cells": 183,
+        "observed_free_volume_m3": 5299.5,
+        "mission": "BLOCKED",
+        "map_age_p95_s": 0.9239440798759461,
+        "map_age_max_s": 1.4197585582733154
+      },
+      "finished_at": "2026-10-20T19:51:27.031840+08:00"
+    },
+    {
+      "scenario": "campus",
+      "state": "RECORDED",
+      "runner_pid": 10478,
+      "watcher_pid": 10479,
+      "elapsed_measurement_s": 600,
+      "checks": {
+        "timer_completed": true,
+        "measured_duration_matches": true,
+        "source_hashes_unchanged": true,
+        "enough_samples": true,
+        "no_runtime_parent_failure": true,
+        "no_live_descendants": true,
+        "no_forced_shutdown": true,
+        "video_full_decode_passed": true,
+        "video_duration_matches": true,
+        "video_fps_matches": true,
+        "analysis_passed": true,
+        "no_child_or_cleanup_exception": true,
+        "blas_workers_bounded": true
+      },
+      "video_ok": true,
+      "metrics": {
+        "distance_m": 174.32,
+        "visited_1m_xy_cells": 208,
+        "observed_free_volume_m3": 17991.375,
+        "mission": "EXPLORING",
+        "map_age_p95_s": 1.245266568660735,
+        "map_age_max_s": 1.721992015838623
+      },
+      "finished_at": "2026-10-20T20:04:06.536386+08:00"
+    },
+    {
+      "scenario": "indoor",
+      "state": "FAILED",
+      "runner_pid": 13640,
+      "watcher_pid": 13641,
+      "elapsed_measurement_s": 569.5,
+      "error": "",
+      "finished_at": "2026-10-20T20:14:10.749904+08:00"
+    },
+    {
+      "scenario": "forest",
+      "state": "PENDING"
+    },
+    {
+      "scenario": "tunnel",
+      "state": "PENDING"
+    }
+  ],
+  "updated_at": "2026-10-20T20:14:09.722094+08:00"
+}

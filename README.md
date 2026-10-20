@@ -1,3 +1,9 @@
+# 阶段42：原TARE＋HT五场景验证
+
+同阶段41导航版本。计划5场景、每组600秒；已获得2组完整且通过检查的记录，其余3组未完成、检查不通过或未启动。 失败及未启动场景照实保留。[报告、可用视频和图表](docs/results/ht_tare_native_5scene_10min_2026-10-20/REPORT.md) · [完整数据Release](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261020-tare-multiscene)。完整数据发布状态以stage42.json回执为准。
+
+## 前一轮结果
+
 # 阶段41：原TARE决策与HT航点路由
 
 历史实验完整数据补归档进度、版本对应与恢复说明：[62个历史目录](docs/experiments/legacy_archive/README.md)。

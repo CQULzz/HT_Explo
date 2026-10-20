@@ -1,3 +1,9 @@
+# 阶段42：原TARE＋HT五场景验证
+
+同阶段41导航版本。计划5场景、每组600秒；已获得2组完整且通过检查的记录，其余3组未完成、检查不通过或未启动。 失败及未启动场景照实保留。[报告、可用视频和图表](docs/results/ht_tare_native_5scene_10min_2026-10-20/REPORT.md) · [完整数据Release](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261020-tare-multiscene)。完整数据发布状态以stage42.json回执为准。
+
+## 前一轮结果
+
 # 阶段41：原TARE决策与HT航点路由
 
 阶段41保持原TARE覆盖/TSP/航点顺序，修正HT掩码与BFS同步和近家HOME优先级。完整车库600秒181.31m/8660.125m³，较39+33.6%、较40+2.3%。搜索时间上限34次、展开上限57次，最长完全停车0.25s，末60秒新增671.645m³/移动16.56m；末尾EXPLORING。 [报告](docs/results/ht_tare_boundaries_10min_2026-10-20/REPORT.md) · [视频](docs/results/ht_tare_boundaries_10min_2026-10-20/garage/camera_h264.mp4) · [历次图册](docs/results/ht_tare_boundaries_10min_2026-10-20/history/index.html)。[完整数据已上传并核验](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261020-tare-boundaries)；本机保留第40/41轮完整数据，不宣称追平原版。

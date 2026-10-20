@@ -1,0 +1,33 @@
+endurance: started record pid=13662
+endurance: started health pid=13664
+endurance: started sim pid=13665
+endurance: started elevation pid=14143
+endurance: started ht_bridge pid=14221
+endurance: started xytheta_follower pid=14306
+endurance: started probe pid=14351
+endurance: started tare pid=14426
+RESULTS /home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_tare_native_5scene_10min_2026-10-20_19-39-37/indoor
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/subprocess.py", line 1264, in wait
+    return self._wait(timeout=timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 2047, in _wait
+    time.sleep(delay)
+KeyboardInterrupt
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/lzz/my test/HT_Explo-fixposition/presentations/run_ht_endurance.py", line 207, in <module>
+    main()
+  File "/home/lzz/my test/HT_Explo-fixposition/presentations/run_ht_endurance.py", line 189, in main
+    summary = run_trial(trial, 'current', args.duration,args.scenario)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/lzz/my test/HT_Explo-fixposition/presentations/run_scheduled_comparison.py", line 218, in run_trial
+    probe_proc.wait(timeout=duration+145)
+  File "/usr/lib/python3.12/subprocess.py", line 1277, in wait
+    self._wait(timeout=sigint_timeout)
+  File "/usr/lib/python3.12/subprocess.py", line 2046, in _wait
+    delay = min(delay * 2, remaining, .05)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+KeyboardInterrupt

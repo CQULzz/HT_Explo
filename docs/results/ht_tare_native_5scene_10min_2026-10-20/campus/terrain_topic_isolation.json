@@ -1,0 +1,50 @@
+{
+  "publishers": {
+    "/terrain_map": [],
+    "/terrain_map_ext": [],
+    "/simulation/terrain_map": [
+      {
+        "node_name": "terrainAnalysis",
+        "node_namespace": "/",
+        "topic_type": "sensor_msgs/msg/PointCloud2"
+      }
+    ],
+    "/simulation/terrain_map_ext": [
+      {
+        "node_name": "terrainAnalysisExt",
+        "node_namespace": "/",
+        "topic_type": "sensor_msgs/msg/PointCloud2"
+      }
+    ],
+    "/ht_traversability/global_local": [
+      {
+        "node_name": "cupy_to_ht_bridge",
+        "node_namespace": "/",
+        "topic_type": "grid_map_msgs/msg/GridMap"
+      }
+    ],
+    "/tare_tsp_order": [
+      {
+        "node_name": "tare_planner_node",
+        "node_namespace": "/",
+        "topic_type": "std_msgs/msg/String"
+      }
+    ],
+    "/tare_native_waypoint": [
+      {
+        "node_name": "tare_planner_node",
+        "node_namespace": "/",
+        "topic_type": "geometry_msgs/msg/PointStamped"
+      }
+    ],
+    "/ht_xytheta_path": [
+      {
+        "node_name": "tare_planner_node",
+        "node_namespace": "/",
+        "topic_type": "nav_msgs/msg/Path"
+      }
+    ]
+  },
+  "navigation_cmu_terrain_isolated": true,
+  "ht_map_published": true
+}
