@@ -246,15 +246,26 @@ def archive(record):
                        release=f'https://github.com/{REPO}/releases/tag/{tag}',
                        inventory_sha256=sha(local_inventory), files=sum(e['kind']=='file' for e in entries),
                        file_bytes=sum(e.get('bytes', 0) for e in entries),
-                       assets=assets, verified_at=datetime.datetime.now().astimezone().isoformat())
+                       assets=assets)
         proof = temp / (prefix + '-verified.json')
-        write(proof, receipt)
+        if proof.name in existing:
+            # Resume even after a complete proof upload followed by a lost response.
+            gh('release', 'download', tag, '--repo', REPO, '--pattern', proof.name,
+               '--output', str(proof))
+            prior=json.loads(proof.read_text())
+            comparable=dict(prior)
+            comparable.pop('verified_at',None)  # Compatibility with the first archive receipts.
+            if comparable != receipt:
+                raise ValueError('Existing proof describes different complete content')
+        else:
+            write(proof, receipt)
         proof_asset = upload(proof)
         receipt['assets'].append(proof_asset)
         # Verify the complete set together, after all streaming checks succeeded.
         final = {a['name']: a for a in release(tag)['assets']}
         if not all(a['name'] in final and matches(final[a['name']], a) for a in receipt['assets']):
             raise ValueError('Final complete remote verification failed')
+        receipt['verified_at']=datetime.datetime.now().astimezone().isoformat()
         write(receipt_path, receipt)
     print('VERIFIED', source.name, receipt['file_bytes'], flush=True)
     return receipt

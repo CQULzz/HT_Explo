@@ -1,7 +1,7 @@
 # 历史实验完整数据与版本对应表
 
 本次范围：原审计列出的 **62 个历史目录**，常规文件共 **63.405 GiB**。
-已完成远端大小与 SHA256 核验：**10/62 个目录**，原始文件 **0.000 GiB**。其余状态以表格为准，不把待上传当作已备份。
+已完成远端大小与 SHA256 核验：**40/62 个目录**，原始文件 **3.095 GiB**。其余状态以表格为准，不把待上传当作已备份。
 
 ## 版本对应的含义
 
@@ -16,36 +16,36 @@ Release 用于归入对应研究阶段；旧标签保持不动。归入某阶段
 | 8 | `2026-10-12_10-01-43` | 0.0000 | [已核验](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-elevation-xytheta) · [逐文件清单](inventories/2026-10-12_10-01-43.json) · [回执](receipts/2026-10-12_10-01-43.json) |
 | 8 | `2026-10-12_10-02-28` | 0.0000 | [已核验](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-elevation-xytheta) · [逐文件清单](inventories/2026-10-12_10-02-28.json) · [回执](receipts/2026-10-12_10-02-28.json) |
 | 8 | `2026-10-12_10-04-20` | 0.0000 | [已核验](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-elevation-xytheta) · [逐文件清单](inventories/2026-10-12_10-04-20.json) · [回执](receipts/2026-10-12_10-04-20.json) |
-| 8 | `2026-10-12_10-05-50` | 0.0001 | [待完成](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-elevation-xytheta) |
-| 8 | `2026-10-12_10-08-15` | 0.0001 | [待完成](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-elevation-xytheta) |
-| 8 | `2026-10-12_10-10-47` | 0.0002 | [待完成](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-elevation-xytheta) |
+| 8 | `2026-10-12_10-05-50` | 0.0001 | [已核验](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-elevation-xytheta) · [逐文件清单](inventories/2026-10-12_10-05-50.json) · [回执](receipts/2026-10-12_10-05-50.json) |
+| 8 | `2026-10-12_10-08-15` | 0.0001 | [已核验](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-elevation-xytheta) · [逐文件清单](inventories/2026-10-12_10-08-15.json) · [回执](receipts/2026-10-12_10-08-15.json) |
+| 8 | `2026-10-12_10-10-47` | 0.0002 | [已核验](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-elevation-xytheta) · [逐文件清单](inventories/2026-10-12_10-10-47.json) · [回执](receipts/2026-10-12_10-10-47.json) |
 | 8 | `2026-10-12_13-36-02` | 0.0000 | [已核验](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-elevation-xytheta) · [逐文件清单](inventories/2026-10-12_13-36-02.json) · [回执](receipts/2026-10-12_13-36-02.json) |
-| 8 | `2026-10-12_13-36-45` | 0.0001 | [待完成](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-elevation-xytheta) |
-| 8 | `2026-10-13_13-33-11` | 0.0016 | [待完成](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-elevation-xytheta) |
-| 8 | `history_executor_2026-10-12_13-43-58` | 0.0001 | [待完成](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-elevation-xytheta) |
-| 8 | `history_export_2026-10-12_13-52-39` | 0.0011 | [待完成](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-elevation-xytheta) |
-| 8 | `history_lookahead_2026-10-12_13-47-51` | 0.0001 | [待完成](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-elevation-xytheta) |
+| 8 | `2026-10-12_13-36-45` | 0.0001 | [已核验](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-elevation-xytheta) · [逐文件清单](inventories/2026-10-12_13-36-45.json) · [回执](receipts/2026-10-12_13-36-45.json) |
+| 8 | `2026-10-13_13-33-11` | 0.0016 | [已核验](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-elevation-xytheta) · [逐文件清单](inventories/2026-10-13_13-33-11.json) · [回执](receipts/2026-10-13_13-33-11.json) |
+| 8 | `history_executor_2026-10-12_13-43-58` | 0.0001 | [已核验](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-elevation-xytheta) · [逐文件清单](inventories/history_executor_2026-10-12_13-43-58.json) · [回执](receipts/history_executor_2026-10-12_13-43-58.json) |
+| 8 | `history_export_2026-10-12_13-52-39` | 0.0011 | [已核验](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-elevation-xytheta) · [逐文件清单](inventories/history_export_2026-10-12_13-52-39.json) · [回执](receipts/history_export_2026-10-12_13-52-39.json) |
+| 8 | `history_lookahead_2026-10-12_13-47-51` | 0.0001 | [已核验](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-elevation-xytheta) · [逐文件清单](inventories/history_lookahead_2026-10-12_13-47-51.json) · [回执](receipts/history_lookahead_2026-10-12_13-47-51.json) |
 | 8 | `ht_validation_final_2026-10-15` | 1.9329 | [待完成](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-elevation-xytheta) |
-| 8 | `noise_chain_2026-10-13_15-26-34` | 0.0313 | [待完成](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-elevation-xytheta) |
-| 8 | `noise_source_analysis_2026-10-13` | 0.0005 | [待完成](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-elevation-xytheta) |
-| 8 | `noise_static_2026-10-13` | 0.0043 | [待完成](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-elevation-xytheta) |
-| 8 | `noise_static_dense_2026-10-13` | 0.0120 | [待完成](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-elevation-xytheta) |
-| 8 | `noise_static_unit_resolution_2026-10-13` | 0.0035 | [待完成](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-elevation-xytheta) |
+| 8 | `noise_chain_2026-10-13_15-26-34` | 0.0313 | [已核验](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-elevation-xytheta) · [逐文件清单](inventories/noise_chain_2026-10-13_15-26-34.json) · [回执](receipts/noise_chain_2026-10-13_15-26-34.json) |
+| 8 | `noise_source_analysis_2026-10-13` | 0.0005 | [已核验](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-elevation-xytheta) · [逐文件清单](inventories/noise_source_analysis_2026-10-13.json) · [回执](receipts/noise_source_analysis_2026-10-13.json) |
+| 8 | `noise_static_2026-10-13` | 0.0043 | [已核验](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-elevation-xytheta) · [逐文件清单](inventories/noise_static_2026-10-13.json) · [回执](receipts/noise_static_2026-10-13.json) |
+| 8 | `noise_static_dense_2026-10-13` | 0.0120 | [已核验](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-elevation-xytheta) · [逐文件清单](inventories/noise_static_dense_2026-10-13.json) · [回执](receipts/noise_static_dense_2026-10-13.json) |
+| 8 | `noise_static_unit_resolution_2026-10-13` | 0.0035 | [已核验](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-elevation-xytheta) · [逐文件清单](inventories/noise_static_unit_resolution_2026-10-13.json) · [回执](receipts/noise_static_unit_resolution_2026-10-13.json) |
 | 8 | `original_10min_replay_2026-10-13_16-58-15` | 28.9696 | [待完成](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-elevation-xytheta) |
-| 8 | `pose_permission_fix_2026-10-13_16-21-50` | 0.0010 | [待完成](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-elevation-xytheta) |
-| 8 | `pose_permission_latest_map_2026-10-13_16-25-58` | 0.0027 | [待完成](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-elevation-xytheta) |
-| 8 | `realtime_fix_smoke_2026-10-15` | 0.5352 | [待完成](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-elevation-xytheta) |
-| 8 | `stop_ht_2026-10-12_14-00-05` | 0.0041 | [待完成](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-elevation-xytheta) |
+| 8 | `pose_permission_fix_2026-10-13_16-21-50` | 0.0010 | [已核验](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-elevation-xytheta) · [逐文件清单](inventories/pose_permission_fix_2026-10-13_16-21-50.json) · [回执](receipts/pose_permission_fix_2026-10-13_16-21-50.json) |
+| 8 | `pose_permission_latest_map_2026-10-13_16-25-58` | 0.0027 | [已核验](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-elevation-xytheta) · [逐文件清单](inventories/pose_permission_latest_map_2026-10-13_16-25-58.json) · [回执](receipts/pose_permission_latest_map_2026-10-13_16-25-58.json) |
+| 8 | `realtime_fix_smoke_2026-10-15` | 0.5352 | [已核验](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-elevation-xytheta) · [逐文件清单](inventories/realtime_fix_smoke_2026-10-15.json) · [回执](receipts/realtime_fix_smoke_2026-10-15.json) |
+| 8 | `stop_ht_2026-10-12_14-00-05` | 0.0041 | [已核验](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-elevation-xytheta) · [逐文件清单](inventories/stop_ht_2026-10-12_14-00-05.json) · [回执](receipts/stop_ht_2026-10-12_14-00-05.json) |
 | 8 | `surface_fix_live_2026-10-15` | 0.8977 | [待完成](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-elevation-xytheta) |
 | 8 | `surface_fix_live_reliable_isolated_2026-10-15` | 0.8403 | [待完成](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-elevation-xytheta) |
 | 8 | `upstream_replay_scan_tf_smoke_2026-10-13` | 0.0001 | [已核验](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-elevation-xytheta) · [逐文件清单](inventories/upstream_replay_scan_tf_smoke_2026-10-13.json) · [回执](receipts/upstream_replay_scan_tf_smoke_2026-10-13.json) |
-| 8 | `upstream_replay_scan_tf_verified_2026-10-13` | 0.0377 | [待完成](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-elevation-xytheta) |
+| 8 | `upstream_replay_scan_tf_verified_2026-10-13` | 0.0377 | [已核验](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-elevation-xytheta) · [逐文件清单](inventories/upstream_replay_scan_tf_verified_2026-10-13.json) · [回执](receipts/upstream_replay_scan_tf_verified_2026-10-13.json) |
 | 8 | `upstream_replay_smoke_2026-10-13` | 0.6439 | [待完成](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-elevation-xytheta) |
 | 9 | `ht_continuity_candidates_2026-10-15` | 1.2712 | [待完成](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-goal-continuity) |
 | 9 | `ht_continuity_escape_2026-10-15` | 1.8119 | [待完成](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-goal-continuity) |
 | 9 | `ht_continuity_final_2026-10-15` | 1.8976 | [待完成](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-goal-continuity) |
-| 9 | `ht_target_continuity_2026-10-15` | 0.4081 | [待完成](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-goal-continuity) |
-| 9 | `ht_target_continuity_verified_2026-10-15` | 0.2403 | [待完成](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-goal-continuity) |
+| 9 | `ht_target_continuity_2026-10-15` | 0.4081 | [已核验](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-goal-continuity) · [逐文件清单](inventories/ht_target_continuity_2026-10-15.json) · [回执](receipts/ht_target_continuity_2026-10-15.json) |
+| 9 | `ht_target_continuity_verified_2026-10-15` | 0.2403 | [已核验](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-goal-continuity) · [逐文件清单](inventories/ht_target_continuity_verified_2026-10-15.json) · [回执](receipts/ht_target_continuity_verified_2026-10-15.json) |
 | 10 | `ht_repeat_publish_2026-10-15` | 2.4815 | [待完成](https://github.com/CQULzz/HT_Explo/releases/tag/ht-garage-repeat-20261015-1225) |
 | 11 | `ht_swept_gate_2026-10-16` | 1.9364 | [待完成](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261016-swept-check) |
 | 11 | `ht_swept_gate_repeat_2026-10-16` | 1.8527 | [待完成](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261016-swept-check) |
@@ -56,25 +56,25 @@ Release 用于归入对应研究阶段；旧标签保持不动。归入某阶段
 | 14 | `ht_progress_return_fix_2026-10-16_23-20-58` | 0.0000 | [已核验](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261016-progress-memory) · [逐文件清单](inventories/ht_progress_return_fix_2026-10-16_23-20-58.json) · [回执](receipts/ht_progress_return_fix_2026-10-16_23-20-58.json) |
 | 14 | `ht_progress_return_fix_2026-10-16_23-23-20` | 0.7262 | [待完成](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261016-progress-memory) |
 | 15 | `ht_endurance_progress_2026-10-17_00-39-55` | 2.3770 | [待完成](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261017-endurance-return) |
-| 16 | `ht_clean_shutdown_smoke2_2026-10-17` | 0.0479 | [待完成](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261017-crossguide-lifecycle) |
-| 16 | `ht_clean_shutdown_smoke3_2026-10-17` | 0.0320 | [待完成](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261017-crossguide-lifecycle) |
-| 16 | `ht_cycle_shutdown_smoke_2026-10-17` | 0.0799 | [待完成](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261017-crossguide-lifecycle) |
+| 16 | `ht_clean_shutdown_smoke2_2026-10-17` | 0.0479 | [已核验](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261017-crossguide-lifecycle) · [逐文件清单](inventories/ht_clean_shutdown_smoke2_2026-10-17.json) · [回执](receipts/ht_clean_shutdown_smoke2_2026-10-17.json) |
+| 16 | `ht_clean_shutdown_smoke3_2026-10-17` | 0.0320 | [已核验](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261017-crossguide-lifecycle) · [逐文件清单](inventories/ht_clean_shutdown_smoke3_2026-10-17.json) · [回执](receipts/ht_clean_shutdown_smoke3_2026-10-17.json) |
+| 16 | `ht_cycle_shutdown_smoke_2026-10-17` | 0.0799 | [已核验](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261017-crossguide-lifecycle) · [逐文件清单](inventories/ht_cycle_shutdown_smoke_2026-10-17.json) · [回执](receipts/ht_cycle_shutdown_smoke_2026-10-17.json) |
 | 16 | `ht_direct_gazebo_shutdown_smoke4_2026-10-17` | 0.0000 | [已核验](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261017-crossguide-lifecycle) · [逐文件清单](inventories/ht_direct_gazebo_shutdown_smoke4_2026-10-17.json) · [回执](receipts/ht_direct_gazebo_shutdown_smoke4_2026-10-17.json) |
-| 16 | `ht_endurance_crossguide_2026-10-17_02-14-09` | 0.5103 | [待完成](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261017-crossguide-lifecycle) |
-| 17 | `ht_endurance_cpu_limited_2026-10-17_02-35-26` | 0.1556 | [待完成](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261017-blas-threads) |
+| 16 | `ht_endurance_crossguide_2026-10-17_02-14-09` | 0.5103 | [已核验](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261017-crossguide-lifecycle) · [逐文件清单](inventories/ht_endurance_crossguide_2026-10-17_02-14-09.json) · [回执](receipts/ht_endurance_crossguide_2026-10-17_02-14-09.json) |
+| 17 | `ht_endurance_cpu_limited_2026-10-17_02-35-26` | 0.1556 | [已核验](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261017-blas-threads) · [逐文件清单](inventories/ht_endurance_cpu_limited_2026-10-17_02-35-26.json) · [回执](receipts/ht_endurance_cpu_limited_2026-10-17_02-35-26.json) |
 | 18 | `ht_multiscene_10min_2026-10-17_11-37-52` | 2.2031 | [待完成](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261017-multiscene-10min) |
-| 19 | `ht_indoor_dense_10min_2026-10-17_12-38-24` | 0.2891 | [待完成](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261017-indoor-viewpoints) |
+| 19 | `ht_indoor_dense_10min_2026-10-17_12-38-24` | 0.2891 | [已核验](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261017-indoor-viewpoints) · [逐文件清单](inventories/ht_indoor_dense_10min_2026-10-17_12-38-24.json) · [回执](receipts/ht_indoor_dense_10min_2026-10-17_12-38-24.json) |
 | 20 | `ht_combined_admission_10min_2026-10-18_01-52-52` | 1.7468 | [待完成](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261017-context-recovery) |
-| 20 | `ht_completion_diagnostic_2026-10-18_01-06-52` | 0.2692 | [待完成](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261017-context-recovery) |
-| 20 | `ht_context_recovery_10min_2026-10-17_14-42-07` | 0.0971 | [待完成](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261017-context-recovery) |
-| 20 | `ht_heading_reserve_10min_2026-10-18_01-47-41` | 0.3299 | [待完成](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261017-context-recovery) |
+| 20 | `ht_completion_diagnostic_2026-10-18_01-06-52` | 0.2692 | [已核验](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261017-context-recovery) · [逐文件清单](inventories/ht_completion_diagnostic_2026-10-18_01-06-52.json) · [回执](receipts/ht_completion_diagnostic_2026-10-18_01-06-52.json) |
+| 20 | `ht_context_recovery_10min_2026-10-17_14-42-07` | 0.0971 | [已核验](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261017-context-recovery) · [逐文件清单](inventories/ht_context_recovery_10min_2026-10-17_14-42-07.json) · [回执](receipts/ht_context_recovery_10min_2026-10-17_14-42-07.json) |
+| 20 | `ht_heading_reserve_10min_2026-10-18_01-47-41` | 0.3299 | [已核验](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261017-context-recovery) · [逐文件清单](inventories/ht_heading_reserve_10min_2026-10-18_01-47-41.json) · [回执](receipts/ht_heading_reserve_10min_2026-10-18_01-47-41.json) |
 | 20 | `ht_recovery_verified_10min_2026-10-17_14-55-03` | 0.0000 | [已核验](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261017-context-recovery) · [逐文件清单](inventories/ht_recovery_verified_10min_2026-10-17_14-55-03.json) · [回执](receipts/ht_recovery_verified_10min_2026-10-17_14-55-03.json) |
 | 20 | `ht_recovery_verified_10min_2026-10-17_14-55-26` | 0.5603 | [待完成](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261017-context-recovery) |
 | 20 | `ht_reversible_motion_10min_2026-10-18_01-26-31` | 1.1109 | [待完成](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261017-context-recovery) |
 | 21 | `ht_zero_twist_fine_heading_10min_2026-10-18_02-28-07` | 1.9352 | [待完成](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261018-zero-hold) |
 | 21 | `ht_zero_twist_verified_10min_2026-10-18_02-13-23` | 0.0000 | [已核验](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261018-zero-hold) · [逐文件清单](inventories/ht_zero_twist_verified_10min_2026-10-18_02-13-23.json) · [回执](receipts/ht_zero_twist_verified_10min_2026-10-18_02-13-23.json) |
 | 21 | `ht_zero_twist_verified_10min_2026-10-18_02-15-15` | 0.8191 | [待完成](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261018-zero-hold) |
-| 39 | `ht_revision_metric_reanalysis_2026-10-19` | 0.0003 | [待完成](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261020-successor-pruning) |
+| 39 | `ht_revision_metric_reanalysis_2026-10-19` | 0.0003 | [已核验](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261020-successor-pruning) · [逐文件清单](inventories/ht_revision_metric_reanalysis_2026-10-19.json) · [回执](receipts/ht_revision_metric_reanalysis_2026-10-19.json) |
 
 ## 下载与恢复
 
