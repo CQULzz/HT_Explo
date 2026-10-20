@@ -19,6 +19,8 @@ BASE = ROOT / 'presentations/scheduled_results'
 OUT = ROOT / 'docs/experiments/legacy_archive'
 REPO = 'CQULzz/HT_Explo'
 PART = 512 * 1024 * 1024
+UPLOAD_POOL = None
+SPOOL_SLOTS = None
 
 
 def write(path, value):
@@ -94,10 +96,11 @@ class CheckedReader:
         return b
 
 
-def stream_parts(source, entries, temp, prefix, callback, part_bytes=PART):
+def stream_parts(source, entries, temp, prefix, callback, part_bytes=PART,
+                 upload_pool=None, spool_slots=None):
     """Tar producer verifies source bytes while compressor/consumer apply backpressure.
 
-    Only one transport part exists at a time. Compression and tar headers are
+    Transport spool is bounded by the shared semaphore. Compression and tar headers are
     deterministic, so already uploaded identical parts can be reused after restart.
     """
     errors = []
@@ -137,26 +140,48 @@ def stream_parts(source, entries, temp, prefix, callback, part_bytes=PART):
     thread = threading.Thread(target=produce, daemon=True)
     thread.start()
     assets = []
+    pending = []
+    def upload_and_release(path):
+        try:
+            return callback(path)
+        finally:
+            path.unlink(missing_ok=True)
+            spool_slots.release()
     try:
         number = 0
         while True:
+            if upload_pool:
+                spool_slots.acquire()
             part = temp / f'{prefix}.tar.zst.part{number:03d}'
-            with part.open('wb') as output:
-                remaining = part_bytes
-                while remaining:
-                    b = proc.stdout.read(min(4 * 1024 * 1024, remaining))
-                    if not b:
-                        break
-                    output.write(b)
-                    remaining -= len(b)
+            try:
+                with part.open('wb') as output:
+                    remaining = part_bytes
+                    while remaining:
+                        b = proc.stdout.read(min(4 * 1024 * 1024, remaining))
+                        if not b:
+                            break
+                        output.write(b)
+                        remaining -= len(b)
+            except BaseException:
+                if upload_pool:
+                    spool_slots.release()
+                raise
             if not part.stat().st_size:
                 part.unlink()
+                if upload_pool:
+                    spool_slots.release()
                 break
-            assets.append(callback(part))
-            part.unlink()  # Source remains; only the verified temporary transport part is removed.
+            if upload_pool:
+                pending.append(upload_pool.submit(upload_and_release,part))
+            else:
+                assets.append(callback(part))
+                part.unlink()  # Source remains; only temporary transport parts are removed.
             number += 1
         thread.join()
         code = proc.wait()
+        if upload_pool:
+            # Keep numeric part order, regardless of upload completion order.
+            assets=[future.result() for future in pending]
         if errors:
             raise errors[0]
         if code:
@@ -164,6 +189,12 @@ def stream_parts(source, entries, temp, prefix, callback, part_bytes=PART):
     finally:
         if proc.poll() is None:
             proc.kill()
+        # Failed sources/transfers cannot leave tasks using a removed temp directory.
+        for future in pending:
+            try:
+                future.result()
+            except BaseException:
+                pass
         proc.stdout.close()
         proc.stderr.close()
     return assets
@@ -235,7 +266,8 @@ def archive(record):
         return expected
     with tempfile.TemporaryDirectory(prefix='ht-legacy-') as tmp:
         temp = Path(tmp)
-        assets = stream_parts(source, entries, temp, prefix, upload)
+        assets = stream_parts(source, entries, temp, prefix, upload,
+                              upload_pool=UPLOAD_POOL,spool_slots=SPOOL_SLOTS)
         inv_asset = temp / (prefix + '-files.json')
         inv_asset.write_bytes(local_inventory.read_bytes())
         assets.append(upload(inv_asset))
@@ -282,20 +314,43 @@ def self_test():
         entries = [dict(path='alias',kind='symlink',original_target='data.bin',portable_target='data.bin'),
                    dict(path='data.bin',kind='file',bytes=20000,sha256=sha(source/'data.bin'),mode=0o644),
                    dict(path='empty',kind='directory',mode=0o755)]
-        def once(label):
+        def once(label,parallel=False):
             transport=[]
             def save(p):
                 transport.append(p.read_bytes())
                 return dict(bytes=p.stat().st_size,sha256=sha(p))
+            if parallel:
+                chunks={}
+                def parallel_save(p):
+                    chunks[p.name]=p.read_bytes()
+                    return dict(bytes=p.stat().st_size,sha256=sha(p))
+                with concurrent.futures.ThreadPoolExecutor(max_workers=3) as pool:
+                    slots=threading.BoundedSemaphore(3)
+                    assets=stream_parts(source,entries,temp,label,parallel_save,4096,pool,slots)
+                assert slots._value==3
+                return assets,b''.join(chunks[n] for n in sorted(chunks))
             assets=stream_parts(source,entries,temp,label,save,4096)
             return assets,b''.join(transport)
         a,raw=once('one');b,repeated=once('two')
         assert a==b and raw==repeated and len(a)>1
+        c,parallel=once('parallel',True)
+        assert c==a and parallel==raw
         unpacked=subprocess.check_output(['zstd','-q','-d','-c'],input=raw)
         with tarfile.open(fileobj=io.BytesIO(unpacked)) as tar:
             assert tar.extractfile('example/data.bin').read()==(source/'data.bin').read_bytes()
             assert tar.getmember('example/alias').linkname=='data.bin'
             assert tar.getmember('example/empty').isdir()
+        with concurrent.futures.ThreadPoolExecutor(max_workers=3) as pool:
+            slots=threading.BoundedSemaphore(3)
+            def reject_upload(path):
+                raise RuntimeError('Simulated interrupted transport')
+            try:
+                stream_parts(source,entries,temp,'interrupted',reject_upload,4096,pool,slots)
+            except RuntimeError:
+                pass
+            else:
+                raise AssertionError('Failed upload was accepted')
+            assert slots._value==3 and not list(temp.glob('interrupted*'))
         entries[1]['sha256']='0'*64
         try:
             stream_parts(source,entries,temp,'corrupt',lambda p:None,4096)
@@ -305,10 +360,11 @@ def self_test():
             raise AssertionError('Changed source was not rejected')
         assert matches(dict(state='uploaded',size=1,digest='sha256:abc'),dict(bytes=1,sha256='abc'))
         assert not matches(dict(state='uploaded',size=1,digest='sha256:xyz'),dict(bytes=1,sha256='abc'))
-    print('PASS: deterministic multipart round-trip, empty directories, portable symlink, source mismatch and remote digest rejection')
+    print('PASS: deterministic serial/parallel multipart round-trip, bounded spool, empty directories, portable symlink, source mismatch and remote digest rejection')
 
 
 def main():
+    global UPLOAD_POOL,SPOOL_SLOTS
     ap=argparse.ArgumentParser(description=__doc__)
     ap.add_argument('--self-test',action='store_true')
     ap.add_argument('--dataset',action='append')
@@ -325,15 +381,23 @@ def main():
         records=[r for r in records if r['dataset'] in args.dataset]
     if not 1 <= args.workers <= 4:
         raise ValueError('Use between one and four bounded-spool upload workers')
-    # Three independent datasets can upload concurrently; each retains just one part.
+    # Share three upload connections/spool slots across datasets, including one large dataset.
     receipts=[]
-    with concurrent.futures.ThreadPoolExecutor(max_workers=args.workers) as pool:
-        jobs={pool.submit(archive,r):r for r in sorted(records,key=lambda r:r['bytes'])}
+    SPOOL_SLOTS=threading.BoundedSemaphore(3)
+    with concurrent.futures.ThreadPoolExecutor(max_workers=3) as uploads, concurrent.futures.ThreadPoolExecutor(max_workers=args.workers) as pool:
+        UPLOAD_POOL=uploads
+        # After transport checks, start the largest pending dataset early so its
+        # long upload overlaps smaller datasets instead of leaving a serial tail.
+        order=sorted(records,key=lambda r:((OUT/'receipts'/(r['dataset']+'.json')).exists(),-r['bytes']))
+        jobs={pool.submit(archive,r):r for r in order}
         for future in concurrent.futures.as_completed(jobs):
             record=jobs[future]
             receipts.append(future.result())
-            write(OUT/'progress.json',dict(selected=len(records),verified=len(receipts),
-                                          verified_file_bytes=sum(r['file_bytes'] for r in receipts),
+            available=[json.loads(p.read_text()) for p in (OUT/'receipts').glob('*.json')
+                       if p.stem in {r['dataset'] for r in records}]
+            write(OUT/'progress.json',dict(selected=len(records),verified=len(available),
+                                          session_reverified=len(receipts),
+                                          verified_file_bytes=sum(r['file_bytes'] for r in available),
                                           latest=record['dataset'],updated_at=datetime.datetime.now().astimezone().isoformat()))
     print('ALL SELECTED DATASETS VERIFIED',len(receipts),flush=True)
 
