@@ -1,6 +1,6 @@
 # 阶段41：原TARE决策与HT航点路由
 
-阶段41保持原TARE覆盖/TSP/航点顺序，修正HT掩码与BFS同步和近家HOME优先级。完整车库600秒181.31m/8660.125m³，较39+33.6%、较40+2.3%。搜索时间上限34次、展开上限57次，最长完全停车0.25s，末60秒新增671.645m³/移动16.56m；末尾EXPLORING。 [报告](docs/results/ht_tare_boundaries_10min_2026-10-20/REPORT.md) · [视频](docs/results/ht_tare_boundaries_10min_2026-10-20/garage/camera_h264.mp4) · [历次图册](docs/results/ht_tare_boundaries_10min_2026-10-20/history/index.html)。完整数据待本轮Release远端核验；不宣称追平原版。
+阶段41保持原TARE覆盖/TSP/航点顺序，修正HT掩码与BFS同步和近家HOME优先级。完整车库600秒181.31m/8660.125m³，较39+33.6%、较40+2.3%。搜索时间上限34次、展开上限57次，最长完全停车0.25s，末60秒新增671.645m³/移动16.56m；末尾EXPLORING。 [报告](docs/results/ht_tare_boundaries_10min_2026-10-20/REPORT.md) · [视频](docs/results/ht_tare_boundaries_10min_2026-10-20/garage/camera_h264.mp4) · [历次图册](docs/results/ht_tare_boundaries_10min_2026-10-20/history/index.html)。[完整数据已上传并核验](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261020-tare-boundaries)；本机保留第40/41轮完整数据，不宣称追平原版。
 
 ---
 
