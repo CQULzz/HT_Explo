@@ -20,7 +20,8 @@ git add -- docs/experiments/legacy_archive docs/release_notes \
   docs/plans/2026-10-20_historical_data_archive.md \
   scripts/archive_legacy_ht_data.py scripts/report_legacy_ht_archive.py \
   scripts/verify_legacy_ht_archive.py scripts/link_legacy_ht_releases.py \
-  scripts/finalize_legacy_ht_archive.sh
+  scripts/finalize_legacy_ht_archive.sh scripts/run_legacy_ht_archive.sh \
+  scripts/install_legacy_ht_archive_service.py
 if ! git diff --cached --quiet; then
   git -c user.name=Codex -c user.email=codex@local commit \
     -m 'Verify all 62 historical data archives and link corresponding GitHub releases'
