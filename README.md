@@ -1,3 +1,9 @@
+# 阶段43：原TARE同分支短前缀补搜
+
+车库600秒：191.25m / 7013.625m³ / 末状态EXPLORING。[报告、比较图和视频](docs/results/ht_tare_short_prefix_10min_2026-10-21/REPORT.md) · [完整数据Release](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261021-tare-short-prefix)。完整上传以stage43.json回执为准；室内低分问题未在线修复。
+
+## 前一轮记录
+
 # 阶段42：原TARE＋HT五场景验证
 
 同阶段41导航版本。计划5场景、每组600秒；已获得2组完整且通过检查的记录，其余3组未完成、检查不通过或未启动。 失败及未启动场景照实保留。[报告、可用视频和图表](docs/results/ht_tare_native_5scene_10min_2026-10-20/REPORT.md) · [完整数据Release](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261020-tare-multiscene)。完整数据发布状态以stage42.json回执为准。
