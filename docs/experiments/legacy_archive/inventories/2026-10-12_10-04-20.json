@@ -1,0 +1,58 @@
+{
+  "dataset": "2026-10-12_10-04-20",
+  "entries": [
+    {
+      "path": "build.log",
+      "kind": "file",
+      "bytes": 97,
+      "sha256": "c6d65176a4a1061e0f034aaf1f6454ad5ad5c71125a66223332eaaf34221f44a",
+      "mode": 436
+    },
+    {
+      "path": "manifest.json",
+      "kind": "file",
+      "bytes": 1159,
+      "sha256": "11df51eaf471e470ff6b5506d463188b5968ea4b060031d597fb035407abc01c",
+      "mode": 436
+    },
+    {
+      "path": "original",
+      "kind": "directory",
+      "mode": 509
+    },
+    {
+      "path": "original/sim.log",
+      "kind": "file",
+      "bytes": 26559,
+      "sha256": "517db157d34b611619cbaf9dd6b7ff07344f6987fcddadecd551dbfd95926f2b",
+      "mode": 436
+    },
+    {
+      "path": "original/stage.log",
+      "kind": "file",
+      "bytes": 650,
+      "sha256": "cbebe381cb388b86055d9ead4d5b69d7276144ff6e147ef505e87c83b852f741",
+      "mode": 436
+    }
+  ],
+  "provenance": {
+    "dataset": "2026-10-12_10-04-20",
+    "source": "presentations/scheduled_results/2026-10-12_10-04-20",
+    "stage": 8,
+    "tag": "ht-stage-20261015-elevation-xytheta",
+    "stage_tag_commit": "8398f538450a21c4ee9d65d17193ee084eacee03",
+    "association": "Related research phase; NOT a claim that the tag equals the measured code. See original manifests, source snapshots and working_tree.patch. Unknown commits remain unknown.",
+    "provenance": [
+      {
+        "path": "manifest.json",
+        "recorded_commits": {},
+        "planned_duration_s": 10,
+        "working_tree_patch_preserved": false
+      }
+    ],
+    "original_status_evidence": [],
+    "bytes": 28465,
+    "scope": "ALL existing regular files and symlink topology; no newly simulated data; does not certify full600s or navigation success."
+  },
+  "format": "Concatenate parts in numeric order, zstd-decompress then tar-extract into a common root. Symlinks are relative; original link strings are in this inventory."
+}

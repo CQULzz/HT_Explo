@@ -1,0 +1,72 @@
+{
+  "dataset": "2026-10-12_10-02-28",
+  "entries": [
+    {
+      "path": "FAILURE.json",
+      "kind": "file",
+      "bytes": 341,
+      "sha256": "5725b1921a8d1080836eda465a667c229172ff27aed7fba5f2431700cfa0de72",
+      "mode": 436
+    },
+    {
+      "path": "build.log",
+      "kind": "file",
+      "bytes": 97,
+      "sha256": "5a322ec493483b619ead8604b935510b67bef1b7701998da347e828b5001c4e0",
+      "mode": 436
+    },
+    {
+      "path": "manifest.json",
+      "kind": "file",
+      "bytes": 1159,
+      "sha256": "13ab1270b5bcd4266fe44a119d03ad87069304c869f7c8eca254c1b68b0efe19",
+      "mode": 436
+    },
+    {
+      "path": "original",
+      "kind": "directory",
+      "mode": 509
+    },
+    {
+      "path": "original/sim.log",
+      "kind": "file",
+      "bytes": 26559,
+      "sha256": "c7191b69b0e181b32c4988b3400d28ffde20a3a2b68c0125535c9e5d8dc9469a",
+      "mode": 436
+    },
+    {
+      "path": "original/stage.log",
+      "kind": "file",
+      "bytes": 492,
+      "sha256": "f3d8582e3ffee359edf4fc0552672c27551b77fd746d5c6185fb4a339d558974",
+      "mode": 436
+    }
+  ],
+  "provenance": {
+    "dataset": "2026-10-12_10-02-28",
+    "source": "presentations/scheduled_results/2026-10-12_10-02-28",
+    "stage": 8,
+    "tag": "ht-stage-20261015-elevation-xytheta",
+    "stage_tag_commit": "8398f538450a21c4ee9d65d17193ee084eacee03",
+    "association": "Related research phase; NOT a claim that the tag equals the measured code. See original manifests, source snapshots and working_tree.patch. Unknown commits remain unknown.",
+    "provenance": [
+      {
+        "path": "manifest.json",
+        "recorded_commits": {},
+        "planned_duration_s": 10,
+        "working_tree_patch_preserved": false
+      }
+    ],
+    "original_status_evidence": [
+      {
+        "path": "FAILURE.json",
+        "state": "see_original_file",
+        "runs": [],
+        "reason": null
+      }
+    ],
+    "bytes": 28648,
+    "scope": "ALL existing regular files and symlink topology; no newly simulated data; does not certify full600s or navigation success."
+  },
+  "format": "Concatenate parts in numeric order, zstd-decompress then tar-extract into a common root. Symlinks are relative; original link strings are in this inventory."
+}

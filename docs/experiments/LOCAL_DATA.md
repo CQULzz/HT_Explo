@@ -16,3 +16,8 @@ python3 scripts/prune_published_ht_raw.py --keep 2 --apply
 需要重新分析旧轮时，从相应Release下载完整raw.tar（大包可能按part000、part001分卷），先对照发布回执核对SHA256，再解包；仓库中的报告/视频不等于全部原始MCAP。源秒抽样激光和周期地图的原始采集范围没有因此变成全传感器无损记录。
 
 删除旧原始目录前，实际C++回归需要的阶段22冻结HT样本已逐字节保留在[fixtures/mixed_turn_stop.txt](../fixes/fixtures/mixed_turn_stop.txt)。后续设置HT_CONFIGURATION_FIXTURE指向该文件；其余既有回归样本和模型、独立仿真/建图工作区不受清理影响。未纳入已校验完整发布回执的历史数据暂时保留。
+
+
+## 早期历史目录补归档（2026-10-20）
+
+此前标准清理仅覆盖stage发布回执。原审计的62个额外目录共63.405 GiB，现按阶段建立[补归档清单](legacy_archive/README.md)，逐文件清单与远端校验回执另行保存，不将阶段归属冒充精确测试提交。补归档工具不删除源目录；失败/中止也按原样归档。

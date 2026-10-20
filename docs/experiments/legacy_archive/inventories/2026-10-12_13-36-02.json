@@ -1,0 +1,65 @@
+{
+  "dataset": "2026-10-12_13-36-02",
+  "entries": [
+    {
+      "path": "FAILURE.json",
+      "kind": "file",
+      "bytes": 241,
+      "sha256": "ab69f68beb575e4283134ee1208fcf1ce6cbac35d707277d897155ec8e21b9a9",
+      "mode": 436
+    },
+    {
+      "path": "build.log",
+      "kind": "file",
+      "bytes": 97,
+      "sha256": "f74aa96ccb276c9b4d06fbf78d39c97c196004d1d04fd3d00bb8404bbc1e100c",
+      "mode": 436
+    },
+    {
+      "path": "manifest.json",
+      "kind": "file",
+      "bytes": 1159,
+      "sha256": "a903d06e3a037b4fc7abc8b8a3375330edb71f957b81224f65d471eec445bb2a",
+      "mode": 436
+    },
+    {
+      "path": "original",
+      "kind": "directory",
+      "mode": 509
+    },
+    {
+      "path": "original/sim.log",
+      "kind": "file",
+      "bytes": 23108,
+      "sha256": "e4ad85b73568e3d8f8cc626709130a020601843f0681afa784591337d016302b",
+      "mode": 436
+    }
+  ],
+  "provenance": {
+    "dataset": "2026-10-12_13-36-02",
+    "source": "presentations/scheduled_results/2026-10-12_13-36-02",
+    "stage": 8,
+    "tag": "ht-stage-20261015-elevation-xytheta",
+    "stage_tag_commit": "8398f538450a21c4ee9d65d17193ee084eacee03",
+    "association": "Related research phase; NOT a claim that the tag equals the measured code. See original manifests, source snapshots and working_tree.patch. Unknown commits remain unknown.",
+    "provenance": [
+      {
+        "path": "manifest.json",
+        "recorded_commits": {},
+        "planned_duration_s": 90,
+        "working_tree_patch_preserved": false
+      }
+    ],
+    "original_status_evidence": [
+      {
+        "path": "FAILURE.json",
+        "state": "see_original_file",
+        "runs": [],
+        "reason": null
+      }
+    ],
+    "bytes": 24605,
+    "scope": "ALL existing regular files and symlink topology; no newly simulated data; does not certify full600s or navigation success."
+  },
+  "format": "Concatenate parts in numeric order, zstd-decompress then tar-extract into a common root. Symlinks are relative; original link strings are in this inventory."
+}

@@ -1,0 +1,135 @@
+{
+  "dataset": "ht_progress_return_fix_2026-10-16_23-20-58",
+  "entries": [
+    {
+      "path": "FAILURE.json",
+      "kind": "file",
+      "bytes": 107,
+      "sha256": "d2c742b051589a896f92c6d122d8b7d69744ed6a69824c5ae2528f11d32e98cd",
+      "mode": 436
+    },
+    {
+      "path": "POSTPROCESS_FAILED.json",
+      "kind": "file",
+      "bytes": 109,
+      "sha256": "550c6ffb702bc4ec6d96396db0108b050dfee07f11bd96cd49b148a08562cadb",
+      "mode": 436
+    },
+    {
+      "path": "current",
+      "kind": "directory",
+      "mode": 509
+    },
+    {
+      "path": "current/health.log",
+      "kind": "file",
+      "bytes": 604,
+      "sha256": "d8075df55f530d47086f66b70c1034f8e24e643882b50523d30f51e4a6bbdb27",
+      "mode": 436
+    },
+    {
+      "path": "current/record.log",
+      "kind": "file",
+      "bytes": 604,
+      "sha256": "c62ccd2fdb93fa09aed2c434c1df972cae42878874a6ecc8d09291e142db557b",
+      "mode": 436
+    },
+    {
+      "path": "current/sim.log",
+      "kind": "file",
+      "bytes": 22006,
+      "sha256": "affa151d91a6776966c0269d2d5a7e046c9b52e5cbf938656ae23b456ed100fd",
+      "mode": 436
+    },
+    {
+      "path": "endurance_probe.py",
+      "kind": "file",
+      "bytes": 7706,
+      "sha256": "19ade9fb6906cbafd7cf2fe203af8606e84f12e62b7a03030cec2bd9320e8e56",
+      "mode": 436
+    },
+    {
+      "path": "live_status.json",
+      "kind": "file",
+      "bytes": 208,
+      "sha256": "319e2a5c16a9bbe60246d32763271e2bb271994449a995d4a4ad04a600fcf959",
+      "mode": 436
+    },
+    {
+      "path": "manifest.json",
+      "kind": "file",
+      "bytes": 3832,
+      "sha256": "4212a2de0c6476845fb3c456a9da1d7e5d9ccc64890dce8aab2bda13f50f5970",
+      "mode": 436
+    },
+    {
+      "path": "mapper_checkpoints.jsonl",
+      "kind": "file",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "mode": 436
+    },
+    {
+      "path": "resources.csv",
+      "kind": "file",
+      "bytes": 1125,
+      "sha256": "10bf5f918b9cb8ecc2bb88f799f67c075e924627dbaee6cc8fe536443de51b8c",
+      "mode": 436
+    },
+    {
+      "path": "run_ht_endurance.py",
+      "kind": "file",
+      "bytes": 8720,
+      "sha256": "6b11e31f030387caa13dab90a7e92e8bf94668b0aeb67d834c27ab23970e216d",
+      "mode": 436
+    },
+    {
+      "path": "runtime_failures.json",
+      "kind": "file",
+      "bytes": 260,
+      "sha256": "b1aa16f74e0eb468f8f69a58e92407651fc54dd60a5db680969c124f3b7720c4",
+      "mode": 436
+    },
+    {
+      "path": "snapshots",
+      "kind": "directory",
+      "mode": 509
+    },
+    {
+      "path": "working_tree.patch",
+      "kind": "file",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "mode": 436
+    }
+  ],
+  "provenance": {
+    "dataset": "ht_progress_return_fix_2026-10-16_23-20-58",
+    "source": "presentations/scheduled_results/ht_progress_return_fix_2026-10-16_23-20-58",
+    "stage": 14,
+    "tag": "ht-stage-20261016-progress-memory",
+    "stage_tag_commit": "9393e7da7d1eeabf04a4325593834304f236e405",
+    "association": "Related research phase; NOT a claim that the tag equals the measured code. See original manifests, source snapshots and working_tree.patch. Unknown commits remain unknown.",
+    "provenance": [
+      {
+        "path": "manifest.json",
+        "recorded_commits": {
+          "git_head": "c85ad1f004bbaceae14cd65351be38c3a9e61273"
+        },
+        "planned_duration_s": 1500,
+        "working_tree_patch_preserved": true
+      }
+    ],
+    "original_status_evidence": [
+      {
+        "path": "FAILURE.json",
+        "state": "see_original_file",
+        "runs": [],
+        "reason": null
+      }
+    ],
+    "bytes": 45281,
+    "scope": "ALL existing regular files and symlink topology; no newly simulated data; does not certify full600s or navigation success."
+  },
+  "format": "Concatenate parts in numeric order, zstd-decompress then tar-extract into a common root. Symlinks are relative; original link strings are in this inventory."
+}

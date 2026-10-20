@@ -1,0 +1,143 @@
+{
+  "dataset": "upstream_replay_scan_tf_smoke_2026-10-13",
+  "entries": [
+    {
+      "path": "configuration",
+      "kind": "directory",
+      "mode": 509
+    },
+    {
+      "path": "configuration/mapper",
+      "kind": "directory",
+      "mode": 509
+    },
+    {
+      "path": "configuration/mapper/offline_core.yaml",
+      "kind": "file",
+      "bytes": 1691,
+      "sha256": "9e3757557ca46a3d22fc86108d17f92a792dc84bde7c2af11a2c84b44b850ca1",
+      "mode": 436
+    },
+    {
+      "path": "configuration/mapper/offline_setup.yaml",
+      "kind": "file",
+      "bytes": 278,
+      "sha256": "08ed9f10b6f4e3aa759f1f7f9d1922457b77710df181f764185eb1a211438672",
+      "mode": 436
+    },
+    {
+      "path": "original",
+      "kind": "symlink",
+      "original_target": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/upstream_replay_smoke_2026-10-13/original",
+      "portable_target": "../upstream_replay_smoke_2026-10-13/original"
+    },
+    {
+      "path": "original_bag",
+      "kind": "symlink",
+      "original_target": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/upstream_replay_smoke_2026-10-13/original_bag",
+      "portable_target": "../upstream_replay_smoke_2026-10-13/original_bag"
+    },
+    {
+      "path": "processed_bag",
+      "kind": "directory",
+      "mode": 509
+    },
+    {
+      "path": "processed_bag/metadata.yaml",
+      "kind": "file",
+      "bytes": 3589,
+      "sha256": "418f50e0974eb2490fe183627e0d411d748041b19648853b4ea7401b83033cf7",
+      "mode": 436
+    },
+    {
+      "path": "processed_bag/processed_bag_0.mcap",
+      "kind": "file",
+      "bytes": 46735,
+      "sha256": "8d76cc7808434bacf8f2f6a73172a894779fac64cf47dbdc906a5f00ff206ee2",
+      "mode": 436
+    },
+    {
+      "path": "record_summary.json",
+      "kind": "symlink",
+      "original_target": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/upstream_replay_smoke_2026-10-13/record_summary.json",
+      "portable_target": "../upstream_replay_smoke_2026-10-13/record_summary.json"
+    },
+    {
+      "path": "render.log",
+      "kind": "file",
+      "bytes": 912,
+      "sha256": "231637a0c405bf6c40adb204e18b356e7075a208ae04fbe533181abb31c1b81f",
+      "mode": 436
+    },
+    {
+      "path": "replay_logs",
+      "kind": "directory",
+      "mode": 509
+    },
+    {
+      "path": "replay_logs/bag_play.log",
+      "kind": "file",
+      "bytes": 524,
+      "sha256": "37442421d660ad1a6df76c6b0435cd1ec3986ead4f1c0ade1015556f1e591b69",
+      "mode": 436
+    },
+    {
+      "path": "replay_logs/capture.log",
+      "kind": "file",
+      "bytes": 300,
+      "sha256": "658676e4d56ab1092761228236bb5a890a04a5fed63334b7664a07159d28ad30",
+      "mode": 436
+    },
+    {
+      "path": "replay_logs/elevation.log",
+      "kind": "file",
+      "bytes": 4390,
+      "sha256": "e01b5602b2d8f21222507156e3b38f926dfb35f45fd5420b9e74a46c0e3b4007",
+      "mode": 436
+    },
+    {
+      "path": "replay_logs/ht_bridge.log",
+      "kind": "file",
+      "bytes": 300,
+      "sha256": "1b835abd2da15a60bcad8f71534d4ea6e400e0a74d31dc180acc2c55a8657db4",
+      "mode": 436
+    },
+    {
+      "path": "replay_logs/map_record.log",
+      "kind": "file",
+      "bytes": 1713,
+      "sha256": "4ee39b7fe5d12a6904f9d65df1708db3003c9011c0225d8e201e81786012ed2f",
+      "mode": 436
+    },
+    {
+      "path": "snapshots",
+      "kind": "directory",
+      "mode": 509
+    },
+    {
+      "path": "snapshots/index.json",
+      "kind": "file",
+      "bytes": 60,
+      "sha256": "83ed5810c5ec3628c59b8af967a4406b189918ce6c8dd264d270e1699d1a584e",
+      "mode": 436
+    },
+    {
+      "path": "visuals",
+      "kind": "directory",
+      "mode": 509
+    }
+  ],
+  "provenance": {
+    "dataset": "upstream_replay_scan_tf_smoke_2026-10-13",
+    "source": "presentations/scheduled_results/upstream_replay_scan_tf_smoke_2026-10-13",
+    "stage": 8,
+    "tag": "ht-stage-20261015-elevation-xytheta",
+    "stage_tag_commit": "8398f538450a21c4ee9d65d17193ee084eacee03",
+    "association": "Related research phase; NOT a claim that the tag equals the measured code. See original manifests, source snapshots and working_tree.patch. Unknown commits remain unknown.",
+    "provenance": [],
+    "original_status_evidence": [],
+    "bytes": 60492,
+    "scope": "ALL existing regular files and symlink topology; no newly simulated data; does not certify full600s or navigation success."
+  },
+  "format": "Concatenate parts in numeric order, zstd-decompress then tar-extract into a common root. Symlinks are relative; original link strings are in this inventory."
+}
