@@ -4,6 +4,7 @@
 #include <grid_map_core/iterators/GridMapIterator.hpp>
 #include <chrono>
 #include <thread>
+#include "ht_cost/tare_waypoint_route.h"
 
 class TareTerrainGraph : public ::testing::Test {
  protected:
@@ -66,4 +67,52 @@ TEST_F(TareTerrainGraph, AsyncMapCannotRemoveVerticesBetweenBfsAndCandidateGraph
   send(false);manager->CheckViewPointConnectivity();manager->GetViewPointCandidate();
   EXPECT_TRUE(manager->IsViewPointCandidate(target()));
   EXPECT_FALSE(manager->GetViewPointShortestPath(start,target()).poses.empty());
+}
+
+TEST_F(TareTerrainGraph, ShortNativePrefixStillRequiresAndPassesFullHtPath) {
+  // A short known patch ahead of the robot, followed by a rejected band.
+  // The old four targets never launch search even though moving onto the
+  // unchanged native branch is feasible under the very same hard HT gate.
+  for(grid_map::GridMapIterator it(map);!it.isPastEnd();++it) {
+    grid_map::Position p;map.getPosition(*it,p);
+    const float score=std::max(p.x(),p.y())>.7 ? .1f:1.f;
+    for(int k=0;k<8;++k)map.at("ht_dir_"+std::to_string(k),*it)=score;
+  }
+  map.setTimestamp(node->now().nanoseconds());pub->publish(*grid_map::GridMapRosConverter::toMessage(map));spin(40);
+  auto ht=manager->HT();ht->beginCycle();ASSERT_TRUE(ht->ready());
+  manager->CheckViewPointCollision(std::make_shared<pcl::PointCloud<pcl::PointXYZI>>());
+  manager->CheckViewPointConnectivity();manager->GetViewPointCandidate();
+  const std::vector<ht_cost_ns::Point> branch{{.404115,.410836,0},{1.604115,1.610836,0},{5.645016,5.668668,0}};
+  auto supported=[&](ht_cost_ns::Point p) {
+    for(int k=0;k<8;++k)if(ht->permits(ht->poseSupport(p.x,p.y,k*ht_cost_ns::kPi/4)))return true;
+    return false;
+  };
+  for(double arc:{4.,3.,2.,1.}) EXPECT_FALSE(supported(ht_cost_ns::tarePrefix(branch,arc)));
+  ht_cost_ns::XYThetaConfig config;config.try_direct_connection=true;
+  config.headings=32;config.goal_radius=.35;config.max_search_seconds=.15;
+  auto valid=[&](ht_cost_ns::Pose2 a,ht_cost_ns::Pose2 b,double) {
+    return ht->permits(ht->motionSupport(a,b)) &&
+      !manager->InCollisionAtPose(Eigen::Vector3d(b.x,b.y,.75),0.);
+  };
+  const ht_cost_ns::Pose2 robot{0,0,.6414};bool reached=false;
+  for(const auto& target:ht_cost_ns::tareAdaptivePrefixes(branch,{0,0,0},ht->resolution())) {
+    if(!supported(target.point))continue;
+    const auto plan=ht_cost_ns::planXYTheta(robot,target.point,config,valid);
+    if(plan.reached && plan.poses.size()>1) {
+      reached=true;EXPECT_LT(target.arc,1.);
+      for(size_t i=1;i<plan.poses.size();++i) EXPECT_TRUE(valid(plan.poses[i-1],plan.poses[i],0));
+      break;
+    }
+  }
+  EXPECT_TRUE(reached);
+  // Endpoint green beyond a separating band is still not a valid path.
+  for(grid_map::GridMapIterator it(map);!it.isPastEnd();++it) {
+    grid_map::Position p;map.getPosition(*it,p);
+    const float score=p.x()>1 && p.x()<2 ? .1f:1.f;
+    for(int k=0;k<8;++k)map.at("ht_dir_"+std::to_string(k),*it)=score;
+  }
+  map.setTimestamp(node->now().nanoseconds());pub->publish(*grid_map::GridMapRosConverter::toMessage(map));spin(40);ht->beginCycle();
+  ASSERT_TRUE(supported({3,0,0}));
+  EXPECT_FALSE(ht_cost_ns::planXYTheta({0,0,0},{3,0,0},config,
+    [&](ht_cost_ns::Pose2 a,ht_cost_ns::Pose2 b,double){return ht->permits(ht->motionSupport(a,b));}).reached);
 }

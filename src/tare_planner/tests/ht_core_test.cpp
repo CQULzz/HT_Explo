@@ -42,6 +42,39 @@ int main() {
   check(loop.size()==2);near(tarePrefix(loop,1.).x,1.);near(tarePrefix(loop,1.).y,0.);
   check(tareBranch(u,{true},{3,0,0}).empty());
 
+  // Captured garage stop: the TARE anchor is ahead of continuous odometry.
+  // Integer prefixes are outside a short supported interval; adaptive
+  // candidates must include that interval without changing the branch.
+  const Point stopped_robot{12.566203,30.956604,0};
+  const std::vector<Point> stopped_branch{{12.970318,31.367440,0},
+    {14.170318,32.567440,0},{18.211219,36.625272,0}};
+  auto short_support=[](double arc){return arc<=.25;};
+  for(double arc:{4.,3.,2.,1.}) check(!short_support(arc));
+  const auto short_targets=tareAdaptivePrefixes(stopped_branch,stopped_robot,.1);
+  check(!short_targets.empty());near(short_targets.front().arc,0);
+  check(short_targets.front().distance>.57 && short_targets.front().distance<.59);
+  check(std::any_of(short_targets.begin(),short_targets.end(),[&](const auto& t){return short_support(t.arc);}));
+  for(size_t i=0;i<short_targets.size();++i) {
+    const auto& t=short_targets[i];const auto expected=tarePrefix(stopped_branch,t.arc);
+    near(t.point.x,expected.x);near(t.point.y,expected.y);
+    check(t.arc>=0 && t.arc<=4.+1e-9 && t.distance>=.4);
+    if(i) check(t.distance+1e-9>=short_targets[i-1].distance);
+  }
+  // A stale grid anchor behind odometry must not become a reverse target.
+  const auto forward_targets=tareAdaptivePrefixes({{0,0,0},{5,0,0}},{.8,0,0},.1);
+  check(!forward_targets.empty());
+  for(const auto& t:forward_targets) check(t.point.x>=1.2-1e-9);
+  // Folded routes retain their actual polyline; no diagonal to the waypoint.
+  for(const auto& t:tareAdaptivePrefixes(u,{-.6,0,0},.1)) {
+    check((std::abs(t.point.x)<1e-9 && t.point.y>=0 && t.point.y<=3) ||
+          (std::abs(t.point.y-3)<1e-9 && t.point.x>=0 && t.point.x<=1));
+  }
+  check(tareAdaptivePrefixes({},stopped_robot,.1).empty());
+  check(tareAdaptivePrefixes(stopped_branch,stopped_robot,0).empty());
+  check(tareAdaptivePrefixes(stopped_branch,{NAN,0,0},.1).empty());
+  const auto degenerate=tareAdaptivePrefixes({{.6,0,0},{.6,0,0}},{0,0,0},.1);
+  check(degenerate.size()==1);near(degenerate.front().arc,0);
+
   // Captured35s stop: open local recovery behind the vehicle takes thousands
   // of graph validity queries. A checked spin/straight connection reaches it
   // without spending those graph expansions or weakening the predicate.

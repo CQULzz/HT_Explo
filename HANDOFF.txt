@@ -1,4 +1,10 @@
 HT_Explo 项目交接文档
+最新修正进度补记：2026-10-21T00:55:22+08:00
+[事实] 新候选已实现原TARE同一路线短前缀补搜，保持HT/几何/运动硬门槛及0.35秒周期搜索预算。旧整数快速路径保留，失败时细采样并避免追逐后方锚点；具体见docs/fixes/2026-10-21_tare_short_prefix.md。
+[事实] 四项CTest通过（49.42秒）、六函数SHA通过、10项中断与保留策略回归通过，已安装重建二进制。当前尚未新600秒闭环，不能声称已稳定修复。
+[事实] 室内12个已观测HT低分点切断候选图的证据已保存docs/fixes/2026-10-21_indoor_ht_gate.md；平地小纹理敏感度只读消融不等于修好输入。本候选不改模型或TARE完成条件。
+[计划] 冻结本候选并单独跑600秒车库，与阶段41及未改导航的车库复测比较。新job以.git/short-prefix-runtime/job.json为准，旧多场景批次不拼接/覆盖。测量期间不要改运行文件或提交HEAD。
+
 最新状态补记（优先于下文20:13快照）：2026-10-20T23:11:12+08:00
 [事实] 用户要求上传最新代码。本次检查主测量和发布等待服务均MainPID=0；未见该批运行进程。run.log末尾有KeyboardInterrupt，suite.json仍停留RUNNING，不能据此认为还在测量。
 [事实] suite逐组记录：garage=RECORDED, campus=RECORDED, indoor=FAILED, forest=PENDING, tunnel=PENDING。室内FAILED，elapsed_measurement_s=569.5，不能算完整600秒；forest/tunnel未开始。中断原因待确认，未在本次重启或拼接实验。

@@ -47,9 +47,9 @@ def preflight(scenes):
 
 
 def save_report(job,state):
-    title='HT 五环境各10分钟实验' if len(state['runs'])==5 else 'HT '+ '、'.join(NAMES[r['scenario']] for r in state['runs'])+'10分钟补测'
+    title='HT 五环境各10分钟实验（计划与实际）' if len(state['runs'])==5 else 'HT '+ '、'.join(NAMES[r['scenario']] for r in state['runs'])+'10分钟补测'
     lines=['# '+title, '',
-           f'每组测量 {state["duration_s"]} 秒，从首个具备里程计和激光输入的TARE运行周期开始计时；初始化不计入。',
+           f'每组计划测量 {state["duration_s"]} 秒，从首个具备里程计和激光输入的TARE运行周期开始计时；初始化不计入。失败或中断记录不代表完成计划时长。',
            '每个场景独立启动、独立高程历史，上一组完全退出且视频处理结束后再启动下一组。车速上限均为0.5m/s，HT硬约束与3秒时效保护相同。',
            '采用对应场景TARE参数；车库沿用历史配对起点，其余使用各自仿真原生起点。因此这不是相同场景的算法优劣对照。',
            '相机原生960×540、15fps，视频含状态条并裁去初始化；重复帧代表真实图像更新间隔，不做插帧。', '',
@@ -69,7 +69,7 @@ def save_report(job,state):
             playlist += [f'#EXTINF:{state["duration_s"]},{NAMES[row["scenario"]]} HT探索',movie]
         if row.get('error'):lines += ['',f'> {row["scenario"]}：{row["error"]}', '']
     lines += ['', '[全部视频播放列表](videos.m3u) · [实时状态与校验](suite.json)', '',
-              '每个场景仅一次10分钟测试，不能据此证明更长时间、所有环境或实车稳定。定时记录完成不等于探索完成。观测体积是抽样激光射线的自由体素并集近似，不是真值覆盖率；跨场景体积不可直接作为算法优劣排名。']
+              '实际完成情况以逐场景状态、summary.json和检查为准；进度抽样不能替代实测时长。不能据此证明更长时间、所有环境或实车稳定。定时记录完成不等于探索完成。观测体积是抽样激光射线的自由体素并集近似，不是真值覆盖率；跨场景体积不可直接作为算法优劣排名。']
     (job/'REPORT.md').write_text('\n'.join(lines)+'\n')
     (job/'videos.m3u').write_text('\n'.join(playlist)+'\n')
     write_json(job/'suite.json',state)
@@ -150,6 +150,22 @@ def wait_process(proc,state,job,row,phase,timeout):
     return proc.returncode
 
 
+def finish_suite(job,state,error=None):
+    """Always persist an explicit aggregate terminal state for handled interruptions."""
+    if error is not None:
+        state['state']='INTERRUPTED'
+        state['interruption']=dict(type=type(error).__name__,message=str(error))
+    else:
+        state['state']='COMPLETED' if all(r['state']=='RECORDED' for r in state['runs']) else 'COMPLETED_WITH_ISSUES'
+    state['finished_at']=dt.datetime.now().astimezone().isoformat()
+    save_report(job,state)
+    write_json(job/'FINISHED.json',state)
+
+
+def termination_requested(signum,frame):
+    raise SystemExit(128+signum)
+
+
 def main():
     ap=argparse.ArgumentParser()
     ap.add_argument('--scenarios',nargs='+',choices=SCENES,default=list(SCENES))
@@ -160,6 +176,7 @@ def main():
     args=ap.parse_args()
     if len(set(args.scenarios))!=len(args.scenarios):raise ValueError('Duplicate scenarios')
     if args.duration<=0 or not 0<=args.domain<=232-len(args.scenarios)+1:raise ValueError('Invalid duration/domain')
+    signal.signal(signal.SIGTERM,termination_requested)
     preflight(args.scenarios)
     job=(args.output or ROOT/'presentations/scheduled_results'/('ht_multiscene_10min_'+dt.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))).resolve()
     if job.exists():raise RuntimeError('Refusing to overwrite '+str(job))
@@ -169,60 +186,63 @@ def main():
                job=str(job),state='RUNNING',runs=[dict(scenario=s,state='PENDING') for s in args.scenarios])
     write_json(ROOT/'presentations/scheduled_results/latest_multiscene.json',dict(folder=str(job),pid=__import__('os').getpid(),duration_s=args.duration,scenarios=args.scenarios))
     save_report(job,state)
-    for index,row in enumerate(state['runs']):
-        scene=row['scenario'];folder=job/scene;runner=watcher=None
-        try:
-            if psutil.virtual_memory().available<1000*1024**2 or __import__('shutil').disk_usage(job).free<8*1024**3:
-                raise RuntimeError('Insufficient free RAM/disk for another independent scene')
-            with (job/f'{scene}.runner.log').open('w') as log:
-                runner=subprocess.Popen([sys.executable,str(Path(__file__).with_name('run_ht_endurance.py')),
-                    '--duration',str(args.duration),'--scenario',scene,'--video-fps','15',
-                    '--domain',str(args.domain+index),'--output',str(folder)],stdout=log,stderr=subprocess.STDOUT,start_new_session=True)
-            row['runner_pid']=runner.pid
-            with (job/f'{scene}.watcher.log').open('w') as log:
-                watcher=subprocess.Popen([sys.executable,str(Path(__file__).with_name('watch_ht_endurance.py')),
-                    str(folder),'--runner-pid',str(runner.pid),'--encoder',str(args.encoder)],
-                    stdout=log,stderr=subprocess.STDOUT,start_new_session=True)
-            row['watcher_pid']=watcher.pid
-            write_json(ROOT/'presentations/scheduled_results/latest_endurance.json',dict(
-                folder=str(folder),pid=runner.pid,watcher_pid=watcher.pid,duration_s=args.duration,
-                domain=args.domain+index,scenario=scene,suite=str(job),baseline=None))
-            print('STARTED',scene,'runner',runner.pid,flush=True)
-            result=wait_process(runner,state,job,row,'RECORDING',args.duration+300)
-            if result:raise RuntimeError(f'Runner exited {result}; inspect {scene}.runner.log')
-            result=wait_process(watcher,state,job,row,'POSTPROCESSING',3000)
-            if result:raise RuntimeError(f'Analysis/video worker exited {result}')
-            checks=audit_run(folder,args.duration)
-            row['checks']=checks
-            row['video_ok']=checks['video_full_decode_passed'] and checks['video_duration_matches']
-            summary=read_json(folder/'summary.json')
-            audit=read_json(folder/'endurance_audit.json')
-            row['metrics']=dict(distance_m=summary['distance_m'],visited_1m_xy_cells=summary['visited_1m_xy_cells'],
-                observed_free_volume_m3=(audit.get('external_metrics') or {}).get('observed_free_volume_m3'),
-                mission=audit['mission_audit']['last_sampled_mission'],
-                map_age_p95_s=audit['sampled_map_age_s']['p95'],map_age_max_s=audit['sampled_map_age_s']['max'])
-            row['state']='RECORDED' if all(checks.values()) else 'RECORDED_WITH_ISSUES'
-            if row['video_ok']:
-                preview(folder,args.encoder,args.duration)
-                overview(job,state)
-            print('FINISHED',scene,row['state'],json.dumps(row['metrics']),flush=True)
-        except BaseException as error:
-            row['state']='FAILED';row['error']=str(error)
-            print('FAILED',scene,repr(error),flush=True)
-            if runner and runner.poll() is None:
-                runner.send_signal(signal.SIGINT)
-                try:runner.wait(timeout=35)
-                except subprocess.TimeoutExpired:raise RuntimeError('Owned runner did not clean up; refuse to start another scene')
-            if watcher and watcher.poll() is None:
-                try:watcher.wait(timeout=12)
-                except subprocess.TimeoutExpired:
-                    watcher.terminate();watcher.wait(timeout=8)
-            if isinstance(error,(KeyboardInterrupt,SystemExit)):raise
-        finally:
-            row['finished_at']=dt.datetime.now().astimezone().isoformat();save_report(job,state)
-    state['state']='COMPLETED' if all(r['state']=='RECORDED' for r in state['runs']) else 'COMPLETED_WITH_ISSUES'
-    state['finished_at']=dt.datetime.now().astimezone().isoformat();save_report(job,state)
-    (job/'FINISHED.json').write_text(json.dumps(state,ensure_ascii=False,indent=2)+'\n')
+    try:
+        for index,row in enumerate(state['runs']):
+            scene=row['scenario'];folder=job/scene;runner=watcher=None
+            try:
+                if psutil.virtual_memory().available<1000*1024**2 or __import__('shutil').disk_usage(job).free<8*1024**3:
+                    raise RuntimeError('Insufficient free RAM/disk for another independent scene')
+                with (job/f'{scene}.runner.log').open('w') as log:
+                    runner=subprocess.Popen([sys.executable,str(Path(__file__).with_name('run_ht_endurance.py')),
+                        '--duration',str(args.duration),'--scenario',scene,'--video-fps','15',
+                        '--domain',str(args.domain+index),'--output',str(folder)],stdout=log,stderr=subprocess.STDOUT,start_new_session=True)
+                row['runner_pid']=runner.pid
+                with (job/f'{scene}.watcher.log').open('w') as log:
+                    watcher=subprocess.Popen([sys.executable,str(Path(__file__).with_name('watch_ht_endurance.py')),
+                        str(folder),'--runner-pid',str(runner.pid),'--encoder',str(args.encoder)],
+                        stdout=log,stderr=subprocess.STDOUT,start_new_session=True)
+                row['watcher_pid']=watcher.pid
+                write_json(ROOT/'presentations/scheduled_results/latest_endurance.json',dict(
+                    folder=str(folder),pid=runner.pid,watcher_pid=watcher.pid,duration_s=args.duration,
+                    domain=args.domain+index,scenario=scene,suite=str(job),baseline=None))
+                print('STARTED',scene,'runner',runner.pid,flush=True)
+                result=wait_process(runner,state,job,row,'RECORDING',args.duration+300)
+                if result:raise RuntimeError(f'Runner exited {result}; inspect {scene}.runner.log')
+                result=wait_process(watcher,state,job,row,'POSTPROCESSING',3000)
+                if result:raise RuntimeError(f'Analysis/video worker exited {result}')
+                checks=audit_run(folder,args.duration)
+                row['checks']=checks
+                row['video_ok']=checks['video_full_decode_passed'] and checks['video_duration_matches']
+                summary=read_json(folder/'summary.json')
+                audit=read_json(folder/'endurance_audit.json')
+                row['metrics']=dict(distance_m=summary['distance_m'],visited_1m_xy_cells=summary['visited_1m_xy_cells'],
+                    observed_free_volume_m3=(audit.get('external_metrics') or {}).get('observed_free_volume_m3'),
+                    mission=audit['mission_audit']['last_sampled_mission'],
+                    map_age_p95_s=audit['sampled_map_age_s']['p95'],map_age_max_s=audit['sampled_map_age_s']['max'])
+                row['state']='RECORDED' if all(checks.values()) else 'RECORDED_WITH_ISSUES'
+                if row['video_ok']:
+                    preview(folder,args.encoder,args.duration)
+                    overview(job,state)
+                print('FINISHED',scene,row['state'],json.dumps(row['metrics']),flush=True)
+            except BaseException as error:
+                row['state']='FAILED';row['error']=f'{type(error).__name__}: {error}'
+                print('FAILED',scene,repr(error),flush=True)
+                if runner and runner.poll() is None:
+                    runner.send_signal(signal.SIGINT)
+                    try:runner.wait(timeout=35)
+                    except subprocess.TimeoutExpired:raise RuntimeError('Owned runner did not clean up; refuse to start another scene')
+                if watcher and watcher.poll() is None:
+                    try:watcher.wait(timeout=12)
+                    except subprocess.TimeoutExpired:
+                        watcher.terminate();watcher.wait(timeout=8)
+                if isinstance(error,(KeyboardInterrupt,SystemExit)):raise
+            finally:
+                row['finished_at']=dt.datetime.now().astimezone().isoformat();save_report(job,state)
+    except BaseException as error:
+        finish_suite(job,state,error)
+        raise
+    else:
+        finish_suite(job,state)
     print('RESULTS',job,flush=True)
 
 

@@ -33,19 +33,47 @@ def live_users(raw):
   except (psutil.NoSuchProcess,psutil.AccessDenied):pass
  return result
 
+def complete_collection(receipt):
+ """Only demonstrated complete suites may displace recent complete raw data."""
+ status=receipt.get('publication_status')
+ if status is not None:
+  validation=receipt.get('collection_validation',{})
+  return status=='COMPLETE_VALIDATED_COLLECTION' and bool(receipt.get('verified_at')) and bool(validation) and all(
+   r.get('complete600s') and r.get('recorded_state')=='RECORDED' and bool(r.get('checks')) and all(r['checks'].values())
+   for r in validation.values())
+ # Legacy stage receipts have no collection status. Require their retained
+ # measured evidence, not merely a tag/stage number or a planned-duration label.
+ try:
+  archive=Path(receipt['result_archive']);state=json.loads((archive/'suite.json').read_text())
+  if state.get('git_head')!=receipt['tested_commit'] or state.get('state')!='COMPLETED' or state.get('duration_s')!=600 or not state.get('runs') or not (archive/'FINISHED.json').is_file():return False
+  for row in state['runs']:
+   trial=archive/row['scenario'];checks=row.get('checks',{})
+   if row.get('state')!='RECORDED' or not checks or not all(checks.values()) or not (trial/'COMPLETED.json').is_file():return False
+   if json.loads((trial/'summary.json').read_text()).get('duration_s')!=600:return False
+  return True
+ except (OSError,ValueError,KeyError,TypeError):return False
+
+
+def retention_protection(receipts,keep):
+ complete={r[2]['tag'] for r in receipts if complete_collection(r[2])}
+ recent=[r[2]['tag'] for r in receipts if r[2]['tag'] in complete][:keep]
+ incomplete={r[2]['tag'] for r in receipts if r[2]['tag'] not in complete}
+ return set(recent)|incomplete,incomplete
+
+
 def main():
  ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--keep',type=int,default=2);ap.add_argument('--apply',action='store_true');args=ap.parse_args()
  if args.keep<2:raise ValueError('Keep at least the latest two published trials')
  receipts=[]
  for p in (ROOT/'docs/experiments/publications').glob('stage*.json'):
   number=int(p.stem[5:]);receipts.append((number,p,json.loads(p.read_text())))
- receipts.sort(reverse=True);protected={r[2]['tag'] for r in receipts[:args.keep]}
+ receipts.sort(reverse=True);protected,incomplete=retention_protection(receipts,args.keep)
  compact=json.loads(INDEX.read_text()) if INDEX.exists() else {};journal=json.loads(JOURNAL.read_text()) if JOURNAL.exists() else dict(policy='GitHub keeps all complete published raw data; local keeps latest two, reports/videos and regression fixtures.',entries={})
  entries=journal['entries'];plan=[];jobs=[]
  for number,p,r in receipts:
   raw=Path(r['raw_suite']).absolute();entry=compact.get(r['tag'],{});packed=Path(entry['archive']) if entry.get('archive') else None
   if raw.parent!=BASE or not raw.name.startswith('ht_') or raw.is_symlink():raise ValueError('Unsafe owned source path')
-  if r['tag'] in protected:plan.append(dict(stage=number,tag=r['tag'],status='kept_recent',raw=str(raw)));continue
+  if r['tag'] in protected:plan.append(dict(stage=number,tag=r['tag'],status='kept_incomplete_or_unverified' if r['tag'] in incomplete else 'kept_recent',raw=str(raw)));continue
   if not raw.exists() and not (packed and packed.exists()):plan.append(dict(stage=number,tag=r['tag'],status='not_local'));continue
   if live_users(raw):plan.append(dict(stage=number,tag=r['tag'],status='kept_in_use'));continue
   jobs.append((number,p,r,raw,entry,packed))

@@ -11,13 +11,13 @@ def load(spec):
  label,folder=spec.split('=',1);p=Path(folder)
  def rows(name):
   f=p/name if (p/name).exists() else p/'current'/name
-  return list(csv.DictReader(f.open()))
+  with f.open() as stream:return list(csv.DictReader(stream))
  v=rows('observation_volume.csv');m=rows('timeseries.csv');e=json.loads((p/'endurance_audit.json').read_text());s=json.loads((p/'summary.json').read_text())
  return dict(label=label,folder=str(p),t=np.array([float(x['t_s']) for x in m]),vt=np.array([float(x['time_s']) for x in v]),v=np.array([float(x['observed_free_volume_m3']) for x in v]),
   d=np.array([float(x['distance_m']) for x in m]),speed=np.array([float(x['odom_speed_mps']) for x in m]),x=np.array([float(x['x_m']) for x in m]),y=np.array([float(x['y_m']) for x in m]),e=e['external_metrics'],s=s,age=e['sampled_map_age_s'])
 def main():
  ap=argparse.ArgumentParser();ap.add_argument('--run',action='append',required=True);ap.add_argument('--output',type=Path,required=True);a=ap.parse_args();a.output.mkdir(exist_ok=True,parents=True)
- data=[load(v) for v in a.run];colors=['#63768a','#e09335','#187e78'];plt.rcParams.update({'font.family':'Noto Sans CJK JP','axes.unicode_minus':False,'axes.spines.top':False,'axes.spines.right':False})
+ data=[load(v) for v in a.run];colors=plt.get_cmap('tab10')(np.arange(len(data))%10);plt.rcParams.update({'font.family':'Noto Sans CJK JP','axes.unicode_minus':False,'axes.spines.top':False,'axes.spines.right':False})
  fig,axes=plt.subplots(2,3,figsize=(17,9),layout='constrained');minute=np.arange(0,601,60)
  for i,(r,c) in enumerate(zip(data,colors)):
   axes[0,0].plot(r['vt']/60,r['v'],color=c,label=r['label'],lw=2);axes[0,0].annotate(f"{r['v'][-1]:.0f}",(10,r['v'][-1]),xytext=(-5,-12 if i==1 else 5),textcoords='offset points',ha='right',color=c)

@@ -40,25 +40,44 @@ bool SensorCoveragePlanner3D::RouteTareWaypoint(const exploration_path_ns::Explo
     selected.poses.push_back(pose);}
   tare_branch_pub_->publish(selected);
   const auto started=std::chrono::steady_clock::now();
-  double previous_x=std::numeric_limits<double>::quiet_NaN(),previous_y=previous_x;
-  for(double length:{4.,3.,2.,1.}) {
-    const auto p=ht_cost_ns::tarePrefix(branch,length);
-    if(std::hypot(p.x-previous_x,p.y-previous_y)<1e-6) continue;
-    previous_x=p.x;previous_y=p.y;
-    if(std::hypot(p.x-robot_position_.x,p.y-robot_position_.y)<.4) continue;
+  std::vector<Point> checked;
+  int unsupported=0,too_close=0,searches=0;
+  auto attempt=[&](Point p,double length,bool adaptive) {
+    for(const auto& previous:checked)
+      if(std::hypot(p.x-previous.x,p.y-previous.y)<1e-6) return false;
+    checked.push_back(p);
+    if(std::hypot(p.x-robot_position_.x,p.y-robot_position_.y)<.4) {++too_close;return false;}
     bool supported=false;
     for(int k=0;k<8;++k) if(viewpoint_manager_->HT()->permits(
       viewpoint_manager_->HT()->poseSupport(p.x,p.y,k*ht_cost_ns::kPi/4))) {supported=true;break;}
-    if(!supported) continue;
+    if(!supported) {++unsupported;return false;}
     const double remaining=.35-std::chrono::duration<double>(std::chrono::steady_clock::now()-started).count();
-    if(remaining<=0) break;
+    if(remaining<=0) return false;
+    ++searches;
     auto path=local_coverage_planner_->PlanHTReturn(Eigen::Vector3d(p.x,p.y,p.z),remaining);
     goal.point.x=p.x;goal.point.y=p.y;goal.point.z=p.z;ht_route_goal_pub_->publish(goal);
-    RCLCPP_INFO(get_logger(),"TARE_ROUTE native=(%.3f,%.3f) lookahead=(%.3f,%.3f) local=(%.3f,%.3f) prefix=%.1f branch=%zu poses=%zu success=%d",
-      native.x,native.y,raw.x,raw.y,p.x,p.y,length,branch.size(),path.nodes_.size(),!path.nodes_.empty());
-    if(!path.nodes_.empty()) return true;
+    RCLCPP_INFO(get_logger(),"TARE_ROUTE native=(%.3f,%.3f) lookahead=(%.3f,%.3f) local=(%.3f,%.3f) prefix=%.3f branch=%zu poses=%zu success=%d adaptive=%d distance=%.3f map_stamp=%.9f",
+      native.x,native.y,raw.x,raw.y,p.x,p.y,length,branch.size(),path.nodes_.size(),!path.nodes_.empty(),adaptive,
+      std::hypot(p.x-robot_position_.x,p.y-robot_position_.y),viewpoint_manager_->HT()->cycleStamp());
+    return !path.nodes_.empty();
+  };
+  // Preserve the existing fast path and its behavior when an integer target
+  // works. All fallbacks share its original 0.35s wall-time search budget.
+  for(double length:{4.,3.,2.,1.}) {
+    if(std::chrono::duration<double>(std::chrono::steady_clock::now()-started).count()>=.35) break;
+    if(attempt(ht_cost_ns::tarePrefix(branch,length),length,false)) return true;
   }
-  RCLCPP_WARN(get_logger(),"TARE_ROUTE failed same-goal prefixes; holding native=(%.3f,%.3f)",native.x,native.y);
+  if(std::chrono::duration<double>(std::chrono::steady_clock::now()-started).count()<.35) {
+    const auto targets=ht_cost_ns::tareAdaptivePrefixes(branch,
+      {robot_position_.x,robot_position_.y,robot_position_.z},viewpoint_manager_->HT()->resolution());
+    for(const auto& target:targets) {
+      if(std::chrono::duration<double>(std::chrono::steady_clock::now()-started).count()>=.35) break;
+      if(attempt(target.point,target.arc,true)) return true;
+    }
+  }
+  RCLCPP_WARN(get_logger(),"TARE_ROUTE failed same-goal prefixes; holding native=(%.3f,%.3f) checked=%zu unsupported=%d too_close=%d searches=%d elapsed=%.6f map_stamp=%.9f",
+    native.x,native.y,checked.size(),unsupported,too_close,searches,
+    std::chrono::duration<double>(std::chrono::steady_clock::now()-started).count(),viewpoint_manager_->HT()->cycleStamp());
   return false;
 }
 }
