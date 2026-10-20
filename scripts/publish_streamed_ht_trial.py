@@ -52,7 +52,10 @@ def main():
     ap.add_argument('--tag',required=True);ap.add_argument('--title',required=True)
     ap.add_argument('--include-failed-recordings',action='store_true')
     ap.add_argument('--dry-run',action='store_true')
+    ap.add_argument('--upload-timeout-seconds',type=float,default=180,
+                    help='Deadline per asset attempt; bounded retries preserve local source and verify any completed remote asset.')
     a=ap.parse_args();suite=a.suite.resolve();archive=a.archive.resolve()
+    if not 0<a.upload_timeout_seconds<float('inf'):ap.error('--upload-timeout-seconds must be finite and positive')
     state,validation,status=validate(suite,archive,a.tag,a.include_failed_recordings)
     print(json.dumps(dict(tested_commit=state['git_head'],collection_status=status,validation=validation),ensure_ascii=False,indent=2),flush=True)
     if a.dry_run:return
@@ -80,8 +83,11 @@ def main():
                     if not matches(current[path.name],expected):raise ValueError('Existing asset differs: '+path.name)
                     existing[path.name]=current[path.name];break
                 print('Uploading',path.name,expected['bytes'],flush=True)
-                try:subprocess.run(['gh','release','upload',a.tag,str(path),'--repo',REPO],check=True)
-                except subprocess.CalledProcessError:
+                try:subprocess.run(['gh','release','upload',a.tag,str(path),'--repo',REPO],check=True,
+                                   timeout=a.upload_timeout_seconds)
+                except (subprocess.CalledProcessError,subprocess.TimeoutExpired) as error:
+                    print('Upload attempt interrupted',path.name,type(error).__name__,
+                          'local source retained; rechecking remote before retry',flush=True)
                     if attempt==3:raise
                     time.sleep(2**attempt)
             current={x['name']:x for x in release(a.tag)['assets']}
