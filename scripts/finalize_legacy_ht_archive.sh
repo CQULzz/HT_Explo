@@ -3,6 +3,8 @@
 set -euo pipefail
 task_repo=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
 cd -- "$task_repo"
+exec 9> "$task_repo/.git/ht-results-publication.lock"
+flock -x 9
 if [[ $(git branch --show-current) != codex/ht8dir-v1 ]]; then
   echo 'Refuse to publish from an unexpected branch.' >&2
   exit 1

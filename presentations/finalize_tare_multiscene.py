@@ -33,6 +33,7 @@ def main():
             audits[scene]=dict(recording_complete=False,original_state=row);continue
         if read(trial/'summary.json')['duration_s']!=600:raise ValueError('Unexpected measurement duration')
         commands=[('audit_tare_waypoint.py',['--output',str(trial/'tare_waypoint_audit')]),
+                  ('audit_tare_prefix_admissibility.py',['--output',str(trial/'prefix_admissibility_audit')]),
                   ('audit_cupy_latency.py',['--output',str(trial/'latency_audit')]),
                   ('audit_blocked_commands.py',['--output',str(trial/'blocked_commands.json')]),
                   ('audit_pose_admissibility_changes.py',['--output',str(trial/'pose_admission_audit.json'),'--capture-final',str(trial/'final_pose_snapshot.npz')]),
@@ -53,7 +54,7 @@ def main():
         for name in ['planner_parameters.yaml','follower_parameters.yaml','parameter_capture_attempts.json','terrain_topic_isolation.json',
                      'blocked_commands.json','pose_admission_audit.json','context_consistency.json','source_age_alignment.json','scan_delivery_trace.json']:
             if (src/name).exists():shutil.copy2(src/name,dst/name)
-        for name in ['tare_waypoint_audit','latency_audit']:
+        for name in ['tare_waypoint_audit','latency_audit','prefix_admissibility_audit']:
             if (src/name).is_dir():shutil.copytree(src/name,dst/name)
     shutil.copy2(suite/'additional_audits.json',out/'additional_audits.json')
     shutil.copy2(a.state,out/'frozen_job.json')
@@ -72,9 +73,19 @@ def main():
             scene=row['scenario'];r=audits[scene].get('routing') or {}
             f.write(f'| {scene} | {r.get("coverage_cycles","未知")} | {r.get("maximum_ordered_viewpoints","未知")} | {r.get("nonempty_executable_paths","未知")} | {len(r.get("contract_violations",[])) if r else "未知"} | {r.get("contract_passed",False)} |\n')
         f.write('\n未移动或没有路线时，分工检查可能不满足“有实际执行样本”的通过条件；不能把空样本当作通过。各场景只有一次600秒记录，统计与检查仅限本批记录。\n\n![多维度诊断](multiscene_diagnostics.png)\n\n[PDF图表](multiscene_diagnostics.pdf) · [同场景车库历史比较](garage_history/tare_architecture_comparison.png)\n\n')
+        f.write('| 场景 | 附加审计非零退出项 | CMU导航地形隔离 | 实际HT探索模式 |\n|---|---|---|---|\n')
+        import yaml
+        for row in state['runs']:
+            scene=row['scenario'];trial=suite/scene
+            failed=[r['script'] for r in audits[scene].get('audits',[]) if r['returncode']]
+            isolation=read(trial/'terrain_topic_isolation.json') if (trial/'terrain_topic_isolation.json').exists() else {}
+            params=yaml.safe_load((trial/'planner_parameters.yaml').read_text()) if (trial/'planner_parameters.yaml').exists() else {}
+            mode=(params or {}).get('/tare_planner_node',{}).get('ros__parameters',{}).get('ht_exploration_mode','未采到')
+            f.write(f'| {scene} | {", ".join(failed) or "无"} | {isolation.get("navigation_cmu_terrain_isolated","未知")} | {mode} |\n')
         f.write('累计观测体积是0.5米体素的采样激光射线自由空间并集，不是真值覆盖率。每组起点/场景参数不同，跨场景体积不作为算法优劣排名；没有新增原版TARE同限制对照或实车验证。完整数据是否已上传，以本批Release远端校验回执为准。\n')
         for row in state['runs']:
             scene=row['scenario'];f.write(f'\n### {scene} 的原访问顺序与HT路线\n\n![分工审计]({scene}/tare_waypoint_audit/architecture.png)\n\n![实际规划快照]({scene}/tare_waypoint_audit/routes.png)\n')
+            f.write(f'\n![末段固定分段目标与HT空间门槛]({scene}/prefix_admissibility_audit/endpoints.png)\n\n[空间门槛回放与时间对齐限制]({scene}/prefix_admissibility_audit/summary.json)；这不是XYθ全路径可达性证明。\n')
     hashes={str(p.relative_to(out)):hashlib.sha256(p.read_bytes()).hexdigest() for p in out.rglob('*') if p.is_file() and p.name!='files_sha256.json'}
     (out/'files_sha256.json').write_text(json.dumps(hashes,ensure_ascii=False,indent=2)+'\n')
     print('ARCHIVED',out,flush=True)
