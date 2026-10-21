@@ -1,0 +1,77 @@
+{
+  "mode": "detail",
+  "frames": 11,
+  "fps": 10,
+  "source_start_s": 28.0,
+  "source_end_s": 32.0,
+  "source_duration_s": 4.0,
+  "video_duration_s": 1.1,
+  "speed": 4.0,
+  "display": ":98",
+  "capture_size_px": [
+    1920,
+    1080
+  ],
+  "encoder_input": "rgb24",
+  "encoder_output": "yuv420p",
+  "image_transform": "none; fixed-size capture, no resize/crop/padding",
+  "theta_style": "voxels",
+  "voxel_alpha": 0.12,
+  "voxel_height_display_units": 0.5,
+  "theta_note": "Eight independent recorded scores. Thickness is display-only; no angular interpolation.",
+  "capture": "PIL ImageGrab of actual RViz2 windows on isolated Xvfb plus labelled HUD",
+  "first_frame": {
+    "frame": 0,
+    "experiment_t_s": 28.0,
+    "capture_wall": 1792604333.7197535
+  },
+  "last_frame": {
+    "frame": 10,
+    "experiment_t_s": 32.0,
+    "capture_wall": 1792604335.558881
+  },
+  "video_sha256": "581f7fed833c993703a159a426f39df4b5f5345ba8090f151db0d42b025a8afe",
+  "publishers": [
+    "/recorded_rviz/ht/cloud",
+    "/recorded_rviz/ht/global",
+    "/recorded_rviz/ht/local",
+    "/recorded_rviz/ht/theta",
+    "/recorded_rviz/original/cloud",
+    "/recorded_rviz/original/global",
+    "/recorded_rviz/original/local",
+    "/recorded_rviz/original/theta"
+  ],
+  "source_metadata": {
+    "original": {
+      "bag": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_tare_campus_matched_10min_2026-10-21_19-12-25/original/evidence_bag",
+      "origin_wall_time": 1792581200.6658673,
+      "metadata_sha256": "6911077fb03c21fde045c3fa1828470502cf5b1c0052c221b3c2d69342e57f13",
+      "display_events": {
+        "pose": 14652,
+        "waypoint": 594,
+        "coverage": 594,
+        "global": 594,
+        "scan": 600
+      },
+      "event_count": 8208
+    },
+    "ht": {
+      "bag": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_tare_campus_matched_10min_2026-10-21_19-12-25/ht/evidence_bag",
+      "origin_wall_time": 1792581854.857346,
+      "metadata_sha256": "23cf60888514ff8b831fa29dc939cf3b6581951469a14d77eb362e0bba28bd2a",
+      "display_events": {
+        "pose": 14541,
+        "follower": 1660,
+        "waypoint": 620,
+        "status": 581,
+        "ht": 1180,
+        "coverage": 554,
+        "route_goal": 615,
+        "execution": 554,
+        "scan": 600
+      },
+      "event_count": 11637
+    }
+  },
+  "video_bytes": 377090
+}
