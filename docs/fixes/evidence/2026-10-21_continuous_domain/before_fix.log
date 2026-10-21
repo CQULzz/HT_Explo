@@ -1,0 +1,21 @@
+Running main() from /opt/ros/jazzy/src/gtest_vendor/src/gtest_main.cc
+Note: Google Test filter = GeometryPose.UnlabelledCoverageCellDoesNotInvalidateFreeContinuousRoot
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from GeometryPose
+[ RUN      ] GeometryPose.UnlabelledCoverageCellDoesNotInvalidateFreeContinuousRoot
+/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/tests/geometry_pose_test.cpp:135: Failure
+Value of: manager.InCollisionAtPose(root)
+  Actual: true
+Expected: false
+
+[  FAILED  ] GeometryPose.UnlabelledCoverageCellDoesNotInvalidateFreeContinuousRoot (707 ms)
+[----------] 1 test from GeometryPose (708 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (708 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] GeometryPose.UnlabelledCoverageCellDoesNotInvalidateFreeContinuousRoot
+
+ 1 FAILED TEST

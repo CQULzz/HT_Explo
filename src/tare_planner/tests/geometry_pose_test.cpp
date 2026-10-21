@@ -117,6 +117,33 @@ TEST(GeometryPose, HeightSliceMatchesBruteForceAtBoundariesAndOtherHeights) {
   EXPECT_EQ(checked,800);
 }
 
+TEST(GeometryPose, UnlabelledCoverageCellDoesNotInvalidateFreeContinuousRoot) {
+  if (!rclcpp::ok()) rclcpp::init(0,nullptr);
+  rclcpp::NodeOptions options;
+  options.arguments({"--ros-args","--params-file",HT_SOURCE_ROOT "/config/indoor.yaml"});
+  options.automatically_declare_parameters_from_overrides(true);
+  auto node=std::make_shared<rclcpp::Node>("tare_planner_node",options);
+  viewpoint_manager_ns::ViewPointManager manager(node);
+  const Eigen::Vector3d root(0.04,0.06,.75);
+  manager.UpdateRobotPosition(root);
+  const int index=manager.GetViewPointInd(root);ASSERT_GE(index,0);
+  manager.SetViewPointHeight(index,root.z());
+  auto cloud=std::make_shared<pcl::PointCloud<pcl::PointXYZI>>();
+  manager.CheckViewPointCollision(cloud);
+  manager.SetViewPointCandidate(index,false);manager.SetViewPointCollision(index,false);
+  EXPECT_FALSE(manager.InLocalPlanningHorizon(root)); // Native TARE meaning stays intact.
+  EXPECT_FALSE(manager.InCollisionAtPose(root));
+  EXPECT_TRUE(manager.InCollisionAtPose(Eigen::Vector3d(100,100,root.z())));
+  EXPECT_TRUE(manager.InCollisionAtPose(Eigen::Vector3d(root.x(),root.y(),root.z()+2)));
+  EXPECT_TRUE(manager.InCollisionAtPose(Eigen::Vector3d(NAN,root.y(),root.z())));
+  // A real obstacle is still rejected at that exact same continuous root.
+  for(int k=0;k<4;++k) {
+    pcl::PointXYZI point;point.x=root.x();point.y=root.y();point.z=root.z();cloud->push_back(point);
+  }
+  manager.CheckViewPointCollision(cloud);
+  EXPECT_TRUE(manager.InCollisionAtPose(root));
+}
+
 TEST(SearchAudit, SeparatesDeadlineExpansionLimitAndExhaustedComponent) {
   using namespace ht_cost_ns;
   XYThetaConfig config;config.max_search_seconds=10;

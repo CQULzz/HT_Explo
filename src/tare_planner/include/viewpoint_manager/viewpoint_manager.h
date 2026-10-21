@@ -331,6 +331,9 @@ public:
 
   int GetNearestCandidateViewPointInd(const Eigen::Vector3d& position);
   bool InLocalPlanningHorizon(const Eigen::Vector3d& position);
+  // Continuous motion uses spatial bounds, independently of the nearest
+  // coverage viewpoint's candidate/collision labels. Physical gates are separate.
+  bool InContinuousPlanningHorizon(const Eigen::Vector3d& position);
   Eigen::Vector3d GetLocalPlanningHorizonSize()
   {
     return vp_.LocalPlanningHorizonSize;

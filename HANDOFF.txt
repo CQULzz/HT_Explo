@@ -1,4 +1,6 @@
 HT_Explo 项目交接文档
+阶段46候选补记：阶段45完整数据已发布fe42313，室内600s169.14m/3625.625m³但末段INVALID_START。已核对并复现最近覆盖格非候选/非碰撞标签使连续根状态被误判的问题；新增连续范围接口，不改原TARE函数/TSP与HT/物理硬门槛。四CTest50.80s和六函数SHA通过。即将独立室内600s，job .git/continuous-domain-runtime/job.json；当前仍不能把上轮成绩当本轮。详见docs/fixes/2026-10-21_continuous_domain.md。
+
 阶段45全量发布已核验：docs/experiments/publications/stage45.json。最新完整轮保留策略已执行，原中断轮继续保护。当前没有新的测量；结果和未解决问题见最新报告。
 
 阶段45室内测量与分析已结束：实测15e197eca16bee3dea1fcd3870a05ee84f2ecd12；{'distance_m': 169.14, 'visited_1m_xy_cells': 140, 'observed_free_volume_m3': 3625.625, 'mission': 'BLOCKED', 'map_age_p95_s': 0.8616966724395752, 'map_age_max_s': 1.3770060539245605}。结果docs/results/ht_known_body_terrain_10min_2026-10-21/REPORT.md；全量数据正在发布。森林/隧道本轮未复测，不能称已全面修好。

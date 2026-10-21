@@ -483,7 +483,7 @@ void ViewPointManager::CheckViewPointCollisionWithCollisionGrid(
 
 bool ViewPointManager::InCollisionAtPose(const Eigen::Vector3d& position, double extra_margin)
 {
-  if (!std::isfinite(extra_margin) || extra_margin<0 || extra_margin>1 || !position.allFinite() || !pose_collision_ready_ || !InLocalPlanningHorizon(position)) return true;
+  if (!std::isfinite(extra_margin) || extra_margin<0 || extra_margin>1 || !position.allFinite() || !pose_collision_ready_ || !InContinuousPlanningHorizon(position)) return true;
   geometry_msgs::msg::Point query;
   query.x=position.x();query.y=position.y();query.z=position.z();
   if (!viewpoint_boundary_.points.empty() && !misc_utils_ns::PointInPolygon(query,viewpoint_boundary_)) return true;
@@ -1613,6 +1613,15 @@ void ViewPointManager::GetCollisionViewPointVisCloud(pcl::PointCloud<pcl::PointX
   {
     cloud->points.push_back(point);
   }
+}
+
+bool ViewPointManager::InContinuousPlanningHorizon(const Eigen::Vector3d& position)
+{
+  if (!position.allFinite()) return false;
+  const int viewpoint_ind=GetViewPointInd(position);
+  if (!InRange(viewpoint_ind)) return false;
+  const auto center=GetViewPointPosition(viewpoint_ind);
+  return std::abs(center.z-position.z()) < std::max(vp_.kResolution.x(),vp_.kResolution.y())*2;
 }
 
 bool ViewPointManager::InLocalPlanningHorizon(const Eigen::Vector3d& position)

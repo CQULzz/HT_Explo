@@ -1,0 +1,46 @@
+[  5%] Built target gtest_main
+[ 11%] Built target ht_cost
+[ 16%] Built target lidar_model
+[ 22%] Built target misc_utils
+[ 27%] Built target pointcloud_utils
+[ 33%] Built target tsp_solver
+[ 38%] Built target viewpoint
+[ 44%] Built target rolling_grid
+[ 50%] Built target exploration_path
+[ 55%] Built target pointcloud_manager
+[ 61%] Built target rolling_occupancy_grid
+[ 66%] Built target gtest
+[ 72%] Built target keypose_graph
+[ 77%] Built target planning_env
+[ 86%] Built target grid_world
+[ 91%] Built target viewpoint_manager
+[ 94%] Building CXX object CMakeFiles/geometry_pose_test.dir/tests/geometry_pose_test.cpp.o
+In file included from /home/lzz/my test/HT_Explo-fixposition/src/tare_planner/include/grid/grid.h:15,
+                 from /home/lzz/my test/HT_Explo-fixposition/src/tare_planner/include/viewpoint_manager/viewpoint_manager.h:32,
+                 from /home/lzz/my test/HT_Explo-fixposition/src/tare_planner/tests/geometry_pose_test.cpp:2:
+/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/include/utils/misc_utils.h:69:85: warning: ‘nav_msgs::msg::Odometry_<std::allocator<void> >::ConstPtr’ is deprecated [-Wdeprecated-declarations]
+   69 | void KeyposeToMap(CloudType& cloud, const nav_msgs::msg::Odometry::ConstPtr& keypose);
+      |                                                                                     ^
+In file included from /opt/ros/jazzy/include/nav_msgs/nav_msgs/msg/odometry.hpp:7,
+                 from /home/lzz/my test/HT_Explo-fixposition/src/tare_planner/include/utils/misc_utils.h:15:
+/opt/ros/jazzy/include/nav_msgs/nav_msgs/msg/detail/odometry__struct.hpp:150:5: note: declared here
+  150 |     ConstPtr;
+      |     ^~~~~~~~
+/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/include/utils/misc_utils.h: In constructor ‘misc_utils_ns::Marker::Marker(rclcpp::Node::SharedPtr, std::string, std::string)’:
+/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/include/utils/misc_utils.h:299:27: warning: ‘misc_utils_ns::Marker::nh_’ will be initialized after [-Wreorder]
+  299 |   rclcpp::Node::SharedPtr nh_;
+      |                           ^~~
+/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/include/utils/misc_utils.h:296:15: warning:   ‘std::string misc_utils_ns::Marker::pub_topic_’ [-Wreorder]
+  296 |   std::string pub_topic_;
+      |               ^~~~~~~~~~
+/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/include/utils/misc_utils.h:304:12: warning:   when initialized here [-Wreorder]
+  304 |   explicit Marker(rclcpp::Node::SharedPtr nh, std::string pub_topic, std::string frame_id)
+      |            ^~~~~~
+In file included from /home/lzz/my test/HT_Explo-fixposition/src/tare_planner/include/grid_world/grid_world.h:29,
+                 from /home/lzz/my test/HT_Explo-fixposition/src/tare_planner/include/viewpoint_manager/viewpoint_manager.h:36:
+/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/include/keypose_graph/keypose_graph.h: In member function ‘bool keypose_graph_ns::KeyposeGraph::InBound(int)’:
+/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/include/keypose_graph/keypose_graph.h:118:32: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<std::vector<int> >::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  118 |     return index >= 0 && index < graph_.size();
+      |                          ~~~~~~^~~~~~~~~~~~~~~
+[ 97%] Linking CXX executable geometry_pose_test
+[100%] Built target geometry_pose_test
