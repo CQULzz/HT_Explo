@@ -49,19 +49,26 @@ def main():
         row['state']='RECORDED' if all(row['checks'].values()) else 'VALIDATION_FAILED'
         metrics[name]['checks']=row['checks']
         row['cleanup_scope']='CLEAN' if clean else 'POST_MEASUREMENT_SIGINT_EXCEPTION' if during_ok else 'UNRESOLVED_EXCEPTION'
-    state['state']='COMPLETED' if all(r['state']=='RECORDED' for r in state['runs']) else 'COMPLETED_WITH_ISSUES'
+    paired=read(suite/'paired_validation.json')
+    paired_ok=all(paired['parameter_checks'].values()) and paired['start_position_pass'] and paired['start_yaw_pass']
+    state['state']='COMPLETED' if all(r['state']=='RECORDED' for r in state['runs']) and paired_ok else 'COMPLETED_WITH_ISSUES'
     state['final_lifecycle_audit_at']=dt.datetime.now().astimezone().isoformat()
-    paragraph='''## 原版退出异常（不隐去）
-
-原TARE组的CMU localPlanner和pathFollower在采集完成、收到SIGINT之后，因ROS context已失效而抛异常并以-6结束。最早记录的信号处理时间为1792574297.610514，600秒测量窗口结束于1792574297.398429；异常均位于停止信号之后。定时探针已正常完成，录包/视频完整，未检出测量窗口内的该类异常。详细证据见original/lifecycle_exception_audit.json和原始local_planner.log。
-
-因此保留600秒的探索指标，但原版的“无子节点退出异常”检查为false；整体状态COMPLETED_WITH_ISSUES，完整数据按带缺陷记录发布，不能声称所有稳定性检查通过。本轮没有修改原CMU节点源码来掩盖这个问题。
-
-'''
+    lines=['## 子进程退出检查','']
+    for row in state['runs']:
+        name=row['scenario'];audit=read(suite/name/'lifecycle_exception_audit.json')
+        if audit['clean_shutdown']:
+            lines.append(f'- {name}：未检出匹配的子进程退出异常；仍需结合逐项采集检查判断总体状态。')
+        else:
+            scope='已确认位于测量结束及停止信号之后' if audit['no_in_measurement_exception_detected'] else '有异常未能确认全部位于测量之后'
+            signals=[x['first_signal_wall_time'] for x in audit['files_with_exceptions'].values() if x['first_signal_wall_time'] is not None]
+            first=min(signals) if signals else None
+            lines.append(f'- {name}：{scope}；测量结束wall={audit["measurement_end_wall_time"]:.9f}，异常日志中最早信号wall={first}；文件：'+', '.join(audit['files_with_exceptions'])+'。')
+    lines+=['',f'本轮最终状态{state["state"]}。采集与退出异常分开记录，不删除失败、不把完整计时等同于所有稳定性检查通过。详见逐组lifecycle_exception_audit.json和原始日志。','']
+    paragraph='\n'.join(lines)+'\n'
     for target in [suite,out]:
         write(target/'suite.json',state);write(target/'FINISHED.json',state);write(target/'comparison_metrics.json',metrics)
         report=target/'REPORT.md';body=report.read_text().replace('总体状态：COMPLETED。','总体状态：'+state['state']+'。')
-        if '## 原版退出异常（不隐去）' not in body:
+        if '## 子进程退出检查' not in body:
             body=body.replace('## 口径与限制\n',paragraph+'## 口径与限制\n',1)
         report.write_text(body)
     shutil.copy2(snapshot,out/snapshot.name)

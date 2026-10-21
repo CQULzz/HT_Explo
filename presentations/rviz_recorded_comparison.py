@@ -107,13 +107,19 @@ def prepare(suite, cache):
                                   'metadata_sha256': sha(base/'evidence_bag/metadata.yaml'),
                                   'display_events': dict(counts), 'event_count': len(events)}
         print(name, len(events), dict(counts), flush=True)
+    xy=np.array([(float(row['x_m']),float(row['y_m'])) for run in result['data'].values() for row in run['rows']])
+    low=xy.min(axis=0)-15.;high=xy.max(axis=0)+15.
+    result['global_view']={'center':((low+high)/2).tolist(),
+                           'scale':float(.95*min(928/(high[0]-low[0]),702/(high[1]-low[1]))),
+                           'display_bounds_xy':[low.tolist(),high.tolist()],
+                           'policy':'Common fixed view from both full recorded trajectories plus15m display sensor range.'}
     cache.parent.mkdir(parents=True, exist_ok=True)
     with cache.open('wb') as f:
         pickle.dump(result, f, protocol=5)
     cache.with_suffix('.json').write_text(json.dumps({k:v for k,v in result.items() if k != 'data'}, indent=2)+'\n')
 
 
-def configs(out):
+def configs(out, global_view=None):
     def topic(t):
         return {'Value': t, 'Depth': 2, 'History Policy': 'Keep Last',
                 'Reliability Policy': 'Reliable', 'Durability Policy': 'Volatile'}
@@ -131,7 +137,8 @@ def configs(out):
         displays.append({'Class': 'rviz_default_plugins/MarkerArray', 'Name': 'Recorded routes and robot',
                          'Enabled': True, 'Marker Topic': topic(prefix+'/'+view), 'Topic': topic(prefix+'/'+view)})
         if view == 'global':
-            camera = {'Class': 'rviz_default_plugins/TopDownOrtho', 'Scale': 6.7, 'X': 42., 'Y': 10., 'Angle': 0.,
+            center=(global_view or {}).get('center',[42.,10.])
+            camera = {'Class': 'rviz_default_plugins/TopDownOrtho', 'Scale': (global_view or {}).get('scale',6.7), 'X': center[0], 'Y': center[1], 'Angle': 0.,
                       'Target Frame': 'map', 'Near Clip Distance': .01}
         elif view == 'local':
             camera = {'Class': 'rviz_default_plugins/TopDownOrtho', 'Scale': 67., 'X': 0., 'Y': 0., 'Angle': 0.,
@@ -417,7 +424,9 @@ def main():
     if a.prepare:
         prepare(a.suite.resolve(), a.cache.resolve())
     else:
-        a.output.mkdir(parents=True, exist_ok=True); configs(a.output)
+        a.output.mkdir(parents=True, exist_ok=True)
+        meta=json.loads(a.cache.with_suffix('.json').read_text())
+        configs(a.output,meta.get('global_view'))
         replay(a.cache, a.output.resolve(), a.encoder, a.mode, a.display, a.speed, a.fps, a.limit)
 
 

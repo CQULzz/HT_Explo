@@ -12,8 +12,12 @@ from finalize_matched_tare_comparison import read, write, run, sha
 def main():
     ap=argparse.ArgumentParser();ap.add_argument('--state',type=Path,required=True);a=ap.parse_args()
     job=read(a.state);suite=Path(job['suite']);out=Path(job['archive']);encoder=job['encoder']
-    if read(suite/'suite.json')['state']!='COMPLETED':
-        raise RuntimeError('Both camera recordings must already pass collection validation')
+    if read(suite/'suite.json')['state'] not in ('COMPLETED','COMPLETED_WITH_ISSUES'):
+        raise RuntimeError('Both measurements must finish before rendering evidence')
+    for name in ('original','ht'):
+        validation=read(suite/name/'video_validation.json')
+        if validation['full_decode_returncode'] or not validation['duration_matches']:
+            raise RuntimeError('Individual camera recording is incomplete: '+name)
     movie=suite/'comparison.mp4'
     run([encoder,'-nostdin','-y','-i',suite/'original/camera_h264.mp4','-i',suite/'ht/camera_h264.mp4',
          '-filter_complex_threads','2','-filter_complex','[0:v][1:v]hstack=inputs=2:shortest=1',

@@ -1,0 +1,34 @@
+{
+  "measurement_origin_wall_time": 1792581200.6658673,
+  "measurement_end_wall_time": 1792581800.6658673,
+  "actual600s": true,
+  "clean_shutdown": false,
+  "no_in_measurement_exception_detected": true,
+  "files_with_exceptions": {
+    "local_planner.log": {
+      "exceptions": [
+        {
+          "line": 34,
+          "text": "[pathFollower-2] terminate called after throwing an instance of 'rclcpp::exceptions::RCLError'"
+        },
+        {
+          "line": 37,
+          "text": "[localPlanner-1] terminate called after throwing an instance of 'rclcpp::exceptions::RCLError'"
+        },
+        {
+          "line": 41,
+          "text": "[ERROR] [localPlanner-1]: process has died [pid 179335, exit code -6, cmd '/home/lzz/my test/autonomous_exploration_development_environment/install/local_planner/lib/local_planner/localPlanner --ros-args -r __node:=localPlanner --params-file /tmp/launch_params_0qg1_1fo --params-file /tmp/launch_params_r3dwi2ii --params-file /tmp/launch_params_8n6j57cj --params-file /tmp/launch_params_rgrc4_do --params-file /tmp/launch_params_tudaxcgn --params-file /tmp/launch_params_8wzhthlf --params-file /tmp/launch_params_qgqyus7h --params-file /tmp/launch_params_oq_rb32n --params-file /tmp/launch_params_tus4eqji --params-file /tmp/launch_params_knpagdpb --params-file /tmp/launch_params_dww0_o49 --params-file /tmp/launch_params_prn7vfjx --params-file /tmp/launch_params_ubl4v_ak --params-file /tmp/launch_params_yh8kxjph --params-file /tmp/launch_params_2_8aou6b --params-file /tmp/launch_params_b064sg_n --params-file /tmp/launch_params_xczhz745 --params-file /tmp/launch_params_zoprc0px --params-file /tmp/launch_params_j6lq_01o --params-file /tmp/launch_params_qwlhegl4 --params-file /tmp/launch_params_21xjt9tq --params-file /tmp/launch_params_cx1g0nro --params-file /tmp/launch_params_32ohk2dc --params-file /tmp/launch_params_0ek76xxr --params-file /tmp/launch_params_0n883c61 --params-file /tmp/launch_params_nko8_h34 --params-file /tmp/launch_params__r13r1t3 --params-file /tmp/launch_params_xwlicdpi --params-file /tmp/launch_params_ilyvsxcl --params-file /tmp/launch_params_0g3i5iin --params-file /tmp/launch_params_3xzzb913 --params-file /tmp/launch_params_wljikgg3 --params-file /tmp/launch_params_d1yo6dpo --params-file /tmp/launch_params_5j8ayyjt --params-file /tmp/launch_params_40_0wxd2 --params-file /tmp/launch_params_d14o6_fz --params-file /tmp/launch_params_ni9otuao --params-file /tmp/launch_params_mtohcnfh --params-file /tmp/launch_params_4qltclbe']."
+        },
+        {
+          "line": 42,
+          "text": "[ERROR] [pathFollower-2]: process has died [pid 179336, exit code -6, cmd '/home/lzz/my test/autonomous_exploration_development_environment/install/local_planner/lib/local_planner/pathFollower --ros-args -r __node:=pathFollower --params-file /tmp/launch_params_05_6e7ca --params-file /tmp/launch_params_b8qnam8f --params-file /tmp/launch_params_qht3_1cw --params-file /tmp/launch_params_clv8bwd7 --params-file /tmp/launch_params_fg0v02wg --params-file /tmp/launch_params_idq_xy1r --params-file /tmp/launch_params_wc8hu01i --params-file /tmp/launch_params_ev6te1an --params-file /tmp/launch_params_mx9hzu4z --params-file /tmp/launch_params_e3p7x0k9 --params-file /tmp/launch_params_q_z3fz3k --params-file /tmp/launch_params_kig1rbsv --params-file /tmp/launch_params_7cxhkaw4 --params-file /tmp/launch_params_aotl4nf8 --params-file /tmp/launch_params_4ul8n0dp --params-file /tmp/launch_params_hb15ehp1 --params-file /tmp/launch_params_c77qk9gq --params-file /tmp/launch_params_1_3ckeh9 --params-file /tmp/launch_params_dqzjuft8 --params-file /tmp/launch_params_uem94j_t --params-file /tmp/launch_params_qrqhitw1 --params-file /tmp/launch_params_kv4vlpe_ --params-file /tmp/launch_params_cxmo4_q8 --params-file /tmp/launch_params_97qk8jtk --params-file /tmp/launch_params_a89dwwuu --params-file /tmp/launch_params_q4ndw8n9 --params-file /tmp/launch_params_o1ci5p9r --params-file /tmp/launch_params_a87zqqel -r /cmd_vel:=/comparison/tare_raw_cmd_vel']."
+        }
+      ],
+      "clean_shutdown": false,
+      "exceptions_confirmed_after_measurement_and_stop": true,
+      "no_in_measurement_exception_detected": true,
+      "first_signal_wall_time": 1792581800.9066
+    }
+  },
+  "scope": "Sequential log ordering and recorded signal-handler timestamps; exceptions are retained, never waived to claim clean shutdown."
+}

@@ -1,0 +1,64 @@
+{
+  "git_head": "f7fd77b66fc442752599ead359e8aa60e7773ae4",
+  "duration_s": 600,
+  "scene": "campus",
+  "state": "COMPLETED_WITH_ISSUES",
+  "started_at": "2026-10-21T19:12:29.237936+08:00",
+  "runs": [
+    {
+      "scenario": "original",
+      "state": "RECORDED",
+      "runner_pid": 178686,
+      "elapsed_measurement_s": 600.0,
+      "runner_returncode": 0,
+      "checks": {
+        "timer_completed": true,
+        "measured600s": true,
+        "enough_samples": true,
+        "source_hashes_unchanged": true,
+        "no_parent_failure": true,
+        "no_live_descendants": true,
+        "no_forced_shutdown": true,
+        "video_decodes": true,
+        "video_duration": true,
+        "motion_caps": true,
+        "normal_acceleration": true,
+        "upstream_tracked_unchanged": true
+      },
+      "metrics": {
+        "distance_m": 223.53,
+        "observed_free_volume_m3": 17048.25,
+        "mission": "EXPLORING"
+      }
+    },
+    {
+      "scenario": "ht",
+      "state": "VALIDATION_FAILED",
+      "runner_pid": 180806,
+      "elapsed_measurement_s": 600.0,
+      "runner_returncode": 0,
+      "checks": {
+        "timer_completed": true,
+        "measured600s": true,
+        "enough_samples": true,
+        "source_hashes_unchanged": true,
+        "no_parent_failure": true,
+        "no_live_descendants": true,
+        "no_forced_shutdown": true,
+        "video_decodes": true,
+        "video_duration": true,
+        "motion_caps": true,
+        "normal_acceleration": false,
+        "cmu_terrain_isolated": true,
+        "ht_model_threads_bounded": true
+      },
+      "metrics": {
+        "distance_m": 218.28,
+        "observed_free_volume_m3": 17722.25,
+        "mission": "EXPLORING"
+      }
+    }
+  ],
+  "updated_at": "2026-10-21T19:34:15.631766+08:00",
+  "finished_at": "2026-10-21T19:34:17.633366+08:00"
+}

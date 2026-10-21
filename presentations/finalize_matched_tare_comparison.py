@@ -129,7 +129,9 @@ def parameter_audit(suite):
     differences={k:dict(original=planners['original'][k],ht=planners['ht'][k])
                  for k in sorted(planners['original'].keys()&planners['ht'].keys())
                  if planners['original'][k]!=planners['ht'][k]}
-    write(suite/'effective_parameter_comparison.json',dict(checks=checks,parameters=params,
+    grids={name:{key:values['viewpoint_manager/'+key] for key in
+                 ('number_x','number_y','resolution_x','resolution_y')} for name,values in planners.items()}
+    write(suite/'effective_parameter_comparison.json',dict(checks=checks,parameters=params,viewpoint_grids=grids,
                                                          shared_planner_parameter_differences=differences))
     return checks
 
@@ -154,7 +156,7 @@ def collection(folder, original, motion):
     return checks
 
 
-def plots(suite, data):
+def plots(suite, data, scene='indoor'):
     font='/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc'
     if Path(font).exists():
         from matplotlib import font_manager
@@ -164,7 +166,7 @@ def plots(suite, data):
     colors={'original':'#2878b5','ht':'#ed7d31'}
     labels={'original':'原TARE（同运动上限）','ht':'最新HT + 原TARE决策'}
     fig,axes=plt.subplots(2,3,figsize=(17,9),layout='constrained')
-    fig.suptitle('同室内、同原生起点、各600秒：TARE 与最新HT\n单次端到端对照；近似观测自由体积并非覆盖真值')
+    fig.suptitle(f'同{scene}、同原生起点、各600秒：TARE 与最新HT\n单次端到端对照；近似观测自由体积并非覆盖真值')
     for i,(name,d) in enumerate(data.items()):
         rows,volume,metrics=d['rows'],d['volume'],d['external']
         t=np.array([float(r['t_s']) for r in rows]);distance=np.array([float(r['distance_m']) for r in rows])
@@ -199,19 +201,26 @@ def plots(suite, data):
     fig,axes=plt.subplots(2,2,figsize=(14,8),layout='constrained')
     for name in data:
         folder=suite/name;origin=read(folder/'current/measurement_started.json')['wall_time']
-        groups={}
+        groups=[]
         for row in csv.DictReader((folder/'resources.csv').open()):
             second=float(row['wall_time'])-origin
             if not 0<=second<600:
                 continue
-            bucket=math.floor(second/5)*5
-            group=groups.setdefault(bucket,dict(cpu=0.,rss=0.))
+            wall=float(row['wall_time'])
+            if not groups or wall-groups[-1]['first_wall']>1:
+                groups.append(dict(first_wall=wall,last_wall=wall,cpu=0.,rss=0.,rows=0))
+            group=groups[-1]
+            group['last_wall']=wall;group['rows']+=1
             group['rss']+=float(row['rss_mb'])
             if row['cpu_percent']:
                 group['cpu']+=float(row['cpu_percent'])
-        t=sorted(groups);c=colors[name];label=labels[name]
-        axes[0,0].plot(np.array(t)/60,[groups[k]['cpu'] for k in t],label=label,color=c,linewidth=.8)
-        axes[0,1].plot(np.array(t)/60,[groups[k]['rss'] for k in t],label=label,color=c,linewidth=.8)
+        batches=[dict(time_s=g['first_wall']-origin,cpu_percent=g['cpu'],rss_mib=g['rss'],
+                      process_rows=g['rows'],batch_span_s=g['last_wall']-g['first_wall']) for g in groups]
+        with (folder/'resource_batches.csv').open('w',newline='') as f:
+            writer=csv.DictWriter(f,fieldnames=list(batches[0]),lineterminator='\n');writer.writeheader();writer.writerows(batches)
+        t=[b['time_s'] for b in batches];c=colors[name];label=labels[name]
+        axes[0,0].plot(np.array(t)/60,[b['cpu_percent'] for b in batches],label=label,color=c,linewidth=.8)
+        axes[0,1].plot(np.array(t)/60,[b['rss_mib'] for b in batches],label=label,color=c,linewidth=.8)
         health=[r for r in csv.DictReader((folder/'health.csv').open()) if 0<=float(r['wall_time'])-origin<600]
         ht=np.array([float(r['wall_time'])-origin for r in health])/60
         scan=np.array([float(r['scan_source_age_s']) if r['scan_source_age_s'] else np.nan for r in health])
@@ -230,6 +239,9 @@ def main():
     ap=argparse.ArgumentParser();ap.add_argument('--state',type=Path,required=True);a=ap.parse_args()
     job=read(a.state);suite=Path(job['suite']);out=Path(job['archive']);encoder=job['encoder']
     state=read(suite/'suite.json')
+    stage=int(job.get('stage',47));scene=job.get('scene',state.get('scene','indoor'))
+    if scene!=state.get('scene',scene):
+        raise RuntimeError('Scenario differs between job and recorded suite')
     if state['state']!='MEASUREMENTS_COMPLETE':
         raise RuntimeError('Both actual measurements must finish; preserve interrupted state')
     if out.exists():
@@ -277,11 +289,16 @@ def main():
     write(suite/'paired_validation.json',paired)
     state['state']='COMPLETED' if all(r['state']=='RECORDED' for r in state['runs']) and all(params.values()) and paired['start_position_pass'] and paired['start_yaw_pass'] else 'COMPLETED_WITH_ISSUES'
     write(suite/'suite.json',state);write(suite/'FINISHED.json',state)
-    plots(suite,data)
+    plots(suite,data,scene)
     concise={name:{k:v for k,v in d.items() if k not in ('rows','volume')} for name,d in data.items()}
     write(suite/'comparison_metrics.json',concise)
-    lines=['# 阶段47：原TARE与最新HT，同运动上限室内600秒对照','',
-        f"试验设施冻结`{job['candidate_commit']}`；HT导航保持`{job['navigation_control_commit']}`，原TARE ROS2适配基线`{job['upstream_commit']}`。每组独立重启同一indoor原生起点，顺序原TARE→HT，均实际600秒。",'',
+    grids=read(suite/'effective_parameter_comparison.json')['viewpoint_grids']
+    def grid_description(name):
+        g=grids[name]
+        return (f"{g['number_x']}×{g['number_y']}，间距{g['resolution_x']:g}×{g['resolution_y']:g}m，"
+                f"名义{g['number_x']*g['resolution_x']:g}×{g['number_y']*g['resolution_y']:g}m")
+    lines=[f'# 阶段{stage}：原TARE与最新HT，同运动上限{scene}600秒对照','',
+        f"试验设施冻结`{job['candidate_commit']}`；HT导航保持`{job['navigation_control_commit']}`，原TARE ROS2适配基线`{job['upstream_commit']}`。每组独立重启同一{scene}原生起点，顺序原TARE→HT，均实际600秒。",'',
         '原TARE保留自身探索/TSP与CMU规划器；原CMU参数对齐角速度和线加速度，并用透明限幅组件对齐倒车速度/角加速度，限幅前后指令均已记录。前进0.5、倒车0.25m/s，角速度0.8rad/s，常规线/角加速度0.5m/s²、1.2rad/s²。显式全零/输入过期可立即停止。CMU原maxSpeed=2.0的内部归一化配置保留，但autonomySpeed=0.5，实际输出另有共同限幅，并非以2m/s开车。两套地形、几何安全规则与跟踪器仍不同，是端到端对照，不是HT单模块消融。','',
         '| 指标 | 原TARE（对齐运动上限） | 最新HT |','|---|---:|---:|']
     specs=[('实际里程/m','distance_m','summary'),('近似观测自由体积/m³','observed_free_volume_m3','external'),
@@ -292,7 +309,7 @@ def main():
         values=[data[n][source][key] for n in ['original','ht']]
         lines.append('| '+label+' | '+' | '.join(f'{v:.2%}' if key.endswith('fraction') else f'{v:.3f}' for v in values)+' |')
     lines+=['| 末任务 | '+data['original']['mission']+' | '+data['ht']['mission']+' |',
-        '| 视点网格 | 50×50，间距0.6m | 100×100，间距0.3m |','',
+        '| 视点网格 | '+grid_description('original')+' | '+grid_description('ht')+' |','',
         f"本次HT/原TARE体积比={data['ht']['external']['observed_free_volume_m3']/data['original']['external']['observed_free_volume_m3']:.3f}，里程比={data['ht']['summary']['distance_m']/data['original']['summary']['distance_m']:.3f}。仅该次运行描述，不代表统计优越。",'',
         '![累计体积、增量、里程、速度、运动组成和规划周期](comparison.png)','',
         '![同尺度实际轨迹](trajectories.png)','',
@@ -305,10 +322,10 @@ def main():
         '- 每秒按绝对源秒取一帧真实地图坐标激光，使用相同sensor里程计原点；0.5m自由体素并集、0.25m射线步长、15m截断、回波前0.25m排除。这是近似观测量，不是真值覆盖率。',
         '- 原TARE完成信号只表示原生返航触发，不能拿它当HT的COMPLETED到家驻留状态，也不证明真实全覆盖。',
         '- 两个系统各一次，固定运行顺序，探索随机性和初始化/感知/控制差异未统计消除；限幅后的原TARE不是原CMU默认高速控制链。',
-        '- 视点网格不同：原TARE 50×50、间距0.6m；HT 100×100、间距0.3m。名义范围均约30×30m，但HT有4倍网格数量，会影响候选和计算工作量；不能将差距全归于HT地形或XYθ。完整有效参数与逐项差异见effective_parameter_comparison.json。',
+        '- 本场景实际视点网格见上表及effective_parameter_comparison.json；没有沿用室内配置的网格说明。即使采样密度相同，感知、几何与控制链仍不同，不能把差距单独归因于HT。',
         '- 记录保留全部发布控制/odom/状态/路线；激光源秒采样、HT输入/地图按既有策略，不是全部原始传感器全频无损录包。',
         '- 本轮没有修改HT导航；本次对照不同时验证森林、隧道或实车。', '',
-        '完整数据以docs/experiments/publications/stage47.json远端大小/SHA回执为准，报告存在不等于已发布。']
+        f'完整数据以docs/experiments/publications/stage{stage}.json远端大小/SHA回执为准，报告存在不等于已发布。']
     (suite/'REPORT.md').write_text('\n'.join(lines)+'\n')
     out.mkdir(parents=True)
     root_files=['REPORT.md','comparison_metrics.json','comparison.png','comparison.pdf','trajectories.png','trajectories.pdf','resources_comparison.png','resources_comparison.pdf',
@@ -325,6 +342,7 @@ def main():
             shutil.copy2(src/'current'/name2,dst/'current'/name2)
         shutil.copy2(src/'health.csv',dst/'health.csv')
         shutil.copy2(src/'resources.csv',dst/'resources.csv')
+        shutil.copy2(src/'resource_batches.csv',dst/'resource_batches.csv')
     for script in ['run_matched_tare_comparison.py','run_matched_tare_original.py','comparison_motion_limits.py','finalize_matched_tare_comparison.py']:
         shutil.copy2(Path(__file__).with_name(script),out/script)
     shutil.copy2(a.state,out/'frozen_job.json')
