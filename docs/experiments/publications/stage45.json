@@ -1,0 +1,79 @@
+{
+  "tag": "ht-stage-20261021-terrain-footprint",
+  "tested_commit": "15e197eca16bee3dea1fcd3870a05ee84f2ecd12",
+  "raw_suite": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_known_body_terrain_10min_2026-10-21_12-49-46",
+  "result_archive": "/home/lzz/my test/HT_Explo-fixposition/docs/results/ht_known_body_terrain_10min_2026-10-21",
+  "release": "https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261021-terrain-footprint",
+  "publication_status": "COMPLETE_VALIDATED_COLLECTION",
+  "collection_validation": {
+    "indoor": {
+      "recorded_state": "RECORDED",
+      "complete600s": true,
+      "checks": {
+        "timer_completed": true,
+        "measured_duration_matches": true,
+        "source_hashes_unchanged": true,
+        "enough_samples": true,
+        "no_runtime_parent_failure": true,
+        "no_live_descendants": true,
+        "no_forced_shutdown": true,
+        "video_full_decode_passed": true,
+        "video_duration_matches": true,
+        "video_fps_matches": true,
+        "analysis_passed": true,
+        "no_child_or_cleanup_exception": true,
+        "blas_workers_bounded": true
+      },
+      "failed_checks": []
+    }
+  },
+  "recording_scope": "All published HT/control/odom/status/TARE routes; source-second lidar and periodic maps/model inputs; not lossless all-frequency raw sensor data.",
+  "transport": "Deterministic streaming tar+zstd,512MiB parts; three shared spool slots, at most1.5GiB temporary transport.",
+  "assets": [
+    {
+      "name": "ht-stage-20261021-terrain-footprint-raw.tar.zst.part000",
+      "bytes": 536870912,
+      "sha256": "24af52c01ea4fad07f7c58aa37be214da8d6ec0dc203e02120c4324cb8244b3f"
+    },
+    {
+      "name": "ht-stage-20261021-terrain-footprint-raw.tar.zst.part001",
+      "bytes": 536870912,
+      "sha256": "82089ab77d04db96b2209e37e68abc1d5cd553dbb3401343734ea70871314c3f"
+    },
+    {
+      "name": "ht-stage-20261021-terrain-footprint-raw.tar.zst.part002",
+      "bytes": 408345057,
+      "sha256": "3c53fce601d68f7e7dc1276927b0dddb49c46e47fc72be159904523a2bb67d82"
+    },
+    {
+      "name": "ht-stage-20261021-terrain-footprint-raw-files.json",
+      "bytes": 57408,
+      "sha256": "798b8a239f15f153a95ecf2bc8fd2b8e251b25b5a8e0994ca5d98e0571364730"
+    },
+    {
+      "name": "ht-stage-20261021-terrain-footprint-results.tar.zst.part000",
+      "bytes": 18840908,
+      "sha256": "f351f18300c870dd66cdd396e1952fa3be6f5c2fb7c333b2064b0a808e0f743c"
+    },
+    {
+      "name": "ht-stage-20261021-terrain-footprint-results-files.json",
+      "bytes": 16514,
+      "sha256": "a527c5961edff9600b5c1da908e48218c9b730bb653b99005172b512084acdb4"
+    },
+    {
+      "name": "ht-stage-20261021-terrain-footprint-indoor.mp4",
+      "bytes": 13254382,
+      "sha256": "06f79b2306f88de6522165ef8c6d1aa2e0d93afef849607c8ebf844bb2cf5922"
+    },
+    {
+      "name": "ht-stage-20261021-terrain-footprint-SHA256.json",
+      "bytes": 3234,
+      "sha256": "00fa45e48d33d480cda93d6baa02c91779371971d60e2f2974f2c30d4b8409b0"
+    }
+  ],
+  "raw_inventory_sha256": "798b8a239f15f153a95ecf2bc8fd2b8e251b25b5a8e0994ca5d98e0571364730",
+  "raw_topology_sha256": "9cd9aef66d877ce93f719e300010bfacd53252671ac9cb284ebaa77c0d4e4115",
+  "results_inventory_sha256": "a527c5961edff9600b5c1da908e48218c9b730bb653b99005172b512084acdb4",
+  "results_topology_sha256": "ae34bd495bdd3c5b4620b40cf18c89ef54e8ace81a7010f288a3df8121a6fbac",
+  "verified_at": "2026-10-21T13:07:25.860959+08:00"
+}

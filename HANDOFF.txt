@@ -1,4 +1,6 @@
 HT_Explo 项目交接文档
+阶段45全量发布已核验：docs/experiments/publications/stage45.json。最新完整轮保留策略已执行，原中断轮继续保护。当前没有新的测量；结果和未解决问题见最新报告。
+
 阶段45室内测量与分析已结束：实测15e197eca16bee3dea1fcd3870a05ee84f2ecd12；{'distance_m': 169.14, 'visited_1m_xy_cells': 140, 'observed_free_volume_m3': 3625.625, 'mission': 'BLOCKED', 'map_age_p95_s': 0.8616966724395752, 'map_age_max_s': 1.3770060539245605}。结果docs/results/ht_known_body_terrain_10min_2026-10-21/REPORT.md；全量数据正在发布。森林/隧道本轮未复测，不能称已全面修好。
 
 阶段45候选补记（2026-10-21）：阶段44四场景数据已全部远端核验（24资产，stage44.json，提交a8a6334）。已修原TARE地形提示遗漏已知障碍足迹的问题，含无预测时旧绿缓存更新；未知引导和严格执行保持。旧代码两失败、另一个中途缺测历史反例及最终四CTest50.65s/六函数SHA证据见docs/fixes/2026-10-21_known_body_terrain.md。本候选接下来独立室内600s，闭环尚未完成；新job .git/terrain-gate-runtime/job.json为准，不把阶段44成绩冒充新成绩。
