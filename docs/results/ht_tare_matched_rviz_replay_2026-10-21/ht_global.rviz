@@ -1,0 +1,74 @@
+Panels: []
+Visualization Manager:
+  Class: ''
+  Displays:
+  - Class: rviz_default_plugins/Grid
+    Name: Common10m grid
+    Enabled: true
+    Alpha: 0.28
+    Cell Size: 10.0
+    Plane Cell Count: 30
+    Color: 95; 117; 138
+    Line Style:
+      Value: Lines
+      Line Width: 0.03
+    Plane: XY
+    Reference Frame: map
+  - Class: rviz_default_plugins/PointCloud2
+    Name: Observed lidar surfaces
+    Enabled: true
+    Topic:
+      Value: /recorded_rviz/ht/cloud
+      Depth: 2
+      History Policy: Keep Last
+      Reliability Policy: Reliable
+      Durability Policy: Volatile
+    Color Transformer: RGB8
+    Position Transformer: XYZ
+    Style: Points
+    Size (Pixels): 2
+    Size (m): 0.18
+    Decay Time: 0
+    Alpha: 1
+    Use Fixed Frame: true
+  - Class: rviz_default_plugins/MarkerArray
+    Name: Recorded routes and robot
+    Enabled: true
+    Marker Topic:
+      Value: /recorded_rviz/ht/global
+      Depth: 2
+      History Policy: Keep Last
+      Reliability Policy: Reliable
+      Durability Policy: Volatile
+    Topic:
+      Value: /recorded_rviz/ht/global
+      Depth: 2
+      History Policy: Keep Last
+      Reliability Policy: Reliable
+      Durability Policy: Volatile
+  Enabled: true
+  Global Options:
+    Fixed Frame: map
+    Background Color: 20; 27; 35
+    Frame Rate: 15
+  Name: root
+  Tools:
+  - Class: rviz_default_plugins/MoveCamera
+  Views:
+    Current:
+      Class: rviz_default_plugins/TopDownOrtho
+      Scale: 6.7
+      X: 42.0
+      Y: 10.0
+      Angle: 0.0
+      Target Frame: map
+      Near Clip Distance: 0.01
+      Name: Current View
+    Saved: []
+Window Geometry:
+  X: 960
+  Y: 68
+  Width: 960
+  Height: 800
+  Hide Left Dock: true
+  Hide Right Dock: true

@@ -48,6 +48,8 @@ HT地图源时间年龄的1Hz采样P95=1.411s、最大=1.595s，超过3秒样本
 
 ## 视频与数据
 
+[新增实际RViz回放：全局地图、路线、轨迹对比，以及HT局部XY/八层XYθ](../ht_tare_matched_rviz_replay_2026-10-21/REPORT.md)。这是对同一轮数据的离线可视化补录，原始试验与失败记录不变。
+
 [左右分屏对比视频：左TARE，右HT](../ht_tare_matched_10min_2026-10-21/comparison.mp4)
 
 [原TARE 10分钟视频](../ht_tare_matched_10min_2026-10-21/original/camera_h264.mp4) · [最新HT 10分钟视频](../ht_tare_matched_10min_2026-10-21/ht/camera_h264.mp4)

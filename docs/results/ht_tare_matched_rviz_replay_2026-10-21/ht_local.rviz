@@ -1,0 +1,45 @@
+Panels: []
+Visualization Manager:
+  Class: ''
+  Displays:
+  - Class: rviz_default_plugins/MarkerArray
+    Name: Recorded routes and robot
+    Enabled: true
+    Marker Topic:
+      Value: /recorded_rviz/ht/local
+      Depth: 2
+      History Policy: Keep Last
+      Reliability Policy: Reliable
+      Durability Policy: Volatile
+    Topic:
+      Value: /recorded_rviz/ht/local
+      Depth: 2
+      History Policy: Keep Last
+      Reliability Policy: Reliable
+      Durability Policy: Volatile
+  Enabled: true
+  Global Options:
+    Fixed Frame: map
+    Background Color: 20; 27; 35
+    Frame Rate: 15
+  Name: root
+  Tools:
+  - Class: rviz_default_plugins/MoveCamera
+  Views:
+    Current:
+      Class: rviz_default_plugins/TopDownOrtho
+      Scale: 67.0
+      X: 0.0
+      Y: 0.0
+      Angle: 0.0
+      Target Frame: map
+      Near Clip Distance: 0.01
+      Name: Current View
+    Saved: []
+Window Geometry:
+  X: 0
+  Y: 68
+  Width: 960
+  Height: 800
+  Hide Left Dock: true
+  Hide Right Dock: true
