@@ -21,7 +21,7 @@ def main():
  fig,axes=plt.subplots(2,3,figsize=(17,9),layout='constrained');minute=np.arange(0,601,60)
  for i,(r,c) in enumerate(zip(data,colors)):
   axes[0,0].plot(r['vt']/60,r['v'],color=c,label=r['label'],lw=2);axes[0,0].annotate(f"{r['v'][-1]:.0f}",(10,r['v'][-1]),xytext=(-5,-12 if i==1 else 5),textcoords='offset points',ha='right',color=c)
-  marginal=np.diff(np.interp(minute,r['vt'],r['v']));axes[0,1].bar(np.arange(1,11)+(i-(len(data)-1)/2)*.24,marginal,width=.23,color=c,label=r['label'])
+  marginal=np.diff(np.interp(minute,r['vt'],r['v']));bar_width=min(.24,.8/len(data));axes[0,1].bar(np.arange(1,11)+(i-(len(data)-1)/2)*bar_width,marginal,width=bar_width*.95,color=c,label=r['label'])
   axes[0,2].plot(r['t']/60,r['d'],color=c,label=r['label'],lw=2)
   bins=np.arange(0,601,10);values=[np.mean(r['speed'][(r['t']>=lo)&(r['t']<hi)]) for lo,hi in zip(bins,bins[1:])]
   axes[1,0].plot((bins[:-1]+5)/60,values,color=c,label=r['label'],lw=1.5)

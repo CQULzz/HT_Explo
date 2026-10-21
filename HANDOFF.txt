@@ -1,4 +1,6 @@
 HT_Explo 项目交接文档
+2026-10-21阶段44实测补记：冻结454efa230fae337cfa8f87b2aa87ee9917040621；四场景采集已结束、结果见docs/results/ht_sparse_height_4scene_10min_2026-10-21/REPORT.md。完整数据正在发布，stage44.json核验后才称备份完成；剩余问题：indoor末状态BLOCKED，不能称探索成功；indoor记录中5次XYθ搜索达到展开上限，不能据此断言无路；indoor最长完全停车412.53s，需结合任务/门禁解释；forest末状态BLOCKED，不能称探索成功；forest记录中754次XYθ搜索达到展开上限，不能据此断言无路；forest最长完全停车436.05s，需结合任务/门禁解释；tunnel最长完全停车529.38s，需结合任务/门禁解释；tunnel在53.0s采样报告exploration_finished，是否真实全覆盖尚未验证；COMPLETED只表示任务返航条件满足。
+
 2026-10-21 11:36新补记（优先于下方所有旧状态）
 [事实] 历史备份已完成62/62目录、68081073112字节、280资产、15个Release；final_verification.json及release_links_verified.json存在，历史源文件未删除。ht-legacy-archive.service已成功结束。提交a041bd9已推送。
 [事实] 已实现稀疏对称真实邻居高程滤波与小连贯特征保护；保留既有2cm调整上限、方差、大跳变与所有硬门槛。69项桥接测试和源数据录制检查、六函数SHA通过。精确后续输入重放仅说明部分平地分数改善，不代表准确早停触发帧或闭环修复。

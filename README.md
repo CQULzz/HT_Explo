@@ -1,3 +1,9 @@
+# 阶段44：稀疏高程修正与四场景测试
+
+[结果、比较图和视频](docs/results/ht_sparse_height_4scene_10min_2026-10-21/REPORT.md) · [完整数据](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261021-sparse-height)。采集成功不等于探索成功，剩余阻塞见报告；完整发布以stage44.json回执为准。
+
+## 前一轮记录
+
 # 阶段43：原TARE同分支短前缀补搜
 
 车库600秒：191.25m / 7013.625m³ / 末状态EXPLORING。[报告、比较图和视频](docs/results/ht_tare_short_prefix_10min_2026-10-21/REPORT.md) · [完整数据Release](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261021-tare-short-prefix)。完整上传以stage43.json回执为准；室内低分问题未在线修复。

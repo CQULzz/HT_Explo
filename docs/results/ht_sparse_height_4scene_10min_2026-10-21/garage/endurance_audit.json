@@ -1,0 +1,341 @@
+{
+  "duration_s": 600.0,
+  "completed_timer": true,
+  "node_restarts": 0,
+  "runtime_failures": [],
+  "summary": {
+    "duration_s": 600.0,
+    "startup_wait_s": 5.68,
+    "sample_count": 1201,
+    "odom_count": 119828,
+    "cmd_count": 12000,
+    "waypoint_count": 600,
+    "path_count": 591,
+    "registered_scans": 2997,
+    "scan_gap_max_s": 0.3669737050004187,
+    "distance_m": 224.11,
+    "net_displacement_m": 78.05,
+    "visited_1m_xy_cells": 236,
+    "mean_odom_speed_mps": 0.3740840965861782,
+    "moving_fraction": 0.8376353039134055,
+    "zero_cmd_fraction": 0.1357202331390508,
+    "forward_cmd_fraction": 0.8376353039134055,
+    "reverse_cmd_fraction": 0.0,
+    "median_waypoint_distance_m": 7.834,
+    "short_path_fraction": 0.011656952539550375,
+    "planner_runtime_median_s": 0.2720000147819519,
+    "planner_runtime_p95_s": 0.4480000138282776,
+    "planner_runtime_max_s": 1.1460000276565552,
+    "planner_runtime_count": 587,
+    "exploration_finished": false,
+    "ht_status_callbacks": {
+      "HT_ASSISTED": 1188
+    },
+    "ht_map_count": 1189,
+    "ht_map_gap_max_s": 1.4291576530013117,
+    "ht_map_age_max_s": 1.2855527376376954,
+    "start_pose_xyyaw": [
+      0.3770170509815216,
+      3.1808550357818604,
+      1.0624874830245972
+    ],
+    "measurement_origin": "first TARE /runtime after odometry and registered scan",
+    "registered_scans_total_in_window": 2997
+  },
+  "external_metrics": {
+    "scan_selection": "source_second",
+    "observed_free_volume_m3": 9809.375,
+    "processed_volume_scans": 600,
+    "skipped_volume_scans": 0,
+    "recorded_scans_in_source_time_window": 600,
+    "sensor_position_source": "nearest sensor-frame state_estimation (common to both systems)",
+    "pose_time_offset_max_s": 2.384185791015625e-07,
+    "command_samples": 12000,
+    "fully_stopped_fraction": 0.009416666666666667,
+    "stationary_turn_fraction": 0.12516666666666668,
+    "reverse_command_fraction": 0.0,
+    "max_abs_linear_command_mps": 0.5,
+    "max_abs_yaw_command_rps": 0.8,
+    "longest_zero_command_s": 0.99980788230896,
+    "follower_status_samples": {
+      "DRIVING": 10385,
+      "TURNING": 1502,
+      "ALIGNING": 65,
+      "GOAL_REACHED": 3,
+      "GEOMETRY_COMMAND_BLOCKED": 1,
+      "EMPTY_PATH": 41,
+      "HT_PATH_BLOCKED": 3
+    },
+    "longest_no_translation_command_s": 3.8997588634490965,
+    "last_translation_s": 600.005,
+    "distance_last60_m": 23.335000000000008
+  },
+  "target_selection_audit": {
+    "logged_plan_rows": 0,
+    "new_goal_rows": 0,
+    "new_goal_zero_reported_gain_rows": 0,
+    "new_goal_recovery_rows": 0,
+    "guide_log_counts": {},
+    "note": "Throttled log rows, not all planning cycles. Gain is the viewpoint coverage estimate, not measured new free volume. Older builds used a gain0 placeholder for held goals; use the external observed-volume union to assess real progress.",
+    "guide_events": [],
+    "global_stall_releases": 0,
+    "accepted_execution_rejections": [
+      {
+        "time_s": 318.337486743927,
+        "log": "[tare_planner_node-1] [WARN] [1792554741.627582739] [tare_planner_node]: Execution rejected HT edge (6.97,27.50)->(6.95,27.48); replan with 6s edge cooldown"
+      },
+      {
+        "time_s": 324.5496914386749,
+        "log": "[tare_planner_node-1] [WARN] [1792554747.839787425] [tare_planner_node]: Execution rejected HT edge (6.89,25.91)->(6.94,25.79); replan with 6s edge cooldown"
+      },
+      {
+        "time_s": 465.19142270088196,
+        "log": "[tare_planner_node-1] [WARN] [1792554888.481518859] [tare_planner_node]: Execution rejected HT edge (13.44,65.30)->(13.39,65.43); replan with 6s edge cooldown"
+      }
+    ]
+  },
+  "mission_audit": {
+    "first_exploration_finished_sample_s": null,
+    "sampled_mission_counts": {
+      "EXPLORING": 600
+    },
+    "first_completed_sample_s": null,
+    "last_sampled_mission": "EXPLORING",
+    "last_sampled_execution_status": "HT_ASSISTED",
+    "final_distance_to_measurement_start_m": 78.05131576085057,
+    "meaning": "Exploration finished is a return-home trigger. Only mission COMPLETED confirms the home radius, low-speed and dwell checks; neither establishes ground-truth full coverage."
+  },
+  "source_aligned_input_delivery": {
+    "exact_source_stamp_checkpoints": 11,
+    "source_stamp_tolerance_s": 0.0001,
+    "count_offset_distribution": {
+      "148": 11
+    },
+    "constant_offset_in_observed_window": true,
+    "first_checkpoint": {
+      "source_stamp_s": 1792554588.4195263,
+      "probe_count": 1067,
+      "mapper_received_count": 919
+    },
+    "last_checkpoint": {
+      "source_stamp_s": 1792554973.4347246,
+      "probe_count": 2990,
+      "mapper_received_count": 2842
+    },
+    "meaning": "A constant offset supports no net relative input loss between the full-rate external observer and mapper in this matched window. It does not prove the simulator published continuously or that neither subscriber missed the same message."
+  },
+  "sampled_map_age_s": {
+    "count": 600,
+    "median": 0.46311426162719727,
+    "p95": 0.9291829347610472,
+    "max": 1.4759821891784668
+  },
+  "sampled_scan_age_s": {
+    "count": 600,
+    "median": 0.08593273162841797,
+    "p95": 0.19741909503936766,
+    "max": 0.36212992668151855
+  },
+  "map_age_over3s_samples": 0,
+  "sampled_follower_status_counts": {
+    "DRIVING": 508,
+    "TURNING": 87,
+    "ALIGNING": 4,
+    "HT_PATH_BLOCKED": 1
+  },
+  "longest_fully_zero_sampled_intervals": [
+    {
+      "start_s": 318.504,
+      "end_s": 319.504,
+      "duration_s": 1.0
+    },
+    {
+      "start_s": 465.503,
+      "end_s": 466.503,
+      "duration_s": 1.0
+    },
+    {
+      "start_s": 140.502,
+      "end_s": 141.002,
+      "duration_s": 0.5
+    },
+    {
+      "start_s": 300.504,
+      "end_s": 301.004,
+      "duration_s": 0.5
+    },
+    {
+      "start_s": 325.004,
+      "end_s": 325.504,
+      "duration_s": 0.5
+    },
+    {
+      "start_s": 337.504,
+      "end_s": 338.004,
+      "duration_s": 0.5
+    },
+    {
+      "start_s": 430.004,
+      "end_s": 430.504,
+      "duration_s": 0.5
+    }
+  ],
+  "longest_no_actual_translation_sampled_intervals": [
+    {
+      "start_s": 334.504,
+      "end_s": 338.004,
+      "duration_s": 3.5
+    },
+    {
+      "start_s": 509.503,
+      "end_s": 513.001,
+      "duration_s": 3.4979999999999905
+    },
+    {
+      "start_s": 163.502,
+      "end_s": 166.505,
+      "duration_s": 3.002999999999986
+    },
+    {
+      "start_s": 239.503,
+      "end_s": 242.503,
+      "duration_s": 3.0
+    },
+    {
+      "start_s": 258.504,
+      "end_s": 261.504,
+      "duration_s": 3.0
+    },
+    {
+      "start_s": 314.504,
+      "end_s": 317.504,
+      "duration_s": 3.0
+    },
+    {
+      "start_s": 539.5,
+      "end_s": 542.004,
+      "duration_s": 2.504000000000019
+    },
+    {
+      "start_s": 138.502,
+      "end_s": 141.002,
+      "duration_s": 2.5
+    },
+    {
+      "start_s": 249.504,
+      "end_s": 252.004,
+      "duration_s": 2.5
+    },
+    {
+      "start_s": 466.003,
+      "end_s": 468.503,
+      "duration_s": 2.5
+    },
+    {
+      "start_s": 591.504,
+      "end_s": 594.004,
+      "duration_s": 2.5
+    },
+    {
+      "start_s": 299.505,
+      "end_s": 302.004,
+      "duration_s": 2.4990000000000236
+    },
+    {
+      "start_s": 385.505,
+      "end_s": 387.505,
+      "duration_s": 2.0
+    },
+    {
+      "start_s": 91.502,
+      "end_s": 93.002,
+      "duration_s": 1.5
+    },
+    {
+      "start_s": 153.502,
+      "end_s": 155.002,
+      "duration_s": 1.5
+    }
+  ],
+  "process_memory": {
+    "elevation": {
+      "peak_summed_rss_mb": 468.16015625,
+      "minute5to10_median_rss_mb": 468.12890625,
+      "last5min_median_rss_mb": 468.12890625,
+      "median_rss_change_mb": 0.0
+    },
+    "health": {
+      "peak_summed_rss_mb": 304.875,
+      "minute5to10_median_rss_mb": 302.32421875,
+      "last5min_median_rss_mb": 302.32421875,
+      "median_rss_change_mb": 0.0
+    },
+    "ht_bridge": {
+      "peak_summed_rss_mb": 472.37890625,
+      "minute5to10_median_rss_mb": 407.484375,
+      "last5min_median_rss_mb": 407.484375,
+      "median_rss_change_mb": 0.0
+    },
+    "probe": {
+      "peak_summed_rss_mb": 89.453125,
+      "minute5to10_median_rss_mb": 84.33203125,
+      "last5min_median_rss_mb": 84.33203125,
+      "median_rss_change_mb": 0.0
+    },
+    "record": {
+      "peak_summed_rss_mb": 95.23046875,
+      "minute5to10_median_rss_mb": 95.2265625,
+      "last5min_median_rss_mb": 95.2265625,
+      "median_rss_change_mb": 0.0
+    },
+    "sim": {
+      "peak_summed_rss_mb": 1477.26953125,
+      "minute5to10_median_rss_mb": 1428.83203125,
+      "last5min_median_rss_mb": 1428.83203125,
+      "median_rss_change_mb": 0.0
+    },
+    "tare": {
+      "peak_summed_rss_mb": 931.31640625,
+      "minute5to10_median_rss_mb": 914.109375,
+      "last5min_median_rss_mb": 914.109375,
+      "median_rss_change_mb": 0.0
+    },
+    "xytheta_follower": {
+      "peak_summed_rss_mb": 135.87890625,
+      "minute5to10_median_rss_mb": 128.9765625,
+      "last5min_median_rss_mb": 128.9765625,
+      "median_rss_change_mb": 0.0
+    }
+  },
+  "segments": [
+    {
+      "start_s": 0,
+      "end_s": 600,
+      "distance_m": 224.1055,
+      "fully_stopped_sample_fraction": 0.0075,
+      "stationary_turn_sample_fraction": 0.12833333333333333,
+      "map_age": {
+        "count": 600,
+        "median": 0.46311426162719727,
+        "p95": 0.9291829347610472,
+        "max": 1.4759821891784668
+      },
+      "reported_planner_runtime_sampled_s": {
+        "count": 1200,
+        "median": 0.2715,
+        "p95": 0.462,
+        "max": 1.146
+      },
+      "cumulative_visited_1m_xy_cells": 235,
+      "observed_free_volume_gain_m3": 9809.375
+    }
+  ],
+  "scenario": "garage",
+  "limitations": [
+    "One garage run; not a real-vehicle safety guarantee.",
+    "A running node is not proof of exploration progress.",
+    "RSS sums can double-count shared pages. GPU total includes the desktop.",
+    "Probe ages and stop states are sampled1Hz and0.5s; full control messages retained in MCAP.",
+    "Reported planner runtime is not end-to-end latency."
+  ]
+}

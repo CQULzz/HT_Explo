@@ -1,0 +1,370 @@
+{
+  "indoor": {
+    "recording_complete": true,
+    "checks": {
+      "timer_completed": true,
+      "measured_duration_matches": true,
+      "source_hashes_unchanged": true,
+      "enough_samples": true,
+      "no_runtime_parent_failure": true,
+      "no_live_descendants": true,
+      "no_forced_shutdown": true,
+      "video_full_decode_passed": true,
+      "video_duration_matches": true,
+      "video_fps_matches": true,
+      "analysis_passed": true,
+      "no_child_or_cleanup_exception": true,
+      "blas_workers_bounded": true
+    },
+    "audits": [
+      {
+        "script": "audit_tare_waypoint.py",
+        "returncode": 0,
+        "log": "audit_tare_waypoint.log"
+      },
+      {
+        "script": "audit_tare_prefix_admissibility.py",
+        "returncode": 0,
+        "log": "audit_tare_prefix_admissibility.log"
+      },
+      {
+        "script": "audit_cupy_latency.py",
+        "returncode": 0,
+        "log": "audit_cupy_latency.log"
+      },
+      {
+        "script": "audit_blocked_commands.py",
+        "returncode": 0,
+        "log": "audit_blocked_commands.log"
+      },
+      {
+        "script": "audit_pose_admissibility_changes.py",
+        "returncode": 0,
+        "log": "audit_pose_admissibility_changes.log"
+      },
+      {
+        "script": "audit_ht_context_dumps.py",
+        "returncode": 0,
+        "log": "audit_ht_context_dumps.log"
+      },
+      {
+        "script": "audit_ht_source_age_alignment.py",
+        "returncode": 0,
+        "log": "audit_ht_source_age_alignment.log"
+      },
+      {
+        "script": "audit_ht_scan_delivery_trace.py",
+        "returncode": 0,
+        "log": "audit_ht_scan_delivery_trace.log"
+      }
+    ],
+    "routing": {
+      "message_counts": {
+        "/tare_coverage_route": 538,
+        "/tare_route_branch": 538,
+        "/ht_xytheta_path": 545,
+        "/tare_native_waypoint": 538,
+        "/ht_route_goal": 183,
+        "/way_point": 599,
+        "/ht_navigation_allowed": 599,
+        "/tare_tsp_order": 538,
+        "/state_estimation": 119229
+      },
+      "coverage_cycles": 538,
+      "tsp_calls": {
+        "1": 497,
+        "10": 41
+      },
+      "maximum_ordered_viewpoints": 16,
+      "mean_ordered_viewpoints": 11.702602230483272,
+      "moving_waypoints": 187,
+      "local_goals": 183,
+      "nonempty_executable_paths": 174,
+      "searches": 183,
+      "search_termination": {
+        "REACHED": 174,
+        "EXHAUSTED": 4,
+        "EXPANSION_LIMIT": 5
+      },
+      "contract_violations": [],
+      "contract_passed": true,
+      "scope": "Sampled/message-level contract, not a proof of global exploration optimality or continuous physical safety."
+    }
+  },
+  "garage": {
+    "recording_complete": true,
+    "checks": {
+      "timer_completed": true,
+      "measured_duration_matches": true,
+      "source_hashes_unchanged": true,
+      "enough_samples": true,
+      "no_runtime_parent_failure": true,
+      "no_live_descendants": true,
+      "no_forced_shutdown": true,
+      "video_full_decode_passed": true,
+      "video_duration_matches": true,
+      "video_fps_matches": true,
+      "analysis_passed": true,
+      "no_child_or_cleanup_exception": true,
+      "blas_workers_bounded": true
+    },
+    "audits": [
+      {
+        "script": "audit_tare_waypoint.py",
+        "returncode": 0,
+        "log": "audit_tare_waypoint.log"
+      },
+      {
+        "script": "audit_tare_prefix_admissibility.py",
+        "returncode": 0,
+        "log": "audit_tare_prefix_admissibility.log"
+      },
+      {
+        "script": "audit_cupy_latency.py",
+        "returncode": 0,
+        "log": "audit_cupy_latency.log"
+      },
+      {
+        "script": "audit_blocked_commands.py",
+        "returncode": 0,
+        "log": "audit_blocked_commands.log"
+      },
+      {
+        "script": "audit_pose_admissibility_changes.py",
+        "returncode": 0,
+        "log": "audit_pose_admissibility_changes.log"
+      },
+      {
+        "script": "audit_ht_context_dumps.py",
+        "returncode": 0,
+        "log": "audit_ht_context_dumps.log"
+      },
+      {
+        "script": "audit_ht_source_age_alignment.py",
+        "returncode": 0,
+        "log": "audit_ht_source_age_alignment.log"
+      },
+      {
+        "script": "audit_ht_scan_delivery_trace.py",
+        "returncode": 0,
+        "log": "audit_ht_scan_delivery_trace.log"
+      }
+    ],
+    "routing": {
+      "message_counts": {
+        "/tare_coverage_route": 588,
+        "/tare_route_branch": 588,
+        "/ht_xytheta_path": 591,
+        "/tare_native_waypoint": 588,
+        "/ht_route_goal": 655,
+        "/way_point": 600,
+        "/ht_navigation_allowed": 600,
+        "/tare_tsp_order": 588,
+        "/state_estimation": 119827
+      },
+      "coverage_cycles": 588,
+      "tsp_calls": {
+        "1": 498,
+        "10": 90
+      },
+      "maximum_ordered_viewpoints": 28,
+      "mean_ordered_viewpoints": 14.814625850340136,
+      "moving_waypoints": 600,
+      "local_goals": 655,
+      "nonempty_executable_paths": 588,
+      "searches": 655,
+      "search_termination": {
+        "REACHED": 588,
+        "TIME_LIMIT": 30,
+        "EXPANSION_LIMIT": 37
+      },
+      "contract_violations": [],
+      "contract_passed": true,
+      "scope": "Sampled/message-level contract, not a proof of global exploration optimality or continuous physical safety."
+    }
+  },
+  "forest": {
+    "recording_complete": true,
+    "checks": {
+      "timer_completed": true,
+      "measured_duration_matches": true,
+      "source_hashes_unchanged": true,
+      "enough_samples": true,
+      "no_runtime_parent_failure": true,
+      "no_live_descendants": true,
+      "no_forced_shutdown": true,
+      "video_full_decode_passed": true,
+      "video_duration_matches": true,
+      "video_fps_matches": true,
+      "analysis_passed": true,
+      "no_child_or_cleanup_exception": true,
+      "blas_workers_bounded": true
+    },
+    "audits": [
+      {
+        "script": "audit_tare_waypoint.py",
+        "returncode": 0,
+        "log": "audit_tare_waypoint.log"
+      },
+      {
+        "script": "audit_tare_prefix_admissibility.py",
+        "returncode": 0,
+        "log": "audit_tare_prefix_admissibility.log"
+      },
+      {
+        "script": "audit_cupy_latency.py",
+        "returncode": 0,
+        "log": "audit_cupy_latency.log"
+      },
+      {
+        "script": "audit_blocked_commands.py",
+        "returncode": 0,
+        "log": "audit_blocked_commands.log"
+      },
+      {
+        "script": "audit_pose_admissibility_changes.py",
+        "returncode": 0,
+        "log": "audit_pose_admissibility_changes.log"
+      },
+      {
+        "script": "audit_ht_context_dumps.py",
+        "returncode": 0,
+        "log": "audit_ht_context_dumps.log"
+      },
+      {
+        "script": "audit_ht_source_age_alignment.py",
+        "returncode": 0,
+        "log": "audit_ht_source_age_alignment.log"
+      },
+      {
+        "script": "audit_ht_scan_delivery_trace.py",
+        "returncode": 0,
+        "log": "audit_ht_scan_delivery_trace.log"
+      }
+    ],
+    "routing": {
+      "message_counts": {
+        "/tare_coverage_route": 507,
+        "/tare_route_branch": 507,
+        "/ht_xytheta_path": 510,
+        "/tare_native_waypoint": 507,
+        "/ht_route_goal": 911,
+        "/way_point": 600,
+        "/ht_navigation_allowed": 600,
+        "/tare_tsp_order": 507,
+        "/state_estimation": 119784
+      },
+      "coverage_cycles": 507,
+      "tsp_calls": {
+        "1": 482,
+        "10": 25
+      },
+      "maximum_ordered_viewpoints": 22,
+      "mean_ordered_viewpoints": 20.660749506903354,
+      "moving_waypoints": 163,
+      "local_goals": 911,
+      "nonempty_executable_paths": 138,
+      "searches": 911,
+      "search_termination": {
+        "REACHED": 138,
+        "EXPANSION_LIMIT": 754,
+        "TIME_LIMIT": 19
+      },
+      "contract_violations": [],
+      "contract_passed": true,
+      "scope": "Sampled/message-level contract, not a proof of global exploration optimality or continuous physical safety."
+    }
+  },
+  "tunnel": {
+    "recording_complete": true,
+    "checks": {
+      "timer_completed": true,
+      "measured_duration_matches": true,
+      "source_hashes_unchanged": true,
+      "enough_samples": true,
+      "no_runtime_parent_failure": true,
+      "no_live_descendants": true,
+      "no_forced_shutdown": true,
+      "video_full_decode_passed": true,
+      "video_duration_matches": true,
+      "video_fps_matches": true,
+      "analysis_passed": true,
+      "no_child_or_cleanup_exception": true,
+      "blas_workers_bounded": true
+    },
+    "audits": [
+      {
+        "script": "audit_tare_waypoint.py",
+        "returncode": 0,
+        "log": "audit_tare_waypoint.log"
+      },
+      {
+        "script": "audit_tare_prefix_admissibility.py",
+        "returncode": 0,
+        "log": "audit_tare_prefix_admissibility.log"
+      },
+      {
+        "script": "audit_cupy_latency.py",
+        "returncode": 0,
+        "log": "audit_cupy_latency.log"
+      },
+      {
+        "script": "audit_blocked_commands.py",
+        "returncode": 0,
+        "log": "audit_blocked_commands.log"
+      },
+      {
+        "script": "audit_pose_admissibility_changes.py",
+        "returncode": 0,
+        "log": "audit_pose_admissibility_changes.log"
+      },
+      {
+        "script": "audit_ht_context_dumps.py",
+        "returncode": 0,
+        "log": "audit_ht_context_dumps.log"
+      },
+      {
+        "script": "audit_ht_source_age_alignment.py",
+        "returncode": 0,
+        "log": "audit_ht_source_age_alignment.log"
+      },
+      {
+        "script": "audit_ht_scan_delivery_trace.py",
+        "returncode": 0,
+        "log": "audit_ht_scan_delivery_trace.log"
+      }
+    ],
+    "routing": {
+      "message_counts": {
+        "/tare_coverage_route": 73,
+        "/tare_route_branch": 73,
+        "/ht_xytheta_path": 73,
+        "/tare_native_waypoint": 73,
+        "/ht_route_goal": 73,
+        "/way_point": 600,
+        "/ht_navigation_allowed": 600,
+        "/tare_tsp_order": 73,
+        "/state_estimation": 119990
+      },
+      "coverage_cycles": 73,
+      "tsp_calls": {
+        "1": 64,
+        "10": 9
+      },
+      "maximum_ordered_viewpoints": 10,
+      "mean_ordered_viewpoints": 4.821917808219178,
+      "moving_waypoints": 70,
+      "local_goals": 73,
+      "nonempty_executable_paths": 70,
+      "searches": 73,
+      "search_termination": {
+        "REACHED": 70,
+        "TIME_LIMIT": 1,
+        "EXHAUSTED": 2
+      },
+      "contract_violations": [],
+      "contract_passed": true,
+      "scope": "Sampled/message-level contract, not a proof of global exploration optimality or continuous physical safety."
+    }
+  }
+}
