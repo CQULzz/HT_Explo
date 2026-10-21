@@ -1,7 +1,7 @@
 # 历史实验完整数据与版本对应表
 
 本次范围：原审计列出的 **62 个历史目录**，常规文件共 **63.405 GiB**。
-已完成远端大小与 SHA256 核验：**61/62 个目录**，原始文件 **34.436 GiB**。其余状态以表格为准，不把待上传当作已备份。
+已完成远端大小与 SHA256 核验：**62/62 个目录**，原始文件 **63.405 GiB**。其余状态以表格为准，不把待上传当作已备份。
 
 ## 版本对应的含义
 
@@ -31,7 +31,7 @@ Release 用于归入对应研究阶段；旧标签保持不动。归入某阶段
 | 8 | `noise_static_2026-10-13` | 未知 / 见原记录 | 0.0043 | [已核验](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-elevation-xytheta) · [逐文件清单](inventories/noise_static_2026-10-13.json) · [回执](receipts/noise_static_2026-10-13.json) |
 | 8 | `noise_static_dense_2026-10-13` | 未知 / 见原记录 | 0.0120 | [已核验](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-elevation-xytheta) · [逐文件清单](inventories/noise_static_dense_2026-10-13.json) · [回执](receipts/noise_static_dense_2026-10-13.json) |
 | 8 | `noise_static_unit_resolution_2026-10-13` | 未知 / 见原记录 | 0.0035 | [已核验](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-elevation-xytheta) · [逐文件清单](inventories/noise_static_unit_resolution_2026-10-13.json) · [回执](receipts/noise_static_unit_resolution_2026-10-13.json) |
-| 8 | `original_10min_replay_2026-10-13_16-58-15` | `baseline_revision:b6760adb42` | 28.9696 | [待完成](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-elevation-xytheta) |
+| 8 | `original_10min_replay_2026-10-13_16-58-15` | `baseline_revision:b6760adb42` | 28.9696 | [已核验](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-elevation-xytheta) · [逐文件清单](inventories/original_10min_replay_2026-10-13_16-58-15.json) · [回执](receipts/original_10min_replay_2026-10-13_16-58-15.json) |
 | 8 | `pose_permission_fix_2026-10-13_16-21-50` | 未知 / 见原记录 | 0.0010 | [已核验](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-elevation-xytheta) · [逐文件清单](inventories/pose_permission_fix_2026-10-13_16-21-50.json) · [回执](receipts/pose_permission_fix_2026-10-13_16-21-50.json) |
 | 8 | `pose_permission_latest_map_2026-10-13_16-25-58` | 未知 / 见原记录 | 0.0027 | [已核验](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-elevation-xytheta) · [逐文件清单](inventories/pose_permission_latest_map_2026-10-13_16-25-58.json) · [回执](receipts/pose_permission_latest_map_2026-10-13_16-25-58.json) |
 | 8 | `realtime_fix_smoke_2026-10-15` | 未知 / 见原记录 | 0.5352 | [已核验](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261015-elevation-xytheta) · [逐文件清单](inventories/realtime_fix_smoke_2026-10-15.json) · [回执](receipts/realtime_fix_smoke_2026-10-15.json) |

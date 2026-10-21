@@ -21,6 +21,7 @@ REPO = 'CQULzz/HT_Explo'
 PART = 512 * 1024 * 1024
 UPLOAD_POOL = None
 SPOOL_SLOTS = None
+ORPHAN_LOCK = threading.Lock()
 
 
 def write(path, value):
@@ -205,6 +206,48 @@ def matches(asset, expected):
             and asset.get('digest') == 'sha256:' + expected['sha256'])
 
 
+def quarantine_incomplete_asset(asset, tag, owned_attempt=False):
+    """Preserve an orphan starter under a non-part name; never replace valid bytes."""
+    if asset.get('state') != 'starter' or asset.get('digest'):
+        return False
+    updated = asset.get('updated_at') or asset.get('created_at')
+    if not updated:
+        return False
+    age = (datetime.datetime.now(datetime.timezone.utc) -
+           datetime.datetime.fromisoformat(updated.replace('Z', '+00:00'))).total_seconds()
+    if age < (0 if owned_attempt else 3600):
+        return False
+    import psutil
+    for process in psutil.process_iter(['name', 'cmdline']):
+        try:
+            argv = process.info['cmdline'] or []
+            if (process.info['name'] == 'gh' and argv[:4] == ['gh','release','upload',tag]
+                    and len(argv) > 4 and Path(argv[4]).name == asset['name']):
+                raise ValueError('Incomplete asset still has an active owned uploader: ' + asset['name'])
+        except (psutil.NoSuchProcess, psutil.AccessDenied):
+            pass
+    with ORPHAN_LOCK:
+        before = json.loads(gh('api', f'repos/{REPO}/releases/assets/{asset["id"]}'))
+        if before.get('state') != 'starter' or before.get('digest') or before['name'] != asset['name']:
+            raise ValueError('Incomplete asset changed before quarantine; inspect remote')
+        # A prefix-part wildcard must never include the incomplete object.
+        renamed = 'incomplete-upload-' + str(asset['id']) + '.bin'
+        result = json.loads(gh('api', '--method', 'PATCH',
+            f'repos/{REPO}/releases/assets/{asset["id"]}', '-f', 'name=' + renamed,
+            '-f', 'label=Preserved incomplete upload: ' + asset['name']))
+        if (result['id'],result['name'],result.get('state'),result.get('size'),result.get('digest')) != (
+                before['id'],renamed,before.get('state'),before.get('size'),before.get('digest')):
+            raise ValueError('Quarantine result differs; source and remote asset retained')
+        journal = OUT/'quarantined_uploads.json'
+        records = json.loads(journal.read_text()) if journal.exists() else []
+        records.append(dict(tag=tag,before=before,after=result,
+            reason='Unfinished starter without digest; preserved by rename, not deleted',
+            recorded_at=datetime.datetime.now(datetime.timezone.utc).isoformat()))
+        write(journal,records)
+    print('Preserved incomplete upload as',renamed,flush=True)
+    return True
+
+
 def archive(record):
     source = (ROOT / record['source']).absolute()
     if source.parent != BASE or source.is_symlink() or not source.is_dir():
@@ -239,6 +282,9 @@ def archive(record):
     write(local_inventory, contents)
     def upload(path):
         expected = dict(name=path.name, bytes=path.stat().st_size, sha256=sha(path))
+        if path.name in existing and not matches(existing[path.name], expected):
+            if quarantine_incomplete_asset(existing[path.name], tag):
+                del existing[path.name]
         if path.name in existing:
             if not matches(existing[path.name], expected):
                 raise ValueError('Refuse to overwrite differing asset: ' + path.name)
@@ -250,11 +296,13 @@ def archive(record):
                 current = {a['name']: a for a in release(tag)['assets']}
                 if path.name in current:
                     if not matches(current[path.name], expected):
-                        raise ValueError('Remote asset conflicts: ' + path.name)
-                    break
+                        if not quarantine_incomplete_asset(current[path.name], tag, owned_attempt=attempt>0):
+                            raise ValueError('Remote asset conflicts: ' + path.name)
+                    else:
+                        break
                 try:
-                    subprocess.run(['gh', 'release', 'upload', tag, str(path), '--repo', REPO], check=True)
-                except subprocess.CalledProcessError:
+                    subprocess.run(['gh', 'release', 'upload', tag, str(path), '--repo', REPO], check=True,timeout=180)
+                except (subprocess.CalledProcessError,subprocess.TimeoutExpired):
                     if attempt == 3:
                         raise
                     time.sleep(2 ** attempt)

@@ -23,3 +23,23 @@ A→B→A不再重置A的停滞预算；新收益可绕过恢复目标冷却；�
 ## 2026-10-18后续复核
 
 2026-10-18复核确认本阶段含晚HT拦截仍发布非零候选Twist的缺陷，阶段21修正；历史记录保留，不能由原通过项推断该晚分支正确停车。 [证据与修正](https://github.com/CQULzz/HT_Explo/blob/codex/ht8dir-v1/docs/results/ht_completion_cause_audit_2026-10-18/REPORT.md)。这不是对所有历史停滞的统一归因。
+
+<!-- legacy-full-data-start -->
+## 历史完整实验数据补归档（2026-10-20）
+
+本阶段关联的 **5 个历史目录**已作为本 Release 的 `legacy-*` 分卷附件补齐，并核对远端大小与 SHA256。
+
+**阶段归属不等于标签就是实际测试提交。** 原始 manifest、测试提交、未提交补丁、源文件哈希、真实时长和失败/中止说明均保留在逐文件清单与数据中；没有证据的提交号仍标为未知。本次仅补数据，不改变原实验结论或标签。
+
+[全部62目录的版本对应、逐文件清单、校验回执与下载恢复方法](https://github.com/CQULzz/HT_Explo/blob/codex/ht8dir-v1/docs/experiments/legacy_archive/README.md)
+
+| 历史目录 | 原始文件GiB | 完整数据前缀 |
+|---|---:|---|
+| `ht_clean_shutdown_smoke2_2026-10-17` | 0.0479 | `legacy-ht_clean_shutdown_smoke2_2026-10-17-371d7d55bff2` |
+| `ht_clean_shutdown_smoke3_2026-10-17` | 0.0320 | `legacy-ht_clean_shutdown_smoke3_2026-10-17-87ed2633ff21` |
+| `ht_cycle_shutdown_smoke_2026-10-17` | 0.0799 | `legacy-ht_cycle_shutdown_smoke_2026-10-17-1e23e5775a1d` |
+| `ht_direct_gazebo_shutdown_smoke4_2026-10-17` | 0.0000 | `legacy-ht_direct_gazebo_shutdown_smoke4_2026-10-17-c6c31266fb7a` |
+| `ht_endurance_crossguide_2026-10-17_02-14-09` | 0.5103 | `legacy-ht_endurance_crossguide_2026-10-17_02-14-09-9fc29aa09fd9` |
+
+下载同一前缀的全部 `.tar.zst.partNNN`、`-files.json` 与 `-verified.json`；核对回执后按数字顺序合并解压。大MCAP/NPZ在Release附件，未加入Git历史。
+<!-- legacy-full-data-end -->

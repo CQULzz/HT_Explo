@@ -35,3 +35,19 @@ Hybrid A*相同终点键/代价的支配比较移到昂贵HT/几何检查之前�
 体积较38+11.6%，仍低于36的7900.375m³；里程、末分钟新增、完全停车占比和最长无平移有退步，仍65次超时。原局部多视点覆盖和全局拓扑接力未恢复，没有完全相同控制约束的新原版配对，不能称追平TARE。单轮、单场景，不是统计或实车验收。
 
 附件保留全部已录制数据、精选结果、MP4与SHA256，完成后核对远端大小和digest；激光源秒采样、地图周期保存，不是全部原始传感器无损录制。GitHub全部保留，本机校验后只保留最近两轮完整录包。
+
+<!-- legacy-full-data-start -->
+## 历史完整实验数据补归档（2026-10-20）
+
+本阶段关联的 **1 个历史目录**已作为本 Release 的 `legacy-*` 分卷附件补齐，并核对远端大小与 SHA256。
+
+**阶段归属不等于标签就是实际测试提交。** 原始 manifest、测试提交、未提交补丁、源文件哈希、真实时长和失败/中止说明均保留在逐文件清单与数据中；没有证据的提交号仍标为未知。本次仅补数据，不改变原实验结论或标签。
+
+[全部62目录的版本对应、逐文件清单、校验回执与下载恢复方法](https://github.com/CQULzz/HT_Explo/blob/codex/ht8dir-v1/docs/experiments/legacy_archive/README.md)
+
+| 历史目录 | 原始文件GiB | 完整数据前缀 |
+|---|---:|---|
+| `ht_revision_metric_reanalysis_2026-10-19` | 0.0003 | `legacy-ht_revision_metric_reanalysis_2026-10-19-2ffd2e20d69f` |
+
+下载同一前缀的全部 `.tar.zst.partNNN`、`-files.json` 与 `-verified.json`；核对回执后按数字顺序合并解压。大MCAP/NPZ在Release附件，未加入Git历史。
+<!-- legacy-full-data-end -->

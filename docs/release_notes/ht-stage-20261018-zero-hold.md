@@ -31,3 +31,21 @@
 [通俗修复说明](https://github.com/CQULzz/HT_Explo/blob/codex/ht8dir-v1/docs/fixes/2026-10-18_late_hold_zero_twist.md) · [原因核查、反例、回归及数据](https://github.com/CQULzz/HT_Explo/blob/codex/ht8dir-v1/docs/results/ht_completion_cause_audit_2026-10-18/REPORT.md)
 
 室内进一步逐格核对：车位中心概率前后均约0.999846，实际变化是8个原来神经预测无效、物理已观测的邻格开始有有效低概率，经足迹聚合将当前位姿否决。这个预测有效范围与足迹门槛接口尚未修改，不能把聚合最小值下降说成中心预测突变，也不能直接认定噪声或重复膨胀。
+
+<!-- legacy-full-data-start -->
+## 历史完整实验数据补归档（2026-10-20）
+
+本阶段关联的 **3 个历史目录**已作为本 Release 的 `legacy-*` 分卷附件补齐，并核对远端大小与 SHA256。
+
+**阶段归属不等于标签就是实际测试提交。** 原始 manifest、测试提交、未提交补丁、源文件哈希、真实时长和失败/中止说明均保留在逐文件清单与数据中；没有证据的提交号仍标为未知。本次仅补数据，不改变原实验结论或标签。
+
+[全部62目录的版本对应、逐文件清单、校验回执与下载恢复方法](https://github.com/CQULzz/HT_Explo/blob/codex/ht8dir-v1/docs/experiments/legacy_archive/README.md)
+
+| 历史目录 | 原始文件GiB | 完整数据前缀 |
+|---|---:|---|
+| `ht_zero_twist_fine_heading_10min_2026-10-18_02-28-07` | 1.9352 | `legacy-ht_zero_twist_fine_heading_10min_2026-10-18_02-28-07-8bf856929ce9` |
+| `ht_zero_twist_verified_10min_2026-10-18_02-13-23` | 0.0000 | `legacy-ht_zero_twist_verified_10min_2026-10-18_02-13-23-945969142b1f` |
+| `ht_zero_twist_verified_10min_2026-10-18_02-15-15` | 0.8191 | `legacy-ht_zero_twist_verified_10min_2026-10-18_02-15-15-d396d8641816` |
+
+下载同一前缀的全部 `.tar.zst.partNNN`、`-files.json` 与 `-verified.json`；核对回执后按数字顺序合并解压。大MCAP/NPZ在Release附件，未加入Git历史。
+<!-- legacy-full-data-end -->
