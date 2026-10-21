@@ -1,301 +1,199 @@
 HT_Explo 项目交接文档
-阶段46全量发布已核验：docs/experiments/publications/stage46.json。最新完整轮保留策略已执行，原中断轮继续保护。当前没有新的测量；结果和未解决问题见最新报告。
-
-阶段46室内测量与分析已结束：实测07c1abd334f83cb8d602e2234134b4286862c916；{'distance_m': 187.22, 'visited_1m_xy_cells': 127, 'observed_free_volume_m3': 3934.25, 'mission': 'EXPLORING', 'map_age_p95_s': 0.9583802700042722, 'map_age_max_s': 1.5767745971679688}。结果docs/results/ht_continuous_domain_10min_2026-10-21/REPORT.md；全量数据正在发布。森林/隧道本轮未复测，不能称已全面修好。
-
-阶段46候选补记：阶段45完整数据已发布fe42313，室内600s169.14m/3625.625m³但末段INVALID_START。已核对并复现最近覆盖格非候选/非碰撞标签使连续根状态被误判的问题；新增连续范围接口，不改原TARE函数/TSP与HT/物理硬门槛。四CTest50.80s和六函数SHA通过。即将独立室内600s，job .git/continuous-domain-runtime/job.json；当前仍不能把上轮成绩当本轮。详见docs/fixes/2026-10-21_continuous_domain.md。
-
-阶段45全量发布已核验：docs/experiments/publications/stage45.json。最新完整轮保留策略已执行，原中断轮继续保护。当前没有新的测量；结果和未解决问题见最新报告。
-
-阶段45室内测量与分析已结束：实测15e197eca16bee3dea1fcd3870a05ee84f2ecd12；{'distance_m': 169.14, 'visited_1m_xy_cells': 140, 'observed_free_volume_m3': 3625.625, 'mission': 'BLOCKED', 'map_age_p95_s': 0.8616966724395752, 'map_age_max_s': 1.3770060539245605}。结果docs/results/ht_known_body_terrain_10min_2026-10-21/REPORT.md；全量数据正在发布。森林/隧道本轮未复测，不能称已全面修好。
-
-阶段45候选补记（2026-10-21）：阶段44四场景数据已全部远端核验（24资产，stage44.json，提交a8a6334）。已修原TARE地形提示遗漏已知障碍足迹的问题，含无预测时旧绿缓存更新；未知引导和严格执行保持。旧代码两失败、另一个中途缺测历史反例及最终四CTest50.65s/六函数SHA证据见docs/fixes/2026-10-21_known_body_terrain.md。本候选接下来独立室内600s，闭环尚未完成；新job .git/terrain-gate-runtime/job.json为准，不把阶段44成绩冒充新成绩。
-
-阶段44完整远端发布已核验，见docs/experiments/publications/stage44.json；测量/分析均结束，剩余问题照实保留，不自动改下一候选。
-
-2026-10-21阶段44实测补记：冻结454efa230fae337cfa8f87b2aa87ee9917040621；四场景采集已结束、结果见docs/results/ht_sparse_height_4scene_10min_2026-10-21/REPORT.md。完整数据正在发布，stage44.json核验后才称备份完成；剩余问题：indoor末状态BLOCKED，不能称探索成功；indoor记录中5次XYθ搜索达到展开上限，不能据此断言无路；indoor最长完全停车412.53s，需结合任务/门禁解释；forest末状态BLOCKED，不能称探索成功；forest记录中754次XYθ搜索达到展开上限，不能据此断言无路；forest最长完全停车436.05s，需结合任务/门禁解释；tunnel最长完全停车529.38s，需结合任务/门禁解释；tunnel在53.0s采样报告exploration_finished，是否真实全覆盖尚未验证；COMPLETED只表示任务返航条件满足。
-
-2026-10-21 11:36新补记（优先于下方所有旧状态）
-[事实] 历史备份已完成62/62目录、68081073112字节、280资产、15个Release；final_verification.json及release_links_verified.json存在，历史源文件未删除。ht-legacy-archive.service已成功结束。提交a041bd9已推送。
-[事实] 已实现稀疏对称真实邻居高程滤波与小连贯特征保护；保留既有2cm调整上限、方差、大跳变与所有硬门槛。69项桥接测试和源数据录制检查、六函数SHA通过。精确后续输入重放仅说明部分平地分数改善，不代表准确早停触发帧或闭环修复。
-[事实] 新候选即将冻结；计划室内/车库/森林/隧道各完整600s，当前未完成新闭环。见docs/fixes/2026-10-21_sparse_height.md及docs/plans/2026-10-21_sparse_height_denoising_plan.md。新job保存在.git/indoor-input-runtime/job.json；先核实现场是否已启动，不重启旧job、不在测量中修改源码或HEAD。
-[事实] 原TARE六函数/TSP/waypoint顺序、HT权重/归一化/0.5门槛、速度和C++短前缀导航本轮未改。历史归档孤立starter资产改名保留后补传，4项针对性测试通过，所有历史分卷已核验。后续实验仍须完整上传、保留失败和比较后再迭代。
-
-最终已核验补记：2026-10-21T01:30:08+08:00（优先于以下所有中途快照）
-[事实] 本轮代码修改、回归、独立车库600秒、对比图/报告/视频及全部已录数据发布完成。实测导航提交d7e0741c1aeeb65f4c0ff404521a4c54f992a330；后续提交仅结果、索引和传输工具，不把后续HEAD冒充实测提交。
-[事实] 新车库600.0秒、191.25米、近似观测自由体积7013.625m³；末状态EXPLORING，最长完全停车0.600秒，规划P95=0.432秒，地图年龄P95=0.648秒。13项采集/视频检查、原TARE→HT分工审计通过。四CTest、六函数SHA和10项中断/保留回归通过。
-[事实] 本轮新增短前缀补搜实际触发0次；不能把体积变化归因补搜收益。针对性回归验证整数终点漏搜及短分支完整路径检查。室内平地低分门禁未在线修复，森林/隧道仍未补跑，不声称多场景已全通过。
-[事实] 阶段42原中断批次全部已录文件远端核验完成，17个资产；状态RETAINED_FAILURES_NOT_A_VALIDATED_COMPLETE_SUITE。阶段43远端核验10个资产，状态COMPLETE_VALIDATED_COLLECTION；见docs/experiments/publications/stage42.json与stage43.json，最后验证时间2026-10-21T01:28:42.068499+08:00。
-[事实] 当前测量/分析/阶段43发布服务均已结束。历史62目录备份服务已恢复，当前有61/62目录回执；不要把它误当成仍在仿真。保留策略已执行：最近完整轮41和43保留，部分批次42额外保护，未验证目录未删除。
-[事实] 上传过程中两条慢连接定向重试后完成；发布器新增可配置单次180秒超时及保留源文件重试。新增本地CLI桩端到端测试1项通过，不访问GitHub；详见docs/fixes/2026-10-21_release_upload_deadline.md。
-[入口] 报告和多角度图：docs/results/ht_tare_short_prefix_10min_2026-10-21/REPORT.md；视频：同目录garage/camera_h264.mp4；冻结job同目录frozen_job.json；完整数据：https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261021-tare-short-prefix。
-[下一步] 本轮停止新增候选。用户若要求继续，先读室内HT门禁及输入噪声证据，核实准确输入/训练契约，再做保边且不放宽硬门槛的单独候选；每次行为修改仍至少完整600秒，不拿旧数据拼接。独立工作区及未备份数据保护约定继续有效。
-
-最新实测补记：阶段43车库600秒已采集，原始数据正在发布；实测提交d7e0741c1aeeb65f4c0ff404521a4c54f992a330。新报告docs/results/ht_tare_short_prefix_10min_2026-10-21/REPORT.md；stage43.json存在并校验后才称完整备份。阶段42按中断批次保留，没有补齐其失败/未启动场景。
-
-最新修正进度补记：2026-10-21T00:55:22+08:00
-[事实] 新候选已实现原TARE同一路线短前缀补搜，保持HT/几何/运动硬门槛及0.35秒周期搜索预算。旧整数快速路径保留，失败时细采样并避免追逐后方锚点；具体见docs/fixes/2026-10-21_tare_short_prefix.md。
-[事实] 四项CTest通过（49.42秒）、六函数SHA通过、10项中断与保留策略回归通过，已安装重建二进制。当前尚未新600秒闭环，不能声称已稳定修复。
-[事实] 室内12个已观测HT低分点切断候选图的证据已保存docs/fixes/2026-10-21_indoor_ht_gate.md；平地小纹理敏感度只读消融不等于修好输入。本候选不改模型或TARE完成条件。
-[计划] 冻结本候选并单独跑600秒车库，与阶段41及未改导航的车库复测比较。新job以.git/short-prefix-runtime/job.json为准，旧多场景批次不拼接/覆盖。测量期间不要改运行文件或提交HEAD。
-
-最新状态补记（优先于下文20:13快照）：2026-10-20T23:11:12+08:00
-[事实] 用户要求上传最新代码。本次检查主测量和发布等待服务均MainPID=0；未见该批运行进程。run.log末尾有KeyboardInterrupt，suite.json仍停留RUNNING，不能据此认为还在测量。
-[事实] suite逐组记录：garage=RECORDED, campus=RECORDED, indoor=FAILED, forest=PENDING, tunnel=PENDING。室内FAILED，elapsed_measurement_s=569.5，不能算完整600秒；forest/tunnel未开始。中断原因待确认，未在本次重启或拼接实验。
-[事实] stage42.json仍不存在，五场景总结果未完成发布；历史上传服务已运行但日志在等待系统钥匙串认证。
-[事实] 本次仅提交最新后处理/归档工具与交接文档，不修改导航算法、不移动实测标签。Python语法检查、shell语法检查、六个原TARE函数SHA契约检查通过；新发布工具尚未端到端完成。
-[待确认] 后续接手先判断是否补跑未完成场景，使用新的冻结记录与独立输出；不得直接启动旧job将新HEAD冒充旧冻结提交。
-
-生成时间：2026-10-20T20:13:19+08:00（Asia/Shanghai）
+更新：2026-10-21（Asia/Shanghai），阶段46收尾核查。
 仓库：/home/lzz/my test/HT_Explo-fixposition
+分支：codex/ht8dir-v1
+远端：git@github.com:CQULzz/HT_Explo.git
 
 阅读约定
-[事实] 表示本次文件/命令核查可见，或明确标出可查的既有报告/回执。
-[推测] 表示尚无充分证据的原因解释。[待确认] 表示未运行、未完成或未核实。
-本文为时间点快照；后台任务仍会推进。先重新读取现场状态，再采取行动。
-仅省略敏感凭据，不省略坏结果；账号密码、GitHub令牌、钥匙串密码不在本文保存。
+[事实] 来自仓库、命令输出、已保存日志、采集结果或发布回执。
+[推测] 尚未形成完整证据的解释。[待确认] 未运行、未测量或未验证。
+本文件替换此前层层追加的过时状态；旧内容可从Git历史查看。
+敏感凭据不保存在这里。阶段标签固定到实测提交，后续报告提交不能冒充实测代码。
 
 1. 项目背景与当前目标
 
-[事实/用户要求] 差速或滑移转向车辆，可原地转向、倒车。用户希望：原TARE继续负责覆盖估计、视点、全局/局部TSP、waypoint访问顺序；地形分析由HT提供，odom到TARE指定waypoint的可执行路径由HT的XYθ局部规划完成。HT作为硬通行约束。先写计划再执行；代码、每次实验数据、视频、变化和缺陷均发布GitHub。
-[事实] 已有历史高程融合、CuPy高程图与HT八方向图、XYθ规划/跟踪实现；当前批次没有重新修改这些算法。不要把八方向HT输入与规划器内部航向离散数量等同，具体规划参数以实际节点参数为准。
-[事实] 最新业务任务是已改版本的多场景实验。正在顺序运行garage/campus/indoor/forest/tunnel，每组600秒；本轮交接请求没有要求停止这些服务。
-[事实] 另一条未完任务：62个早期实验目录完整备份到对应研究阶段的GitHub Release。保留政策是“GitHub保留全部，本机保留最近两轮完整录包，报告/视频/必要回归样本保留”。
-[事实] 不应承诺“已经没有问题”：本批车库末段阻塞，室内中途已报告COMPLETED，均需解释；没有实车验收。
+[事实/用户要求] 车辆为差速或滑移转向，可原地旋转、倒车。保持原TARE的覆盖估计、视点、全局/局部TSP和访问顺序；HT提供地形可通过性硬约束，由XYθ局部路由把odom连接到TARE指定分支的局部目标，再由跟踪器执行。不是用HT重新选择收益目标或替换TSP。
+[事实] CuPy高程图、历史高程融合、HT八方向推理、XYθ规划和跟踪已有实现。八方向HT输入不等于规划器内部只有八个航向。
+[事实/用户要求] 先证实原因再修改。每个行为候选冻结源码、参数和二进制后，至少独立完整600秒；保留失败、数据、图、视频，并发布GitHub后进入下一候选。报告需写明提升与剩余缺陷。
+[事实/保存约定] GitHub保留全部已录数据；本机保留最近两轮完整raw，另外保护部分/未验证/仍在使用的数据，报告、视频和必要回归样本继续保留。不能未经远端大小和SHA核验直接删数据。
+[事实] 本轮已完成三个候选44/45/46，共六组独立600秒测试（44四场景，45和46各室内）。它们不是一次连续一小时稳定性测试。本轮收尾后不自动启动其他候选或场景。
 
-2. 已完成事项与证据
+2. 最新状态：已完成与未完成
 
-2.1 架构修改（已经提交的导航版本）
-[事实] 主分支工作目录：codex/ht8dir-v1；origin=git@github.com:CQULzz/HT_Explo.git。
-冻结运行HEAD：dccfcc93232f0f27f9ae2d63b59ae93c4c1168c4（本机origin跟踪引用相同；此前push成功）。
-实际导航/控制基线：68701319b333165dd9cd5acf8e226ba52c174434。
-此前架构恢复提交：42966cb22b0f719df035391f3850b9a654f161e1。
-原函数参考：独立ROS2适配参考b6760adb4280b379567c76f4e684ce628e28ef71；不是声称整个项目与官方ROS1 TARE字节相同。
+[事实] 阶段46实测导航提交：07c1abd334f83cb8d602e2234134b4286862c916。
+阶段45实测：15e197eca16bee3dea1fcd3870a05ee84f2ecd12。
+阶段44实测：454efa230fae337cfa8f87b2aa87ee9917040621。
+阶段46报告提交：6395394；完整发布/保留回执提交：d6aada8，已推送。
+本文件收尾提交仅更新文档，不改导航；最终HEAD请用git log核实。
 
-[事实] 42966cb主要改动：
-- src/tare_planner/config/ht.yaml：默认ht_exploration_mode=tare_waypoint。
-- src/tare_planner/src/{local_coverage_planner,grid_world,sensor_coverage_planner}/tare_original.cpp：恢复原TARE相关函数体；包装接入见同目录原有实现文件和对应include。
-- src/tare_planner/src/sensor_coverage_planner/tare_waypoint_router.cpp、include/ht_cost/tare_waypoint_route.h：沿TARE选中分支取局部前缀，HT路由到该局部目标，失败停车，不改成另一个收益点。
-- src/tare_planner/src/ht_cost/ht_cost_map.cpp、include/ht_cost/ht_cost_map.h、viewpoint_manager.cpp：HT硬门槛及地形接口。
-- tools/ht_cupy_bridge/cupy_to_ht.py、ht_trial.yaml、cmu_xytheta.launch.py：同源第12层ht_elevation供导航地形；CMU原地形保留供仿真贴地，隔离至/simulation/terrain_map及_ext。
-- scripts/check_tare_waypoint_contract.py、docs/fixes/evidence/2026-10-20_tare_waypoint/：保存原函数体、SHA和回归；新增presentations/audit_tare_waypoint.py供记录级接口审计。
-完整文件列表：git show --stat 42966cb22b0f719df035391f3850b9a654f161e1。
+[事实] 最新室内同起点、同运动上限、每版各完整600秒的实际比较：
+版本                 里程m     近似观测自由体积m³   最长完全停车s  末60秒里程m  末任务
+44 稀疏高程          62.88       1849.250            412.529          0.00       BLOCKED
+45 足迹反馈         169.14       3625.625             65.060          0.00       BLOCKED
+46 连续空间         187.22       3934.250              2.149         18.80       EXPLORING
+每版本只有一次闭环，不能据此排除随机路径差异或宣称普遍优越。
 
-[事实] 6870131修正两个已构造反例的边界：
-- viewpoint_manager.cpp/.h及ht_cost_map.cpp/.h：同一规划周期BFS与候选图共用HT地形顶点掩码，避免BFS后再次异步删点破坏连通性。
-- sensor_coverage_planner_ground.cpp、tare_waypoint_route.h：恢复原TARE近家rush-home优先级。
-- ht_core_test.cpp、tare_waypoint_test.cpp及连接性探针保留失败/修复证据。
-详细根因及回归：docs/fixes/2026-10-20_tare_waypoint_boundaries.md。
+[事实] 阶段46：13项采集检查通过；完整H264视频解码/时长/帧率核验通过；运行源码/配置/二进制哈希保持，无采集记录的子进程崩溃或强制收尾。TARE→HT分工审计通过、零契约违规。144份模型输入上下文均有精确时间戳配对，检查通过。
+[事实] 阶段46共564次搜索尝试：REACHED=555、EXHAUSTED=4、EXPANSION_LIMIT=5、INVALID_START=0。搜索尝试次数不等于停车次数。
+[事实] 阶段46地图年龄P95=0.958s、最大=1.577s；TARE整个规划周期P95=0.962s，不是仅XYθ搜索耗时。实际最大指令0.5m/s、0.8rad/s。
+[事实] 阶段46仍有HT_COMMAND_BLOCKED、HT_PATH_BLOCKED、EMPTY_PATH等瞬时保持状态，不能声称没有任何阻塞。最长无平移约8.20s包含正常原地转向；最长完全零运动指令为2.149s。末状态EXPLORING，不是证明任务已完成。
 
-[事实/本次重新执行通过] python3 scripts/check_tare_waypoint_contract.py：passed=true，六个函数体SHA与保存的参考一致：SolveTSP、SolveLocalCoverageProblem、UpdateCellStatus、SolveGlobalTSP、ConcatenateGlobalLocalPath、GetLookAheadPoint。检查不依赖相邻参考工作区。它不能证明全部原TARE行为完全不变。
-[事实/既有报告] 阶段41车库实测600秒、181.31m、8660.125m³，末状态EXPLORING；13项采集、4项CTest、六函数SHA通过。683次HT搜索尝试中592到达、34时间上限、57展开上限；尝试失败数不是停车次数。
-证据：docs/results/ht_tare_boundaries_10min_2026-10-20/REPORT.md及其regression_and_counterexamples/。
-完整数据/视频已发布且有远端大小/SHA回执：docs/experiments/publications/stage41.json。
-Release：https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261020-tare-boundaries。
-[待确认] 阶段41闭环未据此完成真实任务返航验收；没有同限制新原版TARE配对、多场景稳定性或实车结论。
+[事实] 阶段46发布回执：docs/experiments/publications/stage46.json。
+状态COMPLETE_VALIDATED_COLLECTION；8个资产，远端大小/SHA核验时间2026-10-21T13:33:16.877666+08:00。
+Release：https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261021-continuous-domain
+完成标记：docs/experiments/LAST_COMPLETED_STAGE46.json，remote_verified=true。
+收尾时重新读取精选目录files_sha256.json的107个文件，全部匹配。
+原始录制范围：全部发布的HT/控制/odom/状态/TARE路线；激光按源秒采样，地图和模型输入按记录策略采样。不是所有原始传感器全频无损录制。
+报告中部分“发布后”文案来自封存时间点；当前发布状态以上述回执为准，勿改写已封存目录导致哈希失配。
 
-2.2 本轮多场景验证的准备与已执行操作
-[事实] 先提交计划docs/plans/2026-10-20_tare_ht_multiscene_plan.md，再开始测试。dccfcc9包含计划、61份历史备份进度/索引、下列新采集/分析工具：
-- presentations/capture_tare_multiscene_runtime.py：现场planner/follower参数、话题发布者隔离检查。
-- presentations/finalize_tare_multiscene.py：所有场景录制结束后只读审计、精选归档、比较图。
-- scripts/run_tare_ht_multiscene_validation.sh：冻结HEAD检查、运行五组和观察器、只读分析；EXIT恢复历史备份服务。
-[事实/准备记录] 五场景preflight通过；阶段41的72项运行源码/参数/二进制与本批逐一SHA匹配。依据.git/multiscene-runtime/frozen_reference.json和已完成场景suite_validation.json。未改变控制速度上限、HT模型或高程融合来提高本批成绩。
-[事实/准备记录] py_compile、bash -n、systemd-analyze --user verify通过相关新工具语法/服务配置；这些不是完整端到端发布验证。
-[事实/已执行] systemctl --user start --no-block ht-tare-multiscene.service
-[事实/已执行] systemctl --user start --no-block ht-tare-multiscene-publication.service
-[事实] 两个oneshot服务运行时显示activating/start且有MainPID是正常的；Result=success不代表它们已经完成。
-[事实] 历史压缩/上传在测量期间暂停，以免资源争用。
+[事实] 收尾核查ht-continuous-domain-10min.service、ht-continuous-domain-post.service、ht-terrain-gate-10min.service、ht-terrain-gate-post.service、ht-legacy-archive.service均MainPID=0、inactive、Result=success。本轮已无这些服务的测量/发布任务运行，勿重复启动旧job。
+[事实] 本机完整raw保留45和46；44/43已按远端核验后的政策清理，但精选报告、视频仍在。42中断批次raw额外保护，仍在。清理回执：docs/experiments/local_raw_retention.json。
+[待确认] 最新46尚未重测森林/隧道/车库/校园；不能把44的四场景结果当46的结果。没有新增同限制原版TARE配对，也没有实车验收。
 
-[事实] 系统无可用通用ffmpeg；Playwright附带版本不能承担本批H264编码。已执行：
-  python3 -m pip install --disable-pip-version-check --no-input --target .git/experiment-tools/python imageio-ffmpeg
-安装imageio-ffmpeg 0.6.0，使用附带静态ffmpeg 7.0.2，libx264已检查可用。只在.git下安装编码工具；不是修改导航Python依赖。
+3. 已修改内容、原因证据与验证
 
-2.3 尚未提交的改动（重要，不能reset/clean掉）
-[事实/交接时git status] 除本文外：
- M presentations/finalize_tare_multiscene.py
- M scripts/finalize_legacy_ht_archive.sh
-?? presentations/audit_tare_prefix_admissibility.py
-?? scripts/finalize_tare_multiscene_publication.py
-?? scripts/publish_streamed_ht_trial.py
-?? scripts/wait_and_publish_tare_multiscene.py
-这些是只读后处理/归档工具，不是72项导航热修改；计划在全部测量结束后由发布工具提交。本文HANDOFF.txt不会被现有发布工具自动加入Git。
-- finalize_tare_multiscene.py增加末段前缀诊断及归档，存在依赖新审计脚本导致后处理失败的风险。
-- audit_tare_prefix_admissibility.py：读取约590s地图快照和最近此前TARE分支/odom，模拟固定1/2/3/4m终点空间预筛；额外长度只作反事实诊断。不等于真实完整搜索或路径可达性证明。已语法检查；截至本文未见实际数据执行结果。
-- publish_streamed_ht_trial.py：复用历史归档流式方法，512MiB分卷、3个共享槽位限制临时磁盘占用；校验实测tag、文件哈希、远端资产大小/摘要与完整采集状态。允许显式保留失败，但不能标成完整通过。此前记录有stage41 dry-run通过，当前.git中没有dry-run receipt文件，不能把它当远端发布证据。
-- finalize_tare_multiscene_publication.py：测量结束后创建实测固定tag、阶段42索引/说明，提交推送报告工具，上传完整数据及视频，校验回执，然后标准保留两轮并提交回执。尚未端到端执行完成。
-- wait_and_publish_tare_multiscene.py：等待主服务MainPID=0且精选files_sha256.json存在再发布，否则报错保留原始资料。
-- finalize_legacy_ht_archive.sh增加.git/ht-results-publication.lock的flock，避免两个流程并发操作Git索引。
+3.1 阶段44：稀疏高程预处理与模型输入录制
+[事实] 先提交计划f381a73，再冻结454efa2。主要文件：
+- tools/ht_cupy_bridge/elevation_quality.py：稀疏平滑需真实相对邻居支持，保护连贯小特征，保留既有方差、最大2cm调整和大跳变保护。
+- tools/ht_cupy_bridge/inference_context_io.py、cupy_to_ht.py：加入输入来源/方差/观测年龄等字段；诊断开启时在首45秒密集记录，之后周期保存，便于精确输入审计。
+- test_elevation_quality.py、test_inference_context_io.py、test_postfilter_bridge.py：增加针对性回归。
+- presentations/run_ht_endurance.py、audit_sparse_height_input.py：说明采集范围，重放已保存输入。
+证据：docs/fixes/2026-10-21_sparse_height.md及其evidence目录。
+[事实] 原室内候选图被12个HT低分点切断；后续精确输入重放最大误差约3.28e-7。部分平地最高方向分数由约0.33提升到约0.60，仍不是所有方向都通过。
+[待确认] 原13.512秒早停触发帧完整输入未保存；不能声称重放了准确触发帧。低置信孤立厘米级障碍与噪声仍有歧义，不可宣称所有小障碍都被保留。
+[事实] 69项桥接测试、输入来源检查、原TARE六函数SHA通过。四场景各完整600秒：
+indoor：62.88m/1849.25m³/BLOCKED；garage：224.11m/9809.375m³/EXPLORING；
+forest：46.32m/8377.875m³/BLOCKED；tunnel：25.616m/448.875m³/COMPLETED。
+四场景采集检查通过，566份上下文精确时间戳配对通过。森林记录754次展开上限；隧道53秒样本报告exploration_finished，不能等同真值全覆盖。
+发布回执stage44.json，24资产已验证；Release标签ht-stage-20261021-sparse-height。
 
-2.4 历史数据备份与此前修复
-[事实] docs/experiments/legacy_archive/README.md、mapping.json、inventories/、receipts/记录62目录约63.405GiB；现有61份目录回执，对应34.436GiB原始常规文件已核验。
-[事实] 最大目录original_10min_replay_2026-10-13_16-58-15约28.9696GiB尚无完整目录回执。不能说62份全部备份完成。
-[事实] final_verification.json、release_links_verified.json、.git/legacy-archive-runtime/COMPLETE在交接检查时均不存在。
-[事实/恢复报告] 曾在重启后发现27个Git零字节对象，先备份.git/recovery/20261020-143704，再执行git fetch --refetch origin codex/ht8dir-v1；git fsck --full --no-reflogs返回0，没有reset/checkout覆盖源码。证据：docs/experiments/legacy_archive/reboot_recovery_2026-10-20.md。
-[事实/历史] SSH推送可用不代表GitHub REST上传凭据可用。重启后钥匙串曾锁定，用户在本地系统窗口解锁后恢复；没有让用户在聊天发送系统密码。当前会话此前gh api user --silent成功，重启后须重新检查，不能假设永远有效。
+3.2 阶段45：已知车体障碍反馈给TARE地形引导
+[事实] 计划d63a393，冻结15e197e。阶段44同一保存快照中，前方1/2/3/4m目标中心HT最高概率均很高、粗地形格允许，但八个方向的车体足迹均被已知墙体挡住，形成地形引导与执行不一致。不是单靠“地图太旧”的猜测。
+[事实] 修改src/tare_planner/src/ht_cost/ht_cost_map.cpp：粗地形聚合放到已知障碍足迹计算之后；标量/批量地形提示检查当前实际中心的已知足迹障碍；缺HT预测但有已知物理障碍时也更新历史，防止旧绿缓存再现。未知区域仍可乐观引导，实际执行保持严格。
+[事实] tests/ht_ros_test.cpp增加已知墙体、清除恢复、历史滚动、未知引导、缺预测历史等针对性反例。保存旧代码失败和中途修正证据；最终四CTest全过50.65秒，六函数SHA通过、独立安装更新。
+证据：docs/fixes/2026-10-21_known_body_terrain.md及evidence目录。
+[事实] 完整室内600秒显著减少长停，但末段INVALID_START、BLOCKED，不能称当时已全面修好。完整数据和视频已发布stage45.json；标签ht-stage-20261021-terrain-footprint。
 
-3. 当前运行状态（动态，以现场文件为准）
+3.3 阶段46：连续XYθ空间范围与覆盖标签解耦
+[事实] 先提交计划d9f97cb，再冻结07c1abd。阶段45末段实际位姿HT为KNOWN、当前概率0.99932，几何有效高度内最近障碍0.8014m，大于既有几何半径0.641421m；最近覆盖格同时非候选、无碰撞标签。
+[事实] 旧ViewPointManager::InLocalPlanningHorizon除空间范围外，还要求最近覆盖格“候选或碰撞”。它被误用于连续车辆根状态和碰撞查询，因此自由位置也会判INVALID_START。保存空碰撞云的最小反例，旧代码失败。
+[事实] 修改文件：
+- src/tare_planner/include/viewpoint_manager/viewpoint_manager.h
+- src/tare_planner/src/viewpoint_manager/viewpoint_manager.cpp
+- src/tare_planner/src/local_coverage_planner/ht_route.cpp
+- src/tare_planner/tests/geometry_pose_test.cpp
+新增InContinuousPlanningHorizon，只用实际空间网格与原高度范围；连续碰撞查询和两处HT路由有效性检查使用它。原InLocalPlanningHorizon继续服务原TARE覆盖语义。
+[事实] 未给真实起点碰撞加豁免；实际障碍、边界、禁入区、HT方向/未知/新鲜度和运动检查仍在。测试包括真实障碍、越界、高度、NaN等，最终四CTest全过50.80秒，六函数SHA通过。
+原因/测试：docs/fixes/2026-10-21_continuous_domain.md。
+原始末段证据和只读脚本：docs/fixes/evidence/2026-10-21_start_gate_followup/。
+回归日志：docs/fixes/evidence/2026-10-21_continuous_domain/。
+[事实] 最新600秒结果见第2节，未再出现记录中的INVALID_START。证据不等于逐回调重放了45所有内存，也不证明此前每次INVALID_START都有同一原因。
 
-[事实] 实测job：.git/multiscene-runtime/job.json。
-完整原始suite：
-  /home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_tare_native_5scene_10min_2026-10-20_19-39-37
-精选目标目录：
-  /home/lzz/my test/HT_Explo-fixposition/docs/results/ht_tare_native_5scene_10min_2026-10-20
-本批候选dccfcc9，导航6870131，每组600秒，ROS_DOMAIN_ID依场景210..214，HT_PROFILE_CUPY=1。
-后台主服务ht-tare-multiscene.service，交接核查MainPID=6917。
-后台发布等待服务ht-tare-multiscene-publication.service，交接核查MainPID=9975。
-历史服务ht-legacy-archive.service目前MainPID=0；failed/Result=signal是本轮主动暂停后可见状态，不足以说明发生新上传错误。主脚本EXIT会重新start它。
+3.4 保持的架构与约束
+[事实] 本轮未更改HT模型权重、0.5硬门槛、车体尺寸、0.5m/s和0.8rad/s上限、共享0.35秒局部搜索预算及8000展开上限。45/46未再改高程预处理。
+[事实] 原TARE六函数SHA保持，参考b6760adb4280b379567c76f4e684ce628e28ef71是独立ROS2适配版本，不是整个官方ROS1项目字节相同。检查：scripts/check_tare_waypoint_contract.py。
+六函数：SolveTSP、SolveLocalCoverageProblem、UpdateCellStatus、SolveGlobalTSP、ConcatenateGlobalLocalPath、GetLookAheadPoint。
+[事实] HT地形会改变候选图和TSP输入，因此“TSP实现不变”不等于所有运行访问序列都相同。实际局部执行仍受HT窗口、足迹与几何限制，连续范围修正没有扩张实际允许执行区域。
+[事实] 更早架构恢复42966cb、图掩码/返航优先级6870131、同分支短前缀d7e0741均保留。短前缀阶段43车库测试新增补搜触发0次，不可将其成绩归为该补搜收益。
 
-[事实/自动读取快照]
-  garage: RECORDED, 实测600.0s, 里程189.99m, 近似观测自由体积5299.5m³, 末状态BLOCKED。13项采集检查全部=True; 视频全解码退出码=0, 时长599.933s/8999帧。完全停车最长22.133s, 原地转向比例19.48%, 完全停车比例4.90%。地图年龄P95/max=0.924/1.420s, 规划P95=0.481s。
-  campus: RECORDED, 实测600.0s, 里程174.32m, 近似观测自由体积17991.375m³, 末状态EXPLORING。13项采集检查全部=True; 视频全解码退出码=0, 时长599.933s/8999帧。完全停车最长1.099s, 原地转向比例22.56%, 完全停车比例1.94%。地图年龄P95/max=1.245/1.722s, 规划P95=0.949s。
-  indoor: RECORDING; live更新2026-10-20T20:13:17.039342+08:00, 采集已过约516.8s; 最近落盘运动样本t=479.504s, 里程=8.563m, finished=1, ht_status=COMPLETED。这是中途样本，不能当最终600秒结果。
-  forest: PENDING
-  tunnel: PENDING
+3.5 历史数据备份与发布修复
+[事实] 62/62早期目录、68081073112字节、280资产、15个Release已核验；提交a041bd9已推送。证据docs/experiments/legacy_archive/final_verification.json、release_links_verified.json及.git/legacy-archive-runtime/COMPLETE。
+[事实] scripts/archive_legacy_ht_data.py处理一个旧starter孤立上传资产：重新核对状态后改名incomplete-upload-657965717.bin并保存原元数据，没有删除原资产或覆盖完整上传。4项模拟回归和确定性归档自测通过。
+[事实] 早期约63.4GiB源目录没有在本轮广泛清理。标准pruner不等于历史62目录的自动清理器；如清理需另核对备份、差异和使用状态。
+[事实] 42是保留失败的中断批次：garage/campus完整，indoor569.5秒，forest/tunnel未开始；stage42.json明确RETAINED_FAILURES_NOT_A_VALIDATED_COMPLETE_SUITE。不要改原suite的历史RUNNING快照来伪装完整，也不要拼接旧数据补600秒。
+[事实] 发布器采用确定性tar+zstd、512MiB分卷、3共享槽位、至多1.5GiB临时传输；每资产验证大小/SHA。44慢连接定向重试后完成；45/46上传单次超时设置600秒。认证曾需本地钥匙串解锁，SSH能推送不代表REST上传一定可用；不输出令牌。
 
-[事实] 本批garage/campus均无>3s地图年龄采样。1Hz健康采样不能证明每个瞬间都低于3秒。
-[事实] garage复测5299.5m³低于阶段41同场景8660.125m³，尽管冻结导航相同。因此不可把这次下降归为新算法修改，更不能隐去重复实验差异。
-[待确认] indoor早停是否是真实探索完成或过早判定；截至快照仅约8.563m路径并报告COMPLETED，不能据此声称全室内覆盖。
-[事实] 截至交接docs/experiments/publications/stage42.json不存在，五场景总报告/阶段42完整远端发布尚未完成。
-[事实] 当前根分区约27GiB可用（df显示值）。后续五场景录包与旧目录上传仍要监控，不能未经校验删除旧资料。
+4. 已知问题、风险与待确认
 
-4. 已知问题、风险、待决策点与踩坑
+P1 [事实] 森林44末BLOCKED、754次展开上限，尚未用46复测。达到8000展开上限不是无可行路径证明；不能只抬预算掩盖根因。
+P1 [事实] 隧道44在53秒报告探索结束；是否真实全覆盖待确认。COMPLETED、600秒采满、视频可播、上传完成、真实充分探索是不同验收。
+P1 [待确认] 最新版本的重复性、多场景和超过10分钟连续稳定性；无新增同设置原TARE配对，不能说已追平或超过原版。
+P2 [事实] 最新室内仍有瞬时硬门禁/空路径保持和原地转向；本次没有持续老卡死，不等于所有阻塞消失。规划周期P95接近1秒，是否需要进一步优化须结合任务/队列/地图时间审计，不可把此数当局部搜索预算超限。
+P2 [事实] 近似体积采用0.5m自由空间体素并集、源秒激光口径，不是独立物理覆盖真值；跨场景不能据体积大小排名。
+P2 [事实] 当前几何/运动约束不构成轮胎滑移、完整车辆动力学或实车安全证明。
+P2 [待确认] 低置信厘米级独立地物的去噪保真边界；不应靠放宽阈值或把未知变可行制造通路。
 
-4.1 garage末段阻塞
-[事实/既有现场日志核查] 约578s后没有新HT_WAYPOINT_SEARCH到达日志，继续有原TARE覆盖周期和“TARE_ROUTE failed same-goal prefixes; holding native=(18.211,36.625)”；最终NO_EXECUTABLE_ROUTE/BLOCKED，非COMPLETED。
-[事实/源码] RouteTareWaypoint尝试TARE当前分支的4/3/2/1m前缀，去重复、跳过距车<0.4m目标；八方向poseSupport全不permits的终点直接跳过搜索；剩余搜索总预算0.35s。
-[推测] 固定前缀终点被空间支持预筛拒绝，可能使车辆一直保持同一航点；也可能与粗TARE图和全足迹SE2硬门槛不一致有关。需要实测地图/分支/时间戳和调用证据；目前不是已证实完整根因。
-[事实] 已记录地图年龄最大约1.42s，现有证据不支持用“地图超过3秒”解释该段停车。
-[待确认] endpoint空间筛选、footprint/unknown约束、时间/展开预算、可绕行分支各自的贡献；新离线审计缺少精确同周期匹配、freshness/startup prior、扫掠几何、动力学及完整路径搜索，不能过度解释。
+5. 下一步行动与验收标准
 
-4.2 室内中途报告完成
-[事实] 上述live运动样本finished=1、ht_status=COMPLETED、里程8.563m。
-[待确认] 需要末段日志、TARE_COMPLETION/global_return/local_complete、未覆盖/前沿数、HOME触发和地图范围核实。COMPLETED仅能证明代码完成条件触发，不能证明场景真实完全覆盖。不得看到状态就提前停止600秒采集。
+本轮完成后停止新增候选。若用户进一步要求继续实验或修改，按以下优先级处理；不要因读到旧计划就自动重跑。
+P0 先核查现场：读AGENTS.md、协议、本文件，git status/log及service/job/回执。验收：区分最新代码与实测代码、活跃与结束服务，无重复任务、不覆写封存结果、不删未验证数据。
+P1 用同一冻结46版本优先复测森林与隧道（各独立600秒），保留失败；先记录实际证据再选行为修改。验收：完整采集/视频/哈希、结束与返航原因、搜索预算/有效分支/几何门禁、同场景历史比较、全数据发布回执。单纯复测与修改后的新候选严格区分。
+P2 若森林阻塞仍在，按真实TARE分支/候选目标、根状态、HT/几何支持、搜索展开和时间预算核对根因；隧道核对原TARE未覆盖/前沿/返航证据。验收：同周期证据或明确时间范围，最小旧代码失败反例，解释反证；不将绿色终点当整条可行路径。
+P3 每个必要修正先计划、回归、冻结，再至少600秒独立实验、同口径图、发布后再迭代。验收：TARE六函数契约、真实足迹/未知/新鲜度硬检查不退化，失败不隐去，代码和所有已录数据可追溯。
+P4 稳定后补同限制原TARE配对与重复试验。验收：同起点/时长/速度/传感器/指标，报告单轮差异与统计限制；没有新数据不得填成绩。
 
-4.3 方法与指标局限
-[事实] 当前保留原TARE六函数和访问决策，但HT地形改变候选图，从而可改变TSP输入；“原TARE TSP不变”不等于每次访问结果与旧版相同。
-[事实] 远端未知可乐观引导，实际执行须新鲜局部HT与几何硬检查。粗图连通不保证全足迹SE2可达；预算失败也不证明地形必然不可通。
-[事实] 近似观测自由体积是按源秒选取激光，0.5m体素并集口径，不是独立物理真值。跨场景体积不能排算法优劣。
-[事实] 原始记录保留全部发布HT/控制/odom/状态，激光按源秒、地图和输入按周期采样，不是全部原始传感器全频无损录制。
-[事实] 有速度/角速度/加速度/车辆几何和跟踪硬检查；没有完整轮胎接地/滑移动力学证明，没有实车检验。
-[待确认] 无同起点、同限制、同指标口径的新原版TARE五场景配对；不能声称已经追平或优于原版。
+6. 关键路径与复现/验证命令
 
-4.4 发布与运行陷阱
-- [事实] .git/runtime日志可跨本次服务调用，但/tmp在重启可能丢失；不能依赖旧PID或用旧service状态当当前状态。
-- [事实] 未来场景preview.jpg尚未生成时的cv2 imread警告已见于run.log；仅此警告不是仿真崩溃证据。
-- [事实] ROS环境要先source；不要set -u后直接source ROS脚本。
-- [事实] 不要混淆camera_15fps.mp4原相机文件与最终camera_h264.mp4，检查video_validation.json实际文件和解码结果。
-- [事实] 现有新流式发布代码未完成本批端到端；检查失败时保留原文件，先诊断，不让“自动化存在”替代上传成功。
-- [事实] 历史归档对应研究阶段，不一定是该tag精确测量提交；保留原manifest提交/dirty patch，不给缺失提交补当前HEAD。
-- [建议] 大suite不要使用需要整包tar再复制分卷的旧发布路径，当前磁盘空间存在峰值风险。优先核验流式工具。
-- [待确认/资源风险] 主脚本完成后旧上传会恢复，可能和阶段42上传竞争磁盘/CPU/网络；Git提交有锁，资源上仍需观察。不要在正在测量时恢复重压缩。
+工作区互相独立：
+主仓库：/home/lzz/my test/HT_Explo-fixposition
+CMU仿真：/home/lzz/my test/autonomous_exploration_development_environment
+CuPy高程：/home/lzz/my test/elevation_mapping_cupy_ws
+原TARE ROS2参考：/home/lzz/my test/tare_planner_upstream_baseline
+本仓库独立构建/安装：build_standalone/tare_planner、install_standalone/tare_planner
+HT桥：tools/ht_cupy_bridge/；权重：student_best_epoch_weights.pth（精确摘要见冻结记录）。
 
-5. 下一步行动（按优先级，附验收标准）
+阶段46精选：docs/results/ht_continuous_domain_10min_2026-10-21/
+  REPORT.md、COLLECTION_REPORT.md、frozen_job.json、frozen_run.sh、files_sha256.json
+  comparison/tare_architecture_comparison.png（累计量、增量、里程、速度、运动组成、每米收益）
+  comparison/tare_trajectories.png
+  indoor/camera_h264.mp4、late_camera.jpg、late_ht_footprint.png、tare_waypoint_audit/
+阶段45精选：docs/results/ht_known_body_terrain_10min_2026-10-21/
+阶段44精选：docs/results/ht_sparse_height_4scene_10min_2026-10-21/
+原始46：presentations/scheduled_results/ht_continuous_domain_10min_2026-10-21_13-17-09/
+原始45：presentations/scheduled_results/ht_known_body_terrain_10min_2026-10-21_12-49-46/
+本机44 raw已清理，恢复入口为stage44 Release分卷与清单。
+运行作业：.git/continuous-domain-runtime/job.json、run.log、post.log；45对应.git/terrain-gate-runtime/。
+版本/发布入口：VERSIONS.md、docs/version_history.json、docs/experiments/publications/stage{44,45,46}.json。
+下载播放脚本：/home/lzz/下载/播放HT多环境10分钟视频.sh，调用scripts/play_ht_multiscene.sh；没有为本轮自动启动播放器。
 
-P0 读取现场并保护实验
-动作：读AGENTS.md、协议、job.json；查三个服务、suite.json、live_status及run/publication日志。不要重复启动五场景任务，不修改72项运行文件、配置/权重/二进制，不在测量中commit改变冻结HEAD。不要stop服务来写报告。
-验收：明确五场景逐一状态、实际完成秒数、是否仍测量；冻结提交与源哈希未变，无重复ROS域任务、无未授权数据删除。异常重启保留部分记录，标失败，不能拼成600秒。
+环境：ROS2 Jazzy /opt/ros/jazzy/setup.bash、Python3.12、rclpy/torch/cupy/cv2等，以冻结环境为准。HT在CPU4线程推理、CuPy在GPU建图。图形会话DISPLAY=:0、XAUTHORITY=/run/user/1000/gdm/Xauthority，重启后需核实。
+H264编码器：.git/experiment-tools/python/imageio_ffmpeg/binaries/ffmpeg-linux-x86_64-v7.0.2。
+该编码工具仅安装在.git/experiment-tools/python；系统无通用ffmpeg，Playwright附带VP8编码器不能替代本轮H264编码。
 
-P1 等当前全部测量完成并核验
-动作：indoor即使COMPLETED继续采满；forest、tunnel按现有队列运行；检查13项采集校验、实际600秒、进程退出、参数/话题隔离、视频全解码。分别写“采集结果”和“导航结果”。
-验收：五组均有真实完成/失败证据、原始数据和逐组结论；失败组不被伪装通过。garage BLOCKED和indoor完成触发必须保留。
-
-P2 验证只读后处理并定位行为问题
-动作：观察finalize_tare_multiscene.py；有错误先修只读分析工具、保留原录包。用原TARE路线、HT八方向栅格、实际轨迹、状态/时延联合审计。先跑prefix审计确认字段和坐标，再看精确在线条件；室内核实TARE完成/返航证据。
-验收：每组有TARE→HT分工审计、有效参数、末段地图/相机/状态；六维诊断图和同场景历史对照。对garage阻塞与indoor早停明确事实、反例和仍缺证据，不把空间终点通过当作可行路径。
-
-P3 完成阶段42发布
-动作：监控publication.log及新发布器；测量后才提交工具与结果；tag ht-stage-20261020-tare-multiscene固定到实际dccfcc9，不移动旧tag。检查全套原始文件分卷/逐文件清单、五视频、报告、SHA，失败记录同样保留且标注。若等待服务失败，先理解退出点再按现有脚本继续，不重复启动测量。
-验收：GitHub分支有结果/工具/版本说明；Release所有原始资产远端大小+SHA核验；stage42.json和LAST_COMPLETED_STAGE42.json确实存在且真实反映采集状态；不把只有本地报告称作已上传。
-
-P4 恢复并完成62目录历史备份
-动作：确认ht-legacy-archive.service已被主脚本恢复；完成大目录剩余分卷。运行独立校验、更新Release对应链接和索引；必要时处理钥匙串本地解锁。
-验收：62/62逐目录回执、原始文件可重组校验；final_verification.json、release_links_verified.json及COMPLETE与真实校验相符。不能仅因为部分资产上传完成就宣布整目录完成。
-
-P5 仅在完整远端验证后整理空间/交付
-动作：标准轮次按prune_published_ht_raw.py --keep 2 --apply；legacy目录另核查回执/差异/是否仍用，不能把标准pruner当早期62目录清理器。保留报告/视频/fixtures。
-验收：最新两轮完整raw保留，其他删除项都有远端一致性及清理回执，未校验/使用中文件不删。向用户简洁报告本批成绩、退步和未解问题。
-[待决策] 多场景验证后如需修改阻塞/提前完成逻辑，先用证据提出单独候选，冻结后每次至少600秒并上传。当前批次不热改，不无限延长到“所有环境绝对没问题”。
-
-6. 关键路径、依赖与命令
-
-工作区分离（不是允许从任意相邻构建工作区偷偷借包）
-  主项目：/home/lzz/my test/HT_Explo-fixposition
-  CMU仿真：/home/lzz/my test/autonomous_exploration_development_environment
-  CuPy高程：/home/lzz/my test/elevation_mapping_cupy_ws
-  独立ROS2原TARE参考：/home/lzz/my test/tare_planner_upstream_baseline
-  主项目构建/安装：build_standalone/tare_planner、install_standalone/tare_planner
-  HT桥/历史高程：tools/ht_cupy_bridge/（historical_elevation.py等）
-  当前模型：tools/ht_cupy_bridge/student_best_epoch_weights.pth（实测摘要见freeze manifest）
-
-环境
-  ROS2 Jazzy：/opt/ros/jazzy/setup.bash；系统Python3.12。
-  既有CuPy、PyTorch、OpenCV、matplotlib、rclpy等；精确环境和有效配置以manifest/参数转储为准。
-  GPU既有检查：RTX5060Ti，约16GiB，驱动580.178.04；此配置不构成算法性能保证。
-  图形会话DISPLAY=:0，XAUTHORITY=/run/user/1000/gdm/Xauthority（重启后待确认）。
-  编码器：/home/lzz/my test/HT_Explo-fixposition/.git/experiment-tools/python/imageio_ffmpeg/binaries/ffmpeg-linux-x86_64-v7.0.2
-  systemd用户unit：/home/lzz/.config/systemd/user/ht-{tare-multiscene,tare-multiscene-publication,legacy-archive}.service
-
-协议/计划/版本入口
-  AGENTS.md
-  docs/experiments/ht_iteration_protocol.md
-  docs/plans/2026-10-20_tare_ht_waypoint_plan.md
-  docs/plans/2026-10-20_tare_ht_boundary_plan.md
-  docs/plans/2026-10-20_tare_ht_multiscene_plan.md
-  docs/version_history.json、VERSIONS.md、docs/experiments/ITERATIONS.md
-  docs/experiments/publications/stage41.json（42待产生）
-
-现场命令（只读，优先执行；不要在活跃录制时运行重分析）
+只读启动检查（先执行）：
   cd '/home/lzz/my test/HT_Explo-fixposition'
   git status --short
-  git log -n 8 --format='%H %s'
-  systemctl --user show ht-tare-multiscene.service ht-tare-multiscene-publication.service ht-legacy-archive.service -p Id -p MainPID -p ActiveState -p SubState -p Result
-  cat .git/multiscene-runtime/job.json
-  tail -n 30 .git/multiscene-runtime/run.log
-  tail -n 30 .git/multiscene-runtime/runtime_capture.log
-  tail -n 30 .git/multiscene-runtime/publication.log
-  tail -n 30 .git/legacy-archive-runtime/service.log
-  df -h .
+  git log -8 --oneline
+  systemctl --user show ht-continuous-domain-10min.service ht-continuous-domain-post.service -p Id -p MainPID -p ActiveState -p Result
+  cat .git/continuous-domain-runtime/job.json
+  cat docs/experiments/publications/stage46.json
   python3 scripts/check_tare_waypoint_contract.py
 
-本次为制作交接已执行的命令
-  git status/log/remote/show/diff、cat AGENTS及协议/计划/报告/脚本、systemctl --user show、df、Python读取suite/live/audit/video/receipt、六函数契约检查；没有新编译、没有中断实验、没有新增行为测试、没有移动tag、没有为本文提交代码。
-此前命令结果以2节和对应日志为准；不要将本节列为又一次600秒实验。
-
-后处理/恢复命令（仅当前测量结束后，先检查是否已有自动流程在做，避免竞争）
+行为代码未来有变时的构建/测试命令（本轮已通过，无变更无需重复）：
   source /opt/ros/jazzy/setup.bash
-  # TRIAL是实际单个场景目录；以下变量由接手者明确设置，勿照抄未设置变量执行。
-  python3 presentations/audit_tare_waypoint.py "$TRIAL" --output "$TRIAL/tare_waypoint_audit"
-  python3 presentations/audit_tare_prefix_admissibility.py "$TRIAL" --output "$TRIAL/prefix_admissibility_audit"
-  python3 presentations/finalize_tare_multiscene.py '<suite绝对路径>' --state .git/multiscene-runtime/job.json
-  python3 scripts/finalize_tare_multiscene_publication.py --state .git/multiscene-runtime/job.json
-  # 原始/精选文件开始上传封存后不要改里面的文件，否则哈希变更。
-  python3 scripts/verify_legacy_ht_archive.py --check-local-bytes
-  python3 scripts/link_legacy_ht_releases.py --apply
-  # 有完整远端校验且没有正在用的数据后才执行：
-  python3 scripts/prune_published_ht_raw.py --keep 2 --apply
-
-未来单独复现实验（示例，不是让你现在重复启动）：
+  cmake --build build_standalone/tare_planner -j 2
+  ROS_DOMAIN_ID=188 HT_CONFIGURATION_FIXTURE='/home/lzz/my test/HT_Explo-fixposition/docs/fixes/fixtures/mixed_turn_stop.txt' ctest --test-dir build_standalone/tare_planner --output-on-failure
+  cmake --install build_standalone/tare_planner
+  python3 scripts/check_tare_waypoint_contract.py
+桥接测试（需CuPy和ROS导入环境）：
   source /opt/ros/jazzy/setup.bash
-  HT_PROFILE_CUPY=1 python3 presentations/run_ht_multiscene.py --duration 600 --scenarios garage campus indoor forest tunnel --domain 210 --encoder '<可用ffmpeg绝对路径>' --output '<全新唯一suite目录>'
-  # 域需检查无冲突；不能复用当前输出目录，也不能改变当前job冒充重测。
-  python3 presentations/compare_ht_iterations.py --run '上一版=<同场景上轮目录>' --run '本轮=<同场景新轮目录>' --output '<新比较目录>'
-  # 既有CTest证据在阶段41报告；如导航代码未来有改动，完成构建后再跑相应CTest，不能用本文替代回归。
+  source '/home/lzz/my test/elevation_mapping_cupy_ws/install/local_setup.bash'
+  OPENBLAS_NUM_THREADS=1 python3 -m unittest discover -s tools/ht_cupy_bridge -p 'test_*.py'
+不要set -u后直接source ROS。不要借相邻TARE工作区的旧二进制替代本仓库安装。
 
-7. 重要假设及不要重复的方向
+新复现实验只使用全新目录和无冲突ROS域；不要原样执行frozen_run.sh（它校验当时HEAD、固定旧输出），也不要重复启动旧systemd任务。
+示例（须将占位路径替换，完成冻结与观察器准备后才运行）：
+  source /opt/ros/jazzy/setup.bash
+  HT_PROFILE_CUPY=1 python3 presentations/run_ht_multiscene.py --duration 600 --scenarios indoor --domain 226 --encoder '<可用编码器绝对路径>' --output '<全新suite目录>'
+实际完整调用和观察器以frozen_run.sh/frozen_job.json为参考，新的job必须记录新提交、参数/源码/二进制哈希。
+对比工具：presentations/plot_tare_route_comparison.py（--run '标签=场景目录'，--scene-label，--output）；不要把室内图标为车库。
+发布工具：scripts/publish_streamed_ht_trial.py；晚近job通过--upload-timeout-seconds 600使用较长单次上传超时（具体调用见冻结发布脚本）。
+清理只在新轮完整远端验证后运行：python3 scripts/prune_published_ht_raw.py --keep 2 --apply。
 
-[事实] 当前用户已授权多场景测试及结果发布，无须重复询问是否运行；最新HANDOFF请求不等于取消实验。用户要求先证实原因再修改。
-[假设/待确认] 新发布工具能完成大suite端到端上传；目前仅语法、设计和既有流式组件证据，必须现场核验。
-[不要重复] 不将TARE原TSP替换回HT单目标收益/时间贪心；旧legacy模式不是用户这轮目标。
-[不要重复] 不通过抬速度、放宽HT硬门槛、隐藏失败轮来制造提升；任何必要行为修正须新冻结轮600秒。
-[不要重复] 不把3秒地图新鲜度当所有停车的解释；本轮garage末段已有相反采样证据。
-[不要重复] 不以粗图可连通、某个终点绿色或离线空间筛选通过，代替完整可执行XYθ路径证据。
-[不要重复] 不把任务COMPLETED、定时600秒完成、视频能播、远端上传成功、实际充分探索这五件事混为一谈。
-[不要重复] 不将旧标签移动到当前提交；旧实验缺提交信息用“未知”，不能编造。
-[不要重复] 不reset --hard/git clean覆盖上述未提交工具；不清理未核验或活跃数据；不从聊天/文件输出密钥或密码。
-[不要重复] 不用killall或广泛pkill清理ROS/Gazebo；如确需处理进程，仅处理已确认归属本批的服务/进程组。
-[不要重复] 不在现有完整数据上传时对源目录重新分析写入、修改hash清单；不要重复启动同一发布任务。
-[待确认] 本文无法恢复所有更早对话中每个代码改动；历史版本详情请读docs/version_history.json、各阶段报告/Release和git show，本文不虚构早期全部实现。
+7. 不要重复尝试的方向
 
-给下一个 AI 的启动提示词
+- 不把TSP替换回HT单目标收益贪心，不通过更换目标掩盖同分支路由失败。
+- 不抬速度、缩足迹、放宽0.5门槛或将未知直接当可执行地形来制造提升。
+- 不把所有停车解释为3秒地图过期；本轮记录中最大采样年龄不到3秒。
+- 不把非候选覆盖格当连续车辆状态不可行；不通过全局改原TARE函数语义修局部调用错误。
+- 不把开启严格未知的地形引导当简单修复：会在局部窗口外形成未知闭环，可能再次假完成；引导与执行语义需分清。
+- 不将budget/展开上限解释为无路，不将粗图连通或绿色目标解释为全足迹XYθ可达。
+- 不用当前HEAD填补旧实验未知提交，不移动实测tag、不拼600秒、不覆盖失败和封存哈希。
+- 不用reset --hard/git clean丢弃现场修改，不对整机killall/pkill，不清理未验证或正在使用的数据。
+- 上传时不再改写源目录；远端starter异常要核验所有权/状态后保留处理，不能覆盖完整资产。
+- 不输出密码、token、钥匙串内容。SSH推送成功不代表API上传权限已验证。
+- 不靠中间状态推断完成：oneshot有MainPID时activating可能正常；Result=success单独不足。以最终日志、文件、回执和真实进程状态交叉核实。
 
-你接手的是/home/lzz/my test/HT_Explo-fixposition，用户要保持原TARE覆盖/TSP/waypoint决策，仅用HT地形和XYθ路由执行；当前五场景600秒验证仍在后台。先读AGENTS.md、docs/experiments/ht_iteration_protocol.md和本HANDOFF.txt，再读取.git/multiscene-runtime/job.json、suite.json与三个systemd用户服务及日志，确认真实进展。不要立即重启实验、改72项冻结运行文件、commit改变测量HEAD或清理数据。保留garage末段BLOCKED和indoor早报COMPLETED证据，先完成当前全部采集；之后核验只读后处理、新流式发布器及stage42远端回执，明确采集成功与导航成功。确认历史上传服务恢复，完成尚缺的大目录和62/62独立核验。只在远端哈希与大小验证后按用户政策保留本机最近两轮完整录包。若服务失败，先定位退出点和证据，不假称已经完成、不覆盖坏记录；向用户说明实际完成项、剩余问题及下一步。
+给下一个AI的启动提示词
+
+你接手/home/lzz/my test/HT_Explo-fixposition。先读AGENTS.md、docs/experiments/ht_iteration_protocol.md、本HANDOFF.txt，再核查git status/log、阶段46job/service、stage46.json和最新REPORT.md。实测代码07c1abd，后续是报告/发布/交接提交；本轮已结束，最新室内600秒187.22m/3934.25m³、最长完全停车2.15秒、末EXPLORING，全数据/视频已远端核验。不要重复旧job或把旧“运行中”文案当现场。保持原TARE覆盖/TSP/访问顺序，HT硬约束和XYθ局部执行；最新森林/隧道尚未复测，44的森林展开上限和隧道53秒完成只是未解线索。如用户继续要求实验，先使用同一冻结版本核对这些场景的真实问题，再用可复现反例提出单独候选，每轮完整600秒、图表、视频、全量已录数据上传后再迭代。保护部分42、最近完整45/46以及未验证数据，清理须依远端大小/SHA回执。本文件未宣称所有问题消失，不要编造原版TARE配对或实车成绩。
