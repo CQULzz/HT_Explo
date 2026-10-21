@@ -1,0 +1,26 @@
+{
+  "qos": [
+    {
+      "case": "current_fixposition_to_tare",
+      "result": "ERROR",
+      "reason": "ERROR: Best effort publisher and reliable subscription;"
+    },
+    {
+      "case": "reliable_publisher_to_tare",
+      "result": "WARNING",
+      "reason": "WARNING: Publisher liveliness is system_default and subscription liveliness is system_default;"
+    },
+    {
+      "case": "sensor_subscriber",
+      "result": "WARNING",
+      "reason": "WARNING: Publisher liveliness is system_default and subscription liveliness is system_default;"
+    }
+  ],
+  "fixed_dt_acceleration_example": {
+    "configured_max_accel_mps2": 0.5,
+    "per_tick_delta_mps": 0.025,
+    "actual_elapsed_s_example": 0.01,
+    "implied_accel_mps2": 2.5
+  },
+  "note": "Static API compatibility and arithmetic checks only. No simulation or vehicle started."
+}

@@ -5,6 +5,7 @@ from copy import deepcopy
 from collections import deque
 from array import array as FloatArray
 import json
+import math
 import os
 import signal
 from pathlib import Path
@@ -29,6 +30,40 @@ from local_surface import SurfaceReferenceEstimator
 from cpu_threads import configure_cpu_threads
 from ht_support import prepare_ht_context, preserve_rejected_obstacles
 from inference_context_io import ContextCaptureSchedule, GracefulStop, save_immutable_npz
+
+
+def decode_elevation_source(source):
+    """Validate the model's metric input contract before mutating history."""
+    info = source.info
+    resolution = float(info.resolution)
+    if source.header.frame_id != 'map' or not 0.040 <= resolution <= 0.042:
+        raise ValueError('HT requires map-frame elevation at about 0.041 m/cell')
+    lengths = (info.length_x/resolution, info.length_y/resolution)
+    if any(not math.isfinite(v) or not math.isclose(v, 291, rel_tol=0, abs_tol=1e-6)
+           for v in lengths):
+        raise ValueError(f'HT requires exact 291x291 input geometry; got {lengths}')
+    q = info.pose.orientation
+    if (not all(math.isfinite(v) for v in (info.pose.position.x, info.pose.position.y,
+                                         info.pose.position.z, q.x, q.y, q.z, q.w))
+            or max(abs(q.x), abs(q.y), abs(q.z)) > 1e-6 or abs(abs(q.w)-1) > 1e-6):
+        raise ValueError('HT requires finite, axis-aligned map geometry')
+    if (len(source.layers) != len(source.data) or len(set(source.layers)) != len(source.layers)
+            or not 0 <= source.outer_start_index < 291 or not 0 <= source.inner_start_index < 291):
+        raise ValueError('Invalid elevation layers/circular buffer indices')
+    decoded = []
+    for name in ('elevation', 'variance', 'observation_age'):
+        if name not in source.layers:
+            raise ValueError(f'Missing required elevation layer: {name}')
+        data = source.data[source.layers.index(name)]
+        dims = data.layout.dim
+        if (len(dims) != 2 or dims[0].label != 'column_index' or dims[1].label != 'row_index'
+                or dims[0].size != 291 or dims[1].size != 291
+                or dims[0].stride != 291*291 or dims[1].stride != 291
+                or data.layout.data_offset != 0 or len(data.data) != 291*291):
+            raise ValueError(f'Invalid elevation array layout/length: {name}')
+        layer = np.asarray(data.data, np.float32).reshape((291, 291), order='F')
+        decoded.append(np.roll(layer, (-source.outer_start_index, -source.inner_start_index), (0, 1)))
+    return resolution, *decoded
 
 
 class CupyToHt(Node):
@@ -86,36 +121,12 @@ class CupyToHt(Node):
         stamp_key = (source.header.stamp.sec, source.header.stamp.nanosec)
         if stamp_key == self.last_source_stamp:
             return
-        if source.header.frame_id != "map" or "elevation" not in source.layers:
-            self.get_logger().error("Expected a map-frame CuPy elevation layer")
+        try:
+            resolution, elevation, variance, age = decode_elevation_source(source)
+        except (ValueError, TypeError, OverflowError) as error:
+            self.get_logger().error(f'Invalid elevation input: {error}')
             return
-        resolution = float(source.info.resolution)
-        if not 0.040 <= resolution <= 0.042:
-            self.get_logger().error(f"HT model expects about 0.041 m cells; got {resolution}")
-            return
-        nx = round(source.info.length_x / resolution)
-        ny = round(source.info.length_y / resolution)
-        if nx != 291 or ny != 291:
-            self.get_logger().error(f"HT bridge expects 291x291 input; got {nx}x{ny}")
-            return
-        raw = np.asarray(source.data[source.layers.index("elevation")].data, dtype=np.float32)
-        if raw.size != nx * ny:
-            self.get_logger().error("Invalid elevation array length")
-            return
-        # GridMap Float32MultiArray uses column-major storage.
-        elevation = raw.reshape((nx, ny), order="F")
-        if "variance" in source.layers:
-            variance = np.asarray(
-                source.data[source.layers.index("variance")].data, dtype=np.float32
-            ).reshape((nx, ny), order="F")
-        else:
-            self.get_logger().error("CuPy elevation variance layer is required for historical fusion")
-            return
-        if 'observation_age' not in source.layers:
-            self.get_logger().error('CuPy observation_age is required; enable it in the publisher setup')
-            return
-        age = np.asarray(source.data[source.layers.index('observation_age')].data,
-                         dtype=np.float32).reshape((nx, ny), order='F')
+        nx = ny = 291
         if self.history is None:
             self.history = HistoricalElevation(resolution)
         elif abs(self.history.resolution - resolution) > 1e-6:
@@ -124,11 +135,7 @@ class CupyToHt(Node):
         stamp_s = float(source.header.stamp.sec) + source.header.stamp.nanosec * 1e-9
         self.last_source_stamp = stamp_key
         try:
-            # Decode the physical circular buffer once. The publisher/core has
-            # already converted its coordinates into GridMap logical order.
-            offset = (-source.outer_start_index, -source.inner_start_index)
-            elevation, variance, age = (np.roll(v, offset, (0, 1))
-                                        for v in (elevation, variance, age))
+            # Input arrays have already been decoded into logical GridMap order.
             source_elevation, source_variance = elevation.copy(), variance.copy()
             source_age = age.copy()
             source_quality = preprocess_elevation(elevation, variance, resolution)

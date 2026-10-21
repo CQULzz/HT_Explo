@@ -9,6 +9,7 @@ density is reduced. No simulation, inference, planner, or follower is launched.
 import argparse
 import bisect
 import collections
+from contextlib import ExitStack
 import csv
 import hashlib
 import json
@@ -22,6 +23,83 @@ import time
 
 import numpy as np
 import yaml
+
+
+CAPTURE_SIZE = (1920, 1080)
+
+
+def capture_rgb(image):
+    """Keep the fixed RViz/HUD layout and rawvideo byte geometry identical."""
+    if image.size != CAPTURE_SIZE:
+        raise ValueError(f'RViz capture is {image.size}, expected {CAPTURE_SIZE}; '
+                         'start the isolated display at 1920x1080. No scaling/cropping is applied.')
+    return image.convert('RGB')
+
+
+def frame_times(start, end, speed, fps):
+    if (not all(math.isfinite(v) for v in (start, end, speed, fps))
+            or not 0 <= start < end <= 600 or speed <= 0 or fps <= 0):
+        raise ValueError('Require finite 0<=start<end<=600 and positive speed/fps')
+    intervals = (end-start)/speed*fps
+    if not math.isfinite(intervals):
+        raise ValueError('Requested timeline frame count overflows')
+    steps = max(1, math.ceil(intervals))
+    # Floating point ceil can add an extra step at an exact frame boundary.
+    return [t for i in range(steps) if (t := start+i/fps*speed) < end] + [end]
+
+
+def past_row(times, rows, t):
+    """Never backfill an unavailable statistic with a future sample."""
+    i = bisect.bisect_right(times, t)-1
+    return rows[i] if i >= 0 else None
+
+
+def decode_ht_grid(m, receipt_s, stride=3):
+    """Decode column-major circular GridMap storage without resampling scores."""
+    if not isinstance(stride, int) or stride < 1:
+        raise ValueError('Display stride must be a positive integer')
+    info = m.info
+    if m.header.frame_id != 'map':
+        raise ValueError('HT display requires map-frame geometry')
+    if not all(math.isfinite(v) and v > 0 for v in
+               (info.resolution, info.length_x, info.length_y)):
+        raise ValueError('Invalid HT resolution/length')
+    nx, ny = info.length_x/info.resolution, info.length_y/info.resolution
+    n, k = round(nx), round(ny)
+    if n < 1 or k < 1 or not (math.isclose(nx, n, abs_tol=1e-6, rel_tol=0)
+                             and math.isclose(ny, k, abs_tol=1e-6, rel_tol=0)):
+        raise ValueError('HT lengths must be whole numbers of cells')
+    q = info.pose.orientation
+    if (not all(math.isfinite(v) for v in (q.x, q.y, q.z, q.w,
+                                         info.pose.position.x, info.pose.position.y))
+            or max(abs(q.x), abs(q.y), abs(q.z)) > 1e-6 or abs(abs(q.w)-1) > 1e-6):
+        raise ValueError('HT display requires finite axis-aligned geometry')
+    if (len(m.layers) != len(m.data) or len(set(m.layers)) != len(m.layers)
+            or not 0 <= m.outer_start_index < n or not 0 <= m.inner_start_index < k):
+        raise ValueError('Invalid HT layers/circular buffer indices')
+
+    def layer(key):
+        if key not in m.layers:
+            raise ValueError(f'Missing HT layer: {key}')
+        data = m.data[m.layers.index(key)]
+        dims = data.layout.dim
+        if (len(dims) != 2 or dims[0].label != 'column_index' or dims[1].label != 'row_index'
+                or dims[0].size != k or dims[1].size != n
+                or dims[0].stride != n*k or dims[1].stride != n
+                or data.layout.data_offset != 0 or len(data.data) != n*k):
+            raise ValueError(f'Invalid HT array layout/length: {key}')
+        a = np.asarray(data.data, np.float32).reshape((n, k), order='F')
+        return np.roll(a, (-m.outer_start_index, -m.inner_start_index), (0, 1))[::stride, ::stride].copy()
+
+    raw_valid = layer('ht_valid')
+    scores = np.stack([layer('ht_dir_'+str(i)) for i in range(8)])
+    valid = np.isfinite(raw_valid) & (raw_valid >= .5)
+    valid &= np.all(np.isfinite(scores) & (scores >= 0) & (scores <= 1), axis=0)
+    return {'x': info.pose.position.x+(n/2-np.arange(0, n, stride)-.5)*info.resolution,
+            'y': info.pose.position.y+(k/2-np.arange(0, k, stride)-.5)*info.resolution,
+            'p': scores, 'valid': valid, 'display_cell_m': stride*info.resolution,
+            'source_resolution_m': info.resolution,
+            'source_age_s': receipt_s-m.header.stamp.sec-m.header.stamp.nanosec*1e-9}
 
 
 def sha(path):
@@ -79,19 +157,7 @@ def prepare(suite, cache):
             elif kind in ('waypoint', 'route_goal'):
                 v = (m.point.x, m.point.y, m.point.z)
             elif kind == 'ht':
-                n, k = round(m.info.length_x/m.info.resolution), round(m.info.length_y/m.info.resolution)
-                def layer(key):
-                    a = np.asarray(m.data[m.layers.index(key)].data, np.float32).reshape((n, k), order='F')
-                    return np.roll(a, (-m.outer_start_index, -m.inner_start_index), (0, 1))[::3, ::3].copy()
-                # GridMap index0 is the positive-X/positive-Y corner, not minXY.
-                x = m.info.pose.position.x + (n/2-np.arange(0, n, 3)-.5)*m.info.resolution
-                y = m.info.pose.position.y + (k/2-np.arange(0, k, 3)-.5)*m.info.resolution
-                valid = layer('ht_valid') > .5
-                scores = np.stack([layer('ht_dir_'+str(i)) for i in range(8)])
-                valid &= np.all(np.isfinite(scores), axis=0)
-                v = {'x': x, 'y': y, 'p': scores, 'valid': valid, 'display_cell_m': 3*m.info.resolution,
-                     'source_resolution_m': m.info.resolution,
-                     'source_age_s': ns/1e9-m.header.stamp.sec-m.header.stamp.nanosec*1e-9}
+                v = decode_ht_grid(m, ns/1e9)
             else:
                 v = m.data
             counts[kind] += 1
@@ -160,7 +226,37 @@ def configs(out, global_view=None):
     make('ht_xytheta', '/recorded_rviz/ht', 'theta', 960)
 
 
-def replay(cache, out, encoder, mode, display, speed, fps, limit):
+def stop_process(proc):
+    if proc.poll() is None:
+        proc.send_signal(signal.SIGINT)
+        try:
+            proc.wait(timeout=10)
+        except subprocess.TimeoutExpired:
+            proc.kill(); proc.wait()
+
+
+def finish_encoder(enc):
+    if not enc.stdin.closed:
+        try:
+            enc.stdin.close()
+        except BrokenPipeError:
+            pass
+    try:
+        enc.wait(timeout=15)
+    except subprocess.TimeoutExpired:
+        enc.kill(); enc.wait()
+
+
+def replay(cache, out, encoder, mode, display, speed, fps, limit, start=0.,
+           theta_style='voxels', voxel_alpha=.28, voxel_height=.14):
+    # Register resources as acquired so startup errors are cleaned up as well.
+    with ExitStack() as resources:
+        return _replay(resources, cache, out, encoder, mode, display, speed, fps, limit,
+                       start, theta_style, voxel_alpha, voxel_height)
+
+
+def _replay(resources, cache, out, encoder, mode, display, speed, fps, limit, start,
+            theta_style, voxel_alpha, voxel_height):
     import rclpy
     from rclpy.node import Node
     from visualization_msgs.msg import Marker, MarkerArray
@@ -168,10 +264,14 @@ def replay(cache, out, encoder, mode, display, speed, fps, limit):
     from std_msgs.msg import ColorRGBA, Header
     from sensor_msgs.msg import PointCloud2, PointField
     from PIL import ImageGrab, ImageDraw, ImageFont
-    import cv2
+    timeline = frame_times(start, limit, speed, fps)
+    # Fail before creating ROS/RViz/encoder resources on an incompatible display.
+    capture_rgb(ImageGrab.grab(xdisplay=display))
     data = pickle.loads(cache.read_bytes())
     rclpy.init()
+    resources.callback(rclpy.try_shutdown)
     node = Node('recorded_rviz_visualization_only')
+    resources.callback(node.destroy_node)
     prefixes = {n: '/recorded_rviz/'+n for n in ('original', 'ht')}
     pubs = {n: {k: node.create_publisher(MarkerArray, prefixes[n]+'/'+k, 2) for k in ('global', 'local', 'theta')}
             for n in prefixes}
@@ -181,13 +281,16 @@ def replay(cache, out, encoder, mode, display, speed, fps, limit):
     processes = []
     config_names = ('original_global', 'ht_global') if mode == 'comparison' else ('ht_local', 'ht_xytheta')
     for name in config_names:
-        log = (out/(name+'.log')).open('w')
+        log = resources.enter_context((out/(name+'.log')).open('w'))
         processes.append(subprocess.Popen(['rviz2', '-d', str(out/(name+'.rviz')), '--ros-args', '-r', '__node:='+name],
                                          env=dict(os.environ, DISPLAY=display, LIBGL_ALWAYS_SOFTWARE='1', QT_QPA_PLATFORM='xcb'),
                                          stdout=log, stderr=subprocess.STDOUT))
+        resources.callback(stop_process, processes[-1])
         log.close()
     # Allow both real RViz renderers to start and discover visualization topics.
     time.sleep(7)
+    if any(proc.poll() is not None for proc in processes):
+        raise RuntimeError('RViz exited during startup; inspect the RViz logs')
     state = {n: {'idx': 0, 'pose': (0., 0., .75, 0.), 'trail': [], 'surface': {}, 'events': data['data'][n]['events']}
              for n in prefixes}
     fonts = '/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc'
@@ -199,6 +302,10 @@ def replay(cache, out, encoder, mode, display, speed, fps, limit):
         rows, vol = data['data'][n]['rows'], data['data'][n]['volume']
         stats[n] = {'t': np.array([float(r['t_s']) for r in rows]), 'rows': rows,
                     'vt': np.array([float(r['time_s']) for r in vol]), 'v': vol}
+        for key in ('t', 'vt'):
+            times = stats[n][key]
+            if not np.all(np.isfinite(times)) or np.any(np.diff(times) < 0):
+                raise ValueError(f'Unsorted/nonfinite statistic timestamps: {n}/{key}')
 
     def marker(typ, idx, color, scale, pts=None):
         m = Marker(); m.header.frame_id = 'map'; m.ns = 'recorded_'+mode; m.id = idx; m.type = typ
@@ -270,12 +377,17 @@ def replay(cache, out, encoder, mode, display, speed, fps, limit):
                 ids = np.ones_like(ok)
             points = np.column_stack((xx[ids], yy[ids], np.full(ids.sum(), z)))
             vals = p[ids]; valid = ok[ids]
+            alpha = voxel_alpha if theta and theta_style == 'voxels' else .88 if theta else 1.
             colors = np.column_stack((np.interp(vals, [0., .5, 1.], [1., 1., .12]),
                                       np.interp(vals, [0., .5, 1.], [.15, .85, .7]),
-                                      np.interp(vals, [0., .5, 1.], [.1, .15, .3]), np.full(len(vals), .88 if theta else 1.)))
+                                      np.interp(vals, [0., .5, 1.], [.1, .15, .3]), np.full(len(vals), alpha)))
             colors[~valid] = (.38, .42, .47, 1.)
-            m = marker(Marker.CUBE_LIST, 100+k, (1., 1., 1., 1.),
-                       (h['display_cell_m']*.93, h['display_cell_m']*.93, .012), points)
+            # Theta has angular units. Thickness is a display extent around
+            # each sampled heading, not interpolation into unmeasured angles.
+            xy_fill = .82 if theta and theta_style == 'voxels' else .93
+            thickness = voxel_height if theta and theta_style == 'voxels' else .012
+            m = marker(Marker.CUBE_LIST, 100+k, (1., 1., 1., alpha),
+                       (h['display_cell_m']*xy_fill, h['display_cell_m']*xy_fill, thickness), points)
             m.colors = [ColorRGBA(r=float(r), g=float(g), b=float(b), a=float(a)) for r,g,b,a in colors]
             result.append(m)
             if theta:
@@ -339,22 +451,25 @@ def replay(cache, out, encoder, mode, display, speed, fps, limit):
         d = ImageDraw.Draw(im)
         d.rectangle((0, 0, 1920, 67), fill='#0b121b')
         d.rectangle((0, 868, 1920, 1080), fill='#0b121b')
-        title = '原版 TARE    |    当前 HT + TARE：全程探索对比' if mode == 'comparison' else 'HT 局部规划细节    |    八方向 XYθ 可通过性空间'
+        title = '原版 TARE    |    当前 HT + TARE：全程探索对比' if mode == 'comparison' else ('HT 局部规划细节    |    XYθ 半透明体素' if theta_style == 'voxels' else 'HT 局部规划细节    |    八方向 XYθ 可通过性空间')
         d.text((22, 9), title, font=large, fill='white')
         d.text((1275, 13), f'真实 RViz 录包回放 ×{speed:g}   实验 {t:06.1f} / 600 s', font=font, fill='#8ad9ff')
         names = [('original', '原版 TARE'), ('ht', '当前 HT + TARE')] if mode == 'comparison' else [('ht', '局部 XY：当前最近的 45° 方向层'), ('ht', 'XYθ：0°～315°，间隔 45°')]
         for col,(n,label) in enumerate(names):
-            x = col*960+22; st = stats[n]; j = max(0, bisect.bisect_right(st['t'], t)-1); row = st['rows'][j]
-            vi = max(0, bisect.bisect_right(st['vt'], t)-1); vol = st['v'][vi]
+            x = col*960+22; st = stats[n]
+            row = past_row(st['t'], st['rows'], t)
+            vol = past_row(st['vt'], st['v'], t)
+            distance = f"{float(row['distance_m']):.1f}" if row is not None else '--'
+            volume = f"{float(vol['observed_free_volume_m3']):.0f}" if vol is not None else '--'
             d.text((x, 875), label, font=font, fill='white')
-            d.text((x, 911), f"里程 {float(row['distance_m']):.1f} m    累计观测自由体积 ≈ {float(vol['observed_free_volume_m3']):.0f} m³", font=small, fill='#d2dfec')
+            d.text((x, 911), f"里程 {distance} m    累计观测自由体积 ≈ {volume} m³", font=small, fill='#d2dfec')
             if mode == 'comparison':
                 d.text((x, 943), '青线：实际轨迹    黄线：TARE 局部访问路线    黄球：当前航点', font=small, fill='#d2dfec')
                 d.text((x, 975), '浅灰：累计激光返回点    '+('淡紫：TARE 全局路线' if n=='original' else '绿线：HT 实际下发路径    粉球：HT 路段目标'), font=small, fill='#d2dfec')
             else:
                 h = state['ht'].get('ht'); age = h['source_age_s'] if h else float('nan')
                 layer = int(np.floor((state['ht']['pose'][3]%(2*np.pi))/(np.pi/4)+.5))%8
-                detail = f'当前显示方向 {layer*45}°    图在发布时龄 {age:.2f} s' if col==0 else '竖轴是车头角度 θ；层间距仅用于显示，不是地形高度'
+                detail = f'当前显示方向 {layer*45}°    图在发布时龄 {age:.2f} s' if col==0 else (f'θ 间隔 45°  |  不透明度 {voxel_alpha:.0%}  |  厚度仅为显示' if theta_style == 'voxels' else '竖轴是车头角度 θ；层间距仅用于显示，不是地形高度')
                 d.text((x, 943), detail, font=small, fill='#d2dfec')
                 d.text((x, 975), '绿：高可通过性  红：低  灰：无效（右侧无效格透明）', font=small, fill='#d2dfec')
         d.text((22, 1021), '黄：TARE 路线｜绿：HT 下发路径｜青：实际轨迹。仅回放，不重新规划；网格显示抽稀，未记录的搜索树无法恢复。' if mode!='comparison' else
@@ -362,16 +477,21 @@ def replay(cache, out, encoder, mode, display, speed, fps, limit):
         d.rectangle((0, 1070, int(1920*t/600), 1079), fill='#3ebae5')
         return im
 
-    dest = out/('rviz_'+mode+'_4x.mp4')
+    dest = out/(f'rviz_{mode}_{speed:g}x.mp4')
     enc = subprocess.Popen([str(encoder), '-y', '-loglevel', 'warning', '-f', 'rawvideo', '-pix_fmt', 'rgb24',
                             '-s', '1920x1080', '-r', str(fps), '-i', '-', '-an', '-c:v', 'libx264',
                             '-threads', '3', '-preset', 'veryfast', '-crf', '23', '-pix_fmt', 'yuv420p',
                             '-movflags', '+faststart', str(dest)], stdin=subprocess.PIPE,
-                           stderr=(out/(mode+'_encoder.log')).open('w'))
-    capture_log = []; frames = int(limit/speed*fps)+1; deadline = time.monotonic(); last_detail = -1
+                           stderr=resources.enter_context((out/(mode+'_encoder.log')).open('w')))
+    resources.callback(finish_encoder, enc)
+    capture_log = []; frames = len(timeline); last_detail = -1
+    keyframes = {0, frames-1} | {bisect.bisect_left(timeline, k) for k in (30, 180) if start <= k <= limit}
     try:
-        for frame in range(frames):
-            t = min(limit, frame/fps*speed)
+        # A nonzero start is a view of the recorded past, with no replanning.
+        advance(start, True)
+        time.sleep(1.)
+        deadline = time.monotonic()
+        for frame, t in enumerate(timeline):
             detail = int(t*2) != last_detail
             advance(t, detail)
             last_detail = int(t*2)
@@ -379,29 +499,26 @@ def replay(cache, out, encoder, mode, display, speed, fps, limit):
             wait = deadline+1/fps-time.monotonic()
             if wait>0:
                 time.sleep(wait)
-            im = ImageGrab.grab(xdisplay=display).convert('RGB')
+            im = capture_rgb(ImageGrab.grab(xdisplay=display))
             im = hud(im, t)
             enc.stdin.write(im.tobytes())
             capture_log.append({'frame': frame, 'experiment_t_s': t, 'capture_wall': time.time()})
-            if frame in (min(frames-1, int(30/speed*fps)), min(frames-1, int(180/speed*fps)), frames-1):
+            if frame in keyframes:
                 im.save(out/(mode+f'_t{int(t):03}.jpg'), quality=92)
             deadline = max(deadline+1/fps, time.monotonic()-.05)
             if frame%int(fps*10)==0:
                 print(mode, f't={t:.1f}', f'frame={frame}/{frames}', flush=True)
     finally:
-        enc.stdin.close(); enc.wait()
-        for proc in processes:
-            proc.send_signal(signal.SIGINT)
-        for proc in processes:
-            try:
-                proc.wait(timeout=10)
-            except subprocess.TimeoutExpired:
-                proc.kill(); proc.wait()
-        node.destroy_node(); rclpy.shutdown()
+        finish_encoder(enc)
     if enc.returncode:
         raise RuntimeError('Video encoder failed')
     (out/(mode+'_capture.json')).write_text(json.dumps({'mode': mode, 'frames': frames, 'fps': fps,
-        'source_duration_s': limit, 'video_duration_s': frames/fps, 'speed': speed, 'display': display,
+        'source_start_s': start, 'source_end_s': limit, 'source_duration_s': limit-start,
+        'video_duration_s': frames/fps, 'speed': speed, 'display': display,
+        'capture_size_px': list(CAPTURE_SIZE), 'encoder_input': 'rgb24', 'encoder_output': 'yuv420p',
+        'image_transform': 'none; fixed-size capture, no resize/crop/padding',
+        'theta_style': theta_style, 'voxel_alpha': voxel_alpha, 'voxel_height_display_units': voxel_height,
+        'theta_note': 'Eight independent recorded scores. Thickness is display-only; no angular interpolation.',
         'capture': 'PIL ImageGrab of actual RViz2 windows on isolated Xvfb plus labelled HUD',
         'first_frame': capture_log[0], 'last_frame': capture_log[-1], 'video_sha256': sha(dest),
         'publishers': publisher_names,
@@ -420,14 +537,29 @@ def main():
     ap.add_argument('--speed', type=float, default=4)
     ap.add_argument('--fps', type=int, default=10)
     ap.add_argument('--limit', type=float, default=600)
+    ap.add_argument('--start', type=float, default=0.)
+    ap.add_argument('--theta-style', choices=['voxels', 'sheets'], default='voxels')
+    ap.add_argument('--voxel-alpha', type=float, default=.28)
+    ap.add_argument('--voxel-height', type=float, default=.14)
     a = ap.parse_args()
     if a.prepare:
+        if a.suite is None:
+            ap.error('--suite is required with --prepare')
         prepare(a.suite.resolve(), a.cache.resolve())
     else:
+        if a.output is None or a.mode is None or a.encoder is None:
+            ap.error('--output, --mode and --encoder are required for replay')
+        try:
+            frame_times(a.start, a.limit, a.speed, a.fps)
+        except ValueError as error:
+            ap.error(str(error))
+        if not (0 < a.voxel_alpha <= 1 and 0 < a.voxel_height <= 1.5):
+            ap.error('Require alpha in(0,1], height in(0,1.5].')
         a.output.mkdir(parents=True, exist_ok=True)
         meta=json.loads(a.cache.with_suffix('.json').read_text())
         configs(a.output,meta.get('global_view'))
-        replay(a.cache, a.output.resolve(), a.encoder, a.mode, a.display, a.speed, a.fps, a.limit)
+        replay(a.cache, a.output.resolve(), a.encoder, a.mode, a.display, a.speed, a.fps, a.limit,
+               a.start, a.theta_style, a.voxel_alpha, a.voxel_height)
 
 
 if __name__ == '__main__':

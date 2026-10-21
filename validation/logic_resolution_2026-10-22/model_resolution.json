@@ -1,0 +1,124 @@
+{
+  "note": "Synthetic flat inputs: shapes, crop-center mapping and inference timings only; no accuracy labels.",
+  "cpu": "x86_64",
+  "torch": "2.11.0+cpu",
+  "thread_pools": {
+    "pytorch_threads": 4,
+    "blas_pools": [
+      {
+        "user_api": "blas",
+        "internal_api": "openblas",
+        "num_threads": 1,
+        "prefix": "libopenblas",
+        "filepath": "/home/lzz/.local/lib/python3.12/site-packages/numpy.libs/libopenblas64_p-r0-0cf96a72.3.23.dev.so",
+        "version": "0.3.23.dev",
+        "threading_layer": "pthreads",
+        "architecture": "Prescott"
+      }
+    ]
+  },
+  "resolution_m": 0.04093567251461988,
+  "source_width_m": 11.912280701754385,
+  "output_width_m": 9.865497076023392,
+  "receptive_field_m": 2.087719298245614,
+  "half_crop_m": 1.023391812865497,
+  "results": [
+    {
+      "input_xy": [
+        51,
+        51
+      ],
+      "output_shape": [
+        1,
+        8,
+        2,
+        1,
+        1
+      ],
+      "median_s": 0.00245279900082096,
+      "min_s": 0.0023307300007218146,
+      "max_s": 0.0025772680000955006
+    },
+    {
+      "input_xy": [
+        51,
+        83
+      ],
+      "output_shape": [
+        1,
+        8,
+        2,
+        1,
+        33
+      ],
+      "median_s": 0.0026385789997220854,
+      "min_s": 0.0025992769997174037,
+      "max_s": 0.002837306999936118
+    },
+    {
+      "input_xy": [
+        83,
+        51
+      ],
+      "output_shape": [
+        1,
+        8,
+        2,
+        33,
+        1
+      ],
+      "median_s": 0.0024781000001894427,
+      "min_s": 0.002466609000293829,
+      "max_s": 0.002560365000135789
+    },
+    {
+      "input_xy": [
+        291,
+        291
+      ],
+      "output_shape": [
+        1,
+        8,
+        2,
+        241,
+        241
+      ],
+      "median_s": 0.10163100800036773,
+      "min_s": 0.10079610100001446,
+      "max_s": 0.10675766900021699
+    },
+    {
+      "input_xy": [
+        291,
+        341
+      ],
+      "output_shape": [
+        1,
+        8,
+        2,
+        241,
+        291
+      ],
+      "median_s": 0.1168581419997281,
+      "min_s": 0.11658100800013926,
+      "max_s": 0.11923875499996939
+    },
+    {
+      "input_xy": [
+        341,
+        291
+      ],
+      "output_shape": [
+        1,
+        8,
+        2,
+        291,
+        241
+      ],
+      "median_s": 0.11725891199967009,
+      "min_s": 0.11646256200037897,
+      "max_s": 0.1184518449999814
+    }
+  ],
+  "undersized": "RuntimeError: kernel exceeds input; bridge rejects unsupported shape before inference"
+}

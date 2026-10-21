@@ -1,0 +1,322 @@
+FFFFFFFF.FFF....                                                         [100%]
+=================================== FAILURES ===================================
+_____ test_invalid_input_is_rejected_without_state_change[short_variance] ______
+
+node = <bridge_before.CupyToHt object at 0x7856e8d88c20>
+case = 'short_variance'
+
+    @pytest.mark.parametrize('case', CASES)
+    def test_invalid_input_is_rejected_without_state_change(node, case):
+        m = source_map(); invalidate(m, case)
+>       node.on_map(m)
+
+tools/ht_cupy_bridge/test_source_contract.py:72: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <bridge_before.CupyToHt object at 0x7856e8d88c20>
+source = grid_map_msgs.msg.GridMap(header=std_msgs.msg.Header(stamp=builtin_interfaces.msg.Time(sec=10, nanosec=0), frame_id='m...0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])], outer_start_index=0, inner_start_index=0)
+
+    def on_map(self, source):
+        started = time.monotonic()
+        source_age_at_start = self.get_clock().now().nanoseconds/1e9 - (
+            source.header.stamp.sec + source.header.stamp.nanosec*1e-9)
+        stamp_key = (source.header.stamp.sec, source.header.stamp.nanosec)
+        if stamp_key == self.last_source_stamp:
+            return
+        if source.header.frame_id != "map" or "elevation" not in source.layers:
+            self.get_logger().error("Expected a map-frame CuPy elevation layer")
+            return
+        resolution = float(source.info.resolution)
+        if not 0.040 <= resolution <= 0.042:
+            self.get_logger().error(f"HT model expects about 0.041 m cells; got {resolution}")
+            return
+        nx = round(source.info.length_x / resolution)
+        ny = round(source.info.length_y / resolution)
+        if nx != 291 or ny != 291:
+            self.get_logger().error(f"HT bridge expects 291x291 input; got {nx}x{ny}")
+            return
+        raw = np.asarray(source.data[source.layers.index("elevation")].data, dtype=np.float32)
+        if raw.size != nx * ny:
+            self.get_logger().error("Invalid elevation array length")
+            return
+        # GridMap Float32MultiArray uses column-major storage.
+        elevation = raw.reshape((nx, ny), order="F")
+        if "variance" in source.layers:
+            variance = np.asarray(
+                source.data[source.layers.index("variance")].data, dtype=np.float32
+>           ).reshape((nx, ny), order="F")
+E           ValueError: cannot reshape array of size 1 into shape (291,291)
+
+validation/logic_resolution_2026-10-22/cupy_to_ht_before.py:110: ValueError
+---------------------------- Captured stderr setup -----------------------------
+[INFO] [1792604440.380674015] [cupy_to_ht_bridge]: CPU pools: PyTorch=4, BLAS=1; channels_last
+________ test_invalid_input_is_rejected_without_state_change[short_age] ________
+
+node = <bridge_before.CupyToHt object at 0x7856e83e8c20>, case = 'short_age'
+
+    @pytest.mark.parametrize('case', CASES)
+    def test_invalid_input_is_rejected_without_state_change(node, case):
+        m = source_map(); invalidate(m, case)
+>       node.on_map(m)
+
+tools/ht_cupy_bridge/test_source_contract.py:72: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <bridge_before.CupyToHt object at 0x7856e83e8c20>
+source = grid_map_msgs.msg.GridMap(header=std_msgs.msg.Header(stamp=builtin_interfaces.msg.Time(sec=10, nanosec=0), frame_id='m...sion(label='row_index', size=291, stride=291)], data_offset=0), data=[0.0])], outer_start_index=0, inner_start_index=0)
+
+    def on_map(self, source):
+        started = time.monotonic()
+        source_age_at_start = self.get_clock().now().nanoseconds/1e9 - (
+            source.header.stamp.sec + source.header.stamp.nanosec*1e-9)
+        stamp_key = (source.header.stamp.sec, source.header.stamp.nanosec)
+        if stamp_key == self.last_source_stamp:
+            return
+        if source.header.frame_id != "map" or "elevation" not in source.layers:
+            self.get_logger().error("Expected a map-frame CuPy elevation layer")
+            return
+        resolution = float(source.info.resolution)
+        if not 0.040 <= resolution <= 0.042:
+            self.get_logger().error(f"HT model expects about 0.041 m cells; got {resolution}")
+            return
+        nx = round(source.info.length_x / resolution)
+        ny = round(source.info.length_y / resolution)
+        if nx != 291 or ny != 291:
+            self.get_logger().error(f"HT bridge expects 291x291 input; got {nx}x{ny}")
+            return
+        raw = np.asarray(source.data[source.layers.index("elevation")].data, dtype=np.float32)
+        if raw.size != nx * ny:
+            self.get_logger().error("Invalid elevation array length")
+            return
+        # GridMap Float32MultiArray uses column-major storage.
+        elevation = raw.reshape((nx, ny), order="F")
+        if "variance" in source.layers:
+            variance = np.asarray(
+                source.data[source.layers.index("variance")].data, dtype=np.float32
+            ).reshape((nx, ny), order="F")
+        else:
+            self.get_logger().error("CuPy elevation variance layer is required for historical fusion")
+            return
+        if 'observation_age' not in source.layers:
+            self.get_logger().error('CuPy observation_age is required; enable it in the publisher setup')
+            return
+        age = np.asarray(source.data[source.layers.index('observation_age')].data,
+>                        dtype=np.float32).reshape((nx, ny), order='F')
+E       ValueError: cannot reshape array of size 1 into shape (291,291)
+
+validation/logic_resolution_2026-10-22/cupy_to_ht_before.py:118: ValueError
+---------------------------- Captured stderr setup -----------------------------
+[INFO] [1792604440.443256576] [cupy_to_ht_bridge]: CPU pools: PyTorch=4, BLAS=1; channels_last
+______ test_invalid_input_is_rejected_without_state_change[missing_data] _______
+
+node = <bridge_before.CupyToHt object at 0x7856cd9c33b0>, case = 'missing_data'
+
+    @pytest.mark.parametrize('case', CASES)
+    def test_invalid_input_is_rejected_without_state_change(node, case):
+        m = source_map(); invalidate(m, case)
+>       node.on_map(m)
+
+tools/ht_cupy_bridge/test_source_contract.py:72: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <bridge_before.CupyToHt object at 0x7856cd9c33b0>
+source = grid_map_msgs.msg.GridMap(header=std_msgs.msg.Header(stamp=builtin_interfaces.msg.Time(sec=10, nanosec=0), frame_id='m...4513, 0.0010000000474974513, 0.0010000000474974513, 0.0010000000474974513])], outer_start_index=0, inner_start_index=0)
+
+    def on_map(self, source):
+        started = time.monotonic()
+        source_age_at_start = self.get_clock().now().nanoseconds/1e9 - (
+            source.header.stamp.sec + source.header.stamp.nanosec*1e-9)
+        stamp_key = (source.header.stamp.sec, source.header.stamp.nanosec)
+        if stamp_key == self.last_source_stamp:
+            return
+        if source.header.frame_id != "map" or "elevation" not in source.layers:
+            self.get_logger().error("Expected a map-frame CuPy elevation layer")
+            return
+        resolution = float(source.info.resolution)
+        if not 0.040 <= resolution <= 0.042:
+            self.get_logger().error(f"HT model expects about 0.041 m cells; got {resolution}")
+            return
+        nx = round(source.info.length_x / resolution)
+        ny = round(source.info.length_y / resolution)
+        if nx != 291 or ny != 291:
+            self.get_logger().error(f"HT bridge expects 291x291 input; got {nx}x{ny}")
+            return
+        raw = np.asarray(source.data[source.layers.index("elevation")].data, dtype=np.float32)
+        if raw.size != nx * ny:
+            self.get_logger().error("Invalid elevation array length")
+            return
+        # GridMap Float32MultiArray uses column-major storage.
+        elevation = raw.reshape((nx, ny), order="F")
+        if "variance" in source.layers:
+            variance = np.asarray(
+                source.data[source.layers.index("variance")].data, dtype=np.float32
+            ).reshape((nx, ny), order="F")
+        else:
+            self.get_logger().error("CuPy elevation variance layer is required for historical fusion")
+            return
+        if 'observation_age' not in source.layers:
+            self.get_logger().error('CuPy observation_age is required; enable it in the publisher setup')
+            return
+>       age = np.asarray(source.data[source.layers.index('observation_age')].data,
+                         dtype=np.float32).reshape((nx, ny), order='F')
+E       IndexError: list index out of range
+
+validation/logic_resolution_2026-10-22/cupy_to_ht_before.py:117: IndexError
+---------------------------- Captured stderr setup -----------------------------
+[INFO] [1792604440.500378257] [cupy_to_ht_bridge]: CPU pools: PyTorch=4, BLAS=1; channels_last
+_______ test_invalid_input_is_rejected_without_state_change[nan_length] ________
+
+node = <bridge_before.CupyToHt object at 0x7856c8076300>, case = 'nan_length'
+
+    @pytest.mark.parametrize('case', CASES)
+    def test_invalid_input_is_rejected_without_state_change(node, case):
+        m = source_map(); invalidate(m, case)
+>       node.on_map(m)
+
+tools/ht_cupy_bridge/test_source_contract.py:72: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <bridge_before.CupyToHt object at 0x7856c8076300>
+source = grid_map_msgs.msg.GridMap(header=std_msgs.msg.Header(stamp=builtin_interfaces.msg.Time(sec=10, nanosec=0), frame_id='m...0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])], outer_start_index=0, inner_start_index=0)
+
+    def on_map(self, source):
+        started = time.monotonic()
+        source_age_at_start = self.get_clock().now().nanoseconds/1e9 - (
+            source.header.stamp.sec + source.header.stamp.nanosec*1e-9)
+        stamp_key = (source.header.stamp.sec, source.header.stamp.nanosec)
+        if stamp_key == self.last_source_stamp:
+            return
+        if source.header.frame_id != "map" or "elevation" not in source.layers:
+            self.get_logger().error("Expected a map-frame CuPy elevation layer")
+            return
+        resolution = float(source.info.resolution)
+        if not 0.040 <= resolution <= 0.042:
+            self.get_logger().error(f"HT model expects about 0.041 m cells; got {resolution}")
+            return
+>       nx = round(source.info.length_x / resolution)
+E       ValueError: cannot convert float NaN to integer
+
+validation/logic_resolution_2026-10-22/cupy_to_ht_before.py:96: ValueError
+---------------------------- Captured stderr setup -----------------------------
+[INFO] [1792604440.552779566] [cupy_to_ht_bridge]: CPU pools: PyTorch=4, BLAS=1; channels_last
+____ test_invalid_input_is_rejected_without_state_change[fractional_cells] _____
+
+node = <bridge_before.CupyToHt object at 0x7856c810afc0>
+case = 'fractional_cells'
+
+    @pytest.mark.parametrize('case', CASES)
+    def test_invalid_input_is_rejected_without_state_change(node, case):
+        m = source_map(); invalidate(m, case)
+        node.on_map(m)
+>       assert node.last_source_stamp is None
+E       assert (10, 0) is None
+E        +  where (10, 0) = <bridge_before.CupyToHt object at 0x7856c810afc0>.last_source_stamp
+
+tools/ht_cupy_bridge/test_source_contract.py:73: AssertionError
+---------------------------- Captured stderr setup -----------------------------
+[INFO] [1792604440.610645158] [cupy_to_ht_bridge]: CPU pools: PyTorch=4, BLAS=1; channels_last
+_______ test_invalid_input_is_rejected_without_state_change[nan_center] ________
+
+node = <bridge_before.CupyToHt object at 0x7856c052aa20>, case = 'nan_center'
+
+    @pytest.mark.parametrize('case', CASES)
+    def test_invalid_input_is_rejected_without_state_change(node, case):
+        m = source_map(); invalidate(m, case)
+        node.on_map(m)
+>       assert node.last_source_stamp is None
+E       assert (10, 0) is None
+E        +  where (10, 0) = <bridge_before.CupyToHt object at 0x7856c052aa20>.last_source_stamp
+
+tools/ht_cupy_bridge/test_source_contract.py:73: AssertionError
+---------------------------- Captured stderr setup -----------------------------
+[INFO] [1792604440.841084246] [cupy_to_ht_bridge]: CPU pools: PyTorch=4, BLAS=1; channels_last
+----------------------------- Captured stderr call -----------------------------
+[ERROR] [1792604440.864271632] [cupy_to_ht_bridge]: Historical elevation update failed: cannot convert float NaN to integer
+________ test_invalid_input_is_rejected_without_state_change[rotation] _________
+
+node = <bridge_before.CupyToHt object at 0x7856c810b9e0>, case = 'rotation'
+
+    @pytest.mark.parametrize('case', CASES)
+    def test_invalid_input_is_rejected_without_state_change(node, case):
+        m = source_map(); invalidate(m, case)
+        node.on_map(m)
+>       assert node.last_source_stamp is None
+E       assert (10, 0) is None
+E        +  where (10, 0) = <bridge_before.CupyToHt object at 0x7856c810b9e0>.last_source_stamp
+
+tools/ht_cupy_bridge/test_source_contract.py:73: AssertionError
+---------------------------- Captured stderr setup -----------------------------
+[INFO] [1792604440.872348719] [cupy_to_ht_bridge]: CPU pools: PyTorch=4, BLAS=1; channels_last
+______ test_invalid_input_is_rejected_without_state_change[buffer_index] _______
+
+node = <bridge_before.CupyToHt object at 0x7856c057eb40>, case = 'buffer_index'
+
+    @pytest.mark.parametrize('case', CASES)
+    def test_invalid_input_is_rejected_without_state_change(node, case):
+        m = source_map(); invalidate(m, case)
+        node.on_map(m)
+>       assert node.last_source_stamp is None
+E       assert (10, 0) is None
+E        +  where (10, 0) = <bridge_before.CupyToHt object at 0x7856c057eb40>.last_source_stamp
+
+tools/ht_cupy_bridge/test_source_contract.py:73: AssertionError
+---------------------------- Captured stderr setup -----------------------------
+[INFO] [1792604441.091003391] [cupy_to_ht_bridge]: CPU pools: PyTorch=4, BLAS=1; channels_last
+_________ test_invalid_input_is_rejected_without_state_change[offset] __________
+
+node = <bridge_before.CupyToHt object at 0x7856c8108350>, case = 'offset'
+
+    @pytest.mark.parametrize('case', CASES)
+    def test_invalid_input_is_rejected_without_state_change(node, case):
+        m = source_map(); invalidate(m, case)
+        node.on_map(m)
+>       assert node.last_source_stamp is None
+E       assert (10, 0) is None
+E        +  where (10, 0) = <bridge_before.CupyToHt object at 0x7856c8108350>.last_source_stamp
+
+tools/ht_cupy_bridge/test_source_contract.py:73: AssertionError
+---------------------------- Captured stderr setup -----------------------------
+[INFO] [1792604441.334047764] [cupy_to_ht_bridge]: CPU pools: PyTorch=4, BLAS=1; channels_last
+________ test_invalid_input_is_rejected_without_state_change[row_major] ________
+
+node = <bridge_before.CupyToHt object at 0x7856c052aae0>, case = 'row_major'
+
+    @pytest.mark.parametrize('case', CASES)
+    def test_invalid_input_is_rejected_without_state_change(node, case):
+        m = source_map(); invalidate(m, case)
+        node.on_map(m)
+>       assert node.last_source_stamp is None
+E       assert (10, 0) is None
+E        +  where (10, 0) = <bridge_before.CupyToHt object at 0x7856c052aae0>.last_source_stamp
+
+tools/ht_cupy_bridge/test_source_contract.py:73: AssertionError
+---------------------------- Captured stderr setup -----------------------------
+[INFO] [1792604441.526386924] [cupy_to_ht_bridge]: CPU pools: PyTorch=4, BLAS=1; channels_last
+_________ test_invalid_input_is_rejected_without_state_change[stride] __________
+
+node = <bridge_before.CupyToHt object at 0x7856c810b740>, case = 'stride'
+
+    @pytest.mark.parametrize('case', CASES)
+    def test_invalid_input_is_rejected_without_state_change(node, case):
+        m = source_map(); invalidate(m, case)
+        node.on_map(m)
+>       assert node.last_source_stamp is None
+E       assert (10, 0) is None
+E        +  where (10, 0) = <bridge_before.CupyToHt object at 0x7856c810b740>.last_source_stamp
+
+tools/ht_cupy_bridge/test_source_contract.py:73: AssertionError
+---------------------------- Captured stderr setup -----------------------------
+[INFO] [1792604441.719155032] [cupy_to_ht_bridge]: CPU pools: PyTorch=4, BLAS=1; channels_last
+=========================== short test summary info ============================
+FAILED tools/ht_cupy_bridge/test_source_contract.py::test_invalid_input_is_rejected_without_state_change[short_variance]
+FAILED tools/ht_cupy_bridge/test_source_contract.py::test_invalid_input_is_rejected_without_state_change[short_age]
+FAILED tools/ht_cupy_bridge/test_source_contract.py::test_invalid_input_is_rejected_without_state_change[missing_data]
+FAILED tools/ht_cupy_bridge/test_source_contract.py::test_invalid_input_is_rejected_without_state_change[nan_length]
+FAILED tools/ht_cupy_bridge/test_source_contract.py::test_invalid_input_is_rejected_without_state_change[fractional_cells]
+FAILED tools/ht_cupy_bridge/test_source_contract.py::test_invalid_input_is_rejected_without_state_change[nan_center]
+FAILED tools/ht_cupy_bridge/test_source_contract.py::test_invalid_input_is_rejected_without_state_change[rotation]
+FAILED tools/ht_cupy_bridge/test_source_contract.py::test_invalid_input_is_rejected_without_state_change[buffer_index]
+FAILED tools/ht_cupy_bridge/test_source_contract.py::test_invalid_input_is_rejected_without_state_change[offset]
+FAILED tools/ht_cupy_bridge/test_source_contract.py::test_invalid_input_is_rejected_without_state_change[row_major]
+FAILED tools/ht_cupy_bridge/test_source_contract.py::test_invalid_input_is_rejected_without_state_change[stride]
+11 failed, 5 passed, 2 deselected in 2.48s
