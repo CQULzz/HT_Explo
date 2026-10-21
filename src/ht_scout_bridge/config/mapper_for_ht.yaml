@@ -1,0 +1,75 @@
+# Derived real mapper profile. Native0.04m cells,291x291 published cells.
+# time is the existing mapper-maintained age in seconds, NOT a zero fill.
+# Use as mapping_config for ele_scout_kit real_car.launch.py; no source workspace edit.
+/elevation_mapping_node:
+  ros__parameters:
+    map_frame: odom
+    corrected_map_frame: odom
+    base_frame: FP_POI
+    initialize_frame_id:
+    - FP_POI
+    enable_drift_compensation: true
+    min_height_drift_cnt: 100
+    max_drift: 0.1
+    drift_compensation_alpha: 0.1
+    position_noise_thresh: 0.01
+    orientation_noise_thresh: 0.01
+    position_lowpass_alpha: 0.2
+    orientation_lowpass_alpha: 0.2
+    pointcloud_qos_reliability: reliable
+    pointcloud_qos_depth: 2
+    self_filter_enabled: true
+    self_filter_min_x: -1.0
+    self_filter_max_x: 0.2
+    self_filter_min_y: -0.7
+    self_filter_max_y: 0.7
+    self_filter_min_z: -0.9
+    self_filter_max_z: 0.2
+    enable_global_map: true
+    global_map_storage_path: ~/.ros/elevation_mapping_cupy/global_tiles.sqlite3
+    global_map_resume_from_disk: false
+    global_map_view_length_x: 30.0
+    global_map_view_length_y: 30.0
+    global_map_view_follow_robot: false
+    global_map_async_fusion: true
+    global_map_snapshot_buffer_count: 3
+    global_map_fusion_variance_floor: 0.0025
+    global_map_fusion_variance_ceiling: 4.0
+    global_map_outlier_sigma: 3.0
+    global_map_max_height_jump: 0.3
+    enable_builtin_traversability: false
+    enable_global_map_local_view: true
+    global_map_local_topic: /elevation_mapping_node/elevation_map_global_local
+    global_map_local_length_x: 10.0
+    global_map_local_length_y: 10.0
+    global_map_local_publish_fps: 20.0
+    subscribers:
+      lidar:
+        topic_name: /rslidar_points
+        data_type: pointcloud
+    publishers:
+      elevation_map_raw:
+        layers:
+        - elevation
+        - variance
+        - time
+        basic_layers:
+        - elevation
+        fps: 10.0
+      elevation_map_filter:
+        layers:
+        - min_filter
+        - smooth
+        - near_base_filtered
+        - despiked
+        - inpaint
+        - elevation
+        basic_layers:
+        - min_filter
+        - smooth
+        - near_base_filtered
+        - despiked
+        - inpaint
+        fps: 10.0
+    resolution: 0.04
+    map_length: 11.64

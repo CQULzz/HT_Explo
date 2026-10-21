@@ -1,0 +1,41 @@
+/**:
+  ros__parameters:
+    # Real vehicle branch: original TARE decides order; HT routes each waypoint.
+    ht_enabled: true
+    ht_exploration_mode: tare_waypoint
+    ht_directions_calibrated: false  # Sensor extrinsics are confirmed; HT direction validation is a separate task.
+    ht_topic: /ht_real/traversability
+    ht_min_probability: 0.5
+    ht_score_semantics: configuration
+    ht_map_timeout: 1.0
+    ht_sample_step: 0.02
+    ht_lookahead_distance: 2.0
+    ht_waypoint_reached_distance: 0.3
+    ht_validity_radius: 0.6
+    ht_require_reversible_motion: false
+    ht_heading_offset: 0.0
+    ht_channel_order: [0, 1, 2, 3, 4, 5, 6, 7]
+    ht_startup_radius: 0.0  # Hardware does not inherit the simulation's assumed free1.2m startup disk.
+    ht_startup_duration: 30.0
+    ht_unknown_policy: strict
+    xytheta_cell: 0.3
+    xytheta_headings: 32
+    xytheta_turn_angles_deg: [11.25, 22.5]
+    xytheta_heading_margin: 0.0
+    xytheta_drive_step: 0.4
+    xytheta_goal_radius: 0.35
+    xytheta_max_radius: 7.0
+    xytheta_search_seconds: 0.15
+    xytheta_cycle_search_seconds: 0.35
+    xytheta_max_expansions: 8000
+    ht_fallback_speed: 0.2
+    ht_fallback_lookahead: 0.5
+    ht_fallback_max_seconds: 60.0
+    ht_fallback_max_distance: 10.0
+    mission_normal_speed: 0.5
+    mission_sensor_timeout: 1.0
+    scan_pose_max_skew: 0.05
+    mission_home_radius: 0.5
+    mission_home_dwell: 1.0
+    odometry_child_frame: base_link
+    kAutoStart: false

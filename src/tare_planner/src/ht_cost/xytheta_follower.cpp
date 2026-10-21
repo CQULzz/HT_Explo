@@ -36,6 +36,8 @@ class XYThetaFollower : public rclcpp::Node {
     const auto odometry_topic=declare_parameter<std::string>("odometry_topic","/state_estimation");
     const auto registered_scan_topic=declare_parameter<std::string>("registered_scan_topic","/registered_scan");
     const auto command_topic=declare_parameter<std::string>("command_topic","/cmd_vel");
+    command_frame_=declare_parameter<std::string>("command_frame","vehicle");
+    if(command_frame_.empty())throw std::invalid_argument("Empty command frame");
     expected_child_=declare_parameter<std::string>("odometry_child_frame","");
     max_speed_=declare_parameter<double>("max_speed",0.5);
     max_reverse_=declare_parameter<double>("max_reverse",0.25);
@@ -193,7 +195,7 @@ class XYThetaFollower : public rclcpp::Node {
     if(last_ros_tick_>=0 && now_s<last_ros_tick_-1e-6)input_fault_="CLOCK_RESET_RESTART_REQUIRED";
     last_ros_tick_=now_s;
     geometry_msgs::msg::TwistStamped cmd;
-    cmd.header.stamp=now();cmd.header.frame_id="vehicle";
+    cmd.header.stamp=now();cmd.header.frame_id=command_frame_;
     auto fresh=[&](double stamp,double limit) {return stamp>0 && now_s>=stamp && now_s-stamp<limit;};
     auto status=[&](const std::string& reason) {
       std_msgs::msg::String s;s.data=reason;status_pub_->publish(s);
@@ -366,7 +368,7 @@ class XYThetaFollower : public rclcpp::Node {
   double command_blocked_since_=-1;
   ht_cost_ns::InputPoseBuffer odom_history_;
   ht_cost_ns::CommandInterval command_interval_;
-  std::string expected_child_,input_fault_;
+  std::string expected_child_,input_fault_,command_frame_;
   double last_ros_tick_=-1;
   std_msgs::msg::Header path_header_;
   bool permitted_=false;

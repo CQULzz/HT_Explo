@@ -1,3 +1,9 @@
+实车分支补充（2026-10-22，优先于后文历史记录）
+当前分支 real/scout-helios32，独立工作目录 /home/lzz/my test/HT_Explo-scout-real。先读 docs/real_vehicle/SCOUT.md 与 validation/real_vehicle_scout_2026-10-22/REPORT.md。
+外参来源 eletranskit_scout@cf0b73d；用户确认FP_POI同位与0.1162m支架高度已实车核验。本分支转换到map/base_link，点云用原时间戳TF和LiDAR外参；只做过离线检查，未启动设备、仿真或车辆。
+本分支是实车专用配置/输入桥接，不回写main/develop。独立build_real/install_real；无跨工作区source。外部mapper需本分支mapper_for_ht.yaml，原生0.04m、291格、time年龄层。点云仅整帧刚性配准，不是逐点去畸变。底盘命令接口与HT方向校准未验收，跟踪器默认关闭，命令为/ht_real/cmd_vel_stamped。
+以下保留项目早期交接记录，不应作为当前实车通过证明：
+
 HT_Explo 项目交接文档
 阶段48校园配对完成：原TARE/HT各完整600秒，源代码设施f7fd77b66fc442752599ead359e8aa60e7773ae4，HT导航仍07c1abd；状态COMPLETED_WITH_ISSUES，失败检查{'original': ['no_child_lifecycle_exception'], 'ht': ['normal_acceleration']}。- 原TARE同运动上限：600秒、223.53m、17048.250m³，末任务EXPLORING，最长零运动指令区间0.500s。 - 当前HT＋原TARE决策：600秒、218.28m、17722.250m³，末任务EXPLORING，最长零运动指令区间0.950s。 图表、真实相机、实际RViz回放、参数与完整数据均发布，见docs/results/ht_tare_campus_matched_10min_2026-10-21/REPORT.md及docs/experiments/publications/stage48.json。仅此组campus，不自动修导航或开新候选。
 

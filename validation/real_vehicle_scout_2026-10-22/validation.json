@@ -1,0 +1,46 @@
+{
+  "branch": "real/scout-helios32",
+  "base_commit": "8b10207a705d73a00c830872570eabf61748ada5",
+  "hardware_python_tests_passed": 29,
+  "ctest_targets_passed": 6,
+  "gtest_passed": 80,
+  "gtest_skipped": 4,
+  "tare_original_function_bodies_equal": 6,
+  "source_and_derived_calibration_verified": true,
+  "native_map_to_actual_ht_model_integration_test": true,
+  "launch_static_validation_started_processes": 0,
+  "independent_install_prefixes": [
+    "/home/lzz/my test/HT_Explo-scout-real/install_real/tare_planner",
+    "/home/lzz/my test/HT_Explo-scout-real/install_real/ht_scout_bridge"
+  ],
+  "source_file_sha256": {
+    "scripts/build_real_scout.sh": "bea31c027dca815f9755bbb353cb6bffbde00e14ad7ab6fac83d331bb409d43d",
+    "src/ht_scout_bridge/config/ht_real.yaml": "1df265b6b4f75bf083cb1dc406642fbaca9ad73c98ab525e023413faf55a1ca9",
+    "src/ht_scout_bridge/config/mapper_for_ht.yaml": "4d5b6c261715b9c802e0c1d8917653ed014d6de62b29f31a835a1de9862e993a",
+    "src/ht_scout_bridge/config/scout_extrinsics.yaml": "d911af6f9a0527daa9466ec9c4a8a163383023bbbcf949cdd32e4e33e6209ed2",
+    "src/ht_scout_bridge/config/tare_scout.yaml": "3dfce6c2b59ab5a1a5ebdb48fb13229ba0b96de508573ed069c7bc2fad064a7e",
+    "src/ht_scout_bridge/ht_scout_bridge/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "src/ht_scout_bridge/ht_scout_bridge/geometry.py": "5ed87112acbc67866955859d17a74734b2fc8d05c369c948af32f028e28f73d6",
+    "src/ht_scout_bridge/ht_scout_bridge/node.py": "5399d2402c56bf0ac95436f72a0c9f21deaa9923adf49e0bbd969fabe3162e79",
+    "src/ht_scout_bridge/launch/scout_real.launch.py": "3842941b44c64381c0e5cc15e47fa91eba58ce5ccf2d73e32c4ad1ccb2e195ad",
+    "src/ht_scout_bridge/package.xml": "bce6f5a6ccc94d4591ae6d8b119a9b1ca16aa66229b4580cdef95bc9546af44d",
+    "src/ht_scout_bridge/setup.cfg": "9591fc73ebeb2feca68c91c55be8ff066a0ec4fc9392a2a3e674c18f25fcd684",
+    "src/ht_scout_bridge/setup.py": "ee9947d9e2828717f85d8c3de18e051d41132a6e73035f3e20242e6834ddd0f9",
+    "src/ht_scout_bridge/test/test_geometry.py": "2f13da07da8b57dfc42446280254d0ff8eb7ad5b2a0d2d8f1b31a8ca990ff24b",
+    "src/ht_scout_bridge/test/test_node.py": "60e25c74e5b2500381faa6bae9a3cd5ce7928f9b04fdbe5d3d57fa644ec73f3e",
+    "src/tare_planner/src/ht_cost/xytheta_follower.cpp": "c4f1a53588e01745abc46570e24b3a1f2bcde0675fe905288406dbd9cc53874c"
+  },
+  "remaining_device_navigation_simulator_processes": [],
+  "hardware_run_performed": false,
+  "simulation_run_performed": false,
+  "controller_interface_verified": false,
+  "ht_direction_calibration_verified": false,
+  "notes": [
+    "Native0.04m291cells configured upstream; no map resizing or all-zero age layer.",
+    "Point cloud registration is rigid per scan; no new per-point motion deskew.",
+    "Isolated ROS domain231 offline tests only; no chassis output.",
+    "Four historical captured-map tests still lack their fixtures."
+  ],
+  "runtime_navigation_channels_isolated_under": "/ht_real",
+  "installed_launch_arguments_available": true
+}

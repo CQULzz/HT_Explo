@@ -1,0 +1,65 @@
+{
+  "passed": true,
+  "processes_started": 0,
+  "nodes": [
+    {
+      "executable": "scout_inputs",
+      "enabled": true,
+      "parameters": {
+        "calibration_file": "/home/lzz/my test/HT_Explo-scout-real/src/ht_scout_bridge/config/scout_extrinsics.yaml",
+        "odometry_topic": "/fixposition/odometry_enu",
+        "cloud_topic": "/rslidar_points",
+        "elevation_topic": "/elevation_mapping_node/elevation_map_raw",
+        "source_age_layer": "time",
+        "use_sim_time": false
+      },
+      "parameter_files": []
+    },
+    {
+      "executable": "cupy_to_ht.py",
+      "enabled": true,
+      "parameters": {
+        "use_sim_time": false,
+        "odometry_child_frame": "base_link",
+        "ht_topic": "/ht_real/traversability",
+        "surface_odometry_topic": "/ht_real/odometry",
+        "elevation_topic": "/ht_real/elevation_raw",
+        "surface_sensor_ground_offset_m": 0.23479
+      },
+      "parameter_files": []
+    },
+    {
+      "executable": "tare_planner_node",
+      "enabled": true,
+      "parameters": {
+        "use_sim_time": false,
+        "odometry_child_frame": "base_link",
+        "ht_topic": "/ht_real/traversability",
+        "sub_state_estimation_topic_": "/ht_real/odometry",
+        "sub_registered_scan_topic_": "/ht_real/registered_scan"
+      },
+      "parameter_files": [
+        "/home/lzz/my test/HT_Explo-scout-real/src/ht_scout_bridge/config/tare_scout.yaml",
+        "/home/lzz/my test/HT_Explo-scout-real/src/ht_scout_bridge/config/ht_real.yaml"
+      ]
+    },
+    {
+      "executable": "xytheta_follower",
+      "enabled": false,
+      "parameters": {
+        "use_sim_time": false,
+        "odometry_child_frame": "base_link",
+        "ht_topic": "/ht_real/traversability",
+        "odometry_topic": "/ht_real/odometry",
+        "registered_scan_topic": "/ht_real/registered_scan",
+        "command_topic": "/ht_real/cmd_vel_stamped",
+        "command_frame": "base_link"
+      },
+      "parameter_files": [
+        "/home/lzz/my test/HT_Explo-scout-real/src/ht_scout_bridge/config/ht_real.yaml"
+      ]
+    }
+  ],
+  "native_grid_cells": 291,
+  "native_resolution_m": 0.04
+}

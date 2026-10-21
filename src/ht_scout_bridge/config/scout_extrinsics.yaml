@@ -1,0 +1,74 @@
+# Source sensor extrinsics and existing LiDAR self-filter, user-confirmed2026-10-22.
+source:
+  repository: CQULzz/eletranskit_scout
+  commit: cf0b73d7d01b4b6a2718c7ff3124f4b7a3368c36
+  files:
+  - src/ele_scout_kit/urdf/scout_sensor_rack.urdf.xacro
+  - src/ele_scout_kit/launch/real_car.launch.py
+  user_confirmed_on: '2026-10-22'
+  poi_coincident_with_fixposition_link_confirmed: true
+  rack_contact_height_confirmed: true
+frames:
+  world: map
+  source_world: FP_ENU0
+  poi: FP_POI
+  vehicle: base_link
+  lidar: rslidar
+transforms:
+  poi_to_base_footprint:
+    xyz:
+    - -0.2005158179045505
+    - 0.0
+    - -0.65899
+    rpy:
+    - 0.0
+    - 0.0
+    - 0.0
+  base_footprint_to_base_link:
+    xyz:
+    - 0.0
+    - 0.0
+    - 0.23479
+    rpy:
+    - 0.0
+    - 0.0
+    - 0.0
+  base_link_to_sensor_kit:
+    xyz:
+    - 0.1725
+    - 0.0
+    - 0.1162
+    rpy:
+    - 0.0
+    - 0.0
+    - 0.0
+  sensor_kit_to_helios:
+    xyz:
+    - 0.0
+    - 0.0
+    - 0.434
+    rpy:
+    - 0.0
+    - 0.0
+    - 0.0
+  helios_to_lidar:
+    xyz:
+    - 0.0
+    - 0.0
+    - 0.0
+    rpy:
+    - 0.0
+    - 0.0
+    - 0.0
+lidar_self_filter:
+  enabled: true
+  min_xyz:
+  - -1.0
+  - -0.7
+  - -0.9
+  max_xyz:
+  - 0.2
+  - 0.7
+  - 0.2
+  source: src/ele_scout_kit/config/elevation_mapping_real_car.yaml; expressed in rslidar
+    frame

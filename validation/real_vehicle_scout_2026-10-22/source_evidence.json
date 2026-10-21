@@ -1,0 +1,37 @@
+{
+  "source_repository": "CQULzz/eletranskit_scout",
+  "source_commit": "cf0b73d7d01b4b6a2718c7ff3124f4b7a3368c36",
+  "source_file_sha256": {
+    "src/ele_scout_kit/urdf/scout_sensor_rack.urdf.xacro": "f02ef732ada922d587b9e59810f83e382cbc313af4916271072f2d872b600e30",
+    "src/ele_scout_kit/launch/real_car.launch.py": "524d52151b5a56b8c62f8c866b97863734fa755c3729db0e1176be37f64d9b56",
+    "src/ele_scout_kit/config/elevation_mapping_real_car.yaml": "2067799636f899c389ba1ca71b02a9b9730554b687123d229b026f69ec96c5e6",
+    "src/ele_scout_kit/config/ht_traversability_real_car.yaml": "36c4e8f07dd2353191a7f04e19507dbcbf3ca0ceaed4bec4ab52fa78fa5131fe",
+    "src/vendor/elevation/elevation_mapping_cupy/elevation_mapping_cupy/parameter.py": "54251c0e11815f5c1bdad5797e496e7c38e82d640dcae2d12a42b0307b4bf699",
+    "src/vendor/elevation/elevation_mapping_cupy/elevation_mapping_cupy/elevation_mapping.py": "cb69ad4e4c4b90a6da5e2eff2f32d113efce3e9b4bca46ac79af7ded4d7228e6",
+    "src/vendor/elevation/elevation_mapping_cupy/elevation_mapping_cupy/elevation_mapping_node.py": "6f8ba24ffaff86c9ef54ccf42064f39d5f1fa2076a1039140fe63484778d2d9a"
+  },
+  "source_confirmed_by_user_on": "2026-10-22",
+  "confirmation": "FP_POI coincides with fixposition_link; rack z0.1162 physically verified by user. No new physical measurement in this task.",
+  "derived_poi_from_base_link_xyz_m": [
+    -0.2005158179045505,
+    0.0,
+    -0.42419999999999997
+  ],
+  "derived_poi_from_lidar_xyz_m": [
+    -0.028015817904550516,
+    0.0,
+    0.12600000000000006
+  ],
+  "derived_base_link_from_lidar_xyz_m": [
+    0.1725,
+    0.0,
+    0.5502
+  ],
+  "urdf_chain_matches_profile": true,
+  "self_filter_matches_source": true,
+  "native_input_cells": 291,
+  "resolution_m": 0.04,
+  "output_cells": 241,
+  "output_length_m": 9.64,
+  "age_layer_semantics": "Mapper-maintained time layer in seconds; timer adds time_interval, not a newly invented per-cell hardware clock."
+}

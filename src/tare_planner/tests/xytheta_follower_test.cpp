@@ -36,6 +36,7 @@ class FollowerTest : public ::testing::Test {
     if (!rclcpp::ok()) rclcpp::init(0,nullptr);
     follower=std::make_shared<XYThetaFollower>(rclcpp::NodeOptions().parameter_overrides({
       rclcpp::Parameter("command_topic","/offline_test/cmd_vel"),
+      rclcpp::Parameter("command_frame","base_link"),
       rclcpp::Parameter("ht_enabled",true),rclcpp::Parameter("ht_directions_calibrated",true),
       rclcpp::Parameter("ht_require_reversible_motion",true),
       rclcpp::Parameter("ht_score_semantics",scoreSemantics()),
@@ -295,4 +296,9 @@ TEST(FollowerClock, ClockRollbackLatchesStopEvenAfterClockRecovers) {
   ASSERT_EQ(rcl_set_ros_time_override(clock,11000000000LL),RCL_RET_OK);
   spin();EXPECT_EQ(reason,"CLOCK_RESET_RESTART_REQUIRED");
   executor.remove_node(follower);executor.remove_node(source);
+}
+
+TEST_F(FollowerTest, HardwareCommandNamesTheActualVehicleReferenceFrame) {
+  spin(150ms);ASSERT_FALSE(received_commands.empty());
+  EXPECT_EQ(received_commands.back().header.frame_id,"base_link");
 }
