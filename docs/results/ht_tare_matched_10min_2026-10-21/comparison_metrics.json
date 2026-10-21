@@ -1,0 +1,200 @@
+{
+  "original": {
+    "external": {
+      "scan_selection": "source_second",
+      "observed_free_volume_m3": 4116.125,
+      "processed_volume_scans": 600,
+      "skipped_volume_scans": 0,
+      "recorded_scans_in_source_time_window": 600,
+      "sensor_position_source": "nearest sensor-frame state_estimation (common to both systems)",
+      "pose_time_offset_max_s": 0.005494594573974609,
+      "command_samples": 11930,
+      "fully_stopped_fraction": 0.0032690695725062866,
+      "stationary_turn_fraction": 0.013411567476948869,
+      "reverse_command_fraction": 0.6632858340318525,
+      "max_abs_linear_command_mps": 0.4999997019767761,
+      "max_abs_yaw_command_rps": 0.8,
+      "longest_zero_command_s": 1.5998976707458497,
+      "follower_status_samples": {},
+      "longest_no_translation_command_s": 3.00009446144104,
+      "last_translation_s": 600.002,
+      "distance_last60_m": 14.090499999999963
+    },
+    "summary": {
+      "duration_s": 600.0,
+      "startup_wait_s": 4.64,
+      "sample_count": 1201,
+      "odom_count": 119555,
+      "cmd_count": 11983,
+      "waypoint_count": 597,
+      "path_count": 2978,
+      "registered_scans": 2995,
+      "scan_gap_max_s": 0.8065297599969199,
+      "distance_m": 188.19,
+      "net_displacement_m": 16.16,
+      "visited_1m_xy_cells": 164,
+      "mean_odom_speed_mps": 0.3144379683597002,
+      "moving_fraction": 0.9758534554537885,
+      "zero_cmd_fraction": 0.019182652210175146,
+      "forward_cmd_fraction": 0.31442869057547956,
+      "reverse_cmd_fraction": 0.6630525437864887,
+      "median_waypoint_distance_m": 7.885,
+      "short_path_fraction": 0.002514668901927913,
+      "planner_runtime_median_s": 0.14900000393390656,
+      "planner_runtime_p95_s": 0.25600001215934753,
+      "planner_runtime_max_s": 0.3109999895095825,
+      "planner_runtime_count": 597,
+      "exploration_finished": false,
+      "ht_status_callbacks": {},
+      "ht_map_count": 0,
+      "ht_map_gap_max_s": null,
+      "ht_map_age_max_s": null,
+      "start_pose_xyyaw": [
+        0.0,
+        0.0,
+        5.294026764109325e-23
+      ],
+      "measurement_origin": "first TARE /runtime after odometry and registered scan",
+      "registered_scans_total_in_window": 2995
+    },
+    "motion": {
+      "final": {
+        "samples": 11930,
+        "max_forward_mps": 0.4999997019767761,
+        "min_linear_mps": -0.25,
+        "max_abs_yaw_rps": 0.8
+      },
+      "native_raw": {
+        "samples": 29807,
+        "max_forward_mps": 0.4999997019767761,
+        "min_linear_mps": -0.49999964237213135,
+        "max_abs_yaw_rps": 0.800000011920929
+      },
+      "cap_passed": true,
+      "normal_acceleration_excess_count": 0,
+      "immediate_zero_transition_count": 0,
+      "scope": "Source header time; normal acceleration tolerance0.005 per step; explicit all-zero stops exempt. Different trackers/geometry remain."
+    },
+    "checks": {
+      "timer_completed": true,
+      "measured600s": true,
+      "enough_samples": true,
+      "source_hashes_unchanged": true,
+      "no_parent_failure": true,
+      "no_live_descendants": true,
+      "no_forced_shutdown": true,
+      "video_decodes": true,
+      "video_duration": true,
+      "motion_caps": true,
+      "normal_acceleration": true,
+      "upstream_tracked_unchanged": true,
+      "no_child_lifecycle_exception": false,
+      "no_in_measurement_exception_detected": true
+    },
+    "mission": "EXPLORING"
+  },
+  "ht": {
+    "external": {
+      "scan_selection": "source_second",
+      "observed_free_volume_m3": 5027.125,
+      "processed_volume_scans": 600,
+      "skipped_volume_scans": 0,
+      "recorded_scans_in_source_time_window": 600,
+      "sensor_position_source": "nearest sensor-frame state_estimation (common to both systems)",
+      "pose_time_offset_max_s": 2.384185791015625e-07,
+      "command_samples": 12000,
+      "fully_stopped_fraction": 0.06616666666666667,
+      "stationary_turn_fraction": 0.14883333333333335,
+      "reverse_command_fraction": 0.0069166666666666664,
+      "max_abs_linear_command_mps": 0.5,
+      "max_abs_yaw_command_rps": 0.8,
+      "longest_zero_command_s": 6.39993052482605,
+      "follower_status_samples": {
+        "TURNING": 1786,
+        "ALIGNING": 112,
+        "DRIVING": 9420,
+        "HT_PATH_BLOCKED": 111,
+        "EMPTY_PATH": 328,
+        "HT_COMMAND_BLOCKED": 87,
+        "GOAL_REACHED": 20,
+        "PLANNER_HOLD": 136
+      },
+      "longest_no_translation_command_s": 7.250007915496826,
+      "last_translation_s": 600.004,
+      "distance_last60_m": 11.123999999999995
+    },
+    "summary": {
+      "duration_s": 600.0,
+      "startup_wait_s": 4.68,
+      "sample_count": 1201,
+      "odom_count": 119380,
+      "cmd_count": 12000,
+      "waypoint_count": 600,
+      "path_count": 552,
+      "registered_scans": 2992,
+      "scan_gap_max_s": 0.2805244980045245,
+      "distance_m": 190.53,
+      "net_displacement_m": 73.77,
+      "visited_1m_xy_cells": 199,
+      "mean_odom_speed_mps": 0.3188592839300583,
+      "moving_fraction": 0.7435470441298918,
+      "zero_cmd_fraction": 0.21149042464612822,
+      "forward_cmd_fraction": 0.736053288925895,
+      "reverse_cmd_fraction": 0.00749375520399667,
+      "median_waypoint_distance_m": 7.648,
+      "short_path_fraction": 0.09242298084929226,
+      "planner_runtime_median_s": 0.6159999966621399,
+      "planner_runtime_p95_s": 1.2009999752044678,
+      "planner_runtime_max_s": 1.8079999685287476,
+      "planner_runtime_count": 533,
+      "exploration_finished": false,
+      "ht_status_callbacks": {
+        "HT_ASSISTED": 1119,
+        "NO_EXECUTABLE_ROUTE": 14
+      },
+      "ht_map_count": 1172,
+      "ht_map_gap_max_s": 1.4120661130000371,
+      "ht_map_age_max_s": 1.338722621684448,
+      "start_pose_xyyaw": [
+        0.0,
+        0.0,
+        -0.0014999998966231942
+      ],
+      "measurement_origin": "first TARE /runtime after odometry and registered scan",
+      "registered_scans_total_in_window": 2992
+    },
+    "motion": {
+      "final": {
+        "samples": 12000,
+        "max_forward_mps": 0.5,
+        "min_linear_mps": -0.25,
+        "max_abs_yaw_rps": 0.8
+      },
+      "native_raw": {
+        "samples": 0
+      },
+      "cap_passed": true,
+      "normal_acceleration_excess_count": 0,
+      "immediate_zero_transition_count": 85,
+      "scope": "Source header time; normal acceleration tolerance0.005 per step; explicit all-zero stops exempt. Different trackers/geometry remain."
+    },
+    "checks": {
+      "timer_completed": true,
+      "measured600s": true,
+      "enough_samples": true,
+      "source_hashes_unchanged": true,
+      "no_parent_failure": true,
+      "no_live_descendants": true,
+      "no_forced_shutdown": true,
+      "video_decodes": true,
+      "video_duration": true,
+      "motion_caps": true,
+      "normal_acceleration": true,
+      "cmu_terrain_isolated": true,
+      "ht_model_threads_bounded": true,
+      "no_child_lifecycle_exception": true,
+      "no_in_measurement_exception_detected": true
+    },
+    "mission": "EXPLORING"
+  }
+}

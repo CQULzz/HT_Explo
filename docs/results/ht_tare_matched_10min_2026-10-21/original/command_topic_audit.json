@@ -1,0 +1,24 @@
+{
+  "/cmd_vel": [
+    {
+      "node": "comparison_motion_limiter",
+      "namespace": "/",
+      "type": "geometry_msgs/msg/TwistStamped"
+    }
+  ],
+  "/comparison/tare_raw_cmd_vel": [
+    {
+      "node": "pathFollower",
+      "namespace": "/",
+      "type": "geometry_msgs/msg/TwistStamped"
+    }
+  ],
+  "/terrain_map": [
+    {
+      "node": "terrainAnalysis",
+      "namespace": "/",
+      "type": "sensor_msgs/msg/PointCloud2"
+    }
+  ],
+  "/ht_traversability/global_local": []
+}

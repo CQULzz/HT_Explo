@@ -1,0 +1,51 @@
+/localPlanner:
+  ros__parameters:
+    adjacentRange: 4.25
+    autonomyMode: true
+    autonomySpeed: 0.5
+    checkObstacle: true
+    checkRotObstacle: false
+    costHeightThre: 0.1
+    costScore: 0.02
+    dirThre: 90.0
+    dirToVehicle: false
+    dirWeight: 0.02
+    goalClearRange: 0.5
+    goalX: 0.0
+    goalY: 0.0
+    groundHeightThre: 0.1
+    joyToCheckObstacleDelay: 5.0
+    joyToSpeedDelay: 2.0
+    laserVoxelSize: 0.05
+    maxRelZ: 0.25
+    maxSpeed: 2.0
+    minPathRange: 1.0
+    minPathScale: 0.75
+    minRelZ: -0.5
+    obstacleHeightThre: 0.2
+    pathCropByGoal: true
+    pathFolder: /home/lzz/my test/autonomous_exploration_development_environment/install/local_planner/share/local_planner/paths
+    pathRangeBySpeed: true
+    pathRangeStep: 0.5
+    pathScale: 1.25
+    pathScaleBySpeed: true
+    pathScaleStep: 0.25
+    pointPerPathThre: 2
+    qos_overrides:
+      /parameter_events:
+        publisher:
+          depth: 1000
+          durability: volatile
+          history: keep_last
+          reliability: reliable
+    sensorOffsetX: 0.0
+    sensorOffsetY: 0.0
+    start_type_description_service: true
+    terrainVoxelSize: 0.2
+    twoWayDrive: true
+    useCost: false
+    useTerrainAnalysis: true
+    use_sim_time: false
+    vehicleLength: 0.6
+    vehicleWidth: 0.6
+

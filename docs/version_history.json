@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-10-21T13:29:38.655114+08:00",
+  "updated_at": "2026-10-21T17:39:32.223398+08:00",
   "branch": "codex/ht8dir-v1",
-  "status": "阶段46代码、结果和完整已录数据均已远端核验；未复测和剩余问题见报告",
+  "status": "阶段47比较已记录，完整数据正在发布；发布状态以stage47.json为准",
   "latest_archive_commit": "18e1c32",
   "latest_planner_change": "68701319b333165dd9cd5acf8e226ba52c174434",
   "stages": [
@@ -795,6 +795,21 @@
       "evidence": [
         "docs/results/ht_continuous_domain_10min_2026-10-21/REPORT.md"
       ]
+    },
+    {
+      "id": "stage-47",
+      "number": 47,
+      "sha": "1ded85a7b66ad9506bb26b7abe4e1c1def946648",
+      "tag": "ht-stage-20261021-tare-matched",
+      "title": "原TARE与最新HT同运动上限室内600秒对照",
+      "kind": "同运动包络端到端配对",
+      "change": "新增比较设施；HT导航不改；原TARE使用原探索/TSP与显式对齐的控制包络",
+      "features": "独立双600秒/共同观测指标/限幅前后指令/参数与视频",
+      "validation": "- 原TARE同运动上限：600秒、188.19m、4116.125m³，末任务EXPLORING，最长完全停车1.600s。；- 最新HT：600秒、190.53m、5027.125m³，末任务EXPLORING，最长完全停车6.400s。",
+      "known_issues": "原CMU采后SIGINT退出异常；单次端到端对照，网格密度不同；非HT单模块消融",
+      "evidence": [
+        "docs/results/ht_tare_matched_10min_2026-10-21/REPORT.md"
+      ]
     }
   ],
   "historical_commits": [
@@ -1333,6 +1348,6 @@
   "latest_planner_code": "07c1abd334f83cb8d602e2234134b4286862c916",
   "latest_ht_bridge_code": "454efa230fae337cfa8f87b2aa87ee9917040621",
   "latest_verified_trial_code": "07c1abd334f83cb8d602e2234134b4286862c916",
-  "latest_recorded_trial_code": "07c1abd334f83cb8d602e2234134b4286862c916",
+  "latest_recorded_trial_code": "1ded85a7b66ad9506bb26b7abe4e1c1def946648",
   "latest_cupy_node_code": "d6d87878a4e8982e3a4850a5a17f8e1be1608a24"
 }

@@ -1,0 +1,24 @@
+{
+  "/cmd_vel": [
+    {
+      "node": "xytheta_follower",
+      "namespace": "/",
+      "type": "geometry_msgs/msg/TwistStamped"
+    }
+  ],
+  "/terrain_map": [],
+  "/simulation/terrain_map": [
+    {
+      "node": "terrainAnalysis",
+      "namespace": "/",
+      "type": "sensor_msgs/msg/PointCloud2"
+    }
+  ],
+  "/ht_traversability/global_local": [
+    {
+      "node": "cupy_to_ht_bridge",
+      "namespace": "/",
+      "type": "grid_map_msgs/msg/GridMap"
+    }
+  ]
+}

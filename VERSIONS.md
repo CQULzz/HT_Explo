@@ -1,3 +1,9 @@
+# 阶段47：原TARE与最新HT同运动上限对照
+
+[室内各600秒的图表、报告和视频](docs/results/ht_tare_matched_10min_2026-10-21/REPORT.md) · [完整已录数据](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261021-tare-matched)。HT导航保持07c1abd；端到端单次比较，非单模块消融。完整备份以stage47.json为准。
+
+## 前一轮记录
+
 # 阶段46：连续规划范围解耦与室内复测
 
 [同场景对比、报告与视频](docs/results/ht_continuous_domain_10min_2026-10-21/REPORT.md) · [完整已录数据](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261021-continuous-domain)。采集状态RECORDED，末任务EXPLORING；森林/隧道问题未据此宣称解决。完整远端备份以stage46.json为准。

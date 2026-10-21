@@ -1,0 +1,71 @@
+{
+  "git_head": "1ded85a7b66ad9506bb26b7abe4e1c1def946648",
+  "duration_s": 600,
+  "scene": "indoor",
+  "state": "COMPLETED_WITH_ISSUES",
+  "started_at": "2026-10-21T17:07:58.633711+08:00",
+  "runs": [
+    {
+      "scenario": "original",
+      "state": "VALIDATION_FAILED",
+      "runner_pid": 152458,
+      "elapsed_measurement_s": 600.0,
+      "runner_returncode": 0,
+      "checks": {
+        "timer_completed": true,
+        "measured600s": true,
+        "enough_samples": true,
+        "source_hashes_unchanged": true,
+        "no_parent_failure": true,
+        "no_live_descendants": true,
+        "no_forced_shutdown": true,
+        "video_decodes": true,
+        "video_duration": true,
+        "motion_caps": true,
+        "normal_acceleration": true,
+        "upstream_tracked_unchanged": true,
+        "no_child_lifecycle_exception": false,
+        "no_in_measurement_exception_detected": true
+      },
+      "metrics": {
+        "distance_m": 188.19,
+        "observed_free_volume_m3": 4116.125,
+        "mission": "EXPLORING"
+      },
+      "cleanup_scope": "POST_MEASUREMENT_SIGINT_EXCEPTION"
+    },
+    {
+      "scenario": "ht",
+      "state": "RECORDED",
+      "runner_pid": 153822,
+      "elapsed_measurement_s": 599.4665389060974,
+      "runner_returncode": 0,
+      "checks": {
+        "timer_completed": true,
+        "measured600s": true,
+        "enough_samples": true,
+        "source_hashes_unchanged": true,
+        "no_parent_failure": true,
+        "no_live_descendants": true,
+        "no_forced_shutdown": true,
+        "video_decodes": true,
+        "video_duration": true,
+        "motion_caps": true,
+        "normal_acceleration": true,
+        "cmu_terrain_isolated": true,
+        "ht_model_threads_bounded": true,
+        "no_child_lifecycle_exception": true,
+        "no_in_measurement_exception_detected": true
+      },
+      "metrics": {
+        "distance_m": 190.53,
+        "observed_free_volume_m3": 5027.125,
+        "mission": "EXPLORING"
+      },
+      "cleanup_scope": "CLEAN"
+    }
+  ],
+  "updated_at": "2026-10-21T17:28:52.931928+08:00",
+  "finished_at": "2026-10-21T17:28:54.932640+08:00",
+  "final_lifecycle_audit_at": "2026-10-21T17:36:56.850595+08:00"
+}
