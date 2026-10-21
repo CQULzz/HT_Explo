@@ -1,3 +1,11 @@
+2026-10-22本轮仿真复测（优先于下文历史）
+工作树 /home/lzz/my test/HT_Explo-sim-check；分支sim/validation-20261022；冻结e640c0c，算法develop@8b10207；标签ht-sim-20261022-input-contracts。用户重新授权仿真测试和原理报告，未启动任何真实设备；本轮未新增导航修正。
+室内/校园各600秒：室内9.16m/427.25m³，14秒返航、27.6秒COMPLETED；校园221.56m/17181.875m³，末EXPLORING，有53次TIME_LIMIT和8次EXPANSION_LIMIT但可尝试其它前缀。两组地图未过3秒，速度/常规变化率、视频完整解码、正常退出检查通过；133个运行文件哈希未变。
+先读docs/planning/2026-10-22_project_report.pdf和docs/results/ht_sim_check_2026-10-22/REPORT.md。室内13.817秒global_return=1/local_complete=1/global_order_nodes=0，仍有未覆盖96/前沿139；直接触发已确认，为什么没有合格收益视点尚待查，不能把阈值或输入修正当作已证实根因。下一步需检查该时刻前的候选图和覆盖队列，不应先降低HT硬门槛或改TSP掩盖问题。
+Python99通过，CTest6/6，其中GTest79过4历史样本缺失跳过。原始数据presentations/scheduled_results/ht_sim_check_2026-10-22；完整上传以docs/experiments/publications/stage49.json为准，缺回执不能说已上传。main/develop与real/scout-helios32不自动合并本分支。
+旧10-13MCAP在核验53个远端附件及本地逐文件SHA后按已授权保留政策清理22.76GiB，报告/视频/快照保留；legacy_archive/local_pruning_2026-10-22_sim_check.json。该旧目录仅为精简本地副本。
+
+以下是早期交接记录：
 HT_Explo 项目交接文档
 阶段48校园配对完成：原TARE/HT各完整600秒，源代码设施f7fd77b66fc442752599ead359e8aa60e7773ae4，HT导航仍07c1abd；状态COMPLETED_WITH_ISSUES，失败检查{'original': ['no_child_lifecycle_exception'], 'ht': ['normal_acceleration']}。- 原TARE同运动上限：600秒、223.53m、17048.250m³，末任务EXPLORING，最长零运动指令区间0.500s。 - 当前HT＋原TARE决策：600秒、218.28m、17722.250m³，末任务EXPLORING，最长零运动指令区间0.950s。 图表、真实相机、实际RViz回放、参数与完整数据均发布，见docs/results/ht_tare_campus_matched_10min_2026-10-21/REPORT.md及docs/experiments/publications/stage48.json。仅此组campus，不自动修导航或开新候选。
 

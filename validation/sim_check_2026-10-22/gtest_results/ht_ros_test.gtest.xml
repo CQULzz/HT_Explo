@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="31" failures="0" disabled="0" errors="0" time="11.329" timestamp="2026-10-22T03:59:41.951" name="AllTests">
+  <testsuite name="HtConfigurationRosTest" tests="4" failures="0" disabled="0" skipped="0" errors="0" time="1.653" timestamp="2026-10-22T03:59:41.951">
+    <testcase name="NeighbouringVehicleScoresAreNotPointObstacles" file="/home/lzz/my test/HT_Explo-sim-check/src/tare_planner/tests/ht_ros_test.cpp" line="92" status="run" result="completed" time="0.379" timestamp="2026-10-22T03:59:41.951" classname="tare_planner.HtConfigurationRosTest" />
+    <testcase name="MissingBodyObservationsAndUnscoredReferenceStillReject" file="/home/lzz/my test/HT_Explo-sim-check/src/tare_planner/tests/ht_ros_test.cpp" line="107" status="run" result="completed" time="0.363" timestamp="2026-10-22T03:59:42.330" classname="tare_planner.HtConfigurationRosTest" />
+    <testcase name="MissingOrInvalidPhysicalContractCannotEnableDriving" file="/home/lzz/my test/HT_Explo-sim-check/src/tare_planner/tests/ht_ros_test.cpp" line="116" status="run" result="completed" time="0.568" timestamp="2026-10-22T03:59:42.694" classname="tare_planner.HtConfigurationRosTest" />
+    <testcase name="CapturedMixedTurnStopHasAnExitWithoutInflatingVehicleScores" file="/home/lzz/my test/HT_Explo-sim-check/src/tare_planner/tests/ht_ros_test.cpp" line="123" status="run" result="completed" time="0.342" timestamp="2026-10-22T03:59:43.262" classname="tare_planner.HtConfigurationRosTest" />
+  </testsuite>
+  <testsuite name="HtRosTest" tests="21" failures="0" disabled="0" skipped="4" errors="0" time="7.282" timestamp="2026-10-22T03:59:43.605">
+    <testcase name="DirectionalCostsAndValidSupport" file="/home/lzz/my test/HT_Explo-sim-check/src/tare_planner/tests/ht_ros_test.cpp" line="145" status="run" result="completed" time="0.26" timestamp="2026-10-22T03:59:43.605" classname="tare_planner.HtRosTest" />
+    <testcase name="CircularBufferPreservesSpatialCells" file="/home/lzz/my test/HT_Explo-sim-check/src/tare_planner/tests/ht_ros_test.cpp" line="156" status="run" result="completed" time="0.262" timestamp="2026-10-22T03:59:43.865" classname="tare_planner.HtRosTest" />
+    <testcase name="OffCenterHazardIsHardBlockedAtPlanningAndExecution" file="/home/lzz/my test/HT_Explo-sim-check/src/tare_planner/tests/ht_ros_test.cpp" line="172" status="run" result="completed" time="0.261" timestamp="2026-10-22T03:59:44.127" classname="tare_planner.HtRosTest" />
+    <testcase name="SeparatePhysicalObservationDoesNotInflateContextTwice" file="/home/lzz/my test/HT_Explo-sim-check/src/tare_planner/tests/ht_ros_test.cpp" line="186" status="run" result="completed" time="0.569" timestamp="2026-10-22T03:59:44.388" classname="tare_planner.HtRosTest" />
+    <testcase name="CapturedTunnelReturnKeepsRiskThresholdAndReachesHome" file="/home/lzz/my test/HT_Explo-sim-check/src/tare_planner/tests/ht_ros_test.cpp" line="209" status="run" result="skipped" time="0.157" timestamp="2026-10-22T03:59:44.957" classname="tare_planner.HtRosTest">
+      <skipped message="/home/lzz/my test/HT_Explo-sim-check/src/tare_planner/tests/ht_ros_test.cpp:211&#x0A;Set HT_TUNNEL_FIXTURE using export_ht_tunnel_fixture.py&#x0A;"><![CDATA[/home/lzz/my test/HT_Explo-sim-check/src/tare_planner/tests/ht_ros_test.cpp:211
+Set HT_TUNNEL_FIXTURE using export_ht_tunnel_fixture.py
+]]></skipped>
+    </testcase>
+    <testcase name="CapturedMapSearchResolutionAudit" file="/home/lzz/my test/HT_Explo-sim-check/src/tare_planner/tests/ht_ros_test.cpp" line="242" status="run" result="skipped" time="0.157" timestamp="2026-10-22T03:59:45.115" classname="tare_planner.HtRosTest">
+      <skipped message="/home/lzz/my test/HT_Explo-sim-check/src/tare_planner/tests/ht_ros_test.cpp:244&#x0A;Set HT_STUCK_FIXTURE to audit a captured stop&#x0A;"><![CDATA[/home/lzz/my test/HT_Explo-sim-check/src/tare_planner/tests/ht_ros_test.cpp:244
+Set HT_STUCK_FIXTURE to audit a captured stop
+]]></skipped>
+    </testcase>
+    <testcase name="CapturedSafeRootNeedsFinerHeadingSearchToEscape" file="/home/lzz/my test/HT_Explo-sim-check/src/tare_planner/tests/ht_ros_test.cpp" line="282" status="run" result="skipped" time="0.156" timestamp="2026-10-22T03:59:45.272" classname="tare_planner.HtRosTest">
+      <skipped message="/home/lzz/my test/HT_Explo-sim-check/src/tare_planner/tests/ht_ros_test.cpp:284&#x0A;Set HT_FINE_ESCAPE_FIXTURE to the zero-command-only stopped map&#x0A;"><![CDATA[/home/lzz/my test/HT_Explo-sim-check/src/tare_planner/tests/ht_ros_test.cpp:284
+Set HT_FINE_ESCAPE_FIXTURE to the zero-command-only stopped map
+]]></skipped>
+    </testcase>
+    <testcase name="ReversibleMotionRejectsAOneWayEntranceWithoutChangingRawScores" file="/home/lzz/my test/HT_Explo-sim-check/src/tare_planner/tests/ht_ros_test.cpp" line="304" status="run" result="completed" time="0.616" timestamp="2026-10-22T03:59:45.429" classname="tare_planner.HtRosTest" />
+    <testcase name="CapturedHeadingBoundaryHasPlanningReserveWithoutRelaxingMeasuredRoot" file="/home/lzz/my test/HT_Explo-sim-check/src/tare_planner/tests/ht_ros_test.cpp" line="343" status="run" result="skipped" time="0.157" timestamp="2026-10-22T03:59:46.045" classname="tare_planner.HtRosTest">
+      <skipped message="/home/lzz/my test/HT_Explo-sim-check/src/tare_planner/tests/ht_ros_test.cpp:345&#x0A;Set HT_BOUNDARY_FIXTURE to the recorded84.262s crossing&#x0A;"><![CDATA[/home/lzz/my test/HT_Explo-sim-check/src/tare_planner/tests/ht_ros_test.cpp:345
+Set HT_BOUNDARY_FIXTURE to the recorded84.262s crossing
+]]></skipped>
+    </testcase>
+    <testcase name="RotatedTranslatedFrameRotatesChannels" file="/home/lzz/my test/HT_Explo-sim-check/src/tare_planner/tests/ht_ros_test.cpp" line="365" status="run" result="completed" time="0.513" timestamp="2026-10-22T03:59:46.202" classname="tare_planner.HtRosTest" />
+    <testcase name="MissingLayerRevokesPreviousMap" file="/home/lzz/my test/HT_Explo-sim-check/src/tare_planner/tests/ht_ros_test.cpp" line="385" status="run" result="completed" time="0.364" timestamp="2026-10-22T03:59:46.715" classname="tare_planner.HtRosTest" />
+    <testcase name="InvalidProbabilityPreventsExecution" file="/home/lzz/my test/HT_Explo-sim-check/src/tare_planner/tests/ht_ros_test.cpp" line="390" status="run" result="completed" time="0.363" timestamp="2026-10-22T03:59:47.079" classname="tare_planner.HtRosTest" />
+    <testcase name="StaleFutureAndMissingTransformHold" file="/home/lzz/my test/HT_Explo-sim-check/src/tare_planner/tests/ht_ros_test.cpp" line="399" status="run" result="completed" time="0.466" timestamp="2026-10-22T03:59:47.443" classname="tare_planner.HtRosTest" />
+    <testcase name="NonFinitePoseRejected" file="/home/lzz/my test/HT_Explo-sim-check/src/tare_planner/tests/ht_ros_test.cpp" line="409" status="run" result="completed" time="0.26" timestamp="2026-10-22T03:59:47.910" classname="tare_planner.HtRosTest" />
+    <testcase name="MalformedMessagesDoNotEnterUnsafeConverter" file="/home/lzz/my test/HT_Explo-sim-check/src/tare_planner/tests/ht_ros_test.cpp" line="416" status="run" result="completed" time="0.775" timestamp="2026-10-22T03:59:48.170" classname="tare_planner.HtRosTest" />
+    <testcase name="CalibrationRequiredAndParametersChecked" file="/home/lzz/my test/HT_Explo-sim-check/src/tare_planner/tests/ht_ros_test.cpp" line="426" status="run" result="completed" time="0.166" timestamp="2026-10-22T03:59:48.945" classname="tare_planner.HtRosTest" />
+    <testcase name="StartupPriorIsBoundedAndDoesNotOverwriteObservedRisk" file="/home/lzz/my test/HT_Explo-sim-check/src/tare_planner/tests/ht_ros_test.cpp" line="439" status="run" result="completed" time="0.569" timestamp="2026-10-22T03:59:49.112" classname="tare_planner.HtRosTest" />
+    <testcase name="UnknownAndObservedRiskBothBlockEdges" file="/home/lzz/my test/HT_Explo-sim-check/src/tare_planner/tests/ht_ros_test.cpp" line="460" status="run" result="completed" time="0.261" timestamp="2026-10-22T03:59:49.682" classname="tare_planner.HtRosTest" />
+    <testcase name="StrictPolicyAllowsOnlyKnownOrBoundedStartup" file="/home/lzz/my test/HT_Explo-sim-check/src/tare_planner/tests/ht_ros_test.cpp" line="471" status="run" result="completed" time="0.416" timestamp="2026-10-22T03:59:49.943" classname="tare_planner.HtRosTest" />
+    <testcase name="RecordedGarageUnknownCornerCannotPassAsAnUnsplitEdge" file="/home/lzz/my test/HT_Explo-sim-check/src/tare_planner/tests/ht_ros_test.cpp" line="485" status="run" result="completed" time="0.265" timestamp="2026-10-22T03:59:50.359" classname="tare_planner.HtRosTest" />
+    <testcase name="HeadingSweepChecksIntermediateDirectionsAndWrapsAtPi" file="/home/lzz/my test/HT_Explo-sim-check/src/tare_planner/tests/ht_ros_test.cpp" line="510" status="run" result="completed" time="0.261" timestamp="2026-10-22T03:59:50.625" classname="tare_planner.HtRosTest" />
+  </testsuite>
+  <testsuite name="TareTerrainTest" tests="6" failures="0" disabled="0" skipped="0" errors="0" time="2.393" timestamp="2026-10-22T03:59:50.887">
+    <testcase name="RequiresSameSourceElevationAndUsesAnyHeading" file="/home/lzz/my test/HT_Explo-sim-check/src/tare_planner/tests/ht_ros_test.cpp" line="525" status="run" result="completed" time="0.572" timestamp="2026-10-22T03:59:50.887" classname="tare_planner.TareTerrainTest" />
+    <testcase name="WorldCoordinatesAndHistorySurviveRollingWindow" file="/home/lzz/my test/HT_Explo-sim-check/src/tare_planner/tests/ht_ros_test.cpp" line="542" status="run" result="completed" time="0.365" timestamp="2026-10-22T03:59:51.460" classname="tare_planner.TareTerrainTest" />
+    <testcase name="KnownBodyObstacleRejectsGuidanceAndNewClearObservationRestoresIt" file="/home/lzz/my test/HT_Explo-sim-check/src/tare_planner/tests/ht_ros_test.cpp" line="552" status="run" result="completed" time="0.363" timestamp="2026-10-22T03:59:51.825" classname="tare_planner.TareTerrainTest" />
+    <testcase name="BodyObstacleRejectionSurvivesRollingOutsideCurrentWindow" file="/home/lzz/my test/HT_Explo-sim-check/src/tare_planner/tests/ht_ros_test.cpp" line="567" status="run" result="completed" time="0.363" timestamp="2026-10-22T03:59:52.188" classname="tare_planner.TareTerrainTest" />
+    <testcase name="UnknownBodyObservationsRemainGuidanceButCannotEnableDriving" file="/home/lzz/my test/HT_Explo-sim-check/src/tare_planner/tests/ht_ros_test.cpp" line="579" status="run" result="completed" time="0.26" timestamp="2026-10-22T03:59:52.552" classname="tare_planner.TareTerrainTest" />
+    <testcase name="NewKnownBodyObstacleOverridesUnscoredHistoricalCenter" file="/home/lzz/my test/HT_Explo-sim-check/src/tare_planner/tests/ht_ros_test.cpp" line="592" status="run" result="completed" time="0.467" timestamp="2026-10-22T03:59:52.813" classname="tare_planner.TareTerrainTest" />
+  </testsuite>
+</testsuites>

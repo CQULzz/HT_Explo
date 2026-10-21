@@ -1,0 +1,75 @@
+{
+  "started_at": "2026-10-22T04:01:46.706512+08:00",
+  "duration_s": 600,
+  "git_head": "e640c0c1867fbe9408007c9f7b3e51bb9e66b801",
+  "job": "/home/lzz/my test/HT_Explo-sim-check/presentations/scheduled_results/ht_sim_check_2026-10-22",
+  "state": "COMPLETED",
+  "runs": [
+    {
+      "scenario": "indoor",
+      "state": "RECORDED",
+      "runner_pid": 38693,
+      "watcher_pid": 38694,
+      "elapsed_measurement_s": 598.7,
+      "checks": {
+        "timer_completed": true,
+        "measured_duration_matches": true,
+        "source_hashes_unchanged": true,
+        "enough_samples": true,
+        "no_runtime_parent_failure": true,
+        "no_live_descendants": true,
+        "no_forced_shutdown": true,
+        "video_full_decode_passed": true,
+        "video_duration_matches": true,
+        "video_fps_matches": true,
+        "analysis_passed": true,
+        "no_child_or_cleanup_exception": true,
+        "blas_workers_bounded": true
+      },
+      "video_ok": true,
+      "metrics": {
+        "distance_m": 9.16,
+        "visited_1m_xy_cells": 12,
+        "observed_free_volume_m3": 427.25,
+        "mission": "COMPLETED",
+        "map_age_p95_s": 0.8855430483818054,
+        "map_age_max_s": 0.900641679763794
+      },
+      "finished_at": "2026-10-22T04:12:50.212104+08:00"
+    },
+    {
+      "scenario": "campus",
+      "state": "RECORDED",
+      "runner_pid": 41104,
+      "watcher_pid": 41105,
+      "elapsed_measurement_s": 600,
+      "checks": {
+        "timer_completed": true,
+        "measured_duration_matches": true,
+        "source_hashes_unchanged": true,
+        "enough_samples": true,
+        "no_runtime_parent_failure": true,
+        "no_live_descendants": true,
+        "no_forced_shutdown": true,
+        "video_full_decode_passed": true,
+        "video_duration_matches": true,
+        "video_fps_matches": true,
+        "analysis_passed": true,
+        "no_child_or_cleanup_exception": true,
+        "blas_workers_bounded": true
+      },
+      "video_ok": true,
+      "metrics": {
+        "distance_m": 221.56,
+        "visited_1m_xy_cells": 253,
+        "observed_free_volume_m3": 17181.875,
+        "mission": "EXPLORING",
+        "map_age_p95_s": 0.5734333753585815,
+        "map_age_max_s": 1.5125293731689453
+      },
+      "finished_at": "2026-10-22T04:25:11.724623+08:00"
+    }
+  ],
+  "updated_at": "2026-10-22T04:25:08.462977+08:00",
+  "finished_at": "2026-10-22T04:25:11.724913+08:00"
+}

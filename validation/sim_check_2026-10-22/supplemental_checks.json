@@ -1,0 +1,126 @@
+{
+  "runs": {
+    "indoor": {
+      "delivery": {
+        "exact_source_stamp_checkpoints": 0,
+        "source_stamp_tolerance_s": 0.0001,
+        "count_offset_distribution": {},
+        "constant_offset_in_observed_window": false,
+        "first_checkpoint": null,
+        "last_checkpoint": null,
+        "meaning": "A constant offset supports no net relative input loss between the full-rate external observer and mapper in this matched window. It does not prove the simulator published continuously or that neither subscriber missed the same message."
+      },
+      "nonoverlapping_memory_windows": {
+        "elevation": {
+          "early_120to240_median_rss_mb": 498.67578125,
+          "late_480to600_median_rss_mb": 499.23046875,
+          "difference_mb": 0.5546875
+        },
+        "health": {
+          "early_120to240_median_rss_mb": 291.396484375,
+          "late_480to600_median_rss_mb": 299.80859375,
+          "difference_mb": 8.412109375
+        },
+        "ht_bridge": {
+          "early_120to240_median_rss_mb": 336.103515625,
+          "late_480to600_median_rss_mb": 337.974609375,
+          "difference_mb": 1.87109375
+        },
+        "probe": {
+          "early_120to240_median_rss_mb": 83.552734375,
+          "late_480to600_median_rss_mb": 84.466796875,
+          "difference_mb": 0.9140625
+        },
+        "record": {
+          "early_120to240_median_rss_mb": 89.078125,
+          "late_480to600_median_rss_mb": 91.7890625,
+          "difference_mb": 2.7109375
+        },
+        "sim": {
+          "early_120to240_median_rss_mb": 1474.73828125,
+          "late_480to600_median_rss_mb": 1475.44921875,
+          "difference_mb": 0.7109375
+        },
+        "tare": {
+          "early_120to240_median_rss_mb": 971.5859375,
+          "late_480to600_median_rss_mb": 971.6640625,
+          "difference_mb": 0.078125
+        },
+        "xytheta_follower": {
+          "early_120to240_median_rss_mb": 131.13671875,
+          "late_480to600_median_rss_mb": 130.58203125,
+          "difference_mb": -0.5546875
+        }
+      }
+    },
+    "campus": {
+      "delivery": {
+        "exact_source_stamp_checkpoints": 38,
+        "source_stamp_tolerance_s": 0.0001,
+        "count_offset_distribution": {
+          "0": 38
+        },
+        "constant_offset_in_observed_window": true,
+        "first_checkpoint": {
+          "source_stamp_s": 1792613643.9160414,
+          "probe_count": 139,
+          "mapper_received_count": 139
+        },
+        "last_checkpoint": {
+          "source_stamp_s": 1792614203.927387,
+          "probe_count": 2914,
+          "mapper_received_count": 2914
+        },
+        "meaning": "A constant offset supports no net relative input loss between the full-rate external observer and mapper in this matched window. It does not prove the simulator published continuously or that neither subscriber missed the same message."
+      },
+      "nonoverlapping_memory_windows": {
+        "elevation": {
+          "early_120to240_median_rss_mb": 498.44140625,
+          "late_480to600_median_rss_mb": 498.49609375,
+          "difference_mb": 0.0546875
+        },
+        "health": {
+          "early_120to240_median_rss_mb": 291.43359375,
+          "late_480to600_median_rss_mb": 300.48046875,
+          "difference_mb": 9.046875
+        },
+        "ht_bridge": {
+          "early_120to240_median_rss_mb": 383.89453125,
+          "late_480to600_median_rss_mb": 436.966796875,
+          "difference_mb": 53.072265625
+        },
+        "probe": {
+          "early_120to240_median_rss_mb": 83.591796875,
+          "late_480to600_median_rss_mb": 84.42578125,
+          "difference_mb": 0.833984375
+        },
+        "record": {
+          "early_120to240_median_rss_mb": 90.85546875,
+          "late_480to600_median_rss_mb": 100.759765625,
+          "difference_mb": 9.904296875
+        },
+        "sim": {
+          "early_120to240_median_rss_mb": 3061.9609375,
+          "late_480to600_median_rss_mb": 3181.84765625,
+          "difference_mb": 119.88671875
+        },
+        "tare": {
+          "early_120to240_median_rss_mb": 930.83984375,
+          "late_480to600_median_rss_mb": 960.111328125,
+          "difference_mb": 29.271484375
+        },
+        "xytheta_follower": {
+          "early_120to240_median_rss_mb": 133.8359375,
+          "late_480to600_median_rss_mb": 132.740234375,
+          "difference_mb": -1.095703125
+        }
+      }
+    }
+  },
+  "limitations": [
+    "Original minute5to10 and last5min windows coincide for600s captures; their difference0 cannot establish a lack of growth.",
+    "This supplemental aggregation uses per-label5s bins; RSS sums can double-count shared pages and boundaries approximate sweep grouping.",
+    "Indoor lacks exact source-stamp delivery checkpoints; no claim of no input loss.",
+    "Two10min runs do not establish long-duration stability."
+  ]
+}

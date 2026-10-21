@@ -1,0 +1,42 @@
+{
+  "passed": 79,
+  "skipped": 4,
+  "failures": 0,
+  "files": {
+    "planner_input_test.gtest.xml": {
+      "total": 2,
+      "passed": 2,
+      "skipped": [],
+      "failed": []
+    },
+    "input_pose_test.gtest.xml": {
+      "total": 6,
+      "passed": 6,
+      "skipped": [],
+      "failed": []
+    },
+    "ht_ros_test.gtest.xml": {
+      "total": 31,
+      "passed": 27,
+      "skipped": [
+        "CapturedTunnelReturnKeepsRiskThresholdAndReachesHome",
+        "CapturedMapSearchResolutionAudit",
+        "CapturedSafeRootNeedsFinerHeadingSearchToEscape",
+        "CapturedHeadingBoundaryHasPlanningReserveWithoutRelaxingMeasuredRoot"
+      ],
+      "failed": []
+    },
+    "xytheta_follower_test.gtest.xml": {
+      "total": 21,
+      "passed": 21,
+      "skipped": [],
+      "failed": []
+    },
+    "geometry_pose_test.gtest.xml": {
+      "total": 23,
+      "passed": 23,
+      "skipped": [],
+      "failed": []
+    }
+  }
+}

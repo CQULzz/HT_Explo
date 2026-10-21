@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "updated_at": "2026-10-22",
-  "branch": "main",
-  "status": "阶段48校园两组600秒、图表、视频和全部已录数据远端大小/SHA核验完成；限制见报告",
+  "branch": "sim/validation-20261022",
+  "status": "阶段49室内/校园各600秒；室内提前结束待查，校园持续探索；采集完整与导航效果分开。",
   "latest_archive_commit": "ffab5bd03642c49872fd0aefe8fb58a21ec2d4e1",
   "latest_planner_change": "07c1abd334f83cb8d602e2234134b4286862c916",
   "stages": [
@@ -826,6 +826,22 @@
       "evidence": [
         "docs/results/ht_tare_campus_matched_10min_2026-10-21/REPORT.md"
       ]
+    },
+    {
+      "id": "stage-49",
+      "number": 49,
+      "sha": "e640c0c1867fbe9408007c9f7b3e51bb9e66b801",
+      "tag": "ht-sim-20261022-input-contracts",
+      "title": "输入/控制时序候选的室内与校园600秒复测",
+      "kind": "仿真验证与原理报告",
+      "change": "算法继承develop8b10207；本轮未新改导航。",
+      "features": "各600秒数据/视频、指令/哈希检查、历史曲线、规划原理PDF。",
+      "validation": "室内9.16m/427.25m³/COMPLETED；校园221.56m/17181.875m³/EXPLORING；命令变化率及采集退出检查通过。",
+      "known_issues": "室内14秒返航，深层原因待查；校园有局部搜索预算上限；未证明长期或实车无问题。",
+      "evidence": [
+        "docs/results/ht_sim_check_2026-10-22/REPORT.md",
+        "docs/planning/2026-10-22_project_report.pdf"
+      ]
     }
   ],
   "historical_commits": [
@@ -1364,11 +1380,12 @@
   "latest_planner_code": "07c1abd334f83cb8d602e2234134b4286862c916",
   "latest_ht_bridge_code": "454efa230fae337cfa8f87b2aa87ee9917040621",
   "latest_verified_trial_code": "f7fd77b66fc442752599ead359e8aa60e7773ae4",
-  "latest_recorded_trial_code": "f7fd77b66fc442752599ead359e8aa60e7773ae4",
+  "latest_recorded_trial_code": "e640c0c1867fbe9408007c9f7b3e51bb9e66b801",
   "latest_cupy_node_code": "d6d87878a4e8982e3a4850a5a17f8e1be1608a24",
-  "latest_development_validation": "仅离线验证；C++6/6目标、79项GTest通过及4项历史fixture跳过，Python72通过；没有600秒或实车验收；用户已确认外部配准和标定存在，总launch/TF待补。",
+  "latest_development_validation": "仿真600秒×2；Python99、CTest6/6（GTest79过4跳过）；室内提前结束未解决，未运行实车。",
   "repository_guide": "docs/REPOSITORY_GUIDE.md",
   "previous_development_candidate": "3f589d8ce7e444c16211c8be9e2a3654a56578e1",
   "latest_development_ref": "refs/heads/develop",
-  "latest_development_report": "validation/real_vehicle_offline_fix_2026-10-22/REPORT.md"
+  "latest_development_report": "validation/real_vehicle_offline_fix_2026-10-22/REPORT.md",
+  "latest_simulation_report": "docs/results/ht_sim_check_2026-10-22/REPORT.md"
 }

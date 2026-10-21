@@ -1,3 +1,9 @@
+# 阶段49：输入/控制时序候选的仿真复测
+
+冻结e640c0c、算法基线8b10207，本轮未新改导航。室内/校园各600秒：室内9.16m/427.25m³、14秒触发返航，持续探索明显偏低、深层原因待查；校园221.56m/17181.875m³、末EXPLORING。两场地图未过3秒，指令上限/常规变化率、视频和退出检查通过。采集完整不等于导航无问题。[报告与图表](../results/ht_sim_check_2026-10-22/REPORT.md) · [规划原理](../planning/2026-10-22_project_report.pdf)。上传核验以publications/stage49.json为准。
+
+---
+
 # 阶段41：原TARE决策与HT航点路由
 
 阶段41保持原TARE覆盖/TSP/航点顺序，修正HT掩码与BFS同步和近家HOME优先级。完整车库600秒181.31m/8660.125m³，较39+33.6%、较40+2.3%。搜索时间上限34次、展开上限57次，最长完全停车0.25s，末60秒新增671.645m³/移动16.56m；末尾EXPLORING。 [报告](../results/ht_tare_boundaries_10min_2026-10-20/REPORT.md) · [视频](../results/ht_tare_boundaries_10min_2026-10-20/garage/camera_h264.mp4) · [历次图册](../results/ht_tare_boundaries_10min_2026-10-20/history/index.html)。[完整数据已上传并核验](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261020-tare-boundaries)；本机保留第40/41轮完整数据，不宣称追平原版。
