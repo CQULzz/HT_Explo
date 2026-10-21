@@ -41,7 +41,7 @@ def main():
     ap.add_argument('--output', type=Path, required=True)
     ap.add_argument('--domain', type=int, required=True)
     ap.add_argument('--duration', type=int, default=600)
-    ap.add_argument('--scenario', choices=['indoor', 'garage'], default='indoor')
+    ap.add_argument('--scenario', choices=['indoor', 'garage', 'campus'], default='indoor')
     a = ap.parse_args()
     folder = a.output.resolve()
     if folder.exists():

@@ -24,6 +24,7 @@ def main():
     ap.add_argument('--output', type=Path, required=True)
     ap.add_argument('--encoder', type=Path, required=True)
     ap.add_argument('--domain', type=int, default=226)
+    ap.add_argument('--scenario', choices=['indoor', 'garage', 'campus'], default='indoor')
     a = ap.parse_args()
     folder = a.output.resolve()
     if folder.exists():
@@ -32,15 +33,15 @@ def main():
     candidate = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
     if subprocess.check_output(['git', 'status', '--porcelain'], cwd=ROOT, text=True).strip():
         raise RuntimeError('Freeze a clean candidate before recording')
-    state = dict(git_head=candidate, duration_s=600, scene='indoor', state='RUNNING',
+    state = dict(git_head=candidate, duration_s=600, scene=a.scenario, state='RUNNING',
                  started_at=dt.datetime.now().astimezone().isoformat(),
                  runs=[dict(scenario=s, state='PENDING') for s in ['original', 'ht']])
     write(folder/'suite.json', state)
     programs = [
         [sys.executable, str(Path(__file__).with_name('run_matched_tare_original.py')),
-         '--output', str(folder/'original'), '--duration', '600', '--scenario', 'indoor', '--domain', str(a.domain)],
+         '--output', str(folder/'original'), '--duration', '600', '--scenario', a.scenario, '--domain', str(a.domain)],
         [sys.executable, str(Path(__file__).with_name('run_ht_endurance.py')),
-         '--output', str(folder/'ht'), '--duration', '600', '--scenario', 'indoor', '--video-fps', '15', '--domain', str(a.domain+1)]]
+         '--output', str(folder/'ht'), '--duration', '600', '--scenario', a.scenario, '--video-fps', '15', '--domain', str(a.domain+1)]]
     active = None
     observer = None
     handles = []
