@@ -54,3 +54,5 @@ python3 scripts/build_repository_catalog.py --check
 构建仍需对应系统依赖；CMU仿真和CuPy高程建图属于独立工作区，并非只运行TARE节点就自动具备完整输入链。启动与依赖细节见[已有构建验证](VALIDATION.md)、[HT桥接说明](tools/ht_cupy_bridge/README.md)及[实验复现入口](docs/REPOSITORY_GUIDE.md)。
 
 [原README完整历史副本](docs/history/README_before_repository_organization_2026-10-22.md) · [原版本页历史副本](docs/history/VERSIONS_before_repository_organization_2026-10-22.md) · [实验要求](AGENTS.md)
+
+基于[CMU原版TARE](https://github.com/caochao39/tare_planner)研究框架扩展；原项目说明与引用保留在上述历史副本中。
