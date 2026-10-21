@@ -1,0 +1,79 @@
+{
+  "tag": "ht-stage-20261021-continuous-domain",
+  "tested_commit": "07c1abd334f83cb8d602e2234134b4286862c916",
+  "raw_suite": "/home/lzz/my test/HT_Explo-fixposition/presentations/scheduled_results/ht_continuous_domain_10min_2026-10-21_13-17-09",
+  "result_archive": "/home/lzz/my test/HT_Explo-fixposition/docs/results/ht_continuous_domain_10min_2026-10-21",
+  "release": "https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261021-continuous-domain",
+  "publication_status": "COMPLETE_VALIDATED_COLLECTION",
+  "collection_validation": {
+    "indoor": {
+      "recorded_state": "RECORDED",
+      "complete600s": true,
+      "checks": {
+        "timer_completed": true,
+        "measured_duration_matches": true,
+        "source_hashes_unchanged": true,
+        "enough_samples": true,
+        "no_runtime_parent_failure": true,
+        "no_live_descendants": true,
+        "no_forced_shutdown": true,
+        "video_full_decode_passed": true,
+        "video_duration_matches": true,
+        "video_fps_matches": true,
+        "analysis_passed": true,
+        "no_child_or_cleanup_exception": true,
+        "blas_workers_bounded": true
+      },
+      "failed_checks": []
+    }
+  },
+  "recording_scope": "All published HT/control/odom/status/TARE routes; source-second lidar and periodic maps/model inputs; not lossless all-frequency raw sensor data.",
+  "transport": "Deterministic streaming tar+zstd,512MiB parts; three shared spool slots, at most1.5GiB temporary transport.",
+  "assets": [
+    {
+      "name": "ht-stage-20261021-continuous-domain-raw.tar.zst.part000",
+      "bytes": 536870912,
+      "sha256": "1f8f30fd86d692f26b16684b574016f0bb2d91fa1e382462c2e19e9295a640db"
+    },
+    {
+      "name": "ht-stage-20261021-continuous-domain-raw.tar.zst.part001",
+      "bytes": 536870912,
+      "sha256": "4bb2f3cea00dda9c2eaa79e3574b735c568bd4c722122bcb156b73f3e76d2ec1"
+    },
+    {
+      "name": "ht-stage-20261021-continuous-domain-raw.tar.zst.part002",
+      "bytes": 508931449,
+      "sha256": "4ea9733a0365e66fea66bf713060a7536edfdaddb6648a43de309f8140ac9e1e"
+    },
+    {
+      "name": "ht-stage-20261021-continuous-domain-raw-files.json",
+      "bytes": 58141,
+      "sha256": "47f097a1827172f123029304fcb309cb1e594848444d73bb0b0f77a8dd467331"
+    },
+    {
+      "name": "ht-stage-20261021-continuous-domain-results.tar.zst.part000",
+      "bytes": 19723917,
+      "sha256": "ae6769bf2569a26082dc4a8a772ae851ef0050e9c3252fa1b6f171f6c8a30f36"
+    },
+    {
+      "name": "ht-stage-20261021-continuous-domain-results-files.json",
+      "bytes": 16510,
+      "sha256": "fe775c8ad708814c4bb1219fe6adeab0910e961ef5af124a6b508a5f9300cf3f"
+    },
+    {
+      "name": "ht-stage-20261021-continuous-domain-indoor.mp4",
+      "bytes": 13949047,
+      "sha256": "2bbcec79050ecb96ee2ab9012233089683d539a0b3eb4045c26d6703ee29f5db"
+    },
+    {
+      "name": "ht-stage-20261021-continuous-domain-SHA256.json",
+      "bytes": 3232,
+      "sha256": "06fb338f31895acbfdf19e79dec4773511432ef4b1860a23c74254d36239764a"
+    }
+  ],
+  "raw_inventory_sha256": "47f097a1827172f123029304fcb309cb1e594848444d73bb0b0f77a8dd467331",
+  "raw_topology_sha256": "b0b468c182ed63f20e55eea270c25a2fb2de5d46a311b30a5776ed3a61133a53",
+  "results_inventory_sha256": "fe775c8ad708814c4bb1219fe6adeab0910e961ef5af124a6b508a5f9300cf3f",
+  "results_topology_sha256": "41d97aac4b25c817fbb6a63e64c23fbde7f5df5602898443fa3889ed0fda2bd9",
+  "verified_at": "2026-10-21T13:33:16.877666+08:00"
+}
