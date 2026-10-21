@@ -1,3 +1,9 @@
+# 阶段45：已知障碍足迹反馈与室内复测
+
+[同场景对比、报告与视频](docs/results/ht_known_body_terrain_10min_2026-10-21/REPORT.md) · [完整已录数据](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261021-terrain-footprint)。采集状态RECORDED，末任务BLOCKED；森林/隧道问题未据此宣称解决。完整远端备份以stage45.json为准。
+
+## 前一轮记录
+
 # 阶段44：稀疏高程修正与四场景测试
 
 [结果、比较图和视频](docs/results/ht_sparse_height_4scene_10min_2026-10-21/REPORT.md) · [完整数据](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261021-sparse-height)。采集成功不等于探索成功，剩余阻塞见报告；完整发布以stage44.json回执为准。

@@ -1,0 +1,95 @@
+{
+  "indoor": {
+    "recording_complete": true,
+    "checks": {
+      "timer_completed": true,
+      "measured_duration_matches": true,
+      "source_hashes_unchanged": true,
+      "enough_samples": true,
+      "no_runtime_parent_failure": true,
+      "no_live_descendants": true,
+      "no_forced_shutdown": true,
+      "video_full_decode_passed": true,
+      "video_duration_matches": true,
+      "video_fps_matches": true,
+      "analysis_passed": true,
+      "no_child_or_cleanup_exception": true,
+      "blas_workers_bounded": true
+    },
+    "audits": [
+      {
+        "script": "audit_tare_waypoint.py",
+        "returncode": 0,
+        "log": "audit_tare_waypoint.log"
+      },
+      {
+        "script": "audit_tare_prefix_admissibility.py",
+        "returncode": 0,
+        "log": "audit_tare_prefix_admissibility.log"
+      },
+      {
+        "script": "audit_cupy_latency.py",
+        "returncode": 0,
+        "log": "audit_cupy_latency.log"
+      },
+      {
+        "script": "audit_blocked_commands.py",
+        "returncode": 0,
+        "log": "audit_blocked_commands.log"
+      },
+      {
+        "script": "audit_pose_admissibility_changes.py",
+        "returncode": 0,
+        "log": "audit_pose_admissibility_changes.log"
+      },
+      {
+        "script": "audit_ht_context_dumps.py",
+        "returncode": 0,
+        "log": "audit_ht_context_dumps.log"
+      },
+      {
+        "script": "audit_ht_source_age_alignment.py",
+        "returncode": 0,
+        "log": "audit_ht_source_age_alignment.log"
+      },
+      {
+        "script": "audit_ht_scan_delivery_trace.py",
+        "returncode": 0,
+        "log": "audit_ht_scan_delivery_trace.log"
+      }
+    ],
+    "routing": {
+      "message_counts": {
+        "/tare_coverage_route": 564,
+        "/tare_route_branch": 564,
+        "/ht_xytheta_path": 584,
+        "/tare_native_waypoint": 564,
+        "/ht_route_goal": 9921,
+        "/way_point": 600,
+        "/ht_navigation_allowed": 600,
+        "/tare_tsp_order": 564,
+        "/state_estimation": 119609
+      },
+      "coverage_cycles": 564,
+      "tsp_calls": {
+        "1": 403,
+        "10": 161
+      },
+      "maximum_ordered_viewpoints": 26,
+      "mean_ordered_viewpoints": 8.210992907801419,
+      "moving_waypoints": 532,
+      "local_goals": 9921,
+      "nonempty_executable_paths": 505,
+      "searches": 9921,
+      "search_termination": {
+        "REACHED": 505,
+        "EXHAUSTED": 6,
+        "EXPANSION_LIMIT": 5,
+        "INVALID_START": 9405
+      },
+      "contract_violations": [],
+      "contract_passed": true,
+      "scope": "Sampled/message-level contract, not a proof of global exploration optimality or continuous physical safety."
+    }
+  }
+}
