@@ -1,3 +1,9 @@
+# 阶段46：连续规划范围解耦与室内复测
+
+[同场景对比、报告与视频](docs/results/ht_continuous_domain_10min_2026-10-21/REPORT.md) · [完整已录数据](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261021-continuous-domain)。采集状态RECORDED，末任务EXPLORING；森林/隧道问题未据此宣称解决。完整远端备份以stage46.json为准。
+
+## 前一轮记录
+
 # 阶段45：已知障碍足迹反馈与室内复测
 
 [同场景对比、报告与视频](docs/results/ht_known_body_terrain_10min_2026-10-21/REPORT.md) · [完整已录数据](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261021-terrain-footprint)。采集状态RECORDED，末任务BLOCKED；森林/隧道问题未据此宣称解决。完整远端备份以stage45.json为准。
