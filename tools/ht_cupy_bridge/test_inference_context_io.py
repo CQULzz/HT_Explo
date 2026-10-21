@@ -9,10 +9,27 @@ from unittest.mock import patch
 
 import numpy as np
 
-from inference_context_io import GracefulStop, save_immutable_npz
+from inference_context_io import ContextCaptureSchedule, GracefulStop, save_immutable_npz
 
 
 class ContextIOTest(unittest.TestCase):
+    def test_capture_includes_initial_failure_after_delayed_planner_start(self):
+        schedule = ContextCaptureSchedule()
+        for stamp in [0., .5, 13.5, 44.9]:
+            self.assertTrue(schedule.due(stamp));schedule.saved(stamp)
+        self.assertFalse(schedule.due(45.1))
+        # Garage staging can consume the initial map warmup before TARE runs.
+        schedule.begin_runtime(100.)
+        for stamp in [99.5, 100., 113.5, 144.9]:
+            self.assertTrue(schedule.due(stamp));schedule.saved(stamp)
+        self.assertFalse(schedule.due(145.1))
+        self.assertFalse(schedule.due(144.9))
+        self.assertTrue(schedule.due(155.));schedule.saved(155.)
+        schedule.begin_runtime(180.)  # A later callback must not extend forever.
+        self.assertFalse(schedule.due(156.))
+        self.assertEqual(schedule.first_runtime, 100.)
+        self.assertFalse(schedule.due(float('nan')))
+
     def test_numeric_arrays_roundtrip_without_replacing_an_earlier_stamp(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / 'stamp.npz'

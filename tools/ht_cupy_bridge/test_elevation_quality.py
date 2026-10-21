@@ -77,14 +77,57 @@ class ElevationQualityTest(unittest.TestCase):
         np.testing.assert_allclose(result.height_m[2:-2, 2:-2], z[2:-2, 2:-2], atol=1e-7)
         self.assertFalse(result.edge_mask.any())
 
-    def test_nan_hole_and_its_boundary_remain_unchanged(self):
+    def test_nan_hole_and_one_sided_boundary_remain_unknown_or_unchanged(self):
         z = np.zeros((25, 25), np.float32)
         z[:, ::2] += .01
         z[10:15, 10:15] = np.nan
         result = self.process(z)
         self.assertTrue(np.isnan(result.height_m[10:15, 10:15]).all())
-        np.testing.assert_array_equal(result.height_m[9, 9:16], z[9, 9:16])
-        np.testing.assert_array_equal(result.height_m[15, 9:16], z[15, 9:16])
+        np.testing.assert_array_equal(result.height_m[9, 11:14], z[9, 11:14])
+        np.testing.assert_array_equal(result.height_m[15, 11:14], z[15, 11:14])
+        np.testing.assert_array_equal(np.isfinite(result.height_m), np.isfinite(z))
+
+    def test_sparse_ramp_has_no_one_sided_smoothing_bias(self):
+        xx, yy = np.indices((41, 41), dtype=np.float32)
+        z = .003*xx + .006*yy
+        missing = np.random.default_rng(123).random(z.shape) < .25
+        z[missing] = np.nan
+        result = self.process(z)
+        known = np.isfinite(z)
+        np.testing.assert_allclose(result.height_m[known], z[known], atol=1e-7)
+        self.assertTrue(np.isnan(result.height_m[missing]).all())
+        self.assertGreater(result.stats['sparse_smoothable_cells'], 0)
+
+    def test_sparse_texture_denoising_uses_real_opposite_pairs(self):
+        z = np.zeros((61, 61), np.float32)
+        z[:, ::2] = .009; z[:, 1::2] = -.009
+        z[np.random.default_rng(41).random(z.shape) < .25] = np.nan
+        sparse = self.process(z)
+        full_only = self.process(z, sparse_symmetric=False)
+        known = np.isfinite(z)
+        self.assertGreater(sparse.stats['sparse_smoothable_cells'], 0)
+        self.assertLess(np.std(sparse.height_m[known]), np.std(full_only.height_m[known])*.9)
+        np.testing.assert_array_equal(sparse.observed_quality, full_only.observed_quality)
+        np.testing.assert_array_equal(sparse.rejected_mask, full_only.rejected_mask)
+
+    def test_small_steps_coherent_posts_and_confident_single_cells_are_preserved(self):
+        for height in (.015, .03, .075):
+            for side in (1, 2):
+                z = np.zeros((25, 25), np.float32)
+                z[12:12+side, 12:12+side] = height
+                result = self.process(z, std_m=.003 if side == 1 else .1)
+                np.testing.assert_array_equal(result.height_m, z)
+                self.assertFalse(result.rejected_mask.any())
+            z = np.zeros((25, 25), np.float32);z[:, 12:] = height
+            result = self.process(z)
+            np.testing.assert_allclose(result.height_m, z, atol=1e-7)
+
+    def test_single_sided_sparse_support_does_not_extrapolate(self):
+        z = np.full((9, 9), np.nan, np.float32)
+        z[4, 4] = .01;z[3, 3:6] = 0.;z[4, 3] = 0.
+        result = self.process(z)
+        self.assertEqual(result.height_m[4, 4], z[4, 4])
+        np.testing.assert_array_equal(np.isfinite(result.height_m), np.isfinite(z))
 
     def test_invalid_variance_is_rejected_and_inputs_are_not_modified(self):
         z = np.zeros((9, 9), np.float32)

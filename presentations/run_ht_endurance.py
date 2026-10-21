@@ -155,7 +155,7 @@ def main():
                     simulation_terrain_isolated=True,
                     ht_score_semantics=json.loads((BRIDGE/'ht_trial.yaml').read_text())['/**']['ros__parameters'].get('ht_score_semantics','point'),
                     git_head=subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
-                    evidence_policy=f'All control/status and odometry, full-rate published HT maps and TARE collision geometry; original-stamped scans1Hz; exact-stamp map triplets and network inputs/outputs every10s; camera{args.video_fps}fps. Raw CuPy and scans are not fully bagged.',
+                    evidence_policy=f'All control/status and odometry, full-rate published HT maps and TARE collision geometry; original-stamped scans1Hz; exact-stamp map triplets every10s; network context every frame for45s after HT/TARE startup, then every10s, including history variance and source elevation/variance/age; camera{args.video_fps}fps. Raw CuPy and scans are not fully bagged.',
                     source_hashes={str(p): hashlib.sha256(p.read_bytes()).hexdigest() for p in paths})
     (folder/'manifest.json').write_text(json.dumps(manifest, ensure_ascii=False, indent=2))
     (folder/'working_tree.patch').write_bytes(subprocess.check_output(['git', 'diff', 'HEAD'], cwd=ROOT))

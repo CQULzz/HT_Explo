@@ -158,10 +158,15 @@ def main():
     plot_diagnostics(suite,out,state)
     # Include every complete same-scene record; never silently truncate a color zip.
     specs=[]
-    for label,path in [('39 HT自选目标',ROOT/'docs/results/ht_successor_pruning_10min_2026-10-20/garage'),
+    history_runs=[('39 HT自选目标',ROOT/'docs/results/ht_successor_pruning_10min_2026-10-20/garage'),
                        ('40 恢复原TARE',ROOT/'docs/results/ht_tare_waypoint_10min_2026-10-20/garage'),
-                       ('41 接口修正',ROOT/'docs/results/ht_tare_boundaries_10min_2026-10-20/garage'),
-                       ('42 同版本车库复测',suite/'garage')]:
+                       ('41 接口修正',ROOT/'docs/results/ht_tare_boundaries_10min_2026-10-20/garage')]
+    if job.get('stage',42)>42:
+        history_runs.append(('42 同版本车库复测',ROOT/'docs/results/ht_tare_native_5scene_10min_2026-10-20/garage'))
+    if job.get('stage',42)>43:
+        history_runs.append(('43 短前缀补搜',ROOT/'docs/results/ht_tare_short_prefix_10min_2026-10-21/garage'))
+    history_runs.append((job.get('comparison_label','42 同版本车库复测'),suite/'garage'))
+    for label,path in history_runs:
         if all((path/n).exists() for n in ['summary.json','endurance_audit.json']) and ((path/'timeseries.csv').exists() or (path/'current/timeseries.csv').exists()) and ((path/'observation_volume.csv').exists() or (path/'current/observation_volume.csv').exists()):specs+=['--run',label+'='+str(path)]
     history=False
     if specs:

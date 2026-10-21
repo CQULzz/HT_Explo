@@ -1,7 +1,7 @@
 """Conservative preprocessing of observed elevation, in metric units.
 
 This is an input-quality filter, not a traversability classifier. It never
-creates observations, averages a height discontinuity, or replaces a rejected
+creates observations, averages a protected observed discontinuity, or replaces a rejected
 return with nearby ground. A finite rejected height may enter HT context only through an independent
 hard occupied layer, never as accepted ground. Remaining unknown rejects must
 invalidate their HT receptive fields; nearest-neighbour filling must not make
@@ -38,16 +38,23 @@ class ElevationQualityConfig:
     isolated_uncertain_std_m: float = 0.075
     isolated_background_spread_m: float = 0.040
     isolated_min_neighbors: int = 6
+    sparse_symmetric: bool = True
+    small_feature_jump_m: float = 0.015
+    small_feature_match_m: float = 0.005
 
     def __post_init__(self):
         if not isinstance(self.radius_cells, int) or self.radius_cells not in (1, 2):
             raise ValueError("radius_cells must be 1 or 2")
         for name, value in vars(self).items():
-            if name not in ("radius_cells", "isolated_min_neighbors"):
+            if name not in ("radius_cells", "isolated_min_neighbors", "sparse_symmetric"):
                 if not math.isfinite(value) or value <= 0:
                     raise ValueError(f"{name} must be a positive finite metric value")
         if not 5 <= self.isolated_min_neighbors <= 8:
             raise ValueError("isolated_min_neighbors must be between 5 and 8")
+        if not isinstance(self.sparse_symmetric, bool):
+            raise ValueError("sparse_symmetric must be boolean")
+        if self.small_feature_match_m >= self.small_feature_jump_m:
+            raise ValueError("small feature match tolerance must be below its jump")
         if self.full_smoothing_std_m <= self.confident_std_m:
             raise ValueError("full_smoothing_std_m must exceed confident_std_m")
         if self.isolated_jump_m <= self.preserve_height_jump_m:
@@ -100,9 +107,11 @@ def preprocess_elevation(elevation_m, variance_m2, resolution_m,
     cannot be distinguished from an outlier using this input and becomes
     unknown, never free ground.
 
-    The bilateral filter uses only fully observed neighbourhoods and leaves all
-    cells next to an observed >=7.5 cm discontinuity unchanged. NaN holes and
-    their boundaries remain unchanged. Output variance is deliberately not
+    The bilateral filter uses fully observed neighbourhoods, or (at radius1)
+    at least two opposite pairs of real observations. In the latter case both
+    members of every used pair must exist, so a one-sided hole rim cannot bias
+    a measured ramp. Missing cells stay missing. Coherent small features and
+    observed >=7.5cm discontinuities are preserved. Output variance is not
     reduced: overlapping height maps do not provide independent measurements.
     """
     started = time.perf_counter()
@@ -154,6 +163,7 @@ def preprocess_elevation(elevation_m, variance_m2, resolution_m,
     padded = np.pad(height, radius, constant_values=np.nan)
     edge = np.zeros(z.shape, dtype=bool)
     full_neighborhood = observed.copy()
+    balanced_neighbors = np.zeros(z.shape, dtype=np.uint8)
     numerator = np.zeros(z.shape, dtype=np.float32)
     denominator = np.zeros(z.shape, dtype=np.float32)
     # At most 24 neighbours; no Python loop over grid cells and no wraparound.
@@ -164,7 +174,12 @@ def preprocess_elevation(elevation_m, variance_m2, resolution_m,
             known = np.isfinite(neighbor) & observed
             full_neighborhood &= known
             edge |= known & (np.abs(difference) >= cfg.preserve_height_jump_m)
-            eligible = known & (np.abs(difference) < cfg.preserve_height_jump_m)
+            balanced = known
+            if cfg.sparse_symmetric and radius == 1:
+                opposite = _neighbor_view(padded, z.shape, radius, -dx, -dy)
+                balanced = known & np.isfinite(opposite)
+            balanced_neighbors += balanced
+            eligible = balanced & (np.abs(difference) < cfg.preserve_height_jump_m)
             safe_difference = np.where(eligible, difference, 0.)
             spatial = ((dx * resolution_m) ** 2 + (dy * resolution_m) ** 2)
             exponent = (-0.5 * spatial / cfg.spatial_sigma_m ** 2
@@ -173,7 +188,23 @@ def preprocess_elevation(elevation_m, variance_m2, resolution_m,
             numerator += weight * np.where(known, neighbor, 0.)
             denominator += weight
 
-    smoothable = observed & full_neighborhood & ~edge
+    # Keep real small steps/two-cell posts when one side corroborates the
+    # center and the opposite side is on a different level. Large edges do
+    # not need corroboration. Confident single-cell measurements retain their
+    # original value via the variance blend. Ambiguous, uncertain centimetre
+    # extrema retain the original bounded-noise policy, not a free/obstacle label.
+    small_feature = np.zeros(z.shape, dtype=bool)
+    for dx, dy in ((1, 0), (0, 1), (1, 1), (1, -1)):
+        plus = _neighbor_view(padded, z.shape, radius, dx, dy)
+        minus = _neighbor_view(padded, z.shape, radius, -dx, -dy)
+        dp, dm = np.abs(plus-height), np.abs(minus-height)
+        small_feature |= (observed & np.isfinite(plus) & np.isfinite(minus)
+                          & (((dp <= cfg.small_feature_match_m) & (dm >= cfg.small_feature_jump_m))
+                             | ((dm <= cfg.small_feature_match_m) & (dp >= cfg.small_feature_jump_m))))
+    edge |= small_feature
+    partial = cfg.sparse_symmetric and radius == 1
+    enough_support = full_neighborhood | (partial & (balanced_neighbors >= 5))
+    smoothable = observed & enough_support & ~edge
     candidate = np.divide(numerator, denominator, out=height.copy(),
                           where=denominator > 0)
     std_m = np.sqrt(np.maximum(variance, 0))
@@ -190,6 +221,8 @@ def preprocess_elevation(elevation_m, variance_m2, resolution_m,
         "rejected_cells": int(rejected.sum()),
         "isolated_rejected_cells": int(isolated.sum()),
         "preserved_edge_cells": int((edge & observed).sum()),
+        "preserved_small_feature_cells": int(small_feature.sum()),
+        "sparse_smoothable_cells": int((smoothable & ~full_neighborhood).sum()),
         "smoothed_cells": int(np.count_nonzero(delta)),
         "max_adjustment_m": float(np.max(np.abs(delta))) if delta.size else 0.,
         "rms_adjustment_m": float(np.sqrt(np.mean(delta ** 2))) if delta.size else 0.,

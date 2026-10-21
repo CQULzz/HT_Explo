@@ -67,6 +67,11 @@ class PostfilterBridgeTest(unittest.TestCase):
                     self.assertTrue(capture['quality_rejected'][145,164])
                     self.assertTrue(capture['occupied'][120,139])
                     self.assertTrue(np.all(capture['probabilities'][:,120,139]==0.))
+                    self.assertEqual(capture['history_variance'].shape,(291,291))
+                    self.assertAlmostEqual(float(capture['history_variance'][145,164]),.008,places=6)
+                    np.testing.assert_array_equal(capture['source_elevation'],np.zeros((291,291),np.float32))
+                    np.testing.assert_array_equal(capture['source_observation_age'],np.zeros((291,291),np.float32))
+                    self.assertAlmostEqual(float(capture['source_variance'][145,164]),.001,places=6)
         finally:
             if node is not None:node.destroy_node()
             rclpy.try_shutdown()

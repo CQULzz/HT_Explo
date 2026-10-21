@@ -20,7 +20,7 @@ from rclpy.qos import QoSProfile, ReliabilityPolicy
 from rclpy.signals import SignalHandlerOptions
 from rclpy.executors import ExternalShutdownException, SingleThreadedExecutor
 from nav_msgs.msg import Odometry
-from std_msgs.msg import Float32MultiArray, MultiArrayDimension, MultiArrayLayout
+from std_msgs.msg import Float32, Float32MultiArray, MultiArrayDimension, MultiArrayLayout
 
 from model import load_student_model
 from historical_elevation import HistoricalElevation
@@ -28,7 +28,7 @@ from elevation_quality import preprocess_elevation, retain_recent_obstacle_edges
 from local_surface import SurfaceReferenceEstimator
 from cpu_threads import configure_cpu_threads
 from ht_support import prepare_ht_context, preserve_rejected_obstacles
-from inference_context_io import GracefulStop, save_immutable_npz
+from inference_context_io import ContextCaptureSchedule, GracefulStop, save_immutable_npz
 
 
 class CupyToHt(Node):
@@ -56,6 +56,10 @@ class CupyToHt(Node):
         self.diagnostics = []
         self.last_source_stamp = None
         self.last_context_dump_stamp = None
+        self.context_schedule = ContextCaptureSchedule()
+        if os.environ.get('HT_CONTEXT_DUMP'):
+            self.create_subscription(Float32, '/runtime',
+                lambda _: self.context_schedule.begin_runtime(self.get_clock().now().nanoseconds/1e9), 2)
         self.create_subscription(
             Odometry, self.declare_parameter('surface_odometry_topic', '/state_estimation').value,
             self.on_odometry, QoSProfile(depth=100, reliability=ReliabilityPolicy.BEST_EFFORT))
@@ -125,6 +129,8 @@ class CupyToHt(Node):
             offset = (-source.outer_start_index, -source.inner_start_index)
             elevation, variance, age = (np.roll(v, offset, (0, 1))
                                         for v in (elevation, variance, age))
+            source_elevation, source_variance = elevation.copy(), variance.copy()
+            source_age = age.copy()
             source_quality = preprocess_elevation(elevation, variance, resolution)
             # Store original measured heights after quality rejection; denoise
             # only the selected historical crop, avoiding repeated smoothing.
@@ -247,8 +253,7 @@ class CupyToHt(Node):
         published = time.monotonic()
         context_dump_s = 0.
         context_directory = os.environ.get('HT_CONTEXT_DUMP')
-        if context_directory and (self.last_context_dump_stamp is None or
-                                  stamp_s-self.last_context_dump_stamp >= 10.):
+        if context_directory and self.context_schedule.due(stamp_s):
             dump_started = time.monotonic()
             directory = Path(context_directory)
             directory.mkdir(parents=True, exist_ok=True)
@@ -257,11 +262,16 @@ class CupyToHt(Node):
             # replace an earlier context if a node is accidentally restarted.
             save_immutable_npz(filename, source_stamp=stamp_s,
                     geometry=[center_x, center_y, resolution], height=height,
+                    history_variance=variance,
+                    source_elevation=source_elevation, source_variance=source_variance,
+                    source_observation_age=source_age,
+                    source_geometry=[source.info.pose.position.x, source.info.pose.position.y, resolution],
                     raw_history=raw_history, observed=observed, rejected=rejected,
                     quality_rejected=quality.rejected_mask, obstacle_context=obstacle_context,
                     support=support, physical_support=physical_support, occupied=occupied,
                     probabilities=probabilities)
             self.last_context_dump_stamp = stamp_s
+            self.context_schedule.saved(stamp_s)
             context_dump_s = time.monotonic()-dump_started
         self.count += 1
         self.diagnostics.append({'stamp_s': stamp_s, 'fused_cells': fused,
