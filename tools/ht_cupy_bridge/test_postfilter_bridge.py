@@ -9,7 +9,7 @@ from unittest.mock import patch
 import numpy as np
 import rclpy
 from grid_map_msgs.msg import GridMap
-from std_msgs.msg import Float32MultiArray
+from std_msgs.msg import Float32MultiArray, MultiArrayLayout, MultiArrayDimension
 
 from cupy_to_ht import CupyToHt
 
@@ -47,7 +47,11 @@ class PostfilterBridgeTest(unittest.TestCase):
             source.info.pose.orientation.w=1.
             source.layers=['elevation','variance','observation_age']
             for value in [0.,.001,0.]:
-                data=Float32MultiArray();data.data=array('f',np.full((291,291),value,np.float32).tobytes());source.data.append(data)
+                data=Float32MultiArray()
+                data.layout=MultiArrayLayout(dim=[
+                    MultiArrayDimension(label='column_index',size=291,stride=291*291),
+                    MultiArrayDimension(label='row_index',size=291,stride=291)])
+                data.data=array('f',np.full((291,291),value,np.float32).tobytes());source.data.append(data)
             with tempfile.TemporaryDirectory() as temporary, patch.dict(os.environ,{'HT_CONTEXT_DUMP':temporary}):
                 node.on_map(source)
                 self.assertEqual(len(output.messages),1)
