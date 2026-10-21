@@ -23,3 +23,13 @@
 最终约2秒BLOCKED，未观察其未来恢复；最长全零6.20s，HT地图年龄最大约5.996s，规划P95 1.616s。无探索完成或多场景/实车稳定性结论。
 
 车辆动力学仅含运动学搜索与执行限速/限加速度，参考点和方向独立物理标定尚未重新验收。
+
+<!-- repository-catalog-start -->
+## 代码、视频与完整数据的对应关系
+
+- [阶段23完整索引：实际实验候选、导航代码、报告、视频及数据回执](https://github.com/CQULzz/HT_Explo/blob/main/docs/experiments/catalog/stage-23.md)
+- [本阶段归档源码](https://github.com/CQULzz/HT_Explo/tree/149566de09c48a528140b6ec950c08c5fa29539c)：`149566de09c48a528140b6ec950c08c5fa29539c`。这是归档锚点；实际测量源码、运行patch与二进制哈希以原清单为准。
+- [完整实验总目录](https://github.com/CQULzz/HT_Explo/blob/main/docs/experiments/catalog/INDEX.md) · [分支和标签规则](https://github.com/CQULzz/HT_Explo/blob/main/docs/REPOSITORY_GUIDE.md)
+
+早期历史目录只关联到研究阶段，未知测量提交保持待确认；补充回放视频不代表新的导航实验。原有报告、失败记录与全部附件保留。
+<!-- repository-catalog-end -->

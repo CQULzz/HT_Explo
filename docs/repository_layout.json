@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "repository": "CQULzz/HT_Explo",
+  "organized_on": "2026-10-22",
+  "baseline_evidence_commit": "ffab5bd03642c49872fd0aefe8fb58a21ec2d4e1",
+  "baseline_navigation_commit": "07c1abd334f83cb8d602e2234134b4286862c916",
+  "development_candidate_commit": "3f589d8ce7e444c16211c8be9e2a3654a56578e1",
+  "visualization_source_commit": "13b46a9b9ecf7d1ebc94cca778a14132b6ebea70",
+  "branches": [
+    {
+      "name": "main",
+      "purpose": "已完成实验归档的导航基线，附版本索引及可视化；仍有已知问题，不称实车稳定版。",
+      "source_base": "13b46a9b9ecf7d1ebc94cca778a14132b6ebea70",
+      "navigation": "07c1abd334f83cb8d602e2234134b4286862c916"
+    },
+    {
+      "name": "develop",
+      "purpose": "最新输入校验与RViz逻辑修复候选；600秒仿真未验收，独立保存审查/中止记录。",
+      "source_base": "3f589d8ce7e444c16211c8be9e2a3654a56578e1"
+    },
+    {
+      "name": "visualization/xytheta",
+      "purpose": "阶段48已有数据的半透明体素回放、八方向审计；没有新导航实验。",
+      "source_base": "13b46a9b9ecf7d1ebc94cca778a14132b6ebea70"
+    },
+    {
+      "name": "codex/ht8dir-v1",
+      "purpose": "旧开发分支，保留以兼容历史链接；不再作为默认分支。"
+    },
+    {
+      "name": "codex/ht-transparent-voxels-20261022",
+      "purpose": "原可视化发布分支，保留以兼容历史链接。"
+    }
+  ],
+  "milestone_tags": [
+    {
+      "name": "nav/ht-soft-cost-20260914",
+      "commit": "46f9642221ff7e251e601818a45fe041831b928c",
+      "description": "早期HT八方向软代价集成。历史实现，不是当前规划架构。"
+    },
+    {
+      "name": "nav/ht-xytheta-20261015",
+      "commit": "322ec85c728c5900d3e47f22b4c3c5a4e6bccc99",
+      "description": "高程坐标、分层历史与XYθ阶段的代码快照；具体运行patch仍以实验清单为准。"
+    },
+    {
+      "name": "nav/tare-waypoint-20261020",
+      "commit": "42966cb22b0f719df035391f3850b9a654f161e1",
+      "description": "恢复原TARE覆盖/TSP访问顺序，HT路由odom到当前航点。"
+    },
+    {
+      "name": "nav/tare-ht-20261021",
+      "commit": "07c1abd334f83cb8d602e2234134b4286862c916",
+      "description": "阶段46导航修改，阶段47室内与48校园对照沿用。存在已知问题，非稳定版。"
+    },
+    {
+      "name": "viz/xytheta-transparent-20261022",
+      "commit": "13b46a9b9ecf7d1ebc94cca778a14132b6ebea70",
+      "description": "阶段48已有地图的半透明体素可视化和八方向数值审计，不是新的探索能力版本。"
+    }
+  ],
+  "rules": [
+    "现有48个阶段标签与Release保持不动，nav/*表示算法提交，viz/*表示可视化提交。",
+    "Release阶段标签可能指向实验设施/报告提交；实际测量候选、导航提交和源文件哈希分别读取清单。",
+    "早期62组历史目录只作研究阶段关联；没有记录的测量提交标为待确认，不强行声称等于阶段标签。",
+    "完整数据放GitHub Releases，Git只保存源码、报告、索引、校验回执和小型样本。",
+    "main不能用未完成600秒验收的开发候选替换；后续修改遵循AGENTS.md。"
+  ]
+}

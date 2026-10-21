@@ -19,3 +19,13 @@
 仍71次搜索超时，20条HT_MAP_STALE、26条PATH_STALE，最长无平移7.45s（含转向），完全停车占7.0%、原地转向21.7%。健康1Hz采样地图年龄P95 2.115s、最大4.117s；部分延迟在HT回调开始前，不能仅归为网络推理。2次几何和1次HT路径晚拒绝均配对零指令；无未配对或被拦截非零指令。542份几何样本未发现参考余量重叠，不是连续物理安全证明。校园/森林/隧道当前版、独立覆盖真值与实车仍待验证。
 
 [报告、对比曲线与视频](https://github.com/CQULzz/HT_Explo/blob/codex/ht8dir-v1/docs/results/ht_frozen_garage_10min_2026-10-19/REPORT.md)。附件保存全部已录制MCAP/CSV/日志/周期地图/上下文、历史重算证据和MP4；不是全频原始激光/CuPy无损记录。GitHub完整保留、本机只留最近两轮，先校验远端再清理。
+
+<!-- repository-catalog-start -->
+## 代码、视频与完整数据的对应关系
+
+- [阶段36完整索引：实际实验候选、导航代码、报告、视频及数据回执](https://github.com/CQULzz/HT_Explo/blob/main/docs/experiments/catalog/stage-36.md)
+- [本阶段归档源码](https://github.com/CQULzz/HT_Explo/tree/7b4c3589366c6a0bb4f8f1984c14951aa446d1ad)：`7b4c3589366c6a0bb4f8f1984c14951aa446d1ad`。这是归档锚点；实际测量源码、运行patch与二进制哈希以原清单为准。
+- [完整实验总目录](https://github.com/CQULzz/HT_Explo/blob/main/docs/experiments/catalog/INDEX.md) · [分支和标签规则](https://github.com/CQULzz/HT_Explo/blob/main/docs/REPOSITORY_GUIDE.md)
+
+早期历史目录只关联到研究阶段，未知测量提交保持待确认；补充回放视频不代表新的导航实验。原有报告、失败记录与全部附件保留。
+<!-- repository-catalog-end -->

@@ -19,3 +19,13 @@
 ## 存在什么问题
 
 长时间重复主要目标超时，普通恢复目标缺少预算保障。下一候选优先改调度并验证，不放宽HT/物理几何或提高总预算。搜索性能、地图时效、不可达任务、覆盖真值、其他环境与实车仍未验收。本轮不是稳定版本。
+
+<!-- repository-catalog-start -->
+## 代码、视频与完整数据的对应关系
+
+- [阶段32完整索引：实际实验候选、导航代码、报告、视频及数据回执](https://github.com/CQULzz/HT_Explo/blob/main/docs/experiments/catalog/stage-32.md)
+- [本阶段归档源码](https://github.com/CQULzz/HT_Explo/tree/867ba1f5d40c813291bbb148fad2d5fc5b8907d1)：`867ba1f5d40c813291bbb148fad2d5fc5b8907d1`。这是归档锚点；实际测量源码、运行patch与二进制哈希以原清单为准。
+- [完整实验总目录](https://github.com/CQULzz/HT_Explo/blob/main/docs/experiments/catalog/INDEX.md) · [分支和标签规则](https://github.com/CQULzz/HT_Explo/blob/main/docs/REPOSITORY_GUIDE.md)
+
+早期历史目录只关联到研究阶段，未知测量提交保持待确认；补充回放视频不代表新的导航实验。原有报告、失败记录与全部附件保留。
+<!-- repository-catalog-end -->

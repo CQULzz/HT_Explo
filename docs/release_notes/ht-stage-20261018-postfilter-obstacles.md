@@ -21,3 +21,13 @@
 ## 存在什么问题
 
 末段95秒仍无路停车，地图年龄最大3.336s；有回访、体积退步。临时几何捕获没收到collision_cloud，不能冒称完整几何复现。下一轮补可靠几何记录、逐目标搜索终止原因，并核查连续碰撞检查计算代价；任何提速要验证同一碰撞判定。多场景/重复稳定性、动力学与物理标定仍未完成。
+
+<!-- repository-catalog-start -->
+## 代码、视频与完整数据的对应关系
+
+- [阶段26完整索引：实际实验候选、导航代码、报告、视频及数据回执](https://github.com/CQULzz/HT_Explo/blob/main/docs/experiments/catalog/stage-26.md)
+- [本阶段归档源码](https://github.com/CQULzz/HT_Explo/tree/22c2749f395af8bb5dc6705b1e92548acf69494e)：`22c2749f395af8bb5dc6705b1e92548acf69494e`。这是归档锚点；实际测量源码、运行patch与二进制哈希以原清单为准。
+- [完整实验总目录](https://github.com/CQULzz/HT_Explo/blob/main/docs/experiments/catalog/INDEX.md) · [分支和标签规则](https://github.com/CQULzz/HT_Explo/blob/main/docs/REPOSITORY_GUIDE.md)
+
+早期历史目录只关联到研究阶段，未知测量提交保持待确认；补充回放视频不代表新的导航实验。原有报告、失败记录与全部附件保留。
+<!-- repository-catalog-end -->

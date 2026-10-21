@@ -17,3 +17,13 @@ HT路径调用先验算原地转向后前进/倒车的两个简单SE2连接，�
 ## 存在什么问题
 
 最大单次搜索0.253844s，图搜索每32展开检查截止和单次谓词长尾仍可能超过名义预算。简单连接优先可行，可能增加转向或改变收益，不保证时间最优。地图/路径时效、全局未连接或不可观察任务、同版重复/多环境、独立真值覆盖与实车尚未全部验收；SE2运动学加执行限速不等于完整轮胎/滑移动力学证明，不标稳定或无缺陷。
+
+<!-- repository-catalog-start -->
+## 代码、视频与完整数据的对应关系
+
+- [阶段34完整索引：实际实验候选、导航代码、报告、视频及数据回执](https://github.com/CQULzz/HT_Explo/blob/main/docs/experiments/catalog/stage-34.md)
+- [本阶段归档源码](https://github.com/CQULzz/HT_Explo/tree/391fa0f98fc2a0adab2c018b4c5a1c7c29efff91)：`391fa0f98fc2a0adab2c018b4c5a1c7c29efff91`。这是归档锚点；实际测量源码、运行patch与二进制哈希以原清单为准。
+- [完整实验总目录](https://github.com/CQULzz/HT_Explo/blob/main/docs/experiments/catalog/INDEX.md) · [分支和标签规则](https://github.com/CQULzz/HT_Explo/blob/main/docs/REPOSITORY_GUIDE.md)
+
+早期历史目录只关联到研究阶段，未知测量提交保持待确认；补充回放视频不代表新的导航实验。原有报告、失败记录与全部附件保留。
+<!-- repository-catalog-end -->

@@ -34,3 +34,13 @@
 体积较37提高28.4%，仍低于36的7900.375m³约26.5%；搜索超时47→81、最长停车略增。本轮末尾EXPLORING，未完成整个环境；只做一轮车库，不能保证消除版本间波动或其他环境/实车稳定。旧日志无任务ID的单元关联为推断，回访网格受边界抖动影响，体积不是真值覆盖率。
 
 附件保存全部已录制原始目录、精选报告图册、MP4与逐文件SHA256，上传后核对远端大小及SHA256。激光按源秒、地图按周期保存，不是全频原始传感器无损录制。GitHub保留全部，本机校验后仅保留最近两轮完整录包。
+
+<!-- repository-catalog-start -->
+## 代码、视频与完整数据的对应关系
+
+- [阶段38完整索引：实际实验候选、导航代码、报告、视频及数据回执](https://github.com/CQULzz/HT_Explo/blob/main/docs/experiments/catalog/stage-38.md)
+- [本阶段归档源码](https://github.com/CQULzz/HT_Explo/tree/16bdbe4cb1fddd632d061a5710c3e7b294971891)：`16bdbe4cb1fddd632d061a5710c3e7b294971891`。这是归档锚点；实际测量源码、运行patch与二进制哈希以原清单为准。
+- [完整实验总目录](https://github.com/CQULzz/HT_Explo/blob/main/docs/experiments/catalog/INDEX.md) · [分支和标签规则](https://github.com/CQULzz/HT_Explo/blob/main/docs/REPOSITORY_GUIDE.md)
+
+早期历史目录只关联到研究阶段，未知测量提交保持待确认；补充回放视频不代表新的导航实验。原有报告、失败记录与全部附件保留。
+<!-- repository-catalog-end -->

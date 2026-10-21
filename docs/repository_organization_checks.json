@@ -1,0 +1,43 @@
+{
+  "organized_on": "2026-10-22",
+  "repository": "CQULzz/HT_Explo",
+  "scope": "GitHub branch/tag/document organization only; no navigation behavior change or new simulation.",
+  "baseline_remote_head": "ffab5bd03642c49872fd0aefe8fb58a21ec2d4e1",
+  "measured_navigation_code": "07c1abd334f83cb8d602e2234134b4286862c916",
+  "main_base_with_visualization": "13b46a9b9ecf7d1ebc94cca778a14132b6ebea70",
+  "main_base_navigation_paths_equal_measured": true,
+  "development_candidate": "3f589d8ce7e444c16211c8be9e2a3654a56578e1",
+  "development_status": "NOT_ACCEPTED_600S; user_stop.json explicitly excludes stopped simulation as acceptance.",
+  "counts": {
+    "stages": 48,
+    "legacy_datasets": 62,
+    "publication_receipts": 92,
+    "verified_receipt_assets": 536,
+    "release_assets": 560,
+    "direct_videos": 40,
+    "legacy_archived_videos": 59
+  },
+  "checks": {
+    "all_stage_tag_commits_equal_catalog": true,
+    "all_report_paths_exist_in_published_visualization_base": true,
+    "readme_and_guide_local_links_exist": true,
+    "release_notes_dry_run": 48,
+    "tare_original_function_bodies_equal_reference": 6,
+    "development_rviz_pytest_passed": 41
+  },
+  "commands": [
+    "python3 scripts/build_repository_catalog.py --refresh-remote",
+    "python3 scripts/build_repository_catalog.py --check",
+    "python3 scripts/publish_version_notes.py --dry-run",
+    "python3 scripts/check_tare_waypoint_contract.py",
+    "PYTHONPATH=presentations python3 -m pytest -q presentations/test_rviz_resolution_logic.py"
+  ],
+  "initial_test_invocation_correction": "unittest did not collect pytest function tests (one import-path error, then zero collected); rerun with pytest collected41 and passed41.",
+  "remote_integrity_scope": "GitHub API uploaded state, size and server SHA256 versus local publication receipts; no full payload redownload.",
+  "known_limits": [
+    "48 original tags and release assets must not be moved or removed.",
+    "One stage8 starter-state incomplete-upload placeholder is listed separately and excluded from complete attachments; not deleted.",
+    "Early historical directory associations do not prove exact tested commits.",
+    "Checks are organization/offline checks, not a new600s or real-vehicle validation."
+  ]
+}

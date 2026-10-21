@@ -33,3 +33,13 @@
 - tunnel在53.0s采样报告exploration_finished，是否真实全覆盖尚未验证；COMPLETED只表示任务返航条件满足
 
 粗视点地形可行性不等于完整SE2可达性；未知训练噪声分布与低置信厘米孤立物辨识仍有限制。单次轨迹不隔离所有随机因素；无新增同限制原版TARE配对、完整动力学或实车验证。
+
+<!-- repository-catalog-start -->
+## 代码、视频与完整数据的对应关系
+
+- [阶段44完整索引：实际实验候选、导航代码、报告、视频及数据回执](https://github.com/CQULzz/HT_Explo/blob/main/docs/experiments/catalog/stage-44.md)
+- [本阶段归档源码](https://github.com/CQULzz/HT_Explo/tree/454efa230fae337cfa8f87b2aa87ee9917040621)：`454efa230fae337cfa8f87b2aa87ee9917040621`。这是归档锚点；实际测量源码、运行patch与二进制哈希以原清单为准。
+- [完整实验总目录](https://github.com/CQULzz/HT_Explo/blob/main/docs/experiments/catalog/INDEX.md) · [分支和标签规则](https://github.com/CQULzz/HT_Explo/blob/main/docs/REPOSITORY_GUIDE.md)
+
+早期历史目录只关联到研究阶段，未知测量提交保持待确认；补充回放视频不代表新的导航实验。原有报告、失败记录与全部附件保留。
+<!-- repository-catalog-end -->

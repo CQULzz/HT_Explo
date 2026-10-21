@@ -19,3 +19,13 @@ SIGINT只请求停止，单线程回调完成后保存历史图与日志，再�
 本轮搜索{'REACHED': 697, 'TIME_LIMIT': 51}，最大搜索0.233278s。诊断修复不能等同探索收益提升；同一导航二进制仍可能因地图/路径时效、目标回访和未连接待办而停顿。用户授权清理旧录包后磁盘增加14.85GB，加上文件/事件循环时序变化，是环境差异。重复/多环境、独立覆盖真值与实车未全部验收；不保证SIGKILL、断电或磁盘故障仍产生完整诊断。
 
 数据保存按用户选择：GitHub完整保留，本机最近两轮；清理前核对远端附件和逐文件SHA256，报告/视频和必要回归样本保留。
+
+<!-- repository-catalog-start -->
+## 代码、视频与完整数据的对应关系
+
+- [阶段35完整索引：实际实验候选、导航代码、报告、视频及数据回执](https://github.com/CQULzz/HT_Explo/blob/main/docs/experiments/catalog/stage-35.md)
+- [本阶段归档源码](https://github.com/CQULzz/HT_Explo/tree/445b5c1490d6bb198c35bee23e95fc0f7781407e)：`445b5c1490d6bb198c35bee23e95fc0f7781407e`。这是归档锚点；实际测量源码、运行patch与二进制哈希以原清单为准。
+- [完整实验总目录](https://github.com/CQULzz/HT_Explo/blob/main/docs/experiments/catalog/INDEX.md) · [分支和标签规则](https://github.com/CQULzz/HT_Explo/blob/main/docs/REPOSITORY_GUIDE.md)
+
+早期历史目录只关联到研究阶段，未知测量提交保持待确认；补充回放视频不代表新的导航实验。原有报告、失败记录与全部附件保留。
+<!-- repository-catalog-end -->

@@ -19,3 +19,13 @@ XYθ端点、搜索、返航及前方路线复核从粗覆盖视点的碰撞标�
 ## 存在什么问题
 
 本轮新的持续停车由HT UNKNOWN触发，几何层允许。最终网络窗口42个拒绝格中41个已有硬障碍保护，仅1个距车1.023m、有限高度0.4596m的融合后质量拒绝格否决整个51×51窗口。需要核查源质量拒绝与融合后拒绝的障碍上下文处理差异，不能填成自由地面。最大抽样图龄4.417s；已覆盖区域更新P95约0.934s仍耗时。新runtime补入旧遗漏HT搜索，跨版该数值不能作纯性能比较。完整动力学、标定、多环境稳定性仍未完成。
+
+<!-- repository-catalog-start -->
+## 代码、视频与完整数据的对应关系
+
+- [阶段25完整索引：实际实验候选、导航代码、报告、视频及数据回执](https://github.com/CQULzz/HT_Explo/blob/main/docs/experiments/catalog/stage-25.md)
+- [本阶段归档源码](https://github.com/CQULzz/HT_Explo/tree/43069a7b11b8028b53f6eae0d6bdc53c13e8affd)：`43069a7b11b8028b53f6eae0d6bdc53c13e8affd`。这是归档锚点；实际测量源码、运行patch与二进制哈希以原清单为准。
+- [完整实验总目录](https://github.com/CQULzz/HT_Explo/blob/main/docs/experiments/catalog/INDEX.md) · [分支和标签规则](https://github.com/CQULzz/HT_Explo/blob/main/docs/REPOSITORY_GUIDE.md)
+
+早期历史目录只关联到研究阶段，未知测量提交保持待确认；补充回放视频不代表新的导航实验。原有报告、失败记录与全部附件保留。
+<!-- repository-catalog-end -->

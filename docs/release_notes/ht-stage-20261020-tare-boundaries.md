@@ -13,3 +13,13 @@
 ## 存在什么问题
 
 搜索时间上限34次、展开上限57次，最长完全停车0.25s，末60秒新增671.645m³/移动16.56m；末尾EXPLORING。 单次轨迹不能证明某一边界修复导致体积变化；若本轮没有触发返航，只能说返航单元/分支回归通过。尚无同运动限制新原版配对、完整全局SE2可达或实车安全保证。
+
+<!-- repository-catalog-start -->
+## 代码、视频与完整数据的对应关系
+
+- [阶段41完整索引：实际实验候选、导航代码、报告、视频及数据回执](https://github.com/CQULzz/HT_Explo/blob/main/docs/experiments/catalog/stage-41.md)
+- [本阶段归档源码](https://github.com/CQULzz/HT_Explo/tree/68701319b333165dd9cd5acf8e226ba52c174434)：`68701319b333165dd9cd5acf8e226ba52c174434`。这是归档锚点；实际测量源码、运行patch与二进制哈希以原清单为准。
+- [完整实验总目录](https://github.com/CQULzz/HT_Explo/blob/main/docs/experiments/catalog/INDEX.md) · [分支和标签规则](https://github.com/CQULzz/HT_Explo/blob/main/docs/REPOSITORY_GUIDE.md)
+
+早期历史目录只关联到研究阶段，未知测量提交保持待确认；补充回放视频不代表新的导航实验。原有报告、失败记录与全部附件保留。
+<!-- repository-catalog-end -->

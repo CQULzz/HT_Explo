@@ -21,3 +21,13 @@ HT模式按现有覆盖/前沿阈值把有收益UNSEEN单元登记到EXPLORING�
 仍有102次搜索时间预算耗尽，几何查询占搜索时间约92.6%；最长全零17.499秒，恢复后继续探索。旧“无候选就覆盖”分支执行5次，3次前1～3秒仍有收益，下一步须保留最后有效收益证据并区分不可观察/不可达/真正覆盖。
 
 HT健康1Hz抽样最大2.848s但20Hz控制器有1次HT_MAP_STALE，不可声称全时刻低于3秒。另4次PATH_STALE、runtime最大2.241s。没有完成真值覆盖、重复/多环境、窄通道与完整动力学验收，不标稳定版。
+
+<!-- repository-catalog-start -->
+## 代码、视频与完整数据的对应关系
+
+- [阶段30完整索引：实际实验候选、导航代码、报告、视频及数据回执](https://github.com/CQULzz/HT_Explo/blob/main/docs/experiments/catalog/stage-30.md)
+- [本阶段归档源码](https://github.com/CQULzz/HT_Explo/tree/ce7202bb14fa493d6ee2e4cb68dd8d56b32aef0b)：`ce7202bb14fa493d6ee2e4cb68dd8d56b32aef0b`。这是归档锚点；实际测量源码、运行patch与二进制哈希以原清单为准。
+- [完整实验总目录](https://github.com/CQULzz/HT_Explo/blob/main/docs/experiments/catalog/INDEX.md) · [分支和标签规则](https://github.com/CQULzz/HT_Explo/blob/main/docs/REPOSITORY_GUIDE.md)
+
+早期历史目录只关联到研究阶段，未知测量提交保持待确认；补充回放视频不代表新的导航实验。原有报告、失败记录与全部附件保留。
+<!-- repository-catalog-end -->

@@ -21,3 +21,13 @@
 ## 存在什么问题
 
 内部完成不等于全部覆盖；正收益任务登记/核销规则已复现但本轮尚未修正。HT健康年龄最大4.096s，最后执行状态HT_MAP_STALE而mission已COMPLETED、实际保持零；16次PATH_DISCONTINUITY仍待核查。体积不及阶段28/23，不能称性能改善；重复、多环境、真值覆盖、窄通道与动力学未验收。
+
+<!-- repository-catalog-start -->
+## 代码、视频与完整数据的对应关系
+
+- [阶段29完整索引：实际实验候选、导航代码、报告、视频及数据回执](https://github.com/CQULzz/HT_Explo/blob/main/docs/experiments/catalog/stage-29.md)
+- [本阶段归档源码](https://github.com/CQULzz/HT_Explo/tree/b6010156cc26431cc23bac33ac543982f7d5e4c1)：`b6010156cc26431cc23bac33ac543982f7d5e4c1`。这是归档锚点；实际测量源码、运行patch与二进制哈希以原清单为准。
+- [完整实验总目录](https://github.com/CQULzz/HT_Explo/blob/main/docs/experiments/catalog/INDEX.md) · [分支和标签规则](https://github.com/CQULzz/HT_Explo/blob/main/docs/REPOSITORY_GUIDE.md)
+
+早期历史目录只关联到研究阶段，未知测量提交保持待确认；补充回放视频不代表新的导航实验。原有报告、失败记录与全部附件保留。
+<!-- repository-catalog-end -->

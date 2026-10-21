@@ -19,3 +19,13 @@
 ## 存在什么问题
 
 仍停滞，实际执行进入几何安全边界而HT允许。最近路线对前一份点云只有约8mm余量，实际横向偏差约12mm；规划器检查几何+HT，控制器只检查HT。录包关联不能单独区分控制偏差、观测变化和时延，不能把半径重叠说成车身接触。下一轮对齐规划/执行约束并留跟踪余量，仍不放行碰撞根状态。建图长尾、收益不足、多环境和动力学验收未解决。
+
+<!-- repository-catalog-start -->
+## 代码、视频与完整数据的对应关系
+
+- [阶段27完整索引：实际实验候选、导航代码、报告、视频及数据回执](https://github.com/CQULzz/HT_Explo/blob/main/docs/experiments/catalog/stage-27.md)
+- [本阶段归档源码](https://github.com/CQULzz/HT_Explo/tree/4721764fa77eb634f4a0ba50b1381a05b3790195)：`4721764fa77eb634f4a0ba50b1381a05b3790195`。这是归档锚点；实际测量源码、运行patch与二进制哈希以原清单为准。
+- [完整实验总目录](https://github.com/CQULzz/HT_Explo/blob/main/docs/experiments/catalog/INDEX.md) · [分支和标签规则](https://github.com/CQULzz/HT_Explo/blob/main/docs/REPOSITORY_GUIDE.md)
+
+早期历史目录只关联到研究阶段，未知测量提交保持待确认；补充回放视频不代表新的导航实验。原有报告、失败记录与全部附件保留。
+<!-- repository-catalog-end -->

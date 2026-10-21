@@ -23,3 +23,13 @@ HT模式记住候选确认的有效收益；候选缺失不清零证据，保留
 仍有81次TIME_LIMIT、几何查询约占搜索时间93.2%，单次搜索最大0.414s；7条HT_MAP_STALE、1条PATH_STALE和394条20Hz EMPTY_PATH反馈（不是394个独立停滞）。runtime P95约1.505s，健康图龄最大3.061s。全局有当前图未连接任务，不能当永久物理不可达或支持无限重试。
 
 本轮结束后清理约20.2GB可重下载pip HTTP缓存，保留安装环境/模型/本地构建wheel及所有实验数据；后续可用磁盘增加，是环境差异。下一轮先同导航二进制重复，再做保持同几何判断的性能优化与每环境600秒验证。独立真值覆盖、窄通道和完整动力学仍未验收，不标稳定。
+
+<!-- repository-catalog-start -->
+## 代码、视频与完整数据的对应关系
+
+- [阶段31完整索引：实际实验候选、导航代码、报告、视频及数据回执](https://github.com/CQULzz/HT_Explo/blob/main/docs/experiments/catalog/stage-31.md)
+- [本阶段归档源码](https://github.com/CQULzz/HT_Explo/tree/b05ed9e717a3e430cc6243ed61666b5120f76e5b)：`b05ed9e717a3e430cc6243ed61666b5120f76e5b`。这是归档锚点；实际测量源码、运行patch与二进制哈希以原清单为准。
+- [完整实验总目录](https://github.com/CQULzz/HT_Explo/blob/main/docs/experiments/catalog/INDEX.md) · [分支和标签规则](https://github.com/CQULzz/HT_Explo/blob/main/docs/REPOSITORY_GUIDE.md)
+
+早期历史目录只关联到研究阶段，未知测量提交保持待确认；补充回放视频不代表新的导航实验。原有报告、失败记录与全部附件保留。
+<!-- repository-catalog-end -->

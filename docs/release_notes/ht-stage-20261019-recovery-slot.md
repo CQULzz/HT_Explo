@@ -19,3 +19,13 @@
 ## 存在什么问题
 
 本轮搜索退出{'REACHED': 610, 'TIME_LIMIT': 232, 'EXHAUSTED': 4, 'INVALID_START': 14}，几何查询计时占搜索墙钟93.5%，含调度等待；最大单次搜索0.281605s，原截止检查长尾仍在。地图/路径时效、未连接或暂不可观察任务、独立真值覆盖、同版重复/多环境与实车尚未全部验收，不能称为无缺陷或稳定版本。
+
+<!-- repository-catalog-start -->
+## 代码、视频与完整数据的对应关系
+
+- [阶段33完整索引：实际实验候选、导航代码、报告、视频及数据回执](https://github.com/CQULzz/HT_Explo/blob/main/docs/experiments/catalog/stage-33.md)
+- [本阶段归档源码](https://github.com/CQULzz/HT_Explo/tree/ba7942ce176378d68b0eeab99a4f4bb9a5e68913)：`ba7942ce176378d68b0eeab99a4f4bb9a5e68913`。这是归档锚点；实际测量源码、运行patch与二进制哈希以原清单为准。
+- [完整实验总目录](https://github.com/CQULzz/HT_Explo/blob/main/docs/experiments/catalog/INDEX.md) · [分支和标签规则](https://github.com/CQULzz/HT_Explo/blob/main/docs/REPOSITORY_GUIDE.md)
+
+早期历史目录只关联到研究阶段，未知测量提交保持待确认；补充回放视频不代表新的导航实验。原有报告、失败记录与全部附件保留。
+<!-- repository-catalog-end -->
