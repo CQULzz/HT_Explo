@@ -1,4 +1,6 @@
 HT_Explo 项目交接文档
+阶段44完整远端发布已核验，见docs/experiments/publications/stage44.json；测量/分析均结束，剩余问题照实保留，不自动改下一候选。
+
 2026-10-21阶段44实测补记：冻结454efa230fae337cfa8f87b2aa87ee9917040621；四场景采集已结束、结果见docs/results/ht_sparse_height_4scene_10min_2026-10-21/REPORT.md。完整数据正在发布，stage44.json核验后才称备份完成；剩余问题：indoor末状态BLOCKED，不能称探索成功；indoor记录中5次XYθ搜索达到展开上限，不能据此断言无路；indoor最长完全停车412.53s，需结合任务/门禁解释；forest末状态BLOCKED，不能称探索成功；forest记录中754次XYθ搜索达到展开上限，不能据此断言无路；forest最长完全停车436.05s，需结合任务/门禁解释；tunnel最长完全停车529.38s，需结合任务/门禁解释；tunnel在53.0s采样报告exploration_finished，是否真实全覆盖尚未验证；COMPLETED只表示任务返航条件满足。
 
 2026-10-21 11:36新补记（优先于下方所有旧状态）
