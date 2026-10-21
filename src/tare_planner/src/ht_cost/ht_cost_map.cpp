@@ -7,6 +7,23 @@
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 
 namespace ht_cost_ns {
+namespace {
+using TerrainHistory=std::map<std::pair<int,int>,HtCostMap::TerrainCell>;
+bool terrainGuidanceAllowed(const TerrainHistory& history,const Map* latest,
+                            bool configuration_scores,double x,double y) {
+  // Coarse OR aggregation can include a nearby safe center in the same0.2m
+  // cell. Do not let it admit this exact center if a known physical obstacle
+  // overlaps its body. All configuration channels share this physical mask.
+  if (configuration_scores && latest) {
+    size_t index;int channel;
+    if (latest->cellAndChannel(x,y,latest->yaw+latest->heading_offset,index,channel) &&
+        latest->blocked_footprint[channel][index]) return false;
+  }
+  const auto it=history.find({static_cast<int>(std::floor(x/.2)),
+                              static_cast<int>(std::floor(y/.2))});
+  return it==history.end() || it->second.feasible;
+}
+}
 HtCostMap::HtCostMap(rclcpp::Node::SharedPtr node,bool publish_permission)
   : clock_(node->get_clock()), logger_(node->get_logger()),
     buffer_(clock_) {
@@ -182,23 +199,6 @@ void HtCostMap::receive(grid_map_msgs::msg::GridMap::ConstSharedPtr msg) {
         }
       }
     }
-    // Collapse fine cells once per message; average observed ground only.
-    // Coarse feasibility is existential over all 8 headings, never their minimum.
-    if (collect_terrain_) for (grid_map::GridMapIterator it(grid); !it.isPastEnd(); ++it) {
-      const float observed=grid.at("ht_observation_valid",*it);
-      const float scored=grid.at("ht_valid",*it);
-      if (!std::isfinite(observed) || observed<.5 || !std::isfinite(scored) || scored<.5) continue;
-      grid_map::Position p;grid.getPosition(*it,p);
-      auto world=transform*tf2::Vector3(p.x(),p.y(),0);
-      auto& a=terrain[{static_cast<int>(std::floor(world.x()/.2)),static_cast<int>(std::floor(world.y()/.2))}];
-      a.x=world.x();a.y=world.y();
-      for(int k=0;k<8;++k) {
-        const float score=grid.at("ht_dir_"+std::to_string(k),*it);
-        a.feasible=a.feasible || (std::isfinite(score) && score>=min_probability_);
-      }
-      const float z=grid.at("ht_elevation",*it);
-      if (grid.at("ht_obstacle",*it)<.5 && std::isfinite(z)) {a.z+=z+transform.getOrigin().z();++a.count;}
-    }
     // Physical obstacle/observation cells require a body footprint. Vehicle
     // configuration scores already describe a vehicle trial at a reference
     // position and heading; dilating them treats neighbouring *configurations*
@@ -227,6 +227,34 @@ void HtCostMap::receive(grid_map_msgs::msg::GridMap::ConstSharedPtr msg) {
       out->blocked_footprint[k].assign(dst.datastart,dst.dataend);
     }
     if (!out->wellFormed()) throw std::runtime_error("Invalid HT map geometry");
+    // Collapse only after the execution body's known-obstacle masks exist.
+    // Unknown body observations remain optimistic exploration guidance; making
+    // them a new hard coarse barrier would seal off every unseen frontier at
+    // the local-map rim. Execution keeps its independent strict unknown gate.
+    if (collect_terrain_) for (grid_map::GridMapIterator it(grid); !it.isPastEnd(); ++it) {
+      const float observed=grid.at("ht_observation_valid",*it);
+      const float scored=grid.at("ht_valid",*it);
+      const bool measured=std::isfinite(observed) && observed>=.5;
+      const bool eligible=measured && std::isfinite(scored) && scored>=.5;
+      grid_map::Position p;grid.getPosition(*it,p);
+      const auto world=transform*tf2::Vector3(p.x(),p.y(),0);
+      size_t index;int channel;
+      if (!out->cellAndChannel(world.x(),world.y(),out->yaw+out->heading_offset,index,channel))
+        throw std::runtime_error("Terrain reference outside decoded HT grid");
+      const bool body_obstacle=configuration_scores_ && out->blocked_footprint[0][index];
+      // A missing prediction must not hide newly observed physical rejection
+      // from history. Unknown, unblocked cells retain the old guidance policy.
+      if (!eligible && !body_obstacle) continue;
+      auto& a=terrain[{static_cast<int>(std::floor(world.x()/.2)),static_cast<int>(std::floor(world.y()/.2))}];
+      a.x=world.x();a.y=world.y();
+      for(int k=0;k<8;++k) {
+        const float score=out->probabilities[k][index];
+        const bool known_obstacle=configuration_scores_ && out->blocked_footprint[k][index];
+        a.feasible=a.feasible || (eligible && std::isfinite(score) && score>=min_probability_ && !known_obstacle);
+      }
+      const float z=grid.at("ht_elevation",*it);
+      if (measured && grid.at("ht_obstacle",*it)<.5 && std::isfinite(z)) {a.z+=z+transform.getOrigin().z();++a.count;}
+    }
     std::lock_guard<std::mutex> lock(mutex_);
     for (const auto& entry:terrain) {
       auto& cell=terrain_history_[entry.first];const auto& a=entry.second;
@@ -251,14 +279,12 @@ std::vector<HtCostMap::TerrainCell> HtCostMap::terrainWindow(double x,double y,d
 }
 bool HtCostMap::terrainAdmissible(double x,double y) {
   std::lock_guard<std::mutex> lock(mutex_);
-  auto it=terrain_history_.find({static_cast<int>(std::floor(x/.2)),static_cast<int>(std::floor(y/.2))});
-  return it==terrain_history_.end() || it->second.feasible;
+  return terrainGuidanceAllowed(terrain_history_,latest_.get(),configuration_scores_,x,y);
 }
 std::vector<bool> HtCostMap::terrainAdmissible(const std::vector<Point>& points) {
   std::lock_guard<std::mutex> lock(mutex_);std::vector<bool> allowed;allowed.reserve(points.size());
   for(const auto& p:points) {
-    auto it=terrain_history_.find({static_cast<int>(std::floor(p.x/.2)),static_cast<int>(std::floor(p.y/.2))});
-    allowed.push_back(it==terrain_history_.end() || it->second.feasible);
+    allowed.push_back(terrainGuidanceAllowed(terrain_history_,latest_.get(),configuration_scores_,p.x,p.y));
   }
   return allowed;
 }

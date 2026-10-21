@@ -548,3 +548,65 @@ TEST_F(TareTerrainTest, WorldCoordinatesAndHistorySurviveRollingWindow) {
   EXPECT_EQ(ht->terrainWindow(7,-4,1).size(),old.size());
   for(const auto& c:ht->terrainWindow(30,30,1)) EXPECT_NEAR(c.height,.45,1e-6);
 }
+
+TEST_F(TareTerrainTest, KnownBodyObstacleRejectsGuidanceAndNewClearObservationRestoresIt) {
+  auto map=grid();map.add("ht_elevation",.12f);
+  for(int k=0;k<8;++k)map["ht_dir_"+std::to_string(k)].setConstant(.1f);
+  map["ht_dir_3"].setConstant(.9f);
+  grid_map::Index side;ASSERT_TRUE(map.getIndex(grid_map::Position(0,.5),side));
+  map.at("ht_obstacle",side)=1.f;send(map);ASSERT_TRUE(ht->ready());
+  EXPECT_EQ(ht->poseSupport(0,0,3*ht_cost_ns::kPi/4),ht_cost_ns::Support::BLOCKED);
+  EXPECT_FALSE(ht->terrainAdmissible(0,0));
+  auto allowed=ht->terrainAdmissible(std::vector<Point>{{0,0,0},{2,0,0}});
+  ASSERT_EQ(allowed.size(),2u);EXPECT_FALSE(allowed[0]);EXPECT_TRUE(allowed[1]);
+  map.at("ht_obstacle",side)=0.f;map.setTimestamp(node->now().nanoseconds());send(map);
+  EXPECT_TRUE(ht->terrainAdmissible(0,0));
+  EXPECT_EQ(ht->poseSupport(0,0,3*ht_cost_ns::kPi/4),ht_cost_ns::Support::KNOWN);
+}
+
+TEST_F(TareTerrainTest, BodyObstacleRejectionSurvivesRollingOutsideCurrentWindow) {
+  auto map=grid();map.add("ht_elevation",.12f);
+  for(int k=0;k<8;++k)map["ht_dir_"+std::to_string(k)].setConstant(.9f);
+  grid_map::Index side;ASSERT_TRUE(map.getIndex(grid_map::Position(0,.5),side));
+  map.at("ht_obstacle",side)=1.f;send(map);ASSERT_TRUE(ht->ready());
+  EXPECT_FALSE(ht->terrainAdmissible(0,0));
+  map.setPosition(grid_map::Position(30,30));map["ht_obstacle"].setZero();
+  map.setTimestamp(node->now().nanoseconds());send(map);
+  EXPECT_FALSE(ht->terrainAdmissible(0,0));
+  EXPECT_TRUE(ht->terrainAdmissible(30,30));
+}
+
+TEST_F(TareTerrainTest, UnknownBodyObservationsRemainGuidanceButCannotEnableDriving) {
+  auto map=grid();map.add("ht_elevation",.12f);
+  for(int k=0;k<8;++k)map["ht_dir_"+std::to_string(k)].setConstant(.9f);
+  grid_map::Index side;ASSERT_TRUE(map.getIndex(grid_map::Position(0,.5),side));
+  map.at("ht_observation_valid",side)=0.f;send(map);ASSERT_TRUE(ht->ready());
+  // The frontier guidance must not acquire a closed unknown halo around the
+  // local map. It never grants the strict execution gate permission to move.
+  EXPECT_TRUE(ht->terrainAdmissible(0,0));
+  EXPECT_TRUE(ht->terrainAdmissible(std::vector<Point>{{0,0,0}})[0]);
+  EXPECT_EQ(ht->poseSupport(0,0,0),ht_cost_ns::Support::UNKNOWN);
+  EXPECT_FALSE(ht->permits(ht->poseSupport(0,0,0)));
+}
+
+TEST_F(TareTerrainTest, NewKnownBodyObstacleOverridesUnscoredHistoricalCenter) {
+  auto map=grid();map.add("ht_elevation",.12f);
+  for(int k=0;k<8;++k)map["ht_dir_"+std::to_string(k)].setConstant(.9f);
+  grid_map::Index reference,side;
+  ASSERT_TRUE(map.getIndex(grid_map::Position(0,0),reference));
+  ASSERT_TRUE(map.getIndex(grid_map::Position(0,.5),side));
+  grid_map::Position position;map.getPosition(reference,position);
+  send(map);EXPECT_TRUE(ht->terrainAdmissible(position.x(),position.y()));
+  map.at("ht_valid",reference)=0.f;
+  for(int k=0;k<8;++k)map.at("ht_dir_"+std::to_string(k),reference)=NAN;
+  map.at("ht_obstacle",side)=1.f;
+  map.setTimestamp(node->now().nanoseconds());send(map);
+  EXPECT_FALSE(ht->terrainAdmissible(position.x(),position.y()));
+  // Losing a network prediction is not permission to retain the old green
+  // history once a physical obstacle has been observed in that body's area.
+  map.setPosition(grid_map::Position(30,30));map["ht_obstacle"].setZero();
+  map["ht_valid"].setConstant(1.f);
+  for(int k=0;k<8;++k)map["ht_dir_"+std::to_string(k)].setConstant(.9f);
+  map.setTimestamp(node->now().nanoseconds());send(map);
+  EXPECT_FALSE(ht->terrainAdmissible(position.x(),position.y()));
+}

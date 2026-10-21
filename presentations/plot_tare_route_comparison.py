@@ -16,7 +16,7 @@ def load(spec):
  return dict(label=label,folder=str(p),t=np.array([float(x['t_s']) for x in m]),vt=np.array([float(x['time_s']) for x in v]),v=np.array([float(x['observed_free_volume_m3']) for x in v]),
   d=np.array([float(x['distance_m']) for x in m]),speed=np.array([float(x['odom_speed_mps']) for x in m]),x=np.array([float(x['x_m']) for x in m]),y=np.array([float(x['y_m']) for x in m]),e=e['external_metrics'],s=s,age=e['sampled_map_age_s'])
 def main():
- ap=argparse.ArgumentParser();ap.add_argument('--run',action='append',required=True);ap.add_argument('--output',type=Path,required=True);a=ap.parse_args();a.output.mkdir(exist_ok=True,parents=True)
+ ap=argparse.ArgumentParser();ap.add_argument('--run',action='append',required=True);ap.add_argument('--output',type=Path,required=True);ap.add_argument('--scene-label',default='同车库');a=ap.parse_args();a.output.mkdir(exist_ok=True,parents=True)
  data=[load(v) for v in a.run];colors=plt.get_cmap('tab10')(np.arange(len(data))%10);plt.rcParams.update({'font.family':'Noto Sans CJK JP','axes.unicode_minus':False,'axes.spines.top':False,'axes.spines.right':False})
  fig,axes=plt.subplots(2,3,figsize=(17,9),layout='constrained');minute=np.arange(0,601,60)
  for i,(r,c) in enumerate(zip(data,colors)):
@@ -32,7 +32,7 @@ def main():
  for ax,title,xlabel,ylabel in [(axes[0,0],'累计观测自由体积','时间 / 分钟','m³'),(axes[0,1],'每分钟新增观测','第几分钟','m³'),(axes[0,2],'实际累计里程','时间 / 分钟','m'),(axes[1,0],'平均平移速度（每10秒）','时间 / 分钟','m/s'),(axes[1,2],'扣除首个观测帧后的新增量','实际里程 / m','m³')]:
   ax.set(title=title,xlabel=xlabel,ylabel=ylabel);ax.grid(alpha=.2);ax.legend(fontsize=8)
  axes[1,1].set(title='全部控制指令的运动组成',xticks=range(len(data)),xticklabels=[r['label'] for r in data],ylim=(0,1.08),ylabel='比例');axes[1,1].legend(fontsize=8,loc='upper center')
- fig.suptitle('同车库、同运动上限、完整600秒：原TARE访问顺序与HT局部路由\n每版本一次闭环；近似观测量，不是物理覆盖真值或单项因果收益',fontsize=15)
+ fig.suptitle(a.scene_label+'、同运动上限、完整600秒：原TARE访问顺序与HT局部路由\n每版本一次闭环；近似观测量，不是物理覆盖真值或单项因果收益',fontsize=15)
  for ext in ['png','pdf']:fig.savefig(a.output/('tare_architecture_comparison.'+ext),dpi=160)
  plt.close(fig)
  fig,axes=plt.subplots(1,len(data),figsize=(15,6),layout='constrained');xmin=min(r['x'].min() for r in data)-3;xmax=max(r['x'].max() for r in data)+3;ymin=min(r['y'].min() for r in data)-3;ymax=max(r['y'].max() for r in data)+3

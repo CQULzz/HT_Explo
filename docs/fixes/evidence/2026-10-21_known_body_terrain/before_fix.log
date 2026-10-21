@@ -1,0 +1,44 @@
+Running main() from /opt/ros/jazzy/src/gtest_vendor/src/gtest_main.cc
+Note: Google Test filter = TareTerrainTest.KnownBodyObstacle*:TareTerrainTest.BodyObstacleRejection*:TareTerrainTest.UnknownBodyObservations*
+[==========] Running 3 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 3 tests from TareTerrainTest
+[ RUN      ] TareTerrainTest.KnownBodyObstacleRejectsGuidanceAndNewClearObservationRestoresIt
+[INFO] [1792557835.754183688] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0 scores=configuration
+/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/tests/ht_ros_test.cpp:559: Failure
+Value of: ht->terrainAdmissible(0,0)
+  Actual: true
+Expected: false
+
+/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/tests/ht_ros_test.cpp:561: Failure
+Value of: allowed[0]
+  Actual: true
+Expected: false
+
+[  FAILED  ] TareTerrainTest.KnownBodyObstacleRejectsGuidanceAndNewClearObservationRestoresIt (390 ms)
+[ RUN      ] TareTerrainTest.BodyObstacleRejectionSurvivesRollingOutsideCurrentWindow
+[INFO] [1792557836.123474612] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0 scores=configuration
+/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/tests/ht_ros_test.cpp:572: Failure
+Value of: ht->terrainAdmissible(0,0)
+  Actual: true
+Expected: false
+
+/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/tests/ht_ros_test.cpp:575: Failure
+Value of: ht->terrainAdmissible(0,0)
+  Actual: true
+Expected: false
+
+[  FAILED  ] TareTerrainTest.BodyObstacleRejectionSurvivesRollingOutsideCurrentWindow (367 ms)
+[ RUN      ] TareTerrainTest.UnknownBodyObservationsRemainGuidanceButCannotEnableDriving
+[INFO] [1792557836.488484165] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0 scores=configuration
+[       OK ] TareTerrainTest.UnknownBodyObservationsRemainGuidanceButCannotEnableDriving (260 ms)
+[----------] 3 tests from TareTerrainTest (1018 ms total)
+
+[----------] Global test environment tear-down
+[==========] 3 tests from 1 test suite ran. (1018 ms total)
+[  PASSED  ] 1 test.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] TareTerrainTest.KnownBodyObstacleRejectsGuidanceAndNewClearObservationRestoresIt
+[  FAILED  ] TareTerrainTest.BodyObstacleRejectionSurvivesRollingOutsideCurrentWindow
+
+ 2 FAILED TESTS

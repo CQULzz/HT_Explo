@@ -169,7 +169,7 @@ def main():
     for label,path in history_runs:
         if all((path/n).exists() for n in ['summary.json','endurance_audit.json']) and ((path/'timeseries.csv').exists() or (path/'current/timeseries.csv').exists()) and ((path/'observation_volume.csv').exists() or (path/'current/observation_volume.csv').exists()):specs+=['--run',label+'='+str(path)]
     history=False
-    if specs:
+    if specs and any(row['scenario']=='garage' for row in state['runs']):
         result=subprocess.run([sys.executable,str(ROOT/'presentations/plot_tare_route_comparison.py'),*specs,'--output',str(out/'garage_history')])
         history=result.returncode==0
     write_report(out,state,evidence,audits,history)

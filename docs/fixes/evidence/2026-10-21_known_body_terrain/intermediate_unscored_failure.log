@@ -1,0 +1,22 @@
+Running main() from /opt/ros/jazzy/src/gtest_vendor/src/gtest_main.cc
+Note: Google Test filter = TareTerrainTest.NewKnownBodyObstacleOverridesUnscoredHistoricalCenter
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from TareTerrainTest
+[ RUN      ] TareTerrainTest.NewKnownBodyObstacleOverridesUnscoredHistoricalCenter
+[INFO] [1792558005.611001545] [ht_ros_test]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0 scores=configuration
+/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/tests/ht_ros_test.cpp:611: Failure
+Value of: ht->terrainAdmissible(position.x(),position.y())
+  Actual: true
+Expected: false
+
+[  FAILED  ] TareTerrainTest.NewKnownBodyObstacleOverridesUnscoredHistoricalCenter (485 ms)
+[----------] 1 test from TareTerrainTest (485 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (485 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] TareTerrainTest.NewKnownBodyObstacleOverridesUnscoredHistoricalCenter
+
+ 1 FAILED TEST

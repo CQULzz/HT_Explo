@@ -1,4 +1,6 @@
 HT_Explo 项目交接文档
+阶段45候选补记（2026-10-21）：阶段44四场景数据已全部远端核验（24资产，stage44.json，提交a8a6334）。已修原TARE地形提示遗漏已知障碍足迹的问题，含无预测时旧绿缓存更新；未知引导和严格执行保持。旧代码两失败、另一个中途缺测历史反例及最终四CTest50.65s/六函数SHA证据见docs/fixes/2026-10-21_known_body_terrain.md。本候选接下来独立室内600s，闭环尚未完成；新job .git/terrain-gate-runtime/job.json为准，不把阶段44成绩冒充新成绩。
+
 阶段44完整远端发布已核验，见docs/experiments/publications/stage44.json；测量/分析均结束，剩余问题照实保留，不自动改下一候选。
 
 2026-10-21阶段44实测补记：冻结454efa230fae337cfa8f87b2aa87ee9917040621；四场景采集已结束、结果见docs/results/ht_sparse_height_4scene_10min_2026-10-21/REPORT.md。完整数据正在发布，stage44.json核验后才称备份完成；剩余问题：indoor末状态BLOCKED，不能称探索成功；indoor记录中5次XYθ搜索达到展开上限，不能据此断言无路；indoor最长完全停车412.53s，需结合任务/门禁解释；forest末状态BLOCKED，不能称探索成功；forest记录中754次XYθ搜索达到展开上限，不能据此断言无路；forest最长完全停车436.05s，需结合任务/门禁解释；tunnel最长完全停车529.38s，需结合任务/门禁解释；tunnel在53.0s采样报告exploration_finished，是否真实全覆盖尚未验证；COMPLETED只表示任务返航条件满足。
