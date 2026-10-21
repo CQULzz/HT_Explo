@@ -23,3 +23,5 @@
 - 原TARE视点网格50×50/0.6m，HT为100×100/0.3m，名义范围相同但网格数量不同；完整参数差异已记录。
 - 观测自由体积是源秒抽样射线体素并集近似，不是覆盖真值；不是全频原始传感器无损录制。
 - 本轮不代表森林/隧道问题已解决，也没有实车验证。
+
+[资源图复核版报告与批次CSV](https://github.com/CQULzz/HT_Explo/blob/codex/ht8dir-v1/docs/results/ht_tare_matched_10min_2026-10-21_review/REPORT.md)：修正少量跨5秒分桶造成的CPU/RSS向下尖点，原始数据与封存报告保持不变；比较指标没有改变。

@@ -1,6 +1,6 @@
 # 阶段47：原TARE与最新HT同运动上限对照
 
-[室内各600秒的图表、报告和视频](docs/results/ht_tare_matched_10min_2026-10-21/REPORT.md) · [完整已录数据](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261021-tare-matched)。HT导航保持07c1abd；端到端单次比较，非单模块消融。完整备份以stage47.json为准。
+[室内各600秒的图表、报告和视频](docs/results/ht_tare_matched_10min_2026-10-21_review/REPORT.md) · [完整已录数据](https://github.com/CQULzz/HT_Explo/releases/tag/ht-stage-20261021-tare-matched)。HT导航保持07c1abd；端到端单次比较，非单模块消融。完整备份以stage47.json为准。
 
 ## 前一轮记录
 
