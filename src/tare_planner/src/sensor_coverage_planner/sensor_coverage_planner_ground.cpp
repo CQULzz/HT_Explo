@@ -398,7 +398,7 @@ bool SensorCoveragePlanner3D::initialize() {
                 std::placeholders::_1));
   registered_scan_sub_ =
       this->create_subscription<sensor_msgs::msg::PointCloud2>(
-          sub_registered_scan_topic_, 5,
+          sub_registered_scan_topic_, rclcpp::SensorDataQoS().keep_last(5),
           std::bind(&SensorCoveragePlanner3D::RegisteredScanCallback, this,
                     std::placeholders::_1));
   terrain_map_sub_ = this->create_subscription<sensor_msgs::msg::PointCloud2>(
@@ -411,7 +411,7 @@ bool SensorCoveragePlanner3D::initialize() {
           std::bind(&SensorCoveragePlanner3D::TerrainMapExtCallback, this,
                     std::placeholders::_1));
   state_estimation_sub_ = this->create_subscription<nav_msgs::msg::Odometry>(
-      sub_state_estimation_topic_, 5,
+      sub_state_estimation_topic_, rclcpp::SensorDataQoS().keep_last(100),
       std::bind(&SensorCoveragePlanner3D::StateEstimationCallback, this,
                 std::placeholders::_1));
   coverage_boundary_sub_ =
@@ -465,9 +465,11 @@ bool SensorCoveragePlanner3D::initialize() {
   speed_pub_=create_publisher<std_msgs::msg::Float32>("/speed",1);
   normal_speed_=declare_parameter<double>("mission_normal_speed",0.5);
   sensor_timeout_=declare_parameter<double>("mission_sensor_timeout",3.0);
+  scan_pose_max_skew_=declare_parameter<double>("scan_pose_max_skew",.05);
+  odometry_child_frame_=declare_parameter<std::string>("odometry_child_frame","");
   home_completion_.radius=declare_parameter<double>("mission_home_radius",0.5);
   home_completion_.dwell=declare_parameter<double>("mission_home_dwell",1.0);
-  for (double v : {normal_speed_,sensor_timeout_,home_completion_.radius,home_completion_.dwell})
+  for (double v : {normal_speed_,sensor_timeout_,home_completion_.radius,home_completion_.dwell,scan_pose_max_skew_})
     if (!std::isfinite(v) || v<=0) throw std::invalid_argument("Invalid mission parameter");
   runtime_breakdown_pub_ =
       this->create_publisher<std_msgs::msg::Int32MultiArray>(
@@ -499,11 +501,20 @@ void SensorCoveragePlanner3D::StateEstimationCallback(
   const double stamp=rclcpp::Time(state_estimation_msg->header.stamp).seconds();
   const double now=this->now().seconds();
   const auto& frame=state_estimation_msg->header.frame_id;
-  if ((frame!="map" && frame!="/map") || !std::isfinite(position.x) ||
+  if(last_input_ros_time_>=0 && now<last_input_ros_time_-1e-6)input_fault_="CLOCK_RESET_RESTART_REQUIRED";
+  last_input_ros_time_=now;
+  if (!input_fault_.empty()) {odom_received_=-1;return;}
+  if ((frame!="map" && frame!="/map") || stamp<=0 ||
+      (!odometry_child_frame_.empty() && state_estimation_msg->child_frame_id!=odometry_child_frame_) || !std::isfinite(position.x) ||
       !std::isfinite(position.y) || !std::isfinite(position.z) ||
       !std::isfinite(q.x+q.y+q.z+q.w) ||
       std::abs(q.x*q.x+q.y*q.y+q.z*q.z+q.w*q.w-1)>0.01 || stamp>now+0.1 ||
       now-stamp>sensor_timeout_) {odom_received_=-1;return;}
+  const ht_cost_ns::InputPose input{stamp,{position.x,position.y,position.z},{q.x,q.y,q.z,q.w}};
+  if(!ht_cost_ns::validInputPose(input)){odom_received_=-1;return;}
+  if(stamp<=odom_history_.latestStamp())return;
+  if(odom_history_.jump(input)) {input_fault_="ODOM_JUMP_RESTART_REQUIRED";odom_received_=-1;return;}
+  odom_history_.add(input);
   // Measure motion from poses: the CMU simulator may publish zero odometry twist.
   if (odom_stamp_>=0 && stamp>odom_stamp_)
     measured_speed_=std::hypot(position.x-robot_position_.x,position.y-robot_position_.y)/(stamp-odom_stamp_);
@@ -523,6 +534,11 @@ void SensorCoveragePlanner3D::StateEstimationCallback(
     moving_forward_ = false;
   }
   // initialized_ = true;
+  // A registered scan can arrive before its matching odometry. Retry a small
+  // bounded queue once new poses arrive, rather than always dropping that
+  // ordering and starving the planner at a fixed sensor phase offset.
+  auto pending=std::move(pending_scans_);pending_scans_.clear();
+  for(const auto& scan:pending)RegisteredScanCallback(scan);
 }
 
 void SensorCoveragePlanner3D::RegisteredScanCallback(
@@ -530,8 +546,24 @@ void SensorCoveragePlanner3D::RegisteredScanCallback(
   const double stamp=rclcpp::Time(registered_scan_msg->header.stamp).seconds();
   const double now=this->now().seconds();
   const auto& frame=registered_scan_msg->header.frame_id;
+  if(last_input_ros_time_>=0 && now<last_input_ros_time_-1e-6)input_fault_="CLOCK_RESET_RESTART_REQUIRED";
+  last_input_ros_time_=now;
+  if(!input_fault_.empty()){scan_received_=-1;return;}
   if ((frame!="map" && frame!="/map") || registered_scan_msg->width*registered_scan_msg->height==0 ||
-      stamp>now+0.1 || now-stamp>sensor_timeout_) {scan_received_=-1;return;}
+      stamp<=0 || stamp>now+0.1 || now-stamp>sensor_timeout_) {scan_received_=-1;return;}
+  if(stamp<=scan_stamp_)return;
+  const auto scan_pose=odom_history_.at(stamp,scan_pose_max_skew_);
+  if(!scan_pose) {
+    if(stamp>odom_history_.latestStamp()) {
+      auto position=std::lower_bound(pending_scans_.begin(),pending_scans_.end(),stamp,
+        [](const auto& p,double t){return rclcpp::Time(p->header.stamp).seconds()<t;});
+      if(position==pending_scans_.end() || rclcpp::Time((*position)->header.stamp).seconds()!=stamp)
+        pending_scans_.insert(position,registered_scan_msg);
+      while(pending_scans_.size()>10)pending_scans_.pop_front();
+    }
+    // No renewal of last good sensor time; freshness still expires normally.
+    return;
+  }
   scan_received_=now;scan_stamp_=stamp;
   if (!initialized_) {
     return;
@@ -549,14 +581,19 @@ void SensorCoveragePlanner3D::RegisteredScanCallback(
   registered_cloud_->cloud_->clear();
   pcl::copyPointCloud(*registered_scan_tmp, *(registered_cloud_->cloud_));
 
-  planning_env_->UpdateRobotPosition(robot_position_);
+  geometry_msgs::msg::Point scan_position;
+  scan_position.x=scan_pose->xyz[0];scan_position.y=scan_pose->xyz[1];scan_position.z=scan_pose->xyz[2];
+  planning_env_->UpdateRobotPosition(scan_position);
   planning_env_->UpdateRegisteredCloud<pcl::PointXYZI>(
       registered_cloud_->cloud_);
 
   registered_cloud_count_ = (registered_cloud_count_ + 1) % 5;
   if (registered_cloud_count_ == 0) {
     // initialized_ = true;
-    keypose_.pose.pose.position = robot_position_;
+    keypose_.header=registered_scan_msg->header;
+    keypose_.pose.pose.position = scan_position;
+    keypose_.pose.pose.orientation.x=scan_pose->q[0];keypose_.pose.pose.orientation.y=scan_pose->q[1];
+    keypose_.pose.pose.orientation.z=scan_pose->q[2];keypose_.pose.pose.orientation.w=scan_pose->q[3];
     keypose_.pose.covariance[0] = keypose_count_++;
     cur_keypose_node_ind_ =
         keypose_graph_->AddKeyposeNode(keypose_, *(planning_env_));
@@ -1626,6 +1663,13 @@ void SensorCoveragePlanner3D::CountDirectionChange() {
 
 void SensorCoveragePlanner3D::execute() {
   auto ht=viewpoint_manager_->HT();
+  const double input_now=this->now().seconds();
+  if(last_input_ros_time_>=0 && input_now<last_input_ros_time_-1e-6)input_fault_="CLOCK_RESET_RESTART_REQUIRED";
+  last_input_ros_time_=input_now;
+  if(!input_fault_.empty()) {
+    base_healthy_=false;force_hold_=true;stopped_=false;hold_reason_=input_fault_;
+    lookahead_point_update_=false;ht->publishPermission(false);PublishWaypoint();return;
+  }
   ht->updateExecution({robot_position_.x,robot_position_.y,robot_position_.z},fallback_commanded_);
   ht->beginCycle();
   const double now=this->now().seconds();

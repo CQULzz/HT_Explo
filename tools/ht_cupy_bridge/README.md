@@ -222,3 +222,44 @@ and the source age on entry; `map_processing_s` is the complete callback time.
 Latest stopped-map context/observation fix, its failed diagnostic attempt and
 closed-loop recordings: [fix report](../../docs/fixes/2026-10-17_context_recovery.md).
 Successful return-home checks are separate from complete terrain coverage.
+
+## Real-vehicle input integration (2026-10-22 development candidate)
+
+The user has an external registered-cloud pipeline and calibration. Its launch
+and TF details have not yet been supplied. Do not install a duplicate pipeline
+or rename raw `rslidar` coordinates to `map`.
+
+The installed `explore_ht_fixposition.launch.py` now offers `odometry_topic`,
+`registered_scan_topic`, `elevation_topic`, `ht_topic`, `odometry_child_frame`,
+and `command_topic`. Planner, follower and surface-reference bridge use the same
+chosen odometry. `start_fixposition`, `start_lidar`, `start_ht_bridge`, and
+`start_follower` prevent duplicate producers/controllers when the external launch
+already starts them. Each defaults to true; direction calibration still defaults
+to false and is not bypassed. The follower publishes `TwistStamped`; the external
+chassis consumer/adapter and vehicle reference point still need to be checked.
+
+`cupy_to_ht.py`, its sibling modules and the trained weights are installed within
+this package. Runtime Python needs ROS2 `rclpy`, `grid_map_msgs`, `nav_msgs`,
+`std_msgs`, NumPy, PyTorch, SciPy and threadpoolctl in the chosen interpreter;
+no neighboring-workspace Python path is assumed or added by the launch.
+
+Best-effort subscriptions also accept reliable publishers. Odometry is checked
+for map frame, finite pose and unit quaternion. An optional child-frame contract
+rejects the wrong vehicle reference instead of silently applying unknown TF.
+Surface-reference Z is used only within 50ms of the map timestamp. Map/odometry
+out-of-order packets cannot rewind the fusion history.
+
+The planner buffers up to 10 scans awaiting odometry, interpolates pose over a
+bracket no longer than 100ms (default), or accepts a nearest sample within 50ms.
+The `scan_pose_max_skew` parameter controls these bounds. This aligns the map
+insertion/keyframe reference; point-wise lidar deskew and transformation into
+map remain the upstream node's responsibility.
+
+A large odometry jump or ROS-clock rollback latches `*_RESTART_REQUIRED` in the
+planner/follower/bridge. Do not restart only the bridge and reuse other old maps:
+stop and restart/reset the complete external mapping and navigation pipeline in
+one consistent frame. Automatic epoch/reset coordination is not claimed.
+
+Changes passed code/offline tests only; no simulation, sensor, or vehicle run
+was started for this candidate. Keep 291x291 input, 241x241 center crop, model
+weights and approximately 0.04094m/cell unchanged until real data justify a change.

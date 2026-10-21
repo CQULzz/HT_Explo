@@ -1,0 +1,57 @@
+[  3%] Built target lidar_model
+[  6%] Built target ht_cost
+[  9%] Built target misc_utils
+[ 12%] Built target graph
+[ 15%] Built target tsp_solver
+[ 18%] Built target pointcloud_utils
+[ 21%] Built target viewpoint
+[ 25%] Built target exploration_path
+[ 28%] Built target pointcloud_manager
+[ 31%] Built target rolling_occupancy_grid
+[ 34%] Built target navigationBoundary
+[ 37%] Built target tare_visualizer
+[ 40%] Built target ht_core_test
+[ 43%] Built target xytheta_follower
+[ 46%] Built target gtest_main
+[ 50%] Built target gtest
+[ 53%] Built target rolling_grid
+[ 56%] Built target planning_env
+[ 59%] Built target ht_ros_test
+[ 62%] Built target input_pose_test
+[ 65%] Built target xytheta_follower_test
+[ 68%] Built target keypose_graph
+[ 73%] Built target grid_world
+[ 76%] Built target viewpoint_manager
+[ 81%] Built target geometry_pose_test
+[ 87%] Built target local_coverage_planner
+[ 93%] Built target sensor_coverage_planner_ground
+[ 95%] Building CXX object CMakeFiles/planner_input_test.dir/tests/planner_input_test.cpp.o
+[ 98%] Built target tare_planner_node
+In file included from /home/lzz/my test/HT_Explo-fixposition/src/tare_planner/include/sensor_coverage_planner/sensor_coverage_planner_ground.h:48,
+                 from /home/lzz/my test/HT_Explo-fixposition/src/tare_planner/tests/planner_input_test.cpp:1:
+/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/include/utils/misc_utils.h:69:85: warning: ‘nav_msgs::msg::Odometry_<std::allocator<void> >::ConstPtr’ is deprecated [-Wdeprecated-declarations]
+   69 | void KeyposeToMap(CloudType& cloud, const nav_msgs::msg::Odometry::ConstPtr& keypose);
+      |                                                                                     ^
+In file included from /opt/ros/jazzy/include/nav_msgs/nav_msgs/msg/odometry.hpp:7,
+                 from /home/lzz/my test/HT_Explo-fixposition/src/tare_planner/include/sensor_coverage_planner/sensor_coverage_planner_ground.h:24:
+/opt/ros/jazzy/include/nav_msgs/nav_msgs/msg/detail/odometry__struct.hpp:150:5: note: declared here
+  150 |     ConstPtr;
+      |     ^~~~~~~~
+/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/include/utils/misc_utils.h: In constructor ‘misc_utils_ns::Marker::Marker(rclcpp::Node::SharedPtr, std::string, std::string)’:
+/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/include/utils/misc_utils.h:299:27: warning: ‘misc_utils_ns::Marker::nh_’ will be initialized after [-Wreorder]
+  299 |   rclcpp::Node::SharedPtr nh_;
+      |                           ^~~
+/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/include/utils/misc_utils.h:296:15: warning:   ‘std::string misc_utils_ns::Marker::pub_topic_’ [-Wreorder]
+  296 |   std::string pub_topic_;
+      |               ^~~~~~~~~~
+/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/include/utils/misc_utils.h:304:12: warning:   when initialized here [-Wreorder]
+  304 |   explicit Marker(rclcpp::Node::SharedPtr nh, std::string pub_topic, std::string frame_id)
+      |            ^~~~~~
+In file included from /home/lzz/my test/HT_Explo-fixposition/src/tare_planner/include/grid_world/grid_world.h:29,
+                 from /home/lzz/my test/HT_Explo-fixposition/src/tare_planner/include/sensor_coverage_planner/sensor_coverage_planner_ground.h:52:
+/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/include/keypose_graph/keypose_graph.h: In member function ‘bool keypose_graph_ns::KeyposeGraph::InBound(int)’:
+/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/include/keypose_graph/keypose_graph.h:118:32: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<std::vector<int> >::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  118 |     return index >= 0 && index < graph_.size();
+      |                          ~~~~~~^~~~~~~~~~~~~~~
+[100%] Linking CXX executable planner_input_test
+[100%] Built target planner_input_test

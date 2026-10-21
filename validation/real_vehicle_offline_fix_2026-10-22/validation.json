@@ -1,0 +1,66 @@
+{
+  "ctest_targets": 6,
+  "ctest_failed": 0,
+  "gtest_suites": {
+    "planner_input_test.gtest.xml": {
+      "tests": 2,
+      "failures": 0,
+      "skipped": []
+    },
+    "input_pose_test.gtest.xml": {
+      "tests": 6,
+      "failures": 0,
+      "skipped": []
+    },
+    "ht_ros_test.gtest.xml": {
+      "tests": 31,
+      "failures": 0,
+      "skipped": [
+        "CapturedTunnelReturnKeepsRiskThresholdAndReachesHome",
+        "CapturedMapSearchResolutionAudit",
+        "CapturedSafeRootNeedsFinerHeadingSearchToEscape",
+        "CapturedHeadingBoundaryHasPlanningReserveWithoutRelaxingMeasuredRoot"
+      ]
+    },
+    "xytheta_follower_test.gtest.xml": {
+      "tests": 21,
+      "failures": 0,
+      "skipped": []
+    },
+    "geometry_pose_test.gtest.xml": {
+      "tests": 23,
+      "failures": 0,
+      "skipped": []
+    }
+  },
+  "gtest_passed": 79,
+  "gtest_skipped": 4,
+  "python_passed": 72,
+  "python_failed": 0,
+  "tare_unchanged_function_bodies": 6,
+  "launch_contract_passed": true,
+  "launch_contract_started_processes": 0,
+  "installed_bridge_modules_and_weights_equal_source": true,
+  "source_sha256": {
+    "src/tare_planner/include/ht_cost/input_pose_buffer.h": "7611d6610bd24585d2acdcd4cb1c464fdace827b625e22862c710344c7d1cf33",
+    "src/tare_planner/include/ht_cost/xytheta_planner.h": "5a78e98c1f9edc3a5911623f2257e97899ff87ea44e58169b6666ce5052e08a4",
+    "src/tare_planner/include/sensor_coverage_planner/sensor_coverage_planner_ground.h": "85f88be53866d69677fc94d6a487b97d57e06e84491eb6f1b93ec8d24c0b05af",
+    "src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp": "e2a9dec19604d9df293c434595a61b77d6c771c58533b8e06ebf2aebd6437780",
+    "src/tare_planner/src/ht_cost/xytheta_follower.cpp": "4b7a9685358e34122163a5e7fc8c28111d7ea1633b4d5a5b32e046d0150d3fab",
+    "src/tare_planner/launch/explore_ht_fixposition.launch.py": "e6833d10e9cfdd7084efb9e41120a5de4108ede2079acd04f2e23e5aca7321d3",
+    "src/tare_planner/CMakeLists.txt": "252da43bb9bb496baeebe72d3c1663843c255e6991f80b27e5458d3559eb741c",
+    "src/tare_planner/package.xml": "a4e03625245dc16cb7cda2db0d4bc90a0dea1925d4bfa9b0285144606ad7f957",
+    "tools/ht_cupy_bridge/cupy_to_ht.py": "2a39839c84a34a2d328654710b2ab96739b187ef283ca0215c8ff4161311844e",
+    "tools/ht_cupy_bridge/input_odometry.py": "139504ca5007b3efbfaf6140f3b8417c0e0d7da7d334cd2a451ce8e3cac3a0e1",
+    "tools/ht_cupy_bridge/model.py": "3057962e50f20ed6962cdb30b32e275f48ef608cb93b86eda517ce582df2fc14",
+    "tools/ht_cupy_bridge/student_best_epoch_weights.pth": "0a79b865d012aa633fbb9913fc4031908dfe188ec9e161ef5a3fbb34a3f8c4d4"
+  },
+  "remaining_navigation_simulator_device_processes": [],
+  "runtime_versions": {
+    "numpy": "1.26.4",
+    "torch": "2.11.0+cpu",
+    "scipy": "1.11.4",
+    "threadpoolctl": "3.6.0"
+  },
+  "scope": "Offline synthetic messages/test clock and static captured map only; follower commands remapped to /offline_test/* in domain231; no simulator, hardware driver or vehicle run."
+}

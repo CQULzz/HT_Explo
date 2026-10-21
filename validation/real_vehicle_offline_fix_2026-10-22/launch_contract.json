@@ -1,0 +1,55 @@
+{
+  "passed": true,
+  "started_processes": 0,
+  "nodes": [
+    {
+      "executable": "fixposition_driver_ros2_exec",
+      "enabled": false,
+      "overrides": {
+        "nav2_mode": true,
+        "use_sim_time": false
+      }
+    },
+    {
+      "executable": "rslidar_sdk_node",
+      "enabled": false,
+      "overrides": {
+        "config_path": "/home/lzz/my test/HT_Explo-fixposition/src/tare_planner/config/rslidar_helios32.yaml"
+      }
+    },
+    {
+      "executable": "tare_planner_node",
+      "enabled": true,
+      "overrides": {
+        "sub_state_estimation_topic_": "/external/vehicle_odom",
+        "sub_registered_scan_topic_": "/external/registered_cloud",
+        "odometry_child_frame": "base_link",
+        "ht_topic": "/candidate/ht",
+        "use_sim_time": false
+      }
+    },
+    {
+      "executable": "xytheta_follower",
+      "enabled": true,
+      "overrides": {
+        "odometry_topic": "/external/vehicle_odom",
+        "registered_scan_topic": "/external/registered_cloud",
+        "ht_topic": "/candidate/ht",
+        "odometry_child_frame": "base_link",
+        "use_sim_time": false,
+        "command_topic": "/offline_test/cmd_vel"
+      }
+    },
+    {
+      "executable": "cupy_to_ht.py",
+      "enabled": true,
+      "overrides": {
+        "surface_odometry_topic": "/external/vehicle_odom",
+        "odometry_child_frame": "base_link",
+        "ht_topic": "/candidate/ht",
+        "elevation_topic": "/external/elevation_raw",
+        "use_sim_time": false
+      }
+    }
+  ]
+}

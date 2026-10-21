@@ -7,7 +7,7 @@
 | 分支 | 内容 | 使用边界 |
 |---|---|---|
 | `main` | 默认分支；`ffab5bd`完整归档基线，加`13b46a9`可视化与本次资料索引 | 导航源文件沿用阶段47/48，导航改动锚点`07c1abd`；有已知问题，不代表实车通过 |
-| `develop` | 保留`3f589d8`高程输入校验，以及当前RViz输入/时序/资源清理修复和离线审查 | 没有完整600秒仿真验收；见该分支`validation/logic_resolution_2026-10-22/`；中止记录保留 |
+| `develop` | 保留`3f589d8`输入校验，并新增实车话题/QoS、扫描位姿匹配、实际指令间隔及定位跳变停用修复；见`validation/real_vehicle_offline_fix_2026-10-22/REPORT.md` | 没有完整600秒仿真验收；见该分支`validation/logic_resolution_2026-10-22/`；中止记录保留 |
 | `visualization/xytheta` | 指向`13b46a9`：半透明体素及八方向数据审计 | 只重放阶段48数据；不作为新的探索能力对照 |
 | `codex/ht8dir-v1` | 原默认开发分支 | 原提交保留，不强推、不重写；作为历史兼容入口 |
 | `codex/ht-transparent-voxels-20261022` | 原可视化分支 | 保留原链接，与`visualization/xytheta`的起始代码相同 |

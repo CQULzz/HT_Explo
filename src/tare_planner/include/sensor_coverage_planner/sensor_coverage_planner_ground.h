@@ -28,6 +28,7 @@
 #include <std_msgs/msg/bool.hpp>
 #include <std_msgs/msg/string.hpp>
 #include "ht_cost/execution_policy.h"
+#include "ht_cost/input_pose_buffer.h"
 #include <std_msgs/msg/empty.hpp>
 #include <std_msgs/msg/float32.hpp>
 #include <std_msgs/msg/int32.hpp>
@@ -212,6 +213,11 @@ private:
   bool home_initialized_=false, base_healthy_=false, force_hold_=true;
   bool fallback_commanded_=false, startup_commanded_=false;
   double odom_received_=-1, scan_received_=-1, odom_stamp_=-1, scan_stamp_=-1;
+  ht_cost_ns::InputPoseBuffer odom_history_;
+  std::deque<sensor_msgs::msg::PointCloud2::ConstSharedPtr> pending_scans_;
+  friend struct InputCallbackTestAccess;
+  double scan_pose_max_skew_=.05,last_input_ros_time_=-1;
+  std::string odometry_child_frame_,input_fault_;
   double measured_speed_=0, normal_speed_=0.5, sensor_timeout_=3.0, last_plan_=-1;
   std::string hold_reason_="WAIT_START";
   ht_cost_ns::HomeCompletion home_completion_;

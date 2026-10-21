@@ -1,6 +1,7 @@
 #include "ht_cost/xytheta_planner.h"
 #include "ht_cost/ht_cost_map.h"
 #include "ht_cost/measured_collision_field.h"
+#include "ht_cost/input_pose_buffer.h"
 #include <sensor_msgs/point_cloud2_iterator.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <nav_msgs/msg/odometry.hpp>
@@ -32,6 +33,10 @@ int gear(Pose2 a,Pose2 b) {
 class XYThetaFollower : public rclcpp::Node {
  public:
   explicit XYThetaFollower(const rclcpp::NodeOptions& options=rclcpp::NodeOptions()) : Node("xytheta_follower",options) {
+    const auto odometry_topic=declare_parameter<std::string>("odometry_topic","/state_estimation");
+    const auto registered_scan_topic=declare_parameter<std::string>("registered_scan_topic","/registered_scan");
+    const auto command_topic=declare_parameter<std::string>("command_topic","/cmd_vel");
+    expected_child_=declare_parameter<std::string>("odometry_child_frame","");
     max_speed_=declare_parameter<double>("max_speed",0.5);
     max_reverse_=declare_parameter<double>("max_reverse",0.25);
     max_yaw_rate_=declare_parameter<double>("max_yaw_rate",0.8);
@@ -90,6 +95,8 @@ class XYThetaFollower : public rclcpp::Node {
         std::vector<Pose2> incoming;
         if (msg->header.frame_id!="map") {path_.clear();return;}
         for (const auto& stamped:msg->poses) {
+          if ((!stamped.header.frame_id.empty() && !ht_cost_ns::mapFrame(stamped.header.frame_id)) ||
+              !validPose(stamped.pose,1)) {path_.clear();return;}
           const auto pose=poseOf(stamped.pose);
           if (!std::isfinite(pose.x) || !std::isfinite(pose.y) || !std::isfinite(pose.yaw)) {
             path_.clear();return;
@@ -118,8 +125,20 @@ class XYThetaFollower : public rclcpp::Node {
         path_stamp_=rclcpp::Time(msg->header.stamp).seconds();
         path_header_=msg->header;
       });
-    odom_sub_=create_subscription<nav_msgs::msg::Odometry>("/state_estimation",5,
+    odom_sub_=create_subscription<nav_msgs::msg::Odometry>(odometry_topic,rclcpp::SensorDataQoS().keep_last(100),
       [this](nav_msgs::msg::Odometry::ConstSharedPtr msg) {
+        const double stamp=rclcpp::Time(msg->header.stamp).seconds(),now_s=now().seconds();
+        if (!ht_cost_ns::mapFrame(msg->header.frame_id) || !validPose(msg->pose.pose,stamp) ||
+            (!expected_child_.empty() && msg->child_frame_id!=expected_child_) ||
+            stamp>now_s+.1 || now_s-stamp>odom_timeout_ || !std::isfinite(msg->twist.twist.angular.z)) {
+          odom_received_=-1;return;
+        }
+        const auto input=inputPose(msg->pose.pose,stamp);
+        if (stamp<=odom_history_.latestStamp())return;
+        if (odom_history_.jump(input)) {
+          input_fault_="ODOM_JUMP_RESTART_REQUIRED";odom_received_=-1;path_.clear();permitted_=false;return;
+        }
+        odom_history_.add(input);
         robot_=poseOf(msg->pose.pose);robot_z_=msg->pose.pose.position.z;
         measured_yaw_rate_=msg->twist.twist.angular.z;
         if (!std::isfinite(robot_z_) || !std::isfinite(robot_.x) || !std::isfinite(robot_.y) || !std::isfinite(robot_.yaw) ||
@@ -129,8 +148,9 @@ class XYThetaFollower : public rclcpp::Node {
         odom_received_=now().seconds();
         odom_stamp_=rclcpp::Time(msg->header.stamp).seconds();
       });
-    scan_sub_=create_subscription<sensor_msgs::msg::PointCloud2>("/registered_scan",rclcpp::SensorDataQoS(),
+    scan_sub_=create_subscription<sensor_msgs::msg::PointCloud2>(registered_scan_topic,rclcpp::SensorDataQoS(),
       [this](sensor_msgs::msg::PointCloud2::ConstSharedPtr msg) {
+        if(!ht_cost_ns::mapFrame(msg->header.frame_id)){scan_received_=-1;return;}
         scan_received_=now().seconds();scan_stamp_=rclcpp::Time(msg->header.stamp).seconds();
       });
     permission_sub_=create_subscription<std_msgs::msg::Bool>("/ht_navigation_allowed",5,
@@ -143,15 +163,35 @@ class XYThetaFollower : public rclcpp::Node {
       [this](std_msgs::msg::Bool::ConstSharedPtr msg) {
         completed_=msg->data;completed_received_=now().seconds();
       });
-    cmd_pub_=create_publisher<geometry_msgs::msg::TwistStamped>("/cmd_vel",5);
+    cmd_pub_=create_publisher<geometry_msgs::msg::TwistStamped>(command_topic,5);
     status_pub_=create_publisher<std_msgs::msg::String>("/ht_follower_status",5);
     rejection_pub_=create_publisher<nav_msgs::msg::Path>("/ht_execution_rejected_edge",5);
     timer_=create_wall_timer(std::chrono::milliseconds(50),[this]() {tick();});
   }
   void initialize() {ht_=std::make_unique<ht_cost_ns::HtCostMap>(shared_from_this(),false);}
  private:
+  static ht_cost_ns::InputPose inputPose(const geometry_msgs::msg::Pose& p,double stamp) {
+    return {stamp,{p.position.x,p.position.y,p.position.z},
+                  {p.orientation.x,p.orientation.y,p.orientation.z,p.orientation.w}};
+  }
+  static bool validPose(const geometry_msgs::msg::Pose& p,double stamp) {
+    return ht_cost_ns::validInputPose(inputPose(p,stamp));
+  }
+  static double steadySeconds() {
+    return std::chrono::duration<double>(std::chrono::steady_clock::now().time_since_epoch()).count();
+  }
+  void publishCommand(geometry_msgs::msg::TwistStamped& cmd) {
+    cmd.header.stamp=now();
+    cmd_pub_->publish(cmd);
+    // Use the end of the previous publish call as a conservative reference.
+    // Timing from tick starts would include variable validation work and can
+    // overestimate the interval between actual consecutive publications.
+    command_interval_.published(steadySeconds());
+  }
   void tick() {
     const double now_s=now().seconds();
+    if(last_ros_tick_>=0 && now_s<last_ros_tick_-1e-6)input_fault_="CLOCK_RESET_RESTART_REQUIRED";
+    last_ros_tick_=now_s;
     geometry_msgs::msg::TwistStamped cmd;
     cmd.header.stamp=now();cmd.header.frame_id="vehicle";
     auto fresh=[&](double stamp,double limit) {return stamp>0 && now_s>=stamp && now_s-stamp<limit;};
@@ -165,8 +205,9 @@ class XYThetaFollower : public rclcpp::Node {
       // Clear the outgoing message too; resetting controller state alone
       // would publish the very motion that HT just rejected.
       cmd.twist=geometry_msgs::msg::Twist();
-      cmd_pub_->publish(cmd);status(reason);
+      publishCommand(cmd);status(reason);
     };
+    if(!input_fault_.empty()){hold(input_fault_);return;}
     // A current terminal heartbeat is an explicit stop, even after the final
     // path expires. An old completion flag cannot mask subsequent failures.
     if (completed_ && fresh(completed_received_,permission_timeout_)) {hold("COMPLETED");return;}
@@ -250,7 +291,7 @@ class XYThetaFollower : public rclcpp::Node {
       if (std::abs(bearing_error)<0.65 && std::abs(pose_error)<0.8)
         wanted_v=direction*(direction>0?max_speed_:max_reverse_);
     }
-    const double dt=0.05;
+    const double dt=command_interval_.elapsed(steadySeconds());
     linear_+=clamp(wanted_v-linear_,max_accel_*dt);
     angular_+=clamp(wanted_w-angular_,max_yaw_accel_*dt);
     cmd.twist.linear.x=linear_;cmd.twist.angular.z=angular_;
@@ -276,7 +317,7 @@ class XYThetaFollower : public rclcpp::Node {
     }
     command_blocked_since_=-1;
     status(std::abs(linear_)>.01 ? "DRIVING" : std::abs(angular_)>.05 ? "TURNING" : "ALIGNING");
-    cmd_pub_->publish(cmd);
+    publishCommand(cmd);
   }
   size_t rotationEnd(size_t index) const {
     double angle=wrapYaw(path_[index].yaw-path_[index-1].yaw);
@@ -323,6 +364,10 @@ class XYThetaFollower : public rclcpp::Node {
   double linear_=0,angular_=0;
   double last_rejected_stamp_=-1;
   double command_blocked_since_=-1;
+  ht_cost_ns::InputPoseBuffer odom_history_;
+  ht_cost_ns::CommandInterval command_interval_;
+  std::string expected_child_,input_fault_;
+  double last_ros_tick_=-1;
   std_msgs::msg::Header path_header_;
   bool permitted_=false;
   bool completed_=false;

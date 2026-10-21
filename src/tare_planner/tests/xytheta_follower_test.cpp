@@ -35,6 +35,7 @@ class FollowerTest : public ::testing::Test {
   void SetUp() override {
     if (!rclcpp::ok()) rclcpp::init(0,nullptr);
     follower=std::make_shared<XYThetaFollower>(rclcpp::NodeOptions().parameter_overrides({
+      rclcpp::Parameter("command_topic","/offline_test/cmd_vel"),
       rclcpp::Parameter("ht_enabled",true),rclcpp::Parameter("ht_directions_calibrated",true),
       rclcpp::Parameter("ht_require_reversible_motion",true),
       rclcpp::Parameter("ht_score_semantics",scoreSemantics()),
@@ -47,7 +48,7 @@ class FollowerTest : public ::testing::Test {
     path=source->create_publisher<nav_msgs::msg::Path>("/ht_xytheta_path",1);
     permit=source->create_publisher<std_msgs::msg::Bool>("/ht_navigation_allowed",1);
     completed=source->create_publisher<std_msgs::msg::Bool>("/mission_completed",1);
-    commands=source->create_subscription<geometry_msgs::msg::TwistStamped>("/cmd_vel",5,
+    commands=source->create_subscription<geometry_msgs::msg::TwistStamped>("/offline_test/cmd_vel",5,
       [&](geometry_msgs::msg::TwistStamped::ConstSharedPtr p){speed=p->twist.linear.x;received_commands.push_back(*p);});
     statuses=source->create_subscription<std_msgs::msg::String>("/ht_follower_status",5,
       [&](std_msgs::msg::String::ConstSharedPtr p){reason=p->data;
@@ -71,11 +72,11 @@ class FollowerTest : public ::testing::Test {
   void spin(std::chrono::milliseconds duration) {
     const auto end=std::chrono::steady_clock::now()+duration;
     while (std::chrono::steady_clock::now()<end) {
-      nav_msgs::msg::Odometry o;o.header.stamp=source->now();
+      nav_msgs::msg::Odometry o;o.header.stamp=source->now();o.header.frame_id="map";
       o.pose.pose.orientation.w=std::cos(robot_yaw/2);
       o.pose.pose.orientation.z=std::sin(robot_yaw/2);o.twist.twist.angular.z=robot_yaw_rate;
       if (send_odom) odom->publish(o);
-      sensor_msgs::msg::PointCloud2 s;s.header.stamp=source->now();scan->publish(s);
+      sensor_msgs::msg::PointCloud2 s;s.header.stamp=source->now();s.header.frame_id="map";scan->publish(s);
       sensor_msgs::msg::PointCloud2 cloud;cloud.header.stamp=source->now();cloud.header.frame_id=geometry_frame;
       sensor_msgs::PointCloud2Modifier modifier(cloud);modifier.setPointCloud2FieldsByString(1,"xyz");
       modifier.resize(geometry_mode ? 1:0);
@@ -245,4 +246,53 @@ TEST_F(FollowerTest, GeometryCommandArcRejectsTrackingDepartureWithActualZeroTwi
     }
     ASSERT_NE(prior,nullptr);EXPECT_DOUBLE_EQ(prior->twist.linear.x,0);EXPECT_DOUBLE_EQ(prior->twist.angular.z,0);
   }
+}
+
+TEST_F(FollowerTest, BestEffortOdometryPublisherIsCompatible) {
+  odom.reset();
+  odom=source->create_publisher<nav_msgs::msg::Odometry>("/state_estimation",rclcpp::SensorDataQoS());
+  spin(350ms);EXPECT_GT(speed,0);EXPECT_EQ(reason,"DRIVING");
+}
+TEST_F(FollowerTest, WrongFrameAndInvalidQuaternionCannotRenewOdometry) {
+  send_odom=false;
+  nav_msgs::msg::Odometry o;o.header.stamp=source->now();o.header.frame_id="odom";o.pose.pose.orientation.w=1;
+  odom->publish(o);spin(100ms);EXPECT_DOUBLE_EQ(speed,0);EXPECT_EQ(reason,"ODOM_STALE");
+  o.header.stamp=source->now();o.header.frame_id="map";o.pose.pose.orientation.w=0;
+  odom->publish(o);spin(100ms);EXPECT_DOUBLE_EQ(speed,0);EXPECT_EQ(reason,"ODOM_STALE");
+  send_odom=true;spin(200ms);EXPECT_GT(speed,0);
+}
+TEST_F(FollowerTest, DiscontinuousLocalizationRequiresRestartDespiteNewPaths) {
+  send_odom=false;
+  nav_msgs::msg::Odometry o;o.header.stamp=source->now();o.header.frame_id="map";
+  o.pose.pose.orientation.w=1;o.pose.pose.position.x=5;
+  odom->publish(o);spin(150ms);EXPECT_DOUBLE_EQ(speed,0);EXPECT_EQ(reason,"ODOM_JUMP_RESTART_REQUIRED");
+  send_odom=true;sendPath();allow(true);spin(200ms);
+  EXPECT_DOUBLE_EQ(speed,0);EXPECT_EQ(reason,"ODOM_JUMP_RESTART_REQUIRED");
+}
+TEST_F(FollowerTest, MalformedIndividualPathPoseCannotProduceMotion) {
+  auto p=last_path;p.header.stamp=source->now();p.poses.back().pose.orientation.w=0;
+  path->publish(p);spin(100ms);EXPECT_DOUBLE_EQ(speed,0);EXPECT_EQ(reason,"EMPTY_PATH");
+}
+
+TEST(FollowerClock, ClockRollbackLatchesStopEvenAfterClockRecovers) {
+  if(!rclcpp::ok())rclcpp::init(0,nullptr);
+  auto follower=std::make_shared<XYThetaFollower>(rclcpp::NodeOptions().parameter_overrides({
+    rclcpp::Parameter("use_sim_time",true),rclcpp::Parameter("ht_enabled",false),
+    rclcpp::Parameter("command_topic","/offline_test/clock_cmd")}));
+  follower->initialize();
+  auto source=std::make_shared<rclcpp::Node>("offline_clock_observer");
+  std::string reason;
+  auto status=source->create_subscription<std_msgs::msg::String>("/ht_follower_status",5,
+    [&](std_msgs::msg::String::ConstSharedPtr m){reason=m->data;});
+  auto clock=follower->get_clock()->get_clock_handle();
+  ASSERT_EQ(rcl_enable_ros_time_override(clock),RCL_RET_OK);
+  ASSERT_EQ(rcl_set_ros_time_override(clock,10000000000LL),RCL_RET_OK);
+  rclcpp::executors::SingleThreadedExecutor executor;executor.add_node(source);executor.add_node(follower);
+  auto spin=[&](){for(int i=0;i<15;++i){executor.spin_some();std::this_thread::sleep_for(10ms);}};
+  spin();EXPECT_EQ(reason,"ODOM_STALE");
+  ASSERT_EQ(rcl_set_ros_time_override(clock,9000000000LL),RCL_RET_OK);
+  spin();EXPECT_EQ(reason,"CLOCK_RESET_RESTART_REQUIRED");
+  ASSERT_EQ(rcl_set_ros_time_override(clock,11000000000LL),RCL_RET_OK);
+  spin();EXPECT_EQ(reason,"CLOCK_RESET_RESTART_REQUIRED");
+  executor.remove_node(follower);executor.remove_node(source);
 }

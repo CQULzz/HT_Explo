@@ -4,6 +4,8 @@
 
 当前为研究原型。最近已完整归档的导航代码是`07c1abd`，阶段47室内、48校园分别做了原TARE与HT各600秒对照；仍有检查失败及场景限制，不能称为实车稳定版。`develop`另有输入校验候选，**没有完整600秒验收**，不能把旧视频当成它的运行结果。
 
+开发候选新增了实车接口、扫描时刻匹配、实际指令间隔限幅与跳变/时钟回退停用；仅离线通过，见[评估与修正报告](validation/real_vehicle_offline_fix_2026-10-22/REPORT.md)。用户已确认外部配准与标定存在，实际总launch/TF待补。
+
 [版本改动与已知问题](VERSIONS.md) · [全部实验、视频和原始数据](docs/experiments/catalog/INDEX.md) · [分支/标签规则](docs/REPOSITORY_GUIDE.md)
 
 ## 代码在哪里
@@ -24,7 +26,7 @@
 | 分支 | 用途 | 验证范围 |
 |---|---|---|
 | [`main`](https://github.com/CQULzz/HT_Explo/tree/main) | 默认入口；已完成实验归档的导航基线、报告与回放工具 | 导航沿用`07c1abd`；看阶段47/48具体限制 |
-| [`develop`](https://github.com/CQULzz/HT_Explo/tree/develop) | `3f589d8`输入校验及RViz逻辑修复候选，附审查记录 | 离线检查；600秒仿真未验收 |
+| [`develop`](https://github.com/CQULzz/HT_Explo/tree/develop) | 输入校验、实车接口及执行时序候选，附离线审查记录 | 离线检查；600秒仿真未验收 |
 | [`visualization/xytheta`](https://github.com/CQULzz/HT_Explo/tree/visualization/xytheta) | 半透明体素回放及八方向数值审计 | 重放阶段48已有数据，没有新导航实验 |
 
 旧`codex/*`分支和全部48个阶段标签保留以兼容历史链接；新开发使用`develop`，导航与可视化里程碑分别用`nav/*`、`viz/*`。每个分支均是完整仓库快照，区别在于改动范围。

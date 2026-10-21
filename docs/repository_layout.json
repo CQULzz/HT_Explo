@@ -4,7 +4,6 @@
   "organized_on": "2026-10-22",
   "baseline_evidence_commit": "ffab5bd03642c49872fd0aefe8fb58a21ec2d4e1",
   "baseline_navigation_commit": "07c1abd334f83cb8d602e2234134b4286862c916",
-  "development_candidate_commit": "3f589d8ce7e444c16211c8be9e2a3654a56578e1",
   "visualization_source_commit": "13b46a9b9ecf7d1ebc94cca778a14132b6ebea70",
   "branches": [
     {
@@ -15,7 +14,7 @@
     },
     {
       "name": "develop",
-      "purpose": "最新输入校验与RViz逻辑修复候选；600秒仿真未验收，独立保存审查/中止记录。",
+      "purpose": "输入校验、实车输入/QoS、扫描位姿匹配和执行时序开发候选；仅离线通过，未进行600秒或实车验收。",
       "source_base": "3f589d8ce7e444c16211c8be9e2a3654a56578e1"
     },
     {
@@ -65,5 +64,8 @@
     "早期62组历史目录只作研究阶段关联；没有记录的测量提交标为待确认，不强行声称等于阶段标签。",
     "完整数据放GitHub Releases，Git只保存源码、报告、索引、校验回执和小型样本。",
     "main不能用未完成600秒验收的开发候选替换；后续修改遵循AGENTS.md。"
-  ]
+  ],
+  "development_previous_candidate_commit": "3f589d8ce7e444c16211c8be9e2a3654a56578e1",
+  "development_ref": "refs/heads/develop",
+  "development_report": "validation/real_vehicle_offline_fix_2026-10-22/REPORT.md"
 }

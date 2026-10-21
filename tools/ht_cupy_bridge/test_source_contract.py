@@ -105,3 +105,24 @@ def test_valid_model_and_map_are_unchanged_from_before(node):
             assert x.layout == y.layout
             np.testing.assert_array_equal(np.array(x.data),np.array(y.data))
     finally: old.destroy_node()
+
+
+def test_older_map_does_not_rewind_fused_history(node):
+    m=source_map();node.on_map(m)
+    count=node.count;history=node.history
+    m.header.stamp.sec=9;node.on_map(m)
+    assert node.count==count and node.history is history and node.last_source_stamp==(10,0)
+
+
+def test_discontinuous_odometry_prevents_reusing_previous_history(node):
+    from nav_msgs.msg import Odometry
+    m=source_map();node.on_map(m);count=node.count
+    a=Odometry();a.header.frame_id='map';a.header.stamp=node.get_clock().now().to_msg();a.pose.pose.orientation.w=1.
+    node.on_odometry(a)
+    b=deepcopy(a)
+    t=a.header.stamp.sec*10**9+a.header.stamp.nanosec+10**6
+    b.header.stamp.sec=t//10**9;b.header.stamp.nanosec=t%10**9;b.pose.pose.position.x=5.
+    node.on_odometry(b)
+    assert node.input_odometry.fault=='ODOM_JUMP_RESTART_REQUIRED'
+    m.header.stamp.sec=11;node.on_map(m)
+    assert node.count==count and node.robot_z_at(a.header.stamp.sec+a.header.stamp.nanosec*1e-9) is None

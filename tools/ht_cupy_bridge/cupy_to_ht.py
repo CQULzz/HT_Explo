@@ -2,7 +2,6 @@
 """Infer the local eight-direction HT map from observed CuPy elevation cells."""
 
 from copy import deepcopy
-from collections import deque
 from array import array as FloatArray
 import json
 import math
@@ -21,7 +20,7 @@ from rclpy.qos import QoSProfile, ReliabilityPolicy
 from rclpy.signals import SignalHandlerOptions
 from rclpy.executors import ExternalShutdownException, SingleThreadedExecutor
 from nav_msgs.msg import Odometry
-from std_msgs.msg import Float32, Float32MultiArray, MultiArrayDimension, MultiArrayLayout
+from std_msgs.msg import Float32, Float32MultiArray, MultiArrayDimension, MultiArrayLayout, String
 
 from model import load_student_model
 from historical_elevation import HistoricalElevation
@@ -30,6 +29,7 @@ from local_surface import SurfaceReferenceEstimator
 from cpu_threads import configure_cpu_threads
 from ht_support import prepare_ht_context, preserve_rejected_obstacles
 from inference_context_io import ContextCaptureSchedule, GracefulStop, save_immutable_npz
+from input_odometry import InputOdometry
 
 
 def decode_elevation_source(source):
@@ -82,12 +82,14 @@ class CupyToHt(Node):
         )
         if self.channels_last:
             self.model=self.model.to(memory_format=torch.channels_last)
-        self.pub = self.create_publisher(GridMap, "/ht_traversability/global_local", 1)
+        self.pub = self.create_publisher(GridMap, self.declare_parameter('ht_topic', '/ht_traversability/global_local').value, 1)
         self.history_pub = self.create_publisher(GridMap, "/elevation_mapping/historical_local", 1)
         self.history = None
         offset = self.declare_parameter('surface_sensor_ground_offset_m', -1.0).value
         self.surface = SurfaceReferenceEstimator(sensor_ground_offset_m=offset if offset >= 0 else None)
-        self.odometry = deque(maxlen=4000)
+        self.input_odometry = InputOdometry(self.declare_parameter('odometry_child_frame', '').value)
+        self.odometry = self.input_odometry.samples
+        self.input_status = self.create_publisher(String, '/ht_input_status', 1)
         self.diagnostics = []
         self.last_source_stamp = None
         self.last_context_dump_stamp = None
@@ -99,27 +101,28 @@ class CupyToHt(Node):
             Odometry, self.declare_parameter('surface_odometry_topic', '/state_estimation').value,
             self.on_odometry, QoSProfile(depth=100, reliability=ReliabilityPolicy.BEST_EFFORT))
         self.sub = self.create_subscription(
-            GridMap, "/elevation_mapping/elevation_map_raw", self.on_map,
+            GridMap, self.declare_parameter('elevation_topic', '/elevation_mapping/elevation_map_raw').value, self.on_map,
             QoSProfile(depth=1, reliability=ReliabilityPolicy.RELIABLE)
         )
         self.count = 0
 
     def on_odometry(self, msg):
-        stamp = msg.header.stamp.sec + msg.header.stamp.nanosec*1e-9
-        self.odometry.append((stamp, float(msg.pose.pose.position.z)))
+        self.input_odometry.add(msg, self.get_clock().now().nanoseconds/1e9)
+        if self.input_odometry.fault:
+            self.input_status.publish(String(data=self.input_odometry.fault))
 
     def robot_z_at(self, stamp):
-        if not self.odometry:
-            return None
-        match = min(self.odometry, key=lambda v: abs(v[0]-stamp))
-        return match[1] if abs(match[0]-stamp) <= .75 else None
+        return self.input_odometry.height_at(stamp)
 
     def on_map(self, source):
         started = time.monotonic()
+        if not self.input_odometry.check_clock(self.get_clock().now().nanoseconds/1e9):
+            self.input_status.publish(String(data=self.input_odometry.fault))
+            return
         source_age_at_start = self.get_clock().now().nanoseconds/1e9 - (
             source.header.stamp.sec + source.header.stamp.nanosec*1e-9)
         stamp_key = (source.header.stamp.sec, source.header.stamp.nanosec)
-        if stamp_key == self.last_source_stamp:
+        if self.last_source_stamp is not None and stamp_key <= self.last_source_stamp:
             return
         try:
             resolution, elevation, variance, age = decode_elevation_source(source)

@@ -14,8 +14,9 @@ struct Pose2 {
 };
 
 inline double wrapYaw(double yaw) {
-  while (yaw>kPi) yaw-=2*kPi;
-  while (yaw<=-kPi) yaw+=2*kPi;
+  if (!std::isfinite(yaw))return std::numeric_limits<double>::quiet_NaN();
+  yaw=std::remainder(yaw,2*kPi);
+  if (yaw<=-kPi)yaw+=2*kPi;
   return yaw;
 }
 
@@ -96,6 +97,9 @@ struct XYThetaConfig {
 template<class Valid>
 XYThetaPlan planXYTheta(Pose2 start,Point goal,const XYThetaConfig& cfg,Valid valid) {
   XYThetaPlan out;
+  for(double v:{cfg.cell,cfg.drive_step,cfg.forward_speed,cfg.reverse_speed,
+                cfg.max_yaw_rate,cfg.goal_radius,cfg.max_radius,cfg.max_search_seconds})
+    if(!std::isfinite(v) || v<=0)return out;
   if (!std::isfinite(start.x) || !std::isfinite(start.y) || !std::isfinite(start.yaw) ||
       !std::isfinite(goal.x) || !std::isfinite(goal.y) || cfg.cell<=0 ||
       cfg.headings<8 || cfg.drive_step<=0 || cfg.forward_speed<=0 ||

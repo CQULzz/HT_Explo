@@ -186,6 +186,14 @@ install(DIRECTORY data/
         DESTINATION share/${PROJECT_NAME}
       )
 
+# Keep the inference entry, sibling modules and weights in this workspace's
+# install tree. No adjacent workspace or source-absolute script path is used.
+install(PROGRAMS ../../tools/ht_cupy_bridge/cupy_to_ht.py DESTINATION lib/${PROJECT_NAME})
+install(DIRECTORY ../../tools/ht_cupy_bridge/ DESTINATION lib/${PROJECT_NAME}
+        FILES_MATCHING PATTERN "*.py" PATTERN "*.pth"
+        PATTERN "cupy_to_ht.py" EXCLUDE PATTERN "test_*" EXCLUDE
+        PATTERN "__pycache__" EXCLUDE)
+
 if(BUILD_TESTING)
   enable_testing()
   add_executable(ht_core_test tests/ht_core_test.cpp)
@@ -197,7 +205,11 @@ if(BUILD_TESTING)
   target_link_libraries(geometry_pose_test viewpoint_manager "-Wl,--whole-archive" planning_env "-Wl,--no-whole-archive" pointcloud_manager)
   ament_add_gtest(ht_ros_test tests/ht_ros_test.cpp TIMEOUT 60)
   target_link_libraries(ht_ros_test ht_cost)
-  ament_add_gtest(xytheta_follower_test tests/xytheta_follower_test.cpp TIMEOUT 45)
+  ament_add_gtest(input_pose_test tests/input_pose_test.cpp TIMEOUT 15)
+  ament_add_gtest(planner_input_test tests/planner_input_test.cpp TIMEOUT 20)
+  ament_target_dependencies(planner_input_test rclcpp nav_msgs sensor_msgs)
+  target_link_libraries(planner_input_test sensor_coverage_planner_ground)
+  ament_add_gtest(xytheta_follower_test tests/xytheta_follower_test.cpp TIMEOUT 90)
   ament_target_dependencies(xytheta_follower_test rclcpp nav_msgs geometry_msgs sensor_msgs std_msgs)
   target_link_libraries(xytheta_follower_test ht_cost ${PCL_LIBRARIES})
 endif()
