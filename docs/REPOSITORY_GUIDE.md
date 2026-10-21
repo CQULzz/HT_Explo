@@ -1,6 +1,6 @@
 # GitHub分支、标签与实验资料
 
-整理日期：2026-10-22。源码、完整已录数据和辅助视频工具分别登记；没有修改导航算法或重跑实验。机器可读规则见[repository_layout.json](repository_layout.json)，逐阶段清单见[实验总索引](experiments/catalog/INDEX.md)。
+整理日期：2026-10-22。源码、完整已录数据和辅助视频工具分别登记；没有修改导航算法或重跑实验。机器可读规则见[repository_layout.json](repository_layout.json)，逐阶段清单见[实验总索引](experiments/catalog/INDEX.md)。本次实际分支、标签、源码和附件核验结果见[发布回执](repository_organization_receipt.json)。
 
 ## 分支职责
 
