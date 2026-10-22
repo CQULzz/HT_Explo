@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/home/lzz/my test/HT_Explo-sim-check/scripts/prune_published_ht_raw.py", line 111, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "/home/lzz/my test/HT_Explo-sim-check/scripts/prune_published_ht_raw.py", line 75, in main
+    if raw.parent!=BASE or not raw.name.startswith('ht_') or raw.is_symlink():raise ValueError('Unsafe owned source path')
+                                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: Unsafe owned source path

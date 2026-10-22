@@ -1,0 +1,79 @@
+{
+  "tag": "ht-sim-20261022-indoor-repeat",
+  "tested_commit": "0087a008f9d8beb26f2efa636f65fbf3e940a268",
+  "raw_suite": "/home/lzz/my test/HT_Explo-sim-check/presentations/scheduled_results/ht_indoor_repeat_2026-10-22",
+  "result_archive": "/home/lzz/my test/HT_Explo-sim-check/docs/results/ht_indoor_repeat_2026-10-22",
+  "release": "https://github.com/CQULzz/HT_Explo/releases/tag/ht-sim-20261022-indoor-repeat",
+  "publication_status": "COMPLETE_VALIDATED_COLLECTION",
+  "collection_validation": {
+    "indoor": {
+      "recorded_state": "RECORDED",
+      "complete600s": true,
+      "checks": {
+        "timer_completed": true,
+        "measured_duration_matches": true,
+        "source_hashes_unchanged": true,
+        "enough_samples": true,
+        "no_runtime_parent_failure": true,
+        "no_live_descendants": true,
+        "no_forced_shutdown": true,
+        "video_full_decode_passed": true,
+        "video_duration_matches": true,
+        "video_fps_matches": true,
+        "analysis_passed": true,
+        "no_child_or_cleanup_exception": true,
+        "blas_workers_bounded": true
+      },
+      "failed_checks": []
+    }
+  },
+  "recording_scope": "All published HT/control/odom/status/TARE routes; source-second lidar and periodic maps/model inputs; not lossless all-frequency raw sensor data.",
+  "transport": "Deterministic streaming tar+zstd,512MiB parts; three shared spool slots, at most1.5GiB temporary transport.",
+  "assets": [
+    {
+      "name": "ht-sim-20261022-indoor-repeat-raw.tar.zst.part000",
+      "bytes": 536870912,
+      "sha256": "bd6246eae5b2ec85d50ee6b46de052830ca3d7aaa36209202c9f59bbaf338fde"
+    },
+    {
+      "name": "ht-sim-20261022-indoor-repeat-raw.tar.zst.part001",
+      "bytes": 536870912,
+      "sha256": "7fd544e6c9024e8c52dac68a05680b3bbff0f862b7027b03d0f8317ade2e49e6"
+    },
+    {
+      "name": "ht-sim-20261022-indoor-repeat-raw.tar.zst.part002",
+      "bytes": 436896755,
+      "sha256": "5a42ee6850a3aca029a7e573b9c23d62006ae19b2725f2b8cd24cd450c26b9ce"
+    },
+    {
+      "name": "ht-sim-20261022-indoor-repeat-raw-files.json",
+      "bytes": 52419,
+      "sha256": "a706370e680132ec11fd3593d05e704ceaed752b55a6ff6f8ab00e37ce352ac0"
+    },
+    {
+      "name": "ht-sim-20261022-indoor-repeat-results.tar.zst.part000",
+      "bytes": 65040724,
+      "sha256": "7b7cbd3a5e96818f4f9b9c95d07a1308d5fcf16851785b6afb2aad077a8720c1"
+    },
+    {
+      "name": "ht-sim-20261022-indoor-repeat-results-files.json",
+      "bytes": 15152,
+      "sha256": "f9e2ee09a6b4e3caa810c73ff060c4814efdadbb7f54f195192ff0e8d8ad5fd3"
+    },
+    {
+      "name": "ht-sim-20261022-indoor-repeat-indoor.mp4",
+      "bytes": 14280899,
+      "sha256": "6b3c2890621eda2a315914d35437a7fde979df6902f475d4bb81ad3e9e7c65e6"
+    },
+    {
+      "name": "ht-sim-20261022-indoor-repeat-SHA256.json",
+      "bytes": 3145,
+      "sha256": "0d328bdf1b554fb042f2af1e4083454cc404a8bf6e46c264b21cbb33c57dbe80"
+    }
+  ],
+  "raw_inventory_sha256": "a706370e680132ec11fd3593d05e704ceaed752b55a6ff6f8ab00e37ce352ac0",
+  "raw_topology_sha256": "6e405016921421a728b0f9658baabc789976bca68a1a9d4fb65a2260b0176860",
+  "results_inventory_sha256": "f9e2ee09a6b4e3caa810c73ff060c4814efdadbb7f54f195192ff0e8d8ad5fd3",
+  "results_topology_sha256": "688cc013423a764eb6e6ccd7d7c1e422ea070c1188a9dcdfa29c8f14afcac941",
+  "verified_at": "2026-10-22T12:21:56.281303+08:00"
+}
