@@ -1,0 +1,45 @@
+Panels: []
+Visualization Manager:
+  Class: ''
+  Displays:
+  - Class: rviz_default_plugins/MarkerArray
+    Name: XYtheta voxel volume
+    Enabled: true
+    Marker Topic: &id001
+      Value: /recorded_voxel_grid/full
+      Depth: 2
+      History Policy: Keep Last
+      Reliability Policy: Reliable
+      Durability Policy: Volatile
+    Topic: *id001
+  Enabled: true
+  Global Options:
+    Fixed Frame: map
+    Background Color: 18; 25; 34
+    Frame Rate: 15
+  Name: root
+  Tools:
+  - Class: rviz_default_plugins/MoveCamera
+  Views:
+    Current:
+      Class: rviz_default_plugins/Orbit
+      Distance: 23.0
+      Pitch: 0.47
+      Yaw: 0.78
+      Focal Point:
+        X: 0.0
+        Y: 0.0
+        Z: 4.8
+      Target Frame: map
+      Near Clip Distance: 0.01
+      Name: Current View
+      Focal Shape Fixed Size: true
+      Focal Shape Size: 0.03
+    Saved: []
+Window Geometry:
+  X: 0
+  Y: 68
+  Width: 960
+  Height: 800
+  Hide Left Dock: true
+  Hide Right Dock: true
