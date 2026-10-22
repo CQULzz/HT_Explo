@@ -1,0 +1,40 @@
+{
+  "captured_at": "2026-10-22T12:16:07.352481+08:00",
+  "runtime_files_checked": 133,
+  "changed_runtime_files": [],
+  "parameter_differences": {
+    "cupy_to_ht_bridge.json": {},
+    "tare_planner_node.json": {},
+    "xytheta_follower.json": {}
+  },
+  "checks": {
+    "timer_completed": true,
+    "measured_duration_matches": true,
+    "source_hashes_unchanged": true,
+    "enough_samples": true,
+    "no_runtime_parent_failure": true,
+    "no_live_descendants": true,
+    "no_forced_shutdown": true,
+    "video_full_decode_passed": true,
+    "video_duration_matches": true,
+    "video_fps_matches": true,
+    "analysis_passed": true,
+    "no_child_or_cleanup_exception": true,
+    "blas_workers_bounded": true
+  },
+  "speed_and_command_rate_audit": {
+    "final": {
+      "samples": 12000,
+      "max_forward_mps": 0.5,
+      "min_linear_mps": -0.25,
+      "max_abs_yaw_rps": 0.8
+    },
+    "native_raw": {
+      "samples": 0
+    },
+    "cap_passed": true,
+    "normal_acceleration_excess_count": 0,
+    "immediate_zero_transition_count": 36,
+    "scope": "Source header time; normal acceleration tolerance0.005 per step; explicit all-zero stops exempt. Different trackers/geometry remain."
+  }
+}

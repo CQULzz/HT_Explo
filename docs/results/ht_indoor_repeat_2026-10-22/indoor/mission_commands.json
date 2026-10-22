@@ -1,0 +1,22 @@
+{
+  "source": "/home/lzz/my test/HT_Explo-sim-check/presentations/scheduled_results/ht_indoor_repeat_2026-10-22/indoor",
+  "measurement_origin": 1792641496.9184904,
+  "first_completed_message_s": null,
+  "active_mission": {
+    "duration_s": 600.0,
+    "command_samples": 12000,
+    "longest_zero_command_s": 2.2998881340026855,
+    "fully_stopped_sample_fraction": 0.0415,
+    "max_abs_v": 0.5,
+    "max_abs_w": 0.8,
+    "max_command_gap_s": 0.05385470390319824
+  },
+  "transitions": [
+    {
+      "time_s": 0.6013514995574951,
+      "state": "EXPLORING"
+    }
+  ],
+  "threshold": "|v|<0.01m/s and |w|<0.05rad/s; split intervals if command gap exceeds 0.2s",
+  "meaning": "Mission COMPLETED confirms home settling, not ground-truth complete coverage"
+}

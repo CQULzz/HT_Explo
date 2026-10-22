@@ -1,0 +1,72 @@
+{
+  "runs": [
+    {
+      "label": "上次HT（同一运行版本）",
+      "folder": "/home/lzz/my test/HT_Explo-sim-check/docs/results/ht_sim_check_2026-10-22/indoor",
+      "scenario": "indoor",
+      "failed_recording_checks": [],
+      "git_head": "e640c0c1867fbe9408007c9f7b3e51bb9e66b801",
+      "duration_s": 600.0,
+      "speed_cap_mps": 0.5,
+      "measurement_start_pose_xyyaw": [
+        0.0,
+        0.0,
+        -0.0017999998526647685
+      ],
+      "distance_m": 9.16,
+      "observed_free_volume_m3": 427.25,
+      "final_mission": "COMPLETED",
+      "completed_at_s": 27.60156559944153,
+      "blocked_sample_fraction": 0.0,
+      "runtime_p95_s": 0.40299999713897705,
+      "source_sha256": {
+        "/home/lzz/my test/HT_Explo-sim-check/docs/results/ht_sim_check_2026-10-22/indoor/timeseries.csv": "6440945b05e9f6164e53f441d5f247877b2058b4d94e0a5d539ed8efd2bdb3f4",
+        "/home/lzz/my test/HT_Explo-sim-check/docs/results/ht_sim_check_2026-10-22/indoor/observation_volume.csv": "60b360d7ef896e5bfac619c36e55e39cd52bd537d9aa3e7f18cefd72682f1fda",
+        "/home/lzz/my test/HT_Explo-sim-check/docs/results/ht_sim_check_2026-10-22/indoor/manifest.json": "f1eccc911374e9d0ae88ff95dfb499cd95c35784a003c1cb55f3d33f3520f6be",
+        "/home/lzz/my test/HT_Explo-sim-check/docs/results/ht_sim_check_2026-10-22/indoor/metric_definition.json": "5bbbc1cdd875a80f67ec2efceb6d131f6f80c8c5d888a2b371599b0ea6caa84c",
+        "/home/lzz/my test/HT_Explo-sim-check/docs/results/ht_sim_check_2026-10-22/indoor/suite_validation.json": "163498ec8059fd8c528675e430e799ea0ec0c230a2c0a8c39ad24af8040b0975"
+      }
+    },
+    {
+      "label": "本次HT重复",
+      "folder": "/home/lzz/my test/HT_Explo-sim-check/docs/results/ht_indoor_repeat_2026-10-22/indoor",
+      "scenario": "indoor",
+      "failed_recording_checks": [],
+      "git_head": "0087a008f9d8beb26f2efa636f65fbf3e940a268",
+      "duration_s": 600.0,
+      "speed_cap_mps": 0.5,
+      "measurement_start_pose_xyyaw": [
+        0.0,
+        0.0,
+        -0.0002999999851454049
+      ],
+      "distance_m": 197.88,
+      "observed_free_volume_m3": 3728.0,
+      "final_mission": "EXPLORING",
+      "completed_at_s": null,
+      "blocked_sample_fraction": 0.0,
+      "runtime_p95_s": 0.9800000190734863,
+      "source_sha256": {
+        "/home/lzz/my test/HT_Explo-sim-check/docs/results/ht_indoor_repeat_2026-10-22/indoor/timeseries.csv": "3ae1517ef56394c9e325b57a576b72332ac830d95cc1702e01d6d0fa1578782b",
+        "/home/lzz/my test/HT_Explo-sim-check/docs/results/ht_indoor_repeat_2026-10-22/indoor/observation_volume.csv": "d5430fbf75ec14d56746ae777fa1ea66d05908622792a2f8cedebdf1b38140cf",
+        "/home/lzz/my test/HT_Explo-sim-check/docs/results/ht_indoor_repeat_2026-10-22/indoor/manifest.json": "7951eef6e43efd086a4b9db29f077598aeae133cab6ca6574c367830932d3ccc",
+        "/home/lzz/my test/HT_Explo-sim-check/docs/results/ht_indoor_repeat_2026-10-22/indoor/metric_definition.json": "5bbbc1cdd875a80f67ec2efceb6d131f6f80c8c5d888a2b371599b0ea6caa84c",
+        "/home/lzz/my test/HT_Explo-sim-check/docs/results/ht_indoor_repeat_2026-10-22/indoor/suite_validation.json": "4468c5fced04b647ff4dd19485ee76ffaf9117a0f566562f0791ed912cf7041c"
+      }
+    }
+  ],
+  "metric_definition": {
+    "voxel_size_m": 0.5,
+    "ray_sample_step_m": 0.25,
+    "max_range_m": 15,
+    "endpoint_exclusion_m": 0.25,
+    "scan_recording": "first source-stamped scan per wall-clock source second",
+    "selection": "one recorded scan per absolute source second, filtered to the measurement window; no second measurement-bin downsampling",
+    "definition": "Approximate cumulative union of observed free voxels; not ground truth or official coverage.",
+    "delivery_audit": "Sampled bag cannot establish loss of unsaved input frames; compare full-rate observer and mapper callback counters."
+  },
+  "measurement_start_pose_tolerance": {
+    "position_m": 0.05,
+    "yaw_rad": 0.02
+  }
+}
