@@ -2,9 +2,9 @@
   "schema_version": 1,
   "updated_at": "2026-10-22",
   "branch": "sim/validation-20261022",
-  "status": "阶段49室内/校园各600秒；室内提前结束待查，校园持续探索；采集完整与导航效果分开。 已录原始数据/结果/两段视频共14个附件远端核验完成。",
-  "latest_archive_commit": "ffab5bd03642c49872fd0aefe8fb58a21ec2d4e1",
-  "latest_planner_change": "07c1abd334f83cb8d602e2234134b4286862c916",
+  "status": "阶段50相同运行代码室内600秒复跑：197.88m/3728m³，末EXPLORING；未重现上轮早退，未改导航，问题不称已修复。8个主附件及1个双视频附件均核验；候选断连机制和模型低分待确认项保留。",
+  "latest_archive_commit": "24721b64759120530ec5441fabd4d86c1e5b2aa5",
+  "latest_planner_change": "8b10207a705d73a00c830872570eabf61748ada5",
   "stages": [
     {
       "id": "stage-01",
@@ -844,6 +844,26 @@
       ],
       "publication_receipt": "docs/experiments/publications/stage49.json",
       "remote_assets_verified": 14
+    },
+    {
+      "id": "stage-50",
+      "number": 50,
+      "sha": "0087a008f9d8beb26f2efa636f65fbf3e940a268",
+      "tag": "ht-sim-20261022-indoor-repeat",
+      "title": "室内相同运行版本600秒复跑与提前返航机制核对",
+      "kind": "仿真重复与离线原因核对",
+      "change": "未改导航；133运行文件及前轮72项输入/二进制哈希一致，三个节点参数逐键一致。",
+      "features": "完整600秒采集、前60秒双视频、历史/当前多指标图、候选变化与按阶段估算对齐的简化连通图核对。",
+      "validation": "197.88m/3728m³/EXPLORING；13项采集检查及12000条命令上限/常规变化率通过；HT年龄P95 0.927s、最大1.468s；视频8999帧/15fps/599.933s完整解码，通过600s目标一帧容差。",
+      "known_issues": "偶发早退未改导航修复；HT低分来源及真实性待查，简化图不等于完整规划器反事实；本次近似体积低于历史原TARE9.43%；单次成功不证明稳定或实车通过。",
+      "evidence": [
+        "docs/results/ht_indoor_repeat_2026-10-22/REPORT.md",
+        "docs/results/ht_indoor_repeat_2026-10-22/all_comparisons.pdf",
+        "validation/indoor_repeat_2026-10-22/REPRODUCE.md"
+      ],
+      "publication_receipt": "docs/experiments/publications/stage50.json",
+      "supplemental_publication_receipt": "docs/experiments/publication_addenda/stage50_video_comparison.json",
+      "remote_assets_verified": 9
     }
   ],
   "historical_commits": [
