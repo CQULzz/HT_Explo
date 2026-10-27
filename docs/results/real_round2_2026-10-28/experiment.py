@@ -24,14 +24,37 @@ def main():
     p.add_argument('--archive',type=Path,required=True)
     p.add_argument('--output',type=Path,required=True)
     p.add_argument('--commit',required=True)
+    p.add_argument('--device',choices=['cpu','cuda'],default='cpu')
+    p.add_argument('--quality-backend',choices=['numpy','numba','auto'],default='numpy')
+    p.add_argument('--input',type=Path,help='Explicit serialized-map input for an independent rebuild')
     a=p.parse_args();a.output.mkdir(parents=True,exist_ok=False)
     sys.path.insert(0,str(a.bridge_dir))
     import replay_real_archive as replay
     replay.current_commit=lambda:a.commit
-    source=a.archive/'validation/jetson_scout_2026-10-23/quality_optimization/live_input.pkl'
+    # Override only declared execution parameters in both frozen code versions.
+    # The baseline's source bytes are preserved; the live node is checked too.
+    original_init=replay.rclpy.init
+    def init(args=None,**kwargs):
+        options=[s.replace('ht_device:=cpu','ht_device:='+a.device)
+                   .replace('ht_quality_backend:=numpy','ht_quality_backend:='+a.quality_backend) for s in (args or [])]
+        return original_init(args=options,**kwargs)
+    replay.rclpy.init=init
+    actual=[];original_node_init=replay.CupyToHt.__init__
+    def node_init(self):
+        original_node_init(self)
+        assert str(self.device)==a.device
+        actual.append({'device':str(self.device),'quality_backend':self.quality_backend,
+                       'cpu_fused_batchnorm':getattr(self,'cpu_fuse_bn',False)})
+    replay.CupyToHt.__init__=node_init
+    source=a.input or a.archive/'validation/jetson_scout_2026-10-23/quality_optimization/live_input.pkl'
     if a.stage=='ht':
         # recompute creates its own fresh subdirectory.
-        replay.recompute(source,a.output/'maps');return
+        replay.recompute(source,a.output/'maps')
+        path=a.output/'maps/index.json';metadata=json.loads(path.read_text())
+        metadata['actual_execution']=actual[-1]
+        metadata['parameters'].update(ht_device=a.device,ht_quality_backend=actual[-1]['quality_backend'],
+                                      ht_cpu_fuse_bn=actual[-1]['cpu_fused_batchnorm'])
+        save(path,metadata);return
     if a.stage=='timed':
         import rclpy
         from rclpy.serialization import deserialize_message
@@ -71,6 +94,7 @@ def main():
                     'input_maps':len(maps),'outputs':len(published),'pending_replaced':n.pending_maps.replaced,
                     'published_source_stamps':published,'elapsed_wall_s':time.monotonic()-start,
                     'input_fault':n.input_odometry.fault,'diagnostics':n.diagnostics}
+            result['actual_execution']=actual[-1]
             save(a.output/'timed.json',result)
             print({k:v for k,v in result.items() if k not in ['diagnostics','published_source_stamps']},flush=True)
         finally:

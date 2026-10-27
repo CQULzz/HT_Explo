@@ -342,7 +342,8 @@ def encode(folder, ffmpeg, speed):
         raise RuntimeError('Video decode validation failed: '+decoded.stderr)
     write_json(folder/'video_validation.json',dict(codec='H264',pixel_format='yuv420p',
         size=target.stat().st_size,sha256=sha(target),full_decode_passed=True,
-        frame_images=len(frames),playback_speed=speed,source_commit=metadata['source_commit']))
+        frame_images=len(frames),playback_speed=speed,
+        source_commit=metadata.get('source_commit',metadata.get('commit'))))
 
 
 def main():
