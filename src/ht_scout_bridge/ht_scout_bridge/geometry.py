@@ -1,6 +1,7 @@
 """SE(3) reference-point conversion; no ROS, device or simulator startup."""
 import argparse
 import json
+import math
 from pathlib import Path
 import numpy as np
 from scipy.spatial.transform import Rotation
@@ -82,7 +83,41 @@ def convert_reference(world_from_source, source_from_poi, poi_from_base,
     return a@b@c,v,w,j_pose@covariance(pose_cov)@j_pose.T,j_twist@covariance(twist_cov)@j_twist.T
 
 
-def transform_cloud(msg, target_from_lidar, self_filter=None):
+def self_filter_keep_mask(xyz, self_filter=None, filter_from_lidar=None):
+    """Remove measured vehicle geometry, never the whole nearby ground box."""
+    points=np.asarray(xyz,float)
+    if points.ndim!=2 or points.shape[1]!=3:raise ValueError('Expected Nx3 points')
+    valid=np.isfinite(points).all(axis=1)
+    if not self_filter or not self_filter.get('enabled'):return valid
+    if 'boxes' not in self_filter:
+        # Explicit legacy configurations retain their original source frame.
+        lo=np.asarray(self_filter['min_xyz'],float);hi=np.asarray(self_filter['max_xyz'],float)
+        if lo.shape!=(3,) or hi.shape!=(3,) or not np.isfinite([lo,hi]).all() or np.any(lo>=hi):
+            raise ValueError('Invalid source-frame self filter')
+        return valid & ~((points>=lo).all(axis=1)&(points<=hi).all(axis=1))
+    if self_filter.get('frame')!='base_link' or filter_from_lidar is None:
+        raise ValueError('Body geometry requires calibrated base_link-from-lidar transform')
+    t=validate_transform(filter_from_lidar)
+    points=points@t[:3,:3].T+t[:3,3]
+    occupied=np.zeros(len(points),bool)
+    if not self_filter['boxes']:raise ValueError('Empty body geometry')
+    for box in self_filter['boxes']:
+        lo=np.asarray(box['min_xyz'],float);hi=np.asarray(box['max_xyz'],float)
+        if lo.shape!=(3,) or hi.shape!=(3,) or not np.isfinite([lo,hi]).all() or np.any(lo>=hi):
+            raise ValueError('Invalid body box')
+        occupied|=((points>=lo).all(axis=1)&(points<=hi).all(axis=1))
+    for cylinder in self_filter.get('cylinders',[]):
+        center=np.asarray(cylinder['center_xyz'],float)
+        radius=float(cylinder['radius']);half=float(cylinder['half_length'])
+        if (center.shape!=(3,) or not np.isfinite(center).all() or cylinder['axis']!='y'
+                or not math.isfinite(radius) or not math.isfinite(half) or min(radius,half)<=0):
+            raise ValueError('Invalid wheel cylinder')
+        local=points-center
+        occupied|=(local[:,0]**2+local[:,2]**2<=radius**2)&(np.abs(local[:,1])<=half)
+    return valid & ~occupied
+
+
+def transform_cloud(msg, target_from_lidar, self_filter=None, filter_from_lidar=None):
     """Rigid scan registration; preserves fields, intensity and timestamps.
 
     This is not per-point motion deskew. The input may be externally deskewed
@@ -108,12 +143,7 @@ def transform_cloud(msg, target_from_lidar, self_filter=None):
     dtype='>f4' if msg.is_bigendian else '<f4'
     xyz=np.stack([np.ndarray((len(raw),),dtype=dtype,buffer=raw,
                   offset=fields[n].offset,strides=(msg.point_step,)) for n in ['x','y','z']],axis=1)
-    valid=np.isfinite(xyz).all(axis=1)
-    if self_filter and self_filter.get('enabled'):
-        lo=np.asarray(self_filter['min_xyz'],float);hi=np.asarray(self_filter['max_xyz'],float)
-        if lo.shape!=(3,) or hi.shape!=(3,) or not np.isfinite([lo,hi]).all() or np.any(lo>=hi):
-            raise ValueError('Invalid source-frame self filter')
-        valid &= ~((xyz>=lo).all(axis=1)&(xyz<=hi).all(axis=1))
+    valid=self_filter_keep_mask(xyz,self_filter,filter_from_lidar)
     raw=raw[valid].copy();xyz=xyz[valid]
     moved=xyz@t[:3,:3].T+t[:3,3]
     if not np.isfinite(moved).all():raise ValueError('Nonfinite registered points')

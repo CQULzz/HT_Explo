@@ -1,6 +1,6 @@
-# Derived real mapper profile. Native0.04m cells,291x291 published cells.
-# time is the existing mapper-maintained age in seconds, NOT a zero fill.
-# Use as mapping_config for ele_scout_kit real_car.launch.py; no source workspace edit.
+# Native 291x291 map; requires mapper observation-age patch.
+# Feed the geometry-filtered sensor-frame /ht_real/lidar_filtered exactly once.
+# The external mapper/TF workspace stays independent.
 /elevation_mapping_node:
   ros__parameters:
     map_frame: odom
@@ -18,7 +18,7 @@
     orientation_lowpass_alpha: 0.2
     pointcloud_qos_reliability: reliable
     pointcloud_qos_depth: 2
-    self_filter_enabled: true
+    self_filter_enabled: false
     self_filter_min_x: -1.0
     self_filter_max_x: 0.2
     self_filter_min_y: -0.7
@@ -45,14 +45,14 @@
     global_map_local_publish_fps: 20.0
     subscribers:
       lidar:
-        topic_name: /rslidar_points
+        topic_name: /ht_real/lidar_filtered
         data_type: pointcloud
     publishers:
       elevation_map_raw:
         layers:
         - elevation
         - variance
-        - time
+        - observation_age
         basic_layers:
         - elevation
         fps: 10.0

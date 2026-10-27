@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from typing import Mapping
+from copy import deepcopy
 
 import torch
 from torch import Tensor, nn
@@ -140,3 +141,26 @@ def load_student_model(weight_path: str, device: torch.device) -> HTStudent8Dire
     model.to(device)
     model.eval()
     return model
+
+
+def fuse_student_for_inference(model: HTStudent8Direction) -> HTStudent8Direction:
+    """Fold fixed evaluation BN statistics into convolution weights, on a copy.
+
+    The checkpoint stays untouched. FP32 roundoff may differ by a few ulps;
+    callers compare probabilities and hard gates against the unfused model.
+    """
+    from torch.nn.utils.fusion import fuse_conv_bn_eval
+    if not isinstance(model, HTStudent8Direction) or any(m.training for m in model.modules()):
+        raise ValueError('BN fusion requires the complete evaluation-mode HT student')
+    fused=deepcopy(model)
+    for k in range(1,7):
+        setattr(fused,f'res_conv{k}',fuse_conv_bn_eval(getattr(fused,f'res_conv{k}'),getattr(fused,f'res_bn{k}')))
+        setattr(fused,f'res_bn{k}',nn.Identity())
+        block=getattr(fused,f'res_block{k}')
+        for j in (1,2):
+            setattr(block,f'conv{j}',fuse_conv_bn_eval(getattr(block,f'conv{j}'),getattr(block,f'bn{j}')))
+            setattr(block,f'bn{j}',nn.Identity())
+    for k in (1,2,3):
+        setattr(fused,f'hdc_conv{k}',fuse_conv_bn_eval(getattr(fused,f'hdc_conv{k}'),getattr(fused,f'hdc_bn{k}')))
+        setattr(fused,f'hdc_bn{k}',nn.Identity())
+    return fused

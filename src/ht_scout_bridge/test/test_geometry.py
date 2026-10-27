@@ -3,7 +3,7 @@ from copy import deepcopy
 import numpy as np
 import pytest
 from scipy.spatial.transform import Rotation
-from ht_scout_bridge.geometry import load_calibration,transform,convert_reference,transform_cloud
+from ht_scout_bridge.geometry import load_calibration,transform,convert_reference,transform_cloud,self_filter_keep_mask
 
 PROFILE=Path(__file__).resolve().parents[1]/'config/scout_extrinsics.yaml'
 
@@ -87,8 +87,29 @@ def test_lidar_self_filter_uses_source_coordinates_without_inventing_free_cells(
     raw[0,:3]=[0,0,0]  # Vehicle return inside the source profile's body box.
     from array import array
     m.data=array('B',raw.tobytes())
-    profile,_,_=load_calibration(PROFILE)
-    out=transform_cloud(m,np.eye(4),profile['lidar_self_filter'])
+    profile,b,l=load_calibration(PROFILE)
+    out=transform_cloud(m,np.eye(4),profile['lidar_self_filter'],np.linalg.inv(b)@l)
     assert out.width==2
     points=np.frombuffer(bytes(out.data),dtype='<f4').reshape(2,4)
     np.testing.assert_array_equal(points[:,3],[22,33])
+
+
+def test_physical_filter_retains_ground_and_nearby_features_but_removes_front_and_wheels():
+    profile,b,l=load_calibration(PROFILE);base_from_lidar=np.linalg.inv(b)@l
+    base=np.array([[0,0,-.23479],[0,.5,-.23479],[.55,.45,-.19],
+                   [.44,0,0],[.249,.29153,-.0702],[0,0,0],
+                   [.249+.15,.29153,-.0702+.15],[0,0,-.4]],float)
+    lidar=(base-base_from_lidar[:3,3])@base_from_lidar[:3,:3]
+    keep=self_filter_keep_mask(lidar,profile['lidar_self_filter'],base_from_lidar)
+    np.testing.assert_array_equal(keep,[True,True,True,False,False,False,True,True])
+    legacy={'enabled':True,'min_xyz':[-1,-.7,-.9],'max_xyz':[.2,.7,.2]}
+    old=self_filter_keep_mask(lidar,legacy)
+    assert not old[0] and old[3]  # Actual old-ground deletion/front-body omission.
+
+
+def test_body_filter_requires_its_calibrated_reference_and_preserves_nonfinite_rejection():
+    profile,b,l=load_calibration(PROFILE)
+    with pytest.raises(ValueError):self_filter_keep_mask(np.zeros((1,3)),profile['lidar_self_filter'])
+    invalid=np.array([[np.nan,0,0],[0,np.inf,0]],float)
+    with np.errstate(invalid='ignore'):
+        assert not self_filter_keep_mask(invalid,profile['lidar_self_filter'],np.linalg.inv(b)@l).any()

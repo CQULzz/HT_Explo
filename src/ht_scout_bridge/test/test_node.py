@@ -44,7 +44,7 @@ def node(monkeypatch):
     monkeypatch.setattr(module,'get_package_share_directory',lambda _:str(ROOT))
     rclpy.init();n=module.ScoutInputs();n.timer.cancel()
     n.buffer=FakeTf(n);n.clock_ok=lambda:10.05;n.age_layer='observation_age'
-    for name in ['odom_pub','cloud_pub','elevation_pub','status_pub','stop_pub']:setattr(n,name,Sink())
+    for name in ['odom_pub','cloud_pub','filtered_cloud_pub','elevation_pub','status_pub','stop_pub']:setattr(n,name,Sink())
     try:yield n
     finally:n.destroy_node();rclpy.try_shutdown()
 
@@ -81,11 +81,16 @@ def test_lidar_callback_applies_external_pose_and_calibration(node):
     out=node.cloud_pub.messages[-1];a=np.frombuffer(bytes(out.data),dtype='<f4').reshape(-1,4)
     assert out.header.frame_id=='map'
     np.testing.assert_allclose(a[0,:3],[1-.0280158179045505,2,3+.78499],atol=1e-6)
+    filtered=node.filtered_cloud_pub.messages[-1]
+    assert filtered.header==m.header and filtered.header.frame_id=='rslidar'
+    raw=np.frombuffer(bytes(filtered.data),dtype='<f4').reshape(-1,4)
+    np.testing.assert_array_equal(raw[0],[1,2,3,11])
 
 
 def test_tf_is_awaited_without_latest_pose_substitution(node):
     node.buffer.missing=True;node.enqueue('cloud',cloud())
     assert not node.cloud_pub.messages and len(node.pending['cloud'])==1
+    assert not node.filtered_cloud_pub.messages
     node.buffer.missing=False;node.drain()
     assert len(node.cloud_pub.messages)==1 and not node.pending['cloud']
 
@@ -129,11 +134,18 @@ def test_queue_is_bounded_and_fault_clock_is_latched(node):
     assert node.stop_pub.messages[-1].data==1
 
 
-def test_mapper_time_layer_is_renamed_without_fabricating_freshness(node):
-    m=elevation();m.layers[2]='time';node.age_layer='time';m.data[2].data[7]=123.5
+def test_true_observation_age_is_preserved_without_rejuvenating_history(node):
+    m=elevation();m.data[2].data[7]=123.5
     node.enqueue('elevation',m);out=node.elevation_pub.messages[-1]
     assert out.layers[2]=='observation_age' and out.data[2].data[7]==123.5
     assert out.data[2].data[0]==pytest.approx(.2)
+
+
+def test_timer_layer_is_not_promoted_to_measurement_freshness(node):
+    m=elevation();m.layers[2]='time'
+    with pytest.raises(ValueError):node.convert_elevation(m)
+    node.age_layer='time'
+    with pytest.raises(ValueError):node.convert_elevation(m)
 
 
 def test_real_age_map_drives_the_existing_ht_model_without_resizing(node):
@@ -142,7 +154,7 @@ def test_real_age_map_drives_the_existing_ht_model_without_resizing(node):
     from cupy_to_ht import CupyToHt
     bridge=CupyToHt();bridge.pub=Sink();bridge.history_pub=Sink()
     try:
-        m=elevation();m.layers[2]='time';node.age_layer='time'
+        m=elevation()
         m.header.stamp=bridge.get_clock().now().to_msg()
         mapped=node.convert_elevation(m)
         body=odom();body.header.stamp=m.header.stamp

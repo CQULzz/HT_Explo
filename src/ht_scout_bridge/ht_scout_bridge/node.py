@@ -38,8 +38,10 @@ class ScoutInputs(Node):
         default=Path(get_package_share_directory('ht_scout_bridge'))/'config/scout_extrinsics.yaml'
         self.profile,self.poi_base,self.poi_lidar=load_calibration(self.declare_parameter('calibration_file',str(default)).value)
         self.frames=self.profile['frames']
-        self.age_layer=self.declare_parameter('source_age_layer','time').value
-        if self.age_layer not in ('time','observation_age'):raise ValueError('Unknown measured age layer')
+        self.base_from_lidar=np.linalg.inv(self.poi_base)@self.poi_lidar
+        self.age_layer=self.declare_parameter('source_age_layer','observation_age').value
+        if self.age_layer!='observation_age':
+            raise ValueError('Require observation_age from accepted point-cloud stamps; timer-based time is not measurement age')
         self.max_age=float(self.declare_parameter('max_input_age',1.).value)
         if not math.isfinite(self.max_age) or self.max_age<=0:raise ValueError('Invalid max_input_age')
         self.twist_cov_frame=self.declare_parameter('twist_covariance_frame','parent').value
@@ -49,6 +51,7 @@ class ScoutInputs(Node):
         self.stop_pub=self.create_publisher(Int8,'/ht_real/stop',5)
         self.odom_pub=self.create_publisher(Odometry,'/ht_real/odometry',20)
         self.cloud_pub=self.create_publisher(PointCloud2,'/ht_real/registered_scan',2)
+        self.filtered_cloud_pub=self.create_publisher(PointCloud2,'/ht_real/lidar_filtered',2)
         self.elevation_pub=self.create_publisher(GridMap,'/ht_real/elevation_raw',1)
         self.last_clock=None;self.fault=None;self.last_pose=None
         self.last_stamp={'odom':-1,'cloud':-1,'elevation':-1}
@@ -163,11 +166,17 @@ class ScoutInputs(Node):
         if msg.header.frame_id!=self.frames['lidar']:raise ValueError('Expected calibrated rslidar-frame cloud')
         self.check_static(self.frames['lidar'],self.poi_lidar,msg)
         t=self.lookup(self.frames['world'],self.frames['poi'],msg)@self.poi_lidar
-        out=transform_cloud(msg,t,self.profile.get('lidar_self_filter'));out.header.frame_id=self.frames['world']
+        filtered=transform_cloud(msg,np.eye(4),self.profile.get('lidar_self_filter'),self.base_from_lidar)
+        out=transform_cloud(filtered,t);out.header.frame_id=self.frames['world']
         if not out.width:raise ValueError('No finite cloud points')
+        # Mapping needs the real sensor origin for ray geometry/covariance.
+        # Keep its filtered scan in rslidar rather than relabelling world points.
+        self.filtered_cloud_pub.publish(filtered)
         return out
 
     def convert_elevation(self,msg):
+        if self.age_layer!='observation_age':
+            raise ValueError('Require source-timestamp observation_age; timer time is not equivalent')
         # Retain HT's tested metric contract; never resize a250-cell source or
         # create observation_age=0 for retained historical posterior cells.
         if msg.header.frame_id not in ('map','odom'):raise ValueError('Expected map/odom elevation frame')

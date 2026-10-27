@@ -83,10 +83,11 @@ RViz中：灰点是实测高程，外围红绿是HT最佳概率；白圈是0.6m�
 
 ## 外部输入约定
 
-- 原生291×291、0.04m高程，层elevation/variance/time，使用mapper_for_ht.yaml。
+- 原生291×291、0.04m高程，层elevation/variance/observation_age，使用mapper_for_ht.yaml。`observation_age`必须由实际被接受点云的源时间更新；定时器累计的`time`不能代替。外部mapper须已应用真实观测年龄补丁（见tools/elevation_mapping_fixes/OBSERVATION_AGE.md）；旧版只发time的入口会明确拒绝。
 - 默认输入`/fixposition/odometry_enu`、`/rslidar_points`、`/elevation_mapping_node/elevation_map_raw`。
 - 外部TF为唯一来源。标定来自eletranskit_scout@cf0b73d：FP_POI到base_link平移[-0.2005158179045505,0,-0.4242]m，base_link到rslidar为[0.1725,0,0.5502]m，旋转为0。
-- 车身点云过滤继续启用；本包没有逐点运动去畸变。
+- 车身过滤按指定模型的车体、四轮和传感器几何执行，参考坐标为base_link、余量2cm；外参不变。余量是工程假设，尚未单独实车验收。本包没有逐点运动去畸变。
+- 新的`/ht_real/lidar_filtered`保持rslidar坐标系和原时间戳，供独立mapper使用；`/ht_real/registered_scan`为同一过滤结果变换到map后给TARE使用。mapper_for_ht.yaml已切换前者并关闭旧大包围盒，避免重复删地面。禁止把map坐标点改名为rslidar。
 
 测试结果与限制见`validation/navigation_completion_2026-10-27/REPORT.md`，起点共享修正见`validation/startup_prior_sync_2026-10-24/REPORT.md`。软件回归和保存数据对照不等于实车导航验收。
 
@@ -95,3 +96,5 @@ RViz中：灰点是实测高程，外围红绿是HT最佳概率；白圈是0.6m�
 导出的副本可能缺少OR-Tools的`libortools.so.9`别名。构建现在从实际原生库生成工作区私有运行副本，并随安装打包；不修改外部依赖目录。雷达订阅改为BEST_EFFORT请求，可接入BEST_EFFORT及RELIABLE发布者。命令适配器的看门狗改用稳定时钟定时器，ROS时钟暂停后仍检查接收超时并发布零速。
 
 本候选只在x86_64/ROS Jazzy做了独立构建和离线回归，未验证Jetson/ARM64、CUDA/Numba或车辆运动。原有方向策略、模型、起点先验、1秒地图时效和地形阈值保留。静态保存帧中车旁缺测仍存在；不能将本次修复称为已完成实车自主探索。原因、测试与剩余项见`validation/real_review_2026-10-28/REPORT.md`。
+
+第二轮同时提供CPU推理Conv/BN融合（`ht_cpu_fuse_bn`，默认true，仅CPU生效；false可作对照）。它只折叠eval统计，不修改检查点或地形规则；FP32舍入可能相差数个微小单位。CUDA路径不启用该优化。第二轮问题简报和同输入实验见`docs/results/real_round2_2026-10-28/`。

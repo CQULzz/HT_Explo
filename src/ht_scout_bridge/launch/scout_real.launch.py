@@ -93,7 +93,7 @@ def generate_launch_description():
         DeclareLaunchArgument('odometry_topic',default_value='/fixposition/odometry_enu'),
         DeclareLaunchArgument('cloud_topic',default_value='/rslidar_points'),
         DeclareLaunchArgument('elevation_topic',default_value='/elevation_mapping_node/elevation_map_raw'),
-        DeclareLaunchArgument('source_age_layer',default_value='time'),
+        DeclareLaunchArgument('source_age_layer',default_value='observation_age'),
         # Avoid competing with an external chassis controller. Hardware launch
         # does not auto-publish to an unverified motor-driver command topic.
         DeclareLaunchArgument('command_topic',default_value='auto'),

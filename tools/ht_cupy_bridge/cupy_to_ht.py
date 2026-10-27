@@ -24,7 +24,7 @@ from rclpy.executors import ExternalShutdownException, MultiThreadedExecutor
 from nav_msgs.msg import Odometry
 from std_msgs.msg import Float32, Float32MultiArray, MultiArrayDimension, MultiArrayLayout, String
 
-from model import load_student_model
+from model import load_student_model, fuse_student_for_inference
 from historical_elevation import HistoricalElevation
 from elevation_quality import preprocess_elevation, retain_recent_obstacle_edges, warmup_quality
 from local_surface import SurfaceReferenceEstimator
@@ -77,6 +77,7 @@ class CupyToHt(Node):
         requested_device=self.declare_parameter('ht_device','cpu').value
         self.channels_last=self.declare_parameter('ht_channels_last',requested_device!='cuda').value
         self.small_holes=self.declare_parameter('ht_small_hole_repair',False).value
+        self.cpu_fuse_bn=self.declare_parameter('ht_cpu_fuse_bn',True).value and requested_device=='cpu'
         self.blas_limit, cpu_threads = configure_cpu_threads(threads)
         self.quality_backend=warmup_quality(self.declare_parameter('ht_quality_backend','auto').value)
         self.get_logger().info(f'Elevation quality backend: {self.quality_backend}')
@@ -97,6 +98,9 @@ class CupyToHt(Node):
         self.model = load_student_model(
             str(Path(__file__).with_name("student_best_epoch_weights.pth")), self.device
         )
+        if self.cpu_fuse_bn:
+            self.model=fuse_student_for_inference(self.model)
+            self.get_logger().info('CPU inference: evaluation Conv/BN fusion enabled; checkpoint unchanged')
         if self.channels_last:
             self.model=self.model.to(memory_format=torch.channels_last)
         if self.device.type=='cuda':
@@ -361,6 +365,7 @@ class CupyToHt(Node):
                                  'fusion_and_quality_s': fusion_finished-started,
                                  'support_and_history_publish_s': inference_started-fusion_finished,
                                  'network_inference_s': inference_finished-inference_started,
+                                 'cpu_fused_batchnorm': self.cpu_fuse_bn,
                                  'ht_serialize_publish_s': published-inference_finished,
                                  'context_dump_s': context_dump_s,
                                  'elapsed_s': time.monotonic()-started})
