@@ -32,6 +32,19 @@ if(NOT EXISTS "${TARE_ORTOOLS_ROOT}/lib/cmake/ortools/ortoolsConfig.cmake")
 endif()
 list(PREPEND CMAKE_PREFIX_PATH "${TARE_ORTOOLS_ROOT}")
 find_package(ortools 9.8 CONFIG REQUIRED PATHS "${TARE_ORTOOLS_ROOT}" NO_DEFAULT_PATH)
+# Exported copies on exFAT/ZIP can retain the versioned ELF file while losing
+# its SONAME symlink. Stage a private regular copy for build-tree execution;
+# do not repair or mutate the caller's third-party installation in place.
+get_target_property(TARE_ORTOOLS_LIBRARY ortools::ortools IMPORTED_LOCATION_RELEASE)
+get_target_property(TARE_ORTOOLS_SONAME ortools::ortools IMPORTED_SONAME_RELEASE)
+if(NOT EXISTS "${TARE_ORTOOLS_LIBRARY}" OR NOT TARE_ORTOOLS_SONAME)
+  message(FATAL_ERROR "OR-Tools must provide its native runtime file and SONAME")
+endif()
+set(TARE_ORTOOLS_RUNTIME_DIR "${CMAKE_CURRENT_BINARY_DIR}/ortools_runtime")
+file(MAKE_DIRECTORY "${TARE_ORTOOLS_RUNTIME_DIR}")
+configure_file("${TARE_ORTOOLS_LIBRARY}"
+  "${TARE_ORTOOLS_RUNTIME_DIR}/${TARE_ORTOOLS_SONAME}" COPYONLY)
+list(APPEND CMAKE_BUILD_RPATH "${TARE_ORTOOLS_RUNTIME_DIR}")
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
@@ -188,8 +201,8 @@ install(TARGETS
 # A regular (non-symlink) colcon install must also find OR-Tools at runtime.
 set_target_properties(tare_planner_node PROPERTIES INSTALL_RPATH "$ORIGIN")
 install(FILES
-  "${TARE_ORTOOLS_ROOT}/lib/libortools.so.9"
-  "${TARE_ORTOOLS_ROOT}/lib/libortools.so.9.8.3296"
+  "${TARE_ORTOOLS_RUNTIME_DIR}/${TARE_ORTOOLS_SONAME}"
+  "${TARE_ORTOOLS_LIBRARY}"
   DESTINATION lib/${PROJECT_NAME})
 
 install(DIRECTORY launch/

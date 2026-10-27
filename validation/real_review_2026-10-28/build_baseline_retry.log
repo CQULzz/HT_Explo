@@ -1,0 +1,354 @@
+Starting >>> tare_planner
+--- stderr: tare_planner
+In file included from /home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/grid/grid.h:15,
+                 from /home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/viewpoint_manager/viewpoint_manager.h:32,
+                 from /home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/tests/geometry_pose_test.cpp:2:
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/utils/misc_utils.h:69:85: warning: ‘nav_msgs::msg::Odometry_<std::allocator<void> >::ConstPtr’ is deprecated [-Wdeprecated-declarations]
+   69 | void KeyposeToMap(CloudType& cloud, const nav_msgs::msg::Odometry::ConstPtr& keypose);
+      |                                                                                     ^
+In file included from /opt/ros/jazzy/include/nav_msgs/nav_msgs/msg/odometry.hpp:7,
+                 from /home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/utils/misc_utils.h:15:
+/opt/ros/jazzy/include/nav_msgs/nav_msgs/msg/detail/odometry__struct.hpp:150:5: note: declared here
+  150 |     ConstPtr;
+      |     ^~~~~~~~
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/utils/misc_utils.h: In constructor ‘misc_utils_ns::Marker::Marker(rclcpp::Node::SharedPtr, std::string, std::string)’:
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/utils/misc_utils.h:299:27: warning: ‘misc_utils_ns::Marker::nh_’ will be initialized after [-Wreorder]
+  299 |   rclcpp::Node::SharedPtr nh_;
+      |                           ^~~
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/utils/misc_utils.h:296:15: warning:   ‘std::string misc_utils_ns::Marker::pub_topic_’ [-Wreorder]
+  296 |   std::string pub_topic_;
+      |               ^~~~~~~~~~
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/utils/misc_utils.h:304:12: warning:   when initialized here [-Wreorder]
+  304 |   explicit Marker(rclcpp::Node::SharedPtr nh, std::string pub_topic, std::string frame_id)
+      |            ^~~~~~
+In file included from /home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/grid/grid.h:15,
+                 from /home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/viewpoint_manager/viewpoint_manager.h:32,
+                 from /home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/tests/tare_waypoint_test.cpp:2:
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/utils/misc_utils.h:69:85: warning: ‘nav_msgs::msg::Odometry_<std::allocator<void> >::ConstPtr’ is deprecated [-Wdeprecated-declarations]
+   69 | void KeyposeToMap(CloudType& cloud, const nav_msgs::msg::Odometry::ConstPtr& keypose);
+      |                                                                                     ^
+In file included from /opt/ros/jazzy/include/nav_msgs/nav_msgs/msg/odometry.hpp:7,
+                 from /home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/utils/misc_utils.h:15:
+/opt/ros/jazzy/include/nav_msgs/nav_msgs/msg/detail/odometry__struct.hpp:150:5: note: declared here
+  150 |     ConstPtr;
+      |     ^~~~~~~~
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/utils/misc_utils.h: In constructor ‘misc_utils_ns::Marker::Marker(rclcpp::Node::SharedPtr, std::string, std::string)’:
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/utils/misc_utils.h:299:27: warning: ‘misc_utils_ns::Marker::nh_’ will be initialized after [-Wreorder]
+  299 |   rclcpp::Node::SharedPtr nh_;
+      |                           ^~~
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/utils/misc_utils.h:296:15: warning:   ‘std::string misc_utils_ns::Marker::pub_topic_’ [-Wreorder]
+  296 |   std::string pub_topic_;
+      |               ^~~~~~~~~~
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/utils/misc_utils.h:304:12: warning:   when initialized here [-Wreorder]
+  304 |   explicit Marker(rclcpp::Node::SharedPtr nh, std::string pub_topic, std::string frame_id)
+      |            ^~~~~~
+In file included from /home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/grid_world/grid_world.h:29,
+                 from /home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/viewpoint_manager/viewpoint_manager.h:36:
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/keypose_graph/keypose_graph.h: In member function ‘bool keypose_graph_ns::KeyposeGraph::InBound(int)’:
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/keypose_graph/keypose_graph.h:118:32: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<std::vector<int> >::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  118 |     return index >= 0 && index < graph_.size();
+      |                          ~~~~~~^~~~~~~~~~~~~~~
+In file included from /home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/grid_world/grid_world.h:29,
+                 from /home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/viewpoint_manager/viewpoint_manager.h:36:
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/keypose_graph/keypose_graph.h: In member function ‘bool keypose_graph_ns::KeyposeGraph::InBound(int)’:
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/keypose_graph/keypose_graph.h:118:32: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<std::vector<int> >::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  118 |     return index >= 0 && index < graph_.size();
+      |                          ~~~~~~^~~~~~~~~~~~~~~
+In file included from /home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/sensor_coverage_planner/sensor_coverage_planner_ground.h:48,
+                 from /home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/src/sensor_coverage_planner/tare_waypoint_router.cpp:1:
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/utils/misc_utils.h:69:85: warning: ‘nav_msgs::msg::Odometry_<std::allocator<void> >::ConstPtr’ is deprecated [-Wdeprecated-declarations]
+   69 | void KeyposeToMap(CloudType& cloud, const nav_msgs::msg::Odometry::ConstPtr& keypose);
+      |                                                                                     ^
+In file included from /opt/ros/jazzy/include/nav_msgs/nav_msgs/msg/odometry.hpp:7,
+                 from /home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/sensor_coverage_planner/sensor_coverage_planner_ground.h:24:
+/opt/ros/jazzy/include/nav_msgs/nav_msgs/msg/detail/odometry__struct.hpp:150:5: note: declared here
+  150 |     ConstPtr;
+      |     ^~~~~~~~
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/utils/misc_utils.h: In constructor ‘misc_utils_ns::Marker::Marker(rclcpp::Node::SharedPtr, std::string, std::string)’:
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/utils/misc_utils.h:299:27: warning: ‘misc_utils_ns::Marker::nh_’ will be initialized after [-Wreorder]
+  299 |   rclcpp::Node::SharedPtr nh_;
+      |                           ^~~
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/utils/misc_utils.h:296:15: warning:   ‘std::string misc_utils_ns::Marker::pub_topic_’ [-Wreorder]
+  296 |   std::string pub_topic_;
+      |               ^~~~~~~~~~
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/utils/misc_utils.h:304:12: warning:   when initialized here [-Wreorder]
+  304 |   explicit Marker(rclcpp::Node::SharedPtr nh, std::string pub_topic, std::string frame_id)
+      |            ^~~~~~
+In file included from /home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/grid_world/grid_world.h:29,
+                 from /home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/sensor_coverage_planner/sensor_coverage_planner_ground.h:52:
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/keypose_graph/keypose_graph.h: In member function ‘bool keypose_graph_ns::KeyposeGraph::InBound(int)’:
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/keypose_graph/keypose_graph.h:118:32: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<std::vector<int> >::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  118 |     return index >= 0 && index < graph_.size();
+      |                          ~~~~~~^~~~~~~~~~~~~~~
+In file included from /home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/sensor_coverage_planner/sensor_coverage_planner_ground.h:48,
+                 from /home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/src/sensor_coverage_planner/tare_original.cpp:3:
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/utils/misc_utils.h:69:85: warning: ‘nav_msgs::msg::Odometry_<std::allocator<void> >::ConstPtr’ is deprecated [-Wdeprecated-declarations]
+   69 | void KeyposeToMap(CloudType& cloud, const nav_msgs::msg::Odometry::ConstPtr& keypose);
+      |                                                                                     ^
+In file included from /opt/ros/jazzy/include/nav_msgs/nav_msgs/msg/odometry.hpp:7,
+                 from /home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/sensor_coverage_planner/sensor_coverage_planner_ground.h:24:
+/opt/ros/jazzy/include/nav_msgs/nav_msgs/msg/detail/odometry__struct.hpp:150:5: note: declared here
+  150 |     ConstPtr;
+      |     ^~~~~~~~
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/utils/misc_utils.h: In constructor ‘misc_utils_ns::Marker::Marker(rclcpp::Node::SharedPtr, std::string, std::string)’:
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/utils/misc_utils.h:299:27: warning: ‘misc_utils_ns::Marker::nh_’ will be initialized after [-Wreorder]
+  299 |   rclcpp::Node::SharedPtr nh_;
+      |                           ^~~
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/utils/misc_utils.h:296:15: warning:   ‘std::string misc_utils_ns::Marker::pub_topic_’ [-Wreorder]
+  296 |   std::string pub_topic_;
+      |               ^~~~~~~~~~
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/utils/misc_utils.h:304:12: warning:   when initialized here [-Wreorder]
+  304 |   explicit Marker(rclcpp::Node::SharedPtr nh, std::string pub_topic, std::string frame_id)
+      |            ^~~~~~
+In file included from /home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/grid_world/grid_world.h:29,
+                 from /home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/sensor_coverage_planner/sensor_coverage_planner_ground.h:52:
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/keypose_graph/keypose_graph.h: In member function ‘bool keypose_graph_ns::KeyposeGraph::InBound(int)’:
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/keypose_graph/keypose_graph.h:118:32: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<std::vector<int> >::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  118 |     return index >= 0 && index < graph_.size();
+      |                          ~~~~~~^~~~~~~~~~~~~~~
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/src/sensor_coverage_planner/tare_original.cpp: In member function ‘bool sensor_coverage_planner_3d_ns::SensorCoveragePlanner3D::GetTareLookAheadPoint(const exploration_path_ns::ExplorationPath&, const exploration_path_ns::ExplorationPath&, Eigen::Vector3d&)’:
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/src/sensor_coverage_planner/tare_original.cpp:59:21: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<exploration_path_ns::Node>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+   59 |   for (int i = 1; i < global_path.nodes_.size(); i++) {
+      |                   ~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/src/sensor_coverage_planner/tare_original.cpp:81:21: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<exploration_path_ns::Node>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+   81 |   for (int i = 0; i < local_path.nodes_.size(); i++) {
+      |                   ~~^~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/src/sensor_coverage_planner/tare_original.cpp:92:25: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<exploration_path_ns::Node>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+   92 |       for (int i = 1; i < global_path.nodes_.size(); i++) {
+      |                       ~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/src/sensor_coverage_planner/tare_original.cpp:120:21: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<exploration_path_ns::Node>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  120 |   for (int i = 0; i < local_path.nodes_.size(); i++) {
+      |                   ~~^~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/src/sensor_coverage_planner/tare_original.cpp:179:12: warning: unused variable ‘dist_to_robot’ [-Wunused-variable]
+  179 |     double dist_to_robot =
+      |            ^~~~~~~~~~~~~
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/src/sensor_coverage_planner/tare_original.cpp:213:12: warning: unused variable ‘dist_to_robot’ [-Wunused-variable]
+  213 |     double dist_to_robot =
+      |            ^~~~~~~~~~~~~
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/src/sensor_coverage_planner/tare_original.cpp:117:8: warning: unused variable ‘dir’ [-Wunused-variable]
+  117 |   bool dir = true;
+      |        ^~~
+In file included from /home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/sensor_coverage_planner/sensor_coverage_planner_ground.h:48,
+                 from /home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp:12:
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/utils/misc_utils.h:69:85: warning: ‘nav_msgs::msg::Odometry_<std::allocator<void> >::ConstPtr’ is deprecated [-Wdeprecated-declarations]
+   69 | void KeyposeToMap(CloudType& cloud, const nav_msgs::msg::Odometry::ConstPtr& keypose);
+      |                                                                                     ^
+In file included from /opt/ros/jazzy/include/nav_msgs/nav_msgs/msg/odometry.hpp:7,
+                 from /home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/sensor_coverage_planner/sensor_coverage_planner_ground.h:24:
+/opt/ros/jazzy/include/nav_msgs/nav_msgs/msg/detail/odometry__struct.hpp:150:5: note: declared here
+  150 |     ConstPtr;
+      |     ^~~~~~~~
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/utils/misc_utils.h: In constructor ‘misc_utils_ns::Marker::Marker(rclcpp::Node::SharedPtr, std::string, std::string)’:
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/utils/misc_utils.h:299:27: warning: ‘misc_utils_ns::Marker::nh_’ will be initialized after [-Wreorder]
+  299 |   rclcpp::Node::SharedPtr nh_;
+      |                           ^~~
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/utils/misc_utils.h:296:15: warning:   ‘std::string misc_utils_ns::Marker::pub_topic_’ [-Wreorder]
+  296 |   std::string pub_topic_;
+      |               ^~~~~~~~~~
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/utils/misc_utils.h:304:12: warning:   when initialized here [-Wreorder]
+  304 |   explicit Marker(rclcpp::Node::SharedPtr nh, std::string pub_topic, std::string frame_id)
+      |            ^~~~~~
+In file included from /home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/grid_world/grid_world.h:29,
+                 from /home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/sensor_coverage_planner/sensor_coverage_planner_ground.h:52:
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/keypose_graph/keypose_graph.h: In member function ‘bool keypose_graph_ns::KeyposeGraph::InBound(int)’:
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/keypose_graph/keypose_graph.h:118:32: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<std::vector<int> >::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  118 |     return index >= 0 && index < graph_.size();
+      |                          ~~~~~~^~~~~~~~~~~~~~~
+In file included from /home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp:14:
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/graph/graph.h: In member function ‘bool tare::Graph::NodeIndexInRange(int)’:
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/graph/graph.h:37:42: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<std::vector<int> >::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+   37 |     return node_index >= 0 && node_index < connection_.size();
+      |                               ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp: In member function ‘void sensor_coverage_planner_3d_ns::SensorCoveragePlanner3D::NogoBoundaryCallback(geometry_msgs::msg::PolygonStamped_<std::allocator<void> >::ConstSharedPtr)’:
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp:680:21: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<geometry_msgs::msg::Polygon_<std::allocator<void> > >::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  680 |   for (int i = 0; i < nogo_boundary.size(); i++) {
+      |                   ~~^~~~~~~~~~~~~~~~~~~~~~
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp:681:23: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<geometry_msgs::msg::Point32_<std::allocator<void> >, std::allocator<geometry_msgs::msg::Point32_<std::allocator<void> > > >::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  681 |     for (int j = 0; j < nogo_boundary[i].points.size() - 1; j++) {
+      |                     ~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp: In member function ‘void sensor_coverage_planner_3d_ns::SensorCoveragePlanner3D::JoystickCallback(sensor_msgs::msg::Joy_<std::allocator<void> >::ConstSharedPtr)’:
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp:706:36: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<float>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  706 |       kResetWaypointJoystickAxesID < joy_msg->axes.size()) {
+      |       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp: In member function ‘void sensor_coverage_planner_3d_ns::SensorCoveragePlanner3D::ResetWaypointCallback(std_msgs::msg::Empty_<std::allocator<void> >::ConstSharedPtr)’:
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp:727:48: warning: unused parameter ‘empty_msg’ [-Wunused-parameter]
+  727 |     const std_msgs::msg::Empty::ConstSharedPtr empty_msg) {
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp: In member function ‘void sensor_coverage_planner_3d_ns::SensorCoveragePlanner3D::UpdateVisitedPositions()’:
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp:858:21: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<Eigen::Matrix<double, 3, 1> >::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  858 |   for (int i = 0; i < visited_positions_.size(); i++) {
+      |                   ~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp: In member function ‘void sensor_coverage_planner_3d_ns::SensorCoveragePlanner3D::PublishGlobalPlanningVisualization(const exploration_path_ns::ExplorationPath&, const exploration_path_ns::ExplorationPath&)’:
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp:948:21: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<exploration_path_ns::Node>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  948 |   for (int i = 0; i < global_path.nodes_.size(); i++) {
+      |                   ~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp: In member function ‘bool sensor_coverage_planner_3d_ns::SensorCoveragePlanner3D::GetLookAheadPoint(const exploration_path_ns::ExplorationPath&, const exploration_path_ns::ExplorationPath&, Eigen::Vector3d&)’:
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp:1204:21: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<exploration_path_ns::Node>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+ 1204 |   for (int i = 1; i < global_path.nodes_.size(); i++) {
+      |                   ~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp:1226:21: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<exploration_path_ns::Node>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+ 1226 |   for (int i = 0; i < local_path.nodes_.size(); i++) {
+      |                   ~~^~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp:1237:25: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<exploration_path_ns::Node>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+ 1237 |       for (int i = 1; i < global_path.nodes_.size(); i++) {
+      |                       ~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp:1265:21: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<exploration_path_ns::Node>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+ 1265 |   for (int i = 0; i < local_path.nodes_.size(); i++) {
+      |                   ~~^~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp:1324:12: warning: unused variable ‘dist_to_robot’ [-Wunused-variable]
+ 1324 |     double dist_to_robot =
+      |            ^~~~~~~~~~~~~
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp:1358:12: warning: unused variable ‘dist_to_robot’ [-Wunused-variable]
+ 1358 |     double dist_to_robot =
+      |            ^~~~~~~~~~~~~
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp:1262:8: warning: unused variable ‘dir’ [-Wunused-variable]
+ 1262 |   bool dir = true;
+      |        ^~~
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp: In member function ‘void sensor_coverage_planner_3d_ns::SensorCoveragePlanner3D::PublishRuntime()’:
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp:1588:23: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<int>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+ 1588 |     for (int i = 0; i < runtime_breakdown_msg.data.size() - 1; i++) {
+      |                     ~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp: In member function ‘void sensor_coverage_planner_3d_ns::SensorCoveragePlanner3D::execute()’:
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp:1784:12: warning: unused variable ‘delta_time’ [-Wunused-variable]
+ 1784 |     double delta_time = current_time - start_time_;
+      |            ^~~~~~~~~~
+In file included from /home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/local_coverage_planner/local_coverage_planner.h:22,
+                 from /home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/sensor_coverage_planner/sensor_coverage_planner_ground.h:54:
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/viewpoint_manager/viewpoint_manager.h: In instantiation of ‘void viewpoint_manager_ns::ViewPointManager::UpdateViewPointCoverage(const typename pcl::PointCloud<PointT>::Ptr&) [with PCLPointType = pcl::PointXYZRGBNormal; typename pcl::PointCloud<PointT>::Ptr = std::shared_ptr<pcl::PointCloud<pcl::PointXYZRGBNormal> >]’:
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp:810:69:   required from here
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/viewpoint_manager/viewpoint_manager.h:178:25: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<viewpoint_ns::ViewPoint>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  178 |       for (int i = 0; i < viewpoints_.size(); i++)
+      |                       ~~^~~~~~~~~~~~~~~~~~~~
+In file included from /home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/keypose_graph/keypose_graph.h:24:
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/planning_env/planning_env.h: In instantiation of ‘void planning_env_ns::PlanningEnv::GetCoverageCloudWithinBoundary(typename pcl::PointCloud<PointT>::Ptr&) [with PCLPointType = pcl::PointXYZRGBNormal; typename pcl::PointCloud<PointT>::Ptr = std::shared_ptr<pcl::PointCloud<pcl::PointXYZRGBNormal> >]’:
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/planning_env/planning_env.h:164:62:   required from ‘void planning_env_ns::PlanningEnv::UpdateKeyposeCloud(typename pcl::PointCloud<PointT>::Ptr&) [with PCLPointType = pcl::PointXYZRGBNormal; typename pcl::PointCloud<PointT>::Ptr = std::shared_ptr<pcl::PointCloud<pcl::PointXYZRGBNormal> >]’
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp:904:59:   required from here
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/planning_env/planning_env.h:256:23: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<pcl::PointXYZRGBNormal, Eigen::aligned_allocator<pcl::PointXYZRGBNormal> >::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  256 |     for (int i = 0; i < cloud->points.size(); i++)
+      |                     ~~^~~~~~~~~~~~~~~~~~~~~~
+In file included from /home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/sensor_coverage_planner/sensor_coverage_planner_ground.h:49:
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/utils/pointcloud_utils.h: In instantiation of ‘void pointcloud_utils_ns::VerticalSurfaceExtractor::ExtractVerticalSurface(typename pcl::PointCloud<PointT>::Ptr&, typename pcl::PointCloud<PointOutT>::Ptr&, double, double) [with InputPCLPointType = pcl::PointXYZRGBNormal; OutputPCLPointType = pcl::PointXYZRGBNormal; typename pcl::PointCloud<PointT>::Ptr = std::shared_ptr<pcl::PointCloud<pcl::PointXYZRGBNormal> >; typename pcl::PointCloud<PointOutT>::Ptr = std::shared_ptr<pcl::PointCloud<pcl::PointXYZRGBNormal> >]’:
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/planning_env/planning_env.h:172:103:   required from ‘void planning_env_ns::PlanningEnv::UpdateKeyposeCloud(typename pcl::PointCloud<PointT>::Ptr&) [with PCLPointType = pcl::PointXYZRGBNormal; typename pcl::PointCloud<PointT>::Ptr = std::shared_ptr<pcl::PointCloud<pcl::PointXYZRGBNormal> >]’
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp:904:59:   required from here
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/utils/pointcloud_utils.h:127:23: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<pcl::PointXYZI, Eigen::aligned_allocator<pcl::PointXYZI> >::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  127 |     for (int i = 0; i < extractor_cloud_->points.size(); i++)
+      |                     ~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/utils/pointcloud_utils.h: In instantiation of ‘pointcloud_utils_ns::PCLCloud<PCLPointType>::PCLCloud(rclcpp::Node::SharedPtr, std::string, std::string) [with PCLPointType = pcl::PointXYZRGBNormal; rclcpp::Node::SharedPtr = std::shared_ptr<rclcpp::Node>; std::string = std::__cxx11::basic_string<char>]’:
+/usr/include/c++/13/bits/stl_construct.h:119:7:   required from ‘void std::_Construct(_Tp*, _Args&& ...) [with _Tp = pointcloud_utils_ns::PCLCloud<pcl::PointXYZRGBNormal>; _Args = {shared_ptr<rclcpp::Node>, const char (&)[14], const __cxx11::basic_string<char, char_traits<char>, allocator<char> >&}]’
+/usr/include/c++/13/bits/alloc_traits.h:661:19:   required from ‘static void std::allocator_traits<std::allocator<void> >::construct(allocator_type&, _Up*, _Args&& ...) [with _Up = pointcloud_utils_ns::PCLCloud<pcl::PointXYZRGBNormal>; _Args = {std::shared_ptr<rclcpp::Node>, const char (&)[14], const std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&}; allocator_type = std::allocator<void>]’
+/usr/include/c++/13/bits/shared_ptr_base.h:604:39:   required from ‘std::_Sp_counted_ptr_inplace<_Tp, _Alloc, _Lp>::_Sp_counted_ptr_inplace(_Alloc, _Args&& ...) [with _Args = {std::shared_ptr<rclcpp::Node>, const char (&)[14], const std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&}; _Tp = pointcloud_utils_ns::PCLCloud<pcl::PointXYZRGBNormal>; _Alloc = std::allocator<void>; __gnu_cxx::_Lock_policy _Lp = __gnu_cxx::_S_atomic]’
+/usr/include/c++/13/bits/shared_ptr_base.h:971:16:   required from ‘std::__shared_count<_Lp>::__shared_count(_Tp*&, std::_Sp_alloc_shared_tag<_Alloc>, _Args&& ...) [with _Tp = pointcloud_utils_ns::PCLCloud<pcl::PointXYZRGBNormal>; _Alloc = std::allocator<void>; _Args = {std::shared_ptr<rclcpp::Node>, const char (&)[14], const std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&}; __gnu_cxx::_Lock_policy _Lp = __gnu_cxx::_S_atomic]’
+/usr/include/c++/13/bits/shared_ptr_base.h:1712:14:   required from ‘std::__shared_ptr<_Tp, _Lp>::__shared_ptr(std::_Sp_alloc_shared_tag<_Tp>, _Args&& ...) [with _Alloc = std::allocator<void>; _Args = {std::shared_ptr<rclcpp::Node>, const char (&)[14], const std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&}; _Tp = pointcloud_utils_ns::PCLCloud<pcl::PointXYZRGBNormal>; __gnu_cxx::_Lock_policy _Lp = __gnu_cxx::_S_atomic]’
+/usr/include/c++/13/bits/shared_ptr.h:464:59:   required from ‘std::shared_ptr<_Tp>::shared_ptr(std::_Sp_alloc_shared_tag<_Tp>, _Args&& ...) [with _Alloc = std::allocator<void>; _Args = {std::shared_ptr<rclcpp::Node>, const char (&)[14], const std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&}; _Tp = pointcloud_utils_ns::PCLCloud<pcl::PointXYZRGBNormal>]’
+/usr/include/c++/13/bits/shared_ptr.h:1009:14:   required from ‘std::shared_ptr<typename std::enable_if<(! std::is_array< <template-parameter-1-1> >::value), _Tp>::type> std::make_shared(_Args&& ...) [with _Tp = pointcloud_utils_ns::PCLCloud<pcl::PointXYZRGBNormal>; _Args = {shared_ptr<rclcpp::Node>, const char (&)[14], const __cxx11::basic_string<char, char_traits<char>, allocator<char> >&}; typename enable_if<(! is_array< <template-parameter-1-1> >::value), _Tp>::type = pointcloud_utils_ns::PCLCloud<pcl::PointXYZRGBNormal>]’
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp:245:77:   required from here
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/utils/pointcloud_utils.h:191:27: warning: ‘pointcloud_utils_ns::PCLCloud<pcl::PointXYZRGBNormal>::nh_’ will be initialized after [-Wreorder]
+  191 |   rclcpp::Node::SharedPtr nh_;
+      |                           ^~~
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/utils/pointcloud_utils.h:187:15: warning:   ‘std::string pointcloud_utils_ns::PCLCloud<pcl::PointXYZRGBNormal>::pub_cloud_topic_’ [-Wreorder]
+  187 |   std::string pub_cloud_topic_;
+      |               ^~~~~~~~~~~~~~~~
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/utils/pointcloud_utils.h:193:3: warning:   when initialized here [-Wreorder]
+  193 |   PCLCloud(rclcpp::Node::SharedPtr nh, std::string pub_cloud_topic, std::string frame_id)
+      |   ^~~~~~~~
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/utils/pointcloud_utils.h: In instantiation of ‘pointcloud_utils_ns::PCLCloud<PCLPointType>::PCLCloud(rclcpp::Node::SharedPtr, std::string, std::string) [with PCLPointType = pcl::PointXYZ; rclcpp::Node::SharedPtr = std::shared_ptr<rclcpp::Node>; std::string = std::__cxx11::basic_string<char>]’:
+/usr/include/c++/13/bits/stl_construct.h:119:7:   required from ‘void std::_Construct(_Tp*, _Args&& ...) [with _Tp = pointcloud_utils_ns::PCLCloud<pcl::PointXYZ>; _Args = {shared_ptr<rclcpp::Node>, const char (&)[22], const __cxx11::basic_string<char, char_traits<char>, allocator<char> >&}]’
+/usr/include/c++/13/bits/alloc_traits.h:661:19:   required from ‘static void std::allocator_traits<std::allocator<void> >::construct(allocator_type&, _Up*, _Args&& ...) [with _Up = pointcloud_utils_ns::PCLCloud<pcl::PointXYZ>; _Args = {std::shared_ptr<rclcpp::Node>, const char (&)[22], const std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&}; allocator_type = std::allocator<void>]’
+/usr/include/c++/13/bits/shared_ptr_base.h:604:39:   required from ‘std::_Sp_counted_ptr_inplace<_Tp, _Alloc, _Lp>::_Sp_counted_ptr_inplace(_Alloc, _Args&& ...) [with _Args = {std::shared_ptr<rclcpp::Node>, const char (&)[22], const std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&}; _Tp = pointcloud_utils_ns::PCLCloud<pcl::PointXYZ>; _Alloc = std::allocator<void>; __gnu_cxx::_Lock_policy _Lp = __gnu_cxx::_S_atomic]’
+/usr/include/c++/13/bits/shared_ptr_base.h:971:16:   required from ‘std::__shared_count<_Lp>::__shared_count(_Tp*&, std::_Sp_alloc_shared_tag<_Alloc>, _Args&& ...) [with _Tp = pointcloud_utils_ns::PCLCloud<pcl::PointXYZ>; _Alloc = std::allocator<void>; _Args = {std::shared_ptr<rclcpp::Node>, const char (&)[22], const std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&}; __gnu_cxx::_Lock_policy _Lp = __gnu_cxx::_S_atomic]’
+/usr/include/c++/13/bits/shared_ptr_base.h:1712:14:   required from ‘std::__shared_ptr<_Tp, _Lp>::__shared_ptr(std::_Sp_alloc_shared_tag<_Tp>, _Args&& ...) [with _Alloc = std::allocator<void>; _Args = {std::shared_ptr<rclcpp::Node>, const char (&)[22], const std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&}; _Tp = pointcloud_utils_ns::PCLCloud<pcl::PointXYZ>; __gnu_cxx::_Lock_policy _Lp = __gnu_cxx::_S_atomic]’
+/usr/include/c++/13/bits/shared_ptr.h:464:59:   required from ‘std::shared_ptr<_Tp>::shared_ptr(std::_Sp_alloc_shared_tag<_Tp>, _Args&& ...) [with _Alloc = std::allocator<void>; _Args = {std::shared_ptr<rclcpp::Node>, const char (&)[22], const std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&}; _Tp = pointcloud_utils_ns::PCLCloud<pcl::PointXYZ>]’
+/usr/include/c++/13/bits/shared_ptr.h:1009:14:   required from ‘std::shared_ptr<typename std::enable_if<(! std::is_array< <template-parameter-1-1> >::value), _Tp>::type> std::make_shared(_Args&& ...) [with _Tp = pointcloud_utils_ns::PCLCloud<pcl::PointXYZ>; _Args = {shared_ptr<rclcpp::Node>, const char (&)[22], const __cxx11::basic_string<char, char_traits<char>, allocator<char> >&}; typename enable_if<(! is_array< <template-parameter-1-1> >::value), _Tp>::type = pointcloud_utils_ns::PCLCloud<pcl::PointXYZ>]’
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp:248:69:   required from here
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/utils/pointcloud_utils.h:191:27: warning: ‘pointcloud_utils_ns::PCLCloud<pcl::PointXYZ>::nh_’ will be initialized after [-Wreorder]
+  191 |   rclcpp::Node::SharedPtr nh_;
+      |                           ^~~
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/utils/pointcloud_utils.h:187:15: warning:   ‘std::string pointcloud_utils_ns::PCLCloud<pcl::PointXYZ>::pub_cloud_topic_’ [-Wreorder]
+  187 |   std::string pub_cloud_topic_;
+      |               ^~~~~~~~~~~~~~~~
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/utils/pointcloud_utils.h:193:3: warning:   when initialized here [-Wreorder]
+  193 |   PCLCloud(rclcpp::Node::SharedPtr nh, std::string pub_cloud_topic, std::string frame_id)
+      |   ^~~~~~~~
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/utils/pointcloud_utils.h: In instantiation of ‘pointcloud_utils_ns::PCLCloud<PCLPointType>::PCLCloud(rclcpp::Node::SharedPtr, std::string, std::string) [with PCLPointType = pcl::PointXYZI; rclcpp::Node::SharedPtr = std::shared_ptr<rclcpp::Node>; std::string = std::__cxx11::basic_string<char>]’:
+/usr/include/c++/13/bits/stl_construct.h:119:7:   required from ‘void std::_Construct(_Tp*, _Args&& ...) [with _Tp = pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>; _Args = {shared_ptr<rclcpp::Node>, const char (&)[17], const __cxx11::basic_string<char, char_traits<char>, allocator<char> >&}]’
+/usr/include/c++/13/bits/alloc_traits.h:661:19:   required from ‘static void std::allocator_traits<std::allocator<void> >::construct(allocator_type&, _Up*, _Args&& ...) [with _Up = pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>; _Args = {std::shared_ptr<rclcpp::Node>, const char (&)[17], const std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&}; allocator_type = std::allocator<void>]’
+/usr/include/c++/13/bits/shared_ptr_base.h:604:39:   required from ‘std::_Sp_counted_ptr_inplace<_Tp, _Alloc, _Lp>::_Sp_counted_ptr_inplace(_Alloc, _Args&& ...) [with _Args = {std::shared_ptr<rclcpp::Node>, const char (&)[17], const std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&}; _Tp = pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>; _Alloc = std::allocator<void>; __gnu_cxx::_Lock_policy _Lp = __gnu_cxx::_S_atomic]’
+/usr/include/c++/13/bits/shared_ptr_base.h:971:16:   required from ‘std::__shared_count<_Lp>::__shared_count(_Tp*&, std::_Sp_alloc_shared_tag<_Alloc>, _Args&& ...) [with _Tp = pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>; _Alloc = std::allocator<void>; _Args = {std::shared_ptr<rclcpp::Node>, const char (&)[17], const std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&}; __gnu_cxx::_Lock_policy _Lp = __gnu_cxx::_S_atomic]’
+/usr/include/c++/13/bits/shared_ptr_base.h:1712:14:   required from ‘std::__shared_ptr<_Tp, _Lp>::__shared_ptr(std::_Sp_alloc_shared_tag<_Tp>, _Args&& ...) [with _Alloc = std::allocator<void>; _Args = {std::shared_ptr<rclcpp::Node>, const char (&)[17], const std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&}; _Tp = pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>; __gnu_cxx::_Lock_policy _Lp = __gnu_cxx::_S_atomic]’
+/usr/include/c++/13/bits/shared_ptr.h:464:59:   required from ‘std::shared_ptr<_Tp>::shared_ptr(std::_Sp_alloc_shared_tag<_Tp>, _Args&& ...) [with _Alloc = std::allocator<void>; _Args = {std::shared_ptr<rclcpp::Node>, const char (&)[17], const std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&}; _Tp = pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>]’
+/usr/include/c++/13/bits/shared_ptr.h:1009:14:   required from ‘std::shared_ptr<typename std::enable_if<(! std::is_array< <template-parameter-1-1> >::value), _Tp>::type> std::make_shared(_Args&& ...) [with _Tp = pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>; _Args = {shared_ptr<rclcpp::Node>, const char (&)[17], const __cxx11::basic_string<char, char_traits<char>, allocator<char> >&}; typename enable_if<(! is_array< <template-parameter-1-1> >::value), _Tp>::type = pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>]’
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp:251:70:   required from here
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/utils/pointcloud_utils.h:191:27: warning: ‘pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>::nh_’ will be initialized after [-Wreorder]
+  191 |   rclcpp::Node::SharedPtr nh_;
+      |                           ^~~
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/utils/pointcloud_utils.h:187:15: warning:   ‘std::string pointcloud_utils_ns::PCLCloud<pcl::PointXYZI>::pub_cloud_topic_’ [-Wreorder]
+  187 |   std::string pub_cloud_topic_;
+      |               ^~~~~~~~~~~~~~~~
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/utils/pointcloud_utils.h:193:3: warning:   when initialized here [-Wreorder]
+  193 |   PCLCloud(rclcpp::Node::SharedPtr nh, std::string pub_cloud_topic, std::string frame_id)
+      |   ^~~~~~~~
+In file included from /home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/sensor_coverage_planner/sensor_coverage_planner_ground.h:48,
+                 from /home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/src/tare_planner_node/tare_planner_node.cpp:2:
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/utils/misc_utils.h:69:85: warning: ‘nav_msgs::msg::Odometry_<std::allocator<void> >::ConstPtr’ is deprecated [-Wdeprecated-declarations]
+   69 | void KeyposeToMap(CloudType& cloud, const nav_msgs::msg::Odometry::ConstPtr& keypose);
+      |                                                                                     ^
+In file included from /opt/ros/jazzy/include/nav_msgs/nav_msgs/msg/odometry.hpp:7,
+                 from /home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/sensor_coverage_planner/sensor_coverage_planner_ground.h:24:
+/opt/ros/jazzy/include/nav_msgs/nav_msgs/msg/detail/odometry__struct.hpp:150:5: note: declared here
+  150 |     ConstPtr;
+      |     ^~~~~~~~
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/utils/misc_utils.h: In constructor ‘misc_utils_ns::Marker::Marker(rclcpp::Node::SharedPtr, std::string, std::string)’:
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/utils/misc_utils.h:299:27: warning: ‘misc_utils_ns::Marker::nh_’ will be initialized after [-Wreorder]
+  299 |   rclcpp::Node::SharedPtr nh_;
+      |                           ^~~
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/utils/misc_utils.h:296:15: warning:   ‘std::string misc_utils_ns::Marker::pub_topic_’ [-Wreorder]
+  296 |   std::string pub_topic_;
+      |               ^~~~~~~~~~
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/utils/misc_utils.h:304:12: warning:   when initialized here [-Wreorder]
+  304 |   explicit Marker(rclcpp::Node::SharedPtr nh, std::string pub_topic, std::string frame_id)
+      |            ^~~~~~
+In file included from /home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/sensor_coverage_planner/sensor_coverage_planner_ground.h:48,
+                 from /home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/tests/planner_input_test.cpp:1:
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/utils/misc_utils.h:69:85: warning: ‘nav_msgs::msg::Odometry_<std::allocator<void> >::ConstPtr’ is deprecated [-Wdeprecated-declarations]
+   69 | void KeyposeToMap(CloudType& cloud, const nav_msgs::msg::Odometry::ConstPtr& keypose);
+      |                                                                                     ^
+In file included from /opt/ros/jazzy/include/nav_msgs/nav_msgs/msg/odometry.hpp:7,
+                 from /home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/sensor_coverage_planner/sensor_coverage_planner_ground.h:24:
+/opt/ros/jazzy/include/nav_msgs/nav_msgs/msg/detail/odometry__struct.hpp:150:5: note: declared here
+  150 |     ConstPtr;
+      |     ^~~~~~~~
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/utils/misc_utils.h: In constructor ‘misc_utils_ns::Marker::Marker(rclcpp::Node::SharedPtr, std::string, std::string)’:
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/utils/misc_utils.h:299:27: warning: ‘misc_utils_ns::Marker::nh_’ will be initialized after [-Wreorder]
+  299 |   rclcpp::Node::SharedPtr nh_;
+      |                           ^~~
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/utils/misc_utils.h:296:15: warning:   ‘std::string misc_utils_ns::Marker::pub_topic_’ [-Wreorder]
+  296 |   std::string pub_topic_;
+      |               ^~~~~~~~~~
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/utils/misc_utils.h:304:12: warning:   when initialized here [-Wreorder]
+  304 |   explicit Marker(rclcpp::Node::SharedPtr nh, std::string pub_topic, std::string frame_id)
+      |            ^~~~~~
+In file included from /home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/grid_world/grid_world.h:29,
+                 from /home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/sensor_coverage_planner/sensor_coverage_planner_ground.h:52:
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/keypose_graph/keypose_graph.h: In member function ‘bool keypose_graph_ns::KeyposeGraph::InBound(int)’:
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/keypose_graph/keypose_graph.h:118:32: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<std::vector<int> >::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  118 |     return index >= 0 && index < graph_.size();
+      |                          ~~~~~~^~~~~~~~~~~~~~~
+In file included from /home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/grid_world/grid_world.h:29,
+                 from /home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/sensor_coverage_planner/sensor_coverage_planner_ground.h:52:
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/keypose_graph/keypose_graph.h: In member function ‘bool keypose_graph_ns::KeyposeGraph::InBound(int)’:
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/include/keypose_graph/keypose_graph.h:118:32: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<std::vector<int> >::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  118 |     return index >= 0 && index < graph_.size();
+      |                          ~~~~~~^~~~~~~~~~~~~~~
+CMake Error at cmake_install.cmake:454 (file):
+  file INSTALL cannot find "/home/lzz/my
+  test/HT_Explo-real-review-20261028/src/tare_planner/or-tools/lib/libortools.so.9":
+  No such file or directory.
+
+
+---
+Failed   <<< tare_planner [1min 4s, exited with code 1]
+
+Summary: 0 packages finished [1min 4s]
+  1 package failed: tare_planner
+  1 package had stderr output: tare_planner
+  1 package not processed

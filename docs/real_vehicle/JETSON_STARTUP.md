@@ -89,3 +89,9 @@ RViz中：灰点是实测高程，外围红绿是HT最佳概率；白圈是0.6m�
 - 车身点云过滤继续启用；本包没有逐点运动去畸变。
 
 测试结果与限制见`validation/navigation_completion_2026-10-27/REPORT.md`，起点共享修正见`validation/startup_prior_sync_2026-10-24/REPORT.md`。软件回归和保存数据对照不等于实车导航验收。
+
+## 2026-10-28 离线审查候选
+
+导出的副本可能缺少OR-Tools的`libortools.so.9`别名。构建现在从实际原生库生成工作区私有运行副本，并随安装打包；不修改外部依赖目录。雷达订阅改为BEST_EFFORT请求，可接入BEST_EFFORT及RELIABLE发布者。命令适配器的看门狗改用稳定时钟定时器，ROS时钟暂停后仍检查接收超时并发布零速。
+
+本候选只在x86_64/ROS Jazzy做了独立构建和离线回归，未验证Jetson/ARM64、CUDA/Numba或车辆运动。原有方向策略、模型、起点先验、1秒地图时效和地形阈值保留。静态保存帧中车旁缺测仍存在；不能将本次修复称为已完成实车自主探索。原因、测试与剩余项见`validation/real_review_2026-10-28/REPORT.md`。

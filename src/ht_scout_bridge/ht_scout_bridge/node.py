@@ -57,7 +57,7 @@ class ScoutInputs(Node):
         self.odom_sub=self.create_subscription(Odometry,self.declare_parameter('odometry_topic','/fixposition/odometry_enu').value,
             lambda m:self.enqueue('odom',m),sensor)
         self.cloud_sub=self.create_subscription(PointCloud2,self.declare_parameter('cloud_topic','/rslidar_points').value,
-            lambda m:self.enqueue('cloud',m),QoSProfile(depth=2,reliability=ReliabilityPolicy.RELIABLE))
+            lambda m:self.enqueue('cloud',m),QoSProfile(depth=2,reliability=ReliabilityPolicy.BEST_EFFORT))
         self.elevation_sub=self.create_subscription(GridMap,self.declare_parameter('elevation_topic','/elevation_mapping_node/elevation_map_raw').value,
             lambda m:self.enqueue('elevation',m),QoSProfile(depth=1,reliability=ReliabilityPolicy.RELIABLE))
         self.timer=self.create_timer(.05,self.drain)

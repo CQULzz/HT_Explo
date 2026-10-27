@@ -4,6 +4,8 @@ import time
 import signal
 import rclpy
 from rclpy.node import Node
+from rclpy.clock import Clock
+from rclpy.clock_type import ClockType
 from rclpy.signals import SignalHandlerOptions
 from geometry_msgs.msg import Twist, TwistStamped
 from nav_msgs.msg import Odometry
@@ -40,7 +42,10 @@ class ScoutCommandBridge(Node):
         self.create_subscription(Bool,'/ht_real/ht_navigation_allowed',self.allow,1)
         self.create_subscription(Odometry,'/ht_real/odometry',self.pose,qos_profile_sensor_data)
         self.create_subscription(Int8,'/ht_real/stop',self.stop,1)
-        self.create_timer(.05,self.tick)
+        # Receipt watchdogs use monotonic time. Their timer must keep running
+        # when ROS time pauses or moves backwards as well.
+        self.watchdog_clock=Clock(clock_type=ClockType.STEADY_TIME)
+        self.watchdog_timer=self.create_timer(.05,self.tick,clock=self.watchdog_clock)
     def receive(self,msg):self.command=(msg,time.monotonic())
     def allow(self,msg):self.permission=(msg.data,time.monotonic())
     def pose(self,msg):self.odom=(msg,time.monotonic())

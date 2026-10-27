@@ -1,0 +1,62 @@
+FFF.                                                                     [100%]
+=================================== FAILURES ===================================
+__________________ test_watchdog_stops_with_frozen_ros_clock ___________________
+
+    def test_watchdog_stops_with_frozen_ros_clock():
+        result=probe(pause=True)
+>       assert result['forwarded'],result
+E       AssertionError: {'configured_topic': '/offline_review/chassis_command', 'forwarded': False, 'last_command': 0.0, 'outputs_after_pause': 0, ...}
+E       assert False
+
+src/ht_scout_bridge/test/test_command_clock_and_remap_ros.py:53: AssertionError
+----------------------------- Captured stderr call -----------------------------
+[WARN] [1793118094.924179920] [rcl]: ROS_LOCALHOST_ONLY is deprecated but still honored if it is enabled. Use ROS_AUTOMATIC_DISCOVERY_RANGE and ROS_STATIC_PEERS instead.
+[WARN] [1793118094.924195034] [rcl]: 'localhost_only' is enabled, 'automatic_discovery_range' and 'static_peers' will be ignored.
+___________ test_topic_remapping_preserves_command_ownership_checks ____________
+
+    def test_topic_remapping_preserves_command_ownership_checks():
+        result=probe(remap=True)
+>       assert result['forwarded'],result
+E       AssertionError: {'configured_topic': '/offline_review/chassis_command', 'forwarded': False, 'last_command': 0.0, 'outputs_after_pause': 0, ...}
+E       assert False
+
+src/ht_scout_bridge/test/test_command_clock_and_remap_ros.py:59: AssertionError
+----------------------------- Captured stderr call -----------------------------
+[WARN] [1793118097.697787461] [rcl]: ROS_LOCALHOST_ONLY is deprecated but still honored if it is enabled. Use ROS_AUTOMATIC_DISCOVERY_RANGE and ROS_STATIC_PEERS instead.
+[WARN] [1793118097.697805969] [rcl]: 'localhost_only' is enabled, 'automatic_discovery_range' and 'static_peers' will be ignored.
+___________________ test_sensor_cloud_reaches_input_queue[2] ___________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x79d134e88f50>
+reliability = <ReliabilityPolicy.BEST_EFFORT: 2>
+
+    @pytest.mark.parametrize('reliability',[ReliabilityPolicy.BEST_EFFORT,ReliabilityPolicy.RELIABLE])
+    def test_sensor_cloud_reaches_input_queue(monkeypatch,reliability):
+        root=Path(__file__).resolve().parents[1]
+        monkeypatch.setattr(module,'get_package_share_directory',lambda _:str(root))
+        rclpy.init(args=['--ros-args','-p','cloud_topic:=/offline_review/lidar_input'])
+        consumer=module.ScoutInputs();consumer.timer.cancel()
+        received=[];consumer.enqueue=lambda kind,msg:received.append(kind)
+        source=rclpy.create_node('offline_lidar_qos_probe')
+        pub=source.create_publisher(PointCloud2,'/offline_review/lidar_input',QoSProfile(depth=2,reliability=reliability))
+        executor=SingleThreadedExecutor();executor.add_node(consumer);executor.add_node(source)
+        try:
+            deadline=time.monotonic()+1.5
+            while time.monotonic()<deadline and not received:
+                pub.publish(PointCloud2());executor.spin_once(timeout_sec=.01)
+>           assert received==['cloud'],f'Cloud publisher reliability {reliability} did not reach input queue'
+E           AssertionError: Cloud publisher reliability 2 did not reach input queue
+E           assert [] == ['cloud']
+E             Right contains one more item: 'cloud'
+E             Use -v to get more diff
+
+src/ht_scout_bridge/test/test_cloud_qos_ros.py:26: AssertionError
+----------------------------- Captured stderr call -----------------------------
+[WARN] [1793118099.619960825] [rcl]: ROS_LOCALHOST_ONLY is deprecated but still honored if it is enabled. Use ROS_AUTOMATIC_DISCOVERY_RANGE and ROS_STATIC_PEERS instead.
+[WARN] [1793118099.619977048] [rcl]: 'localhost_only' is enabled, 'automatic_discovery_range' and 'static_peers' will be ignored.
+[WARN] [1793118099.633700494] [offline_lidar_qos_probe]: New subscription discovered on topic '/offline_review/lidar_input', requesting incompatible QoS. No messages will be sent to it. Last incompatible policy: RELIABILITY
+[WARN] [1793118099.634005794] [ht_scout_inputs]: New publisher discovered on topic '/offline_review/lidar_input', offering incompatible QoS. No messages will be received from it. Last incompatible policy: RELIABILITY
+=========================== short test summary info ============================
+FAILED src/ht_scout_bridge/test/test_command_clock_and_remap_ros.py::test_watchdog_stops_with_frozen_ros_clock
+FAILED src/ht_scout_bridge/test/test_command_clock_and_remap_ros.py::test_topic_remapping_preserves_command_ownership_checks
+FAILED src/ht_scout_bridge/test/test_cloud_qos_ros.py::test_sensor_cloud_reaches_input_queue[2]
+3 failed, 1 passed in 6.56s

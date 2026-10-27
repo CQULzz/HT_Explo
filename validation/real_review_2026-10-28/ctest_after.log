@@ -1,0 +1,151 @@
+Internal ctest changing into directory: /home/lzz/my test/HT_Explo-real-review-20261028/build_real/tare_planner
+Test project /home/lzz/my test/HT_Explo-real-review-20261028/build_real/tare_planner
+    Start 1: ht_core_test
+1/7 Test #1: ht_core_test .....................   Passed    0.01 sec
+    Start 2: geometry_pose_test
+2/7 Test #2: geometry_pose_test ...............***Failed    8.66 sec
+-- run_test.py: invoking following command in '/home/lzz/my test/HT_Explo-real-review-20261028/build_real/tare_planner':
+ - /home/lzz/my test/HT_Explo-real-review-20261028/build_real/tare_planner/geometry_pose_test --gtest_output=xml:/home/lzz/my test/HT_Explo-real-review-20261028/build_real/tare_planner/test_results/tare_planner/geometry_pose_test.gtest.xml
+Running main() from /opt/ros/jazzy/src/gtest_vendor/src/gtest_main.cc
+[==========] Running 23 tests from 6 test suites.
+[----------] Global test environment set-up.
+[----------] 1 test from SearchPruning
+[ RUN      ] SearchPruning.SameAcceptedRoutesWithFewerHardQueries
+[       OK ] SearchPruning.SameAcceptedRoutesWithFewerHardQueries (7 ms)
+[----------] 1 test from SearchPruning (7 ms total)
+
+[----------] 3 tests from GeometryPose
+[ RUN      ] GeometryPose.CapturedContinuousRootDoesNotInheritNeighbourCollision
+[WARN] [1793118668.729670263] [rcl]: ROS_LOCALHOST_ONLY is deprecated but still honored if it is enabled. Use ROS_AUTOMATIC_DISCOVERY_RANGE and ROS_STATIC_PEERS instead.
+[WARN] [1793118668.729688551] [rcl]: 'localhost_only' is enabled, 'automatic_discovery_range' and 'static_peers' will be ignored.
+/home/lzz/my test/HT_Explo-real-review-20261028/src/tare_planner/tests/geometry_pose_test.cpp:57: Failure
+Value of: stream.good()
+  Actual: false
+Expected: true
+
+[  FAILED  ] GeometryPose.CapturedContinuousRootDoesNotInheritNeighbourCollision (226 ms)
+[ RUN      ] GeometryPose.HeightSliceMatchesBruteForceAtBoundariesAndOtherHeights
+[       OK ] GeometryPose.HeightSliceMatchesBruteForceAtBoundariesAndOtherHeights (205 ms)
+[ RUN      ] GeometryPose.UnlabelledCoverageCellDoesNotInvalidateFreeContinuousRoot
+[       OK ] GeometryPose.UnlabelledCoverageCellDoesNotInvalidateFreeContinuousRoot (208 ms)
+[----------] 3 tests from GeometryPose (640 ms total)
+
+[----------] 1 test from SearchAudit
+[ RUN      ] SearchAudit.SeparatesDeadlineExpansionLimitAndExhaustedComponent
+[       OK ] SearchAudit.SeparatesDeadlineExpansionLimitAndExhaustedComponent (0 ms)
+[----------] 1 test from SearchAudit (0 ms total)
+
+[----------] 14 tests from PendingCell
+[ RUN      ] PendingCell.GainWithoutSelectedLocalGoalMustEnterGlobalTodo
+[INFO] [1793118669.378749653] [tare_planner_node]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=0 reversible=0 scores=point
+[INFO] [1793118669.584704412] [standalone_logger]: HT_CELL_AUDIT cell=64 xy=(24.000000,0.000000) old=0 new=1 reason=REGISTER_OBSERVED_GAIN candidates=1 selected=0 above_small=1 above_big=1 above_frontier=1 highest_score=235 visits=1 graph_nodes=0 robot=(9.267491,-14.360244) ht_stamp=-1.000000000 pending_gain=1
+[       OK ] PendingCell.GainWithoutSelectedLocalGoalMustEnterGlobalTodo (223 ms)
+[ RUN      ] PendingCell.PositiveGainMustSurviveLeavingLocalNeighbourhood
+[INFO] [1793118669.595292993] [tare_planner_node]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=0 reversible=0 scores=point
+[INFO] [1793118669.786137864] [standalone_logger]: HT_CELL_AUDIT cell=64 xy=(24.000000,0.000000) old=1 new=1 reason=KEEP_PENDING_GAIN candidates=1 selected=0 above_small=1 above_big=1 above_frontier=1 highest_score=235 visits=1 graph_nodes=0 robot=(9.267491,-14.360244) ht_stamp=-1.000000000 pending_gain=1
+[       OK ] PendingCell.PositiveGainMustSurviveLeavingLocalNeighbourhood (201 ms)
+[ RUN      ] PendingCell.FrontierOnlyObservationRegistersGlobalTodo
+[INFO] [1793118669.796524049] [tare_planner_node]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=0 reversible=0 scores=point
+[INFO] [1793118669.995295442] [standalone_logger]: HT_CELL_AUDIT cell=64 xy=(24.000000,0.000000) old=0 new=1 reason=REGISTER_OBSERVED_GAIN candidates=1 selected=0 above_small=0 above_big=0 above_frontier=1 highest_score=0 visits=1 graph_nodes=0 robot=(9.267491,-14.360244) ht_stamp=-1.000000000 pending_gain=1
+[       OK ] PendingCell.FrontierOnlyObservationRegistersGlobalTodo (208 ms)
+[ RUN      ] PendingCell.ZeroGainDoesNotCreateGlobalTodo
+[INFO] [1793118670.004936947] [tare_planner_node]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=0 reversible=0 scores=point
+[INFO] [1793118670.207014737] [standalone_logger]: HT_CELL_AUDIT cell=64 xy=(24.000000,0.000000) old=0 new=0 reason=UNCHANGED candidates=1 selected=0 above_small=0 above_big=0 above_frontier=0 highest_score=0 visits=1 graph_nodes=0 robot=(9.267491,-14.360244) ht_stamp=-1.000000000 pending_gain=0
+[       OK ] PendingCell.ZeroGainDoesNotCreateGlobalTodo (211 ms)
+[ RUN      ] PendingCell.VisitedViewpointDoesNotCreateGlobalTodo
+[INFO] [1793118670.216254934] [tare_planner_node]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=0 reversible=0 scores=point
+[INFO] [1793118670.418276320] [standalone_logger]: HT_CELL_AUDIT cell=64 xy=(24.000000,0.000000) old=0 new=0 reason=UNCHANGED candidates=1 selected=0 above_small=0 above_big=0 above_frontier=0 highest_score=-1 visits=1 graph_nodes=0 robot=(9.267491,-14.360244) ht_stamp=-1.000000000 pending_gain=0
+[       OK ] PendingCell.VisitedViewpointDoesNotCreateGlobalTodo (211 ms)
+[ RUN      ] PendingCell.NoCandidateDoesNotInventObservedGain
+[INFO] [1793118670.427800014] [tare_planner_node]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=0 reversible=0 scores=point
+[       OK ] PendingCell.NoCandidateDoesNotInventObservedGain (208 ms)
+[ RUN      ] PendingCell.ExistingZeroGainTaskCanStillBecomeCovered
+[INFO] [1793118670.636111494] [tare_planner_node]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=0 reversible=0 scores=point
+[INFO] [1793118670.832000046] [standalone_logger]: HT_CELL_AUDIT cell=64 xy=(24.000000,0.000000) old=1 new=2 reason=NO_GAIN_WITH_CANDIDATES candidates=1 selected=0 above_small=0 above_big=0 above_frontier=0 highest_score=0 visits=1 graph_nodes=0 robot=(9.267491,-14.360244) ht_stamp=-1.000000000 pending_gain=0
+[       OK ] PendingCell.ExistingZeroGainTaskCanStillBecomeCovered (204 ms)
+[ RUN      ] PendingCell.OtherSelectedGoalDoesNotHidePendingCell
+[INFO] [1793118670.840759584] [tare_planner_node]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=0 reversible=0 scores=point
+[INFO] [1793118671.039524161] [standalone_logger]: HT_CELL_AUDIT cell=63 xy=(18.000000,0.000000) old=0 new=1 reason=SELECTED_REOPEN candidates=1 selected=1 above_small=1 above_big=1 above_frontier=0 highest_score=150 visits=1 graph_nodes=0 robot=(9.267491,-14.360244) ht_stamp=-1.000000000 pending_gain=1
+[INFO] [1793118671.039546737] [standalone_logger]: HT_CELL_AUDIT cell=64 xy=(24.000000,0.000000) old=0 new=1 reason=REGISTER_OBSERVED_GAIN candidates=1 selected=0 above_small=1 above_big=1 above_frontier=1 highest_score=235 visits=1 graph_nodes=0 robot=(9.267491,-14.360244) ht_stamp=-1.000000000 pending_gain=1
+[       OK ] PendingCell.OtherSelectedGoalDoesNotHidePendingCell (208 ms)
+[ RUN      ] PendingCell.CoveredCellReopeningKeepsExistingHysteresis
+[INFO] [1793118671.048958075] [tare_planner_node]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=0 reversible=0 scores=point
+[INFO] [1793118671.243582719] [standalone_logger]: HT_CELL_AUDIT cell=64 xy=(24.000000,0.000000) old=2 new=2 reason=UNCHANGED candidates=1 selected=0 above_small=1 above_big=1 above_frontier=1 highest_score=235 visits=1 graph_nodes=0 robot=(9.267491,-14.360244) ht_stamp=-1.000000000 pending_gain=0
+[       OK ] PendingCell.CoveredCellReopeningKeepsExistingHysteresis (205 ms)
+[ RUN      ] PendingCell.LastObservedGainSurvivesTemporaryNoCandidates
+[INFO] [1793118671.254243502] [tare_planner_node]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=0 reversible=0 scores=point
+[INFO] [1793118671.455524384] [standalone_logger]: HT_CELL_AUDIT cell=64 xy=(24.000000,0.000000) old=0 new=1 reason=REGISTER_OBSERVED_GAIN candidates=1 selected=0 above_small=1 above_big=1 above_frontier=1 highest_score=235 visits=1 graph_nodes=0 robot=(9.267491,-14.360244) ht_stamp=-1.000000000 pending_gain=1
+[INFO] [1793118671.455552555] [standalone_logger]: HT_CELL_AUDIT cell=64 xy=(24.000000,0.000000) old=1 new=1 reason=NO_CANDIDATE_DEFERRED candidates=0 selected=0 above_small=0 above_big=0 above_frontier=0 highest_score=-1 visits=1 graph_nodes=0 robot=(9.267491,-14.360244) ht_stamp=-1.000000000 pending_gain=1
+[       OK ] PendingCell.LastObservedGainSurvivesTemporaryNoCandidates (211 ms)
+[ RUN      ] PendingCell.LastObservedGainSurvivesNoCandidatesNearRobot
+[INFO] [1793118671.465260685] [tare_planner_node]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=0 reversible=0 scores=point
+[INFO] [1793118671.667696046] [standalone_logger]: HT_CELL_AUDIT cell=64 xy=(24.000000,0.000000) old=0 new=1 reason=REGISTER_OBSERVED_GAIN candidates=1 selected=0 above_small=1 above_big=1 above_frontier=1 highest_score=235 visits=1 graph_nodes=0 robot=(9.267491,-14.360244) ht_stamp=-1.000000000 pending_gain=1
+[INFO] [1793118671.667719788] [standalone_logger]: HT_CELL_AUDIT cell=64 xy=(24.000000,0.000000) old=1 new=1 reason=NO_CANDIDATE_DEFERRED candidates=0 selected=0 above_small=0 above_big=0 above_frontier=0 highest_score=-1 visits=2 graph_nodes=0 robot=(24.000000,0.000000) ht_stamp=-1.000000000 pending_gain=1
+[       OK ] PendingCell.LastObservedGainSurvivesNoCandidatesNearRobot (212 ms)
+[ RUN      ] PendingCell.FreshZeroGainCanDischargeRememberedPendingTask
+[INFO] [1793118671.677644709] [tare_planner_node]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=0 reversible=0 scores=point
+[INFO] [1793118671.882463964] [standalone_logger]: HT_CELL_AUDIT cell=64 xy=(24.000000,0.000000) old=0 new=1 reason=REGISTER_OBSERVED_GAIN candidates=1 selected=0 above_small=1 above_big=1 above_frontier=1 highest_score=235 visits=1 graph_nodes=0 robot=(9.267491,-14.360244) ht_stamp=-1.000000000 pending_gain=1
+[INFO] [1793118671.882485037] [standalone_logger]: HT_CELL_AUDIT cell=64 xy=(24.000000,0.000000) old=1 new=1 reason=NO_CANDIDATE_DEFERRED candidates=0 selected=0 above_small=0 above_big=0 above_frontier=0 highest_score=-1 visits=1 graph_nodes=0 robot=(9.267491,-14.360244) ht_stamp=-1.000000000 pending_gain=1
+[INFO] [1793118671.882491035] [standalone_logger]: HT_CELL_AUDIT cell=64 xy=(24.000000,0.000000) old=1 new=2 reason=NO_GAIN_WITH_CANDIDATES candidates=1 selected=0 above_small=0 above_big=0 above_frontier=0 highest_score=0 visits=1 graph_nodes=0 robot=(9.267491,-14.360244) ht_stamp=-1.000000000 pending_gain=0
+[       OK ] PendingCell.FreshZeroGainCanDischargeRememberedPendingTask (214 ms)
+[ RUN      ] PendingCell.NavigationOnlyTaskDoesNotInventRememberedGain
+[INFO] [1793118671.891738990] [tare_planner_node]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=0 reversible=0 scores=point
+[INFO] [1793118672.099133430] [standalone_logger]: HT_CELL_AUDIT cell=64 xy=(24.000000,0.000000) old=0 new=1 reason=SELECTED_REOPEN candidates=1 selected=1 above_small=0 above_big=0 above_frontier=0 highest_score=0 visits=1 graph_nodes=0 robot=(9.267491,-14.360244) ht_stamp=-1.000000000 pending_gain=0
+[INFO] [1793118672.099155540] [standalone_logger]: HT_CELL_AUDIT cell=64 xy=(24.000000,0.000000) old=1 new=2 reason=NO_CANDIDATE_FIRST_VISIT_NO_GRAPH candidates=0 selected=0 above_small=0 above_big=0 above_frontier=0 highest_score=-1 visits=1 graph_nodes=0 robot=(9.267491,-14.360244) ht_stamp=-1.000000000 pending_gain=0
+[       OK ] PendingCell.NavigationOnlyTaskDoesNotInventRememberedGain (216 ms)
+[ RUN      ] PendingCell.ExternalCoveredOrResetClearsPendingRegistry
+[INFO] [1793118672.108485974] [tare_planner_node]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=0 reversible=0 scores=point
+[INFO] [1793118672.314170127] [standalone_logger]: HT_CELL_AUDIT cell=64 xy=(24.000000,0.000000) old=0 new=1 reason=REGISTER_OBSERVED_GAIN candidates=1 selected=0 above_small=1 above_big=1 above_frontier=1 highest_score=235 visits=1 graph_nodes=0 robot=(9.267491,-14.360244) ht_stamp=-1.000000000 pending_gain=1
+[INFO] [1793118672.314193272] [standalone_logger]: HT_CELL_AUDIT cell=64 xy=(24.000000,0.000000) old=0 new=1 reason=REGISTER_OBSERVED_GAIN candidates=1 selected=0 above_small=1 above_big=1 above_frontier=1 highest_score=235 visits=1 graph_nodes=0 robot=(9.267491,-14.360244) ht_stamp=-1.000000000 pending_gain=1
+[       OK ] PendingCell.ExternalCoveredOrResetClearsPendingRegistry (215 ms)
+[----------] 14 tests from PendingCell (2951 ms total)
+
+[----------] 1 test from LegacyPendingCell
+[ RUN      ] LegacyPendingCell.DisabledHtPreservesLegacySelectedActivation
+[       OK ] LegacyPendingCell.DisabledHtPreservesLegacySelectedActivation (213 ms)
+[----------] 1 test from LegacyPendingCell (213 ms total)
+
+[----------] 3 tests from TareTerrainGraph
+[ RUN      ] TareTerrainGraph.KnownBlockedBandCannotYieldConnectedCandidate
+[INFO] [1793118672.537650247] [tare_planner_node]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0 scores=configuration
+[       OK ] TareTerrainGraph.KnownBlockedBandCannotYieldConnectedCandidate (983 ms)
+[ RUN      ] TareTerrainGraph.AsyncMapCannotRemoveVerticesBetweenBfsAndCandidateGraph
+[INFO] [1793118673.520728509] [tare_planner_node]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0 scores=configuration
+[       OK ] TareTerrainGraph.AsyncMapCannotRemoveVerticesBetweenBfsAndCandidateGraph (2042 ms)
+[ RUN      ] TareTerrainGraph.ShortNativePrefixStillRequiresAndPassesFullHtPath
+[INFO] [1793118675.564057771] [tare_planner_node]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0 scores=configuration
+[       OK ] TareTerrainGraph.ShortNativePrefixStillRequiresAndPassesFullHtPath (1531 ms)
+[----------] 3 tests from TareTerrainGraph (4557 ms total)
+
+[----------] Global test environment tear-down
+[==========] 23 tests from 6 test suites ran. (8370 ms total)
+[  PASSED  ] 22 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] GeometryPose.CapturedContinuousRootDoesNotInheritNeighbourCollision
+
+ 1 FAILED TEST
+-- run_test.py: return code 1
+-- run_test.py: inject classname prefix into gtest result file '/home/lzz/my test/HT_Explo-real-review-20261028/build_real/tare_planner/test_results/tare_planner/geometry_pose_test.gtest.xml'
+-- run_test.py: verify result file '/home/lzz/my test/HT_Explo-real-review-20261028/build_real/tare_planner/test_results/tare_planner/geometry_pose_test.gtest.xml'
+
+    Start 3: ht_ros_test
+3/7 Test #3: ht_ros_test ......................   Passed   11.65 sec
+    Start 4: ht_startup_sync_test
+4/7 Test #4: ht_startup_sync_test .............   Passed    5.17 sec
+    Start 5: input_pose_test
+5/7 Test #5: input_pose_test ..................   Passed    0.05 sec
+    Start 6: planner_input_test
+6/7 Test #6: planner_input_test ...............   Passed    0.27 sec
+    Start 7: xytheta_follower_test
+7/7 Test #7: xytheta_follower_test ............   Passed   36.79 sec
+
+86% tests passed, 1 tests failed out of 7
+
+Label Time Summary:
+gtest    =  62.58 sec*proc (6 tests)
+
+Total Test time (real) =  62.59 sec
+
+The following tests FAILED:
+	  2 - geometry_pose_test (Failed)
+Errors while running CTest
