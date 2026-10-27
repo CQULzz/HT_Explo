@@ -143,7 +143,15 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--maps", required=True, type=Path)
     p.add_argument("--output", required=True, type=Path)
+    p.add_argument("--frame-stride", type=int, default=5,
+                   help="Select every Nth successful real frame, retaining the final frame (default: 5)")
+    p.add_argument("--heading-probe-stride", type=int, default=0,
+                   help="Add counterfactual heading probes every Nth selected real frame and at the final frame; 0 disables them")
     a = p.parse_args()
+    if a.frame_stride < 1:
+        p.error("--frame-stride must be a positive integer")
+    if a.heading_probe_stride < 0:
+        p.error("--heading-probe-stride must be 0 (disabled) or a positive integer")
     maps_dir = a.maps.resolve()
     index_path = maps_dir / "index.json"
     index = json.loads(index_path.read_text())
@@ -160,14 +168,19 @@ def main():
     frames = [v for v in index["frames"] if v.get("output") and v.get("file")]
     if not frames:
         raise ValueError("No successful real frames in index")
-    selected = frames[::5]
+    selected = frames[::a.frame_stride]
     if selected[-1]["file"] != frames[-1]["file"]:
         selected.append(frames[-1])
+    probe_indices = set()
+    if a.heading_probe_stride:
+        probe_indices.update(range(0, len(selected), a.heading_probe_stride))
+        probe_indices.add(len(selected) - 1)
     a.output.mkdir(parents=True, exist_ok=False)
     out = a.output.resolve()
     (out / "maps").mkdir()
     records, queries = [], []
-    for f in selected:
+    probe_frame_labels = []
+    for selected_index, f in enumerate(selected):
         source = sources[int(f["input_index"])]
         if stamp_ns(source) != int(f["stamp_ns"]) or source.header.frame_id != "map":
             raise ValueError("Source CDR stamp/frame differs from indexed HT result")
@@ -203,6 +216,17 @@ def main():
             angle = k * math.pi / 4
             queries.append((str(target), *map(float, robot), float(robot[0] + 1.5 * math.cos(angle)),
                             float(robot[1] + 1.5 * math.sin(angle)), f"recorded_{npz_path.stem}_goal_{k * 45:03d}deg"))
+        if selected_index in probe_indices:
+            # These are different initial conditions, not rotations from the
+            # recorded pose. Reuse the original map bytes without changing
+            # terrain, support, observation stamps, or the recorded main group.
+            probe_frame_labels.append(npz_path.stem)
+            for k in range(8):
+                angle = k * math.pi / 4
+                label = (f"counterfactual_heading_frame_{int(f['input_index']):04d}"
+                         f"_yaw_{k * 45:03d}deg")
+                queries.append((str(target), float(robot[0]), float(robot[1]), angle,
+                                float(robot[0] + 1.5), float(robot[1]), label))
 
     for label, layers, start, goal, evidence in synthetic_fixtures():
         m = grid_message(layers, np.zeros(2), .04, synthetic=True)
@@ -220,7 +244,24 @@ def main():
                 "canonical_grid": "row points toward -map X; column toward -map Y for yaw=0; F-order storage; circular starts zero",
                 "query_columns": ["mapfile", "start_x", "start_y", "start_yaw", "goal_x", "goal_y", "label"],
                 "query_file": str(query_path), "query_sha256": sha256(query_path), "query_header": False,
-                "real_query_selection": "Every fifth successful recorded frame plus final frame; 8 world-frame goals 1.5m from recorded start",
+                "frame_stride": a.frame_stride,
+                "real_query_selection": f"Every {a.frame_stride}th successful recorded frame plus final frame; 8 world-frame goals 1.5m from recorded start, preserving recorded body yaw",
+                "heading_probe_stride": a.heading_probe_stride,
+                "counterfactual_heading_frames": len(probe_indices),
+                "counterfactual_heading_frame_labels": probe_frame_labels,
+                "counterfactual_heading_queries": len(probe_indices) * 8,
+                "counterfactual_heading_selection": (
+                    f"Every {a.heading_probe_stride}th selected real frame plus final selected frame"
+                    if a.heading_probe_stride else "Disabled"),
+                "counterfactual_heading_scope": (
+                    "Separate diagnostic group: replace only initial body yaw by k*pi/4 "
+                    "for k=0..7 at the same recorded XY, with a common world +X goal 1.5m away. "
+                    "Original map fields, probabilities and source stamps are unchanged. "
+                    "These changed initial conditions do not establish that the recorded vehicle "
+                    "can rotate into those headings, and must not count as recorded navigation success."),
+                "query_groups": {"recorded": len(selected) * 8,
+                                 "counterfactual_heading": len(probe_indices) * 8,
+                                 "synthetic": 3},
                 "synthetic_assumptions": "Configuration/body-yaw semantics, unchanged T>=0.5 hard gate, 0.6m physical radius; synthetic controls are not model accuracy evidence",
                 "recorded_frames": len(selected), "synthetic_frames": 3, "queries": len(queries), "maps": records}
     (out / "metadata.json").write_text(json.dumps(metadata, indent=2, ensure_ascii=False) + "\n")
