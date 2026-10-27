@@ -33,3 +33,14 @@ def test_actual_launch_modes_and_start_topic(monkeypatch,mode):
     assert rows['xytheta_follower']['params']['command_topic']==topic
     assert rows['scout_command_bridge']['params']['input_topic']==topic
     assert rows['cupy_to_ht.py']['params']['ht_small_hole_repair'] is True
+    assert rows['scout_inputs']['params']['source_age_layer']=='observation_age'
+
+
+def test_mapper_profile_preserves_sensor_origin_and_measured_age():
+    import yaml
+    p=yaml.safe_load((ROOT/'src/ht_scout_bridge/config/mapper_for_ht.yaml').read_text())['/elevation_mapping_node']['ros__parameters']
+    assert p['subscribers']['lidar']['topic_name']=='/ht_real/lidar_filtered'
+    assert p['subscribers']['lidar']['qos_reliability']=='reliable'
+    assert not p['self_filter_enabled']  # Already filtered by the physical body geometry.
+    assert p['publishers']['elevation_map_raw']['layers']==['elevation','variance','observation_age']
+    assert p['map_length']/p['resolution']==pytest.approx(291)

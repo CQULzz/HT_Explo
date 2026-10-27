@@ -4,9 +4,17 @@ import argparse,json,sys,importlib.util
 
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument('--require-cuda',action='store_true');p.add_argument('--cupy',action='store_true');a=p.parse_args()
+    p=argparse.ArgumentParser();p.add_argument('--require-cuda',action='store_true');p.add_argument('--cupy',action='store_true');p.add_argument('--require-numba',action='store_true');a=p.parse_args()
     report={'python':sys.executable,'numba_installed':importlib.util.find_spec('numba') is not None}
     ok=True
+    if report['numba_installed']:
+        try:
+            import numba
+            report['numba']=numba.__version__
+        except Exception as e:
+            report['numba_error']=str(e)
+            if a.require_numba:ok=False
+    elif a.require_numba:ok=False
     try:
         import torch
         report.update(torch=torch.__version__,torch_cuda_build=torch.version.cuda,cuda_available=torch.cuda.is_available())

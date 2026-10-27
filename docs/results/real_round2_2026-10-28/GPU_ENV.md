@@ -11,12 +11,13 @@ python3 -m pip --python ~/.venvs/ht_real_gpu_20261028/bin/python install \
 
 安装方式依据[PyTorch官方安装入口](https://pytorch.org/get-started/locally/)，具体版本以本轮pip日志和实际运算检查为准。
 CuPy使用已有13.6.0；显式提供虚拟环境里的NVRTC和CUDA运行库搜索路径。
+Numba另装0.65.1、llvmlite 0.47.0，NumPy保持1.26.4。系统coverage 7.4.4与该Numba导入不兼容；仅在虚拟环境升级coverage到7.17.0，原失败日志保留。
 
 ```bash
 source scripts/source_real_scout.sh
 source ~/.venvs/ht_real_gpu_20261028/bin/activate
 export LD_LIBRARY_PATH="$VIRTUAL_ENV/lib/python3.12/site-packages/nvidia/cuda_nvrtc/lib:$VIRTUAL_ENV/lib/python3.12/site-packages/nvidia/cuda_runtime/lib:${LD_LIBRARY_PATH:-}"
-python tools/check_ht_compute.py --require-cuda --cupy
+python tools/check_ht_compute.py --require-cuda --cupy --require-numba
 ```
 
 CuPy源码放在独立工作区`/home/lzz/my test/ht_cupy_gpu_ws_20261028`，基线`88f4c0c`。

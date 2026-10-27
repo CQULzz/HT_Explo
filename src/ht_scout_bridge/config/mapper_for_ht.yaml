@@ -47,6 +47,9 @@
       lidar:
         topic_name: /ht_real/lidar_filtered
         data_type: pointcloud
+        qos_reliability: reliable
+        queue_depth: 2
+        channels: []
     publishers:
       elevation_map_raw:
         layers:
