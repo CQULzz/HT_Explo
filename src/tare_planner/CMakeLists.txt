@@ -188,6 +188,12 @@ add_executable(xytheta_follower src/ht_cost/xytheta_follower.cpp)
 ament_target_dependencies(xytheta_follower rclcpp std_msgs nav_msgs geometry_msgs sensor_msgs)
 target_link_libraries(xytheta_follower ht_cost ${PCL_LIBRARIES})
 
+# Read-only historical GridMap queries. This tool never publishes navigation
+# paths, permission or velocity commands and does not launch any hardware.
+add_executable(ht_xytheta_offline tools/ht_xytheta_offline.cpp)
+ament_target_dependencies(ht_xytheta_offline rclcpp grid_map_msgs)
+target_link_libraries(ht_xytheta_offline ht_cost)
+
 #############
 ## Install ##
 #############
@@ -196,6 +202,7 @@ install(TARGETS
   navigationBoundary
   tare_planner_node
   xytheta_follower
+  ht_xytheta_offline
   DESTINATION lib/${PROJECT_NAME})
 
 # A regular (non-symlink) colcon install must also find OR-Tools at runtime.

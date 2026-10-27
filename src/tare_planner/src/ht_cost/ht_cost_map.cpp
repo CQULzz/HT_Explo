@@ -437,7 +437,13 @@ Support HtCostMap::motionSupport(Pose2 a,Pose2 b) const {
   for (size_t i=1;i<cuts.size();++i)
     if (!merge(supportDirected(point(cuts[i-1]),point(cuts[i]),
              a.yaw+angle*(cuts[i-1]+cuts[i])*.5))) return result;
-  if (std::hypot(b.x-a.x,b.y-a.y)>1e-6) {
+  // Configuration channels describe the vehicle's actual body yaw, not the
+  // sign or bearing of its translation. The swept checks above therefore
+  // apply equally to forward/reverse traversal of the same body poses.
+  // Requiring the displacement channel as well would wrongly reject a safe
+  // reverse or a small lateral tracking correction using an unrelated yaw.
+  // Legacy point/travel scores retain their separate direction contract.
+  if (!configuration_scores_ && std::hypot(b.x-a.x,b.y-a.y)>1e-6) {
     if (!merge(support(point(0),point(1)))) return result;
     // Preserve the exact swept body poses when driving the same arc backward.
     // Body-heading checks above are already symmetric under path reversal;

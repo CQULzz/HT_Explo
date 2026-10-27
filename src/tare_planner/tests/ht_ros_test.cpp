@@ -89,6 +89,87 @@ class HtConfigurationRosTest : public HtRosTest {
   std::string scoreSemantics() const override {return "configuration";}
 };
 
+TEST_F(HtConfigurationRosTest, ReverseUsesActualBodyYawAndProducesAnExecutableRoute) {
+  auto map=grid();
+  for(int k=0;k<8;++k)map["ht_dir_"+std::to_string(k)].setConstant(.1f);
+  map["ht_dir_0"].setConstant(.9f);send(map);ASSERT_TRUE(ht->ready());
+  const ht_cost_ns::Pose2 a{0,0,0},b{-1,0,0};
+  // A displacement-only query sees theta=pi. It is not the body pose of a
+  // vehicle reversing with its nose still at theta=0.
+  EXPECT_EQ(ht->support({0,0,0},{-1,0,0}),ht_cost_ns::Support::BLOCKED);
+  EXPECT_EQ(ht->motionSupport(a,b),ht_cost_ns::Support::KNOWN);
+  EXPECT_EQ(ht->motionSupport(b,a),ht_cost_ns::Support::KNOWN);
+  EXPECT_EQ(ht->poseSupport(0,0,ht_cost_ns::kPi),ht_cost_ns::Support::BLOCKED);
+  EXPECT_EQ(ht->motionSupport(a,{0,0,ht_cost_ns::kPi}),ht_cost_ns::Support::BLOCKED);
+  ht_cost_ns::XYThetaConfig config;config.headings=32;config.try_direct_connection=true;
+  auto valid=[&](ht_cost_ns::Pose2 x,ht_cost_ns::Pose2 y,double){return ht->permits(ht->motionSupport(x,y));};
+  const auto plan=ht_cost_ns::planXYTheta(a,{-1,0,0},config,valid);
+  ASSERT_TRUE(plan.reached);ASSERT_GT(plan.poses.size(),1u);
+  for(size_t i=0;i<plan.poses.size();++i) {
+    EXPECT_NEAR(plan.poses[i].yaw,0,1e-9);
+    if(i)EXPECT_EQ(ht->motionSupport(plan.poses[i-1],plan.poses[i]),ht_cost_ns::Support::KNOWN);
+  }
+}
+
+TEST_F(HtConfigurationRosTest, SmallLateralTrackingCorrectionCannotChangeTheBodyChannel) {
+  auto map=grid();
+  for(int k=0;k<8;++k)map["ht_dir_"+std::to_string(k)].setConstant(.1f);
+  map["ht_dir_0"].setConstant(.9f);send(map);ASSERT_TRUE(ht->ready());
+  const ht_cost_ns::Pose2 a{0,0,0},b{0,1e-4,0};
+  // This predicate checks configuration support; it does not authorize a
+  // lateral differential-drive primitive. Such a tiny connector can appear
+  // when comparing the measured pose with a replanned path sample.
+  EXPECT_EQ(ht->support({0,0,0},{0,1e-4,0}),ht_cost_ns::Support::BLOCKED);
+  EXPECT_EQ(ht->motionSupport(a,b),ht_cost_ns::Support::KNOWN);
+  map["ht_dir_0"].setConstant(.1f);map["ht_dir_2"].setConstant(.9f);
+  map.setTimestamp(node->now().nanoseconds());send(map);ASSERT_TRUE(ht->ready());
+  EXPECT_EQ(ht->support({0,0,0},{0,1e-4,0}),ht_cost_ns::Support::KNOWN);
+  EXPECT_EQ(ht->motionSupport(a,b),ht_cost_ns::Support::BLOCKED);
+}
+
+TEST_F(HtConfigurationRosTest, ReverseStillRejectsUnknownSupportAndMeasuredObstacles) {
+  auto map=grid();
+  for(int k=0;k<8;++k)map["ht_dir_"+std::to_string(k)].setConstant(.1f);
+  map["ht_dir_0"].setConstant(.9f);
+  const ht_cost_ns::Pose2 a{0,0,0},b{-.4,0,0};
+  grid_map::Index side;ASSERT_TRUE(map.getIndex(grid_map::Position(0,.5),side));
+  map.at("ht_observation_valid",side)=0;send(map);ASSERT_TRUE(ht->ready());
+  EXPECT_EQ(ht->motionSupport(a,b),ht_cost_ns::Support::UNKNOWN);
+  EXPECT_FALSE(ht->permits(ht->motionSupport(a,b)));
+  map.at("ht_observation_valid",side)=1;map["ht_valid"].setZero();
+  map.setTimestamp(node->now().nanoseconds());send(map);ASSERT_TRUE(ht->ready());
+  EXPECT_EQ(ht->motionSupport(a,b),ht_cost_ns::Support::UNKNOWN);
+  EXPECT_FALSE(ht->permits(ht->motionSupport(a,b)));
+  map["ht_valid"].setConstant(1.f);map.at("ht_obstacle",side)=1;
+  map.setTimestamp(node->now().nanoseconds());send(map);ASSERT_TRUE(ht->ready());
+  EXPECT_EQ(ht->motionSupport(a,b),ht_cost_ns::Support::BLOCKED);
+  EXPECT_FALSE(ht->permits(ht->motionSupport(a,b)));
+}
+
+TEST_F(HtConfigurationRosTest, ReversibleGuardDoesNotRequireAChangedBodyOrientation) {
+  rclcpp::NodeOptions options;
+  options.parameter_overrides({rclcpp::Parameter("ht_enabled",true),
+    rclcpp::Parameter("ht_directions_calibrated",true),
+    rclcpp::Parameter("ht_topic","/ht_test_map"),
+    rclcpp::Parameter("ht_score_semantics","configuration"),
+    rclcpp::Parameter("ht_require_reversible_motion",true),
+    rclcpp::Parameter("ht_map_timeout",2.0)});
+  auto guarded_node=std::make_shared<rclcpp::Node>("ht_configuration_reversible_test",options);
+  ht_cost_ns::HtCostMap guarded(guarded_node,false);
+  auto map=grid();
+  for(int k=0;k<8;++k)map["ht_dir_"+std::to_string(k)].setConstant(.1f);
+  map["ht_dir_0"].setConstant(.9f);
+  map.setTimestamp(node->now().nanoseconds());pub->publish(*grid_map::GridMapRosConverter::toMessage(map));
+  const auto until=std::chrono::steady_clock::now()+150ms;
+  do {rclcpp::spin_some(node);rclcpp::spin_some(guarded_node);std::this_thread::sleep_for(5ms);}
+  while(std::chrono::steady_clock::now()<until);
+  guarded.beginCycle();ASSERT_TRUE(guarded.ready());
+  const ht_cost_ns::Pose2 a{0,0,0},b{-.4,0,0};
+  EXPECT_EQ(guarded.motionSupport(a,b),ht_cost_ns::Support::KNOWN);
+  EXPECT_EQ(guarded.motionSupport(b,a),ht_cost_ns::Support::KNOWN);
+  EXPECT_EQ(guarded.motionSupport(a,{0,0,ht_cost_ns::kPi}),ht_cost_ns::Support::BLOCKED);
+}
+
 TEST_F(HtConfigurationRosTest, NeighbouringVehicleScoresAreNotPointObstacles) {
   auto map=grid();
   for(int k=0;k<8;++k)map["ht_dir_"+std::to_string(k)].setConstant(.8f);

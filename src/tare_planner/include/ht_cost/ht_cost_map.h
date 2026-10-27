@@ -29,8 +29,9 @@ class HtCostMap {
   bool knownSegment(const Point& a, const Point& b) const;
   Support support(const Point& a, const Point& b) const;
   Support poseSupport(double x,double y,double yaw) const;
-  // Shared swept gate for search, publication and tracking. Includes body
-  // heading changes and travel direction, including reverse motion.
+  // Shared swept gate for search, publication and tracking. Configuration
+  // scores use actual body yaw throughout the sweep, including reverse.
+  // Legacy point/travel scores additionally check translation direction.
   Support motionSupport(Pose2 a,Pose2 b) const;
   bool permits(Support s) const { return s==Support::KNOWN || s==Support::STARTUP_PRIOR ||
     (s==Support::UNKNOWN && geometric_fallback_ && !budget_.exhausted()); }
@@ -61,6 +62,10 @@ class HtCostMap {
   void receiveStartupPrior(const tare_planner::msg::StartupPrior& msg);
   FallbackBudget budget_;
   bool geometric_fallback_=false;
+  // Extra opposite travel-channel gate for point/travel scores only. A
+  // static configuration sweep is already checked in both traversal orders
+  // by inspecting the same positions and body headings; it has no separate
+  // velocity-conditioned prediction and must not invent a theta+pi demand.
   bool require_reversible_motion_=false;
   bool configuration_scores_=false;
   double fallback_lookahead_=0.5, fallback_speed_=0.2;
