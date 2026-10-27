@@ -260,13 +260,14 @@ def draw_voxels(ax, probabilities, valid, center, resolution, plt):
     ax.tick_params(labelsize=7)
     ax.view_init(elev=23,azim=-61)
     ax.set_box_aspect((1,1,1.2))
-    ax.set_title('XYθ 半透明体素：颜色为方向可通过性\nθ 是朝向；显示抽样约0.49m，未知留空',fontsize=11)
+    ax.set_title(f'XYθ 半透明体素：颜色为方向可通过性\nθ 是朝向；显示抽样约{stride*resolution:.2f}m，未知留空',fontsize=11)
 
 
-def render_current(folder, plt):
+def render_current(folder, plt, *, data_label='2026-10-23 保存输入', playback_speed=.2, display_note=''):
     from matplotlib.colors import ListedColormap
     from matplotlib.patches import Circle
     metadata=json.loads((folder/'index.json').read_text())
+    device=metadata.get('actual_execution',{}).get('device',metadata.get('parameters',{}).get('ht_device','cpu'))
     pngs=folder/'frames';pngs.mkdir(exist_ok=False)
     supported=plt.get_cmap('RdYlGn').copy();supported.set_bad('#d0d3d6')
     terrain=plt.get_cmap('terrain').copy();terrain.set_bad('#d0d3d6')
@@ -276,7 +277,7 @@ def render_current(folder, plt):
             physical=d['ht_observation_valid']>=.5;obstacle=d['ht_obstacle']>=.5
             center=d['center'];r=float(d['resolution']);robot=d['robot']
             fig=plt.figure(figsize=(19.2,10.8),dpi=100)
-            fig.suptitle(f'新版 HT 离线重算 | 2026-10-23 保存输入 | t={item["t_s"]:.2f}s | 帧 {index+1}/{metadata["outputs"]}',fontsize=19,y=.98)
+            fig.suptitle(f'新版 HT 离线重算 | {data_label} | t={item["t_s"]:.2f}s | 帧 {index+1}/{metadata["outputs"]}',fontsize=19,y=.98)
             ax=fig.add_axes([.005,.40,.32,.53],projection='3d')
             draw_voxels(ax,probabilities,valid,center,r,plt)
             rawax=fig.add_axes([.035,.10,.125,.24]);image(rawax,d['raw'],d['raw_center'],r,cmap=terrain)
@@ -296,9 +297,10 @@ def render_current(folder, plt):
                 ax.plot(robot[0],robot[1],'o',color='#1675ec',markersize=4)
                 ax.set_title(f'HT θ={k*45}°',fontsize=13)
             fig.text(.365,.91,'红→绿：HT低→高；灰：上下文不足。蓝点：记录车位；没有新版规划轨迹。',fontsize=12)
-            fig.text(.365,.055,f'本帧回调 {item["callback_s"]*1000:.1f} ms（本机CPU离线，非Jetson性能）\n'
+            fig.text(.365,.055,f'本帧回调 {item["callback_s"]*1000:.1f} ms（本机{device.upper()}离线，非Jetson性能）\n'
                      f'车旁 {item["body_cells"]} 格：缺物理支撑 {item["body_physical_unknown"]}；HT上下文无效 {item["body_context_invalid"]}',fontsize=13)
-            fig.text(.025,.028,'左下诊断：灰=缺支撑，黄=仅物理支撑，绿=物理+HT上下文，红=观测障碍。\n纯数据回放，无驱动、无底盘指令；本视频以0.2倍速播放记录时间。',fontsize=10)
+            fig.text(.025,.028,'左下诊断：灰=缺支撑，黄=仅物理支撑，绿=物理+HT上下文，红=观测障碍。\n'
+                     f'纯数据回放，无驱动、无底盘指令；记录时间播放速度{playback_speed:g}倍。{display_note}',fontsize=10)
             fig.savefig(pngs/f'{index:05d}.png');plt.close(fig)
         print(f'render current {index+1}/{metadata["outputs"]}',flush=True)
 

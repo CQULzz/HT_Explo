@@ -1,3 +1,15 @@
+最新实车离线复测（2026-10-28，优先于下文历史记录）
+[事实] 本轮只做历史数据离线处理，无仿真、设备或车辆运动。报告 docs/results/real_round2_2026-10-28/REPORT.md，简报同目录BRIEF.md；数值FINAL_SUMMARY.json。
+[事实] 实车运行冻结版本：GitHub a00c83eeaf5466a1eac53d29d0b54e35398acfab（本地cdcc4fb4bc9a376f2afa5a113c40f3e95f0968a8），仅real/scout-helios32分支。后续报告提交不冒充实测版本。
+[事实] 按既有标定和物理模型替换误删地面的旧自过滤框；新增传感器坐标/ht_real/lidar_filtered供独立CuPy使用；外部mapper须使用原生0.04m、291格、observation_age，不能再用time层，也不要再次套旧过滤框。此条覆盖后文旧time配置。
+[事实] 本机存在RTX5060Ti，原系统torch为CPU版。本轮独立GPU环境/home/lzz/.venvs/ht_real_gpu_20261028通过实际CUDA/CuPy/Numba检查；系统CPU环境未替换，不可把x86二进制复制到Jetson。
+[事实] 历史约208秒415张抽样原始扫描→独立CuPy→新旧各208张HT；末帧0.6m圈705格内缺物理支撑从206降0（包含既有0.25m近邻支持，不是全部直接测量）。新末帧中心最高T仅0.127534，仍低于0.5；没有降低硬门槛。
+[事实] 215项Python回归、8项CuPy源年龄GPU测试通过，两包编译及六函数TARE合同检查通过。6秒到达测试依然有待处理帧替换，不能声称零丢包或长时稳定。没有新导航探索体积对比。
+[待确认] 末帧车旁高点是真实障碍还是未建模的电脑/电源箱等附件；已向用户询问安装位置尺寸，未获得信息前不能凭空扩大过滤范围或删除障碍。
+[事实] 位姿由录包雷达参考点和固定外参转换到base_link；只是离线pose参考，twist明确NaN，不能接给控制器。未验收在线Fixposition/TF/去畸变/底盘链。
+[事实] 发布标签real-scout-round2-20261028；核验状态见Release附件PUBLICATION_RECEIPT.json，不能仅凭本段文字认定全部资产上传成功。
+[操作] 先读新BRIEF/REPORT和FINAL_SUMMARY，核对发布回执；需要继续修正时先核验末帧高点来源。不要重试相同输入缓存（55张均不同）、不要补造旧250格地图年龄、不要再用FastDDS域235（超过有效范围，使用181等）。
+
 实车分支补充（2026-10-22，优先于后文历史记录）
 当前分支 real/scout-helios32，独立工作目录 /home/lzz/my test/HT_Explo-scout-real。先读 docs/real_vehicle/SCOUT.md 与 validation/real_vehicle_scout_2026-10-22/REPORT.md。
 外参来源 eletranskit_scout@cf0b73d；用户确认FP_POI同位与0.1162m支架高度已实车核验。本分支转换到map/base_link，点云用原时间戳TF和LiDAR外参；只做过离线检查，未启动设备、仿真或车辆。
