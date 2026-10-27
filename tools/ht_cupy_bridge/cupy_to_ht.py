@@ -9,6 +9,7 @@ import os
 import signal
 from pathlib import Path
 import time
+from threading import RLock
 
 import numpy as np
 import torch
@@ -16,20 +17,23 @@ import torch
 import rclpy
 from grid_map_msgs.msg import GridMap
 from rclpy.node import Node
+from rclpy.callback_groups import MutuallyExclusiveCallbackGroup
 from rclpy.qos import QoSProfile, ReliabilityPolicy
 from rclpy.signals import SignalHandlerOptions
-from rclpy.executors import ExternalShutdownException, SingleThreadedExecutor
+from rclpy.executors import ExternalShutdownException, MultiThreadedExecutor
 from nav_msgs.msg import Odometry
 from std_msgs.msg import Float32, Float32MultiArray, MultiArrayDimension, MultiArrayLayout, String
 
 from model import load_student_model
 from historical_elevation import HistoricalElevation
-from elevation_quality import preprocess_elevation, retain_recent_obstacle_edges
+from elevation_quality import preprocess_elevation, retain_recent_obstacle_edges, warmup_quality
 from local_surface import SurfaceReferenceEstimator
 from cpu_threads import configure_cpu_threads
 from ht_support import prepare_ht_context, preserve_rejected_obstacles
 from inference_context_io import ContextCaptureSchedule, GracefulStop, save_immutable_npz
 from input_odometry import InputOdometry
+from latest_input import LatestInput
+from small_holes import repair_small_holes
 
 
 def decode_elevation_source(source):
@@ -70,24 +74,46 @@ class CupyToHt(Node):
     def __init__(self):
         super().__init__("cupy_to_ht_bridge")
         threads=self.declare_parameter('ht_torch_threads',4).value
-        self.channels_last=self.declare_parameter('ht_channels_last',True).value
+        requested_device=self.declare_parameter('ht_device','cpu').value
+        self.channels_last=self.declare_parameter('ht_channels_last',requested_device!='cuda').value
+        self.small_holes=self.declare_parameter('ht_small_hole_repair',False).value
         self.blas_limit, cpu_threads = configure_cpu_threads(threads)
+        self.quality_backend=warmup_quality(self.declare_parameter('ht_quality_backend','auto').value)
+        self.get_logger().info(f'Elevation quality backend: {self.quality_backend}')
         cpu_threads['model_memory_format']='channels_last' if self.channels_last else 'contiguous'
         self.get_logger().info(f'CPU pools: PyTorch={threads}, BLAS=1; {cpu_threads["model_memory_format"]}')
         if os.environ.get('HT_DIAGNOSTICS_DUMP'):
             Path(os.environ['HT_DIAGNOSTICS_DUMP']).with_name('ht_cpu_threads.json').write_text(
                 json.dumps(cpu_threads, indent=2)+'\n')
+        if requested_device not in ('cpu','cuda'):
+            raise ValueError('ht_device must be cpu or cuda')
+        if requested_device=='cuda' and not torch.cuda.is_available():
+            raise RuntimeError('CUDA requested for HT but unavailable; refusing silent CPU fallback')
+        if requested_device=='cuda':
+            torch.backends.cuda.matmul.allow_tf32=False
+            torch.backends.cudnn.allow_tf32=False
+        self.device=torch.device(requested_device)
+        self.get_logger().info(f'HT inference device: {self.device}')
         self.model = load_student_model(
-            str(Path(__file__).with_name("student_best_epoch_weights.pth")), torch.device("cpu")
+            str(Path(__file__).with_name("student_best_epoch_weights.pth")), self.device
         )
         if self.channels_last:
             self.model=self.model.to(memory_format=torch.channels_last)
+        if self.device.type=='cuda':
+            # Complete CUDA initialization before subscribing to timestamped maps.
+            with torch.inference_mode():
+                warmup=torch.zeros((1,1,291,291),device=self.device)
+                if self.channels_last:warmup=warmup.contiguous(memory_format=torch.channels_last)
+                self.model(warmup)
+                torch.cuda.synchronize()
         self.pub = self.create_publisher(GridMap, self.declare_parameter('ht_topic', '/ht_traversability/global_local').value, 1)
         self.history_pub = self.create_publisher(GridMap, "/elevation_mapping/historical_local", 1)
         self.history = None
         offset = self.declare_parameter('surface_sensor_ground_offset_m', -1.0).value
         self.surface = SurfaceReferenceEstimator(sensor_ground_offset_m=offset if offset >= 0 else None)
         self.input_odometry = InputOdometry(self.declare_parameter('odometry_child_frame', '').value)
+        self.odometry_lock=RLock()
+        self.pending_maps=LatestInput()
         self.odometry = self.input_odometry.samples
         self.input_status = self.create_publisher(String, '/ht_input_status', 1)
         self.diagnostics = []
@@ -101,23 +127,37 @@ class CupyToHt(Node):
             Odometry, self.declare_parameter('surface_odometry_topic', '/state_estimation').value,
             self.on_odometry, QoSProfile(depth=100, reliability=ReliabilityPolicy.BEST_EFFORT))
         self.sub = self.create_subscription(
-            GridMap, self.declare_parameter('elevation_topic', '/elevation_mapping/elevation_map_raw').value, self.on_map,
+            GridMap, self.declare_parameter('elevation_topic', '/elevation_mapping/elevation_map_raw').value, self.enqueue_map,
             QoSProfile(depth=1, reliability=ReliabilityPolicy.RELIABLE)
         )
         self.count = 0
+        self.processing_group=MutuallyExclusiveCallbackGroup()
+        self.processing_timer=self.create_timer(.005,self.process_pending,callback_group=self.processing_group)
+
+    def enqueue_map(self, msg):
+        self.pending_maps.put(msg)
+
+    def process_pending(self):
+        source=self.pending_maps.take()
+        if source is not None:self.on_map(source)
 
     def on_odometry(self, msg):
-        self.input_odometry.add(msg, self.get_clock().now().nanoseconds/1e9)
-        if self.input_odometry.fault:
-            self.input_status.publish(String(data=self.input_odometry.fault))
+        with self.odometry_lock:
+            self.input_odometry.add(msg, self.get_clock().now().nanoseconds/1e9)
+            fault=self.input_odometry.fault
+        if fault:self.input_status.publish(String(data=fault))
 
     def robot_z_at(self, stamp):
-        return self.input_odometry.height_at(stamp)
+        with self.odometry_lock:
+            return self.input_odometry.height_at(stamp)
 
     def on_map(self, source):
         started = time.monotonic()
-        if not self.input_odometry.check_clock(self.get_clock().now().nanoseconds/1e9):
-            self.input_status.publish(String(data=self.input_odometry.fault))
+        with self.odometry_lock:
+            healthy=self.input_odometry.check_clock(self.get_clock().now().nanoseconds/1e9)
+            fault=self.input_odometry.fault
+        if not healthy:
+            self.input_status.publish(String(data=fault))
             return
         source_age_at_start = self.get_clock().now().nanoseconds/1e9 - (
             source.header.stamp.sec + source.header.stamp.nanosec*1e-9)
@@ -141,7 +181,7 @@ class CupyToHt(Node):
             # Input arrays have already been decoded into logical GridMap order.
             source_elevation, source_variance = elevation.copy(), variance.copy()
             source_age = age.copy()
-            source_quality = preprocess_elevation(elevation, variance, resolution)
+            source_quality = preprocess_elevation(elevation, variance, resolution, backend=self.quality_backend)
             # Store original measured heights after quality rejection; denoise
             # only the selected historical crop, avoiding repeated smoothing.
             measured = np.where(source_quality.observed_quality, elevation, np.nan)
@@ -170,7 +210,7 @@ class CupyToHt(Node):
             source_rejected = self.history.last_window_incompatible_mask.copy()
             elevation[source_rejected] = np.nan
             raw_history = elevation.copy()
-            quality = preprocess_elevation(elevation, variance, resolution)
+            quality = preprocess_elevation(elevation, variance, resolution, backend=self.quality_backend)
             elevation = quality.height_m
             rejected = source_rejected | quality.rejected_mask
         except (ValueError, MemoryError) as error:
@@ -181,35 +221,46 @@ class CupyToHt(Node):
         if not np.any(observed):
             return
 
-        local = GridMap()
-        local.header = deepcopy(source.header)
-        local.info = deepcopy(source.info)
-        local.info.pose.position.x = center_x
-        local.info.pose.position.y = center_y
-        local.layers = ['elevation', 'variance', 'elevation_raw', 'input_valid', 'rejected']
-        local.basic_layers = ["elevation"]
-        local.outer_start_index = local.inner_start_index = 0
-        for layer in (elevation, variance, raw_history, observed.astype(np.float32),
-                      rejected.astype(np.float32)):
-            data = Float32MultiArray()
-            data.layout = MultiArrayLayout(dim=[
-                MultiArrayDimension(label="column_index", size=ny, stride=nx * ny),
-                MultiArrayDimension(label="row_index", size=nx, stride=nx)], data_offset=0)
-            data.data = FloatArray('f', layer.flatten(order="F").tobytes())
-            local.data.append(data)
-        self.history_pub.publish(local)
+        # Historical display is optional; never serialize an unused 5-layer map.
+        if self.history_pub.get_subscription_count()>0:
+            local = GridMap()
+            local.header = deepcopy(source.header)
+            local.info = deepcopy(source.info)
+            local.info.pose.position.x = center_x
+            local.info.pose.position.y = center_y
+            local.layers = ['elevation', 'variance', 'elevation_raw', 'input_valid', 'rejected']
+            local.basic_layers = ["elevation"]
+            local.outer_start_index = local.inner_start_index = 0
+            for layer in (elevation, variance, raw_history, observed.astype(np.float32),
+                          rejected.astype(np.float32)):
+                data = Float32MultiArray()
+                data.layout = MultiArrayLayout(dim=[
+                    MultiArrayDimension(label="column_index", size=ny, stride=nx * ny),
+                    MultiArrayDimension(label="row_index", size=nx, stride=nx)], data_offset=0)
+                data.data = FloatArray('f', layer.flatten(order="F").tobytes())
+                local.data.append(data)
+            self.history_pub.publish(local)
 
         obstacle_context = preserve_rejected_obstacles(
             self.history.last_window_obstacle_elevation, raw_history, quality.rejected_mask)
         retained_filtered_obstacles = (np.isfinite(obstacle_context) &
             ~np.isfinite(self.history.last_window_obstacle_elevation))
+        inferred=np.zeros(elevation.shape,bool)
+        hole_stats={'filled_cells':0,'filled_components':0,'candidate_components':0}
+        inference_elevation=elevation
+        if self.small_holes:
+            inference_elevation,inferred,hole_stats=repair_small_holes(
+                elevation,observed,rejected,obstacle_context,current,current_var,current_age,resolution,protected=quality.edge_mask)
         height, support, occupied, physical_support = prepare_ht_context(
             elevation, observed, rejected, obstacle_context, resolution)
+        # Interpolated samples are not observations. Keep all support masks
+        # based on measured inputs, and replace only the approved input pixels.
+        height[inferred]=inference_elevation[inferred]
         inference_started = time.monotonic()
         with torch.inference_mode():
-            tensor=torch.from_numpy(height[None,None])
+            tensor=torch.from_numpy(height[None,None]).to(self.device)
             if self.channels_last:tensor=tensor.contiguous(memory_format=torch.channels_last)
-            probabilities = torch.softmax(self.model(tensor), dim=2)[0, :, 1].numpy()
+            probabilities = torch.softmax(self.model(tensor), dim=2)[0, :, 1].cpu().numpy()
         inference_finished = time.monotonic()
         if probabilities.shape != (8, 241, 241):
             self.get_logger().error(f"Unexpected model output shape {probabilities.shape}")
@@ -233,10 +284,11 @@ class CupyToHt(Node):
         result.info.length_y = output_side * resolution
         # Keep measured obstacle geometry distinct from learned vehicle scores.
         result.layers = [f"ht_dir_{k}" for k in range(8)] + ["ht_valid", "ht_observation_valid", "ht_obstacle", "ht_elevation"]
+        if self.small_holes:result.layers += ['ht_measured_valid','ht_interpolated']
         result.basic_layers = ["ht_valid"]
         result.outer_start_index = 0
         result.inner_start_index = 0
-        for k in range(12):
+        for k in range(len(result.layers)):
             if k < 8:
                 layer = np.where(support, probabilities[k], np.nan).astype(np.float32)
             elif k == 8:
@@ -245,10 +297,14 @@ class CupyToHt(Node):
                 layer = physical_support.astype(np.float32)
             elif k == 10:
                 layer = occupied.astype(np.float32)
-            else:
+            elif k == 11:
                 # Same world geometry, crop and physical observations as HT.
                 layer = np.where(physical_support & ~occupied,
-                                 elevation[25:-25, 25:-25], np.nan).astype(np.float32)
+                                 inference_elevation[25:-25, 25:-25], np.nan).astype(np.float32)
+            elif k == 12:
+                layer=observed[25:-25,25:-25].astype(np.float32)
+            else:
+                layer=inferred[25:-25,25:-25].astype(np.float32)
             data = Float32MultiArray()
             data.layout = MultiArrayLayout(
                 dim=[
@@ -259,6 +315,12 @@ class CupyToHt(Node):
             )
             data.data = FloatArray('f', layer.flatten(order="F").tobytes())
             result.data.append(data)
+        # Receiving odometry continues during inference. Never publish a result
+        # computed across a newly detected pose/time discontinuity.
+        with self.odometry_lock:
+            if not self.input_odometry.check_clock(self.get_clock().now().nanoseconds/1e9):
+                self.input_status.publish(String(data=self.input_odometry.fault))
+                return
         self.pub.publish(result)
         published = time.monotonic()
         context_dump_s = 0.
@@ -279,6 +341,7 @@ class CupyToHt(Node):
                     raw_history=raw_history, observed=observed, rejected=rejected,
                     quality_rejected=quality.rejected_mask, obstacle_context=obstacle_context,
                     support=support, physical_support=physical_support, occupied=occupied,
+                    inferred_ground=inferred,
                     probabilities=probabilities)
             self.last_context_dump_stamp = stamp_s
             self.context_schedule.saved(stamp_s)
@@ -286,13 +349,15 @@ class CupyToHt(Node):
         self.count += 1
         self.diagnostics.append({'stamp_s': stamp_s, 'fused_cells': fused,
                                  'observed_cells': int(observed.sum()), 'supported_cells': int(support.sum()),
-                                 'surface': surface_stats, 'quality': quality.stats,
+                                 'surface': surface_stats, 'quality': quality.stats,'small_holes':hole_stats,
                                  'source_rejected_cells': int(source_rejected.sum()),
                                  'known_obstacle_cells': int(occupied.sum()),
                                  'retained_filtered_obstacle_cells': int(retained_filtered_obstacles.sum()),
                                  'new_rejected_observations': rejected_updates,
                                  'retained_current_edge_cells': int(retained_edges.sum()),
                                  'source_age_at_callback_s': source_age_at_start,
+                                 'pending_maps_replaced': self.pending_maps.replaced,
+                                 'source_age_at_publish_s': self.get_clock().now().nanoseconds/1e9-stamp_s,
                                  'fusion_and_quality_s': fusion_finished-started,
                                  'support_and_history_publish_s': inference_started-fusion_finished,
                                  'network_inference_s': inference_finished-inference_started,
@@ -315,7 +380,7 @@ def main():
     stop = GracefulStop()
     previous = signal.signal(signal.SIGINT, stop.request)
     node = None
-    executor = SingleThreadedExecutor()
+    executor = MultiThreadedExecutor(num_threads=2)
     try:
         node = CupyToHt()
         executor.add_node(node)
@@ -325,6 +390,10 @@ def main():
         pass
     finally:
         try:
+            # Drain the in-flight processing callback before saving shared state.
+            executor.shutdown()
+            pool=getattr(executor,"_executor",None)
+            if pool is not None:pool.shutdown(wait=True)
             if node is not None:
                 if node.history is not None and os.environ.get("HT_HISTORY_DUMP"):
                     node.history.save(os.environ["HT_HISTORY_DUMP"])
@@ -334,7 +403,6 @@ def main():
                 node.destroy_node()
         finally:
             try:
-                executor.shutdown()
                 rclpy.try_shutdown()
             finally:
                 signal.signal(signal.SIGINT, previous)

@@ -1679,16 +1679,18 @@ void SensorCoveragePlanner3D::execute() {
   if (!kAutoStart && !start_exploration_) {
     hold_reason_="WAIT_START";lookahead_point_update_=false;PublishWaypoint();return;
   }
+  // Lock the mission origin/time once sensors are healthy, independently of
+  // calibration/map readiness. Waiting for a route must not renew the prior.
+  if (base_healthy_ && !home_initialized_) {
+    initial_position_=Eigen::Vector3d(robot_position_.x,robot_position_.y,robot_position_.z);
+    home_initialized_=true;ht->start({robot_position_.x,robot_position_.y,robot_position_.z});
+  }
   if (!base_healthy_ || !ht->ready()) {
     hold_reason_=!base_healthy_ ? "BASE_SENSOR_FAULT" : ht->status();
     home_completion_.update(now,exploration_finished_,false,0,0);
     lookahead_point_update_=false;PublishWaypoint();return;
   }
   force_hold_=false;
-  if (!home_initialized_) {
-    initial_position_=Eigen::Vector3d(robot_position_.x,robot_position_.y,robot_position_.z);
-    home_initialized_=true;ht->start({robot_position_.x,robot_position_.y,robot_position_.z});
-  }
   stopped_=home_completion_.update(now,exploration_finished_,base_healthy_,GetRobotToHomeDistance(),measured_speed_);
   if (stopped_) {lookahead_point_update_=false;PublishWaypoint();return;}
   if (initialized_ && !keypose_cloud_update_) {

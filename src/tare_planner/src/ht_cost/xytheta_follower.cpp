@@ -214,13 +214,15 @@ class XYThetaFollower : public rclcpp::Node {
     // path expires. An old completion flag cannot mask subsequent failures.
     if (completed_ && fresh(completed_received_,permission_timeout_)) {hold("COMPLETED");return;}
     if (!fresh(odom_received_,odom_timeout_) || !fresh(odom_stamp_,odom_timeout_)) {hold("ODOM_STALE");return;}
+    // Retire the shared disk even while waiting for a path/permission. A
+    // subsequent path cannot revive it after leaving and returning.
+    if (ht_ && ht_->enabled()) ht_->updateExecution({robot_.x,robot_.y,robot_z_},false);
     if (!fresh(path_received_,path_timeout_) || !fresh(path_stamp_,path_timeout_)) {hold("PATH_STALE");return;}
     if (!permitted_ || permission_received_<=0 || stop_>=1) {hold("PLANNER_HOLD");return;}
     if (path_.size()<2) {hold("EMPTY_PATH");return;}
     if (ht_ && ht_->enabled()) {
       if (!fresh(scan_received_,scan_timeout_) || !fresh(scan_stamp_,scan_timeout_)) {hold("SCAN_STALE");return;}
-      if (!prior_started_) {ht_->start({robot_.x,robot_.y,0});prior_started_=true;}
-      ht_->updateExecution({robot_.x,robot_.y,0},false);ht_->beginCycle();
+      ht_->beginCycle();
       if (!ht_->ready()) {hold(ht_->status());return;}
       // A fresh map and a bounded-age plan are checked here independently of
       // TARE's expensive planning callback. Never renew a stale Bool blindly.
@@ -374,7 +376,6 @@ class XYThetaFollower : public rclcpp::Node {
   bool permitted_=false;
   bool completed_=false;
   double completed_received_=-1;
-  bool prior_started_=false;
   std::unique_ptr<ht_cost_ns::HtCostMap> ht_;
   int stop_=0;
   rclcpp::Subscription<nav_msgs::msg::Path>::SharedPtr path_sub_;

@@ -32,6 +32,7 @@ class FrozenHistoricalCrop:
 
 class CapturedPublisher:
     def __init__(self):self.messages=[]
+    def get_subscription_count(self):return 1
     def publish(self,msg):self.messages.append(msg)
 
 
@@ -82,3 +83,34 @@ class PostfilterBridgeTest(unittest.TestCase):
 
 
 if __name__=='__main__':unittest.main()
+
+class FrozenSmallHoleCrop(FrozenHistoricalCrop):
+    def window(self,*args,**kwargs):
+        z=np.zeros((291,291),np.float32);z[144:147,144:147]=np.nan
+        return z,np.full_like(z,.001),0.,0.
+
+class SmallHoleBridgeTest(unittest.TestCase):
+    def test_interpolation_is_separate_from_measurement_and_not_persisted(self):
+        rclpy.init(args=['--ros-args','-p','ht_small_hole_repair:=true']);node=None
+        try:
+            node=CupyToHt();history=FrozenSmallHoleCrop(.04);node.history=history
+            output=CapturedPublisher();node.pub=output
+            source=GridMap();source.header.frame_id='map';source.header.stamp=node.get_clock().now().to_msg()
+            source.info.resolution=.04;source.info.length_x=source.info.length_y=11.64;source.info.pose.orientation.w=1.
+            source.layers=['elevation','variance','observation_age']
+            source_z=np.zeros((291,291),np.float32);source_z[144:147,144:147]=np.nan
+            for value in [source_z,np.full_like(source_z,.001),np.zeros_like(source_z)]:
+                data=Float32MultiArray();data.layout=MultiArrayLayout(dim=[MultiArrayDimension(label='column_index',size=291,stride=84681),MultiArrayDimension(label='row_index',size=291,stride=291)])
+                data.data=array('f',value.flatten(order='F'));source.data.append(data)
+            node.on_map(source);assert len(output.messages)==1
+            result=output.messages[0]
+            def layer(k):return np.asarray(result.data[result.layers.index(k)].data).reshape(241,241,order='F')
+            assert len(result.layers)==14 and layer('ht_interpolated')[120,120]==1
+            assert layer('ht_measured_valid')[120,120]==0
+            assert layer('ht_elevation')[120,120]==0 and layer('ht_obstacle')[120,120]==0
+            assert np.isnan(source.data[0].data[145*291+145])
+            assert np.isnan(history.window()[0][145,145])
+            assert result.header.stamp==source.header.stamp
+        finally:
+            if node:node.destroy_node()
+            rclpy.try_shutdown()

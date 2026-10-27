@@ -101,7 +101,11 @@ TEST(GeometryPose, HeightSliceMatchesBruteForceAtBoundariesAndOtherHeights) {
     manager.SetViewPointInLineOfSight(i,true);manager.SetViewPointConnected(i,true);
   }
   manager.GetViewPointCandidate();
-  const double radius=.5+.5*std::hypot(.2,.2);
+  // Compute the oracle radius from runtime parameters too. Constant-folded
+  // hypot(.2,.2) differs from libm by one ULP on ARM64 at the equality boundary.
+  const double radius=node->get_parameter("kViewPointCollisionMargin").as_double()+
+      .5*std::hypot(node->get_parameter("kCollisionGridResolutionX").as_double(),
+                    node->get_parameter("kCollisionGridResolutionY").as_double());
   int checked=0;
   for(double z:{.75,.74999997,.75000003,.9,.4})
     for(int k=0;k<32;++k)for(double offset:{-1e-5,-1e-7,0.,1e-7,1e-5}) {

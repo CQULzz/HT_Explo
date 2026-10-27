@@ -3,7 +3,9 @@
     # Real vehicle branch: original TARE decides order; HT routes each waypoint.
     ht_enabled: true
     ht_exploration_mode: tare_waypoint
-    ht_directions_calibrated: false  # Sensor extrinsics are confirmed; HT direction validation is a separate task.
+    # Standalone default. Hardware launch resolves this compatibility gate
+    # from direction_validation.yaml + actual weights and direction_acceptance.
+    ht_directions_calibrated: false
     ht_topic: /ht_real/traversability
     ht_min_probability: 0.5
     ht_score_semantics: configuration
@@ -15,7 +17,11 @@
     ht_require_reversible_motion: false
     ht_heading_offset: 0.0
     ht_channel_order: [0, 1, 2, 3, 4, 5, 6, 7]
-    ht_startup_radius: 0.0  # Hardware does not inherit the simulation's assumed free1.2m startup disk.
+    # User-confirmed good starting ground: fixed at the mission's first pose.
+    # Covers the 0.6m body check plus the first 0.4m drive step and raster margin.
+    # Unknown-only permission; measured obstacles/low HT scores still veto it.
+    # Retired after 30s or leaving this disk; never follows the moving vehicle.
+    ht_startup_radius: 1.2
     ht_startup_duration: 30.0
     ht_unknown_policy: strict
     xytheta_cell: 0.3
@@ -32,10 +38,13 @@
     ht_fallback_lookahead: 0.5
     ht_fallback_max_seconds: 60.0
     ht_fallback_max_distance: 10.0
-    mission_normal_speed: 0.5
+    mission_normal_speed: 0.4
     mission_sensor_timeout: 1.0
     scan_pose_max_skew: 0.05
     mission_home_radius: 0.5
     mission_home_dwell: 1.0
     odometry_child_frame: base_link
     kAutoStart: false
+
+    # Match the explicit Scout command bridge forward speed limit.
+    max_speed: 0.4

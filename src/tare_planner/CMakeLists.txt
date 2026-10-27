@@ -21,12 +21,28 @@ find_package(ament_cmake REQUIRED)
 find_package(Eigen3 REQUIRED)
 # Load the complete, matching dependency graph (including Protobuf/Abseil).
 # Linking only libortools.so omits symbols used by the HT solver time limit.
-list(PREPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_SOURCE_DIR}/or-tools")
-find_package(ortools 9.8 CONFIG REQUIRED PATHS "${CMAKE_CURRENT_SOURCE_DIR}/or-tools" NO_DEFAULT_PATH)
+set(TARE_ORTOOLS_DEFAULT "${CMAKE_CURRENT_SOURCE_DIR}/or-tools")
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "^(aarch64|arm64)$")
+  get_filename_component(TARE_ORTOOLS_DEFAULT
+    "${CMAKE_CURRENT_SOURCE_DIR}/../../.local_deps/ortools-arm64" ABSOLUTE)
+endif()
+set(TARE_ORTOOLS_ROOT "${TARE_ORTOOLS_DEFAULT}" CACHE PATH "Native OR-Tools 9.8 C++ installation")
+if(NOT EXISTS "${TARE_ORTOOLS_ROOT}/lib/cmake/ortools/ortoolsConfig.cmake")
+  message(FATAL_ERROR "Set TARE_ORTOOLS_ROOT to an OR-Tools 9.8 installation matching the target architecture")
+endif()
+list(PREPEND CMAKE_PREFIX_PATH "${TARE_ORTOOLS_ROOT}")
+find_package(ortools 9.8 CONFIG REQUIRED PATHS "${TARE_ORTOOLS_ROOT}" NO_DEFAULT_PATH)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
+find_package(builtin_interfaces REQUIRED)
+find_package(rosidl_default_generators REQUIRED)
+rosidl_generate_interfaces(${PROJECT_NAME}
+  "msg/StartupPrior.msg"
+  DEPENDENCIES std_msgs geometry_msgs builtin_interfaces)
+rosidl_get_typesupport_target(tare_typesupport ${PROJECT_NAME} "rosidl_typesupport_cpp")
+ament_export_dependencies(rosidl_default_runtime)
 find_package(sensor_msgs REQUIRED)
 find_package(visualization_msgs REQUIRED)
 find_package(tf2_ros REQUIRED)
@@ -58,11 +74,14 @@ include_directories(SYSTEM ${GRID_MAP_EIGEN_INCLUDE_DIRS})
   # /usr/local/include
   # /usr/include
 )
-include_directories(SYSTEM or-tools/include)
+include_directories(SYSTEM "${TARE_ORTOOLS_ROOT}/include")
 
+# Interface generators can import BUILD_SHARED_LIBS=ON via middleware. TARE's
+# existing mutually dependent internal libraries must retain static linkage.
+set(BUILD_SHARED_LIBS OFF)
 add_library(ht_cost src/ht_cost/ht_cost_map.cpp)
 ament_target_dependencies(ht_cost rclcpp std_msgs grid_map_core grid_map_ros grid_map_msgs tf2 tf2_ros tf2_geometry_msgs)
-target_link_libraries(ht_cost ${OpenCV_LIBS})
+target_link_libraries(ht_cost ${OpenCV_LIBS} "${tare_typesupport}")
 
 get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
 foreach(dir ${dirs})
@@ -169,8 +188,8 @@ install(TARGETS
 # A regular (non-symlink) colcon install must also find OR-Tools at runtime.
 set_target_properties(tare_planner_node PROPERTIES INSTALL_RPATH "$ORIGIN")
 install(FILES
-  or-tools/lib/libortools.so.9
-  or-tools/lib/libortools.so.9.8.3296
+  "${TARE_ORTOOLS_ROOT}/lib/libortools.so.9"
+  "${TARE_ORTOOLS_ROOT}/lib/libortools.so.9.8.3296"
   DESTINATION lib/${PROJECT_NAME})
 
 install(DIRECTORY launch/
@@ -205,6 +224,8 @@ if(BUILD_TESTING)
   target_link_libraries(geometry_pose_test viewpoint_manager "-Wl,--whole-archive" planning_env "-Wl,--no-whole-archive" pointcloud_manager)
   ament_add_gtest(ht_ros_test tests/ht_ros_test.cpp TIMEOUT 60)
   target_link_libraries(ht_ros_test ht_cost)
+  ament_add_gtest(ht_startup_sync_test tests/ht_startup_sync_test.cpp TIMEOUT 30)
+  target_link_libraries(ht_startup_sync_test ht_cost)
   ament_add_gtest(input_pose_test tests/input_pose_test.cpp TIMEOUT 15)
   ament_add_gtest(planner_input_test tests/planner_input_test.cpp TIMEOUT 20)
   ament_target_dependencies(planner_input_test rclcpp nav_msgs sensor_msgs)

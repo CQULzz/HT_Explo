@@ -32,6 +32,7 @@ class FollowerTest : public ::testing::Test {
   double robot_yaw=0,robot_yaw_rate=0;
   bool physical_obstacle=false,physical_hole=false;
   virtual std::string scoreSemantics() const {return "point";}
+  virtual double startupRadius() const {return 0.;}
   void SetUp() override {
     if (!rclcpp::ok()) rclcpp::init(0,nullptr);
     follower=std::make_shared<XYThetaFollower>(rclcpp::NodeOptions().parameter_overrides({
@@ -40,7 +41,7 @@ class FollowerTest : public ::testing::Test {
       rclcpp::Parameter("ht_enabled",true),rclcpp::Parameter("ht_directions_calibrated",true),
       rclcpp::Parameter("ht_require_reversible_motion",true),
       rclcpp::Parameter("ht_score_semantics",scoreSemantics()),
-      rclcpp::Parameter("geometry_timeout",0.4),rclcpp::Parameter("ht_startup_radius",0.0),rclcpp::Parameter("ht_map_timeout",1.0)}));
+      rclcpp::Parameter("geometry_timeout",0.4),rclcpp::Parameter("ht_startup_radius",startupRadius()),rclcpp::Parameter("ht_map_timeout",1.0)}));
     follower->initialize();source=std::make_shared<rclcpp::Node>("follower_test_source");
     odom=source->create_publisher<nav_msgs::msg::Odometry>("/state_estimation",5);
     scan=source->create_publisher<sensor_msgs::msg::PointCloud2>("/registered_scan",5);
@@ -301,4 +302,28 @@ TEST(FollowerClock, ClockRollbackLatchesStopEvenAfterClockRecovers) {
 TEST_F(FollowerTest, HardwareCommandNamesTheActualVehicleReferenceFrame) {
   spin(150ms);ASSERT_FALSE(received_commands.empty());
   EXPECT_EQ(received_commands.back().header.frame_id,"base_link");
+}
+
+class SharedPriorFollowerTest : public FollowerTest {
+ protected:
+  double startupRadius() const override {return 1.2;}
+  void SetUp() override {unknown=true;FollowerTest::SetUp();}
+};
+TEST_F(SharedPriorFollowerTest,FirstPathCannotCreateOwnPriorAndReplansCannotRenewExpiry) {
+  EXPECT_DOUBLE_EQ(speed,0);EXPECT_EQ(reason,"HT_CURRENT_POSE_BLOCKED");
+  // Keep the whole test route and swept body inside the bounded prior;
+  // a default 2m route is correctly rejected independently of its expiry.
+  auto replan=[&]() {
+    auto p=last_path;p.poses.resize(4);p.header.stamp=source->now();
+    for(auto& pose:p.poses)pose.header=p.header;
+    path->publish(p);
+  };
+  replan();
+  auto prior=source->create_publisher<tare_planner::msg::StartupPrior>("/ht_startup_prior",rclcpp::QoS(1).reliable().transient_local());
+  tare_planner::msg::StartupPrior m;m.header.frame_id="map";m.header.stamp=source->now();
+  m.expires_at=rclcpp::Time(rclcpp::Time(m.header.stamp).nanoseconds()+700000000LL);m.radius=1.2;
+  prior->publish(m);spin(250ms);EXPECT_GT(speed,0);
+  replan();allow(true);spin(650ms);EXPECT_DOUBLE_EQ(speed,0);EXPECT_EQ(reason,"HT_CURRENT_POSE_BLOCKED");
+  prior->publish(m);replan();allow(true);spin(200ms);
+  EXPECT_DOUBLE_EQ(speed,0);EXPECT_EQ(reason,"HT_CURRENT_POSE_BLOCKED");
 }

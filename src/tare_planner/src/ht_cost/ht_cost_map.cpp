@@ -85,6 +85,15 @@ HtCostMap::HtCostMap(rclcpp::Node::SharedPtr node,bool publish_permission)
     listener_=std::make_unique<tf2_ros::TransformListener>(buffer_);
     if (publish_permission)
       permission_=node->create_publisher<std_msgs::msg::Bool>("/ht_navigation_allowed",1);
+    owns_prior_=publish_permission;
+    const auto startup_topic=node->declare_parameter<std::string>("ht_startup_topic","/ht_startup_prior");
+    // Retain the original start/expiry for late subscribers, not a new TTL.
+    const auto startup_qos=rclcpp::QoS(1).reliable().transient_local();
+    if (owns_prior_)
+      startup_pub_=node->create_publisher<tare_planner::msg::StartupPrior>(startup_topic,startup_qos);
+    else
+      startup_sub_=node->create_subscription<tare_planner::msg::StartupPrior>(startup_topic,startup_qos,
+        [this](tare_planner::msg::StartupPrior::ConstSharedPtr msg){receiveStartupPrior(*msg);});
     // Map decoding and footprint dilation must be serviced while the default
     // planner callback group is spending seconds evaluating XYtheta routes.
     map_callback_group_=node->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
@@ -96,6 +105,74 @@ HtCostMap::HtCostMap(rclcpp::Node::SharedPtr node,bool publish_permission)
     RCLCPP_INFO(logger_,"HT hard gate: min_probability=%.3f unknown_policy=%s calibrated=%d reversible=%d scores=%s",
                 min_probability_,policy.c_str(),calibrated_,require_reversible_motion_,score_semantics.c_str());
   }
+}
+
+StartupPrior HtCostMap::startupPrior() const {
+  std::lock_guard<std::mutex> lock(prior_mutex_);
+  auto prior=prior_;
+  const double now=clock_->now().seconds();
+  if (prior.initialized && (now<prior.start || now-prior.start>=prior.lifetime)) prior.retired=true;
+  return prior;
+}
+
+void HtCostMap::publishStartupPrior() {
+  if (!startup_pub_) return;
+  const auto prior=startupPrior();
+  if (!prior.initialized) return;
+  tare_planner::msg::StartupPrior msg;
+  msg.header.frame_id="map";
+  msg.header.stamp=rclcpp::Time(static_cast<int64_t>(std::llround(prior.start*1e9)),clock_->get_clock_type());
+  msg.expires_at=rclcpp::Time(static_cast<int64_t>(std::llround((prior.start+prior.lifetime)*1e9)),clock_->get_clock_type());
+  msg.anchor.x=prior.anchor.x;msg.anchor.y=prior.anchor.y;msg.anchor.z=prior.anchor.z;
+  msg.radius=prior.radius;msg.retired=prior.retired;
+  startup_pub_->publish(msg);
+}
+
+void HtCostMap::start(Point p) {
+  if (!owns_prior_ || !std::isfinite(p.x) || !std::isfinite(p.y) || !std::isfinite(p.z)) return;
+  {
+    std::lock_guard<std::mutex> lock(prior_mutex_);
+    prior_.initialize(p,clock_->now().seconds());
+  }
+  publishStartupPrior();
+}
+
+void HtCostMap::updateExecution(Point p,bool was_fallback) {
+  const double now=clock_->now().seconds();
+  bool newly_retired=false;
+  {
+    std::lock_guard<std::mutex> lock(prior_mutex_);
+    const bool retired=prior_.retired;
+    prior_.update(p,now);
+    newly_retired=prior_.retired && !retired;
+  }
+  if (newly_retired && owns_prior_) publishStartupPrior();
+  budget_.update(now,p,was_fallback);
+}
+
+void HtCostMap::receiveStartupPrior(const tare_planner::msg::StartupPrior& msg) {
+  const auto& p=msg.anchor;
+  if (msg.header.frame_id!="map" || msg.header.stamp.sec<0 || msg.expires_at.sec<0 ||
+      msg.header.stamp.nanosec>=1000000000u || msg.expires_at.nanosec>=1000000000u ||
+      !std::isfinite(p.x) || !std::isfinite(p.y) || !std::isfinite(p.z) ||
+      !std::isfinite(msg.radius) || msg.radius<0 || msg.radius>3) return;
+  const double start=rclcpp::Time(msg.header.stamp).seconds();
+  const double expiry=rclcpp::Time(msg.expires_at).seconds();
+  const double now=clock_->now().seconds();
+  if (expiry<=start || start>now) return;
+  std::lock_guard<std::mutex> lock(prior_mutex_);
+  if (prior_.initialized && (std::abs(prior_.start-start)>1e-6 ||
+      std::abs(prior_.start+prior_.lifetime-expiry)>1e-6 || prior_.radius!=msg.radius ||
+      prior_.anchor.x!=p.x || prior_.anchor.y!=p.y || prior_.anchor.z!=p.z)) {
+    // A follower must not silently join another mission or reset its disk.
+    startup_sync_fault_=true;prior_.retired=true;return;
+  }
+  if (!prior_.initialized) {
+    prior_.initialize({p.x,p.y,p.z},start);
+    prior_.radius=msg.radius;prior_.lifetime=expiry-start;
+  }
+  // Even tolerated floating-point round trips cannot accumulate time/radius.
+  prior_.retired=prior_.retired || msg.retired || now>=prior_.start+prior_.lifetime;
 }
 
 void HtCostMap::receive(grid_map_msgs::msg::GridMap::ConstSharedPtr msg) {
@@ -293,10 +370,14 @@ void HtCostMap::beginCycle() {
   cycle_=latest_;cycle_error_=latest_error_;
 }
 bool HtCostMap::ready() const {
+  std::lock_guard<std::mutex> lock(prior_mutex_);
+  if (enabled_ && startup_sync_fault_) return false;
   return !enabled_ || (calibrated_ && cycle_ && cycle_->fresh(clock_->now().seconds(),timeout_));
 }
 std::string HtCostMap::status() const {
+  std::lock_guard<std::mutex> lock(prior_mutex_);
   if (!enabled_) return "HT_DISABLED";
+  if (startup_sync_fault_) return "HT_STARTUP_PRIOR_CONFLICT";
   if (!calibrated_) return "HT_UNCALIBRATED";
   if (!cycle_) return cycle_error_;
   const double now=clock_->now().seconds();
@@ -376,6 +457,7 @@ Support HtCostMap::motionSupport(Pose2 a,Pose2 b) const {
 Support HtCostMap::supportDirected(const Point& a,const Point& b,double heading) const {
   if (!enabled_) return Support::KNOWN;
   if (!ready()) return Support::FAULT;
+  const auto prior=startupPrior();
   size_t first,last;int channel,last_channel;
   if (!cycle_->cellAndChannel(a.x,a.y,heading,first,channel) ||
       !cycle_->cellAndChannel(b.x,b.y,heading,last,last_channel)) return Support::UNKNOWN;
@@ -404,10 +486,10 @@ Support HtCostMap::supportDirected(const Point& a,const Point& b,double heading)
     if (cycle_->valid[index] && !cycle_->unknown_footprint[index]) return Support::KNOWN;
     // Unknown uses the same rasterized support mask as known-unsafe terrain.
     // Re-scanning at arbitrary sub-cell offsets made split edges disagree.
-    if (!prior_.initialized || prior_.retired) return Support::UNKNOWN;
+    if (!prior.initialized || prior.retired) return Support::UNKNOWN;
     const double mx=(cycle_->rows*.5-r-.5)*res,my=(cycle_->cols*.5-c-.5)*res;
     const double cx=cycle_->center_x+co*mx-si*my,cy=cycle_->center_y+si*mx+co*my;
-    if (!cycle_->valid[index] && !prior_.contains(cx,cy)) return Support::UNKNOWN;
+    if (!cycle_->valid[index] && !prior.contains(cx,cy)) return Support::UNKNOWN;
     const int radius=static_cast<int>(std::ceil(footprint_radius_/res))+1;
     Support s=Support::STARTUP_PRIOR;
     for (int ix=-radius;ix<=radius;++ix) for (int iy=-radius;iy<=radius;++iy) {
@@ -418,7 +500,7 @@ Support HtCostMap::supportDirected(const Point& a,const Point& b,double heading)
       const double local_x=mx-ix*res,local_y=my-iy*res;
       const double x=cycle_->center_x+co*local_x-si*local_y;
       const double y=cycle_->center_y+si*local_x+co*local_y;
-      if (!observed && !prior_.contains(x,y)) s=Support::UNKNOWN;
+      if (!observed && !prior.contains(x,y)) s=Support::UNKNOWN;
     }
     return s;
   };

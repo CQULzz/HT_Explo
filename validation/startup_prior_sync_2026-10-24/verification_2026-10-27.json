@@ -1,0 +1,73 @@
+{
+  "completion_date": "2026-10-27",
+  "baseline": "62eaa064e9a697a68a08483741a4e23439056e30",
+  "gtest_suites": [
+    {
+      "suite": "geometry_pose_test.gtest.xml",
+      "tests": 23,
+      "failures": 0,
+      "errors": 0
+    },
+    {
+      "suite": "ht_ros_test.gtest.xml",
+      "tests": 31,
+      "failures": 0,
+      "errors": 0
+    },
+    {
+      "suite": "ht_startup_sync_test.gtest.xml",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0
+    },
+    {
+      "suite": "input_pose_test.gtest.xml",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0
+    },
+    {
+      "suite": "planner_input_test.gtest.xml",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0
+    },
+    {
+      "suite": "xytheta_follower_test.gtest.xml",
+      "tests": 23,
+      "failures": 0,
+      "errors": 0
+    }
+  ],
+  "gtest_tests": 92,
+  "gtest_failures": 0,
+  "ctest_targets_passed_total": 7,
+  "ctest_note": "Six targets passed in initial full run; seventh passed after fixing test-fixture ROS initialization. Both logs retained.",
+  "production_sources_unchanged_during_tests": true,
+  "fixture_only_fix": [
+    "src/tare_planner/tests/ht_startup_sync_test.cpp"
+  ],
+  "real_vehicle_motion": false,
+  "simulation_acceptance": false,
+  "source_sha256": {
+    "docs/real_vehicle/SCOUT.md": "85fa92fbba6aebe7ae83608a9bb9c429340824af5848e8f08bb43a52d11fa585",
+    "src/ht_scout_bridge/launch/scout_real.launch.py": "c68f1dcdea8d13e31db3b062b5f4b57c73052e0b2d161fc7e5bfa2276e95502e",
+    "src/tare_planner/CMakeLists.txt": "f425d9bc750069091e20c9b15067b21e243beb3fa7cff6b952a55abb6ac8a6f1",
+    "src/tare_planner/include/ht_cost/ht_cost_map.h": "572885c50431cb5228177cb3f56b2a08175a0d878a228fdc2a9caa7111e1485b",
+    "src/tare_planner/package.xml": "cdfaff4b2aac1fc4490aeb3a175460acf072f5867f034cdd4549ec8b1da4405d",
+    "src/tare_planner/src/ht_cost/ht_cost_map.cpp": "2196bc566d993ad388dfd48063fbd7644c07c90e064aca5c08754cc816c87559",
+    "src/tare_planner/src/ht_cost/xytheta_follower.cpp": "a4d825ca102090bf4afbe309783d6e1cde86b45a599f814bb44ec1d2e5960eba",
+    "src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp": "8c650ad60f3f10bb2a5d125311e084db6b2fc84fe4b0281480b0d4db0a04d047",
+    "src/tare_planner/tests/xytheta_follower_test.cpp": "d0571c71b5f6ff050eac617e6bbaddb081995ff795acb6d84662817ec04f0cc6",
+    "validation/real_vehicle_scout_2026-10-22/check_launch.py": "727cf0ea394d6b254c97ebe4800c6415574dd4cfcd0321f4ecc771caf7dd3cd0",
+    "src/tare_planner/msg/StartupPrior.msg": "76a3fca05a9c557a625c89d55e356850cecdc14b2a523942a2bbc422d1fea6cb",
+    "src/tare_planner/tests/ht_startup_sync_test.cpp": "cd5aae21b758463a5c909206b85003b2ae276f2b6d925138f80d96070c4742b8"
+  },
+  "binary_sha256": {
+    "install_real/tare_planner/lib/tare_planner/tare_planner_node": "593e956a46c90e96e5330248e8944906b8d2eab159a3549cbceb1f72fb78ec67",
+    "install_real/tare_planner/lib/tare_planner/xytheta_follower": "67975ded214a5dc9c42ddb44d45f12488069564f5e4b6c27a870a7282dd5fc95",
+    "install_real/tare_planner/lib/libtare_planner__rosidl_typesupport_cpp.so": "97184e544277aa1faaebdfcc4ca99a2d9888dce0bfdf70a08f6acfbea2409785",
+    "build_real/tare_planner/ht_startup_sync_test": "4a953ba5986ce7c41e923c2a8c861bd738bcb098a42c46ecb77abdf45384e584",
+    "build_real/tare_planner/xytheta_follower_test": "2f2475abdc663284f900dbeaa98a732ad1191902070bd0a2cea90944caf3c5f3"
+  }
+}

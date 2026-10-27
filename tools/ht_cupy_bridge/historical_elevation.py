@@ -79,8 +79,7 @@ class HistoricalElevation:
         source_gx, source_gy = self._source_indices(center_x, center_y, (nx, ny))
         gx, gy = source_gx[ii], source_gy[jj]
         tx, ty = gx // self.tile_size, gy // self.tile_size
-        keys = np.stack((tx, ty), axis=1)
-        _, inverse = np.unique(keys, axis=0, return_inverse=True)
+        inverse = self._tile_groups(tx,ty)
         updates = 0
         for group in range(int(inverse.max()) + 1):
             selected = np.flatnonzero(inverse == group)
@@ -151,7 +150,7 @@ class HistoricalElevation:
         if not len(ii):return 0
         gx,gy=self._source_indices(center_x,center_y,rejected.shape);gx,gy=gx[ii],gy[jj]
         tx,ty=gx//self.tile_size,gy//self.tile_size
-        _,groups=np.unique(np.stack((tx,ty),axis=1),axis=0,return_inverse=True)
+        groups=self._tile_groups(tx,ty)
         count=0
         for group in range(int(groups.max())+1):
             ids=np.flatnonzero(groups==group);key=(int(tx[ids[0]]),int(ty[ids[0]]))
@@ -209,7 +208,8 @@ class HistoricalElevation:
                           & (last <= stamp_s + 1e-3))
                 # A current-source elevation is stronger evidence than a
                 # robot-height fallback, including observed obstacle tops.
-                p, r = preferred[np.ix_(ix, iy)], reference[np.ix_(ix, iy)]
+                output_index=np.ix_(ix,iy)
+                p, r = preferred[output_index], reference[output_index]
                 has_preferred, has_reference = np.isfinite(p), np.isfinite(r)
                 target = np.where(has_preferred, p, r)
                 has_target = has_preferred | has_reference
@@ -253,7 +253,7 @@ class HistoricalElevation:
                 # Include expired modes: a stale post is unknown occupancy,
                 # not proof that the obstacle disappeared. An inactive floor
                 # with no compatible current-floor height has the same rule.
-                self.last_window_incompatible_mask[np.ix_(ix, iy)] = (
+                self.last_window_incompatible_mask[output_index] = (
                     (np.any(np.isfinite(z), axis=0) & ~found) | newer_rejection)
                 # An observed incompatible surface is occupied/unsafe evidence,
                 # not an observation of traversable ground. Preserve its actual
@@ -269,10 +269,18 @@ class HistoricalElevation:
                     rejected_height=rejected_height[lx[:,None],ly[None,:]]
                     obstacle_height=np.where(newer_rejection & np.isfinite(rejected_height),
                                              rejected_height,obstacle_height)
-                self.last_window_obstacle_elevation[np.ix_(ix, iy)] = obstacle_height
-                elevation[np.ix_(ix, iy)] = np.where(found, chosen_z, np.nan)
-                variance[np.ix_(ix, iy)] = np.where(found, chosen_v, np.inf)
+                self.last_window_obstacle_elevation[output_index] = obstacle_height
+                elevation[output_index] = np.where(found, chosen_z, np.nan)
+                variance[output_index] = np.where(found, chosen_v, np.inf)
         return elevation, variance, exact_x, exact_y
+
+    @staticmethod
+    def _tile_groups(tx,ty):
+        # Dense local tile coordinates encode the same lexicographic order as
+        # unique(stack((tx,ty)),axis=0), without the structured 2D sort.
+        width=int(ty.max()-ty.min())+1
+        keys=(tx-tx.min())*width+(ty-ty.min())
+        return np.unique(keys,return_inverse=True)[1]
 
     def _nearest_index(self, coordinate):
         # Fixed grid cell centres are at integer multiples of resolution.

@@ -95,7 +95,7 @@ def retain_recent_obstacle_edges(history_height, history_variance, current_heigh
     return z, v, use
 
 
-def preprocess_elevation(elevation_m, variance_m2, resolution_m,
+def preprocess_elevation_reference(elevation_m, variance_m2, resolution_m,
                          config=None) -> ElevationQualityResult:
     """Denoise small texture while preserving measured steps and narrow posts.
 
@@ -116,8 +116,8 @@ def preprocess_elevation(elevation_m, variance_m2, resolution_m,
     """
     started = time.perf_counter()
     cfg = config or ElevationQualityConfig()
-    z = np.asarray(elevation_m, dtype=np.float32)
-    variance = np.asarray(variance_m2, dtype=np.float32)
+    z = np.ascontiguousarray(elevation_m, dtype=np.float32)
+    variance = np.ascontiguousarray(variance_m2, dtype=np.float32)
     if z.ndim != 2 or z.shape != variance.shape or min(z.shape) < 1:
         raise ValueError("elevation and variance must be equal nonempty 2D arrays")
     if not math.isfinite(resolution_m) or resolution_m <= 0:
@@ -229,3 +229,74 @@ def preprocess_elevation(elevation_m, variance_m2, resolution_m,
         "elapsed_ms": (time.perf_counter() - started) * 1000.,
     }
     return ElevationQualityResult(filtered, observed, rejected, edge & observed, stats)
+
+
+def quality_backend_name(backend='auto'):
+    if backend not in ('auto','numpy','numba'):raise ValueError('Unknown quality backend')
+    if backend=='numpy':return 'numpy'
+    from quality_kernels import AVAILABLE
+    if backend=='numba' and not AVAILABLE:raise RuntimeError('Numba quality backend requested but unavailable')
+    return 'numba' if backend!='numpy' and AVAILABLE else 'numpy'
+
+
+def warmup_quality(backend='auto'):
+    selected=quality_backend_name(backend)
+    preprocess_elevation(np.zeros((5,5),np.float32),np.full((5,5),.01,np.float32),.04,backend=selected)
+    return selected
+
+
+def preprocess_elevation(elevation_m, variance_m2, resolution_m, config=None, *, backend='auto'):
+    """Same filter/gates as the NumPy oracle, with optional compiled mask loops.
+
+    Only cells proven smoothable need bilateral arithmetic. NumPy retains its
+    original float32 exponent/accumulation order for those selected cells.
+    """
+    if quality_backend_name(backend)=='numpy':
+        return preprocess_elevation_reference(elevation_m,variance_m2,resolution_m,config)
+    from quality_kernels import isolated_mask,neighborhood_masks
+    started=time.perf_counter();cfg=config or ElevationQualityConfig()
+    z=np.ascontiguousarray(elevation_m,np.float32);variance=np.ascontiguousarray(variance_m2,np.float32)
+    if z.ndim!=2 or z.shape!=variance.shape or min(z.shape)<1:
+        raise ValueError('elevation and variance must be equal nonempty 2D arrays')
+    if not math.isfinite(resolution_m) or resolution_m<=0:raise ValueError('resolution_m must be positive and finite')
+    finite=np.isfinite(z)
+    observed=finite & np.isfinite(variance) & (variance>=0) & (variance<=cfg.max_measurement_std_m**2)
+    rejected=finite & ~observed;height=np.where(observed,z,np.nan).astype(np.float32)
+    isolated=isolated_mask(height,variance,observed,np.float32(cfg.preserve_height_jump_m),
+        np.float32(cfg.isolated_jump_m),np.float32(cfg.isolated_background_spread_m),
+        np.float32(cfg.isolated_uncertain_std_m**2),cfg.isolated_min_neighbors)
+    rejected|=isolated;observed&=~isolated;height[~observed]=np.nan
+    edge,full,balanced,small=neighborhood_masks(height,observed,cfg.radius_cells,cfg.sparse_symmetric,
+        np.float32(cfg.preserve_height_jump_m),np.float32(cfg.small_feature_match_m),np.float32(cfg.small_feature_jump_m))
+    enough=full | ((cfg.sparse_symmetric and cfg.radius_cells==1) & (balanced>=5))
+    smoothable=observed & enough & ~edge
+    ii,jj=np.nonzero(smoothable);filtered=height.copy()
+    if len(ii):
+        radius=cfg.radius_cells;padded=np.pad(height,radius,constant_values=np.nan);center=height[ii,jj]
+        numerator=np.zeros(center.shape,np.float32);denominator=np.zeros(center.shape,np.float32)
+        for dx in range(-radius,radius+1):
+            for dy in range(-radius,radius+1):
+                neighbor=padded[ii+radius+dx,jj+radius+dy];difference=neighbor-center;known=np.isfinite(neighbor)
+                paired=known
+                if cfg.sparse_symmetric and radius==1:
+                    paired=known & np.isfinite(padded[ii+radius-dx,jj+radius-dy])
+                eligible=paired & (np.abs(difference)<cfg.preserve_height_jump_m)
+                safe_difference=np.where(eligible,difference,0.)
+                spatial=((dx*resolution_m)**2+(dy*resolution_m)**2)
+                exponent=(-0.5*spatial/cfg.spatial_sigma_m**2-0.5*safe_difference**2/cfg.height_sigma_m**2)
+                weight=np.exp(exponent).astype(np.float32)*eligible
+                numerator+=weight*np.where(known,neighbor,0.);denominator+=weight
+        candidate=np.divide(numerator,denominator,out=center.copy(),where=denominator>0)
+        std_m=np.sqrt(np.maximum(variance[ii,jj],0))
+        blend=np.clip((std_m-cfg.confident_std_m)/(cfg.full_smoothing_std_m-cfg.confident_std_m),0.,1.)
+        adjustment=np.clip(candidate-center,-cfg.max_adjustment_m,cfg.max_adjustment_m)
+        filtered[ii,jj]+=(blend*adjustment)
+    delta=filtered[observed]-z[observed]
+    stats={'input_height_cells':int(finite.sum()),'observed_quality_cells':int(observed.sum()),
+        'rejected_cells':int(rejected.sum()),'isolated_rejected_cells':int(isolated.sum()),
+        'preserved_edge_cells':int((edge&observed).sum()),'preserved_small_feature_cells':int(small.sum()),
+        'sparse_smoothable_cells':int((smoothable&~full).sum()),'smoothed_cells':int(np.count_nonzero(delta)),
+        'max_adjustment_m':float(np.max(np.abs(delta))) if delta.size else 0.,
+        'rms_adjustment_m':float(np.sqrt(np.mean(delta**2))) if delta.size else 0.,
+        'elapsed_ms':(time.perf_counter()-started)*1000.}
+    return ElevationQualityResult(filtered,observed,rejected,edge&observed,stats)

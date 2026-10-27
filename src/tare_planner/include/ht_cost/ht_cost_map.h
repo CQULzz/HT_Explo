@@ -4,6 +4,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include <grid_map_msgs/msg/grid_map.hpp>
 #include <std_msgs/msg/bool.hpp>
+#include <tare_planner/msg/startup_prior.hpp>
 #include <tf2_ros/buffer.h>
 #include <tf2_ros/transform_listener.h>
 #include <mutex>
@@ -33,10 +34,10 @@ class HtCostMap {
   Support motionSupport(Pose2 a,Pose2 b) const;
   bool permits(Support s) const { return s==Support::KNOWN || s==Support::STARTUP_PRIOR ||
     (s==Support::UNKNOWN && geometric_fallback_ && !budget_.exhausted()); }
-  void start(Point p) { prior_.initialize(p,clock_->now().seconds()); }
-  void updateExecution(Point p,bool was_fallback) {
-    const double now=clock_->now().seconds();prior_.update(p,now);budget_.update(now,p,was_fallback);
-  }
+  // Only the planner owns initialization; followers import its immutable epoch.
+  void start(Point p);
+  void updateExecution(Point p,bool was_fallback);
+  StartupPrior startupPrior() const;
   const FallbackBudget& budget() const { return budget_; }
   double fallbackLookahead() const { return fallback_lookahead_; }
   double fallbackSpeed() const { return fallback_speed_; }
@@ -52,6 +53,12 @@ class HtCostMap {
   rclcpp::Clock::SharedPtr clock_;
   rclcpp::Logger logger_;
   StartupPrior prior_;
+  bool owns_prior_=false, startup_sync_fault_=false;
+  mutable std::mutex prior_mutex_;
+  rclcpp::Publisher<tare_planner::msg::StartupPrior>::SharedPtr startup_pub_;
+  rclcpp::Subscription<tare_planner::msg::StartupPrior>::SharedPtr startup_sub_;
+  void publishStartupPrior();
+  void receiveStartupPrior(const tare_planner::msg::StartupPrior& msg);
   FallbackBudget budget_;
   bool geometric_fallback_=false;
   bool require_reversible_motion_=false;

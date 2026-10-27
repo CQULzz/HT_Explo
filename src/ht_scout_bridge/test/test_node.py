@@ -18,6 +18,7 @@ ROOT=Path(__file__).resolve().parents[1]
 
 class Sink:
     def __init__(self):self.messages=[]
+    def get_subscription_count(self):return 1
     def publish(self,m):self.messages.append(deepcopy(m))
 
 
@@ -57,7 +58,7 @@ def odom():
 
 def elevation(n=291,age=True):
     m=GridMap();m.header.frame_id='odom';m.header.stamp.sec=10
-    m.info.resolution=.04;m.info.length_x=m.info.length_y=n*.04;m.info.pose.orientation.w=1
+    m.info.resolution=.04;m.info.length_x=m.info.length_y=n*.04;m.info.pose.orientation.w=1.0
     m.layers=['elevation','variance']+(['observation_age'] if age else [])
     for i in range(len(m.layers)):
         a=Float32MultiArray();a.layout=MultiArrayLayout(dim=[
@@ -161,7 +162,7 @@ def test_grid_world_translation_updates_cell_heights_and_center_without_double_z
     def shifted(parent,child,when):
         t=original(parent,child,when)
         if parent=='map' and child=='odom':
-            t.transform.translation.x=2;t.transform.translation.y=-3;t.transform.translation.z=1.5
+            t.transform.translation.x=2.0;t.transform.translation.y=-3.0;t.transform.translation.z=1.5
         return t
     node.buffer.lookup_transform=shifted
     m=elevation();out=node.convert_elevation(m)
