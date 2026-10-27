@@ -1,3 +1,10 @@
+XYθ规划语义修正（2026-10-28，优先于后文）
+[事实] 新运行代码本地a33f78a，GitHub59179d2f3f173355379d7d4badbd8c6db9055b9e，分支real/scout-helios32。读docs/results/real_xytheta_2026-10-28/BRIEF.md、REPORT.md与Release real-scout-xytheta-20261028及校验回执。
+[事实] configuration的motionSupport不再额外查询位移方向，严格检查实际车头θ扫掠；修正倒车误查θ+π。point/行驶方向语义保留旧门槛。QoS未被当成规划模式修改，TARE访问顺序/模型/0.5门槛/未知及障碍规则未改。
+[事实] 同一个真实C++规划器runner，旧新347查询：人工倒车失败→成功、方向绕墙均成功、全低T均拒绝。真实43帧×8目标均INVALID_START：40位姿BLOCKED、3UNKNOWN；40位姿实际车头T均<0.5。不能称实车停车已解决，不能把合成路径冒充真实路线。
+[事实] 两包构建、96GTest+ht_core_test、原TARE六函数合同检查通过；未新跑实车/仿真或ARM程序，未改TSP。离线查询禁启动先验，只发布内部隔离图，不发布运动。数据/home/lzz/my test/HT_Explo-xytheta-round3-20261028。
+[待确认] 真实高点来源/附件与HT地形响应；不要降低门槛来制造路线。configuration无速度/牵引维，语义修正不能证明真实反向动力学安全。8个预测通道与32个搜索航向需区分。
+
 最新实车离线复测（2026-10-28，优先于下文历史记录）
 [事实] 本轮只做历史数据离线处理，无仿真、设备或车辆运动。报告 docs/results/real_round2_2026-10-28/REPORT.md，简报同目录BRIEF.md；数值FINAL_SUMMARY.json。
 [事实] 实车运行冻结版本：GitHub a00c83eeaf5466a1eac53d29d0b54e35398acfab（本地cdcc4fb4bc9a376f2afa5a113c40f3e95f0968a8），仅real/scout-helios32分支。后续报告提交不冒充实测版本。
