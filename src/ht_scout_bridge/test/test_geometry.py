@@ -113,3 +113,13 @@ def test_body_filter_requires_its_calibrated_reference_and_preserves_nonfinite_r
     invalid=np.array([[np.nan,0,0],[0,np.inf,0]],float)
     with np.errstate(invalid='ignore'):
         assert not self_filter_keep_mask(invalid,profile['lidar_self_filter'],np.linalg.inv(b)@l).any()
+
+
+def test_union_broad_phase_matches_every_unaccelerated_shape():
+    profile,b,l=load_calibration(PROFILE);t=np.linalg.inv(b)@l;f=profile['lidar_self_filter']
+    base=np.random.default_rng(7).uniform(-4,4,(30000,3));inside=np.zeros(len(base),bool)
+    for box in f['boxes']:inside|=(base>=box['min_xyz']).all(1)&(base<=box['max_xyz']).all(1)
+    for cylinder in f['cylinders']:
+        local=base-cylinder['center_xyz'];inside|=(local[:,0]**2+local[:,2]**2<=cylinder['radius']**2)&(np.abs(local[:,1])<=cylinder['half_length'])
+    lidar=(base-t[:3,3])@t[:3,:3]
+    np.testing.assert_array_equal(self_filter_keep_mask(lidar,f,t),~inside)

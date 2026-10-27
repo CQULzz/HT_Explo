@@ -99,22 +99,32 @@ def self_filter_keep_mask(xyz, self_filter=None, filter_from_lidar=None):
         raise ValueError('Body geometry requires calibrated base_link-from-lidar transform')
     t=validate_transform(filter_from_lidar)
     points=points@t[:3,:3].T+t[:3,3]
-    occupied=np.zeros(len(points),bool)
     if not self_filter['boxes']:raise ValueError('Empty body geometry')
+    boxes=[];cylinders=[];lower=np.full(3,np.inf);upper=np.full(3,-np.inf)
     for box in self_filter['boxes']:
         lo=np.asarray(box['min_xyz'],float);hi=np.asarray(box['max_xyz'],float)
         if lo.shape!=(3,) or hi.shape!=(3,) or not np.isfinite([lo,hi]).all() or np.any(lo>=hi):
             raise ValueError('Invalid body box')
-        occupied|=((points>=lo).all(axis=1)&(points<=hi).all(axis=1))
+        boxes.append((lo,hi));lower=np.minimum(lower,lo);upper=np.maximum(upper,hi)
     for cylinder in self_filter.get('cylinders',[]):
         center=np.asarray(cylinder['center_xyz'],float)
         radius=float(cylinder['radius']);half=float(cylinder['half_length'])
         if (center.shape!=(3,) or not np.isfinite(center).all() or cylinder['axis']!='y'
                 or not math.isfinite(radius) or not math.isfinite(half) or min(radius,half)<=0):
             raise ValueError('Invalid wheel cylinder')
+        cylinders.append((center,radius,half))
+        extent=np.array([radius,half,radius]);lower=np.minimum(lower,center-extent);upper=np.maximum(upper,center+extent)
+    # Most scan returns are metres outside the vehicle. Test detailed geometry
+    # only inside its exact union AABB; this cannot remove a new point or miss
+    # a box/cylinder relative to the unaccelerated union.
+    selected=valid&(points>=lower).all(axis=1)&(points<=upper).all(axis=1)
+    points=points[selected];occupied=np.zeros(len(points),bool)
+    for lo,hi in boxes:occupied|=(points>=lo).all(axis=1)&(points<=hi).all(axis=1)
+    for center,radius,half in cylinders:
         local=points-center
         occupied|=(local[:,0]**2+local[:,2]**2<=radius**2)&(np.abs(local[:,1])<=half)
-    return valid & ~occupied
+    valid[selected]&=~occupied
+    return valid
 
 
 def transform_cloud(msg, target_from_lidar, self_filter=None, filter_from_lidar=None):
