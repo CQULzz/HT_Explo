@@ -1,0 +1,112 @@
+{
+  "scope": "New full208-frame offline experiment; same frozen C++ binaries as previous round; no hardware/simulation/control",
+  "runtime_source_commit": "a33f78ad39fe27c8a80290060f734401d3713f32",
+  "runtime_published_commit": "59179d2f3f173355379d7d4badbd8c6db9055b9e",
+  "checkout_commit": "9d0ec30475346d4d48b568a3fda76c137bc991f2",
+  "recorded_frames": 208,
+  "source_span_s": 207.587430954,
+  "groups": {
+    "recorded": {
+      "queries": 1664,
+      "before_reached": 0,
+      "after_reached": 0,
+      "before_termination": {
+        "INVALID_START": 1664
+      },
+      "after_termination": {
+        "INVALID_START": 1664
+      },
+      "after_start_support": {
+        "UNKNOWN": 96,
+        "BLOCKED": 1568
+      }
+    },
+    "counterfactual_heading": {
+      "queries": 344,
+      "before_reached": 0,
+      "after_reached": 0,
+      "before_termination": {
+        "INVALID_START": 344
+      },
+      "after_termination": {
+        "INVALID_START": 344
+      },
+      "after_start_support": {
+        "UNKNOWN": 24,
+        "BLOCKED": 320
+      }
+    },
+    "synthetic": {
+      "queries": 3,
+      "before_reached": 1,
+      "after_reached": 2,
+      "before_termination": {
+        "EXHAUSTED": 1,
+        "REACHED": 1,
+        "INVALID_START": 1
+      },
+      "after_termination": {
+        "REACHED": 2,
+        "INVALID_START": 1
+      },
+      "after_start_support": {
+        "KNOWN": 2,
+        "BLOCKED": 1
+      }
+    }
+  },
+  "recorded_start_counts_by_frame": {
+    "UNKNOWN": 12,
+    "BLOCKED": 196
+  },
+  "all_success_paths_rechecked": true,
+  "source_stamps_preserved": true,
+  "actual_cpp_and_input_hashes_verified": true,
+  "same_frozen_binaries_as_previous_round": true,
+  "parameters": {
+    "ht_enabled": true,
+    "ht_directions_calibrated": true,
+    "ht_exploration_mode": "tare_waypoint",
+    "ht_score_semantics": "configuration",
+    "ht_unknown_policy": "strict",
+    "ht_min_probability": 0.5,
+    "ht_validity_radius": 0.6,
+    "ht_map_timeout": 1,
+    "ht_startup_radius": 0,
+    "ht_startup_duration": 30,
+    "ht_require_reversible_motion": false,
+    "ht_heading_offset": 0,
+    "ht_channel_order": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "ht_sample_step": 0.02,
+    "ht_lookahead_distance": 2,
+    "ht_waypoint_reached_distance": 0.3,
+    "xytheta_cell": 0.3,
+    "xytheta_headings": 32,
+    "xytheta_turn_angles_deg": [
+      11.25,
+      22.5
+    ],
+    "xytheta_drive_step": 0.4,
+    "forward_speed": 0.5,
+    "reverse_speed": 0.25,
+    "max_yaw_rate": 0.8,
+    "xytheta_goal_radius": 0.35,
+    "xytheta_max_radius": 7,
+    "xytheta_max_expansions": 8000,
+    "xytheta_search_seconds": 0.15,
+    "try_direct_connection": true,
+    "startup_prior_initialized": false,
+    "publish_permission": false
+  },
+  "counterfactual_limit": "Initial headings are hypothetical, not rotations executed from recorded yaw; exclude from recorded navigation success",
+  "freshness_limit": "Clock frozen at source map stamp; no live age/network/tracking test"
+}
