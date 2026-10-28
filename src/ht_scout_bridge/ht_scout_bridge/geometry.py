@@ -84,7 +84,12 @@ def convert_reference(world_from_source, source_from_poi, poi_from_base,
 
 
 def self_filter_keep_mask(xyz, self_filter=None, filter_from_lidar=None):
-    """Remove measured vehicle geometry, never the whole nearby ground box."""
+    """Remove geometry, with optional XY-only dilation for explicit trials.
+
+    horizontal_padding_m is additional to dimensions already in the profile.
+    Dilating wheel cylinders in X/Y preserves their original vertical bounds;
+    increasing the radius instead would also remove more nearby ground.
+    """
     points=np.asarray(xyz,float)
     if points.ndim!=2 or points.shape[1]!=3:raise ValueError('Expected Nx3 points')
     valid=np.isfinite(points).all(axis=1)
@@ -95,6 +100,9 @@ def self_filter_keep_mask(xyz, self_filter=None, filter_from_lidar=None):
         if lo.shape!=(3,) or hi.shape!=(3,) or not np.isfinite([lo,hi]).all() or np.any(lo>=hi):
             raise ValueError('Invalid source-frame self filter')
         return valid & ~((points>=lo).all(axis=1)&(points<=hi).all(axis=1))
+    padding=float(self_filter.get('horizontal_padding_m',0.))
+    if not math.isfinite(padding) or padding<0:
+        raise ValueError('horizontal_padding_m must be finite and nonnegative')
     if self_filter.get('frame')!='base_link' or filter_from_lidar is None:
         raise ValueError('Body geometry requires calibrated base_link-from-lidar transform')
     t=validate_transform(filter_from_lidar)
@@ -105,6 +113,7 @@ def self_filter_keep_mask(xyz, self_filter=None, filter_from_lidar=None):
         lo=np.asarray(box['min_xyz'],float);hi=np.asarray(box['max_xyz'],float)
         if lo.shape!=(3,) or hi.shape!=(3,) or not np.isfinite([lo,hi]).all() or np.any(lo>=hi):
             raise ValueError('Invalid body box')
+        extent=np.array([padding,padding,0.]);lo=lo-extent;hi=hi+extent
         boxes.append((lo,hi));lower=np.minimum(lower,lo);upper=np.maximum(upper,hi)
     for cylinder in self_filter.get('cylinders',[]):
         center=np.asarray(cylinder['center_xyz'],float)
@@ -113,7 +122,7 @@ def self_filter_keep_mask(xyz, self_filter=None, filter_from_lidar=None):
                 or not math.isfinite(radius) or not math.isfinite(half) or min(radius,half)<=0):
             raise ValueError('Invalid wheel cylinder')
         cylinders.append((center,radius,half))
-        extent=np.array([radius,half,radius]);lower=np.minimum(lower,center-extent);upper=np.maximum(upper,center+extent)
+        extent=np.array([radius+padding,half+padding,radius]);lower=np.minimum(lower,center-extent);upper=np.maximum(upper,center+extent)
     # Most scan returns are metres outside the vehicle. Test detailed geometry
     # only inside its exact union AABB; this cannot remove a new point or miss
     # a box/cylinder relative to the unaccelerated union.
@@ -122,7 +131,9 @@ def self_filter_keep_mask(xyz, self_filter=None, filter_from_lidar=None):
     for lo,hi in boxes:occupied|=(points>=lo).all(axis=1)&(points<=hi).all(axis=1)
     for center,radius,half in cylinders:
         local=points-center
-        occupied|=(local[:,0]**2+local[:,2]**2<=radius**2)&(np.abs(local[:,1])<=half)
+        # Exact horizontal rectangular dilation of a Y-axis cylinder.
+        radial_x=np.maximum(np.abs(local[:,0])-padding,0.)
+        occupied|=(radial_x**2+local[:,2]**2<=radius**2)&(np.abs(local[:,1])<=half+padding)
     valid[selected]&=~occupied
     return valid
 

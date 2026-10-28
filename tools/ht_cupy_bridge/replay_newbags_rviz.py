@@ -64,7 +64,11 @@ def main():
     p.add_argument('--bag',type=Path,required=True)
     p.add_argument('--output',type=Path,required=True)
     p.add_argument('--cupy-package',type=Path,required=True)
+    p.add_argument('--self-filter-horizontal-padding-m',type=float,default=0.,
+        help='Extra XY-only dilation of each physical primitive; offline experiment, default unchanged')
     a=p.parse_args();a.output.mkdir(parents=True,exist_ok=False)
+    if not math.isfinite(a.self_filter_horizontal_padding_m) or a.self_filter_horizontal_padding_m<0:
+        p.error('self-filter-horizontal-padding-m must be finite and nonnegative')
     (a.output/'frames').mkdir()
     databases=sorted(a.bag.glob('*.db3'))
     assert len(databases)==1, 'Explicit single-file bag expected'
@@ -87,6 +91,9 @@ def main():
                 else:buf.set_transform(t,'recorded')
                 tf_edges[t.header.frame_id+' -> '+t.child_frame_id]=matrix(t).tolist()
     profile,b,l=load_calibration(ROOT/'src/ht_scout_bridge/config/scout_extrinsics.yaml')
+    from copy import deepcopy
+    baseline_filter=deepcopy(profile['lidar_self_filter'])
+    profile['lidar_self_filter']['horizontal_padding_m']=a.self_filter_horizontal_padding_m
     expected=np.linalg.inv(b)@l
     recorded=matrix(buf.lookup_transform('scout_chassis_link','rslidar',Time()))
     assert np.allclose(recorded,expected,atol=1e-7), (recorded,expected)
@@ -108,9 +115,11 @@ def main():
         'integration':'all scans with exact-time TF, no latest-pose fallback',
         'ht_output_period_s':.5,'history_initialization':'empty per bag',
         'drift_compensation':False,'overlap_clearance':False,
+        'self_filter_horizontal_padding_m':a.self_filter_horizontal_padding_m,
+        'self_filter_vertical_bounds_unchanged':True,
         'parameter_limit':'Offline drift/overlap disabled as in preceding stable experiment; not full online launch',
         'sources':{}}
-    for f in [Path(__file__),ROOT/'tools/ht_cupy_bridge/cupy_to_ht.py',ROOT/'tools/ht_cupy_bridge/historical_elevation.py',ROOT/'src/ht_scout_bridge/config/scout_extrinsics.yaml']:
+    for f in [Path(__file__),ROOT/'tools/ht_cupy_bridge/cupy_to_ht.py',ROOT/'tools/ht_cupy_bridge/historical_elevation.py',ROOT/'src/ht_scout_bridge/config/scout_extrinsics.yaml',ROOT/'src/ht_scout_bridge/ht_scout_bridge/geometry.py']:
         freeze['sources'][str(f)]=hashlib.sha256(f.read_bytes()).hexdigest()
     (a.output/'FREEZE.json').write_text(json.dumps(freeze,indent=2)+'\n')
     rows=[];scans=[];last=None;next_map=None;first=None
@@ -128,12 +137,14 @@ def main():
                 row.update(status='SKIPPED_NONMONOTONIC_SOURCE_STAMP');scans.append(row);continue
             xyz=read_points_numpy(m,field_names=('x','y','z'),skip_nans=False).reshape(-1,3)
             keep=self_filter_keep_mask(xyz,profile['lidar_self_filter'],recorded)
+            old_keep=self_filter_keep_mask(xyz,baseline_filter,recorded)
+            assert not np.any(keep&~old_keep)
             begun=time.perf_counter();mapping.move_to(vehicle[:3,3],vehicle[:3,:3])
             if last is not None:
                 param.time_interval=(ns-last)/1e9;mapping.update_time();mapping.update_variance()
             mapping.input_pointcloud(xyz[keep].copy(),['x','y','z'],sensor[:3,:3].copy(),sensor[:3,3].copy(),0.,0.,observation_stamp=ns/1e9)
             cp.cuda.get_current_stream().synchronize()
-            row.update(status='INTEGRATED',kept_points=int(keep.sum()),raw_points=len(xyz),integration_s=time.perf_counter()-begun)
+            row.update(status='INTEGRATED',kept_points=int(keep.sum()),raw_points=len(xyz),extra_removed_points=int((old_keep&~keep).sum()),integration_s=time.perf_counter()-begun)
             scans.append(row);last=ns;first=ns if first is None else first
             next_map=ns if next_map is None else next_map
             if ns < next_map:continue
