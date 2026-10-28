@@ -1,0 +1,34 @@
+{
+  "schema": 1,
+  "base_stage": "cupy_ht_mapping.patch",
+  "candidate_stage": "deterministic_fusion.patch",
+  "upstream_base": "88f4c0c2eb3542faeb7bd8fa9df2f18bd25eed91",
+  "files": [
+    {
+      "file": "elevation_mapping_cupy/script/elevation_mapping_cupy/elevation_mapping.py",
+      "before_sha256": "4339f73035bfed02d9855b97792cb8b4f5d106a09beac6e679740bb8cd44d6ad",
+      "after_sha256": "f66637c47a73b95a41606f66a99ff5d033ad1eaed497546547f67d9107d7d66e"
+    },
+    {
+      "file": "elevation_mapping_cupy/script/elevation_mapping_cupy/parameter.py",
+      "before_sha256": "2a0711ef0a943f5ba314467d90d703a6a3afec1f3839eea1266598da49e98abe",
+      "after_sha256": "6fcdc153f7bb616eea91bba38f08be3bc76acd0f15fea34d92d6194e66a29dbd"
+    },
+    {
+      "file": "elevation_mapping_cupy/script/elevation_mapping_cupy/deterministic_fusion.py",
+      "before_sha256": null,
+      "after_sha256": "df7e7e71460a836f8f0361442058586f1fc6e4e87087754013e776d8531bd0bb"
+    },
+    {
+      "file": "elevation_mapping_cupy/script/elevation_mapping_cupy/tests/test_deterministic_fusion.py",
+      "before_sha256": null,
+      "after_sha256": "c083a292345e86bd89d88d03cd1508c2366acf76460883ab6da4863647faac5f"
+    }
+  ],
+  "defaults": "Legacy remains available; real mapper profile enables deterministic fusion explicitly",
+  "semantic_changes": [
+    "Snapshot acceptance and separately committed ray cleanup",
+    "Stable FP64 sums in original point order, FP32 geometry instead of legacy implicit half",
+    "Drift compensation uses stable ordered residual sums"
+  ]
+}
