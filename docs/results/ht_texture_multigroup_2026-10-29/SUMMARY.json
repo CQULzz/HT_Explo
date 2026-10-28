@@ -1,0 +1,875 @@
+{
+  "scope": "Conditional descriptions of paired overlapping windows from2real clips; no physical traversability ground truth or independent-trial rates",
+  "main": {
+    "samples": 640,
+    "materially_changed": 139,
+    "residual_dominant_among_changed": 139,
+    "plane_dominant_among_changed": 0,
+    "mixed_among_changed": 0,
+    "large_interaction_among_changed": 0,
+    "median_abs_delta": 0.01455213874578476,
+    "median_residual_effect": 0.014537723734974861,
+    "median_plane_effect": 0.00020227371715009212,
+    "alpha_nonmonotonic_rise_samples": 36,
+    "actual_outcomes": {
+      "allgreen_to_allgreen": 303,
+      "allred_to_allred": 93,
+      "mixed": 238,
+      "allred_to_allgreen": 5,
+      "allgreen_to_allred": 1
+    }
+  },
+  "controls": {
+    "samples": 192,
+    "materially_changed": 73,
+    "residual_dominant_among_changed": 73,
+    "plane_dominant_among_changed": 0,
+    "mixed_among_changed": 0,
+    "large_interaction_among_changed": 0,
+    "median_abs_delta": 0.01689939945936203,
+    "median_residual_effect": 0.016947338357567787,
+    "median_plane_effect": 0.00037433364195749164,
+    "alpha_nonmonotonic_rise_samples": 25,
+    "actual_outcomes": {
+      "allgreen_to_allgreen": 64,
+      "allred_to_allred": 64,
+      "allgreen_to_allred": 32,
+      "allred_to_allgreen": 32
+    }
+  },
+  "by_dataset": {
+    "original_stationary": {
+      "main": {
+        "samples": 128,
+        "materially_changed": 5,
+        "residual_dominant_among_changed": 5,
+        "plane_dominant_among_changed": 0,
+        "mixed_among_changed": 0,
+        "large_interaction_among_changed": 0,
+        "median_abs_delta": 0.00043481215834617615,
+        "median_residual_effect": 0.0004398066084831953,
+        "median_plane_effect": 8.786460966803133e-06,
+        "alpha_nonmonotonic_rise_samples": 8,
+        "actual_outcomes": {
+          "allgreen_to_allgreen": 64,
+          "allred_to_allred": 20,
+          "mixed": 44
+        }
+      },
+      "controls": {
+        "samples": 32,
+        "materially_changed": 0,
+        "residual_dominant_among_changed": 0,
+        "plane_dominant_among_changed": 0,
+        "mixed_among_changed": 0,
+        "large_interaction_among_changed": 0,
+        "median_abs_delta": 0.0004893355071544647,
+        "median_residual_effect": 0.0004953052848577499,
+        "median_plane_effect": 8.13603401184082e-06,
+        "alpha_nonmonotonic_rise_samples": 9,
+        "actual_outcomes": {
+          "allgreen_to_allgreen": 16,
+          "allred_to_allred": 16
+        }
+      },
+      "strata": {
+        "high_coverage_low_relief": {
+          "samples": 0,
+          "materially_changed": 0,
+          "residual_dominant_among_changed": 0,
+          "plane_dominant_among_changed": 0,
+          "mixed_among_changed": 0,
+          "large_interaction_among_changed": 0,
+          "median_abs_delta": null,
+          "median_residual_effect": null,
+          "median_plane_effect": null,
+          "alpha_nonmonotonic_rise_samples": 0,
+          "actual_outcomes": {}
+        },
+        "partial_coverage_low_relief": {
+          "samples": 64,
+          "materially_changed": 0,
+          "residual_dominant_among_changed": 0,
+          "plane_dominant_among_changed": 0,
+          "mixed_among_changed": 0,
+          "large_interaction_among_changed": 0,
+          "median_abs_delta": 7.536634802818298e-05,
+          "median_residual_effect": 7.465668022632599e-05,
+          "median_plane_effect": 1.0728836059570312e-06,
+          "alpha_nonmonotonic_rise_samples": 0,
+          "actual_outcomes": {
+            "allgreen_to_allgreen": 64
+          }
+        },
+        "high_relief_or_occupied_context": {
+          "samples": 64,
+          "materially_changed": 5,
+          "residual_dominant_among_changed": 5,
+          "plane_dominant_among_changed": 0,
+          "mixed_among_changed": 0,
+          "large_interaction_among_changed": 0,
+          "median_abs_delta": 0.003570174565538764,
+          "median_residual_effect": 0.003582454053685069,
+          "median_plane_effect": 6.517680594697595e-05,
+          "alpha_nonmonotonic_rise_samples": 8,
+          "actual_outcomes": {
+            "allred_to_allred": 20,
+            "mixed": 44
+          }
+        }
+      }
+    },
+    "plus20_stationary": {
+      "main": {
+        "samples": 128,
+        "materially_changed": 6,
+        "residual_dominant_among_changed": 6,
+        "plane_dominant_among_changed": 0,
+        "mixed_among_changed": 0,
+        "large_interaction_among_changed": 0,
+        "median_abs_delta": 0.00024155701976269484,
+        "median_residual_effect": 0.00024687565746717155,
+        "median_plane_effect": 4.796496796188876e-06,
+        "alpha_nonmonotonic_rise_samples": 16,
+        "actual_outcomes": {
+          "allgreen_to_allgreen": 64,
+          "mixed": 43,
+          "allred_to_allred": 21
+        }
+      },
+      "controls": {
+        "samples": 32,
+        "materially_changed": 0,
+        "residual_dominant_among_changed": 0,
+        "plane_dominant_among_changed": 0,
+        "mixed_among_changed": 0,
+        "large_interaction_among_changed": 0,
+        "median_abs_delta": 0.0006789788603782654,
+        "median_residual_effect": 0.0006804317235946655,
+        "median_plane_effect": 1.7259269952774048e-05,
+        "alpha_nonmonotonic_rise_samples": 13,
+        "actual_outcomes": {
+          "allgreen_to_allgreen": 16,
+          "allred_to_allred": 16
+        }
+      },
+      "strata": {
+        "high_coverage_low_relief": {
+          "samples": 0,
+          "materially_changed": 0,
+          "residual_dominant_among_changed": 0,
+          "plane_dominant_among_changed": 0,
+          "mixed_among_changed": 0,
+          "large_interaction_among_changed": 0,
+          "median_abs_delta": null,
+          "median_residual_effect": null,
+          "median_plane_effect": null,
+          "alpha_nonmonotonic_rise_samples": 0,
+          "actual_outcomes": {}
+        },
+        "partial_coverage_low_relief": {
+          "samples": 64,
+          "materially_changed": 0,
+          "residual_dominant_among_changed": 0,
+          "plane_dominant_among_changed": 0,
+          "mixed_among_changed": 0,
+          "large_interaction_among_changed": 0,
+          "median_abs_delta": 9.826570749282837e-05,
+          "median_residual_effect": 9.900331497192383e-05,
+          "median_plane_effect": 1.5981495380401611e-06,
+          "alpha_nonmonotonic_rise_samples": 0,
+          "actual_outcomes": {
+            "allgreen_to_allgreen": 64
+          }
+        },
+        "high_relief_or_occupied_context": {
+          "samples": 64,
+          "materially_changed": 6,
+          "residual_dominant_among_changed": 6,
+          "plane_dominant_among_changed": 0,
+          "mixed_among_changed": 0,
+          "large_interaction_among_changed": 0,
+          "median_abs_delta": 0.0007443241775035858,
+          "median_residual_effect": 0.0007386860088445246,
+          "median_plane_effect": 1.721782609820366e-05,
+          "alpha_nonmonotonic_rise_samples": 16,
+          "actual_outcomes": {
+            "mixed": 43,
+            "allred_to_allred": 21
+          }
+        }
+      }
+    },
+    "original_moving": {
+      "main": {
+        "samples": 192,
+        "materially_changed": 73,
+        "residual_dominant_among_changed": 73,
+        "plane_dominant_among_changed": 0,
+        "mixed_among_changed": 0,
+        "large_interaction_among_changed": 0,
+        "median_abs_delta": 0.05911760404706001,
+        "median_residual_effect": 0.05884365737438202,
+        "median_plane_effect": 0.0005905875004827976,
+        "alpha_nonmonotonic_rise_samples": 7,
+        "actual_outcomes": {
+          "allgreen_to_allgreen": 78,
+          "mixed": 85,
+          "allred_to_allgreen": 3,
+          "allred_to_allred": 26
+        }
+      },
+      "controls": {
+        "samples": 64,
+        "materially_changed": 36,
+        "residual_dominant_among_changed": 36,
+        "plane_dominant_among_changed": 0,
+        "mixed_among_changed": 0,
+        "large_interaction_among_changed": 0,
+        "median_abs_delta": 0.3377366065979004,
+        "median_residual_effect": 0.33894437551498413,
+        "median_plane_effect": 0.0008080315310508013,
+        "alpha_nonmonotonic_rise_samples": 1,
+        "actual_outcomes": {
+          "allgreen_to_allgreen": 16,
+          "allred_to_allred": 16,
+          "allgreen_to_allred": 16,
+          "allred_to_allgreen": 16
+        }
+      },
+      "strata": {
+        "high_coverage_low_relief": {
+          "samples": 64,
+          "materially_changed": 25,
+          "residual_dominant_among_changed": 25,
+          "plane_dominant_among_changed": 0,
+          "mixed_among_changed": 0,
+          "large_interaction_among_changed": 0,
+          "median_abs_delta": 0.05911760404706001,
+          "median_residual_effect": 0.05884365737438202,
+          "median_plane_effect": 0.0003291536122560501,
+          "alpha_nonmonotonic_rise_samples": 0,
+          "actual_outcomes": {
+            "allgreen_to_allgreen": 43,
+            "mixed": 20,
+            "allred_to_allgreen": 1
+          }
+        },
+        "partial_coverage_low_relief": {
+          "samples": 64,
+          "materially_changed": 35,
+          "residual_dominant_among_changed": 35,
+          "plane_dominant_among_changed": 0,
+          "mixed_among_changed": 0,
+          "large_interaction_among_changed": 0,
+          "median_abs_delta": 0.10515817999839783,
+          "median_residual_effect": 0.104990653693676,
+          "median_plane_effect": 0.0006660809740424156,
+          "alpha_nonmonotonic_rise_samples": 0,
+          "actual_outcomes": {
+            "mixed": 30,
+            "allgreen_to_allgreen": 31,
+            "allred_to_allgreen": 2,
+            "allred_to_allred": 1
+          }
+        },
+        "high_relief_or_occupied_context": {
+          "samples": 64,
+          "materially_changed": 13,
+          "residual_dominant_among_changed": 13,
+          "plane_dominant_among_changed": 0,
+          "mixed_among_changed": 0,
+          "large_interaction_among_changed": 0,
+          "median_abs_delta": 0.027519751340150833,
+          "median_residual_effect": 0.02753009833395481,
+          "median_plane_effect": 0.0007275728275999427,
+          "alpha_nonmonotonic_rise_samples": 7,
+          "actual_outcomes": {
+            "allred_to_allred": 25,
+            "mixed": 35,
+            "allgreen_to_allgreen": 4
+          }
+        }
+      }
+    },
+    "plus20_moving": {
+      "main": {
+        "samples": 192,
+        "materially_changed": 55,
+        "residual_dominant_among_changed": 55,
+        "plane_dominant_among_changed": 0,
+        "mixed_among_changed": 0,
+        "large_interaction_among_changed": 0,
+        "median_abs_delta": 0.04399397224187851,
+        "median_residual_effect": 0.04312089458107948,
+        "median_plane_effect": 0.0005492530763149261,
+        "alpha_nonmonotonic_rise_samples": 5,
+        "actual_outcomes": {
+          "allgreen_to_allgreen": 97,
+          "mixed": 66,
+          "allgreen_to_allred": 1,
+          "allred_to_allgreen": 2,
+          "allred_to_allred": 26
+        }
+      },
+      "controls": {
+        "samples": 64,
+        "materially_changed": 37,
+        "residual_dominant_among_changed": 37,
+        "plane_dominant_among_changed": 0,
+        "mixed_among_changed": 0,
+        "large_interaction_among_changed": 0,
+        "median_abs_delta": 0.31528612971305847,
+        "median_residual_effect": 0.3157001733779907,
+        "median_plane_effect": 0.000987292267382145,
+        "alpha_nonmonotonic_rise_samples": 2,
+        "actual_outcomes": {
+          "allgreen_to_allgreen": 16,
+          "allred_to_allred": 16,
+          "allgreen_to_allred": 16,
+          "allred_to_allgreen": 16
+        }
+      },
+      "strata": {
+        "high_coverage_low_relief": {
+          "samples": 64,
+          "materially_changed": 17,
+          "residual_dominant_among_changed": 17,
+          "plane_dominant_among_changed": 0,
+          "mixed_among_changed": 0,
+          "large_interaction_among_changed": 0,
+          "median_abs_delta": 0.036325231194496155,
+          "median_residual_effect": 0.03616107255220413,
+          "median_plane_effect": 0.0002800263464450836,
+          "alpha_nonmonotonic_rise_samples": 0,
+          "actual_outcomes": {
+            "allgreen_to_allgreen": 54,
+            "mixed": 9,
+            "allgreen_to_allred": 1
+          }
+        },
+        "partial_coverage_low_relief": {
+          "samples": 64,
+          "materially_changed": 29,
+          "residual_dominant_among_changed": 29,
+          "plane_dominant_among_changed": 0,
+          "mixed_among_changed": 0,
+          "large_interaction_among_changed": 0,
+          "median_abs_delta": 0.08860378712415695,
+          "median_residual_effect": 0.08818896114826202,
+          "median_plane_effect": 0.0006782030686736107,
+          "alpha_nonmonotonic_rise_samples": 0,
+          "actual_outcomes": {
+            "allgreen_to_allgreen": 39,
+            "allred_to_allgreen": 2,
+            "mixed": 23
+          }
+        },
+        "high_relief_or_occupied_context": {
+          "samples": 64,
+          "materially_changed": 9,
+          "residual_dominant_among_changed": 9,
+          "plane_dominant_among_changed": 0,
+          "mixed_among_changed": 0,
+          "large_interaction_among_changed": 0,
+          "median_abs_delta": 0.028229566290974617,
+          "median_residual_effect": 0.02830570749938488,
+          "median_plane_effect": 0.0007612349581904709,
+          "alpha_nonmonotonic_rise_samples": 5,
+          "actual_outcomes": {
+            "mixed": 34,
+            "allred_to_allred": 26,
+            "allgreen_to_allgreen": 4
+          }
+        }
+      }
+    }
+  },
+  "main_by_stratum": {
+    "high_coverage_low_relief": {
+      "samples": 128,
+      "materially_changed": 42,
+      "residual_dominant_among_changed": 42,
+      "plane_dominant_among_changed": 0,
+      "mixed_among_changed": 0,
+      "large_interaction_among_changed": 0,
+      "median_abs_delta": 0.05258365720510483,
+      "median_residual_effect": 0.052740540355443954,
+      "median_plane_effect": 0.00030786730349063873,
+      "alpha_nonmonotonic_rise_samples": 0,
+      "actual_outcomes": {
+        "allgreen_to_allgreen": 97,
+        "mixed": 29,
+        "allred_to_allgreen": 1,
+        "allgreen_to_allred": 1
+      }
+    },
+    "partial_coverage_low_relief": {
+      "samples": 256,
+      "materially_changed": 64,
+      "residual_dominant_among_changed": 64,
+      "plane_dominant_among_changed": 0,
+      "mixed_among_changed": 0,
+      "large_interaction_among_changed": 0,
+      "median_abs_delta": 0.004867155104875565,
+      "median_residual_effect": 0.004925532266497612,
+      "median_plane_effect": 5.311146378517151e-05,
+      "alpha_nonmonotonic_rise_samples": 0,
+      "actual_outcomes": {
+        "allgreen_to_allgreen": 198,
+        "mixed": 53,
+        "allred_to_allgreen": 4,
+        "allred_to_allred": 1
+      }
+    },
+    "high_relief_or_occupied_context": {
+      "samples": 256,
+      "materially_changed": 33,
+      "residual_dominant_among_changed": 33,
+      "plane_dominant_among_changed": 0,
+      "mixed_among_changed": 0,
+      "large_interaction_among_changed": 0,
+      "median_abs_delta": 0.009443387389183044,
+      "median_residual_effect": 0.009264892898499966,
+      "median_plane_effect": 0.00021666468819603324,
+      "alpha_nonmonotonic_rise_samples": 36,
+      "actual_outcomes": {
+        "allred_to_allred": 92,
+        "mixed": 156,
+        "allgreen_to_allgreen": 8
+      }
+    }
+  },
+  "main_by_lag": {
+    "0.5": {
+      "samples": 281,
+      "materially_changed": 36,
+      "residual_dominant_among_changed": 36,
+      "plane_dominant_among_changed": 0,
+      "mixed_among_changed": 0,
+      "large_interaction_among_changed": 0,
+      "median_abs_delta": 0.012030716985464096,
+      "median_residual_effect": 0.011848080903291702,
+      "median_plane_effect": 0.00012539327144622803,
+      "alpha_nonmonotonic_rise_samples": 16,
+      "actual_outcomes": {
+        "allgreen_to_allgreen": 135,
+        "mixed": 105,
+        "allred_to_allred": 41
+      }
+    },
+    "2.5": {
+      "samples": 230,
+      "materially_changed": 65,
+      "residual_dominant_among_changed": 65,
+      "plane_dominant_among_changed": 0,
+      "mixed_among_changed": 0,
+      "large_interaction_among_changed": 0,
+      "median_abs_delta": 0.029405415058135986,
+      "median_residual_effect": 0.02928313985466957,
+      "median_plane_effect": 0.0003622099757194519,
+      "alpha_nonmonotonic_rise_samples": 12,
+      "actual_outcomes": {
+        "allgreen_to_allgreen": 106,
+        "allred_to_allred": 35,
+        "mixed": 84,
+        "allred_to_allgreen": 4,
+        "allgreen_to_allred": 1
+      }
+    },
+    "5.0": {
+      "samples": 129,
+      "materially_changed": 38,
+      "residual_dominant_among_changed": 38,
+      "plane_dominant_among_changed": 0,
+      "mixed_among_changed": 0,
+      "large_interaction_among_changed": 0,
+      "median_abs_delta": 0.009754822589457035,
+      "median_residual_effect": 0.009699687361717224,
+      "median_plane_effect": 0.00019093835726380348,
+      "alpha_nonmonotonic_rise_samples": 8,
+      "actual_outcomes": {
+        "allgreen_to_allgreen": 62,
+        "mixed": 49,
+        "allred_to_allred": 17,
+        "allred_to_allgreen": 1
+      }
+    }
+  },
+  "control_groups": {
+    "allgreen_to_allgreen": {
+      "samples": 64,
+      "materially_changed": 9,
+      "residual_dominant_among_changed": 9,
+      "plane_dominant_among_changed": 0,
+      "mixed_among_changed": 0,
+      "large_interaction_among_changed": 0,
+      "median_abs_delta": 0.0014709867537021637,
+      "median_residual_effect": 0.0014861691743135452,
+      "median_plane_effect": 2.3663043975830078e-05,
+      "alpha_nonmonotonic_rise_samples": 0,
+      "actual_outcomes": {
+        "allgreen_to_allgreen": 64
+      }
+    },
+    "allred_to_allred": {
+      "samples": 64,
+      "materially_changed": 0,
+      "residual_dominant_among_changed": 0,
+      "plane_dominant_among_changed": 0,
+      "mixed_among_changed": 0,
+      "large_interaction_among_changed": 0,
+      "median_abs_delta": 0.006866847164928913,
+      "median_residual_effect": 0.006679922342300415,
+      "median_plane_effect": 0.0002026945585384965,
+      "alpha_nonmonotonic_rise_samples": 25,
+      "actual_outcomes": {
+        "allred_to_allred": 64
+      }
+    },
+    "allgreen_to_allred": {
+      "samples": 32,
+      "materially_changed": 32,
+      "residual_dominant_among_changed": 32,
+      "plane_dominant_among_changed": 0,
+      "mixed_among_changed": 0,
+      "large_interaction_among_changed": 0,
+      "median_abs_delta": 0.6098076105117798,
+      "median_residual_effect": 0.6102957725524902,
+      "median_plane_effect": 0.0012836996465921402,
+      "alpha_nonmonotonic_rise_samples": 0,
+      "actual_outcomes": {
+        "allgreen_to_allred": 32
+      }
+    },
+    "allred_to_allgreen": {
+      "samples": 32,
+      "materially_changed": 32,
+      "residual_dominant_among_changed": 32,
+      "plane_dominant_among_changed": 0,
+      "mixed_among_changed": 0,
+      "large_interaction_among_changed": 0,
+      "median_abs_delta": 0.6463108658790588,
+      "median_residual_effect": 0.645847499370575,
+      "median_plane_effect": 0.0014580884017050266,
+      "alpha_nonmonotonic_rise_samples": 0,
+      "actual_outcomes": {
+        "allred_to_allgreen": 32
+      }
+    }
+  },
+  "noise_stress": [
+    {
+      "dataset": "original_moving",
+      "base": "actual_new",
+      "sigma_m": 0,
+      "forwards": 80,
+      "distinct_base_patches": 16,
+      "all8_above_half_fraction": 0.875,
+      "mean8_median": 0.9264149069786072,
+      "mean8_p25_p75": [
+        0.8484259694814682,
+        0.9689141809940338
+      ]
+    },
+    {
+      "dataset": "original_moving",
+      "base": "actual_new",
+      "sigma_m": 0.005,
+      "forwards": 80,
+      "distinct_base_patches": 16,
+      "all8_above_half_fraction": 0.8,
+      "mean8_median": 0.7712829113006592,
+      "mean8_p25_p75": [
+        0.6702113598585129,
+        0.8391537368297577
+      ]
+    },
+    {
+      "dataset": "original_moving",
+      "base": "actual_new",
+      "sigma_m": 0.01,
+      "forwards": 80,
+      "distinct_base_patches": 16,
+      "all8_above_half_fraction": 0.0,
+      "mean8_median": 0.34150195121765137,
+      "mean8_p25_p75": [
+        0.3103839159011841,
+        0.3697429373860359
+      ]
+    },
+    {
+      "dataset": "original_moving",
+      "base": "actual_new",
+      "sigma_m": 0.015,
+      "forwards": 80,
+      "distinct_base_patches": 16,
+      "all8_above_half_fraction": 0.0,
+      "mean8_median": 0.1737593710422516,
+      "mean8_p25_p75": [
+        0.16367080062627792,
+        0.18717379122972488
+      ]
+    },
+    {
+      "dataset": "original_moving",
+      "base": "actual_new",
+      "sigma_m": 0.02,
+      "forwards": 80,
+      "distinct_base_patches": 16,
+      "all8_above_half_fraction": 0.0,
+      "mean8_median": 0.10841013491153717,
+      "mean8_p25_p75": [
+        0.10204625315964222,
+        0.11587797291576862
+      ]
+    },
+    {
+      "dataset": "original_moving",
+      "base": "actual_new",
+      "sigma_m": 0.03,
+      "forwards": 80,
+      "distinct_base_patches": 16,
+      "all8_above_half_fraction": 0.0,
+      "mean8_median": 0.061837196350097656,
+      "mean8_p25_p75": [
+        0.056776451878249645,
+        0.06655462458729744
+      ]
+    },
+    {
+      "dataset": "original_moving",
+      "base": "fitted_plane",
+      "sigma_m": 0,
+      "forwards": 80,
+      "distinct_base_patches": 16,
+      "all8_above_half_fraction": 1.0,
+      "mean8_median": 0.9998701810836792,
+      "mean8_p25_p75": [
+        0.9998688399791718,
+        0.9998726397752762
+      ]
+    },
+    {
+      "dataset": "original_moving",
+      "base": "fitted_plane",
+      "sigma_m": 0.005,
+      "forwards": 80,
+      "distinct_base_patches": 16,
+      "all8_above_half_fraction": 1.0,
+      "mean8_median": 0.9157748222351074,
+      "mean8_p25_p75": [
+        0.9078010618686676,
+        0.9230275303125381
+      ]
+    },
+    {
+      "dataset": "original_moving",
+      "base": "fitted_plane",
+      "sigma_m": 0.01,
+      "forwards": 80,
+      "distinct_base_patches": 16,
+      "all8_above_half_fraction": 0.0,
+      "mean8_median": 0.4022457003593445,
+      "mean8_p25_p75": [
+        0.3805791437625885,
+        0.42959825694561005
+      ]
+    },
+    {
+      "dataset": "original_moving",
+      "base": "fitted_plane",
+      "sigma_m": 0.015,
+      "forwards": 80,
+      "distinct_base_patches": 16,
+      "all8_above_half_fraction": 0.0,
+      "mean8_median": 0.18824543058872223,
+      "mean8_p25_p75": [
+        0.17848322540521622,
+        0.20119529217481613
+      ]
+    },
+    {
+      "dataset": "original_moving",
+      "base": "fitted_plane",
+      "sigma_m": 0.02,
+      "forwards": 80,
+      "distinct_base_patches": 16,
+      "all8_above_half_fraction": 0.0,
+      "mean8_median": 0.11379486322402954,
+      "mean8_p25_p75": [
+        0.10831302404403687,
+        0.1205513495951891
+      ]
+    },
+    {
+      "dataset": "original_moving",
+      "base": "fitted_plane",
+      "sigma_m": 0.03,
+      "forwards": 80,
+      "distinct_base_patches": 16,
+      "all8_above_half_fraction": 0.0,
+      "mean8_median": 0.06251272559165955,
+      "mean8_p25_p75": [
+        0.05811258312314749,
+        0.06770243681967258
+      ]
+    },
+    {
+      "dataset": "plus20_moving",
+      "base": "actual_new",
+      "sigma_m": 0,
+      "forwards": 80,
+      "distinct_base_patches": 16,
+      "all8_above_half_fraction": 0.9375,
+      "mean8_median": 0.9181029796600342,
+      "mean8_p25_p75": [
+        0.8825962841510773,
+        0.9603908658027649
+      ]
+    },
+    {
+      "dataset": "plus20_moving",
+      "base": "actual_new",
+      "sigma_m": 0.005,
+      "forwards": 80,
+      "distinct_base_patches": 16,
+      "all8_above_half_fraction": 0.825,
+      "mean8_median": 0.7537572383880615,
+      "mean8_p25_p75": [
+        0.6992511451244354,
+        0.8391065299510956
+      ]
+    },
+    {
+      "dataset": "plus20_moving",
+      "base": "actual_new",
+      "sigma_m": 0.01,
+      "forwards": 80,
+      "distinct_base_patches": 16,
+      "all8_above_half_fraction": 0.0,
+      "mean8_median": 0.3355121612548828,
+      "mean8_p25_p75": [
+        0.3071857988834381,
+        0.3634411320090294
+      ]
+    },
+    {
+      "dataset": "plus20_moving",
+      "base": "actual_new",
+      "sigma_m": 0.015,
+      "forwards": 80,
+      "distinct_base_patches": 16,
+      "all8_above_half_fraction": 0.0,
+      "mean8_median": 0.17397914826869965,
+      "mean8_p25_p75": [
+        0.16396771371364594,
+        0.19040809571743011
+      ]
+    },
+    {
+      "dataset": "plus20_moving",
+      "base": "actual_new",
+      "sigma_m": 0.02,
+      "forwards": 80,
+      "distinct_base_patches": 16,
+      "all8_above_half_fraction": 0.0,
+      "mean8_median": 0.11153650283813477,
+      "mean8_p25_p75": [
+        0.10441846400499344,
+        0.11743634939193726
+      ]
+    },
+    {
+      "dataset": "plus20_moving",
+      "base": "actual_new",
+      "sigma_m": 0.03,
+      "forwards": 80,
+      "distinct_base_patches": 16,
+      "all8_above_half_fraction": 0.0,
+      "mean8_median": 0.0632142573595047,
+      "mean8_p25_p75": [
+        0.05939155910164118,
+        0.06778295710682869
+      ]
+    },
+    {
+      "dataset": "plus20_moving",
+      "base": "fitted_plane",
+      "sigma_m": 0,
+      "forwards": 80,
+      "distinct_base_patches": 16,
+      "all8_above_half_fraction": 1.0,
+      "mean8_median": 0.9998713731765747,
+      "mean8_p25_p75": [
+        0.9998635351657867,
+        0.9998743832111359
+      ]
+    },
+    {
+      "dataset": "plus20_moving",
+      "base": "fitted_plane",
+      "sigma_m": 0.005,
+      "forwards": 80,
+      "distinct_base_patches": 16,
+      "all8_above_half_fraction": 1.0,
+      "mean8_median": 0.9164561629295349,
+      "mean8_p25_p75": [
+        0.9095483422279358,
+        0.9236738383769989
+      ]
+    },
+    {
+      "dataset": "plus20_moving",
+      "base": "fitted_plane",
+      "sigma_m": 0.01,
+      "forwards": 80,
+      "distinct_base_patches": 16,
+      "all8_above_half_fraction": 0.0,
+      "mean8_median": 0.4056425988674164,
+      "mean8_p25_p75": [
+        0.3821581155061722,
+        0.4228995144367218
+      ]
+    },
+    {
+      "dataset": "plus20_moving",
+      "base": "fitted_plane",
+      "sigma_m": 0.015,
+      "forwards": 80,
+      "distinct_base_patches": 16,
+      "all8_above_half_fraction": 0.0,
+      "mean8_median": 0.19461160898208618,
+      "mean8_p25_p75": [
+        0.18391937017440796,
+        0.20142384991049767
+      ]
+    },
+    {
+      "dataset": "plus20_moving",
+      "base": "fitted_plane",
+      "sigma_m": 0.02,
+      "forwards": 80,
+      "distinct_base_patches": 16,
+      "all8_above_half_fraction": 0.0,
+      "mean8_median": 0.11680254340171814,
+      "mean8_p25_p75": [
+        0.11122257821261883,
+        0.1235102191567421
+      ]
+    },
+    {
+      "dataset": "plus20_moving",
+      "base": "fitted_plane",
+      "sigma_m": 0.03,
+      "forwards": 80,
+      "distinct_base_patches": 16,
+      "all8_above_half_fraction": 0.0,
+      "mean8_median": 0.06388238817453384,
+      "mean8_p25_p75": [
+        0.060528917238116264,
+        0.06861544400453568
+      ]
+    }
+  ]
+}

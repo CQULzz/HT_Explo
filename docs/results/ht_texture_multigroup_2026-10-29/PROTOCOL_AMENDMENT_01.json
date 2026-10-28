@@ -1,0 +1,25 @@
+{
+  "status": "Exploratory additional control frozen after primary inference, before its own execution; primary sampling/analysis unchanged",
+  "parent_protocol_sha256": "215da727acc2abe8f202332e355cd3d67d281af6fb39351910e432b9c91073d4",
+  "reason": "Actual plane changes may be much smaller than residual changes; factorial dominance alone does not prove intrinsic noise sensitivity or physical error",
+  "sample_ids": "same32 high-coverage low-relief patches chosen in original noise stress",
+  "base": "each recorded after fitted plane",
+  "matched_height_RMS_m": [
+    0,
+    0.005,
+    0.01,
+    0.015,
+    0.02,
+    0.03
+  ],
+  "tilt_directions_deg": [
+    0,
+    45,
+    90,
+    135
+  ],
+  "tilt_normalization": "zero-mean planar ramp, normalized to exact std1 over51x51",
+  "iid_control": "same original5 standardized Gaussian fields, now centered and normalized to exact std1",
+  "spatial_shuffle_control": "five permutations of each measured after residual, preserving its exact values and RMS; no claim physically realistic",
+  "interpretation": "tests spatial organization at equal height variation, not physical ground-truth or vehicle safety"
+}

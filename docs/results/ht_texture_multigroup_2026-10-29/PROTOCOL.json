@@ -1,0 +1,112 @@
+{
+  "status": "Protocol frozen before cohort preparation or model interventions",
+  "question": "Does the previous plane/residual counterfactual result generalize within the available clips, and where does it fail?",
+  "scope": "Offline recorded maps and diagnostic NN inputs only; no production code/model/threshold change, no simulator/hardware/control",
+  "independent_source_bags": 2,
+  "datasets": [
+    "original_stationary",
+    "plus20_stationary",
+    "original_moving",
+    "plus20_moving"
+  ],
+  "filters_are_paired_reprocessings_not_independent_vehicle_trials": true,
+  "sampling": {
+    "seed": 20261029,
+    "world_grid_m": 1.0,
+    "before_frames": "every available source map frame",
+    "target_lags_s": [
+      0.5,
+      2.5,
+      5.0
+    ],
+    "lag_tolerance_s": 0.35,
+    "require_both_contexts_valid_and_center_not_forced_occupied": true,
+    "main_input_strata": {
+      "high_coverage_low_relief": "both observed fractions >=.98, max height span <=.20m, no occupied context in either51patch",
+      "partial_coverage_low_relief": "max height span <=.20m and no occupied context, not high coverage",
+      "high_relief_or_occupied_context": "remaining eligible patches"
+    },
+    "main_cap_per_dataset_per_stratum": 64,
+    "main_selection_does_not_use_output_class_or_delta": true,
+    "additional_output_conditioned_controls_cap": 16,
+    "control_groups": [
+      "allgreen_to_allgreen",
+      "allred_to_allred",
+      "allgreen_to_allred",
+      "allred_to_allgreen"
+    ],
+    "controls_not_pooled_with_main_rates": true,
+    "empty_groups_reported_not_filled_by_handpicked_cases": true,
+    "previous_handpicked_xy_excluded_by_grid": "(-.48,12.24) is not on1m world sampling grid"
+  },
+  "decomposition": "H=P+R with OLS plane over51x51; residual includes real microterrain and errors, not assumed noise",
+  "primary_factorial": [
+    "f00=F(Pa+Ra)",
+    "f01=F(Pa+Rb)",
+    "f10=F(Pb+Ra)",
+    "f11=F(Pb+Rb)"
+  ],
+  "effects": {
+    "residual": ".5*((f01-f00)+(f11-f10))",
+    "plane": ".5*((f10-f00)+(f11-f01))",
+    "interaction": "f11-f10-f01+f00",
+    "primary_direction_summary": "mean absolute eight-channel effect; signed effects retained",
+    "material_actual_change": "mean(abs(f11-f00))>=.10",
+    "residual_dominant": "mean(abs(E_R))>=2*mean(abs(E_P)), among materially changed main samples",
+    "large_interaction": "mean(abs(I))>=.10; disclose separately"
+  },
+  "additional_controls": [
+    "identity reconstruction",
+    "old residual scaled to new RMS at new plane",
+    "new residual scaled to old RMS at new plane",
+    "restore residual only where both frames observed",
+    "restore residual only on new nearest-padding cells"
+  ],
+  "residual_amplitude_alpha": [
+    0,
+    0.25,
+    0.5,
+    0.75,
+    1,
+    1.25,
+    1.5
+  ],
+  "noise_stress": {
+    "main_high_coverage_low_relief_cap_per_dataset": 16,
+    "base_inputs": [
+      "actual_new_patch",
+      "its_fitted_plane"
+    ],
+    "iid_sigma_m": [
+      0,
+      0.005,
+      0.01,
+      0.015,
+      0.02,
+      0.03
+    ],
+    "seeds": [
+      1701,
+      1702,
+      1703,
+      1704,
+      1705
+    ],
+    "counts_not_independent_vehicle_trials": true,
+    "purpose": "controlled sensitivity, not proof real recorded errors are IID"
+  },
+  "validation": {
+    "fullmap_to_patch_probability_abs_tolerance": 0.0001,
+    "duplicate_subset_repeat_count": 32,
+    "frozen_checkpoint_sha256": "0a79b865d012aa633fbb9913fc4031908dfe188ec9e161ef5a3fbb34a3f8c4d4",
+    "TF32": false
+  },
+  "reporting": [
+    "all eligible/selected counts by stratum, clip/filter/lag",
+    "effect distributions plus individual traces, no only-success examples",
+    "input masks, full eight outputs, input hashes and selection manifest",
+    "counterexamples and sparse/missing groups",
+    "spatial/time overlap acknowledged; no iid confidence claims",
+    "no physical ground truth or real-world failure-rate calibration inferred"
+  ]
+}
