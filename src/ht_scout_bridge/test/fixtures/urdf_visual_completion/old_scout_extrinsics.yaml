@@ -1,0 +1,184 @@
+# Extrinsics preserved; self filter follows physical geometry in base_link.
+source:
+  repository: CQULzz/eletranskit_scout
+  commit: cf0b73d7d01b4b6a2718c7ff3124f4b7a3368c36
+  files:
+  - src/ele_scout_kit/urdf/scout_sensor_rack.urdf.xacro
+  - src/ele_scout_kit/launch/real_car.launch.py
+  user_confirmed_on: '2026-10-22'
+  poi_coincident_with_fixposition_link_confirmed: true
+  rack_contact_height_confirmed: true
+frames:
+  world: map
+  source_world: FP_ENU0
+  poi: FP_POI
+  vehicle: base_link
+  lidar: rslidar
+transforms:
+  poi_to_base_footprint:
+    xyz:
+    - -0.2005158179045505
+    - 0.0
+    - -0.65899
+    rpy:
+    - 0.0
+    - 0.0
+    - 0.0
+  base_footprint_to_base_link:
+    xyz:
+    - 0.0
+    - 0.0
+    - 0.23479
+    rpy:
+    - 0.0
+    - 0.0
+    - 0.0
+  base_link_to_sensor_kit:
+    xyz:
+    - 0.1725
+    - 0.0
+    - 0.1162
+    rpy:
+    - 0.0
+    - 0.0
+    - 0.0
+  sensor_kit_to_helios:
+    xyz:
+    - 0.0
+    - 0.0
+    - 0.434
+    rpy:
+    - 0.0
+    - 0.0
+    - 0.0
+  helios_to_lidar:
+    xyz:
+    - 0.0
+    - 0.0
+    - 0.0
+    rpy:
+    - 0.0
+    - 0.0
+    - 0.0
+lidar_self_filter:
+  enabled: true
+  frame: base_link
+  source: 'CQULzz/eletranskit_scout@cf0b73d: scout_sensor_rack.urdf.xacro collision
+    geometry and sensor STL bounds'
+  padding_m: 0.02
+  padding_status: engineering margin, not a separately measured calibration
+  boxes:
+  - name: chassis_collision
+    min_xyz:
+    - -0.48250000000000004
+    - -0.21
+    - -0.125
+    max_xyz:
+    - 0.48250000000000004
+    - 0.21
+    - 0.125
+  - name: 0_frame.STL
+    min_xyz:
+    - -0.41981307029724124
+    - -0.3695000004768372
+    - 0.09619999999999983
+    max_xyz:
+    - 0.3450000035762787
+    - 0.3695000004768372
+    - 0.5701999854564667
+  - name: 1_rs_helios.STL
+    min_xyz:
+    - 0.10250000298023222
+    - -0.06995118454098702
+    - 0.4367000116825104
+    max_xyz:
+    - 0.24250000074505804
+    - 0.06995118826627732
+    - 0.6702000536441803
+  - name: 2_fixposition_link.STL
+    min_xyz:
+    - 0.09751582106359664
+    - -0.0768000003695488
+    - 0.4042000033460963
+    max_xyz:
+    - 0.2675158162952251
+    - 0.0768000003695488
+    - 0.47419997511506085
+  - name: 3_gnss_antenna.STL
+    min_xyz:
+    - 0.1144011804461479
+    - -0.3680988195538521
+    - 0.3843999992877245
+    max_xyz:
+    - 0.23059881955385206
+    - -0.2519011804461479
+    - 0.4845000015020371
+  - name: 4_gnss_antenna.STL
+    min_xyz:
+    - 0.1144011804461479
+    - 0.2519011804461479
+    - 0.3843999992877245
+    max_xyz:
+    - 0.23059881955385206
+    - 0.3680988195538521
+    - 0.4845000015020371
+  - name: 5_imu_tm431.STL
+    min_xyz:
+    - 0.1371230000257492
+    - -0.042739998996257786
+    - 0.5091999989345669
+    max_xyz:
+    - 0.2031229996308684
+    - 0.027260000333189965
+    - 0.5601999988749623
+  - name: 6_rs_m1.STL
+    min_xyz:
+    - 0.1086261489539627
+    - -0.1928522926568985
+    - 0.2832000033460963
+    max_xyz:
+    - 0.2724320257752423
+    - 0.12271267592906952
+    - 0.3742320700705052
+  - name: 7_zed2i.stl
+    min_xyz:
+    - 0.23453533632908072
+    - -0.10764373511075974
+    - 0.3293889740483098
+    max_xyz:
+    - 0.31763734182570186
+    - 0.10760673552751542
+    - 0.3996394712106519
+  cylinders:
+  - name: wheel_-0.249_-0.29153
+    center_xyz:
+    - -0.249
+    - -0.29153
+    - -0.0702
+    axis: y
+    radius: 0.18458999999999998
+    half_length: 0.078265
+  - name: wheel_-0.249_0.29153
+    center_xyz:
+    - -0.249
+    - 0.29153
+    - -0.0702
+    axis: y
+    radius: 0.18458999999999998
+    half_length: 0.078265
+  - name: wheel_0.249_-0.29153
+    center_xyz:
+    - 0.249
+    - -0.29153
+    - -0.0702
+    axis: y
+    radius: 0.18458999999999998
+    half_length: 0.078265
+  - name: wheel_0.249_0.29153
+    center_xyz:
+    - 0.249
+    - 0.29153
+    - -0.0702
+    axis: y
+    radius: 0.18458999999999998
+    half_length: 0.078265

@@ -98,10 +98,14 @@ def test_physical_filter_retains_ground_and_nearby_features_but_removes_front_an
     profile,b,l=load_calibration(PROFILE);base_from_lidar=np.linalg.inv(b)@l
     base=np.array([[0,0,-.23479],[0,.5,-.23479],[.55,.45,-.19],
                    [.44,0,0],[.249,.29153,-.0702],[0,0,0],
-                   [.249+.15,.29153,-.0702+.15],[0,0,-.4]],float)
+                   [.249+.15,.29153,-.0702+.15],[0,0,-.4],
+                   [.249+.15,.33153,-.0702+.15]],float)
     lidar=(base-base_from_lidar[:3,3])@base_from_lidar[:3,:3]
     keep=self_filter_keep_mask(lidar,profile['lidar_self_filter'],base_from_lidar)
-    np.testing.assert_array_equal(keep,[True,True,True,False,False,False,True,True])
+    # The old point at y=.29153 is inside the now-modeled visual chassis
+    # shell's 2cm margin (max y=.2930249); it was only outside the wheel cylinder.
+    # A point another 4cm outboard must still be retained as nearby terrain.
+    np.testing.assert_array_equal(keep,[True,True,True,False,False,False,False,True,True])
     legacy={'enabled':True,'min_xyz':[-1,-.7,-.9],'max_xyz':[.2,.7,.2]}
     old=self_filter_keep_mask(lidar,legacy)
     assert not old[0] and old[3]  # Actual old-ground deletion/front-body omission.
