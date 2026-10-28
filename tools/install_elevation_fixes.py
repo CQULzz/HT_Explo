@@ -54,12 +54,16 @@ def read_file(path, boundary):
     return path.read_bytes()
 
 
-def expected_states(repository, bundle, staging):
+def expected_states(repository, bundle, staging, *, surface_registration=False):
     base = json.loads((bundle / 'manifest.json').read_text())['base_commit']
     candidate = json.loads((bundle / 'deterministic_manifest.json').read_text())
     if candidate['upstream_base'] != base:
         raise RuntimeError('Patch manifests name different upstream bases')
     patches = [bundle / 'cupy_ht_mapping.patch', bundle / 'deterministic_fusion.patch']
+    labels = ['base', 'stable']
+    if surface_registration:
+        patches.append(bundle / 'surface_registration.patch')
+        labels.append('surface_registered')
     managed = sorted(set().union(*(patch_paths(patch) for patch in patches)))
     if not managed:
         raise RuntimeError('Patch bundle has no managed mapper files')
@@ -73,7 +77,7 @@ def expected_states(repository, bundle, staging):
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_bytes(clean[name])
     states = [('upstream', clean)]
-    for label, patch in zip(['base', 'stable'], patches, strict=True):
+    for label, patch in zip(labels, patches, strict=True):
         run_git(staging, 'apply', '--check', str(patch))
         run_git(staging, 'apply', str(patch))
         states.append((label, {name: read_file(staging / name, staging) for name in managed}))
@@ -83,10 +87,20 @@ def expected_states(repository, bundle, staging):
             raise RuntimeError(f'Unexpected intermediate patch bytes: {name}')
         if digest(states[2][1][name]) != row['after_sha256']:
             raise RuntimeError(f'Final candidate SHA256 mismatch: {name}')
+    if surface_registration:
+        surface = json.loads((bundle / 'surface_registration_manifest.json').read_text())
+        if surface['upstream_base'] != base:
+            raise RuntimeError('Surface registration manifest names a different upstream base')
+        for row in surface['files']:
+            name = safe_relative(row['file'])
+            if name not in managed or digest(states[2][1][name]) != row['before_sha256']:
+                raise RuntimeError(f'Unexpected stable-stage bytes: {name}')
+            if digest(states[3][1][name]) != row['after_sha256']:
+                raise RuntimeError(f'Final surface registration SHA256 mismatch: {name}')
     return managed, states
 
 
-def generated_configs(workspace, repository, bundle):
+def generated_configs(workspace, repository, bundle, *, surface_registration=False):
     config = workspace / 'config'
     weights = repository / 'elevation_mapping_cupy/config/core/weights.dat'
     if not weights.is_file():
@@ -95,8 +109,11 @@ def generated_configs(workspace, repository, bundle):
     original['plugin_config_file'] = str(config / 'trial_plugins.yaml')
     legacy = dict(original, weight_file='$(rospack find elevation_mapping_cupy)/config/core/weights.dat')
     core = dict(original, weight_file=str(weights), enable_deterministic_fusion=True)
+    stable_core = dict(core)
+    if surface_registration:
+        core['enable_surface_registration'] = True
     encode = lambda value: yaml.safe_dump(value, sort_keys=False).encode()
-    result = {config / 'trial_core.yaml': (encode(core), [encode(core), encode(legacy)])}
+    result = {config / 'trial_core.yaml': (encode(core), [encode(core), encode(stable_core), encode(legacy)])}
     for name in ['trial_setup.yaml', 'trial_plugins.yaml']:
         data = (bundle / name).read_bytes()
         result[config / name] = (data, [data])
@@ -116,7 +133,7 @@ def atomic_write(path, data, mode):
         temporary.unlink(missing_ok=True)
 
 
-def install(workspace, bundle, *, build=False):
+def install(workspace, bundle, *, build=False, surface_registration=False):
     workspace = Path(workspace).expanduser().resolve()
     repository = workspace / 'src/elevation_mapping_cupy_2204'
     bundle = Path(bundle).resolve()
@@ -125,7 +142,8 @@ def install(workspace, bundle, *, build=False):
     if repository.is_symlink():
         raise RuntimeError(f'Refusing checkout symlink: {repository}')
     with tempfile.TemporaryDirectory(prefix='ht-mapper-preflight-') as temporary:
-        managed, states = expected_states(repository, bundle, Path(temporary))
+        managed, states = expected_states(repository, bundle, Path(temporary),
+                                          surface_registration=surface_registration)
         current = {name: read_file(repository / name, repository) for name in managed}
         matching = [label for label, values in states if values == current]
         if not matching:
@@ -134,7 +152,8 @@ def install(workspace, bundle, *, build=False):
         final = states[-1][1]
         planned = {repository / name: final[name] for name in managed if final[name] != current[name]}
         originals = {repository / name: value for name, value in current.items()}
-        for target, (desired, allowed) in generated_configs(workspace, repository, bundle).items():
+        for target, (desired, allowed) in generated_configs(workspace, repository, bundle,
+                                                           surface_registration=surface_registration).items():
             existing = read_file(target, workspace)
             if existing is not None and existing not in allowed:
                 raise RuntimeError(f'Unsupported edits in generated config: {target}; no files were changed')
@@ -167,7 +186,7 @@ def install(workspace, bundle, *, build=False):
         subprocess.run(['colcon', 'build', '--packages-select', 'elevation_mapping_cupy'],
                        cwd=workspace, check=True)
     return {'workspace': str(workspace), 'source_stage_before': matching[0],
-            'source_stage_after': 'stable', 'changed_files': [str(p.relative_to(workspace)) for p in planned],
+            'source_stage_after': states[-1][0], 'changed_files': [str(p.relative_to(workspace)) for p in planned],
             'verified_manifest_files': len(json.loads((bundle / 'deterministic_manifest.json').read_text())['files']),
             'built': build, 'weight_file': str(repository / 'elevation_mapping_cupy/config/core/weights.dat')}
 
@@ -176,9 +195,12 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--workspace', type=Path, required=True)
     parser.add_argument('--build', action='store_true')
+    parser.add_argument('--surface-registration', action='store_true',
+                        help='Install and explicitly enable the offline-tested Z/tilt registration candidate')
     args = parser.parse_args()
     bundle = Path(__file__).resolve().parent / 'elevation_mapping_fixes'
-    print(json.dumps(install(args.workspace, bundle, build=args.build), indent=2))
+    print(json.dumps(install(args.workspace, bundle, build=args.build,
+                             surface_registration=args.surface_registration), indent=2))
 
 
 if __name__ == '__main__':

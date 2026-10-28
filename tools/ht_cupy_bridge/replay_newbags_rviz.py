@@ -66,6 +66,8 @@ def main():
     p.add_argument('--cupy-package',type=Path,required=True)
     p.add_argument('--self-filter-horizontal-padding-m',type=float,default=0.,
         help='Extra XY-only dilation of each physical primitive; offline experiment, default unchanged')
+    p.add_argument('--surface-registration',action='store_true',
+        help='Explicitly enable the independently installed scan-to-map Z/tilt registration candidate')
     a=p.parse_args();a.output.mkdir(parents=True,exist_ok=False)
     if not math.isfinite(a.self_filter_horizontal_padding_m) or a.self_filter_horizontal_padding_m<0:
         p.error('self-filter-horizontal-padding-m must be finite and nonnegative')
@@ -101,6 +103,10 @@ def main():
     param=Parameter(use_chainer=False,resolution=.04,map_length=11.64,
         weight_file=str(a.cupy_package/'config/core/weights.dat'),plugin_config_file=str(plugin),
         enable_drift_compensation=False,enable_overlap_clearance=False,enable_deterministic_fusion=True)
+    if a.surface_registration and not hasattr(param,'enable_surface_registration'):
+        raise RuntimeError('Install the independent mapper with --surface-registration first')
+    if hasattr(param,'enable_surface_registration'):
+        param.enable_surface_registration=a.surface_registration
     param.subscriber_cfg={'scan':{'data_type':'pointcloud'}};param.update()
     mapping=ElevationMap(param);assert mapping.fusion_backend=='deterministic'
     native=[]
@@ -117,10 +123,19 @@ def main():
         'drift_compensation':False,'overlap_clearance':False,
         'self_filter_horizontal_padding_m':a.self_filter_horizontal_padding_m,
         'self_filter_vertical_bounds_unchanged':True,
+        'surface_registration':a.surface_registration,
+        'surface_registration_scope':'Map input only; recorded odometry/TF is not rewritten; not a physical localization calibration',
+        'effective_scalar_parameters':{k:v for k,v in vars(param).items()
+            if v is None or isinstance(v,(str,int,float,bool))},
         'parameter_limit':'Offline drift/overlap disabled as in preceding stable experiment; not full online launch',
         'sources':{}}
     for f in [Path(__file__),ROOT/'tools/ht_cupy_bridge/cupy_to_ht.py',ROOT/'tools/ht_cupy_bridge/historical_elevation.py',ROOT/'src/ht_scout_bridge/config/scout_extrinsics.yaml',ROOT/'src/ht_scout_bridge/ht_scout_bridge/geometry.py']:
         freeze['sources'][str(f)]=hashlib.sha256(f.read_bytes()).hexdigest()
+    from elevation_mapping_cupy import elevation_mapping as mapper_module
+    mapper_source=Path(mapper_module.__file__)
+    for f in [mapper_source,mapper_source.with_name('parameter.py'),
+              mapper_source.with_name('deterministic_fusion.py'),mapper_source.with_name('surface_registration.py')]:
+        if f.is_file():freeze['sources'][str(f)]=hashlib.sha256(f.read_bytes()).hexdigest()
     (a.output/'FREEZE.json').write_text(json.dumps(freeze,indent=2)+'\n')
     rows=[];scans=[];last=None;next_map=None;first=None
     native_file=(a.output/'native_stream.pkl').open('wb')
@@ -145,6 +160,7 @@ def main():
             mapping.input_pointcloud(xyz[keep].copy(),['x','y','z'],sensor[:3,:3].copy(),sensor[:3,3].copy(),0.,0.,observation_stamp=ns/1e9)
             cp.cuda.get_current_stream().synchronize()
             row.update(status='INTEGRATED',kept_points=int(keep.sum()),raw_points=len(xyz),extra_removed_points=int((old_keep&~keep).sum()),integration_s=time.perf_counter()-begun)
+            row['surface_registration']=dict(getattr(mapping,'last_surface_registration',{'status':'UNAVAILABLE'}))
             scans.append(row);last=ns;first=ns if first is None else first
             next_map=ns if next_map is None else next_map
             if ns < next_map:continue

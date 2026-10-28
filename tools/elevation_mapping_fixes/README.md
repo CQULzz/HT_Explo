@@ -71,6 +71,52 @@ CPU-only installer regression:
 python3 -m pytest -q tools/test_install_elevation_fixes.py
 ```
 
+## Optional scan-to-map surface registration candidate
+
+The 2026-10-29 recorded-data audit found millimetre residuals within individual
+ground scans but centimetre discrepancies when repeated observations were
+transformed to the same world cells. This is inconsistent registration across
+frames, not evidence that the physical floor developed new small obstacles.
+It does not identify Fixposition, TF timing, mounting motion or another upstream
+component as the sole physical cause.
+
+An explicit third stage installs `surface_registration.patch`:
+
+```bash
+python3 tools/install_elevation_fixes.py --workspace /path/to/independent_cupy_ws --surface-registration
+```
+
+It estimates one bounded rigid Z/tilt correction from recent, observed, locally
+continuous scan-to-map overlap. A spatial subset is withheld from fitting and
+checks the actual rigid transform before acceptance. Insufficient overlap,
+stale/unknown references, large corrections and lack of improvement retain the
+original pose. No HT score, threshold, output colour or assumed vehicle passage
+enters the fit. The algorithm does not smooth the height raster, fill holes,
+change odometry/TF or reduce measurement variance. Parameters in
+`RegistrationConfig` are engineering bounds, not measured calibration errors.
+
+The mapper default remains disabled. The explicit installer flag enables it in
+the independent trial core. The separate HT profile
+`src/ht_scout_bridge/config/mapper_surface_registered.yaml` enables the candidate;
+`mapper_for_ht.yaml` remains unchanged. Do not interpret this offline candidate
+as physical localization calibration or real vehicle acceptance: the external
+registered-scan/TF chain is not rewritten by it. The two recorded clips cannot
+establish ARM timing or safe closed-loop motion. A frame-wide moving platform
+or a coherent wrong reference may be ambiguous with pose error.
+
+Recorded-input verification uses the unchanged original profile unless the
+replay explicitly requests the candidate:
+
+```bash
+python3 tools/ht_cupy_bridge/replay_newbags_rviz.py --bag /path/to/bag \
+  --output /path/to/new-output --cupy-package /path/to/independent/package \
+  --surface-registration
+```
+
+The installer still refuses unknown edits before writes. It accepts upstream,
+base, stable, and already surface-registered complete states when requested;
+omitting the flag cannot silently downgrade an installed surface candidate.
+
 Its compact fixture contains actual tracked files extracted with
 `git show 88f4c0...:path`; provenance and SHA256 are inside the archive. Each test
 creates a temporary minimal Git repository, so running it cannot alter the

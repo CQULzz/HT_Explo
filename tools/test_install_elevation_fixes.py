@@ -47,7 +47,8 @@ def workspace(tmp_path):
     base = git(repository, 'rev-parse', 'HEAD')
     bundle = tmp_path / 'bundle'
     shutil.copytree(HERE / 'elevation_mapping_fixes', bundle)
-    for name, key in [('manifest.json', 'base_commit'), ('deterministic_manifest.json', 'upstream_base')]:
+    for name, key in [('manifest.json', 'base_commit'), ('deterministic_manifest.json', 'upstream_base'),
+                      ('surface_registration_manifest.json', 'upstream_base')]:
         p = bundle / name
         data = json.loads(p.read_text())
         data[key] = base
@@ -172,3 +173,43 @@ def test_bundle_inside_ht_git_subdirectory_enumerates_every_mapper_path(workspac
     result = installer.install(work, nested_bundle)
     assert result['source_stage_before'] == 'upstream'
     stable_hashes(repository, nested_bundle)
+
+
+def test_surface_candidate_migrates_stable_and_remains_idempotent(workspace):
+    work, repository, bundle = workspace
+    installer.install(work, bundle)
+    result = installer.install(work, bundle, surface_registration=True)
+    assert result['source_stage_before'] == 'stable'
+    assert result['source_stage_after'] == 'surface_registered'
+    for row in json.loads((bundle / 'surface_registration_manifest.json').read_text())['files']:
+        assert hashlib.sha256((repository / row['file']).read_bytes()).hexdigest() == row['after_sha256']
+    core = yaml.safe_load((work / 'config/trial_core.yaml').read_text())
+    assert core['enable_surface_registration'] is True
+    before = contents(work)
+    assert installer.install(work, bundle, surface_registration=True)['changed_files'] == []
+    assert contents(work) == before
+    # Omitting the flag cannot silently downgrade a deliberately installed candidate.
+    with pytest.raises(RuntimeError, match='Unsupported edits'):
+        installer.install(work, bundle)
+    assert contents(work) == before
+
+
+def test_surface_candidate_can_install_directly_from_upstream(workspace):
+    work, repository, bundle = workspace
+    result = installer.install(work, bundle, surface_registration=True)
+    assert result['source_stage_before'] == 'upstream'
+    assert result['source_stage_after'] == 'surface_registered'
+    assert (repository / 'elevation_mapping_cupy/script/elevation_mapping_cupy/surface_registration.py').is_file()
+
+
+def test_bad_surface_manifest_leaves_complete_stable_checkout_unchanged(workspace):
+    work, repository, bundle = workspace
+    installer.install(work, bundle)
+    manifest = bundle / 'surface_registration_manifest.json'
+    data = json.loads(manifest.read_text())
+    data['files'][0]['after_sha256'] = '0' * 64
+    manifest.write_text(json.dumps(data))
+    before = contents(work)
+    with pytest.raises(RuntimeError, match='Final surface registration SHA256 mismatch'):
+        installer.install(work, bundle, surface_registration=True)
+    assert contents(work) == before

@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "upstream_base": "88f4c0c2eb3542faeb7bd8fa9df2f18bd25eed91",
+  "base_stage": "deterministic_fusion.patch",
+  "candidate_stage": "surface_registration.patch",
+  "default_enabled": false,
+  "files": [
+    {
+      "file": "elevation_mapping_cupy/script/elevation_mapping_cupy/elevation_mapping.py",
+      "before_sha256": "f66637c47a73b95a41606f66a99ff5d033ad1eaed497546547f67d9107d7d66e",
+      "after_sha256": "4eed412e6359e209584b26c91fad91a93faf825c409b1183ef62fe329e074026"
+    },
+    {
+      "file": "elevation_mapping_cupy/script/elevation_mapping_cupy/parameter.py",
+      "before_sha256": "6fcdc153f7bb616eea91bba38f08be3bc76acd0f15fea34d92d6194e66a29dbd",
+      "after_sha256": "ded61ac9dcece212c8ac7a7a3a73c614c86f59c7047644fa849f7258b40fb436"
+    },
+    {
+      "file": "elevation_mapping_cupy/script/elevation_mapping_cupy/surface_registration.py",
+      "before_sha256": null,
+      "after_sha256": "062b69395ccea57e682fece99e3c1f5a1819e65aa7530c41657e936308d3199a"
+    }
+  ],
+  "limits": "Offline two-bag candidate; not real vehicle acceptance. Single rigid correction; no height raster smoothing or HT threshold change."
+}
