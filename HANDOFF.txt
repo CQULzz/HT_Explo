@@ -1,3 +1,19 @@
+2026-10-28 后续稳定CuPy修复（本段优先）
+
+用户重新要求解决问题后，已在独立ht_cupy_gpu_ws_20261028实现稳定GPU融合和FP32几何，未启动硬件/仿真/车辆。HT/src未混入CuPy。冻结本地8d9cbe3，对应GitHub实车代码48f61fbfe703ef100220d4e36b0c0bf2927c0f8e；安装工具本地5a09e3a→70f1a51f64239e724031f49c3a091d8092172d1a。后续报告/回执另记。不得直接推本地导入祖先；继续用proper远端父commit-tree叠加，非force。
+
+已验证：同十四盒原始415扫描，各3legacy+3deterministic全新实例。旧最大高程重复差1.589686m，新记录五数组及208张原生高程/方差/年龄三层逐位一致、差0。新10GPU测试+旧8分别两后端通过；桥接83+安装器10=93项通过；独立CuPy两包及HT桥接构建通过，安装目录导入及新源SHA验证通过。整合GPU同步median/P95 7.618/9.404ms，排除CPU诊断压缩，不能当ARM/整链路帧率。
+
+未解决：同生产CPP旧/新各1664真实目标均INVALID_START，208起点196BLOCKED12UNKNOWN。416份精确网络输入已保存。理想平地模型通过，实际高结构不明身份；仅改未知填值/近地噪声未恢复通过，未盲改HT或门槛。旧Oct11实际车跑best_probability+fallback，不是本轮strictXYtheta；最后非零cmd_vel80.702s，80.802s报NO_SAFE_LOCAL_ROUTE，晚有FALLBACK_BUDGET_EXHAUSTED等等待。持续高簇108.089s后才出现，不能解释首次停车全部原因。
+
+最新报告docs/results/real_cupy_stable_2026-10-28/REPORT.md。外盘HT_Explo_cupy_fix_2026-10-28/run_data含六次全中间状态、native图、HT/精确context、CPP及审计。Release/tag real-scout-cupy-stable-20261028，完成远端上传以PUBLICATION_RECEIPT为准。本文生成时源固定，数据已分独立ZIP归档；不要重新运行固定输出路径。原始外盘10月27日备份未改。
+
+工具tools/install_elevation_fixes.py支持干净上游/旧补丁/新补丁三种完整状态；预检后写入，未知用户修改明确失败。实际已有工作区只迁移knowntrial_core配置，源不变。旧首次numstat在Git子目录过滤路径的安装失败已修，失败日志保留。外部core配置必须显式启用enable_deterministic_fusion，旧后端仍可用于对照。
+
+本轮完整发布后停止；新的HT行为修改必须有可验证错误反例，先发布上一轮再独立冻结，不能补绿、减门槛或盲清历史。没有实车运动/ARM性能验收。先读当前报告、AGENTS、FREEZE及远端回执，再响应新要求。
+
+以下是此前归档的历史交接：
+
 2026-10-28 实车离线审查最新补充（优先于下方历史仿真交接）
 
 工作树 /home/lzz/my test/HT_Explo-real-review-20261028；本地分支 real/scout-review-20261028 是导出包导入历史，绝不能直接将本地HEAD祖先推到远端。远端实车分支real/scout-helios32保留原历史，按差异树commit-tree追加；main/develop不变。只做离线，不启动设备、仿真或车辆。

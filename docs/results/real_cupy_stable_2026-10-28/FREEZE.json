@@ -1,0 +1,547 @@
+{
+  "scope": "Ordered FP32 mapping candidate; 3 legacy and 3 deterministic fresh instances, identical14box source scans; offline only",
+  "local_runtime_commit": "8d9cbe302e8c05799fb8c1d65a837904d909c35f",
+  "sources": [
+    {
+      "file": "src/ht_scout_bridge/config/mapper_for_ht.yaml",
+      "sha256": "3a5aac79333a202b92b1f84f702da0b5a09d5ea758e8a2c7d51975bec65ed286"
+    },
+    {
+      "file": "src/ht_scout_bridge/config/scout_extrinsics.yaml",
+      "sha256": "891edf88817e75b94dfe2b87910e520d04a70fd4e9f5c8b40bef07b34a6b31c4"
+    },
+    {
+      "file": "src/ht_scout_bridge/ht_scout_bridge/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "src/ht_scout_bridge/ht_scout_bridge/command_bridge.py",
+      "sha256": "6500634faefb1ffb96675a00a53f3c5aec8059d95a95628506e65abbaa126f06"
+    },
+    {
+      "file": "src/ht_scout_bridge/ht_scout_bridge/geometry.py",
+      "sha256": "7c74db96eb618a4508df945563205f36eb9a476cdb653e47efeb8378ed870ad2"
+    },
+    {
+      "file": "src/ht_scout_bridge/ht_scout_bridge/node.py",
+      "sha256": "51d3891d8083d2822ffd299c7576e4a090aa1aecf095d70469ca105062fa12c1"
+    },
+    {
+      "file": "src/ht_scout_bridge/ht_scout_bridge/runtime_policy.py",
+      "sha256": "1a0530d8d533dbad5dccabcb713db62aee268e61deecfd530a39b06a0795122f"
+    },
+    {
+      "file": "src/ht_scout_bridge/ht_scout_bridge/runtime_status.py",
+      "sha256": "4d9d5e17ec995f0190411d79eafcb579c72f43c5add15895e9405bf57c76c090"
+    },
+    {
+      "file": "src/tare_planner/include/ht_cost/directed_graph.h",
+      "sha256": "1828797e1134045c5b2ca493d8ce30e18e957a30a63f46ca0e7d6a6410466c53"
+    },
+    {
+      "file": "src/tare_planner/include/ht_cost/execution_policy.h",
+      "sha256": "0a9bb73d752ecaf4ff81b2cbf6f0ed5686fbe89ff31616a4bfcefc2801f25723"
+    },
+    {
+      "file": "src/tare_planner/include/ht_cost/exploration_progress.h",
+      "sha256": "69de16bd26e6e0e8e8bab827c4a9dce463667f99026dd5c7fd280166f252c1b5"
+    },
+    {
+      "file": "src/tare_planner/include/ht_cost/grid_edge_support.h",
+      "sha256": "f16da786638f95825c83f6203e186cad6b433b20a45d9efc6d6f038ef5dc39e8"
+    },
+    {
+      "file": "src/tare_planner/include/ht_cost/heading_reserve.h",
+      "sha256": "a5d121bd2b202a28efda17b2de2e5ba22ab28c38c8fd80ea527e86afc9167059"
+    },
+    {
+      "file": "src/tare_planner/include/ht_cost/ht_cost_core.h",
+      "sha256": "4e91c0ff8c6e5979b31adc294d5e3348ee980f71adc72e19106cbd6451eeef00"
+    },
+    {
+      "file": "src/tare_planner/include/ht_cost/ht_cost_map.h",
+      "sha256": "60be33067f6e6f025d421eb4a4368f3af664ed8eb0d1209dc6d38e0e49323e02"
+    },
+    {
+      "file": "src/tare_planner/include/ht_cost/input_pose_buffer.h",
+      "sha256": "7611d6610bd24585d2acdcd4cb1c464fdace827b625e22862c710344c7d1cf33"
+    },
+    {
+      "file": "src/tare_planner/include/ht_cost/measured_collision_field.h",
+      "sha256": "f700f52ddcd228774c70f4ab2d5198ced2b1e5f77230ec50432e5037273ae737"
+    },
+    {
+      "file": "src/tare_planner/include/ht_cost/search_schedule.h",
+      "sha256": "55adf99f44bd6d86b75903c68d2dd1dd6c349c11da67c6bfc52009cb95bcaeea"
+    },
+    {
+      "file": "src/tare_planner/include/ht_cost/tare_waypoint_route.h",
+      "sha256": "df0860ebc6bf131e98d3e0dd7921864d423a3beadd0db7c03f7a33a4eeb07751"
+    },
+    {
+      "file": "src/tare_planner/include/ht_cost/target_commitment.h",
+      "sha256": "4e6ab1ea2c487cd9782c7b4aa7a68bb2c71cf1f363b02c4bce24e4a588fa7d9f"
+    },
+    {
+      "file": "src/tare_planner/include/ht_cost/xytheta_planner.h",
+      "sha256": "5a78e98c1f9edc3a5911623f2257e97899ff87ea44e58169b6666ce5052e08a4"
+    },
+    {
+      "file": "src/tare_planner/src/ht_cost/ht_cost_map.cpp",
+      "sha256": "3d4a876cc1251a471a2f66a8d4ccec4359da470456157c45c64ff9d3e216a45c"
+    },
+    {
+      "file": "src/tare_planner/src/ht_cost/xytheta_follower.cpp",
+      "sha256": "a4d825ca102090bf4afbe309783d6e1cde86b45a599f814bb44ec1d2e5960eba"
+    },
+    {
+      "file": "src/tare_planner/tools/ht_xytheta_offline.cpp",
+      "sha256": "0f34a3c730f439583cdf05a411f758159a6dddd44de1d682b5edfe5c4ee9d8f3"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/capture_ht_stop.py",
+      "sha256": "1368490bf6e88f25afda8f2b931a7654407ff26b3b67b51cfecd44f9ec02ee22"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/capture_inspection_views.py",
+      "sha256": "9ecec5235b011a0cf737d487a9c9693eeaa90ca07f7de9e2174ecdca67d9ffdf"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/capture_noise_chain.py",
+      "sha256": "86ef556812a26aba579edf65062e4965c30821cbafb1b0b3a5f911afe692d0af"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/capture_replay_maps.py",
+      "sha256": "fa1b95c9b3b9eecd7901a8037cfc8911e1621c25bac22589f910f12e06427d61"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/capture_xytheta_planning.py",
+      "sha256": "2d19ff1bd4f6cc16214f5d6ba510ed8a6bb318919f39cc6fb2ceff41fac60d29"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/cmu_campus.launch.py",
+      "sha256": "891c1de7a936c9d65e7bd6ce98ecda96868baee0ab96a2a4c6b84a2d76e6403e"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/cmu_sim.launch.py",
+      "sha256": "68069be65ae96c968a5d64f48195acdbc65a3f91c82fbf49472b3fadb3e8af63"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/cmu_vehicle_downward.launch.py",
+      "sha256": "c9b4ed916c868cfe3e0555604aaec6a490bc6708a9d998470f66e989d04614be"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/cmu_xytheta.launch.py",
+      "sha256": "aa0268bec6c066e223a8306d732545ffe9b0e3997cdb8401a05961b37d0ebf12"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/cpu_threads.py",
+      "sha256": "8ac124e744c2a821f679369bdd667c2ea0d866fda1d721078835d79a3cc08834"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/cupy_to_ht.py",
+      "sha256": "9c0795e8a1d57b4e7dbd45ca37a537430a63e93a663d05153bb797589321b4fe"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/elevation_quality.py",
+      "sha256": "7106dc2db87a695825f1d1703a09274e8980d61f89c387518fee4d30fb8f79a4"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/exploration_metrics.py",
+      "sha256": "ae40577e23660d93c047663b3a378fb30d63e77f665c0ba2f0e381f0208997c6"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/export_ht_tunnel_fixture.py",
+      "sha256": "59dea0f98243612dfea98fb5b29b9c11fa66b79c0b60fbe314b7fbed676da2fd"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/export_legacy_replay_inputs.py",
+      "sha256": "bcafe50b3b3cc010d52b2cfdd46f10711900731509be32a6989a754ed61c6cb4"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/gz_sim_direct.launch.py",
+      "sha256": "18f07bc8a989dc2edf28398f9b179deee7b2f83ce8115f061ecbc062c23a2ba0"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/historical_elevation.py",
+      "sha256": "6e94b22a0c1c733d9b5c4cac1c132c0fffb1c3154c0803c2a2e35a19a4edff27"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/ht_direction_terrain.py",
+      "sha256": "df12ac3a3537ab56fea84a3723f0923c81e68bde187aa5670c2d3b27edd64566"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/ht_support.py",
+      "sha256": "1b5995d9022328e87778deaa366b27961b396b1f9574ad15e03aba3e2001acbd"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/ht_xytheta_volume.py",
+      "sha256": "1c00f4033564bd201ee6adff2c6f24f733784acd76161a1ad2b41100a05ae29f"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/inference_context_io.py",
+      "sha256": "5f6b0a977a5f2b0f22e7a4636ecb1305180ed3af45f7a5809b47f724de29aead"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/input_odometry.py",
+      "sha256": "139504ca5007b3efbfaf6140f3b8417c0e0d7da7d334cd2a451ce8e3cac3a0e1"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/latest_input.py",
+      "sha256": "23d5a665f3b2e7846c6a2aa4aa18cfe61bd02f98ec61ab74c74a1b7cb20bfc78"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/local_surface.py",
+      "sha256": "9fa19eae67d9ba9d4ad0685acbc92e9bcc45c9bb5e4daaf41a17bcd4c2547b42"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/long_run_diagnostics.py",
+      "sha256": "fa7b5037cf2bc1d76e7200783a5c5f107a92f4f43a7ec550a9c0c338a6b4a031"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/model.py",
+      "sha256": "1e5a061196c21718ba377589f466cb723df4f136051ab871cc547e4f29e23c3c"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/path_stutter_probe.py",
+      "sha256": "8338292b2d29524fa84299d2e340fbd7813091c35a93c18fd2d19bc68cf715bb"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/plot_long_run.py",
+      "sha256": "2eadf2decec6baa1beee95ece9390d4d98510751e08918999913aa66a1821ea9"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/plot_xytheta_comparison.py",
+      "sha256": "f187a1b7c27c9d5c4a32199ca13a0cbf1ed1ddffc2a7ae0d2829b31f4e28b2a7"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/prepare_xytheta_replay.py",
+      "sha256": "e2e0200bf65e3bd9fbfd158d67d522eedbeba7f623e30d15087372d832e6b193"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/profile_cupy_runtime.py",
+      "sha256": "ce26da7f047133163c36afd7178f4b7a1c7b7db3237222dfd290380c1cadc232"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/quality_kernels.py",
+      "sha256": "5a68490ae62c3510c99b772c69b626b157d7515b5b995d3a70d9f0e4513516dc"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/rebuild_mapping_stability.py",
+      "sha256": "61451159f3cd8a31bd29e128a898ca7dfb70ea4d04695f28f1a5f5026e8d2960"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/record_ht_exploration_detailed.py",
+      "sha256": "f9c8ba790bbf8212d87631b554e919ffeab02ce5e3d2e8c4eb8c77312b2ad9b3"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/record_sim_video.py",
+      "sha256": "abb7b361df7056c14708f29e354c307536fa9f91ae11c7001a4a10f5b8f96a17"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/render_historical_elevation.py",
+      "sha256": "9171ba62802e75b1bc8057c8505f21271c7212fadee8c5649274a78e5874a5d3"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/render_stopped_ht.py",
+      "sha256": "71b4438d349c33e008ec4d08d6bc41da00aed8586b845e181b521c42740ff9c2"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/render_xytheta_planning.py",
+      "sha256": "bf586c1ec56afafb76f1ca26fba956d1965d64680ef09105aed85ac8a3b71d0d"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/replay_real_archive.py",
+      "sha256": "09277c894c37f02a5e1c5139091f115350689fac6d0a1cfd85a5a2175b5068cf"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/small_holes.py",
+      "sha256": "53fb4690016c808aaa8bfdc140ca883de3a6f7c4799d4869a3f7acb26d973a10"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/student_best_epoch_weights.pth",
+      "sha256": "0a79b865d012aa633fbb9913fc4031908dfe188ec9e161ef5a3fbb34a3f8c4d4"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/test_context_shutdown_ros.py",
+      "sha256": "4118ca219718f73b769070d89742e967ba80219a70a1ce7fb6f294a99e1e1e57"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/test_cpu_threads.py",
+      "sha256": "5b95d93ddf67fd8b71624edb6ba45e9b102cd7b420d152bbfa298f9e70df1dd6"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/test_cuda_backend.py",
+      "sha256": "67495a0de3123b64a69506f9cc3296a23b90a52a4d0af773f3875049f2ffef89"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/test_cupy_tf_worker_ros.py",
+      "sha256": "09178acc4a5db8ba50b6c5e24edc50f5f334f65184e0e5eeea015469e9769ab6"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/test_elevation_quality.py",
+      "sha256": "3b4d1c8f155460d30c10920d6787bd54563d659f450fe46803f12912ef7a606e"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/test_historical_elevation.py",
+      "sha256": "ac83bf64f0eab0a61fa3eb78935fef614993d636b5e275e3cde61901520fca5c"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/test_ht_support.py",
+      "sha256": "07110bebf7bf4a7cf8c03ec6769d4d69471d36e54d0e9c64ca3e4ddf4c7c7fd5"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/test_inference_context_io.py",
+      "sha256": "30101f25714179041f0ac6ed86197b46e91b357b31d6c7599b00a33abdda0e60"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/test_input_odometry.py",
+      "sha256": "294aac8df78886e38594f95d4c29afb7c54512a574060d76eb43d512b2e58822"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/test_latest_input.py",
+      "sha256": "758852b198ddc0d3bcf4f7a81d0527eda1ac657b58e531d129ee3ab57a8eeae2"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/test_local_surface.py",
+      "sha256": "6c1e4651c7766cd9a662193c65a6834e088b0741e1bbf8f38a9ce237d45b3cc8"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/test_model_fusion.py",
+      "sha256": "e6b2147dbfe9b13054076fa31f2280de4b36c6ac1ab4ed7cc5e979328002e520"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/test_obstacle_edge_overlay.py",
+      "sha256": "820eb5e83ab7fc0d2ff1adba9fef41012ca9e7317bb8dc310decd97eb64e18ee"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/test_postfilter_bridge.py",
+      "sha256": "b9d6ab8f779f2f9a478676fe8f6430f1579aad733503f88da91e4e4d10a64a8e"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/test_processing_concurrency_ros.py",
+      "sha256": "ee8fb29c6ab9125feadcf4b2844ea5e1b6e7cf89d2cadce03d89552eaa8e5cd1"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/test_quality_compiled.py",
+      "sha256": "67b24ab2d2a9f2c211e00a8c0bc7c6277ef77f4bffaf7b208b2f928ea1dec62d"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/test_small_holes.py",
+      "sha256": "a24a58e549a1c9f7db136cbc5202413fdcf07d4c5f6dd716546ed203f652178f"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/test_source_contract.py",
+      "sha256": "59d732f364dcf2633848cbd3b85d940e38efe8a3e08bf5976232558aa0a519b0"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/test_surface_pipeline.py",
+      "sha256": "7df33ed99c2c43abac47106427aed893ae8cb5c9bdf84d478372a6fd391dc738"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/test_xytheta_grid_planner.py",
+      "sha256": "63c573be4c610c41268813a2bc85ba79bd5fa5d1a0a7e9f4fce6128bd71e6695"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/trial_diagnostics.py",
+      "sha256": "f4f35cdf4c09d0c2c542bb796865968a16f53e4bcd94342ea4fc72fdc75d4059"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/xytheta_grid_live.py",
+      "sha256": "052e9e6e98a3306e11cd530d58b68e88d9383f7eb1ee4ee34ec768931e9db8aa"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/xytheta_grid_planner.py",
+      "sha256": "339675dc7e427279df5774d297c617fa98900c670fa889ed229ae25c7e907cc1"
+    },
+    {
+      "file": "tools/ht_cupy_bridge/xytheta_live.py",
+      "sha256": "36fa29808cc5f3eafd504d088ee3f3552ffcb9679fc7534cb0a9426a94b62d55"
+    }
+  ],
+  "mapper_sources": [
+    {
+      "file": "/home/lzz/my test/ht_cupy_gpu_ws_20261028/src/elevation_mapping_cupy_2204/elevation_mapping_cupy/config/core/weights.dat",
+      "sha256": "465c88d472cf864ec00c8a84e4b605fca864fefa1d9998e68e4533282b924289"
+    },
+    {
+      "file": "/home/lzz/my test/ht_cupy_gpu_ws_20261028/src/elevation_mapping_cupy_2204/elevation_mapping_cupy/script/elevation_mapping_cupy/__init__.py",
+      "sha256": "0443ac9571b81b23d546d16f604f9135794d2b8f9501d44f2317a6d15d99ae48"
+    },
+    {
+      "file": "/home/lzz/my test/ht_cupy_gpu_ws_20261028/src/elevation_mapping_cupy_2204/elevation_mapping_cupy/script/elevation_mapping_cupy/deterministic_fusion.py",
+      "sha256": "df7e7e71460a836f8f0361442058586f1fc6e4e87087754013e776d8531bd0bb"
+    },
+    {
+      "file": "/home/lzz/my test/ht_cupy_gpu_ws_20261028/src/elevation_mapping_cupy_2204/elevation_mapping_cupy/script/elevation_mapping_cupy/elevation_mapping.py",
+      "sha256": "f66637c47a73b95a41606f66a99ff5d033ad1eaed497546547f67d9107d7d66e"
+    },
+    {
+      "file": "/home/lzz/my test/ht_cupy_gpu_ws_20261028/src/elevation_mapping_cupy_2204/elevation_mapping_cupy/script/elevation_mapping_cupy/elevation_mapping_ros.py",
+      "sha256": "2094722f6b8dd2be4d319bf099220074dc12abe818e40506950b8b08c8b646d4"
+    },
+    {
+      "file": "/home/lzz/my test/ht_cupy_gpu_ws_20261028/src/elevation_mapping_cupy_2204/elevation_mapping_cupy/script/elevation_mapping_cupy/fusion/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "/home/lzz/my test/ht_cupy_gpu_ws_20261028/src/elevation_mapping_cupy_2204/elevation_mapping_cupy/script/elevation_mapping_cupy/fusion/fusion_manager.py",
+      "sha256": "8dda3482122c1b9cfd3333d84f3817013071519e900ca1a2be70f0664992851f"
+    },
+    {
+      "file": "/home/lzz/my test/ht_cupy_gpu_ws_20261028/src/elevation_mapping_cupy_2204/elevation_mapping_cupy/script/elevation_mapping_cupy/fusion/image_color.py",
+      "sha256": "05d1e98c16b783c72f47da1a1155eb5b4132295d0ac02d89e9c58455a8d19fff"
+    },
+    {
+      "file": "/home/lzz/my test/ht_cupy_gpu_ws_20261028/src/elevation_mapping_cupy_2204/elevation_mapping_cupy/script/elevation_mapping_cupy/fusion/image_exponential.py",
+      "sha256": "f04f754e5c06919ee43e15e3c09f26c480ee2f89ffebe615fbac8d7a14be7216"
+    },
+    {
+      "file": "/home/lzz/my test/ht_cupy_gpu_ws_20261028/src/elevation_mapping_cupy_2204/elevation_mapping_cupy/script/elevation_mapping_cupy/fusion/pointcloud_average.py",
+      "sha256": "1466ad6bd1da1626b751a82a64b38d90b2dca50599772fb943a64176c2926366"
+    },
+    {
+      "file": "/home/lzz/my test/ht_cupy_gpu_ws_20261028/src/elevation_mapping_cupy_2204/elevation_mapping_cupy/script/elevation_mapping_cupy/fusion/pointcloud_bayesian_inference.py",
+      "sha256": "64d256810d4430ff47e4e678a528c5effdbeed7aa67a093dc60fe4e9d8dd04cb"
+    },
+    {
+      "file": "/home/lzz/my test/ht_cupy_gpu_ws_20261028/src/elevation_mapping_cupy_2204/elevation_mapping_cupy/script/elevation_mapping_cupy/fusion/pointcloud_class_average.py",
+      "sha256": "8f8958cdc1ad2ebd8ea241ba16ef09ce6bd8c63f1fc8a5125a3b79548ddcfed8"
+    },
+    {
+      "file": "/home/lzz/my test/ht_cupy_gpu_ws_20261028/src/elevation_mapping_cupy_2204/elevation_mapping_cupy/script/elevation_mapping_cupy/fusion/pointcloud_class_bayesian.py",
+      "sha256": "4753e2ed4f3fe7185872a9cde2207be30430e73ed2be1758b01837aa7b0ae9a5"
+    },
+    {
+      "file": "/home/lzz/my test/ht_cupy_gpu_ws_20261028/src/elevation_mapping_cupy_2204/elevation_mapping_cupy/script/elevation_mapping_cupy/fusion/pointcloud_class_max.py",
+      "sha256": "9240e674b616f1592e5ab348cfd1bdaadb11fdb3c0711bc3e469aae782f1f4b3"
+    },
+    {
+      "file": "/home/lzz/my test/ht_cupy_gpu_ws_20261028/src/elevation_mapping_cupy_2204/elevation_mapping_cupy/script/elevation_mapping_cupy/fusion/pointcloud_color.py",
+      "sha256": "75810a0450cd06d989cf1b5a761eff7e04e882167569b098755f43b3e79e6a16"
+    },
+    {
+      "file": "/home/lzz/my test/ht_cupy_gpu_ws_20261028/src/elevation_mapping_cupy_2204/elevation_mapping_cupy/script/elevation_mapping_cupy/kernels/__init__.py",
+      "sha256": "cd83d055d0125d1924ada06132ab0e481b9abebd873472a204d59f6943d0d21d"
+    },
+    {
+      "file": "/home/lzz/my test/ht_cupy_gpu_ws_20261028/src/elevation_mapping_cupy_2204/elevation_mapping_cupy/script/elevation_mapping_cupy/kernels/custom_image_kernels.py",
+      "sha256": "fbf4b8a893bd72c9e8443af2472373c6733a8e7a4aa4e24dddb72882440e3bf9"
+    },
+    {
+      "file": "/home/lzz/my test/ht_cupy_gpu_ws_20261028/src/elevation_mapping_cupy_2204/elevation_mapping_cupy/script/elevation_mapping_cupy/kernels/custom_kernels.py",
+      "sha256": "b2b34821f8c605af872c355665f729915b2aaf9c5d9c0c6720a54cc841ee064c"
+    },
+    {
+      "file": "/home/lzz/my test/ht_cupy_gpu_ws_20261028/src/elevation_mapping_cupy_2204/elevation_mapping_cupy/script/elevation_mapping_cupy/kernels/custom_semantic_kernels.py",
+      "sha256": "6f0c63eac6da44cab99d3085fff29d0727cf7727a0c029df3a4f07823a105d76"
+    },
+    {
+      "file": "/home/lzz/my test/ht_cupy_gpu_ws_20261028/src/elevation_mapping_cupy_2204/elevation_mapping_cupy/script/elevation_mapping_cupy/map_initializer.py",
+      "sha256": "d224a11702ad8a48a3243a0ec791eec8ac513019e4589db0ac872b22b3dac6e6"
+    },
+    {
+      "file": "/home/lzz/my test/ht_cupy_gpu_ws_20261028/src/elevation_mapping_cupy_2204/elevation_mapping_cupy/script/elevation_mapping_cupy/parameter.py",
+      "sha256": "6fcdc153f7bb616eea91bba38f08be3bc76acd0f15fea34d92d6194e66a29dbd"
+    },
+    {
+      "file": "/home/lzz/my test/ht_cupy_gpu_ws_20261028/src/elevation_mapping_cupy_2204/elevation_mapping_cupy/script/elevation_mapping_cupy/plugins/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "/home/lzz/my test/ht_cupy_gpu_ws_20261028/src/elevation_mapping_cupy_2204/elevation_mapping_cupy/script/elevation_mapping_cupy/plugins/erosion.py",
+      "sha256": "3646ece2ad41b9012eb28a43a225627cd664fd283d9d150a8dfedc4e6efe423a"
+    },
+    {
+      "file": "/home/lzz/my test/ht_cupy_gpu_ws_20261028/src/elevation_mapping_cupy_2204/elevation_mapping_cupy/script/elevation_mapping_cupy/plugins/features_pca.py",
+      "sha256": "0c819812ba67bf0ee01a5acf9b5eb46c6fa9f92d1422aa1b39350b5402aa0b6c"
+    },
+    {
+      "file": "/home/lzz/my test/ht_cupy_gpu_ws_20261028/src/elevation_mapping_cupy_2204/elevation_mapping_cupy/script/elevation_mapping_cupy/plugins/inpainting.py",
+      "sha256": "2e0743bf31c41b02b9ba62a193706d30699fa3d80be39c384fb9d9fb671efa20"
+    },
+    {
+      "file": "/home/lzz/my test/ht_cupy_gpu_ws_20261028/src/elevation_mapping_cupy_2204/elevation_mapping_cupy/script/elevation_mapping_cupy/plugins/max_filter.py",
+      "sha256": "db9a957cebba9222af1e33fa98d0fd8c4146ae5cd48044553503868936efdccc"
+    },
+    {
+      "file": "/home/lzz/my test/ht_cupy_gpu_ws_20261028/src/elevation_mapping_cupy_2204/elevation_mapping_cupy/script/elevation_mapping_cupy/plugins/max_layer_filter.py",
+      "sha256": "40b09c35329bd847d6d1fc20a217036cb828b33e1085df3398aa6ffce99b313d"
+    },
+    {
+      "file": "/home/lzz/my test/ht_cupy_gpu_ws_20261028/src/elevation_mapping_cupy_2204/elevation_mapping_cupy/script/elevation_mapping_cupy/plugins/min_filter.py",
+      "sha256": "1f19eca69ecc749e3a5caaf44ecc82e74868ad6568a3bf80fe2c476b276c9438"
+    },
+    {
+      "file": "/home/lzz/my test/ht_cupy_gpu_ws_20261028/src/elevation_mapping_cupy_2204/elevation_mapping_cupy/script/elevation_mapping_cupy/plugins/plugin_manager.py",
+      "sha256": "70c4a11c7b3f91993ba4752268d5797d5272dc195144a7fdec48c74422f29402"
+    },
+    {
+      "file": "/home/lzz/my test/ht_cupy_gpu_ws_20261028/src/elevation_mapping_cupy_2204/elevation_mapping_cupy/script/elevation_mapping_cupy/plugins/robot_centric_elevation.py",
+      "sha256": "43fc68d2d39d5b4b3af9a59eb144954dcb33961553726244613afbc0d7387228"
+    },
+    {
+      "file": "/home/lzz/my test/ht_cupy_gpu_ws_20261028/src/elevation_mapping_cupy_2204/elevation_mapping_cupy/script/elevation_mapping_cupy/plugins/semantic_filter.py",
+      "sha256": "219f2c9465ef647cdaaa229e1e1e15568bab0a342a2f79eaf8bdd9cb46b15681"
+    },
+    {
+      "file": "/home/lzz/my test/ht_cupy_gpu_ws_20261028/src/elevation_mapping_cupy_2204/elevation_mapping_cupy/script/elevation_mapping_cupy/plugins/semantic_traversability.py",
+      "sha256": "0f86cc95805b7f74acb1c226d2e25cae4ff9f02e5b861b8e6b84f713adf26f48"
+    },
+    {
+      "file": "/home/lzz/my test/ht_cupy_gpu_ws_20261028/src/elevation_mapping_cupy_2204/elevation_mapping_cupy/script/elevation_mapping_cupy/plugins/smooth_filter.py",
+      "sha256": "2d425d685249af554ce0b2d0662e902fcedd787dad08e9ed18752fd7ff70816a"
+    },
+    {
+      "file": "/home/lzz/my test/ht_cupy_gpu_ws_20261028/src/elevation_mapping_cupy_2204/elevation_mapping_cupy/script/elevation_mapping_cupy/semantic_map.py",
+      "sha256": "3d16d709bcf827bd1fcd511fa2cc364cb8ee8385a47134752c3ac89ee9e87a99"
+    },
+    {
+      "file": "/home/lzz/my test/ht_cupy_gpu_ws_20261028/src/elevation_mapping_cupy_2204/elevation_mapping_cupy/script/elevation_mapping_cupy/tests/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "/home/lzz/my test/ht_cupy_gpu_ws_20261028/src/elevation_mapping_cupy_2204/elevation_mapping_cupy/script/elevation_mapping_cupy/tests/test_deterministic_fusion.py",
+      "sha256": "c083a292345e86bd89d88d03cd1508c2366acf76460883ab6da4863647faac5f"
+    },
+    {
+      "file": "/home/lzz/my test/ht_cupy_gpu_ws_20261028/src/elevation_mapping_cupy_2204/elevation_mapping_cupy/script/elevation_mapping_cupy/tests/test_elevation_mapping.py",
+      "sha256": "9df3639fa5943091dc35c6f842913b85c1bd86992a07f33484022d00bfc53a13"
+    },
+    {
+      "file": "/home/lzz/my test/ht_cupy_gpu_ws_20261028/src/elevation_mapping_cupy_2204/elevation_mapping_cupy/script/elevation_mapping_cupy/tests/test_observation_age.py",
+      "sha256": "51df5983f7b60f2620b038f672c015530259b1c8a0c1c6d614e6f6fda563bed3"
+    },
+    {
+      "file": "/home/lzz/my test/ht_cupy_gpu_ws_20261028/src/elevation_mapping_cupy_2204/elevation_mapping_cupy/script/elevation_mapping_cupy/tests/test_parameter.py",
+      "sha256": "98f96cf9307e2bbfa11f280002ef6ffafb7eba8b9e5864657552f440780969c4"
+    },
+    {
+      "file": "/home/lzz/my test/ht_cupy_gpu_ws_20261028/src/elevation_mapping_cupy_2204/elevation_mapping_cupy/script/elevation_mapping_cupy/tests/test_plugins.py",
+      "sha256": "23a60a81efb59bd2369781416b1ace8c60818f26589772e253a60167822f85be"
+    },
+    {
+      "file": "/home/lzz/my test/ht_cupy_gpu_ws_20261028/src/elevation_mapping_cupy_2204/elevation_mapping_cupy/script/elevation_mapping_cupy/tests/test_semantic_kernels.py",
+      "sha256": "83ed1d24487daffcb867a1977d1b037f3d2bedb292be62b6730fb74890a8afb3"
+    },
+    {
+      "file": "/home/lzz/my test/ht_cupy_gpu_ws_20261028/src/elevation_mapping_cupy_2204/elevation_mapping_cupy/script/elevation_mapping_cupy/tests/test_semantic_map.py",
+      "sha256": "e8ded965cf5266250f1b7d3c280be0f03eb9f29720d5f32847b86e153596f79e"
+    },
+    {
+      "file": "/home/lzz/my test/ht_cupy_gpu_ws_20261028/src/elevation_mapping_cupy_2204/elevation_mapping_cupy/script/elevation_mapping_cupy/traversability_filter.py",
+      "sha256": "252c63ebd754bbbdb81cc8d1b90a648a443871168d4dad5b1ffb3841da7ff059"
+    },
+    {
+      "file": "/home/lzz/my test/ht_cupy_gpu_ws_20261028/src/elevation_mapping_cupy_2204/elevation_mapping_cupy/script/elevation_mapping_cupy/traversability_polygon.py",
+      "sha256": "fe91cd63507f078b3e40e57ad5b25e23b65521024fbeb3ee15ee8226006bb4e0"
+    }
+  ],
+  "planner_binary": "/home/lzz/my test/HT_Explo-real-review-20261028/build_real/tare_planner/ht_xytheta_offline",
+  "planner_binary_sha256": "cfb9cd91310a09dad2014831e5812d69ad1c3fb35f5fc01c3c2fa6aaca36781d",
+  "input_sha256": "dfc7ad71673876433fc989e8832b7008ce888df337b15933a18fc271c3f67720",
+  "input_mask": "after (URDF14boxes+4cylinders)",
+  "machine": "Linux-7.0.0-38-generic-x86_64-with-glibc2.39",
+  "no_drivers_simulation_or_controller": true,
+  "time_alignment": "Preserved recorded source stamps and R/t; no fabricated control twist"
+}
