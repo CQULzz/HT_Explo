@@ -1,0 +1,14 @@
+from pathlib import Path
+import json,numpy as np,warnings
+warnings.filterwarnings('ignore',message='All-NaN')
+O=Path('/media/lzz/My Passport/HT_filter_expansion_2026-10-29');B=Path('/media/lzz/My Passport/HT_newbags_replay_20261028');allrows=[];series={}
+for scene in ['165317','170043']:
+ baseline=json.loads((B/('rebuild_'+scene)/'RESULTS.json').read_text());baseline_data={x['stamp_ns']:x for x in baseline['frames']}
+ for margin,label in [(0,'baseline'),(.05,'pad005'),(.1,'pad010'),(.2,'pad020')]:
+  folder=B/('rebuild_'+scene) if not margin else O/(label+'_'+scene);r=json.loads((folder/'RESULTS.json').read_text());assert len(r['frames'])==len(baseline['frames']);out=[]
+  for f in r['frames']:
+   old=baseline_data[f['stamp_ns']];assert f['output']==old['output'];z=np.load(folder/'frames'/f['file']);i,j=np.indices((241,241));xy=z['center']+np.stack([120-i,120-j],axis=-1)*.04;robot=z['robot'];near=np.sum((xy-robot[:2])**2,axis=-1)<1.5**2;T=np.stack([z[f'ht_dir_{k}'] for k in range(8)]);valid=z['ht_valid']>.5;maxT=np.max(T,axis=0);red=valid&(maxT<.5);physical=z['ht_observation_valid']>.5
+   native=z['native_elevation'];ii,jj=np.indices((291,291));x=z['local_center'][0]+(145-ii)*.04;y=z['local_center'][1]+(145-jj)*.04;d=baseline['diagnostics'][len(out)]['surface'];plane=d['reference_center_m']+d['slope_xy'][0]*(x-z['center'][0])+d['slope_xy'][1]*(y-z['center'][1]);within=(x-robot[0])**2+(y-robot[1])**2<1.5**2;bump=(native-plane>.06)&(native-plane<.25)&within
+   out.append({'frame':len(out),'stamp_ns':f['stamp_ns'],'t_s':f['t_s'],'near_all8_red_cells':int((near&red).sum()),'near_context_unknown_cells':int((near&~valid).sum()),'near_physical_unknown_cells':int((near&~physical).sum()),'near_native_bump_cells':int(bump.sum()),'all_valid_cells':int(valid.sum()),'red_fraction_direction_cells':float(np.mean(T[:,valid]<.5)),'global_cells':f['global_cells']})
+  record={'scene':scene,'margin_m':margin,'label':label,'input_scans':r['input_scans'],'integrated_scans':r['integrated'],'ht_outputs':r['outputs'],'extra_removed_points':sum(x.get('extra_removed_points',0) for x in r['scans']),'near_all8_red_median':float(np.median([x['near_all8_red_cells'] for x in out])),'near_context_unknown_median':float(np.median([x['near_context_unknown_cells'] for x in out])),'near_physical_unknown_median':float(np.median([x['near_physical_unknown_cells'] for x in out])),'near_native_bump_median':float(np.median([x['near_native_bump_cells'] for x in out])),'frame17':out[17] if scene=='170043' else None,'frame52':out[52] if scene=='170043' else None,'final_global_cells':out[-1]['global_cells']};allrows.append(record);series[scene+'_'+label]=out;print(record,flush=True)
+(O/'FILTER_COMPARISON.json').write_text(json.dumps({'groups':allrows,'series':series,'scope':'Identical raw scans, same algorithms/thresholds/poses/time, only extra XY primitive dilation changes; low-red counts must be read with unknown and raw-ground removal'},indent=2)+'\n')

@@ -1,0 +1,12 @@
+from pathlib import Path
+import cv2,subprocess,imageio_ffmpeg,json
+from PIL import Image,ImageDraw,ImageFont
+O=Path(__file__).parent;old=Path('/media/lzz/My Passport/HT_newbags_replay_20261028/rviz_170043_deliver/20261028_170043_RViz.mp4');new=O/'rviz_pad020_170043_final/XY+20cm_170043_RViz.mp4';out=O/'HT_filter_original_vs_plus20cm_RViz.mp4';cap0=cv2.VideoCapture(str(old));cap1=cv2.VideoCapture(str(new));assert cap0.get(cv2.CAP_PROP_FRAME_COUNT)==cap1.get(cv2.CAP_PROP_FRAME_COUNT)==358
+ff=imageio_ffmpeg.get_ffmpeg_exe();cmd=[ff,'-v','error','-n','-f','rawvideo','-pix_fmt','rgb24','-s','2560x1440','-r','10','-i','-','-an','-c:v','libx264','-preset','fast','-crf','19','-pix_fmt','yuv420p','-movflags','+faststart',str(out)];enc=subprocess.Popen(cmd,stdin=subprocess.PIPE,stderr=(O/'comparison_encode.log').open('w'));font=ImageFont.truetype('/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc',27);small=ImageFont.truetype('/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc',20)
+for index in range(358):
+ ok0,a=cap0.read();ok1,b=cap1.read();assert ok0 and ok1,index;a=Image.fromarray(cv2.cvtColor(a,cv2.COLOR_BGR2RGB));b=Image.fromarray(cv2.cvtColor(b,cv2.COLOR_BGR2RGB));im=Image.new('RGB',(2560,1440));im.paste(a.crop((0,720,1280,1440)),(0,0));im.paste(b.crop((0,720,1280,1440)),(1280,0));im.paste(a.crop((1280,720,2560,1440)),(0,720));im.paste(b.crop((1280,720,2560,1440)),(1280,720));d=ImageDraw.Draw(im)
+ for k,title in enumerate(['原过滤 | HT八方向','水平额外扩大20cm | HT八方向','原过滤 | 半透明XYθ体素','水平额外扩大20cm | 半透明XYθ体素']):
+  x=k%2*1280;y=k//2*720;d.rectangle((x,y,x+1280,y+83),fill=(16,24,29));d.text((x+18,y+5),title,font=font,fill='white');d.text((x+18,y+46),f'同一录包 t={index/10:.1f}s | 实际RViz离线回放 | 仅过滤范围不同，未改变轨迹',font=small,fill=(180,205,220))
+ if index in [95,292]:im.save(O/f'RViz_compare_{index:03d}.png')
+ enc.stdin.write(im.tobytes())
+enc.stdin.close();assert enc.wait()==0;cap0.release();cap1.release();subprocess.run([ff,'-v','error','-i',str(out),'-f','null','-'],check=True);c=cv2.VideoCapture(str(out));check=dict(actual_RViz_inputs=True,frames=int(c.get(cv2.CAP_PROP_FRAME_COUNT)),fps=c.get(cv2.CAP_PROP_FPS),width=c.get(cv2.CAP_PROP_FRAME_WIDTH),height=c.get(cv2.CAP_PROP_FRAME_HEIGHT),full_decode_passed=True);c.release();assert check['frames']==358 and check['width']==2560; (O/'COMPARISON_VIDEO_CHECK.json').write_text(json.dumps(check,indent=2)+'\n');print(out,flush=True)

@@ -1,0 +1,340 @@
+{
+  "scope": "Counterfactual NN inputs for mechanism attribution only; no field changes deployed; CPU diagnostic original agrees with GPU within1e-4",
+  "pairs": [
+    {
+      "before_frame": 12,
+      "after_frame": 13,
+      "source_times_s": [
+        6.600382805,
+        7.202614784
+      ],
+      "observed_cells_before_after": [
+        54485,
+        55054
+      ],
+      "native_finite_before_after": [
+        54801,
+        55419
+      ],
+      "nn_padding_cells_before_after": [
+        29266,
+        27327
+      ],
+      "common_world_cells": 45783,
+      "confident_green_to_red_direction_cells": 2204,
+      "half_threshold_green_to_red_direction_cells": 48720,
+      "changed_height_over5cm_by_new_input_type": {
+        "observed": 1372,
+        "nearest_padding": 4459,
+        "hole_repair": 24,
+        "occupied_context": 16
+      },
+      "variants": {
+        "original": {
+          "red_fraction_among_after_valid": 0.35713752834918233,
+          "previous_flips_recovered_over_half": 0,
+          "half_threshold_flips_recovered": 0,
+          "previous_flips_recovered_over_point8": 0
+        },
+        "restore_only_nearest_padding": {
+          "red_fraction_among_after_valid": 0.3831939084072733,
+          "previous_flips_recovered_over_half": 0,
+          "half_threshold_flips_recovered": 1293,
+          "previous_flips_recovered_over_point8": 0
+        },
+        "restore_only_small_hole_repair": {
+          "red_fraction_among_after_valid": 0.3595422353081606,
+          "previous_flips_recovered_over_half": 0,
+          "half_threshold_flips_recovered": 85,
+          "previous_flips_recovered_over_point8": 0
+        },
+        "restore_only_observed_heights": {
+          "red_fraction_among_after_valid": 0.2959455695698882,
+          "previous_flips_recovered_over_half": 2191,
+          "half_threshold_flips_recovered": 34554,
+          "previous_flips_recovered_over_point8": 2124
+        },
+        "diagnostic_flatten_measured_under5cm": {
+          "red_fraction_among_after_valid": 0.47547298372657465,
+          "previous_flips_recovered_over_half": 0,
+          "half_threshold_flips_recovered": 231,
+          "previous_flips_recovered_over_point8": 0
+        },
+        "diagnostic_flatten_measured_under15cm": {
+          "red_fraction_among_after_valid": 0.4645361675884295,
+          "previous_flips_recovered_over_half": 565,
+          "half_threshold_flips_recovered": 2811,
+          "previous_flips_recovered_over_point8": 332
+        }
+      }
+    },
+    {
+      "before_frame": 23,
+      "after_frame": 26,
+      "source_times_s": [
+        13.001035929,
+        14.699674845
+      ],
+      "observed_cells_before_after": [
+        64474,
+        67582
+      ],
+      "native_finite_before_after": [
+        59516,
+        60496
+      ],
+      "nn_padding_cells_before_after": [
+        19934,
+        16200
+      ],
+      "common_world_cells": 39613,
+      "confident_green_to_red_direction_cells": 3395,
+      "half_threshold_green_to_red_direction_cells": 30948,
+      "changed_height_over5cm_by_new_input_type": {
+        "observed": 2966,
+        "nearest_padding": 2712,
+        "hole_repair": 16,
+        "occupied_context": 4
+      },
+      "variants": {
+        "original": {
+          "red_fraction_among_after_valid": 0.351110722485292,
+          "previous_flips_recovered_over_half": 0,
+          "half_threshold_flips_recovered": 0,
+          "previous_flips_recovered_over_point8": 0
+        },
+        "restore_only_nearest_padding": {
+          "red_fraction_among_after_valid": 0.38610946692495335,
+          "previous_flips_recovered_over_half": 0,
+          "half_threshold_flips_recovered": 227,
+          "previous_flips_recovered_over_point8": 0
+        },
+        "restore_only_small_hole_repair": {
+          "red_fraction_among_after_valid": 0.3571441383268762,
+          "previous_flips_recovered_over_half": 0,
+          "half_threshold_flips_recovered": 16,
+          "previous_flips_recovered_over_point8": 0
+        },
+        "restore_only_observed_heights": {
+          "red_fraction_among_after_valid": 0.2932562957382695,
+          "previous_flips_recovered_over_half": 3376,
+          "half_threshold_flips_recovered": 27283,
+          "previous_flips_recovered_over_point8": 2993
+        },
+        "diagnostic_flatten_measured_under5cm": {
+          "red_fraction_among_after_valid": 0.47587082077772996,
+          "previous_flips_recovered_over_half": 0,
+          "half_threshold_flips_recovered": 623,
+          "previous_flips_recovered_over_point8": 0
+        },
+        "diagnostic_flatten_measured_under15cm": {
+          "red_fraction_among_after_valid": 0.3654263524178505,
+          "previous_flips_recovered_over_half": 2991,
+          "half_threshold_flips_recovered": 18935,
+          "previous_flips_recovered_over_point8": 2991
+        }
+      }
+    },
+    {
+      "before_frame": 50,
+      "after_frame": 51,
+      "source_times_s": [
+        28.198846817,
+        28.698928833
+      ],
+      "observed_cells_before_after": [
+        67484,
+        67470
+      ],
+      "native_finite_before_after": [
+        56179,
+        55307
+      ],
+      "nn_padding_cells_before_after": [
+        16293,
+        16026
+      ],
+      "common_world_cells": 49144,
+      "confident_green_to_red_direction_cells": 501,
+      "half_threshold_green_to_red_direction_cells": 27511,
+      "changed_height_over5cm_by_new_input_type": {
+        "observed": 937,
+        "nearest_padding": 263,
+        "hole_repair": 0,
+        "occupied_context": 7
+      },
+      "variants": {
+        "original": {
+          "red_fraction_among_after_valid": 0.3599221333032762,
+          "previous_flips_recovered_over_half": 0,
+          "half_threshold_flips_recovered": 0,
+          "previous_flips_recovered_over_point8": 0
+        },
+        "restore_only_nearest_padding": {
+          "red_fraction_among_after_valid": 0.36207074691914637,
+          "previous_flips_recovered_over_half": 0,
+          "half_threshold_flips_recovered": 199,
+          "previous_flips_recovered_over_point8": 0
+        },
+        "restore_only_small_hole_repair": {
+          "red_fraction_among_after_valid": 0.3599221333032762,
+          "previous_flips_recovered_over_half": 0,
+          "half_threshold_flips_recovered": 1,
+          "previous_flips_recovered_over_point8": 0
+        },
+        "restore_only_observed_heights": {
+          "red_fraction_among_after_valid": 0.2952641268409979,
+          "previous_flips_recovered_over_half": 501,
+          "half_threshold_flips_recovered": 27345,
+          "previous_flips_recovered_over_point8": 501
+        },
+        "diagnostic_flatten_measured_under5cm": {
+          "red_fraction_among_after_valid": 0.4997252592425609,
+          "previous_flips_recovered_over_half": 0,
+          "half_threshold_flips_recovered": 2028,
+          "previous_flips_recovered_over_point8": 0
+        },
+        "diagnostic_flatten_measured_under15cm": {
+          "red_fraction_among_after_valid": 0.3141413999098287,
+          "previous_flips_recovered_over_half": 501,
+          "half_threshold_flips_recovered": 26548,
+          "previous_flips_recovered_over_point8": 501
+        }
+      }
+    },
+    {
+      "before_frame": 51,
+      "after_frame": 52,
+      "source_times_s": [
+        28.698928833,
+        29.199290991
+      ],
+      "observed_cells_before_after": [
+        67470,
+        67942
+      ],
+      "native_finite_before_after": [
+        55307,
+        55081
+      ],
+      "nn_padding_cells_before_after": [
+        16026,
+        15515
+      ],
+      "common_world_cells": 49313,
+      "confident_green_to_red_direction_cells": 84,
+      "half_threshold_green_to_red_direction_cells": 49795,
+      "changed_height_over5cm_by_new_input_type": {
+        "observed": 1254,
+        "nearest_padding": 330,
+        "hole_repair": 0,
+        "occupied_context": 11
+      },
+      "variants": {
+        "original": {
+          "red_fraction_among_after_valid": 0.49861053835195324,
+          "previous_flips_recovered_over_half": 0,
+          "half_threshold_flips_recovered": 0,
+          "previous_flips_recovered_over_point8": 0
+        },
+        "restore_only_nearest_padding": {
+          "red_fraction_among_after_valid": 0.49913773712229137,
+          "previous_flips_recovered_over_half": 0,
+          "half_threshold_flips_recovered": 73,
+          "previous_flips_recovered_over_point8": 0
+        },
+        "restore_only_small_hole_repair": {
+          "red_fraction_among_after_valid": 0.49861053835195324,
+          "previous_flips_recovered_over_half": 0,
+          "half_threshold_flips_recovered": 0,
+          "previous_flips_recovered_over_point8": 0
+        },
+        "restore_only_observed_heights": {
+          "red_fraction_among_after_valid": 0.39287789607857837,
+          "previous_flips_recovered_over_half": 79,
+          "half_threshold_flips_recovered": 49585,
+          "previous_flips_recovered_over_point8": 42
+        },
+        "diagnostic_flatten_measured_under5cm": {
+          "red_fraction_among_after_valid": 0.542778079778061,
+          "previous_flips_recovered_over_half": 5,
+          "half_threshold_flips_recovered": 5870,
+          "previous_flips_recovered_over_point8": 0
+        },
+        "diagnostic_flatten_measured_under15cm": {
+          "red_fraction_among_after_valid": 0.33510394016645423,
+          "previous_flips_recovered_over_half": 12,
+          "half_threshold_flips_recovered": 45847,
+          "previous_flips_recovered_over_point8": 7
+        }
+      }
+    },
+    {
+      "before_frame": 52,
+      "after_frame": 53,
+      "source_times_s": [
+        29.199290991,
+        29.70636487
+      ],
+      "observed_cells_before_after": [
+        67942,
+        68559
+      ],
+      "native_finite_before_after": [
+        55081,
+        56319
+      ],
+      "nn_padding_cells_before_after": [
+        15515,
+        14711
+      ],
+      "common_world_cells": 50722,
+      "confident_green_to_red_direction_cells": 231,
+      "half_threshold_green_to_red_direction_cells": 23721,
+      "changed_height_over5cm_by_new_input_type": {
+        "observed": 1205,
+        "nearest_padding": 217,
+        "hole_repair": 0,
+        "occupied_context": 17
+      },
+      "variants": {
+        "original": {
+          "red_fraction_among_after_valid": 0.5318490527259818,
+          "previous_flips_recovered_over_half": 0,
+          "half_threshold_flips_recovered": 0,
+          "previous_flips_recovered_over_point8": 0
+        },
+        "restore_only_nearest_padding": {
+          "red_fraction_among_after_valid": 0.5320966144762901,
+          "previous_flips_recovered_over_half": 0,
+          "half_threshold_flips_recovered": 53,
+          "previous_flips_recovered_over_point8": 0
+        },
+        "restore_only_small_hole_repair": {
+          "red_fraction_among_after_valid": 0.5318490527259818,
+          "previous_flips_recovered_over_half": 0,
+          "half_threshold_flips_recovered": 0,
+          "previous_flips_recovered_over_point8": 0
+        },
+        "restore_only_observed_heights": {
+          "red_fraction_among_after_valid": 0.510079967116326,
+          "previous_flips_recovered_over_half": 231,
+          "half_threshold_flips_recovered": 23576,
+          "previous_flips_recovered_over_point8": 231
+        },
+        "diagnostic_flatten_measured_under5cm": {
+          "red_fraction_among_after_valid": 0.6057952804454243,
+          "previous_flips_recovered_over_half": 1,
+          "half_threshold_flips_recovered": 1796,
+          "previous_flips_recovered_over_point8": 0
+        },
+        "diagnostic_flatten_measured_under15cm": {
+          "red_fraction_among_after_valid": 0.34197152572773815,
+          "previous_flips_recovered_over_half": 229,
+          "half_threshold_flips_recovered": 22072,
+          "previous_flips_recovered_over_point8": 228
+        }
+      }
+    }
+  ]
+}
