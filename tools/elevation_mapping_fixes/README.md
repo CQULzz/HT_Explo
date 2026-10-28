@@ -1,45 +1,77 @@
-# Independent CuPy mapping fixes
+# Independent CuPy mapping patches
 
-Apply `cupy_ht_mapping.patch` to the separate repository/version recorded in
-`manifest.json`. HT and CuPy retain separate `src`, build and install trees.
-The HT-side bridge is included in `../ht_cupy_bridge`, including its own model
-checkpoint; it does not import a neighbouring bridge workspace.
+HT and CuPy retain separate source, build and install trees. The installer
+supports the upstream commit recorded in `manifest.json` and applies two ordered
+stages:
+
+1. `cupy_ht_mapping.patch`: coordinate export, actual accepted-observation age,
+   scan/TF/publication scheduling and cloud QoS corrections.
+2. `deterministic_fusion.patch`: immutable-prior point decisions, ordered GPU
+   reductions and separately committed visibility cleanup. The four candidate
+   file hashes are recorded in `deterministic_manifest.json`.
 
 ```bash
 source /opt/ros/jazzy/setup.bash
-python3 tools/install_elevation_fixes.py --workspace /path/to/elevation_mapping_cupy_ws --build
+python3 tools/install_elevation_fixes.py --workspace /path/to/independent_cupy_ws
+# Add --build only when the independent workspace build is wanted.
 ```
 
-The patch fixes the duplicated coordinate flip, tracks true per-cell scan
-times, uses bounded reliable transport for registered world clouds, and
-separates point ingestion from periodic callbacks. Periodic TF lookups do not
-wait for old scans. A complete map copy/mutation is locked, while TF waits and
-ROS serialization happen outside that lock. Four executor workers serve
-TF, scans, maintenance timers and the separate map publication group. A busy
-maintenance callback no longer blocks publication merely by occupying its
-callback group; actual map access still uses the coherent snapshot lock.
-The trial publishes height, variance and observation age, omitting the unused
-CuPy traversability output (the HT directional output remains authoritative).
-On shutdown the worker pool is joined before node destruction.
+The checkout must be at
+`<workspace>/src/elevation_mapping_cupy_2204` and contain the recorded upstream
+Git commit. The installer does not clone, reset, force-checkout or overwrite
+unknown edits. It first builds the complete upstream → base → stable sequence
+in a temporary directory, validates the final hashes, and compares every managed
+file with the three supported complete states. A clean upstream checkout, an
+exact base-patched checkout and an already stable checkout are supported. Mixed
+stages or other edits to managed files fail before any source/config writes.
+Unrelated files are preserved. Repeating a successful install changes no files.
+Write failures restore files already written during that invocation.
 
-Map headers carry the last successfully integrated scan's timestamp, so an
-idle publishing timer cannot disguise stale perception as a fresh map.
-Raw sensor subscribers retain best-effort compatibility unless their profile
-explicitly requests reliable transport. `qos_reliability` and `queue_depth`
-are per-subscriber options; the supplied profile is for CMU registered clouds.
+The generated `config/trial_core.yaml` uses the actual independent package path
+`elevation_mapping_cupy/config/core/weights.dat`; ROS 1 `rospack` substitution is
+not used. It explicitly enables deterministic fusion. Previously generated
+known configs can migrate; modified trial configs are preserved and cause
+preflight failure instead of being silently replaced. `--build` runs only
+`colcon build --packages-select elevation_mapping_cupy` after installation; a
+build failure leaves the verified sources installed and is reported as failure.
+The installer never launches ROS nodes, simulation, vehicle drivers or control.
 
-The core GPU tests cover real world coordinates through ROS serialization,
-true observation ages, map shifts, rejected outliers, repeated publications
-and nonblocking pose timers. The HT-side tests cover multiple surfaces,
-unknown handling, preserved posts/steps, ramp selection and world indexing.
+The stable backend retains legacy thresholds and the Gaussian batch-update
+contract, but replaces formerly racy execution with defined staged semantics.
+Point acceptance reads one prior map; candidates are reduced in original point
+order. Rays read a fixed post-integration map and use deterministic reductions,
+including an explicit upper-bound minimum. Visibility cleanup remains enabled
+when requested by the mapping profile. This is not bit equivalence to an
+arbitrary previous GPU schedule. It also restores FP32 geometry: legacy GPU
+helpers implicitly converted coordinates, rotation entries and rays to actual
+half precision. Ordered sums use FP64 before FP32 map storage. These precision
+changes are part of the candidate and are recorded in the experiment, rather
+than described as a mere scheduling change. Legacy fusion remains available by setting
+`enable_deterministic_fusion: false`; the real Scout mapper profile explicitly
+selects `true`. No HT probability threshold is reduced.
 
-Generated bags and videos stay local in `presentations/scheduled_results`.
-Run a fresh current-HT Garage trial and render its actual published XYθ path:
+The base patch keeps per-cell observation timestamps separate from the legacy
+elapsed-time layer. Rejected returns, retained cells, visibility rays and idle
+map publication cannot renew direct observation age. Map headers retain the
+last successfully integrated scan timestamp. Raw point-cloud subscribers retain
+best-effort compatibility unless the independent profile requests reliable
+transport; registered geometry-filtered sensor-frame clouds use the supplied
+reliable profile.
+
+The CUDA regression tests cover analytic Gaussian/drift expectations, repeated
+state bits, unknown/source-age behavior, stale-obstacle cleanup and preservation
+of actual flat ground, steps and fresh wall hits. They do not establish ARM
+performance, physical calibration or vehicle closed-loop readiness. Full
+recorded-input repeatability and planning results belong to the separately
+frozen experiment report; do not infer them from synthetic tests.
+
+CPU-only installer regression:
 
 ```bash
-python3 presentations/run_ht_validation.py --duration 180
+python3 -m pytest -q tools/test_install_elevation_fixes.py
 ```
 
-Set `HT_SIM_WS` and `HT_CUPY_WS` if those independent workspaces are located
-elsewhere. The current-HT validation does not require the original TARE
-baseline workspace. Original-vs-current comparison does require that baseline.
+Its compact fixture contains actual tracked files extracted with
+`git show 88f4c0...:path`; provenance and SHA256 are inside the archive. Each test
+creates a temporary minimal Git repository, so running it cannot alter the
+independent working checkout.
