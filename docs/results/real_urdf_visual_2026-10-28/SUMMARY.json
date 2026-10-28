@@ -1,0 +1,111 @@
+{
+  "scope": "Same recorded raw scans/poses and fixed local goals; different geometry filters; no new driving",
+  "groups": {
+    "recorded": {
+      "before": {
+        "queries": 1664,
+        "reached": 0,
+        "start_support": {
+          "UNKNOWN": 96,
+          "BLOCKED": 1568
+        },
+        "termination": {
+          "INVALID_START": 1664
+        },
+        "frames_start_support": {
+          "UNKNOWN": 12,
+          "BLOCKED": 196
+        }
+      },
+      "after": {
+        "queries": 1664,
+        "reached": 0,
+        "start_support": {
+          "UNKNOWN": 96,
+          "BLOCKED": 1568
+        },
+        "termination": {
+          "INVALID_START": 1664
+        },
+        "frames_start_support": {
+          "UNKNOWN": 12,
+          "BLOCKED": 196
+        }
+      }
+    },
+    "synthetic": {
+      "before": {
+        "queries": 3,
+        "reached": 2,
+        "start_support": {
+          "KNOWN": 2,
+          "BLOCKED": 1
+        },
+        "termination": {
+          "REACHED": 2,
+          "INVALID_START": 1
+        }
+      },
+      "after": {
+        "queries": 3,
+        "reached": 2,
+        "start_support": {
+          "KNOWN": 2,
+          "BLOCKED": 1
+        },
+        "termination": {
+          "REACHED": 2,
+          "INVALID_START": 1
+        }
+      }
+    }
+  },
+  "parameters": {
+    "ht_enabled": true,
+    "ht_directions_calibrated": true,
+    "ht_exploration_mode": "tare_waypoint",
+    "ht_score_semantics": "configuration",
+    "ht_unknown_policy": "strict",
+    "ht_min_probability": 0.5,
+    "ht_validity_radius": 0.6,
+    "ht_map_timeout": 1,
+    "ht_startup_radius": 0,
+    "ht_startup_duration": 30,
+    "ht_require_reversible_motion": false,
+    "ht_heading_offset": 0,
+    "ht_channel_order": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "ht_sample_step": 0.02,
+    "ht_lookahead_distance": 2,
+    "ht_waypoint_reached_distance": 0.3,
+    "xytheta_cell": 0.3,
+    "xytheta_headings": 32,
+    "xytheta_turn_angles_deg": [
+      11.25,
+      22.5
+    ],
+    "xytheta_drive_step": 0.4,
+    "forward_speed": 0.5,
+    "reverse_speed": 0.25,
+    "max_yaw_rate": 0.8,
+    "xytheta_goal_radius": 0.35,
+    "xytheta_max_radius": 7,
+    "xytheta_max_expansions": 8000,
+    "xytheta_search_seconds": 0.15,
+    "try_direct_connection": true,
+    "startup_prior_initialized": false,
+    "publish_permission": false
+  },
+  "same_fixed_cpp_binary": true,
+  "source_clock_frozen_not_live_freshness_test": true,
+  "source_stamps_poses_goals_paired": true,
+  "successful_paths_independently_rechecked": true
+}

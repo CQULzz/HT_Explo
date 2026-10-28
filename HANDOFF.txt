@@ -1,3 +1,19 @@
+2026-10-28 实车离线审查最新补充（优先于下方历史仿真交接）
+
+工作树 /home/lzz/my test/HT_Explo-real-review-20261028；本地分支 real/scout-review-20261028 是导出包导入历史，绝不能直接将本地HEAD祖先推到远端。远端实车分支real/scout-helios32保留原历史，按差异树commit-tree追加；main/develop不变。只做离线，不启动设备、仿真或车辆。
+
+本次用户要求改XYtheta、实验、上传，并要求按URDF找车身附件。方向语义已修正：configuration分数按body yaw，倒车位移角不再额外误检；已发布真实C++验证及全208帧复测。之后增加URDF base_link.dae五个部件AABB，原九盒/四轮柱/TF不变。本地运行冻结ad573bb8e480c7aab9f15406e6682e6c9ec77ec9，对应远端代码0664a75b221f17709895a03563a8dfa303eb6d20，后续报告提交另记。
+
+最新事实：桥接构建及83项测试通过。415原始扫描/207.587s，两组208张地图，实际同一C++二进制每组1664真实姿态目标查询全部INVALID_START；每组208起点196BLOCKED+12UNKNOWN，停车未修好。3个人工控制每组2成功/1正确拒绝，不能算实地成功。新增盒移除1032候选车体点，不是真值标注。
+
+相同旧过滤负控制逐位核对415帧mask一致，CuPy高程仍有局部最大1.562m差异，HT最大0.614/阈值翻转16766（累计格×方向×帧）。差异在HT之前出现；CuPy源码共享状态竞争可见，各具体单元归因尚未隔离。下一候选应先解决重复性，不能降低0.5门槛造成功。不要混修进已冻结轮次。
+
+最新报告 docs/results/real_urdf_visual_2026-10-28/REPORT.md；大数据外盘 /media/lzz/My Passport/HT_Explo_urdf_visual_candidate_2026-10-28/run_data。Release real-scout-urdf-visual-20261028，完成发布以远端PUBLICATION_RECEIPT.json大小/SHA验证为准。细格半透明体素视频33秒，是离线地图结果，没有新版车辆运动。ARM/实车实时性均未验收。原始10月27日备份未改。
+
+本轮代码、完整实验/控制数据、图和视频发布后停止。接手先读最新报告、AGENTS.md、FREEZE和远端回执，核查git状态再处理新要求。只因下方历史文档说运行中或600s，不得自行重启旧仿真/任务。
+
+以下为早期仿真历史交接，非当前实车运行状态：
+
 XYθ规划语义修正（2026-10-28，优先于后文）
 [事实] 新运行代码本地a33f78a，GitHub59179d2f3f173355379d7d4badbd8c6db9055b9e，分支real/scout-helios32。读docs/results/real_xytheta_2026-10-28/BRIEF.md、REPORT.md与Release real-scout-xytheta-20261028及校验回执。
 [事实] configuration的motionSupport不再额外查询位移方向，严格检查实际车头θ扫掠；修正倒车误查θ+π。point/行驶方向语义保留旧门槛。QoS未被当成规划模式修改，TARE访问顺序/模型/0.5门槛/未知及障碍规则未改。

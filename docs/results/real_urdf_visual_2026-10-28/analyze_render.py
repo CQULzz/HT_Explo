@@ -285,7 +285,7 @@ def model_geometry(out, geometry_paths, plt):
     return metadata
 
 
-def voxel(ax, z, plt, halfwidth=1.85, stride=12):
+def voxel(ax, z, plt, halfwidth=1.85, stride=12, alpha=.085):
     from mpl_toolkits.mplot3d.art3d import Poly3DCollection
     n, m = z['ht_valid'].shape; r = float(z['resolution'])
     ii, jj = np.meshgrid(np.arange(stride//2, n, stride), np.arange(stride//2, m, stride), indexing='ij')
@@ -299,7 +299,7 @@ def voxel(ax, z, plt, halfwidth=1.85, stride=12):
     vertices = vertex[None]*np.array([width, width, 45.])[None,None]
     vertices = vertices+np.stack([xx[i,j]-width/2, yy[i,j]-width/2, k*45.], axis=1)[:,None]
     faces = np.array([[0,1,2,3],[4,5,6,7],[0,1,5,4],[1,2,6,5],[2,3,7,6],[3,0,4,7]])
-    rgba = plt.get_cmap('RdYlGn')(p[k,i,j]); rgba[:,3] = .085
+    rgba = plt.get_cmap('RdYlGn')(p[k,i,j]); rgba[:,3] = alpha
     if len(k):
         ax.add_collection3d(Poly3DCollection(vertices[:,faces].reshape(-1,4,3), facecolors=np.repeat(rgba, 6, axis=0),
                                              edgecolors=(.45,.55,.6,.055), linewidths=.12, zsort='average'))
@@ -319,7 +319,8 @@ def plot_path(ax, row):
         ax.plot(segment[:,0], segment[:,1], segment[:,2], color='#168cde', lw=2.5)
 
 
-def video(out, folders, frames, records, lookups, plt, ffmpeg, sample_every, frame_hold):
+def video(out, folders, frames, records, lookups, plt, ffmpeg, sample_every, frame_hold,
+          voxel_stride=12, voxel_alpha=.085):
     selected = sorted(set(list(range(0, len(frames['after']), sample_every))+[len(frames['after'])-1]))
     folder = out/'video_frames'; folder.mkdir()
     timeline = ['ffconcat version 1.0']; manifest = []
@@ -330,7 +331,7 @@ def video(out, folders, frames, records, lookups, plt, ffmpeg, sample_every, fra
                 z = {k: np.array(f[k]) for k in f.files}
             record = records[role][index]; row = query_for_frame(lookups[role], record['file'])
             ax = fig.add_axes([.015+col*.5, .24, .48, .63], projection='3d')
-            display_resolution = voxel(ax, z, plt); plot_path(ax, row)
+            display_resolution = voxel(ax, z, plt, stride=voxel_stride, alpha=voxel_alpha); plot_path(ax, row)
             ax.scatter([z['robot'][0]], [z['robot'][1]], [math.degrees(z['robot'][2])%360], c='#145a9f', s=32, depthshade=False)
             ax.set_title(f'{name} | {row["termination"] if row else "NO_QUERY"}\n'
                          f'生产起点检查：{record["production_start_support"]}', fontsize=13)
@@ -343,7 +344,8 @@ def video(out, folders, frames, records, lookups, plt, ffmpeg, sample_every, fra
             manifest.append(dict(frame_index=index, role=role, source_npz_sha256=record['npz_sha256'],
                                  query_label=row['label'] if row else None,
                                  termination=row['termination'] if row else None,
-                                 display_voxel_xy_m=display_resolution, display_voxel_theta_deg=45))
+                                 display_voxel_xy_m=display_resolution, display_voxel_theta_deg=45,
+                                 display_voxel_stride=voxel_stride, display_voxel_alpha=voxel_alpha))
         time = records['after'][index]['t_s']
         fig.suptitle(f'同一历史点云重新建图 → HT → 实际 C++ XYθ 查询 | 原录包 t={time:.1f}s', fontsize=16, y=.98)
         fig.text(.5, .035, '没有新行驶；视频为地图快照对比，不是实车录像。未知透明；蓝点是记录姿态；蓝线仅在实际产生路径时显示。\n'
@@ -366,6 +368,7 @@ def video(out, folders, frames, records, lookups, plt, ffmpeg, sample_every, fra
         raise RuntimeError('Full video decode failed: '+decode.stderr)
     write(out/'video_validation.json', dict(video=target.name, sha256=sha(target), bytes=target.stat().st_size,
         encoding='H264/yuv420p/20fps', duration_s=duration, selected_snapshots=len(selected),
+        display_voxel_stride=voxel_stride, display_voxel_alpha=voxel_alpha,
         scope='Paired offline snapshots and saved actual C++ paths only; no executed vehicle motion.',
         full_decode_passed=True, ffmpeg_command=command, frames=manifest))
 
@@ -382,12 +385,18 @@ def main():
     p.add_argument('--figures-only', action='store_true')
     p.add_argument('--sample-every', type=int, default=10)
     p.add_argument('--frame-hold', type=float, default=1.5)
+    p.add_argument('--voxel-stride', type=int, default=12,
+                   help='XY display sampling stride; does not change source grids or planning')
+    p.add_argument('--voxel-alpha', type=float, default=.085,
+                   help='Display cube face opacity in [0,1]; does not change probabilities')
     p.add_argument('--expected-frames', type=int, default=208)
     a = p.parse_args()
     if not a.figures_only and not a.ffmpeg:
         p.error('--ffmpeg is required for video')
     if a.sample_every < 1 or a.frame_hold <= 0:
         p.error('Invalid sampling/hold interval')
+    if a.voxel_stride < 1 or not math.isfinite(a.voxel_alpha) or not 0 <= a.voxel_alpha <= 1:
+        p.error('--voxel-stride must be positive and --voxel-alpha must be finite in [0,1]')
     folders = {role: a.data/f'ht_{role}/maps' for role in ['before','after']}
     indices = {role: read(folder/'index.json') for role, folder in folders.items()}
     frames = {role: [f for f in index['frames'] if f.get('output')] for role, index in indices.items()}
@@ -423,7 +432,8 @@ def main():
                      'No model threshold, unknown policy or recorded source time is changed by this plotting program.'])
     write(a.output/'RESULTS.json', summary)
     if not a.figures_only:
-        video(a.output, folders, frames, records, lookup, plt, a.ffmpeg, a.sample_every, a.frame_hold)
+        video(a.output, folders, frames, records, lookup, plt, a.ffmpeg, a.sample_every, a.frame_hold,
+              a.voxel_stride, a.voxel_alpha)
     print(json.dumps({'output':str(a.output), 'query_groups':query_summary,
                       'last':summary['last']}, ensure_ascii=False), flush=True)
 
