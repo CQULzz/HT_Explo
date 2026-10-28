@@ -1,0 +1,14 @@
+{
+  "created_utc": "2026-10-28T18:48:33.583724+00:00",
+  "scope": "Offline source diagnosis and same-bag regression, no controls/simulation/hardware. Baseline results inspected; sigma intervention not run yet.",
+  "hypothesis": "Legacy absolute innovation gate has wrong variance dimensions, can reject plausible same-surface returns; quantify source and accepted/rejected consistency. Raw noise and deskew remain alternatives.",
+  "diagnostic_candidate": "Replace only point gate abs(h-z)>2*v with abs(h-z)>2*sqrt(v+measurement). Diagnostic source substitution; no production change until obstacle preservation and raw-data checks.",
+  "fixed": "same two original raw bags, exact same source TF/filter/HT weights threshold and history; start empty each case",
+  "acceptance": [
+    "raw-source consistency must improve or remain, not just green area",
+    "no unknown-to-observed without direct measurements",
+    "synthetic persistent 2/5/10/20cm steps and narrow obstacles retained; if regression occurs, do not deploy unrestricted sigma gate",
+    "exact baseline 64 frames must match archived output",
+    "report all degraded cases and do not claim physical terrain truth from model score"
+  ]
+}

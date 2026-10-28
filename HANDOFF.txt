@@ -1,3 +1,11 @@
+2026-10-29 最新离线更新（请先读本段）：
+- 实车代码已发布到 real/scout-helios32，提交 e23f0c3a9fbcbc29abe038b59b745254346723fe；本机冻结代码HEAD 696ea9f，祖先不同，禁止直接推整条本机历史。
+- 新增显式开启的扫描帧到历史图Z/倾斜刚体配准，分发在 tools/elevation_mapping_fixes/surface_registration.patch；源默认false，独立trial_core已恢复原稳定配置，见 RESTORED_DEFAULT_CONFIG.json。独立候选配置 mapper_surface_registered.yaml。
+- 两段原录包、两种过滤的4组完整离线回放输出362张图；固定640主样本明显跳变139→43，高覆盖低起伏42→10，另有5组退步；不是实车通过率，不是4个独立场景。
+- 详情、12页图、复现命令：docs/results/real_surface_registration_2026-10-29/REPORT.md；完整数据位于外盘 HT_texture_source_fix_2026-10-29，计划归档Release real-scout-surface-registration-20261029，以发布回执为准。
+- 原关注绿转全红样本改善；尚不能唯一定位Fixposition/TF/安装物理误差。新障碍进入旧地面格的融合迟滞仍存在（合成50cm障碍约1.2s到半高度），本轮未修复。
+- 本阶段仍只做离线，不启动设备、仿真、控制或车辆；不把任何结果当作ARM、外部registered_scan/TF一致性或实车闭环验收。
+
 2026-10-28 后续稳定CuPy修复（本段优先）
 
 用户重新要求解决问题后，已在独立ht_cupy_gpu_ws_20261028实现稳定GPU融合和FP32几何，未启动硬件/仿真/车辆。HT/src未混入CuPy。冻结本地8d9cbe3，对应GitHub实车代码48f61fbfe703ef100220d4e36b0c0bf2927c0f8e；安装工具本地5a09e3a→70f1a51f64239e724031f49c3a091d8092172d1a。后续报告/回执另记。不得直接推本地导入祖先；继续用proper远端父commit-tree叠加，非force。

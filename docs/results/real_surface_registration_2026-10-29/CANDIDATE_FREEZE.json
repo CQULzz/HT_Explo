@@ -1,0 +1,38 @@
+{
+  "utc": "2026-10-28T19:10:17.605145+00:00",
+  "local_commit": "696ea9f5aaea1374ae2081b5dc9cb66ba8622e0f",
+  "sources": {
+    "src/ht_scout_bridge/config/mapper_surface_registered.yaml": "b07e59066b8e04ae3d6421a50c33484f6f64dfaded5cec862f591ef9f59c6084",
+    "tools/elevation_mapping_fixes/README.md": "79008a1fe1602b38b973ed9f002aab62bc2d45bef7b00b1bac0418d703571543",
+    "tools/elevation_mapping_fixes/surface_registration.patch": "47f5c79d81309b4bccebdecf67c0017b7a8dd330973f7e79db9c42e8a571193e",
+    "tools/elevation_mapping_fixes/surface_registration.py": "062b69395ccea57e682fece99e3c1f5a1819e65aa7530c41657e936308d3199a",
+    "tools/elevation_mapping_fixes/surface_registration_manifest.json": "56ffb9c75137284c26ecd4bf91e7bf75152c3024a2599d8124a3728a7d86dd80",
+    "tools/elevation_mapping_fixes/test_surface_registration.py": "555a011b3fda8a93c7a5b1734fd1a6e3edcf6550c7ff01a9d5baaa6b8c65fd78",
+    "tools/ht_cupy_bridge/replay_newbags_rviz.py": "e248187b3613b533fb356feb29b0dfb9c593257127e313c6a8d6fe041dc1e786",
+    "tools/install_elevation_fixes.py": "1ed1f16c492eed4fdfa42a9b35c867e1fc3198177ab36e843709071a6a1ecbaf",
+    "tools/test_install_elevation_fixes.py": "05a3b8ea781e874a0929e9db9110878f5ae8b6c7e784238b05482307a2641e44",
+    "/home/lzz/my test/ht_cupy_gpu_ws_20261028/src/elevation_mapping_cupy_2204/elevation_mapping_cupy/script/elevation_mapping_cupy/elevation_mapping.py": "4eed412e6359e209584b26c91fad91a93faf825c409b1183ef62fe329e074026",
+    "/home/lzz/my test/ht_cupy_gpu_ws_20261028/src/elevation_mapping_cupy_2204/elevation_mapping_cupy/script/elevation_mapping_cupy/parameter.py": "ded61ac9dcece212c8ac7a7a3a73c614c86f59c7047644fa849f7258b40fb436",
+    "/home/lzz/my test/ht_cupy_gpu_ws_20261028/src/elevation_mapping_cupy_2204/elevation_mapping_cupy/script/elevation_mapping_cupy/surface_registration.py": "062b69395ccea57e682fece99e3c1f5a1819e65aa7530c41657e936308d3199a"
+  },
+  "weights_sha256": "0a79b865d012aa633fbb9913fc4031908dfe188ec9e161ef5a3fbb34a3f8c4d4",
+  "candidate": "bounded Z/tilt rigid scan-to-map registration only; sigma/noise parameter interventions are diagnostic alternatives, not applied",
+  "flags": {
+    "surface_registration": true,
+    "padding_m": [
+      0.0,
+      0.2
+    ],
+    "small_holes": true,
+    "ht_threshold": 0.5
+  },
+  "full_cases": [
+    "original_stationary",
+    "original_moving",
+    "plus20_stationary",
+    "plus20_moving"
+  ],
+  "offline_only": true,
+  "default_real_profile_unchanged": true,
+  "separate_optin_profile": "src/ht_scout_bridge/config/mapper_surface_registered.yaml"
+}
