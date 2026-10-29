@@ -42,7 +42,7 @@ class FakeTf:
 @pytest.fixture
 def node(monkeypatch):
     monkeypatch.setattr(module,'get_package_share_directory',lambda _:str(ROOT))
-    rclpy.init();n=module.ScoutInputs();n.timer.cancel()
+    rclpy.init();n=module.ScoutInputs();n.timer.cancel();n.cloud_timer.cancel()
     n.buffer=FakeTf(n);n.clock_ok=lambda:10.05;n.age_layer='observation_age'
     for name in ['odom_pub','cloud_pub','filtered_cloud_pub','elevation_pub','status_pub','stop_pub']:setattr(n,name,Sink())
     try:yield n
@@ -77,7 +77,7 @@ def test_real_odom_callback_publishes_base_link_pose_with_calibrated_offset(node
 
 
 def test_lidar_callback_applies_external_pose_and_calibration(node):
-    m=cloud();node.enqueue('cloud',m)
+    m=cloud();node.enqueue('cloud',m);node.drain_cloud()
     out=node.cloud_pub.messages[-1];a=np.frombuffer(bytes(out.data),dtype='<f4').reshape(-1,4)
     assert out.header.frame_id=='map'
     np.testing.assert_allclose(a[0,:3],[1-.0280158179045505,2,3+.78499],atol=1e-6)
@@ -89,9 +89,10 @@ def test_lidar_callback_applies_external_pose_and_calibration(node):
 
 def test_tf_is_awaited_without_latest_pose_substitution(node):
     node.buffer.missing=True;node.enqueue('cloud',cloud())
+    node.drain_cloud()
     assert not node.cloud_pub.messages and len(node.pending['cloud'])==1
     assert not node.filtered_cloud_pub.messages
-    node.buffer.missing=False;node.drain()
+    node.buffer.missing=False;node.drain_cloud()
     assert len(node.cloud_pub.messages)==1 and not node.pending['cloud']
 
 

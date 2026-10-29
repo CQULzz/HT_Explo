@@ -6,11 +6,13 @@ Unknown cells stay NaN rather than being filled from neighbouring cells.
 """
 
 import numpy as np
+from history_window import warmup_history_window
 
 
 class HistoricalElevation:
     def __init__(self, resolution, tile_size=64, max_tiles=1024, max_age_s=600.0,
-                 max_layers=4, association_gap_m=0.6, reference_tolerance_m=1.0):
+                 max_layers=4, association_gap_m=0.6, reference_tolerance_m=1.0,
+                 window_backend='auto'):
         self.resolution = float(resolution)
         self.tile_size = int(tile_size)
         self.max_tiles = int(max_tiles)
@@ -18,6 +20,7 @@ class HistoricalElevation:
         self.max_layers = int(max_layers)
         self.association_gap_m = float(association_gap_m)
         self.reference_tolerance_m = float(reference_tolerance_m)
+        self.window_backend, self._window_selector = warmup_history_window(window_backend)
         if (self.resolution <= 0 or self.tile_size <= 0 or self.max_tiles <= 0
                 or self.max_layers <= 0 or self.max_age_s < 0
                 or self.association_gap_m <= 0 or self.reference_tolerance_m <= 0):
@@ -204,12 +207,28 @@ class HistoricalElevation:
                 iy = np.flatnonzero(gy // self.tile_size == ty)
                 lx, ly = gx[ix] % self.tile_size, gy[iy] % self.tile_size
                 z, v, last = (a[:, lx[:, None], ly[None, :]] for a in tile)
-                usable = (np.isfinite(z) & (stamp_s-last <= self.max_age_s)
-                          & (last <= stamp_s + 1e-3))
                 # A current-source elevation is stronger evidence than a
                 # robot-height fallback, including observed obstacle tops.
                 output_index=np.ix_(ix,iy)
                 p, r = preferred[output_index], reference[output_index]
+                if self._window_selector is not None:
+                    key = (int(tx), int(ty))
+                    rejected_time = self.rejections.get(key)
+                    rejected_height = self.rejected_heights.get(key)
+                    rt = (np.full(p.shape, -np.inf, np.float64) if rejected_time is None
+                          else rejected_time[lx[:, None], ly[None, :]])
+                    rh = (np.full(p.shape, np.nan, np.float32) if rejected_height is None
+                          else rejected_height[lx[:, None], ly[None, :]])
+                    selected = self._window_selector(z, v, last, p, r, rt, rh,
+                        float(stamp_s), self.max_age_s, self.association_gap_m,
+                        self.reference_tolerance_m,
+                        reference_height is not None or preferred_elevation is not None)
+                    elevation[output_index], variance[output_index] = selected[:2]
+                    self.last_window_incompatible_mask[output_index] = selected[2]
+                    self.last_window_obstacle_elevation[output_index] = selected[3]
+                    continue
+                usable = (np.isfinite(z) & (stamp_s-last <= self.max_age_s)
+                          & (last <= stamp_s + 1e-3))
                 has_preferred, has_reference = np.isfinite(p), np.isfinite(r)
                 target = np.where(has_preferred, p, r)
                 has_target = has_preferred | has_reference

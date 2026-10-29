@@ -264,15 +264,8 @@ def self_filter_keep_mask(xyz, self_filter=None, filter_from_lidar=None):
     return valid
 
 
-def transform_cloud(msg, target_from_lidar, self_filter=None, filter_from_lidar=None):
-    """Rigid scan registration; preserves fields, intensity and timestamps.
-
-    This is not per-point motion deskew. The input may be externally deskewed
-    while remaining expressed in rslidar; choose that topic in the launch.
-    """
-    from copy import deepcopy
-    from array import array
-    t=validate_transform(target_from_lidar)
+def _filtered_cloud_arrays(msg, self_filter, filter_from_lidar):
+    """Decode once without changing the incoming message's byte storage."""
     if (msg.point_step<=0 or msg.row_step<msg.point_step*msg.width or
             len(msg.data)!=msg.row_step*msg.height or not msg.width or not msg.height):
         raise ValueError('Invalid PointCloud2 storage')
@@ -286,22 +279,66 @@ def transform_cloud(msg, target_from_lidar, self_filter=None, filter_from_lidar=
     if any(abs(a-b)<4 for i,a in enumerate(offsets) for b in offsets[i+1:]):
         raise ValueError('Overlapping XYZ fields')
     raw=np.ndarray((msg.height,msg.width,msg.point_step),dtype=np.uint8,
-                   buffer=bytes(msg.data),strides=(msg.row_step,msg.point_step,1)).copy().reshape(-1,msg.point_step)
+                   buffer=msg.data,strides=(msg.row_step,msg.point_step,1)).reshape(-1,msg.point_step)
     dtype='>f4' if msg.is_bigendian else '<f4'
     xyz=np.stack([np.ndarray((len(raw),),dtype=dtype,buffer=raw,
                   offset=fields[n].offset,strides=(msg.point_step,)) for n in ['x','y','z']],axis=1)
     valid=self_filter_keep_mask(xyz,self_filter,filter_from_lidar)
-    raw=raw[valid].copy();xyz=xyz[valid]
-    moved=xyz@t[:3,:3].T+t[:3,3]
+    # Boolean indexing already owns a packed copy, including organized inputs
+    # with row padding. All later XYZ writes target this private allocation.
+    return raw[valid],xyz[valid],dtype,fields
+
+
+def _write_cloud_xyz(raw, moved, dtype, fields):
     if not np.isfinite(moved).all():raise ValueError('Nonfinite registered points')
     for i,n in enumerate(['x','y','z']):
         values=moved[:,i].astype(dtype)
         if not np.isfinite(values).all():raise ValueError('Registered points overflow float32')
         raw[:,fields[n].offset:fields[n].offset+4]=values.view(np.uint8).reshape(-1,4)
-    result=deepcopy(msg);result.height=1;result.width=len(raw)
+
+
+def _cloud_message(msg, raw):
+    from copy import deepcopy
+    from array import array
+    from sensor_msgs.msg import PointCloud2
+    # Copy metadata only; deepcopy(msg) would copy megabytes of input bytes
+    # immediately before replacing the entire data field.
+    result=PointCloud2();result.header=deepcopy(msg.header)
+    result.fields=deepcopy(msg.fields);result.is_bigendian=msg.is_bigendian
+    result.point_step=msg.point_step;result.height=1;result.width=len(raw)
     result.row_step=result.point_step*result.width;result.is_dense=True
     result.data=array('B',raw.tobytes())
     return result
+
+
+def transform_cloud(msg, target_from_lidar, self_filter=None, filter_from_lidar=None):
+    """Rigid scan registration; preserves fields, intensity and timestamps.
+
+    This is not per-point motion deskew. The input may be externally deskewed
+    while remaining expressed in rslidar; choose that topic in the launch.
+    """
+    t=validate_transform(target_from_lidar)
+    raw,xyz,dtype,fields=_filtered_cloud_arrays(msg,self_filter,filter_from_lidar)
+    _write_cloud_xyz(raw,xyz@t[:3,:3].T+t[:3,3],dtype,fields)
+    return _cloud_message(msg,raw)
+
+
+def transform_cloud_pair(msg, target_from_lidar, self_filter=None, filter_from_lidar=None):
+    """Two independent messages from one decode/filter, with legacy rounding.
+
+    The mapper retains the real sensor frame and origin. The second message
+    uses the target pose. Quantize the intermediate XYZ exactly as the former
+    identity-transform -> float32 serialization -> second decode did.
+    """
+    t=validate_transform(target_from_lidar)
+    raw,xyz,dtype,fields=_filtered_cloud_arrays(msg,self_filter,filter_from_lidar)
+    if not len(raw):raise ValueError('No finite cloud points')
+    identity=np.eye(4)
+    rounded=(xyz@identity[:3,:3].T+identity[:3,3]).astype(np.float32)
+    _write_cloud_xyz(raw,rounded,dtype,fields)
+    filtered=_cloud_message(msg,raw)
+    _write_cloud_xyz(raw,rounded@t[:3,:3].T+t[:3,3],dtype,fields)
+    return filtered,_cloud_message(msg,raw)
 
 
 def main():

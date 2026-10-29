@@ -3,19 +3,23 @@ from collections import deque
 from copy import deepcopy
 import math
 from pathlib import Path
+from threading import Lock, RLock
 import numpy as np
 from scipy.spatial.transform import Rotation
+from threadpoolctl import threadpool_limits
 import rclpy
 from rclpy.node import Node
 from rclpy.time import Time
 from rclpy.qos import QoSProfile, ReliabilityPolicy
+from rclpy.callback_groups import MutuallyExclusiveCallbackGroup
+from rclpy.executors import MultiThreadedExecutor, ExternalShutdownException
 from ament_index_python.packages import get_package_share_directory
 from tf2_ros import Buffer, TransformListener, TransformException
 from nav_msgs.msg import Odometry
 from sensor_msgs.msg import PointCloud2
 from grid_map_msgs.msg import GridMap
 from std_msgs.msg import String, Int8
-from .geometry import load_calibration,transform,convert_reference,transform_cloud,covariance
+from .geometry import load_calibration,transform,convert_reference,transform_cloud_pair,covariance
 
 
 def pose_matrix(p):
@@ -35,6 +39,13 @@ def set_pose(p,t):
 class ScoutInputs(Node):
     def __init__(self):
         super().__init__('ht_scout_inputs')
+        blas_threads=self.declare_parameter('input_blas_threads',1).value
+        if not isinstance(blas_threads,int) or not 1<=blas_threads<=8:
+            raise ValueError('input_blas_threads must be an integer from 1 to 8')
+        # Nx3 transforms and tiny pose matrices do not warrant a large BLAS
+        # team competing with callback reception on this dedicated process.
+        self.blas_limit=threadpool_limits(limits=blas_threads,user_api='blas')
+        self.get_logger().info(f'Input bridge BLAS threads: {blas_threads}')
         default=Path(get_package_share_directory('ht_scout_bridge'))/'config/scout_extrinsics.yaml'
         self.profile,self.poi_base,self.poi_lidar=load_calibration(self.declare_parameter('calibration_file',str(default)).value)
         self.frames=self.profile['frames']
@@ -54,8 +65,11 @@ class ScoutInputs(Node):
         self.filtered_cloud_pub=self.create_publisher(PointCloud2,'/ht_real/lidar_filtered',2)
         self.elevation_pub=self.create_publisher(GridMap,'/ht_real/elevation_raw',1)
         self.last_clock=None;self.fault=None;self.last_pose=None
+        self.state_lock=RLock();self.closing=False
         self.last_stamp={'odom':-1,'cloud':-1,'elevation':-1}
         self.pending={k:deque() for k in self.last_stamp}
+        self.inflight={k:None for k in self.last_stamp}
+        self.processing_locks={k:Lock() for k in self.last_stamp}
         sensor=QoSProfile(depth=20,reliability=ReliabilityPolicy.BEST_EFFORT)
         self.odom_sub=self.create_subscription(Odometry,self.declare_parameter('odometry_topic','/fixposition/odometry_enu').value,
             lambda m:self.enqueue('odom',m),sensor)
@@ -64,20 +78,24 @@ class ScoutInputs(Node):
         self.elevation_sub=self.create_subscription(GridMap,self.declare_parameter('elevation_topic','/elevation_mapping_node/elevation_map_raw').value,
             lambda m:self.enqueue('elevation',m),QoSProfile(depth=1,reliability=ReliabilityPolicy.RELIABLE))
         self.timer=self.create_timer(.05,self.drain)
+        self.cloud_group=MutuallyExclusiveCallbackGroup()
+        self.cloud_timer=self.create_timer(.005,self.drain_cloud,callback_group=self.cloud_group)
 
     def status(self,text):
         self.status_pub.publish(String(data=text))
 
     def latch(self,text):
-        self.fault=text
-        for q in self.pending.values():q.clear()
-        self.stop_pub.publish(Int8(data=1));self.status(text)
+        with self.state_lock:
+            self.fault=text
+            for q in self.pending.values():q.clear()
+            self.stop_pub.publish(Int8(data=1));self.status(text)
 
     def clock_ok(self):
-        now=self.get_clock().now().nanoseconds/1e9
-        if self.last_clock is not None and now<self.last_clock-1e-6:self.latch('CLOCK_RESET_RESTART_REQUIRED')
-        self.last_clock=now
-        return now
+        with self.state_lock:
+            now=self.get_clock().now().nanoseconds/1e9
+            if self.last_clock is not None and now<self.last_clock-1e-6:self.latch('CLOCK_RESET_RESTART_REQUIRED')
+            self.last_clock=now
+            return now
 
     def lookup(self,parent,child,msg):
         # stamp0 would request latest TF and conceal temporal mismatch.
@@ -95,38 +113,79 @@ class ScoutInputs(Node):
             raise ValueError('External TF disagrees with configured calibration')
 
     def enqueue(self,kind,msg):
-        self.clock_ok()
-        if self.fault:return
-        n=stamp_ns(msg)
-        if n<=self.last_stamp[kind] or any(stamp_ns(m)==n for m in self.pending[kind]):return
-        self.pending[kind].append(msg)
-        self.pending[kind]=deque(sorted(self.pending[kind],key=stamp_ns))
+        with self.state_lock:
+            self.clock_ok()
+            if self.fault or self.closing:return
+            n=stamp_ns(msg);active=self.inflight[kind]
+            if (n<=self.last_stamp[kind] or (active is not None and n<=stamp_ns(active))
+                    or any(stamp_ns(m)==n for m in self.pending[kind])):return
+            self.pending[kind].append(msg)
+            self.pending[kind]=deque(sorted(self.pending[kind],key=stamp_ns))
+            self._bound_queue(kind)
+        # Reception of a cloud does no heavy work and cannot drain old clouds
+        # before a newly received elevation or odometry callback can run.
+        if kind!='cloud':self.drain()
+
+    def _bound_queue(self,kind):
         limit=64 if kind=='odom' else 10 if kind=='cloud' else 2
         while len(self.pending[kind])>limit:
             self.pending[kind].popleft();self.status(kind.upper()+'_QUEUE_OVERFLOW_DROPPED_OLDEST')
-        self.drain()
 
     def drain(self):
-        now=self.clock_ok()
-        if self.fault:
-            self.stop_pub.publish(Int8(data=1));return
-        for kind,q in self.pending.items():
-            while q and not self.fault:
-                msg=q[0];age=now-stamp_ns(msg)/1e9
+        for kind in ('odom','elevation'):self._drain_kind(kind)
+
+    def drain_cloud(self):
+        self._drain_kind('cloud')
+
+    def _drain_kind(self,kind):
+        processing=self.processing_locks[kind]
+        if not processing.acquire(blocking=False):return
+        try:
+            while True:
+                with self.state_lock:
+                    now=self.clock_ok()
+                    if self.fault:
+                        self.stop_pub.publish(Int8(data=1));return
+                    if self.closing or not self.pending[kind]:return
+                    msg=self.pending[kind].popleft();age=now-stamp_ns(msg)/1e9
+                    self.inflight[kind]=msg
                 if age>self.max_age or age<-.1 or stamp_ns(msg)<=0:
-                    q.popleft();self.status(kind.upper()+'_SOURCE_TIME_INVALID');continue
-                if stamp_ns(msg)<=self.last_stamp[kind]:q.popleft();continue
+                    self.status(kind.upper()+'_SOURCE_TIME_INVALID');continue
+                if stamp_ns(msg)<=self.last_stamp[kind]:continue
                 try:
                     result=getattr(self,'convert_'+kind)(msg)
                 except TransformException:
-                    self.status(kind.upper()+'_WAIT_TIMESTAMPED_TF');break
+                    with self.state_lock:
+                        if not self.fault and not self.closing:
+                            self.pending[kind].append(msg)
+                            self.pending[kind]=deque(sorted(self.pending[kind],key=stamp_ns))
+                            self._bound_queue(kind)
+                    self.status(kind.upper()+'_WAIT_TIMESTAMPED_TF');return
                 except (ValueError,OverflowError) as error:
-                    if not self.fault:q.popleft()
                     self.status(kind.upper()+'_REJECTED: '+str(error));continue
-                if self.fault:break
-                q.popleft();self.last_stamp[kind]=stamp_ns(msg)
-                getattr(self,kind+'_pub' if kind!='cloud' else 'cloud_pub').publish(result)
-                self.status(kind.upper()+'_READY')
+                # Heavy conversion is outside the state lock. Commit both
+                # cloud frames together only after rechecking clock, age and
+                # latched faults; a concurrent discontinuity discards the pair.
+                with self.state_lock:
+                    now=self.clock_ok();age=now-stamp_ns(msg)/1e9
+                    if self.fault or self.closing:return
+                    if age>self.max_age or age<-.1:
+                        self.status(kind.upper()+'_SOURCE_TIME_INVALID');continue
+                    if stamp_ns(msg)<=self.last_stamp[kind]:continue
+                    if kind=='cloud':
+                        filtered,result=result
+                        self.filtered_cloud_pub.publish(filtered)
+                    getattr(self,kind+'_pub' if kind!='cloud' else 'cloud_pub').publish(result)
+                    self.last_stamp[kind]=stamp_ns(msg)
+                    self.status(kind.upper()+'_READY')
+        finally:
+            with self.state_lock:self.inflight[kind]=None
+            processing.release()
+
+    def close_inputs(self):
+        with self.state_lock:
+            self.closing=True
+            for q in self.pending.values():q.clear()
 
     def convert_odom(self,msg):
         if msg.header.frame_id!=self.frames['source_world'] or msg.child_frame_id!=self.frames['poi']:
@@ -166,13 +225,12 @@ class ScoutInputs(Node):
         if msg.header.frame_id!=self.frames['lidar']:raise ValueError('Expected calibrated rslidar-frame cloud')
         self.check_static(self.frames['lidar'],self.poi_lidar,msg)
         t=self.lookup(self.frames['world'],self.frames['poi'],msg)@self.poi_lidar
-        filtered=transform_cloud(msg,np.eye(4),self.profile.get('lidar_self_filter'),self.base_from_lidar)
-        out=transform_cloud(filtered,t);out.header.frame_id=self.frames['world']
+        filtered,out=transform_cloud_pair(msg,t,self.profile.get('lidar_self_filter'),self.base_from_lidar)
+        out.header.frame_id=self.frames['world']
         if not out.width:raise ValueError('No finite cloud points')
         # Mapping needs the real sensor origin for ray geometry/covariance.
         # Keep its filtered scan in rslidar rather than relabelling world points.
-        self.filtered_cloud_pub.publish(filtered)
-        return out
+        return filtered,out
 
     def convert_elevation(self,msg):
         if self.age_layer!='observation_age':
@@ -198,9 +256,11 @@ class ScoutInputs(Node):
         if not np.allclose(source_pose[:3,:3],np.eye(3),atol=1e-6,rtol=0):raise ValueError('Rotated source grid requires explicit regridding')
         t=self.lookup(self.frames['world'],msg.header.frame_id,msg)
         if not np.allclose(t[:3,:3],np.eye(3),atol=1e-6,rtol=0):raise ValueError('Rotated world grid requires explicit regridding')
-        out=deepcopy(msg);out.header.frame_id=self.frames['world'];set_pose(out.info.pose,t@source_pose)
+        out=GridMap();out.header=deepcopy(msg.header);out.info=deepcopy(msg.info)
+        out.outer_start_index=msg.outer_start_index;out.inner_start_index=msg.inner_start_index
+        out.header.frame_id=self.frames['world'];set_pose(out.info.pose,t@source_pose)
         out.info.pose.position.z=0.0  # Heights below already carry the absolute world Z.
-        out.layers=['elevation','variance','observation_age'];out.basic_layers=[n for n in out.basic_layers if n in out.layers]
+        out.layers=['elevation','variance','observation_age'];out.basic_layers=[n for n in msg.basic_layers if n in out.layers]
         out.data=[deepcopy(msg.data[msg.layers.index(n)]) for n in needed]
         values=np.asarray(out.data[0].data,np.float64)+t[2,3]
         finite=np.isfinite(np.asarray(out.data[0].data));values=values.astype(np.float32)
@@ -212,6 +272,11 @@ class ScoutInputs(Node):
 
 def main():
     rclpy.init();node=ScoutInputs()
-    try:rclpy.spin(node)
-    except KeyboardInterrupt:pass
-    finally:node.destroy_node();rclpy.try_shutdown()
+    executor=MultiThreadedExecutor(num_threads=3);executor.add_node(node)
+    try:executor.spin()
+    except (KeyboardInterrupt,ExternalShutdownException):pass
+    finally:
+        node.close_inputs();executor.shutdown()
+        pool=getattr(executor,'_executor',None)
+        if pool is not None:pool.shutdown(wait=True)
+        node.destroy_node();rclpy.try_shutdown()

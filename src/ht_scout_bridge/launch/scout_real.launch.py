@@ -26,6 +26,7 @@ HARDWARE_REMAPS=[(name,'/ht_real'+name) for name in [
 HARDWARE_REMAPS.append(('/elevation_mapping/historical_local','/ht_real/historical_elevation'))
 # The configured upstream subscriber uses this spelling.
 HARDWARE_REMAPS.append(('/ht_input_status','/ht_real/ht_input_status'))
+HARDWARE_REMAPS.append(('/ht_performance','/ht_real/ht_performance'))
 HARDWARE_REMAPS.append(('/start_exploration','/ht_real/exploration_start'))
 
 
@@ -55,7 +56,11 @@ def start(context):
                 'source_age_layer':arg('source_age_layer'),'use_sim_time':common['use_sim_time']}]),
         Node(package='tare_planner',executable='cupy_to_ht.py',name='cupy_to_ht_bridge',namespace='ht_real',output='screen',remappings=HARDWARE_REMAPS,
              parameters=[common,{'surface_odometry_topic':'/ht_real/odometry',
-                'elevation_topic':'/ht_real/elevation_raw','surface_sensor_ground_offset_m':.23479,'ht_device':arg('ht_device'),'ht_quality_backend':arg('ht_quality_backend'),'ht_small_hole_repair':arg('small_hole_repair','true').lower()=='true'}]),
+                'elevation_topic':'/ht_real/elevation_raw','surface_sensor_ground_offset_m':.23479,
+                'ht_device':arg('ht_device'),'ht_quality_backend':arg('ht_quality_backend'),
+                'ht_history_backend':arg('ht_history_backend', 'auto'),
+                'ht_fuse_bn':arg('ht_fuse_bn', 'true').lower()=='true',
+                'ht_small_hole_repair':arg('small_hole_repair','true').lower()=='true'}]),
         Node(package='tare_planner',executable='tare_planner_node',name='tare_planner_node',namespace='ht_real',output='screen',remappings=HARDWARE_REMAPS,
              parameters=[os.path.join(hw,'config','tare_scout.yaml'),config,common,
                 {'sub_start_exploration_topic_':'/ht_real/exploration_start','sub_state_estimation_topic_':'/ht_real/odometry','sub_registered_scan_topic_':'/ht_real/registered_scan'}]),
@@ -84,6 +89,8 @@ def generate_launch_description():
         DeclareLaunchArgument('small_hole_repair',default_value='true'),
         DeclareLaunchArgument('start_rviz',default_value='false'),
         DeclareLaunchArgument('ht_quality_backend',default_value='auto'),
+        DeclareLaunchArgument('ht_history_backend',default_value='auto'),
+        DeclareLaunchArgument('ht_fuse_bn',default_value='true'),
         DeclareLaunchArgument('ht_device',default_value='cuda'),
         DeclareLaunchArgument('use_sim_time',default_value='false'),
         DeclareLaunchArgument('start_command_bridge',default_value='auto'),

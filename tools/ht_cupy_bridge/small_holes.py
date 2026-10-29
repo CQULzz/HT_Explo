@@ -54,25 +54,32 @@ def _narrow_gaps(z,observed,blocked,current,var,age,resolution):
             candidate&=q>=2
     candidate&=distance_transform_edt(~known)*resolution<=.12+1e-9
     if not np.any(candidate):return z,np.zeros(z.shape,bool)
+    # The box-filter moments still use the original full-grid arithmetic.
+    # Solve planes only at eligible missing pixels, instead of allocating
+    # eleven more 291x291 fit/slope/residual arrays every frame. Other pixels
+    # cannot be filled, so their plane solutions are unused work.
+    index=np.nonzero(candidate)
+    sample_mean=lambda a:mean(a)[index]
     rr,cc=np.indices(z.shape);x=rr*resolution;y=cc*resolution
     h=np.where(known,z,0.).astype(np.float64);k=known.astype(np.float64)
-    norm=np.maximum(mean(k),1e-15)
-    ex=mean(k*x)/norm;ey=mean(k*y)/norm;ez=mean(h)/norm
-    xx=mean(k*x*x)/norm-ex*ex;yy=mean(k*y*y)/norm-ey*ey;xy=mean(k*x*y)/norm-ex*ey
-    xz=mean(h*x)/norm-ex*ez;yz=mean(h*y)/norm-ey*ez;zz=mean(h*h)/norm-ez*ez
+    norm=np.maximum(sample_mean(k),1e-15)
+    ex=sample_mean(k*x)/norm;ey=sample_mean(k*y)/norm;ez=sample_mean(h)/norm
+    xx=sample_mean(k*x*x)/norm-ex*ex;yy=sample_mean(k*y*y)/norm-ey*ey;xy=sample_mean(k*x*y)/norm-ex*ey
+    xz=sample_mean(h*x)/norm-ex*ez;yz=sample_mean(h*y)/norm-ey*ez;zz=sample_mean(h*h)/norm-ez*ez
     det=xx*yy-xy*xy;good=det>1e-8
     a=np.divide(xz*yy-yz*xy,det,out=np.zeros_like(det),where=good)
     b=np.divide(yz*xx-xz*xy,det,out=np.zeros_like(det),where=good)
-    rms=np.sqrt(np.maximum(0.,zz-a*xz-b*yz));pred=ez+a*(x-ex)+b*(y-ey)
-    lo=minimum_filter(np.where(known,z,np.inf),size=size,mode='constant',cval=np.inf)
-    hi=maximum_filter(np.where(known,z,-np.inf),size=size,mode='constant',cval=-np.inf)
-    candidate&=good&(np.hypot(a,b)<=.35)&(rms<=.006)&(pred>=lo-.01)&(pred<=hi+.01)
+    rms=np.sqrt(np.maximum(0.,zz-a*xz-b*yz));pred=ez+a*(x[index]-ex)+b*(y[index]-ey)
+    lo=minimum_filter(np.where(known,z,np.inf),size=size,mode='constant',cval=np.inf)[index]
+    hi=maximum_filter(np.where(known,z,-np.inf),size=size,mode='constant',cval=-np.inf)[index]
+    accepted=good&(np.hypot(a,b)<=.35)&(rms<=.006)&(pred>=lo-.01)&(pred<=hi+.01)
     # Reject measured jumps at the edge of the support window (including pits).
     jumps=np.zeros(z.shape,bool)
     v=known[:-1]&known[1:]&(np.abs(np.diff(z,axis=0))>.018)
     jumps[:-1]|=v;jumps[1:]|=v
     v=known[:,:-1]&known[:,1:]&(np.abs(np.diff(z,axis=1))>.018)
     jumps[:,:-1]|=v;jumps[:,1:]|=v
-    candidate&=~maximum_filter(jumps,size=size,mode='constant')
-    result=z.copy();result[candidate]=pred[candidate].astype(np.float32)
-    return result,candidate
+    accepted&=~maximum_filter(jumps,size=size,mode='constant')[index]
+    filled=np.zeros(z.shape,bool);filled[index]=accepted
+    result=z.copy();result[filled]=pred[accepted].astype(np.float32)
+    return result,filled

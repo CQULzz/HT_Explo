@@ -98,3 +98,21 @@ RViz中：灰点是实测高程，外围红绿是HT最佳概率；白圈是0.6m�
 本候选只在x86_64/ROS Jazzy做了独立构建和离线回归，未验证Jetson/ARM64、CUDA/Numba或车辆运动。原有方向策略、模型、起点先验、1秒地图时效和地形阈值保留。静态保存帧中车旁缺测仍存在；不能将本次修复称为已完成实车自主探索。原因、测试与剩余项见`validation/real_review_2026-10-28/REPORT.md`。
 
 第二轮同时提供CPU推理Conv/BN融合（`ht_cpu_fuse_bn`，默认true，仅CPU生效；false可作对照）。它只折叠eval统计，不修改检查点或地形规则；FP32舍入可能相差数个微小单位。CUDA路径不启用该优化。第二轮问题简报和同输入实验见`docs/results/real_round2_2026-10-28/`。
+
+## 2026-10-30 HT频率优化候选
+
+本地新候选将同一eval Conv/BN融合扩展到CUDA，`ht_fuse_bn`默认true；false可关闭，CPU还受旧`ht_cpu_fuse_bn`开关约束。仍使用FP32、关闭TF32，CUDA布局保持连续。此段取代上面历史记录中“CUDA路径不启用”的当前行为描述。
+
+`ht_history_backend`默认auto，Numba可用时编译多表面选择并在订阅前预热；不可用时告警并回退原NumPy路径。显式设为numba则要求编译成功，numpy可用于同输入对照。Jetson需在实际HT Python环境中提供可用Numba，缓存应在目标机重新编译，不复制本机x86缓存或二进制。
+
+新只读诊断：`ros2 topic echo /ht_real/ht_performance --once`。`source_interval_s`是相邻已处理源时间戳间隔，`publish_interval_s`是实际发布墙钟间隔，`callback_service_s`是本次处理耗时，另有消息年龄、分阶段耗时和`pending_maps_replaced`。源间隔可能包含输入被替换，不能单凭它当作上游原始发布频率；需同时测原始高程和HT输入话题。禁止用重复旧图或放宽地图时效来制造高频。
+
+本地117帧各3次对照中位数60.8→45.1ms，但合并P95未改善；尚未部署Jetson或保证实车不再2.2Hz。证据及完整限制见[HT频率优化报告](../results/real_ht_frequency_2026-10-30/REPORT.md)。
+
+## 2026-10-30 输入桥接与发布减负候选
+
+输入桥接改为三线程executor，点云接收与重计算分组独立，精确源时刻TF和单调性保持；发布前再次检查故障、关闭、时钟及年龄，两个坐标系的点云一起通过检查。点云只解析和过滤一次，保留原中间float32舍入；高程不再复制被丢弃的整条消息。独立输入进程默认`input_blas_threads=1`（可设1～8），部署环境需有`python3-threadpoolctl`，不要把本机28线程条件当作Jetson实际配置。
+
+独立CuPy发布补丁由`tools/install_elevation_fixes.py --workspace /path/to/independent_cupy_ws --publication-performance`安装，只改已知ROS wrapper，不切换融合/配准或trial参数；按原独立build/install路径重建。无订阅时跳过地图锁/GPU取图；有订阅时仍发完整图。需要无订阅录制/捕获的发布器可设`publish_without_subscribers: true`，离线预加载默认保持无条件发布。不使用重复旧图、降低阈值或放宽时效制造高频。
+
+641帧有效录包点云与117帧高程的新旧转换全部字段及载荷字节一致；235项回归通过。本机点云转换中位数20.83→10.72ms，P95 25.62→11.72ms，均不含DDS与在线排队，尚未在Jetson部署或保证车上频率。[输入桥接报告](../results/real_input_pipeline_2026-10-30/REPORT.md)保留完整慢帧、失败尝试及版本哈希。

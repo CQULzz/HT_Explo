@@ -48,7 +48,8 @@ def workspace(tmp_path):
     bundle = tmp_path / 'bundle'
     shutil.copytree(HERE / 'elevation_mapping_fixes', bundle)
     for name, key in [('manifest.json', 'base_commit'), ('deterministic_manifest.json', 'upstream_base'),
-                      ('surface_registration_manifest.json', 'upstream_base')]:
+                      ('surface_registration_manifest.json', 'upstream_base'),
+                      ('publication_performance_manifest.json','upstream_base')]:
         p = bundle / name
         data = json.loads(p.read_text())
         data[key] = base
@@ -59,6 +60,33 @@ def workspace(tmp_path):
 def stable_hashes(repository, bundle):
     for row in json.loads((bundle / 'deterministic_manifest.json').read_text())['files']:
         assert hashlib.sha256((repository / row['file']).read_bytes()).hexdigest() == row['after_sha256']
+
+
+@pytest.mark.parametrize('surface',[False,True])
+def test_publication_only_patch_preserves_fusion_and_all_configs_and_is_idempotent(workspace,surface):
+    work,repository,bundle=workspace
+    installer.install(work,bundle,surface_registration=surface)
+    before=contents(work)
+    result=installer.install(work,bundle,publication_performance=True)
+    changed=result['changed_files']
+    assert len(changed)==1 and changed[0].endswith('elevation_mapping_ros.py')
+    after=contents(work)
+    assert {p for p in before if before[p]!=after[p]}==set(changed)
+    assert result['configs_and_fusion_sources_unchanged'] is True
+    target=work/changed[0];mtime=target.stat().st_mtime_ns
+    assert installer.install(work,bundle,publication_performance=True)['changed_files']==[]
+    assert target.stat().st_mtime_ns==mtime
+
+
+def test_publication_only_patch_refuses_unknown_wrapper_edits_before_writes(workspace):
+    work,repository,bundle=workspace
+    installer.install(work,bundle)
+    target=repository/'elevation_mapping_cupy/script/elevation_mapping_cupy/elevation_mapping_ros.py'
+    target.write_text(target.read_text()+'\n# unrelated local changes\n')
+    before=contents(work)
+    with pytest.raises(RuntimeError,match='Unsupported edits'):
+        installer.install(work,bundle,publication_performance=True)
+    assert contents(work)==before
 
 
 def contents(work):

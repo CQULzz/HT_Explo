@@ -133,7 +133,62 @@ def atomic_write(path, data, mode):
         temporary.unlink(missing_ok=True)
 
 
-def install(workspace, bundle, *, build=False, surface_registration=False):
+def install_publication_performance(workspace, bundle, *, build=False):
+    """Patch only the known ROS wrapper; preserve all mapper/config choices.
+
+    This independent opt-in deliberately does not enable surface registration
+    or regenerate trial configs just because that candidate is installed.
+    """
+    workspace=Path(workspace).expanduser().resolve()
+    repository=workspace/'src/elevation_mapping_cupy_2204'
+    bundle=Path(bundle).resolve()
+    if not (repository/'.git').exists() or repository.is_symlink():
+        raise RuntimeError(f'Missing independent checkout: {repository}')
+    manifest=json.loads((bundle/'publication_performance_manifest.json').read_text())
+    run_git(repository,'cat-file','-e',manifest['upstream_base']+'^{commit}')
+    patch=bundle/'publication_performance.patch'
+    rows=manifest['files']
+    if len(rows)!=1:raise RuntimeError('Publication patch must manage exactly the ROS wrapper')
+    name=safe_relative(rows[0]['file'])
+    if patch_paths(patch)!={name}:raise RuntimeError('Publication patch/manifest paths disagree')
+    target=repository/name;before=read_file(target,repository)
+    current=digest(before);row=rows[0]
+    if current not in (row['before_sha256'],row['after_sha256']):
+        raise RuntimeError('Unsupported edits in mapper ROS wrapper; no files were changed')
+    with tempfile.TemporaryDirectory(prefix='ht-publish-preflight-') as temporary:
+        staging=Path(temporary);p=staging/name;p.parent.mkdir(parents=True);p.write_bytes(before)
+        if current==row['after_sha256']:
+            run_git(staging,'apply','--reverse','--check',str(patch))
+            run_git(staging,'apply','--reverse',str(patch))
+        if digest(p.read_bytes())!=row['before_sha256']:
+            raise RuntimeError('Publication preimage SHA256 mismatch')
+        run_git(staging,'apply','--check',str(patch));run_git(staging,'apply',str(patch))
+        desired=p.read_bytes()
+        if digest(desired)!=row['after_sha256']:
+            raise RuntimeError('Publication candidate SHA256 mismatch')
+    if read_file(target,repository)!=before:
+        raise RuntimeError('Mapper ROS wrapper changed during preflight')
+    changed=[]
+    if before!=desired:
+        mode=target.stat().st_mode&0o777
+        try:
+            atomic_write(target,desired,mode)
+            if read_file(target,repository)!=desired:raise RuntimeError('Publication post-write check failed')
+        except Exception:
+            atomic_write(target,before,mode);raise
+        changed=[str(target.relative_to(workspace))]
+    if build:
+        subprocess.run(['colcon','build','--packages-select','elevation_mapping_cupy'],cwd=workspace,check=True)
+    return {'workspace':str(workspace),'source_stage_before':('publication_performance' if before==desired else 'publication_base'),
+            'source_stage_after':'publication_performance','changed_files':changed,'built':build,
+            'configs_and_fusion_sources_unchanged':True}
+
+
+def install(workspace, bundle, *, build=False, surface_registration=False, publication_performance=False):
+    if publication_performance:
+        if surface_registration:
+            raise RuntimeError('Install surface registration separately; publication-only installation preserves existing configs')
+        return install_publication_performance(workspace,bundle,build=build)
     workspace = Path(workspace).expanduser().resolve()
     repository = workspace / 'src/elevation_mapping_cupy_2204'
     bundle = Path(bundle).resolve()
@@ -197,10 +252,13 @@ def main():
     parser.add_argument('--build', action='store_true')
     parser.add_argument('--surface-registration', action='store_true',
                         help='Install and explicitly enable the offline-tested Z/tilt registration candidate')
+    parser.add_argument('--publication-performance',action='store_true',
+                        help='Only skip unused publication; preserve installed fusion sources and configs')
     args = parser.parse_args()
     bundle = Path(__file__).resolve().parent / 'elevation_mapping_fixes'
     print(json.dumps(install(args.workspace, bundle, build=args.build,
-                             surface_registration=args.surface_registration), indent=2))
+                             surface_registration=args.surface_registration,
+                             publication_performance=args.publication_performance), indent=2))
 
 
 if __name__ == '__main__':

@@ -1,0 +1,36 @@
+diff --git a/elevation_mapping_cupy/script/elevation_mapping_cupy/elevation_mapping_ros.py b/elevation_mapping_cupy/script/elevation_mapping_cupy/elevation_mapping_ros.py
+--- a/elevation_mapping_cupy/script/elevation_mapping_cupy/elevation_mapping_ros.py
++++ b/elevation_mapping_cupy/script/elevation_mapping_cupy/elevation_mapping_ros.py
+@@ -154,6 +154,7 @@
+         self.pointcloud_processing_max_s = 0.0
+         self.cloud_queue_ages_s = []
+         self.timer_profile = {}
++        self.publication_skipped_no_subscribers = {}
+ 
+         self.pointcloud_subscriptions = []
+         self.map_publishers = {}
+@@ -233,6 +234,7 @@
+             "queue_age_max_s": float(ages.max()) if ages.size else None,
+             "timer_profile": {name: {**profile, "mean_s": profile["total_s"]/profile["count"]}
+                               for name, profile in self.timer_profile.items()},
++            "publication_skipped_no_subscribers": dict(self.publication_skipped_no_subscribers),
+         }
+         Path(os.environ["CUPY_STATS_DUMP"]).write_text(json.dumps(stats, indent=2)+'\n')
+ 
+@@ -356,6 +358,16 @@
+         if self.map_translation is None or self.last_integrated_stamp is None:
+             return
+         config = self.publisher_configs[name]
++        publisher = self.map_publishers[name]
++        # Subscriber discovery may lag; the next timer tick supplies a fresh
++        # coherent map once connected. Offline preload/capture can explicitly
++        # retain unconditional publication. Skip before GPU work or map locks.
++        force = config.get("publish_without_subscribers", bool(getattr(self, "offline_tf_bag", "")))
++        if (not force and hasattr(publisher, "get_subscription_count")
++                and publisher.get_subscription_count() == 0):
++            counts = self.publication_skipped_no_subscribers
++            counts[name] = counts.get(name, 0) + 1
++            return
+         msg = GridMap()
+         msg.header.frame_id = self.map_frame
+         # Freeze geometry and every GPU layer under the same lock. Serialize

@@ -117,6 +117,39 @@ The installer still refuses unknown edits before writes. It accepts upstream,
 base, stable, and already surface-registered complete states when requested;
 omitting the flag cannot silently downgrade an installed surface candidate.
 
+## Optional publication-demand performance patch (2026-10-30)
+
+Install the base/stable (or explicit surface candidate) first. Then use the
+separate, publication-only mode:
+
+```bash
+python3 tools/install_elevation_fixes.py --workspace /path/to/independent_cupy_ws --publication-performance
+```
+
+This mode checks the exact known ROS-wrapper hash, stages and verifies
+`publication_performance.patch`, and changes only that wrapper. Existing fusion
+sources and every trial config stay byte-for-byte unchanged; it does not enable
+surface registration. Unknown wrapper edits are refused before writes, repeated
+installation is a no-op, and write failures restore the original bytes. Do not
+combine this flag with `--surface-registration` or run an older installer over
+the new wrapper; unsupported mixed stages are deliberately refused.
+
+With no subscribers, a normal live publisher returns before acquiring map
+locks, running output plugins or copying GPU layers. Subsequent subscribers get
+a fresh coherent map on a later timer tick. Offline preloaded playback retains
+unconditional publication by default; each publisher config can explicitly set
+`publish_without_subscribers: true` for recording/capture. Direct offline capture
+proxies without a subscription-count interface retain their prior behavior.
+Counts are included in `publication_skipped_no_subscribers` when processing
+statistics are enabled. Equal source timestamps are not deduplicated: variance
+and crop geometry may still change. All necessary output/age semantics remain.
+
+Build this package in the independent workspace's existing build/install roots.
+This task uses `--build-base build_stable --install-base install_stable`; it does
+not copy CuPy source into HT/src or copy x86 binaries/caches to Jetson. Source,
+byte-parity checks and timing limits are in
+`docs/results/real_input_pipeline_2026-10-30/REPORT.md`.
+
 Its compact fixture contains actual tracked files extracted with
 `git show 88f4c0...:path`; provenance and SHA256 are inside the archive. Each test
 creates a temporary minimal Git repository, so running it cannot alter the

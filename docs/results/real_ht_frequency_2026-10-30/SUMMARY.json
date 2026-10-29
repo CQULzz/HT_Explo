@@ -1,0 +1,123 @@
+{
+  "scope": "x86_64 RTX 5060 Ti, CUDA FP32, direct HT consumer callbacks; not ARM, live DDS, or vehicle frequency",
+  "baseline_head": "dfd8c7c29de6541d50687ba1301d8c9eadfa33e7",
+  "input_frames": 117,
+  "repeats_per_variant": 3,
+  "warmup_frames_excluded_per_repeat": 5,
+  "output_directory": "/media/lzz/KINGSTON/HT_frequency_2026-10-30_01-01-19",
+  "variants": {
+    "baseline": {
+      "repeat_callback_median_ms": [
+        60.88175500190118,
+        60.88128400006099,
+        60.67333948885789
+      ],
+      "repeat_callback_p95_ms": [
+        168.43729910105966,
+        63.62643119718996,
+        64.5877510018181
+      ],
+      "pooled_callback_ms": {
+        "median": 60.80203150486341,
+        "p95": 64.73590725363465,
+        "max": 297.40741998830345
+      },
+      "slow_frames_above_100ms": 12,
+      "stage_median_ms": {
+        "fusion_and_quality_s": 27.06710649363231,
+        "support_and_history_publish_s": 22.789204500440974,
+        "network_inference_s": 9.148074997938238,
+        "ht_serialize_publish_s": 1.2973460034118034
+      },
+      "comparisons": [
+        {
+          "frames": 117,
+          "max_probability_error": 0.0,
+          "threshold_flips": 0,
+          "mask_or_geometry_mismatches": 0,
+          "non_probability_mismatches": 0
+        },
+        {
+          "frames": 117,
+          "max_probability_error": 0.0,
+          "threshold_flips": 0,
+          "mask_or_geometry_mismatches": 0,
+          "non_probability_mismatches": 0
+        },
+        {
+          "frames": 117,
+          "max_probability_error": 0.0,
+          "threshold_flips": 0,
+          "mask_or_geometry_mismatches": 0,
+          "non_probability_mismatches": 0
+        }
+      ]
+    },
+    "candidate": {
+      "repeat_callback_median_ms": [
+        45.5133735013078,
+        45.2385925091221,
+        44.44636450352846
+      ],
+      "repeat_callback_p95_ms": [
+        188.31118414891483,
+        49.27923474970155,
+        48.88819200641591
+      ],
+      "pooled_callback_ms": {
+        "median": 45.11463850212749,
+        "p95": 93.20943150305538,
+        "max": 220.31528799561784
+      },
+      "slow_frames_above_100ms": 16,
+      "stage_median_ms": {
+        "fusion_and_quality_s": 17.380206503730733,
+        "support_and_history_publish_s": 17.618049001612235,
+        "network_inference_s": 8.42850800108863,
+        "ht_serialize_publish_s": 1.265884995518718
+      },
+      "comparisons": [
+        {
+          "frames": 117,
+          "max_probability_error": 3.725290298461914e-06,
+          "threshold_flips": 0,
+          "mask_or_geometry_mismatches": 0,
+          "non_probability_mismatches": 0
+        },
+        {
+          "frames": 117,
+          "max_probability_error": 3.725290298461914e-06,
+          "threshold_flips": 0,
+          "mask_or_geometry_mismatches": 0,
+          "non_probability_mismatches": 0
+        },
+        {
+          "frames": 117,
+          "max_probability_error": 3.725290298461914e-06,
+          "threshold_flips": 0,
+          "mask_or_geometry_mismatches": 0,
+          "non_probability_mismatches": 0
+        }
+      ]
+    }
+  },
+  "median_reduction_percent": 25.80077114936714,
+  "median_service_capacity_ratio": 1.3477229015587953,
+  "installed_context_parity": {
+    "frames": 117,
+    "exact_input_height_and_stamp_mismatches": [],
+    "outputs": {
+      "frames": 117,
+      "max_probability_error": 3.725290298461914e-06,
+      "threshold_flips": 0,
+      "mask_or_geometry_mismatches": 0,
+      "non_probability_mismatches": 0
+    }
+  },
+  "limitations": [
+    "No guarantee of vehicle frequency; old recording has slower elevation supply as well.",
+    "Pooled candidate P95 is worse in these runs; slow frames retained and cause unresolved.",
+    "No lower threshold, stale republishing, smaller map, FP16 or TF32.",
+    "No vehicle, simulation, Git commit, push or weekly-report action."
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "upstream_base": "88f4c0c2eb3542faeb7bd8fa9df2f18bd25eed91",
+  "candidate_stage": "publication_performance.patch",
+  "scope": "Only skip unused subscriber-free publication before locks/GPU work. No map fusion, TF, source-time, observation-age, variance, crop or threshold change.",
+  "files": [
+    {
+      "file": "elevation_mapping_cupy/script/elevation_mapping_cupy/elevation_mapping_ros.py",
+      "before_sha256": "2094722f6b8dd2be4d319bf099220074dc12abe818e40506950b8b08c8b646d4",
+      "after_sha256": "efbf54a3a6a69a6f9c3564f0961d804044a06673de2375fa59a4eb47c6125fff"
+    }
+  ]
+}

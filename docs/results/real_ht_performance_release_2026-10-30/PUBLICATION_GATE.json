@@ -1,0 +1,29 @@
+{
+  "publish_allowed": true,
+  "checks": {
+    "six_complete_runs": true,
+    "median_reduction_at_least_15_percent": true,
+    "each_repeat_reduction_at_least_10_percent": true,
+    "p95_regression_no_more_than_5_percent": true,
+    "native_maps_equal": true,
+    "model_inputs_equal": true,
+    "geometry_and_masks_equal": true,
+    "threshold_flips_zero": true,
+    "probability_error_at_most_2e-5": true,
+    "frozen_sources_unchanged": true
+  },
+  "criteria_fixed_before_trials": {
+    "median_service_reduction_min_percent": 15,
+    "each_repeat_median_reduction_min_percent": 10,
+    "p95_regression_max_percent": 5,
+    "threshold_flips": 0,
+    "non_probability_or_geometry_mismatches": 0,
+    "native_map_mismatches": 0,
+    "max_supported_probability_error": 2e-05,
+    "required_outputs_each_run": 641
+  },
+  "median_reduction_percent": 17.757778480172824,
+  "p95_reduction_percent": 17.369860859473217,
+  "max_probability_error": 4.470348358154297e-06,
+  "experiment_directory": "/media/lzz/KINGSTON/HT_release_validation_2026-10-30_02-04-25"
+}

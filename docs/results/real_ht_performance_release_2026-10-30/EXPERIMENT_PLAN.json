@@ -1,0 +1,32 @@
+{
+  "scope": "Direct offline raw scan -> filtered cloud pair -> deterministic CuPy -> elevation adapter -> HT, every valid scan. No DDS, controller, simulation or ARM claim.",
+  "source_bag": "/media/lzz/KINGSTON/HT_stationary_retest_2026-10-29_22-43-02/inputs/stationary_required_topics.db3",
+  "baseline_ht": "/media/lzz/KINGSTON/HT_frequency_2026-10-30_01-01-19/baseline_sources",
+  "baseline_scout": "/media/lzz/KINGSTON/HT_input_pipeline_2026-10-30_01-36-43/baseline/ht_scout_bridge",
+  "baseline_mapper": "/media/lzz/KINGSTON/HT_input_pipeline_2026-10-30_01-36-43/baseline/elevation_mapping_ros.py",
+  "repeats": 3,
+  "exclude_first_integrated_scans": 10,
+  "publication_gate": {
+    "median_service_reduction_min_percent": 15,
+    "each_repeat_median_reduction_min_percent": 10,
+    "p95_regression_max_percent": 5,
+    "threshold_flips": 0,
+    "non_probability_or_geometry_mismatches": 0,
+    "native_map_mismatches": 0,
+    "max_supported_probability_error": 2e-05,
+    "required_outputs_each_run": 641
+  },
+  "conditions": {
+    "resolution": 0.04,
+    "map_length": 11.64,
+    "deterministic_fusion": true,
+    "drift": false,
+    "overlap": false,
+    "surface_registration": false,
+    "ht_small_hole_repair": true,
+    "ht_device": "cuda",
+    "precision": "FP32, TF32 off",
+    "blas_threads": 1,
+    "note": "Both stages/processes constrained to BLAS1 to isolate algorithm differences; earlier default28 thread result retained separately."
+  }
+}

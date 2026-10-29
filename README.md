@@ -12,6 +12,7 @@
 
 | 固定版本 tag | 主要内容 | 对应资料 |
 |---|---|---|
+| `real-scout-ht-performance-20261030` | 静止录包每有效扫描一张HT，新旧各3次：离线处理整链路中位76.72→63.10ms、P95 80.51→66.53ms；1923帧新版的地图、掩码及0.5判定一致，未验收ARM/车上频率 | [性能报告](docs/results/real_ht_performance_release_2026-10-30/REPORT.md)、[完整实验数据、代码与离线对照视频](https://github.com/CQULzz/HT_Explo/releases/tag/real-scout-ht-performance-20261030) |
 | `real-scout-rear-red-audit-20261029` | 车后残余红区原因复核：捕获181帧输入，区分孤立高格、邻近高结构与缺测显示；仅诊断，运行代码不变 | [8页证据图、报告与完整诊断数据](https://github.com/CQULzz/HT_Explo/releases/tag/real-scout-rear-red-audit-20261029) |
 | `real-scout-wide-replay-20261029` | 最新大视野离线复测：从两段原始录包重新计算，181帧与上一轮修后结果一致；增加环境显示和录像工具，未更改规划/建图算法 | [视频、完整数据与报告](https://github.com/CQULzz/HT_Explo/releases/tag/real-scout-wide-replay-20261029) |
 | `real-scout-wheel-shadow-20261029` | 默认启用有界轮胎阴影过滤，并保护近地面与可见上部结构；46项检查通过 | [修复代码、对照实验与视频](https://github.com/CQULzz/HT_Explo/releases/tag/real-scout-wheel-shadow-20261029) |
@@ -66,7 +67,7 @@ ros2 run ht_scout_bridge check_scout_calibration \
 
 实车消费者入口为`ros2 launch ht_scout_bridge scout_real.launch.py`。默认跟踪器不启动，命令出口为`/ht_real/cmd_vel_stamped`；需要核对底盘实际消费接口后配置。HT八方向校准仍独立保留，传感器外参确认不等于方向/概率阈值已经标定。
 
-外部建图使用本分支的[mapper_for_ht.yaml](src/ht_scout_bridge/config/mapper_for_ht.yaml)作为独立参数文件：原生0.04m/格，291×291，发布`elevation/variance/time`。适配器把已有`time`层按原值接入`observation_age`。模型中心裁剪输出241×241，即9.64m见方；不缩放250×250图，不伪造年龄。具体两终端集成方式和输入话题见[SCOUT.md](docs/real_vehicle/SCOUT.md)。
+外部建图使用本分支的[mapper_for_ht.yaml](src/ht_scout_bridge/config/mapper_for_ht.yaml)作为独立参数文件：原生0.04m/格，291×291，发布`elevation/variance/observation_age`。观测年龄须来自实际接受点云的源时间，旧`time`定时累加层不能冒充；不合约输入会被拒绝。模型中心裁剪输出241×241，即9.64m见方；不缩放250×250图，不伪造年龄。当前两终端集成方式、独立CuPy发布补丁及性能限制见[JETSON_STARTUP.md](docs/real_vehicle/JETSON_STARTUP.md)。
 
 构建使用本工作区的`build_real/install_real`，HT终端只source ROS和本工作区install。两个独立工作区通过ROS话题通信，不互相source构建产物。
 
