@@ -12,6 +12,7 @@
 
 | 固定版本 tag | 主要内容 | 对应资料 |
 |---|---|---|
+| `real-scout-rear-red-audit-20261029` | 车后残余红区原因复核：捕获181帧输入，区分孤立高格、邻近高结构与缺测显示；仅诊断，运行代码不变 | [8页证据图、报告与完整诊断数据](https://github.com/CQULzz/HT_Explo/releases/tag/real-scout-rear-red-audit-20261029) |
 | `real-scout-wide-replay-20261029` | 最新大视野离线复测：从两段原始录包重新计算，181帧与上一轮修后结果一致；增加环境显示和录像工具，未更改规划/建图算法 | [视频、完整数据与报告](https://github.com/CQULzz/HT_Explo/releases/tag/real-scout-wide-replay-20261029) |
 | `real-scout-wheel-shadow-20261029` | 默认启用有界轮胎阴影过滤，并保护近地面与可见上部结构；46项检查通过 | [修复代码、对照实验与视频](https://github.com/CQULzz/HT_Explo/releases/tag/real-scout-wheel-shadow-20261029) |
 
