@@ -1,0 +1,8 @@
+{
+  "scope": "Offline two recorded clips; no hardware or control. Source-level diagnosis before default geometry change.",
+  "hypothesis": "Existing point-endpoint inclusion misses near-body returns inconsistent with wheel line of sight; wheel collision geometry from user-confirmed source URDF, with sensitivity to its existing 2cm uncertainty margin.",
+  "limits": {"max_lidar_range_m": 1.6, "min_behind_wheel_exit_m": 0.03, "max_behind_wheel_exit_m": 0.5},
+  "ground_guard": "Do not newly remove body-frame points at/below calibrated ground+3cm. Ground is z=-0.23479 in canonical chassis frame; use before motion/surface registration.",
+  "acceptance": ["measure raw point ray/shape provenance, not only red pixel decrease", "retain all previously retained test ground at/below ground+3cm", "retain unobscured near-body external objects", "unknown never relabelled as free", "same full original scans and source TF, same enabled surface registration baseline", "report negative controls and remaining near-body red"],
+  "trial_variants": ["physical wheel core shadow", "existing 2cm padded wheel shadow", "padded shadow with ground guard"]
+}

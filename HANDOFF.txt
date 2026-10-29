@@ -1,3 +1,12 @@
+2026-10-29 车身随行低分修复（先读）：
+- 默认wheel_occlusion已在scout_extrinsics.yaml启用，并在本工作树install_real构建安装、逐字节核对。上轮仅试扩大20cm的问题已不适用：本轮是默认有界轮胎阴影过滤，原14盒/4轮、2cm已计入裕量和外参未改。
+- 有限射线、近地面3cm保护、4cm邻域/4cm高度的可见上部结构保护；48外物样本全保留；单纯阴影会删6个的失败反例已保留。
+- 代码GitHub real/scout-helios32 a54bd0c8ef4bdce4da196db36b16415412ff2984，本机冻结be3e04c（祖先不同，禁止直接推本机历史）。
+- 4组完整离线候选362张HT图＋旧配置关闭回归64帧全数组精确一致；移动包后侧全方向低分中位数141→0（配准关）/125.5→0（开），近车未知中位数未增加。相关46测试通过。
+- 静止包未知/低分基本未改善；末段残余低分和上轮新障碍融合迟滞未修复。不是实车闭环、ARM、绝不误删或全部问题解决的验收。
+- 报告/7页图：docs/results/real_wheel_occlusion_2026-10-29/REPORT.md；外盘HT_body_occlusion_fix_2026-10-29；Release real-scout-wheel-shadow-20261029以PUBLICATION_RECEIPT.json为准。
+- 仍只做离线，不启动设备/仿真/控制；本轮真实RViz录像只显示保存地图，青线是录包轨迹。后续对照保持独立工作区及原始录包，不复用旧污染历史图，不涂绿未知。
+
 2026-10-29 最新离线更新（请先读本段）：
 - 实车代码已发布到 real/scout-helios32，提交 e23f0c3a9fbcbc29abe038b59b745254346723fe；本机冻结代码HEAD 696ea9f，祖先不同，禁止直接推整条本机历史。
 - 新增显式开启的扫描帧到历史图Z/倾斜刚体配准，分发在 tools/elevation_mapping_fixes/surface_registration.patch；源默认false，独立trial_core已恢复原稳定配置，见 RESTORED_DEFAULT_CONFIG.json。独立候选配置 mapper_surface_registered.yaml。
