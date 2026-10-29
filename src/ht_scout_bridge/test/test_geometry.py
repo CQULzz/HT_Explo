@@ -119,8 +119,11 @@ def test_body_filter_requires_its_calibrated_reference_and_preserves_nonfinite_r
         assert not self_filter_keep_mask(invalid,profile['lidar_self_filter'],np.linalg.inv(b)@l).any()
 
 
-def test_union_broad_phase_matches_every_unaccelerated_shape():
-    profile,b,l=load_calibration(PROFILE);t=np.linalg.inv(b)@l;f=profile['lidar_self_filter']
+def test_volume_only_union_broad_phase_matches_every_unaccelerated_shape():
+    profile,b,l=load_calibration(PROFILE);t=np.linalg.inv(b)@l;f=deepcopy(profile['lidar_self_filter'])
+    # This oracle covers endpoint volumes; visibility has its own independent
+    # finite-ray tests and intentionally rejects some endpoints outside them.
+    f.pop('wheel_occlusion',None)
     base=np.random.default_rng(7).uniform(-4,4,(30000,3));inside=np.zeros(len(base),bool)
     for box in f['boxes']:inside|=(base>=box['min_xyz']).all(1)&(base<=box['max_xyz']).all(1)
     for cylinder in f['cylinders']:

@@ -1,4 +1,3 @@
-# Offline-tested candidate: five URDF base_link visual AABBs complete the existing filter.
 source:
   repository: CQULzz/eletranskit_scout
   commit: cf0b73d7d01b4b6a2718c7ff3124f4b7a3368c36
@@ -321,3 +320,19 @@ lidar_self_filter:
       - 0.07970116
       padding_already_in_bounds_m: 0.02
       filter_box: *id005
+  wheel_occlusion:
+    enabled: true
+    max_lidar_range_m: 1.6
+    min_behind_m: 0.03
+    max_behind_m: 0.5
+    ground_z_m: -0.23479
+    min_height_above_ground_m: 0.03
+    source: Same cf0b73d URDF wheel collision cylinders, with the existing 2cm geometry
+      margin; no added XY dilation.
+    scope: Bounded near wheel shadows, using the existing padded tire model. Preserve
+      ground+3cm and shadow points supported by higher visible structure. No free-space
+      inference.
+    max_return_z_m: 0.11438999999999998
+    preserve_vertical_support: true
+    support_radius_m: 0.04
+    support_height_m: 0.04

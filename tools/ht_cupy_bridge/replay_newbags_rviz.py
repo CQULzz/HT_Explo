@@ -64,6 +64,9 @@ def main():
     p.add_argument('--bag',type=Path,required=True)
     p.add_argument('--output',type=Path,required=True)
     p.add_argument('--cupy-package',type=Path,required=True)
+    p.add_argument('--calibration-file',type=Path,
+        default=ROOT/'src/ht_scout_bridge/config/scout_extrinsics.yaml',
+        help='Explicit recorded-data calibration/filter profile; defaults to real Scout profile')
     p.add_argument('--self-filter-horizontal-padding-m',type=float,default=0.,
         help='Extra XY-only dilation of each physical primitive; offline experiment, default unchanged')
     p.add_argument('--surface-registration',action='store_true',
@@ -92,10 +95,12 @@ def main():
                 if name=='/tf_static': buf.set_transform_static(t,'recorded')
                 else:buf.set_transform(t,'recorded')
                 tf_edges[t.header.frame_id+' -> '+t.child_frame_id]=matrix(t).tolist()
-    profile,b,l=load_calibration(ROOT/'src/ht_scout_bridge/config/scout_extrinsics.yaml')
+    profile,b,l=load_calibration(a.calibration_file)
     from copy import deepcopy
     baseline_filter=deepcopy(profile['lidar_self_filter'])
     profile['lidar_self_filter']['horizontal_padding_m']=a.self_filter_horizontal_padding_m
+    endpoint_filter=deepcopy(profile['lidar_self_filter'])
+    endpoint_filter.pop('wheel_occlusion',None)
     expected=np.linalg.inv(b)@l
     recorded=matrix(buf.lookup_transform('scout_chassis_link','rslidar',Time()))
     assert np.allclose(recorded,expected,atol=1e-7), (recorded,expected)
@@ -123,6 +128,8 @@ def main():
         'drift_compensation':False,'overlap_clearance':False,
         'self_filter_horizontal_padding_m':a.self_filter_horizontal_padding_m,
         'self_filter_vertical_bounds_unchanged':True,
+        'calibration_file':str(a.calibration_file),
+        'wheel_occlusion':profile['lidar_self_filter'].get('wheel_occlusion',{'enabled':False}),
         'surface_registration':a.surface_registration,
         'surface_registration_scope':'Map input only; recorded odometry/TF is not rewritten; not a physical localization calibration',
         'effective_scalar_parameters':{k:v for k,v in vars(param).items()
@@ -131,6 +138,7 @@ def main():
         'sources':{}}
     for f in [Path(__file__),ROOT/'tools/ht_cupy_bridge/cupy_to_ht.py',ROOT/'tools/ht_cupy_bridge/historical_elevation.py',ROOT/'src/ht_scout_bridge/config/scout_extrinsics.yaml',ROOT/'src/ht_scout_bridge/ht_scout_bridge/geometry.py']:
         freeze['sources'][str(f)]=hashlib.sha256(f.read_bytes()).hexdigest()
+    freeze['sources'][str(a.calibration_file)]=hashlib.sha256(a.calibration_file.read_bytes()).hexdigest()
     from elevation_mapping_cupy import elevation_mapping as mapper_module
     mapper_source=Path(mapper_module.__file__)
     for f in [mapper_source,mapper_source.with_name('parameter.py'),
@@ -153,13 +161,16 @@ def main():
             xyz=read_points_numpy(m,field_names=('x','y','z'),skip_nans=False).reshape(-1,3)
             keep=self_filter_keep_mask(xyz,profile['lidar_self_filter'],recorded)
             old_keep=self_filter_keep_mask(xyz,baseline_filter,recorded)
+            endpoint_keep=self_filter_keep_mask(xyz,endpoint_filter,recorded)
             assert not np.any(keep&~old_keep)
+            assert not np.any(keep&~endpoint_keep)
             begun=time.perf_counter();mapping.move_to(vehicle[:3,3],vehicle[:3,:3])
             if last is not None:
                 param.time_interval=(ns-last)/1e9;mapping.update_time();mapping.update_variance()
             mapping.input_pointcloud(xyz[keep].copy(),['x','y','z'],sensor[:3,:3].copy(),sensor[:3,3].copy(),0.,0.,observation_stamp=ns/1e9)
             cp.cuda.get_current_stream().synchronize()
             row.update(status='INTEGRATED',kept_points=int(keep.sum()),raw_points=len(xyz),extra_removed_points=int((old_keep&~keep).sum()),integration_s=time.perf_counter()-begun)
+            row['wheel_occlusion_removed_points']=int((endpoint_keep&~keep).sum())
             row['surface_registration']=dict(getattr(mapping,'last_surface_registration',{'status':'UNAVAILABLE'}))
             scans.append(row);last=ns;first=ns if first is None else first
             next_map=ns if next_map is None else next_map
