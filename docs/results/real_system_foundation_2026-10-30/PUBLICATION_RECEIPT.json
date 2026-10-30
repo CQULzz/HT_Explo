@@ -1,11 +1,10 @@
 {
-  "publication_status": "CODE_AND_REPORTS_PUBLISHED; RELEASE_DATA_PENDING_AUTHENTICATION",
   "branch": "real/scout-helios32",
+  "tag": "real-scout-system-foundation-20261030",
   "code_commit": "b21f876f4cc897d529fd3d9b44f09a91a3f117dc",
   "parent": "b90e5e405d511eacc970c5b6faea07873ca14384",
-  "tag": "real-scout-system-foundation-20261030",
-  "code_url": "https://github.com/CQULzz/HT_Explo/commit/b21f876f4cc897d529fd3d9b44f09a91a3f117dc",
-  "classification": "offline candidate, original unrestricted HT P95 gate not passed",
+  "release_url": "https://github.com/CQULzz/HT_Explo/releases/tag/real-scout-system-foundation-20261030",
+  "classification": "candidate / prerelease",
   "authorization": {
     "authorization": "User explicitly requested: 把改好的给我传到github对应分支",
     "branch": "real/scout-helios32",
@@ -16,11 +15,13 @@
     "supersedes_initial_automatic_upload_pause": true,
     "no_change_to_experiment_gate_or_results": true
   },
+  "original_unrestricted_ht_p95_gate_passed": false,
   "code_check": {
     "code_commit": "b21f876f4cc897d529fd3d9b44f09a91a3f117dc",
     "parent": "b90e5e405d511eacc970c5b6faea07873ca14384",
     "tree": "4b13bc3dda292147732622e2bd34b15b7e528b89",
     "files_verified": 38,
+    "only_declared_paths_changed": true,
     "changed_paths": [
       "README.md",
       "docs/plans/2026-10-30_system_optimization_proposal.docx",
@@ -61,32 +62,190 @@
       "tools/ht_cupy_bridge/test_performance_status.py",
       "tools/ht_cupy_bridge/test_runtime_manifest.py"
     ],
-    "only_declared_paths_changed": true,
     "all_declared_blob_hashes_and_modes_verified": true,
-    "local_imported_history_not_pushed": true,
-    "ssh_remote_branch_and_tag_verified": true,
-    "main_develop_and_old_tags_verified_unchanged": true,
-    "release_assets": "PENDING: GitHub CLI API authentication expired (HTTP 401)"
+    "local_imported_history_not_pushed": true
   },
-  "release_assets_uploaded": false,
-  "release_blocker": "GitHub CLI authentication expired; API write HTTP 401. SSH Git write verified. No password/token requested or saved.",
-  "local_assets": {
-    "directory": "/home/lzz/HT_system_foundation_publication_20261030_135537/payload",
-    "assets": 16,
-    "bytes": 246880815,
-    "archive_check": {
-      "archive": "HT_system_foundation_data.tar.zst",
-      "compressed_bytes": 246075568,
-      "files": 1819,
-      "uncompressed_bytes": 257354293,
-      "all_tar_member_sizes_and_sha256_verified": true,
-      "zstd_checksum_test_passed": true
+  "assets": [
+    {
+      "name": "CANDIDATE_FREEZE_AND_PLAN.json",
+      "bytes": 19910,
+      "sha256": "2793b75f85586e05d927fce073ea0452f3cc56d2946875a7311d819cd3c8ab9f",
+      "url": "https://github.com/CQULzz/HT_Explo/releases/download/untagged-33e24fb6d24093e74ad5/CANDIDATE_FREEZE_AND_PLAN.json"
+    },
+    {
+      "name": "CPU_DIAGNOSTIC_SUMMARY.json",
+      "bytes": 12055,
+      "sha256": "58c3c88f013f85645813085c1bf005f3ee23af58ef5dca1d4c93d685245216b0",
+      "url": "https://github.com/CQULzz/HT_Explo/releases/download/untagged-33e24fb6d24093e74ad5/CPU_DIAGNOSTIC_SUMMARY.json"
+    },
+    {
+      "name": "DATA_ARCHIVE_CHECK.json",
+      "bytes": 227,
+      "sha256": "67660eaba63f0f49c9bedded0033ec9ef9ff128be478ccd6e7f24b1b152e4aab",
+      "url": "https://github.com/CQULzz/HT_Explo/releases/download/untagged-33e24fb6d24093e74ad5/DATA_ARCHIVE_CHECK.json"
+    },
+    {
+      "name": "FINAL_CHECK.json",
+      "bytes": 4652,
+      "sha256": "0f0bf7d397bd655d811689be2e4d1b1aea6f34eb9f2a1264cbf1e967e48e8662",
+      "url": "https://github.com/CQULzz/HT_Explo/releases/download/untagged-33e24fb6d24093e74ad5/FINAL_CHECK.json"
+    },
+    {
+      "name": "FULL_DATA_MANIFEST.json",
+      "bytes": 310002,
+      "sha256": "107888080627e06e02a75cbe3e398a870824f555716e52f49b755c7c2183692a",
+      "url": "https://github.com/CQULzz/HT_Explo/releases/download/untagged-33e24fb6d24093e74ad5/FULL_DATA_MANIFEST.json"
+    },
+    {
+      "name": "HT_system_foundation_data.tar.zst",
+      "bytes": 246075568,
+      "sha256": "44e81d98cef5966fabf7d4258e8d5d78f81158d6ad475e7fd477b14b091a67de",
+      "url": "https://github.com/CQULzz/HT_Explo/releases/download/untagged-33e24fb6d24093e74ad5/HT_system_foundation_data.tar.zst"
+    },
+    {
+      "name": "PUBLICATION_AUTHORIZATION.json",
+      "bytes": 466,
+      "sha256": "444023abe3007003cb88cf6c678df5ef5cf02e859312b4f7d6a30d67121384e1",
+      "url": "https://github.com/CQULzz/HT_Explo/releases/download/untagged-33e24fb6d24093e74ad5/PUBLICATION_AUTHORIZATION.json"
+    },
+    {
+      "name": "PUBLICATION_FILES.json",
+      "bytes": 16932,
+      "sha256": "aa4cc7720a99c2acd78f179d70b9a46bdf9d55f99f305acecf6786103807d12c",
+      "url": "https://github.com/CQULzz/HT_Explo/releases/download/untagged-33e24fb6d24093e74ad5/PUBLICATION_FILES.json"
+    },
+    {
+      "name": "RAW_SOURCE_ASSETS.json",
+      "bytes": 2755,
+      "sha256": "dc7f6e608808ca29150f9ab5ef8ef3b04c2d140856d2486a8df9abf1ab9e6640",
+      "url": "https://github.com/CQULzz/HT_Explo/releases/download/untagged-33e24fb6d24093e74ad5/RAW_SOURCE_ASSETS.json"
+    },
+    {
+      "name": "REPORT.md",
+      "bytes": 8566,
+      "sha256": "dc290a0584994d836b582d1ca4d871f245dc8ed1cee56c48ff85783256943647",
+      "url": "https://github.com/CQULzz/HT_Explo/releases/download/untagged-33e24fb6d24093e74ad5/REPORT.md"
+    },
+    {
+      "name": "SUMMARY.json",
+      "bytes": 14558,
+      "sha256": "a9a7248dd16cd2b9ee167e02f476f88de1da6634dc2f9876d23bb888621bb0b2",
+      "url": "https://github.com/CQULzz/HT_Explo/releases/download/untagged-33e24fb6d24093e74ad5/SUMMARY.json"
+    },
+    {
+      "name": "VIDEO_CHECK.json",
+      "bytes": 224,
+      "sha256": "d6ba944580c32cdaa8b3f5ba8a50a01f9e08b29206f7f0891ab2217de8a212dc",
+      "url": "https://github.com/CQULzz/HT_Explo/releases/download/untagged-33e24fb6d24093e74ad5/VIDEO_CHECK.json"
+    },
+    {
+      "name": "ht_callback_timing.png",
+      "bytes": 142657,
+      "sha256": "ce3120ad6ef71c7cfa671c23ebdfaff08c9403359ca344e1b38496288b54e65f",
+      "url": "https://github.com/CQULzz/HT_Explo/releases/download/untagged-33e24fb6d24093e74ad5/ht_callback_timing.png"
+    },
+    {
+      "name": "index_scaling.png",
+      "bytes": 111628,
+      "sha256": "88ae304967fa49de6a17207daf3fa624547774c867b9fa4b445d83efa078156f",
+      "url": "https://github.com/CQULzz/HT_Explo/releases/download/untagged-33e24fb6d24093e74ad5/index_scaling.png"
+    },
+    {
+      "name": "offline_parity.mp4",
+      "bytes": 159290,
+      "sha256": "40b5e58fa6ab131ff2444fefd71d55cc5fbf708e915d25e5148a0aae514e5791",
+      "url": "https://github.com/CQULzz/HT_Explo/releases/download/untagged-33e24fb6d24093e74ad5/offline_parity.mp4"
+    },
+    {
+      "name": "SHA256SUMS",
+      "bytes": 1325,
+      "sha256": "1d9d2fd0e00c08e4f646aa0e575706e09c0615df44aa1763e4416834e7c0a346",
+      "url": "https://github.com/CQULzz/HT_Explo/releases/download/untagged-33e24fb6d24093e74ad5/SHA256SUMS"
+    },
+    {
+      "name": "CODE_PUBLICATION_CHECK.json",
+      "bytes": 2624,
+      "sha256": "d082d1dadcdf26671633b0201af9769f11fb34b5f6087ac4d318c4225d67ea7c",
+      "url": "https://github.com/CQULzz/HT_Explo/releases/download/untagged-33e24fb6d24093e74ad5/CODE_PUBLICATION_CHECK.json"
     }
-  },
+  ],
+  "all_remote_sizes_and_sha256_verified": true,
   "protected_refs": {
     "main": "649dad0479a47bf6ba32980c1c73d235bf2c84da",
     "develop": "8b10207a705d73a00c830872570eabf61748ada5"
   },
-  "old_tags_verified_unchanged": 70,
-  "verified_at": "2026-10-30T06:12:14.574984+00:00"
+  "protected_old_tags": {
+    "ht-garage-repeat-20261015-1225": "0b842e4ab71a1ed0249cc32da923a0f51940106a",
+    "ht-sim-20261022-indoor-repeat": "d3dce26ceaf3200dc112c1d85b753c1f6d388ffc",
+    "ht-sim-20261022-input-contracts": "8cbdb77baf36b38b1251a46b3013f651c12c65bc",
+    "ht-stage-20260914-ht8dir": "69608f8da8ccfd8c0af887f3b2cdc621f596ce20",
+    "ht-stage-20260915-jazzy": "0690018492979e805c3ccafdae6a311643ca35e1",
+    "ht-stage-20260920-corner": "8f5c04a43b0a8726b7f0fd6a8a2f941c07048c82",
+    "ht-stage-20260921-real-ht": "ba93fda4db713ae645586bdb10957a6272f79c86",
+    "ht-stage-20260922-return": "cf40012c8a34725ccba6240f8b1eca5571e39fcf",
+    "ht-stage-20261010-drivers": "701308613a4694d3f18ae2762261ee63c170b64f",
+    "ht-stage-20261011-campus": "39f3075dbcd9dfa46afb11c3714a0902434af939",
+    "ht-stage-20261015-elevation-xytheta": "16103d760dc9bf1c071dd0528ade4eb21d92cac6",
+    "ht-stage-20261015-goal-continuity": "6aafe0f9d76ebde7fa10d1f5f4079abfdabb25ba",
+    "ht-stage-20261016-endurance": "ebe550cbf906d45ea0b369c4b292165f8f5ff32e",
+    "ht-stage-20261016-progress-memory": "55bc2898d1685a932ecd14c0d5680dda0b089029",
+    "ht-stage-20261016-swept-check": "e55aac5fc6885a7ea80a75529d26697599bf0ff1",
+    "ht-stage-20261016-tare-compare": "df8152c172380c15ac7260fa40c71f4baad595d3",
+    "ht-stage-20261017-blas-threads": "34298480df107a7dbe51a386ffb8318ce0567fd8",
+    "ht-stage-20261017-context-recovery": "dee873db9a25778eb67060100025bea2f619c0ee",
+    "ht-stage-20261017-crossguide-lifecycle": "3ef20e936ca4ba005b569f0dd581bd780b7b3a88",
+    "ht-stage-20261017-endurance-return": "6206d8be3a60f35ed33cbd88fad6bed97571da85",
+    "ht-stage-20261017-indoor-viewpoints": "d12812b11aa11913e0e6d8b8ea9196e19d003b48",
+    "ht-stage-20261017-multiscene-10min": "b1ac0f8551e6bcd5084e090daa07c50f99b2b7f2",
+    "ht-stage-20261018-cell-audit": "b6010156cc26431cc23bac33ac543982f7d5e4c1",
+    "ht-stage-20261018-configuration-gate": "149566de09c48a528140b6ec950c08c5fa29539c",
+    "ht-stage-20261018-continuous-geometry": "43069a7b11b8028b53f6eae0d6bdc53c13e8affd",
+    "ht-stage-20261018-execution-geometry": "65efef749493fdfac0960f7b98013ec666d4efff",
+    "ht-stage-20261018-geometry-index": "4721764fa77eb634f4a0ba50b1381a05b3790195",
+    "ht-stage-20261018-latency-diagnosis": "bada7bad52fca98a3eb0942c1bc3d9c0a7d84185",
+    "ht-stage-20261018-mixed-turns": "12d85d871ce84bcab1191a20bbea6e1748449cd5",
+    "ht-stage-20261018-pending-gain": "ce7202bb14fa493d6ee2e4cb68dd8d56b32aef0b",
+    "ht-stage-20261018-postfilter-obstacles": "22c2749f395af8bb5dc6705b1e92548acf69494e",
+    "ht-stage-20261018-zero-hold": "50c239f7a53f290daaa13c28c96fee073516417e",
+    "ht-stage-20261019-atomic-context": "445b5c1490d6bb198c35bee23e95fc0f7781407e",
+    "ht-stage-20261019-checked-connections": "391fa0f98fc2a0adab2c018b4c5a1c7c29efff91",
+    "ht-stage-20261019-deferred-gain": "b05ed9e717a3e430cc6243ed61666b5120f76e5b",
+    "ht-stage-20261019-deferred-repeat": "867ba1f5d40c813291bbb148fad2d5fc5b8907d1",
+    "ht-stage-20261019-frozen-garage": "7b4c3589366c6a0bb4f8f1984c14951aa446d1ad",
+    "ht-stage-20261019-guide-handoff": "16bdbe4cb1fddd632d061a5710c3e7b294971891",
+    "ht-stage-20261019-recovery-slot": "ba7942ce176378d68b0eeab99a4f4bb9a5e68913",
+    "ht-stage-20261019-serial-mapper": "d6d87878a4e8982e3a4850a5a17f8e1be1608a24",
+    "ht-stage-20261020-successor-pruning": "6fc754903f0e7c9aafe4b2a2b13c3fa24266551a",
+    "ht-stage-20261020-tare-boundaries": "68701319b333165dd9cd5acf8e226ba52c174434",
+    "ht-stage-20261020-tare-multiscene": "dccfcc93232f0f27f9ae2d63b59ae93c4c1168c4",
+    "ht-stage-20261020-tare-waypoint": "42966cb22b0f719df035391f3850b9a654f161e1",
+    "ht-stage-20261021-campus-matched": "f7fd77b66fc442752599ead359e8aa60e7773ae4",
+    "ht-stage-20261021-continuous-domain": "07c1abd334f83cb8d602e2234134b4286862c916",
+    "ht-stage-20261021-sparse-height": "454efa230fae337cfa8f87b2aa87ee9917040621",
+    "ht-stage-20261021-tare-matched": "1ded85a7b66ad9506bb26b7abe4e1c1def946648",
+    "ht-stage-20261021-tare-short-prefix": "d7e0741c1aeeb65f4c0ff404521a4c54f992a330",
+    "ht-stage-20261021-terrain-footprint": "15e197eca16bee3dea1fcd3870a05ee84f2ecd12",
+    "ht-viz-20261022-xytheta-voxel-grid": "d8827d59641a67cac98c3f88b7eaafae492b56fc",
+    "nav/ht-soft-cost-20260914": "1d9e83a20c9fa919090fb2cfd41c3491f3c8e391",
+    "nav/ht-xytheta-20261015": "8834b47aaf8212379804c6f1d137623ab93df6ba",
+    "nav/tare-ht-20261021": "bb568c7092444da1cb07ecd666d6caa7eab3457e",
+    "nav/tare-waypoint-20261020": "9f15fd99c84a19dce7c5b26706b761cf98beb58e",
+    "real-scout-cupy-stable-20261028": "cbf0528b836b81c8a9a99b34563c50c999edd700",
+    "real-scout-filter-xy-trials-20261029": "503fc90f2926d5053abf3c5bdfb52dc9a823fbc3",
+    "real-scout-ht-performance-20261030": "1f3523606b7c24fdca1ca133697c2443fbebad5d",
+    "real-scout-newbags-20261028": "ad16a1ed50deb3ccbe70055efde9174b14761fb8",
+    "real-scout-offline-replay-20261028": "856a6ea68c2dfa780e8802b8c8896f5543f17a91",
+    "real-scout-rear-red-audit-20261029": "d063a63a2dd73483369bedc5faa30d4b52bd4ab8",
+    "real-scout-round2-20261028": "37c7cd37a44b9b1b35e7df9ac3a4f7454d290cc6",
+    "real-scout-surface-registration-20261029": "7b84641fe67317c1080f7bf39d044a9f412270c5",
+    "real-scout-texture-multigroup-20261029": "f5766cbc5fce4ac68a224657ee4bc25be61db078",
+    "real-scout-urdf-visual-20261028": "86c33e0742f5fc06a743031e2da452d2b4ecafdf",
+    "real-scout-wheel-shadow-20261029": "93a554d8c9d5d31724286e02d6f29ed83093cffe",
+    "real-scout-wide-replay-20261029": "3b4f483e3bff909d35882a60d9474e84350878ac",
+    "real-scout-xytheta-20261028": "added33629d8f7ce83075775039fb291e9f79b30",
+    "real-scout-xytheta-full208-20261028": "571017d6f8eeb7cbf5cfc34ac7cc47b708ffc568",
+    "viz/xytheta-transparent-20261022": "e6673a3d68f336e162a6794f93ba03473925fa1b"
+  },
+  "verified_at": "2026-10-30T17:57:46.623720+00:00",
+  "scope": "x86 offline tests and container benchmark; no ARM, DDS, closed-loop or vehicle 2.2Hz resolution claim"
 }
