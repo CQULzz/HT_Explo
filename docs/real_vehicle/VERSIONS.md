@@ -16,6 +16,7 @@
 
 | Tag | tag指向的完整提交 | 算法修复提交 | 资料 |
 |---|---|---|---|
+| [`real-scout-ht-latency-20261031`](https://github.com/CQULzz/HT_Explo/tree/real-scout-ht-latency-20261031) | 完整SHA见本轮发布回执，以远端实车父提交叠加 | 小孔候选精确减负、延迟/原因/资源诊断与退出修复；中位减少11.8%、P95减少8.5%，仍有极慢帧，ARM/实车未验收 | [Release](https://github.com/CQULzz/HT_Explo/releases/tag/real-scout-ht-latency-20261031)、[报告](../results/real_ht_latency_2026-10-31/REPORT.md) |
 | [`real-scout-system-foundation-20261030`](https://github.com/CQULzz/HT_Explo/tree/real-scout-system-foundation-20261030) | 完整SHA见发布回执；以远端实车历史追加，不移动旧tag | 候选：运行身份、有界诊断和地形历史索引；不约束调度HT回调P95未通过，用户明确要求上传，不代表实车验收 | [Release](https://github.com/CQULzz/HT_Explo/releases/tag/real-scout-system-foundation-20261030)、[报告](../results/real_system_foundation_2026-10-30/REPORT.md) |
 | [`real-scout-ht-performance-20261030`](https://github.com/CQULzz/HT_Explo/tree/real-scout-ht-performance-20261030) | 完整SHA见该Release发布回执，旧tag不移动 | HT历史/预处理、输入桥接拷贝/调度及无用发布减负；不改阈值、观测/障碍规则和TARE顺序 | [Release](https://github.com/CQULzz/HT_Explo/releases/tag/real-scout-ht-performance-20261030)、[六轮录包性能报告](../results/real_ht_performance_release_2026-10-30/REPORT.md) |
 | [`real-scout-wheel-shadow-20261029`](https://github.com/CQULzz/HT_Explo/tree/real-scout-wheel-shadow-20261029) | `93a554d8c9d5d31724286e02d6f29ed83093cffe` | `a54bd0c8ef4bdce4da196db36b16415412ff2984` | [Release](https://github.com/CQULzz/HT_Explo/releases/tag/real-scout-wheel-shadow-20261029)、[报告](../results/real_wheel_occlusion_2026-10-29/REPORT.md) |

@@ -38,6 +38,7 @@ def main():
     parser.add_argument('--reference', type=Path)
     parser.add_argument('--capture-context', action='store_true')
     parser.add_argument('--save-frames', action='store_true')
+    parser.add_argument('--capture-reasons', action='store_true')
     parser.add_argument('--profile', action='store_true')
     parser.add_argument('--device', choices=['cpu', 'cuda'], default='cuda')
     parser.add_argument('--parameter', action='append', default=[])
@@ -63,6 +64,9 @@ def main():
     # A performance topic, when present, also remains in-process.
     if hasattr(node, 'performance_pub'):
         node.performance_pub = SimpleNamespace(publish=lambda _: None)
+    reason_outputs=[]
+    if hasattr(node,'reason_pub'):
+        node.reason_pub=SimpleNamespace(get_subscription_count=lambda:int(args.capture_reasons),publish=reason_outputs.append)
     buffer = Buffer(cache_time=Duration(seconds=180.))
     database = sqlite3.connect(args.bag.resolve().as_uri()+'?mode=ro&immutable=1', uri=True)
     for name in ['/tf_static', '/tf']:
@@ -140,6 +144,12 @@ def main():
                     np.savez_compressed(args.output/'frames'/f'frame_{index:04d}.npz',
                         stamp_ns=ns,resolution=result.info.resolution,
                         center=[result.info.pose.position.x,result.info.pose.position.y],**layers)
+                if reason_outputs:
+                    reason=reason_outputs.pop()
+                    reason_layers={name:np.asarray(d.data,np.float32).reshape(241,241,order='F')
+                                   for name,d in zip(reason.layers,reason.data)}
+                    np.savez_compressed(args.output/f'reason_{index:04d}.npz',stamp_ns=ns,
+                        resolution=reason.info.resolution,center=[reason.info.pose.position.x,reason.info.pose.position.y],**reason_layers)
                 index += 1
         summary = {}
         for key in ['fusion_and_quality_s', 'support_and_history_publish_s', 'network_inference_s',

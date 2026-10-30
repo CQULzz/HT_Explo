@@ -356,6 +356,15 @@ class HistoricalElevation:
         """Number of allocated XY cells (each has up to max_layers modes)."""
         return len(self.tiles) * self.tile_size**2
 
+    def resource_usage(self):
+        """Resident scientific arrays only; not process RSS or a cache policy."""
+        return {'tiles':len(self.tiles),'max_tiles':self.max_tiles,
+                'allocated_xy_cells':self.allocated_cells,
+                'surface_array_bytes':sum(a.nbytes for tile in self.tiles.values() for a in tile),
+                'rejection_array_bytes':sum(a.nbytes for a in self.rejections.values())+
+                                        sum(a.nbytes for a in self.rejected_heights.values()),
+                'eviction_enabled':False,'age_limit_s':self.max_age_s}
+
     def save(self, path):
         """Persist every height mode and latest-mode compatibility views."""
         keys = sorted(self.tiles)

@@ -1,5 +1,8 @@
 """Exercise the actual bridge main-loop shutdown with SIGINT inside a write."""
 import json
+import gc
+import io
+from contextlib import redirect_stderr
 import os
 from pathlib import Path
 import signal
@@ -24,13 +27,17 @@ class BridgeShutdownTest(unittest.TestCase):
                     super().__init__('bounded_diagnostic_shutdown')
                     self.history=None;self.n=0
                     self.diagnostics=DiagnosticHistory(2,path)
-                    self.create_timer(.01,self.record)
+                    self.timer=self.create_timer(.01,self.record)
                 def record(self):
+                    if self.n>=6:return
                     self.diagnostics.append({'source':self.n});self.n+=1
-                    if self.n==6:os.kill(os.getpid(),signal.SIGINT)
+                    if self.n==6:self.timer.cancel();os.kill(os.getpid(),signal.SIGINT)
             with patch.object(bridge,'CupyToHt',CallbackNode), \
                     patch.dict(os.environ,HT_DIAGNOSTICS_DUMP=str(path),HT_HISTORY_DUMP=''):
-                bridge.main()
+                captured=io.StringIO()
+                with redirect_stderr(captured):
+                    bridge.main();gc.collect()
+                self.assertNotIn('exception was never retrieved',captured.getvalue())
             self.assertEqual(json.loads(path.read_text()),[{'source':i} for i in range(6)])
             status=json.loads(Path(str(path)+'.status.json').read_text())
             self.assertEqual(status['retained'],2)
@@ -60,9 +67,10 @@ class BridgeShutdownTest(unittest.TestCase):
                     super().__init__('context_shutdown_regression')
                     self.history = History()
                     self.diagnostics = []
-                    self.create_timer(.01, self.write)
+                    self.timer=self.create_timer(.01, self.write)
 
                 def write(self):
+                    self.timer.cancel() # This fixture represents one source context.
                     save_immutable_npz(output / 'context.npz', first=np.arange(10000),
                                        probabilities=np.ones((8, 10, 10)))
                     self.diagnostics.append({'callback_completed': True})
@@ -71,7 +79,10 @@ class BridgeShutdownTest(unittest.TestCase):
                     patch.dict(os.environ, HT_HISTORY_DUMP=str(output / 'history.npz'),
                                HT_DIAGNOSTICS_DUMP=str(output / 'diagnostics.json')), \
                     patch('numpy.lib.format.write_array', side_effect=interrupt_first_write):
-                bridge.main()
+                captured=io.StringIO()
+                with redirect_stderr(captured):
+                    bridge.main();gc.collect()
+                self.assertNotIn('exception was never retrieved',captured.getvalue())
             self.assertEqual(signal.getsignal(signal.SIGINT), before)
             self.assertFalse(bridge.rclpy.ok())
             with np.load(output / 'context.npz') as data:

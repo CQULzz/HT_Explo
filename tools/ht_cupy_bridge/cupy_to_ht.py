@@ -37,6 +37,9 @@ from inference_context_io import ContextCaptureSchedule, GracefulStop, save_immu
 from input_odometry import InputOdometry
 from latest_input import LatestInput
 from small_holes import repair_small_holes
+from small_hole_kernels import warmup_small_holes
+from runtime_probe import RuntimeProbe
+from ht_reasons import explain_ht
 from diagnostic_history import DiagnosticHistory
 from runtime_manifest import collect_runtime_manifest
 
@@ -78,6 +81,7 @@ def decode_elevation_source(source):
 class CupyToHt(Node):
     def __init__(self):
         super().__init__("cupy_to_ht_bridge")
+        self.closing=False
         threads=self.declare_parameter('ht_torch_threads',4).value
         requested_device=self.declare_parameter('ht_device','cpu').value
         self.channels_last=self.declare_parameter('ht_channels_last',requested_device!='cuda').value
@@ -91,6 +95,12 @@ class CupyToHt(Node):
         self.get_logger().info(f'Elevation quality backend: {self.quality_backend}')
         self.history_backend, _ = warmup_history_window(
             self.declare_parameter('ht_history_backend', 'auto').value)
+        self.small_hole_backend,_=warmup_small_holes(self.declare_parameter('ht_small_hole_backend','auto').value)
+        self.reason_interval=float(self.declare_parameter('ht_reason_interval_s',1.).value)
+        if not math.isfinite(self.reason_interval) or self.reason_interval<0:
+            raise ValueError('ht_reason_interval_s must be finite and nonnegative')
+        self.profile_runtime=self.declare_parameter('ht_profile_runtime',True).value
+        self.last_reason_monotonic=None
         self.get_logger().info(f'Historical surface selection backend: {self.history_backend}')
         cpu_threads['model_memory_format']='channels_last' if self.channels_last else 'contiguous'
         self.get_logger().info(f'CPU pools: PyTorch={threads}, BLAS=1; {cpu_threads["model_memory_format"]}')
@@ -132,6 +142,7 @@ class CupyToHt(Node):
         self.odometry = self.input_odometry.samples
         self.input_status = self.create_publisher(String, '/ht_input_status', 1)
         self.performance_pub = self.create_publisher(String, '/ht_performance', 1)
+        self.reason_pub=self.create_publisher(GridMap,'/ht_reasons',1)
         self.last_published_monotonic = None
         self.last_published_source_s = None
         self.last_performance_monotonic = None
@@ -154,7 +165,8 @@ class CupyToHt(Node):
         capacity=self.declare_parameter('ht_diagnostics_capacity',600).value
         parameter_names=('use_sim_time','ht_device','ht_torch_threads','ht_channels_last',
                          'ht_quality_backend','ht_history_backend','ht_cpu_fuse_bn','ht_fuse_bn',
-                         'ht_small_hole_repair','ht_diagnostics_capacity','ht_topic',
+                         'ht_small_hole_repair','ht_small_hole_backend','ht_reason_interval_s','ht_profile_runtime',
+                         'ht_diagnostics_capacity','ht_topic',
                          'elevation_topic','surface_odometry_topic','surface_sensor_ground_offset_m',
                          'odometry_child_frame')
         self.runtime_manifest=collect_runtime_manifest(
@@ -164,6 +176,7 @@ class CupyToHt(Node):
              'torch':str(torch.__version__),'numpy':np.__version__,'cuda_runtime':torch.version.cuda,
              'rmw':get_rmw_implementation_identifier(),'quality_backend':self.quality_backend,
              'history_backend':self.history_backend,'fused_batchnorm':self.fused_batchnorm,
+             'small_hole_backend':self.small_hole_backend,
              'channels_last':self.channels_last,'torch_threads':torch.get_num_threads(),
              'cpu_pools':cpu_threads,
              'cuda_matmul_allow_tf32':torch.backends.cuda.matmul.allow_tf32,
@@ -171,25 +184,36 @@ class CupyToHt(Node):
             {'ht':self.pub.topic_name,'elevation':self.sub.topic_name},
             {name:sys.modules[name] for name in ('model','historical_elevation','history_window',
                 'elevation_quality','local_surface','ht_support','small_holes','input_odometry',
-                'latest_input','cpu_threads','diagnostic_history','runtime_manifest')})
+                'latest_input','cpu_threads','diagnostic_history','runtime_manifest',
+                'small_hole_kernels','runtime_probe','ht_reasons')})
         self.runtime_pub=self.create_publisher(String,'/ht_runtime',QoSProfile(
             depth=1,reliability=ReliabilityPolicy.RELIABLE,durability=DurabilityPolicy.TRANSIENT_LOCAL))
         self.runtime_pub.publish(String(data=json.dumps(self.runtime_manifest,sort_keys=True)))
         self.get_logger().info(f'HT runtime identity: {self.runtime_manifest["runtime_id"]}')
         self.diagnostics=DiagnosticHistory(capacity,os.environ.get('HT_DIAGNOSTICS_DUMP'),metadata=self.runtime_manifest)
         self.diagnostic_error_reported=False
+        self.runtime_probe=RuntimeProbe() if self.profile_runtime else None
 
     def destroy_node(self):
+        probe=getattr(self,'runtime_probe',None)
+        if probe is not None:probe.close()
         diagnostics=getattr(self,'diagnostics',None)
         if isinstance(diagnostics,DiagnosticHistory):diagnostics.close()
         return super().destroy_node()
 
+    def begin_shutdown(self):
+        self.closing=True
+        self.processing_timer.cancel()
+        self.pending_maps.clear_for_shutdown()
+
     def enqueue_map(self, msg):
+        if self.closing:return
         self.pending_maps.put(msg)
 
     def process_pending(self):
-        source=self.pending_maps.take()
-        if source is not None:self.on_map(source)
+        if self.closing:return
+        item=self.pending_maps.take_with_metadata()
+        if item is not None:self.on_map(item[0],received_monotonic=item[1])
 
     def on_odometry(self, msg):
         with self.odometry_lock:
@@ -201,8 +225,11 @@ class CupyToHt(Node):
         with self.odometry_lock:
             return self.input_odometry.height_at(stamp)
 
-    def on_map(self, source):
+    def on_map(self, source, *, received_monotonic=None):
+        if self.closing:return
         started = time.monotonic()
+        probe_start=self.runtime_probe.begin() if self.runtime_probe is not None else None
+        queue_wait=None if received_monotonic is None else started-received_monotonic
         with self.odometry_lock:
             healthy=self.input_odometry.check_clock(self.get_clock().now().nanoseconds/1e9)
             fault=self.input_odometry.fault
@@ -219,6 +246,7 @@ class CupyToHt(Node):
         except (ValueError, TypeError, OverflowError) as error:
             self.get_logger().error(f'Invalid elevation input: {error}')
             return
+        decoded=time.monotonic()
         nx = ny = 291
         if self.history is None:
             self.history = HistoricalElevation(resolution, window_backend=self.history_backend)
@@ -232,6 +260,7 @@ class CupyToHt(Node):
             source_elevation, source_variance = elevation.copy(), variance.copy()
             source_age = age.copy()
             source_quality = preprocess_elevation(elevation, variance, resolution, backend=self.quality_backend)
+            source_quality_done=time.monotonic()
             # Store original measured heights after quality rejection; denoise
             # only the selected historical crop, avoiding repeated smoothing.
             measured = np.where(source_quality.observed_quality, elevation, np.nan)
@@ -242,6 +271,7 @@ class CupyToHt(Node):
             fused = self.history.fuse(
                 measured, variance, source.info.pose.position.x, source.info.pose.position.y,
                 stamp_s, observation_time=observed_at)
+            history_fused=time.monotonic()
             align = lambda v, fill=np.nan: self.history.aligned_source_window(
                 v, source.info.pose.position.x, source.info.pose.position.y, nx, fill_value=fill)
             current, current_var, current_age = (align(v) for v in (measured, variance, age))
@@ -251,6 +281,7 @@ class CupyToHt(Node):
             # A fresh source measurement, including a real obstacle top, can.
             preferred = np.where(np.isfinite(current_age) & (current_age >= -.001)
                                  & (current_age <= 2.), current, np.nan)
+            reference_finished=time.monotonic()
             elevation, variance, center_x, center_y = self.history.window(
                 source.info.pose.position.x, source.info.pose.position.y, nx, stamp_s,
                 reference_height=reference, preferred_elevation=preferred)
@@ -260,10 +291,12 @@ class CupyToHt(Node):
             source_rejected = self.history.last_window_incompatible_mask.copy()
             elevation[source_rejected] = np.nan
             raw_history = elevation.copy()
+            window_finished=time.monotonic()
             quality = preprocess_elevation(elevation, variance, resolution, backend=self.quality_backend)
             elevation = quality.height_m
             rejected = source_rejected | quality.rejected_mask
         except (ValueError, MemoryError) as error:
+            self.input_status.publish(String(data='HISTORY_CAPACITY_EXCEEDED' if isinstance(error,MemoryError) else 'HISTORY_UPDATE_FAILED'))
             self.get_logger().error(f"Historical elevation update failed: {error}")
             return
         observed = quality.observed_quality
@@ -298,9 +331,12 @@ class CupyToHt(Node):
         inferred=np.zeros(elevation.shape,bool)
         hole_stats={'filled_cells':0,'filled_components':0,'candidate_components':0}
         inference_elevation=elevation
+        holes_started=time.monotonic()
         if self.small_holes:
             inference_elevation,inferred,hole_stats=repair_small_holes(
-                elevation,observed,rejected,obstacle_context,current,current_var,current_age,resolution,protected=quality.edge_mask)
+                elevation,observed,rejected,obstacle_context,current,current_var,current_age,resolution,
+                protected=quality.edge_mask,backend=self.small_hole_backend)
+        holes_finished=time.monotonic()
         height, support, occupied, physical_support = prepare_ht_context(
             elevation, observed, rejected, obstacle_context, resolution)
         # Interpolated samples are not observations. Keep all support masks
@@ -315,6 +351,15 @@ class CupyToHt(Node):
         if probabilities.shape != (8, 241, 241):
             self.get_logger().error(f"Unexpected model output shape {probabilities.shape}")
             return
+        reason_data=None;reason_summary=None;reason_s=0.
+        if self.last_reason_monotonic is None or inference_finished-self.last_reason_monotonic>=self.reason_interval:
+            reason_start=time.monotonic()
+            reason_data=explain_ht(probabilities,support,physical_support,occupied,
+                                   rejected[25:-25,25:-25],inferred[25:-25,25:-25])
+            reason_summary=reason_data[3]
+            reason_summary['source_stamp_s']=stamp_s
+            self.last_reason_monotonic=inference_finished
+            reason_s=time.monotonic()-reason_start
         # A different observed surface is never selected as free ground. Its
         # own cell is forbidden in all directions, independently of the model;
         # neighbours can still use its measured height as real context.
@@ -374,6 +419,26 @@ class CupyToHt(Node):
         self.pub.publish(result)
         published = time.monotonic()
         source_age_at_publish = self.get_clock().now().nanoseconds/1e9-stamp_s
+        stages={'decode_s':decoded-started,'source_quality_s':source_quality_done-decoded,
+                'history_fusion_s':history_fused-source_quality_done,
+                'surface_align_s':reference_finished-history_fused,
+                'history_window_s':window_finished-reference_finished,
+                'final_quality_s':fusion_finished-window_finished,
+                'support_setup_s':holes_started-fusion_finished,'small_holes_s':holes_finished-holes_started,
+                'context_s':inference_started-holes_finished,'network_s':inference_finished-inference_started,
+                'reason_s':reason_s,'serialize_publish_s':published-inference_finished-reason_s}
+        profile=self.runtime_probe.finish(probe_start) if probe_start is not None else None
+        reason_publish_s=0.
+        if reason_data is not None and self.reason_pub.get_subscription_count()>0:
+            reason_start=time.monotonic()
+            reason_map=GridMap();reason_map.header=deepcopy(result.header);reason_map.info=deepcopy(result.info)
+            reason_map.layers=['reason_flags','raw_model_low_direction_bits','raw_model_min_probability']
+            for layer in reason_data[:3]:
+                data=Float32MultiArray();data.layout=deepcopy(result.data[0].layout)
+                data.data=FloatArray('f',np.asarray(layer,np.float32).flatten(order='F').tobytes())
+                reason_map.data.append(data)
+            self.reason_pub.publish(reason_map)
+            reason_publish_s=time.monotonic()-reason_start
         publish_interval = (None if self.last_published_monotonic is None
                             else published-self.last_published_monotonic)
         source_interval = (None if self.last_published_source_s is None
@@ -394,8 +459,14 @@ class CupyToHt(Node):
                        'history_backend': self.history_backend,
                        'fused_batchnorm': self.fused_batchnorm, 'device': str(self.device),
                        'runtime_id': self.runtime_manifest['runtime_id'],
+                       'queue_wait_s':queue_wait,'input_queue':self.pending_maps.status(),
+                       'stages':stages,'runtime_profile':profile,'reason_summary':reason_summary,
+                       'reason_publish_s':reason_publish_s,
                        'diagnostics_before_current_record': self.diagnostics.status()}
         if self.last_performance_monotonic is None or published-self.last_performance_monotonic >= 1.:
+            resource_getter=getattr(self.history,'resource_usage',None)
+            performance['history_resources']=(resource_getter() if callable(resource_getter) else
+                {'available':False,'reason':'history provider has no resource telemetry'})
             self.performance_pub.publish(String(data=json.dumps(performance)))
             self.last_performance_monotonic = published
         context_dump_s = 0.
@@ -444,6 +515,9 @@ class CupyToHt(Node):
                                  'fused_batchnorm': self.fused_batchnorm,
                                  'ht_serialize_publish_s': published-inference_finished,
                                  'context_dump_s': context_dump_s,
+                                 'queue_wait_s':queue_wait,'stages':stages,'runtime_profile':profile,
+                                 'reason_summary':reason_summary,'reason_publish_s':reason_publish_s,
+                                 'post_publish_diagnostics_s':time.monotonic()-published,
                                  'elapsed_s': time.monotonic()-started})
         if self.diagnostics.error is not None and not self.diagnostic_error_reported:
             self.get_logger().error('Diagnostic archive incomplete: '+self.diagnostics.error)
@@ -474,10 +548,17 @@ def main():
         pass
     finally:
         try:
-            # Drain the in-flight processing callback before saving shared state.
-            executor.shutdown()
+            # Stop submitting first (the spin loop has exited), then drain the
+            # pool while executor guard conditions are still alive. On Jazzy,
+            # executor.shutdown() destroys guards before it joins the pool;
+            # queued timer handlers can otherwise trigger a destroyed guard.
+            if node is not None:
+                begin_shutdown=getattr(node,'begin_shutdown',None)
+                if callable(begin_shutdown):begin_shutdown()
+                for timer in list(node.timers):timer.cancel()
             pool=getattr(executor,"_executor",None)
             if pool is not None:pool.shutdown(wait=True)
+            executor.shutdown()
             if node is not None:
                 try:
                     if node.history is not None and os.environ.get("HT_HISTORY_DUMP"):

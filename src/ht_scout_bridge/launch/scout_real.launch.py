@@ -28,6 +28,7 @@ HARDWARE_REMAPS.append(('/elevation_mapping/historical_local','/ht_real/historic
 HARDWARE_REMAPS.append(('/ht_input_status','/ht_real/ht_input_status'))
 HARDWARE_REMAPS.append(('/ht_performance','/ht_real/ht_performance'))
 HARDWARE_REMAPS.append(('/ht_runtime','/ht_real/ht_runtime'))
+HARDWARE_REMAPS.append(('/ht_reasons','/ht_real/ht_reasons'))
 HARDWARE_REMAPS.append(('/start_exploration','/ht_real/exploration_start'))
 
 
@@ -60,6 +61,9 @@ def start(context):
                 'elevation_topic':'/ht_real/elevation_raw','surface_sensor_ground_offset_m':.23479,
                 'ht_device':arg('ht_device'),'ht_quality_backend':arg('ht_quality_backend'),
                 'ht_history_backend':arg('ht_history_backend', 'auto'),
+                'ht_small_hole_backend':arg('ht_small_hole_backend','auto'),
+                'ht_profile_runtime':arg('ht_profile_runtime','true').lower()=='true',
+                'ht_reason_interval_s':float(arg('ht_reason_interval_s','1.0')),
                 'ht_fuse_bn':arg('ht_fuse_bn', 'true').lower()=='true',
                 'ht_small_hole_repair':arg('small_hole_repair','true').lower()=='true'}]),
         Node(package='tare_planner',executable='tare_planner_node',name='tare_planner_node',namespace='ht_real',output='screen',remappings=HARDWARE_REMAPS,
@@ -91,6 +95,9 @@ def generate_launch_description():
         DeclareLaunchArgument('start_rviz',default_value='false'),
         DeclareLaunchArgument('ht_quality_backend',default_value='auto'),
         DeclareLaunchArgument('ht_history_backend',default_value='auto'),
+        DeclareLaunchArgument('ht_small_hole_backend',default_value='auto'),
+        DeclareLaunchArgument('ht_profile_runtime',default_value='true'),
+        DeclareLaunchArgument('ht_reason_interval_s',default_value='1.0'),
         DeclareLaunchArgument('ht_fuse_bn',default_value='true'),
         DeclareLaunchArgument('ht_device',default_value='cuda'),
         DeclareLaunchArgument('use_sim_time',default_value='false'),

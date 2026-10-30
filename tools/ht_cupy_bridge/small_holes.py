@@ -5,11 +5,21 @@ a nearest measurement within 12cm and a locally planar 9x9 window at 4cm resolut
 this is a bounded interpolation assumption, not negative-obstacle detection.
 """
 import numpy as np
+from functools import lru_cache
 from scipy.ndimage import label,uniform_filter,maximum_filter,minimum_filter,distance_transform_edt
+from small_hole_kernels import warmup_small_holes,distance_offsets
+
+
+@lru_cache(maxsize=8)
+def _geometry(shape,resolution):
+    rr,cc=np.indices(shape)
+    x,y=rr*resolution,cc*resolution
+    x.flags.writeable=False;y.flags.writeable=False
+    return x,y
 
 
 def repair_small_holes(height, observed, rejected, obstacle, fresh_height,
-                       fresh_variance, fresh_age, resolution, protected=None):
+                       fresh_variance, fresh_age, resolution, protected=None, *, backend='auto'):
     z=np.asarray(height,np.float32)
     arrays=[np.asarray(v) for v in (observed,rejected,obstacle,fresh_height,fresh_variance,fresh_age)]
     if z.ndim!=2 or any(v.shape!=z.shape for v in arrays) or not .02<=resolution<=.1:
@@ -22,7 +32,8 @@ def repair_small_holes(height, observed, rejected, obstacle, fresh_height,
     # No interpolation across an observed, even shallow, negative feature.
     # Fit every candidate from original measurements in one vectorized pass.
     # No iterative propagation and no fitted value enters the historical map.
-    output,filled=_narrow_gaps(z,observed,blocked,current,var,age,resolution)
+    _,kernel=warmup_small_holes(backend)
+    output,filled=_narrow_gaps(z,observed,blocked,current,var,age,resolution,kernel=kernel)
     _,missing_components=label(~np.isfinite(z),structure=np.ones((3,3)))
     _,filled_components=label(filled,structure=np.ones((3,3)))
     stats={'candidate_components':missing_components,'filled_components':filled_components,
@@ -30,29 +41,51 @@ def repair_small_holes(height, observed, rejected, obstacle, fresh_height,
     return output,filled,stats
 
 
-def _narrow_gaps(z,observed,blocked,current,var,age,resolution):
+def _narrow_gaps(z,observed,blocked,current,var,age,resolution,*,kernel=None):
     radius=max(1,int(np.floor(.16/resolution+1e-8)));size=2*radius+1
     known=(np.asarray(observed,bool)&np.isfinite(z)&np.isfinite(current)&np.isfinite(var)
         &(var>=0)&(var<=.25)&np.isfinite(age)&(age>=-.001)&(age<=2.)
         &(np.abs(current-z)<=.03)&~blocked)
     mean=lambda a:uniform_filter(np.asarray(a,np.float64),size=size,mode='constant')
-    count=mean(known)*size**2
+    known_mean=mean(known)
+    count=known_mean*size**2
     changed_surface=np.isfinite(z)&np.isfinite(current)&(np.abs(current-z)>.03)&np.isfinite(age)&(age<=2.)
     protected=maximum_filter(blocked|changed_surface,size=size,mode='constant')
     candidate=~np.isfinite(z)&~protected&(count>=12)
     # Integrals count original samples strictly in each of four quadrants.
-    n,m=z.shape;rr=np.arange(n);cc=np.arange(m)
-    ii=np.pad(known.astype(np.int64).cumsum(0).cumsum(1),((1,0),(1,0)))
-    for dr in [-1,1]:
-        r0=np.maximum(0,rr-radius) if dr<0 else rr+1
-        r1=rr if dr<0 else np.minimum(n,rr+radius+1)
-        r0=np.minimum(r0,n)
-        for dc in [-1,1]:
-            c0=np.maximum(0,cc-radius) if dc<0 else np.minimum(m,cc+1)
-            c1=cc if dc<0 else np.minimum(m,cc+radius+1)
-            q=ii[r1[:,None],c1]-ii[r0[:,None],c1]-ii[r1[:,None],c0]+ii[r0[:,None],c0]
-            candidate&=q>=2
-    candidate&=distance_transform_edt(~known)*resolution<=.12+1e-9
+    n,m=z.shape
+    if kernel is None:
+        rr=np.arange(n);cc=np.arange(m)
+        ii=np.pad(known.astype(np.int64).cumsum(0).cumsum(1),((1,0),(1,0)))
+        for dr in [-1,1]:
+            r0=np.maximum(0,rr-radius) if dr<0 else rr+1
+            r1=rr if dr<0 else np.minimum(n,rr+radius+1)
+            r0=np.minimum(r0,n)
+            for dc in [-1,1]:
+                c0=np.maximum(0,cc-radius) if dc<0 else np.minimum(m,cc+1)
+                c1=cc if dc<0 else np.minimum(m,cc+radius+1)
+                q=ii[r1[:,None],c1]-ii[r0[:,None],c1]-ii[r1[:,None],c0]+ii[r0[:,None],c0]
+                candidate&=q>=2
+        candidate&=distance_transform_edt(~known)*resolution<=.12+1e-9
+    else:
+        if not np.any(candidate):return z,np.zeros(z.shape,bool)
+        # Identical integral counts, indexed only at original candidates.
+        rr,cc=np.nonzero(candidate)
+        integral=np.pad(known.astype(np.int64).cumsum(0).cumsum(1),((1,0),(1,0)))
+        eligible=np.ones(len(rr),bool)
+        for dr in [-1,1]:
+            r0=np.maximum(0,rr-radius) if dr<0 else rr+1
+            r1=rr if dr<0 else np.minimum(n,rr+radius+1)
+            r0=np.minimum(r0,n)
+            for dc in [-1,1]:
+                c0=np.maximum(0,cc-radius) if dc<0 else np.minimum(m,cc+1)
+                c1=cc if dc<0 else np.minimum(m,cc+radius+1)
+                q=integral[r1,c1]-integral[r0,c1]-integral[r1,c0]+integral[r0,c0]
+                eligible&=q>=2
+        rr=np.ascontiguousarray(rr[eligible]);cc=np.ascontiguousarray(cc[eligible])
+        close=kernel(np.ascontiguousarray(known),rr,cc,distance_offsets(float(resolution)))
+        candidate[:]=False
+        candidate[rr[close],cc[close]]=True
     if not np.any(candidate):return z,np.zeros(z.shape,bool)
     # The box-filter moments still use the original full-grid arithmetic.
     # Solve planes only at eligible missing pixels, instead of allocating
@@ -60,9 +93,9 @@ def _narrow_gaps(z,observed,blocked,current,var,age,resolution):
     # cannot be filled, so their plane solutions are unused work.
     index=np.nonzero(candidate)
     sample_mean=lambda a:mean(a)[index]
-    rr,cc=np.indices(z.shape);x=rr*resolution;y=cc*resolution
+    x,y=_geometry(z.shape,float(resolution))
     h=np.where(known,z,0.).astype(np.float64);k=known.astype(np.float64)
-    norm=np.maximum(sample_mean(k),1e-15)
+    norm=np.maximum(known_mean[index],1e-15)
     ex=sample_mean(k*x)/norm;ey=sample_mean(k*y)/norm;ez=sample_mean(h)/norm
     xx=sample_mean(k*x*x)/norm-ex*ex;yy=sample_mean(k*y*y)/norm-ey*ey;xy=sample_mean(k*x*y)/norm-ex*ey
     xz=sample_mean(h*x)/norm-ex*ez;yz=sample_mean(h*y)/norm-ey*ez;zz=sample_mean(h*h)/norm-ez*ez

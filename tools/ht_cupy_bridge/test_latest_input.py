@@ -1,6 +1,20 @@
 from types import SimpleNamespace as S
 from latest_input import LatestInput
 
+
+def test_queue_timestamp_is_latest_acceptance_and_counts_are_conserved():
+    clock=[10.]
+    q=LatestInput(clock=lambda:clock[0])
+    a=msg(1);b=msg(2)
+    assert q.put(a);clock[0]=11.;assert q.put(b)
+    clock[0]=12.;assert not q.put(msg(1))
+    source,received=q.take_with_metadata()
+    assert source is b and received==11.
+    assert q.take_with_metadata() is None
+    status=q.status()
+    assert status['received']==3 and status['accepted']==2 and status['replaced']==1
+    assert status['taken']==1 and status['out_of_order']==1 and not status['pending']
+
 def msg(sec):return S(header=S(stamp=S(sec=sec,nanosec=0)))
 
 def test_latest_pending_replaces_without_touching_active_observation():
