@@ -7,6 +7,7 @@ import json
 import math
 import os
 import signal
+import sys
 from pathlib import Path
 import time
 from threading import RLock
@@ -18,7 +19,8 @@ import rclpy
 from grid_map_msgs.msg import GridMap
 from rclpy.node import Node
 from rclpy.callback_groups import MutuallyExclusiveCallbackGroup
-from rclpy.qos import QoSProfile, ReliabilityPolicy
+from rclpy.qos import QoSProfile, ReliabilityPolicy, DurabilityPolicy
+from rclpy.utilities import get_rmw_implementation_identifier
 from rclpy.signals import SignalHandlerOptions
 from rclpy.executors import ExternalShutdownException, MultiThreadedExecutor
 from nav_msgs.msg import Odometry
@@ -35,6 +37,8 @@ from inference_context_io import ContextCaptureSchedule, GracefulStop, save_immu
 from input_odometry import InputOdometry
 from latest_input import LatestInput
 from small_holes import repair_small_holes
+from diagnostic_history import DiagnosticHistory
+from runtime_manifest import collect_runtime_manifest
 
 
 def decode_elevation_source(source):
@@ -127,7 +131,6 @@ class CupyToHt(Node):
         self.pending_maps=LatestInput()
         self.odometry = self.input_odometry.samples
         self.input_status = self.create_publisher(String, '/ht_input_status', 1)
-        self.diagnostics = []
         self.performance_pub = self.create_publisher(String, '/ht_performance', 1)
         self.last_published_monotonic = None
         self.last_published_source_s = None
@@ -148,6 +151,38 @@ class CupyToHt(Node):
         self.count = 0
         self.processing_group=MutuallyExclusiveCallbackGroup()
         self.processing_timer=self.create_timer(.005,self.process_pending,callback_group=self.processing_group)
+        capacity=self.declare_parameter('ht_diagnostics_capacity',600).value
+        parameter_names=('use_sim_time','ht_device','ht_torch_threads','ht_channels_last',
+                         'ht_quality_backend','ht_history_backend','ht_cpu_fuse_bn','ht_fuse_bn',
+                         'ht_small_hole_repair','ht_diagnostics_capacity','ht_topic',
+                         'elevation_topic','surface_odometry_topic','surface_sensor_ground_offset_m',
+                         'odometry_child_frame')
+        self.runtime_manifest=collect_runtime_manifest(
+            __file__,Path(__file__).with_name('student_best_epoch_weights.pth'),
+            {name:self.get_parameter(name).value for name in parameter_names},
+            {'device':str(self.device),'device_name':torch.cuda.get_device_name(self.device) if self.device.type=='cuda' else 'cpu',
+             'torch':str(torch.__version__),'numpy':np.__version__,'cuda_runtime':torch.version.cuda,
+             'rmw':get_rmw_implementation_identifier(),'quality_backend':self.quality_backend,
+             'history_backend':self.history_backend,'fused_batchnorm':self.fused_batchnorm,
+             'channels_last':self.channels_last,'torch_threads':torch.get_num_threads(),
+             'cpu_pools':cpu_threads,
+             'cuda_matmul_allow_tf32':torch.backends.cuda.matmul.allow_tf32,
+             'cudnn_allow_tf32':torch.backends.cudnn.allow_tf32},
+            {'ht':self.pub.topic_name,'elevation':self.sub.topic_name},
+            {name:sys.modules[name] for name in ('model','historical_elevation','history_window',
+                'elevation_quality','local_surface','ht_support','small_holes','input_odometry',
+                'latest_input','cpu_threads','diagnostic_history','runtime_manifest')})
+        self.runtime_pub=self.create_publisher(String,'/ht_runtime',QoSProfile(
+            depth=1,reliability=ReliabilityPolicy.RELIABLE,durability=DurabilityPolicy.TRANSIENT_LOCAL))
+        self.runtime_pub.publish(String(data=json.dumps(self.runtime_manifest,sort_keys=True)))
+        self.get_logger().info(f'HT runtime identity: {self.runtime_manifest["runtime_id"]}')
+        self.diagnostics=DiagnosticHistory(capacity,os.environ.get('HT_DIAGNOSTICS_DUMP'),metadata=self.runtime_manifest)
+        self.diagnostic_error_reported=False
+
+    def destroy_node(self):
+        diagnostics=getattr(self,'diagnostics',None)
+        if isinstance(diagnostics,DiagnosticHistory):diagnostics.close()
+        return super().destroy_node()
 
     def enqueue_map(self, msg):
         self.pending_maps.put(msg)
@@ -357,7 +392,9 @@ class CupyToHt(Node):
                        'pending_maps_replaced': self.pending_maps.replaced,
                        'out_of_order_inputs': self.pending_maps.out_of_order,
                        'history_backend': self.history_backend,
-                       'fused_batchnorm': self.fused_batchnorm, 'device': str(self.device)}
+                       'fused_batchnorm': self.fused_batchnorm, 'device': str(self.device),
+                       'runtime_id': self.runtime_manifest['runtime_id'],
+                       'diagnostics_before_current_record': self.diagnostics.status()}
         if self.last_performance_monotonic is None or published-self.last_performance_monotonic >= 1.:
             self.performance_pub.publish(String(data=json.dumps(performance)))
             self.last_performance_monotonic = published
@@ -385,7 +422,7 @@ class CupyToHt(Node):
             self.context_schedule.saved(stamp_s)
             context_dump_s = time.monotonic()-dump_started
         self.count += 1
-        self.diagnostics.append({'stamp_s': stamp_s, 'fused_cells': fused,
+        self.diagnostics.append({'stamp_s': stamp_s, 'runtime_id':self.runtime_manifest['runtime_id'], 'fused_cells': fused,
                                  'observed_cells': int(observed.sum()), 'supported_cells': int(support.sum()),
                                  'surface': surface_stats, 'quality': quality.stats,'small_holes':hole_stats,
                                  'source_rejected_cells': int(source_rejected.sum()),
@@ -408,6 +445,9 @@ class CupyToHt(Node):
                                  'ht_serialize_publish_s': published-inference_finished,
                                  'context_dump_s': context_dump_s,
                                  'elapsed_s': time.monotonic()-started})
+        if self.diagnostics.error is not None and not self.diagnostic_error_reported:
+            self.get_logger().error('Diagnostic archive incomplete: '+self.diagnostics.error)
+            self.diagnostic_error_reported=True
         if self.count % 5 == 0:
             self.get_logger().info(
                 f"maps={self.count} fused={fused} observed={observed.sum()} "
@@ -439,12 +479,14 @@ def main():
             pool=getattr(executor,"_executor",None)
             if pool is not None:pool.shutdown(wait=True)
             if node is not None:
-                if node.history is not None and os.environ.get("HT_HISTORY_DUMP"):
-                    node.history.save(os.environ["HT_HISTORY_DUMP"])
-                    node.get_logger().info(f"Saved global historical elevation to {os.environ['HT_HISTORY_DUMP']}")
-                if os.environ.get('HT_DIAGNOSTICS_DUMP'):
-                    Path(os.environ['HT_DIAGNOSTICS_DUMP']).write_text(json.dumps(node.diagnostics, indent=2)+'\n')
-                node.destroy_node()
+                try:
+                    if node.history is not None and os.environ.get("HT_HISTORY_DUMP"):
+                        node.history.save(os.environ["HT_HISTORY_DUMP"])
+                        node.get_logger().info(f"Saved global historical elevation to {os.environ['HT_HISTORY_DUMP']}")
+                    if os.environ.get('HT_DIAGNOSTICS_DUMP'):
+                        if isinstance(node.diagnostics,DiagnosticHistory):node.diagnostics.finalize()
+                        else:Path(os.environ['HT_DIAGNOSTICS_DUMP']).write_text(json.dumps(node.diagnostics, indent=2)+'\n')
+                finally:node.destroy_node()
         finally:
             try:
                 rclpy.try_shutdown()

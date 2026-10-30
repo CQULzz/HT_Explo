@@ -1,0 +1,20 @@
+{
+  "reason": "Original unbound HT P95 gate failed; long CPU-stage excursions also exist in baseline. Host has mixed CPU classes. Record core migration and compare equal own-process affinity without changing system power or other processes.",
+  "scope": "Supplementary diagnosis; original failed gate retained, not replaced.",
+  "conditions": [
+    "unbound_trace_1",
+    "bound_trace_1",
+    "bound_trace_2",
+    "bound_trace_3"
+  ],
+  "bound_cpus": [
+    0,
+    2,
+    4,
+    6
+  ],
+  "same_frozen_source": true,
+  "warmup": 5,
+  "frames": 117,
+  "wrapper_sha256": "f7397a86f9a644b6831909cae8b46c6bdbb85ec6c6eb8027f3ef9d70d16918e4"
+}

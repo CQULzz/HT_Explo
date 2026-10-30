@@ -37,11 +37,13 @@ def main():
     parser.add_argument('--module-dir', type=Path, default=Path(__file__).parent)
     parser.add_argument('--reference', type=Path)
     parser.add_argument('--capture-context', action='store_true')
+    parser.add_argument('--save-frames', action='store_true')
     parser.add_argument('--profile', action='store_true')
     parser.add_argument('--device', choices=['cpu', 'cuda'], default='cuda')
     parser.add_argument('--parameter', action='append', default=[])
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=False)
+    if args.save_frames:(args.output/'frames').mkdir()
     sys.path.insert(0, str(args.module_dir.resolve()))
     from cupy_to_ht import CupyToHt
 
@@ -134,6 +136,10 @@ def main():
                 if args.capture_context:
                     np.savez_compressed(args.output/f'context_{index:04d}.npz',
                                         height=captured.pop(), stamp_ns=ns)
+                if args.save_frames:
+                    np.savez_compressed(args.output/'frames'/f'frame_{index:04d}.npz',
+                        stamp_ns=ns,resolution=result.info.resolution,
+                        center=[result.info.pose.position.x,result.info.pose.position.y],**layers)
                 index += 1
         summary = {}
         for key in ['fusion_and_quality_s', 'support_and_history_publish_s', 'network_inference_s',
@@ -143,6 +149,7 @@ def main():
         report = {'scope': __doc__, 'warmup_frames_excluded': 5, 'frames': len(rows),
                   'architecture': platform.machine(), 'torch': torch.__version__,
                   'device': str(node.device), 'parameters': parameters+args.parameter,
+                  'runtime_manifest':getattr(node,'runtime_manifest',None),
                   'stream': str(args.stream), 'summary': summary, 'comparison': comparison,
                   'source_sha256': {p.name: hashlib.sha256(p.read_bytes()).hexdigest()
                                     for p in args.module_dir.glob('*.py')}, 'diagnostics': rows}

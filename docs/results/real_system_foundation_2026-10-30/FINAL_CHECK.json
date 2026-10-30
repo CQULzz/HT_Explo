@@ -1,0 +1,118 @@
+{
+  "candidate_revision": 2,
+  "all_frozen_files_equal_worktree": true,
+  "local_head_unchanged": "dfd8c7c29de6541d50687ba1301d8c9eadfa33e7",
+  "build": "independent build_real/install_real, 2 packages passed",
+  "cpp_ctest_targets_passed": 8,
+  "gtest_cases_passed": 99,
+  "python_checks_passed": 50,
+  "old_data_candidate_frames": 351,
+  "model_input_height_mismatches": 0,
+  "map_layer_mismatches": 0,
+  "threshold_flips": 0,
+  "max_probability_error": 0,
+  "original_unrestricted_p95_gate_passed": false,
+  "controlled_affinity_supplement_p95_gate_passed": true,
+  "publication": "NOT PUBLISHED; original acceptance gate failed; conditional upload not triggered",
+  "archive_root": "/home/lzz/HT_system_foundation_20261030_132818",
+  "video": {
+    "decoded_frames": 117,
+    "fps": 12,
+    "duration_s": 9.75,
+    "bytes": 159290,
+    "sha256": "40b5e58fa6ab131ff2444fefd71d55cc5fbf708e915d25e5148a0aae514e5791",
+    "scope": "Offline map parity, not vehicle or planned path"
+  },
+  "production_changes_vs_previous_snapshot": [
+    {
+      "file": "src/ht_scout_bridge/launch/scout_real.launch.py",
+      "sha256": "1acfe1a75d9f68be36dd64b161ccbddac5f34227f56f8fe0bc04972e6c1e57df",
+      "absent_from_before_snapshot": false
+    },
+    {
+      "file": "src/ht_scout_bridge/test/test_launch_modes.py",
+      "sha256": "0984898532518b7a01df65a6b6d8c05d4f086290f805a6722170a7067e4dadbd",
+      "absent_from_before_snapshot": true
+    },
+    {
+      "file": "src/tare_planner/CMakeLists.txt",
+      "sha256": "a02fedf689a456a5d79398f19539d77aa61006773baab7e67a91434a303bee53",
+      "absent_from_before_snapshot": false
+    },
+    {
+      "file": "src/tare_planner/include/ht_cost/ht_cost_map.h",
+      "sha256": "ffbbd2bc6e1ea555e432b38d69afe7bc1cbf0647a7ba5d3a66157d119a8714e0",
+      "absent_from_before_snapshot": false
+    },
+    {
+      "file": "src/tare_planner/include/ht_cost/terrain_history.h",
+      "sha256": "f7dc71744989556cd30ad9d009e47fd8d5ef75eb354231b2e2005b48255c6637",
+      "absent_from_before_snapshot": true
+    },
+    {
+      "file": "src/tare_planner/src/ht_cost/ht_cost_map.cpp",
+      "sha256": "21f7f9076a1b084418f559f10b479a88fad515a43e798784706c82e86be1e664",
+      "absent_from_before_snapshot": false
+    },
+    {
+      "file": "src/tare_planner/tests/terrain_history_test.cpp",
+      "sha256": "96768d31759ef5301faf1b5a257575aa8f70f292048a02ae9fcd3be69abb4265",
+      "absent_from_before_snapshot": true
+    },
+    {
+      "file": "tools/benchmark_terrain_history.cpp",
+      "sha256": "58e8f4298e43c001286e80e566b97cc47dc58bc40928b62ab0ad123403308a45",
+      "absent_from_before_snapshot": true
+    },
+    {
+      "file": "tools/ht_cupy_bridge/benchmark_ht_stream.py",
+      "sha256": "3c490fc30d60f7ab9f19ec63c9bb41fca10cf7334dc7f71417dd1fb4d55f20c4",
+      "absent_from_before_snapshot": false
+    },
+    {
+      "file": "tools/ht_cupy_bridge/cupy_to_ht.py",
+      "sha256": "eaa8c121a4d1fb31e802704001c5db7675f81c1e5a53137c12e6e0935decb54d",
+      "absent_from_before_snapshot": false
+    },
+    {
+      "file": "tools/ht_cupy_bridge/diagnostic_history.py",
+      "sha256": "15a57c2abd2549becd1abfb96205061090df2bbbe3de69864aec28762601bd09",
+      "absent_from_before_snapshot": true
+    },
+    {
+      "file": "tools/ht_cupy_bridge/replay_newbags_rviz.py",
+      "sha256": "c128199602ea352014bfe52e33fde481f95f13557aceb9115529d4361c730b51",
+      "absent_from_before_snapshot": false
+    },
+    {
+      "file": "tools/ht_cupy_bridge/replay_real_archive.py",
+      "sha256": "5632554956997c4ba7830feaf8f9d50b45410afe37ade39b34ca9b58e7855ce6",
+      "absent_from_before_snapshot": false
+    },
+    {
+      "file": "tools/ht_cupy_bridge/runtime_manifest.py",
+      "sha256": "a08f5fde3a3679e3706e6dd65f5cd5567f63d324c855bf1d4ff514abb0d3822c",
+      "absent_from_before_snapshot": true
+    },
+    {
+      "file": "tools/ht_cupy_bridge/test_context_shutdown_ros.py",
+      "sha256": "8ef847e790b0861b12419ad2026a1c1a44f0f568ea509a718a0a6b1ed78dd316",
+      "absent_from_before_snapshot": false
+    },
+    {
+      "file": "tools/ht_cupy_bridge/test_diagnostic_history.py",
+      "sha256": "731d45fd5e3a44b2711dd6a712fa72524daf3b54e0fbc9197644e86f28e138cc",
+      "absent_from_before_snapshot": true
+    },
+    {
+      "file": "tools/ht_cupy_bridge/test_performance_status.py",
+      "sha256": "e93c10c0ceda62a536349ad9d37c564e3276141ab2b7989fef96116d4b774ac9",
+      "absent_from_before_snapshot": false
+    },
+    {
+      "file": "tools/ht_cupy_bridge/test_runtime_manifest.py",
+      "sha256": "3e0003a89064d4b68981719b0b8c2782c3af6f0cb6332f18e13f884b69e927cb",
+      "absent_from_before_snapshot": true
+    }
+  ]
+}

@@ -27,6 +27,7 @@ HARDWARE_REMAPS.append(('/elevation_mapping/historical_local','/ht_real/historic
 # The configured upstream subscriber uses this spelling.
 HARDWARE_REMAPS.append(('/ht_input_status','/ht_real/ht_input_status'))
 HARDWARE_REMAPS.append(('/ht_performance','/ht_real/ht_performance'))
+HARDWARE_REMAPS.append(('/ht_runtime','/ht_real/ht_runtime'))
 HARDWARE_REMAPS.append(('/start_exploration','/ht_real/exploration_start'))
 
 

@@ -36,6 +36,7 @@ def test_actual_launch_modes_and_start_topic(monkeypatch,mode):
     assert rows['cupy_to_ht.py']['params']['ht_history_backend']=='auto'
     assert rows['cupy_to_ht.py']['params']['ht_fuse_bn'] is True
     assert ('/ht_performance','/ht_real/ht_performance') in m.HARDWARE_REMAPS
+    assert ('/ht_runtime','/ht_real/ht_runtime') in m.HARDWARE_REMAPS
     assert rows['scout_inputs']['params']['source_age_layer']=='observation_age'
 
 

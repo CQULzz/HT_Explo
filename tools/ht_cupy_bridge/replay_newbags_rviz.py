@@ -200,7 +200,8 @@ def main():
         if node.history is not None:node.history.save(a.output/'history_final.npz')
     finally:
         native_file.close();node.destroy_node();rclpy.try_shutdown();c.close()
-        (a.output/'RESULTS.json').write_text(json.dumps({'frames':rows,'scans':scans,'diagnostics':node.diagnostics,
+        (a.output/'RESULTS.json').write_text(json.dumps({'frames':rows,'scans':scans,'diagnostics':list(node.diagnostics),
+            'diagnostics_status':node.diagnostics.status(),
             'integrated':sum(s['status']=='INTEGRATED' for s in scans),'input_scans':len(scans),
             'outputs':sum(r['output'] for r in rows)},indent=2)+'\n')
 

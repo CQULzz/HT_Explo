@@ -12,9 +12,31 @@ from rclpy.node import Node
 
 import cupy_to_ht as bridge
 from inference_context_io import save_immutable_npz
+from diagnostic_history import DiagnosticHistory
 
 
 class BridgeShutdownTest(unittest.TestCase):
+    def test_main_exports_all_records_after_online_history_eviction(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path=Path(directory)/'diagnostics.json'
+            class CallbackNode(Node):
+                def __init__(self):
+                    super().__init__('bounded_diagnostic_shutdown')
+                    self.history=None;self.n=0
+                    self.diagnostics=DiagnosticHistory(2,path)
+                    self.create_timer(.01,self.record)
+                def record(self):
+                    self.diagnostics.append({'source':self.n});self.n+=1
+                    if self.n==6:os.kill(os.getpid(),signal.SIGINT)
+            with patch.object(bridge,'CupyToHt',CallbackNode), \
+                    patch.dict(os.environ,HT_DIAGNOSTICS_DUMP=str(path),HT_HISTORY_DUMP=''):
+                bridge.main()
+            self.assertEqual(json.loads(path.read_text()),[{'source':i} for i in range(6)])
+            status=json.loads(Path(str(path)+'.status.json').read_text())
+            self.assertEqual(status['retained'],2)
+            self.assertEqual(status['archive_written'],6)
+            self.assertFalse(bridge.rclpy.ok())
+
     def test_actual_main_finishes_callback_and_history_before_context_shutdown(self):
         with tempfile.TemporaryDirectory() as directory:
             output = Path(directory)

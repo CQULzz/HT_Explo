@@ -1,6 +1,7 @@
 #pragma once
 #include "ht_cost/execution_policy.h"
 #include "ht_cost/xytheta_planner.h"
+#include "ht_cost/terrain_history.h"
 #include <rclcpp/rclcpp.hpp>
 #include <grid_map_msgs/msg/grid_map.hpp>
 #include <std_msgs/msg/bool.hpp>
@@ -17,7 +18,7 @@ class HtCostMap {
   explicit HtCostMap(rclcpp::Node::SharedPtr node,bool publish_permission=true);
   bool enabled() const { return enabled_; }
   bool tareCoverage() const { return enabled_ && tare_coverage_; }
-  struct TerrainCell { double x=0,y=0,height=std::numeric_limits<double>::quiet_NaN(),stamp=0; bool feasible=false; };
+  using TerrainCell=ht_cost_ns::TerrainCell;
   std::vector<TerrainCell> terrainWindow(double x,double y,double radius);
   // Unknown historical guidance cells stay optimistic; execution is strict.
   bool terrainAdmissible(double x,double y);
@@ -78,7 +79,7 @@ class HtCostMap {
   std::string latest_error_="HT_MAP_MISSING", cycle_error_="HT_MAP_MISSING";
   std::mutex mutex_;
   bool collect_terrain_=false;
-  std::map<std::pair<int,int>,TerrainCell> terrain_history_;
+  TerrainHistory terrain_history_;
   std::shared_ptr<Map> latest_, cycle_;
   tf2_ros::Buffer buffer_;
   std::unique_ptr<tf2_ros::TransformListener> listener_;

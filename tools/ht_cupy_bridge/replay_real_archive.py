@@ -138,7 +138,7 @@ def recompute(source, out):
                                     'ht_small_hole_repair':True,'surface_sensor_ground_offset_m':.23479,
                                     'odometry_child_frame':'base_link','controlled_clock_offset_s':.03},
                         source_commit=current_commit(), input_fault=node.input_odometry.fault,
-                        diagnostics=node.diagnostics)
+                        diagnostics=list(node.diagnostics),diagnostics_status=node.diagnostics.status())
         write_json(out/'index.json', metadata)
         return metadata
     finally:

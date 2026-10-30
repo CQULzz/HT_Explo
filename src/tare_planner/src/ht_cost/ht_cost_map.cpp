@@ -8,7 +8,6 @@
 
 namespace ht_cost_ns {
 namespace {
-using TerrainHistory=std::map<std::pair<int,int>,HtCostMap::TerrainCell>;
 bool terrainGuidanceAllowed(const TerrainHistory& history,const Map* latest,
                             bool configuration_scores,double x,double y) {
   // Coarse OR aggregation can include a nearby safe center in the same0.2m
@@ -21,7 +20,7 @@ bool terrainGuidanceAllowed(const TerrainHistory& history,const Map* latest,
   }
   const auto it=history.find({static_cast<int>(std::floor(x/.2)),
                               static_cast<int>(std::floor(y/.2))});
-  return it==history.end() || it->second.feasible;
+  return it==nullptr || it->feasible;
 }
 }
 HtCostMap::HtCostMap(rclcpp::Node::SharedPtr node,bool publish_permission)
@@ -347,12 +346,8 @@ void HtCostMap::receive(grid_map_msgs::msg::GridMap::ConstSharedPtr msg) {
   }
 }
 std::vector<HtCostMap::TerrainCell> HtCostMap::terrainWindow(double x,double y,double radius) {
-  std::lock_guard<std::mutex> lock(mutex_);std::vector<TerrainCell> result;
-  for(const auto& entry:terrain_history_) {
-    const auto& c=entry.second;
-    if(std::abs(c.x-x)<=radius && std::abs(c.y-y)<=radius && std::isfinite(c.height)) result.push_back(c);
-  }
-  return result;
+  std::lock_guard<std::mutex> lock(mutex_);
+  return terrain_history_.window(x,y,radius);
 }
 bool HtCostMap::terrainAdmissible(double x,double y) {
   std::lock_guard<std::mutex> lock(mutex_);
