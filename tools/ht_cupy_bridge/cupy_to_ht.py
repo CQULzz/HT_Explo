@@ -30,6 +30,7 @@ from std_msgs.msg import Float32, Float32MultiArray, MultiArrayDimension, MultiA
 from model import load_student_model, fuse_student_for_inference
 from historical_elevation import HistoricalElevation
 from history_window import warmup_history_window
+from history_fusion import warmup_history_fusion
 from elevation_quality import preprocess_elevation, retain_recent_obstacle_edges, warmup_quality
 from local_surface import SurfaceReferenceEstimator
 from cpu_threads import configure_cpu_threads
@@ -98,6 +99,8 @@ class CupyToHt(Node):
         self.get_logger().info(f'Elevation quality backend: {self.quality_backend}')
         self.history_backend, _ = warmup_history_window(
             self.declare_parameter('ht_history_backend', 'auto').value)
+        self.history_fusion_backend, _ = warmup_history_fusion(
+            self.get_parameter('ht_history_backend').value)
         self.small_hole_backend,_=warmup_small_holes(self.declare_parameter('ht_small_hole_backend','auto').value)
         self.reason_interval=float(self.declare_parameter('ht_reason_interval_s',1.).value)
         if not math.isfinite(self.reason_interval) or self.reason_interval<0:
@@ -191,6 +194,7 @@ class CupyToHt(Node):
              'torch':str(torch.__version__),'numpy':np.__version__,'cuda_runtime':torch.version.cuda,
              'rmw':get_rmw_implementation_identifier(),'quality_backend':self.quality_backend,
              'history_backend':self.history_backend,'fused_batchnorm':self.fused_batchnorm,
+             'history_fusion_backend':self.history_fusion_backend,
              'small_hole_backend':self.small_hole_backend,
              'channels_last':self.channels_last,'torch_threads':torch.get_num_threads(),
              'cpu_pools':cpu_threads,
@@ -200,7 +204,7 @@ class CupyToHt(Node):
             {name:sys.modules[name] for name in ('model','historical_elevation','history_window',
                 'elevation_quality','local_surface','ht_support','small_holes','input_odometry',
                 'latest_input','cpu_threads','diagnostic_history','runtime_manifest',
-                'small_hole_kernels','cuda_ht_context','runtime_probe','ht_reasons')})
+                'small_hole_kernels','cuda_ht_context','runtime_probe','ht_reasons','history_fusion')})
         self.runtime_pub=self.create_publisher(String,'/ht_runtime',QoSProfile(
             depth=1,reliability=ReliabilityPolicy.RELIABLE,durability=DurabilityPolicy.TRANSIENT_LOCAL))
         self.runtime_pub.publish(String(data=json.dumps(self.runtime_manifest,sort_keys=True)))
@@ -264,7 +268,8 @@ class CupyToHt(Node):
         decoded=time.monotonic()
         nx = ny = 291
         if self.history is None:
-            self.history = HistoricalElevation(resolution, window_backend=self.history_backend)
+            self.history = HistoricalElevation(resolution, window_backend=self.history_backend,
+                                               fusion_backend=self.history_fusion_backend)
         elif abs(self.history.resolution - resolution) > 1e-6:
             self.get_logger().error("Historical map resolution changed; refusing mixed-resolution fusion")
             return

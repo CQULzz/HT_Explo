@@ -30,3 +30,6 @@ HT节点参数`ht_diagnostics_capacity`默认600，必须为正整数。保留�
 `/ht_real/ht_performance`中`diagnostics_before_current_record`说明统计截止上一条完成的逐帧记录。`archive_written`在写盘线程推进，是近似实时进度；以退出后的status作完整性核验。若归档失败，不要把最后600条在线记录替代为完整实验。
 
 此诊断功能不更改地图发布源时间戳、通行阈值、未知或障碍掩码。不能通过重复旧图、放宽超时或关闭检查来提高测得频率。
+
+
+2026-11-01历史提速候选：运行身份effective.history_fusion_backend及history_fusion模块SHA记录实际融合路径。ht_history_backend控制历史编译后端；numpy保留原NumPy更新和选择，auto可回退。新模块在订阅前预热；输入非FP32使用原更新公式。具体81帧一致性、独立进程P95反例与交替计时见[报告](../results/real_history_fusion_speed_2026-11-01/REPORT.md)。这些是服务耗时，不能当成车上有效发布率。

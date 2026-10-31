@@ -7,12 +7,13 @@ Unknown cells stay NaN rather than being filled from neighbouring cells.
 
 import numpy as np
 from history_window import warmup_history_window
+from history_fusion import warmup_history_fusion
 
 
 class HistoricalElevation:
     def __init__(self, resolution, tile_size=64, max_tiles=1024, max_age_s=600.0,
                  max_layers=4, association_gap_m=0.6, reference_tolerance_m=1.0,
-                 window_backend='auto'):
+                 window_backend='auto', fusion_backend=None):
         self.resolution = float(resolution)
         self.tile_size = int(tile_size)
         self.max_tiles = int(max_tiles)
@@ -21,6 +22,8 @@ class HistoricalElevation:
         self.association_gap_m = float(association_gap_m)
         self.reference_tolerance_m = float(reference_tolerance_m)
         self.window_backend, self._window_selector = warmup_history_window(window_backend)
+        self.fusion_backend, self._fusion_updater = warmup_history_fusion(
+            window_backend if fusion_backend is None else fusion_backend)
         if (self.resolution <= 0 or self.tile_size <= 0 or self.max_tiles <= 0
                 or self.max_layers <= 0 or self.max_age_s < 0
                 or self.association_gap_m <= 0 or self.reference_tolerance_m <= 0):
@@ -91,6 +94,12 @@ class HistoricalElevation:
             z = elevation[ii[selected], jj[selected]]
             v = variance[ii[selected], jj[selected]]
             obs = observed[ii[selected], jj[selected]]
+            if (self._fusion_updater is not None and z.dtype == np.float32
+                    and v.dtype == np.float32):
+                updates += self._fusion_updater(mean, var, last, lx, ly, z, v, obs,
+                    self.rejections.get((int(tx[selected[0]]), int(ty[selected[0]]))),
+                    np.float32(self.association_gap_m))
+                continue
             values = mean[:, lx, ly]
             distance = np.where(np.isfinite(values), np.abs(values-z[None, :]), np.inf)
             mode = np.argmin(distance, axis=0)
@@ -206,7 +215,12 @@ class HistoricalElevation:
                     continue
                 iy = np.flatnonzero(gy // self.tile_size == ty)
                 lx, ly = gx[ix] % self.tile_size, gy[iy] % self.tile_size
-                z, v, last = (a[:, lx[:, None], ly[None, :]] for a in tile)
+                # A fixed-world crop intersects each tile in a contiguous,
+                # descending rectangle. Basic slices read those exact cells
+                # without gathering/copying all three multi-surface arrays.
+                xs = slice(int(lx[0]), None if lx[-1] == 0 else int(lx[-1])-1, -1)
+                ys = slice(int(ly[0]), None if ly[-1] == 0 else int(ly[-1])-1, -1)
+                z, v, last = (a[:, xs, ys] for a in tile)
                 # A current-source elevation is stronger evidence than a
                 # robot-height fallback, including observed obstacle tops.
                 output_index=np.ix_(ix,iy)

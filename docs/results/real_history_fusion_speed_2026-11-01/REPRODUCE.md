@@ -1,0 +1,13 @@
+# 复现索引与范围
+
+完整原始ZIP及既有审计/组件原数据复用real-scout-tare-input-fix-20261101 Release的已核对附件，REUSED_INPUT_ASSETS记录SHA/URL，不重新上传原包或解压。inputs.pkl保存81个原始GridMap和匹配原始Odometry CDR，INPUT_CHECK保存每条SHA/源时间/接收时间。prepare_inputs.py只读已验证MCAP，重新运行应更换输出目录。
+
+baseline/candidate和BASELINE_FREEZE/CANDIDATE_FREEZE保存实际源码。benchmark.py直接回调冻结生产类：原始源时间、定位、年龄不改，离线时钟只设源时间+50ms；输出进程内Sink、全部接口诊断命名空间、localhost隔离域，无executor/控制器/设备/车辆播放。验证捕获模型输入/输出，正式计时排除文件I/O、压缩、输入捕获；每次81帧，统计排除前5帧，其余慢帧不剔除。
+
+verify_baseline/verify_candidate保存81个完整NPZ与基线cProfile，用于正确性，不作正式测速。baseline_i/candidate_i是3轮初筛，前段与329项回归并行；final_baseline_i/final_candidate_i为回归结束后独立进程3轮；独立进程P95退步保留。interleaved_i是同进程两个冻结生产节点的逐帧交替3轮，各自模型/历史独立；加载相应历史模块后构造节点，其他共享模块源码相同，保留实际脚本/身份/逐帧记录。
+
+SUMMARY含全部分组/反例；NUMERICAL_CHECK含1053帧次输出哈希、81模型输入字节检查；regression.log329项，新4项检查随机60帧完整多层状态与float32边界。CPP_REUSE_CHECK核对未变源文件及相同旧安装ELF；初次误比较build/installed ELF的RPATH差异也记录，不重做无修改的8组C++测试。INSTALLED_CHECK在同工作树原CMake计划的新前缀确认新模块/入口/权重一致，不覆盖build_real/install_real，不借邻近工作树或独立CuPy。
+
+RECORDED_CAR_PERFORMANCE为原包46条证据；recorded_wheel_travel/task_events来自原记录；prior_component_ray_free_volume是前序同扫描组件曲线，复用不改，不是真值或本轮新探索成绩。offline_history_speed.mp4为81实际HT输出/回调曲线，6fps、13.5秒，显示原不均匀时间，不是实车或实时回放。VIDEO_CHECK完整解码通过。
+
+在新机器需映射脚本的固定路径到归档位置，依赖版本见ENVIRONMENT/每轮runtime_manifest；不要升级依赖、加载独立CuPy或运行实车launch/全话题bag play。科学归档排除可再建build/install/缓存，保存全部源码、原CDR子集、结果/反例/脚本/日志。FULL_DATA_MANIFEST逐项SHA，发布完成以PUBLICATION_RECEIPT/FINAL_REMOTE_CHECK为准。
