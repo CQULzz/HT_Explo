@@ -9,7 +9,7 @@ from cupy_to_ht import CupyToHt
 def test_receivers_remain_responsive_and_only_latest_pending_is_processed():
     rclpy.init();active=threading.Event();release=threading.Event();processed=[]
     class Probe(CupyToHt):
-        def on_map(self,m):
+        def on_map(self,m,*,received_monotonic=None):
             processed.append(m.header.stamp.sec)
             if len(processed)==1:active.set();release.wait(timeout=4)
     n=Probe();source=rclpy.create_node('offline_latest_input_probe')
@@ -33,5 +33,5 @@ def test_receivers_remain_responsive_and_only_latest_pending_is_processed():
         while len(processed)<2 and time.monotonic()<end:time.sleep(.01)
         assert processed[:2]==[1,11]
     finally:
-        release.set();executor.shutdown();executor._executor.shutdown(wait=True);thread.join(timeout=2)
+        release.set();n.begin_shutdown();executor._executor.shutdown(wait=True);executor.shutdown();thread.join(timeout=2)
         n.destroy_node();source.destroy_node();rclpy.try_shutdown()

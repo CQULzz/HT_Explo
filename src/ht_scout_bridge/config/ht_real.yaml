@@ -17,11 +17,11 @@
     ht_require_reversible_motion: false
     ht_heading_offset: 0.0
     ht_channel_order: [0, 1, 2, 3, 4, 5, 6, 7]
-    # User-confirmed good starting ground: fixed at the mission's first pose.
-    # Covers the 0.6m body check plus the first 0.4m drive step and raster margin.
-    # Unknown-only permission; measured obstacles/low HT scores still veto it.
-    # Retired after 30s or leaving this disk; never follows the moving vehicle.
-    ht_startup_radius: 1.2
+    # User-requested fixed initial region: HT observations cannot veto it for30s.
+    # Original measurements remain unchanged. Independent collision/stop gates apply.
+    # Fixed mission anchor/deadline; leaving does not retire or move the region.
+    ht_startup_assume_traversable: true
+    ht_startup_radius: 1.5
     ht_startup_duration: 30.0
     ht_unknown_policy: strict
     xytheta_cell: 0.3

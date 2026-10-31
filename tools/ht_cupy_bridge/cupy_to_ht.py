@@ -115,6 +115,18 @@ class CupyToHt(Node):
             torch.backends.cuda.matmul.allow_tf32=False
             torch.backends.cudnn.allow_tf32=False
         self.device=torch.device(requested_device)
+        context_backend=self.declare_parameter('ht_context_backend','auto').value
+        if context_backend not in ('auto','numpy','cuda'):raise ValueError('Invalid HT context backend')
+        self.cuda_context=None
+        if context_backend=='cuda' or (context_backend=='auto' and requested_device=='cuda'):
+            try:
+                from cuda_ht_context import CudaHtContext
+                self.cuda_context=CudaHtContext(self.device)
+            except Exception as exc:
+                if context_backend=='cuda':raise
+                self.get_logger().warning(f'CUDA context unavailable; using NumPy reference: {exc}')
+        self.context_backend='cuda' if self.cuda_context is not None else 'numpy'
+        self.get_logger().info(f'HT context backend: {self.context_backend}')
         self.get_logger().info(f'HT inference device: {self.device}')
         self.model = load_student_model(
             str(Path(__file__).with_name("student_best_epoch_weights.pth")), self.device
@@ -165,7 +177,7 @@ class CupyToHt(Node):
         capacity=self.declare_parameter('ht_diagnostics_capacity',600).value
         parameter_names=('use_sim_time','ht_device','ht_torch_threads','ht_channels_last',
                          'ht_quality_backend','ht_history_backend','ht_cpu_fuse_bn','ht_fuse_bn',
-                         'ht_small_hole_repair','ht_small_hole_backend','ht_reason_interval_s','ht_profile_runtime',
+                         'ht_small_hole_repair','ht_small_hole_backend','ht_context_backend','ht_reason_interval_s','ht_profile_runtime',
                          'ht_diagnostics_capacity','ht_topic',
                          'elevation_topic','surface_odometry_topic','surface_sensor_ground_offset_m',
                          'odometry_child_frame')
@@ -185,7 +197,7 @@ class CupyToHt(Node):
             {name:sys.modules[name] for name in ('model','historical_elevation','history_window',
                 'elevation_quality','local_surface','ht_support','small_holes','input_odometry',
                 'latest_input','cpu_threads','diagnostic_history','runtime_manifest',
-                'small_hole_kernels','runtime_probe','ht_reasons')})
+                'small_hole_kernels','cuda_ht_context','runtime_probe','ht_reasons')})
         self.runtime_pub=self.create_publisher(String,'/ht_runtime',QoSProfile(
             depth=1,reliability=ReliabilityPolicy.RELIABLE,durability=DurabilityPolicy.TRANSIENT_LOCAL))
         self.runtime_pub.publish(String(data=json.dumps(self.runtime_manifest,sort_keys=True)))
@@ -337,14 +349,17 @@ class CupyToHt(Node):
                 elevation,observed,rejected,obstacle_context,current,current_var,current_age,resolution,
                 protected=quality.edge_mask,backend=self.small_hole_backend)
         holes_finished=time.monotonic()
-        height, support, occupied, physical_support = prepare_ht_context(
-            elevation, observed, rejected, obstacle_context, resolution)
-        # Interpolated samples are not observations. Keep all support masks
-        # based on measured inputs, and replace only the approved input pixels.
-        height[inferred]=inference_elevation[inferred]
+        if self.cuda_context is not None:
+            height,support,occupied,physical_support=self.cuda_context.prepare(
+                elevation,observed,rejected,obstacle_context,resolution,inferred,inference_elevation)
+        else:
+            height, support, occupied, physical_support = prepare_ht_context(
+                elevation, observed, rejected, obstacle_context, resolution)
+            # Inferred heights change model input, never physical support.
+            height[inferred]=inference_elevation[inferred]
         inference_started = time.monotonic()
         with torch.inference_mode():
-            tensor=torch.from_numpy(height[None,None]).to(self.device)
+            tensor=(height[None,None] if isinstance(height,torch.Tensor) else torch.from_numpy(height[None,None]).to(self.device))
             if self.channels_last:tensor=tensor.contiguous(memory_format=torch.channels_last)
             probabilities = torch.softmax(self.model(tensor), dim=2)[0, :, 1].cpu().numpy()
         inference_finished = time.monotonic()
@@ -457,7 +472,7 @@ class CupyToHt(Node):
                        'pending_maps_replaced': self.pending_maps.replaced,
                        'out_of_order_inputs': self.pending_maps.out_of_order,
                        'history_backend': self.history_backend,
-                       'fused_batchnorm': self.fused_batchnorm, 'device': str(self.device),
+                       'fused_batchnorm': self.fused_batchnorm, 'device': str(self.device), 'context_backend':self.context_backend,
                        'runtime_id': self.runtime_manifest['runtime_id'],
                        'queue_wait_s':queue_wait,'input_queue':self.pending_maps.status(),
                        'stages':stages,'runtime_profile':profile,'reason_summary':reason_summary,
@@ -479,7 +494,7 @@ class CupyToHt(Node):
             # A source stamp identifies immutable inference inputs. Never
             # replace an earlier context if a node is accidentally restarted.
             save_immutable_npz(filename, source_stamp=stamp_s,
-                    geometry=[center_x, center_y, resolution], height=height,
+                    geometry=[center_x, center_y, resolution], height=(height.detach().cpu().numpy() if isinstance(height,torch.Tensor) else height),
                     history_variance=variance,
                     source_elevation=source_elevation, source_variance=source_variance,
                     source_observation_age=source_age,
@@ -511,7 +526,7 @@ class CupyToHt(Node):
                                  'fusion_and_quality_s': fusion_finished-started,
                                  'support_and_history_publish_s': inference_started-fusion_finished,
                                  'network_inference_s': inference_finished-inference_started,
-                                 'cpu_fused_batchnorm': self.cpu_fuse_bn,
+                                 'cpu_fused_batchnorm': self.cpu_fuse_bn, 'context_backend':self.context_backend,
                                  'fused_batchnorm': self.fused_batchnorm,
                                  'ht_serialize_publish_s': published-inference_finished,
                                  'context_dump_s': context_dump_s,

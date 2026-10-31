@@ -5,11 +5,11 @@ namespace ht_cost_ns {
 struct StartupPrior {
   Point anchor{};
   double radius=1.2, lifetime=30, start=0;
-  bool initialized=false, retired=false;
+  bool initialized=false, retired=false, assume_traversable=false;
   void initialize(Point p,double now) { if (!initialized) {anchor=p;start=now;initialized=true;} }
   void update(Point p,double now) {
     if (initialized && (now<start || now-start>=lifetime ||
-        std::hypot(p.x-anchor.x,p.y-anchor.y)>radius)) retired=true;
+        (!assume_traversable && std::hypot(p.x-anchor.x,p.y-anchor.y)>radius))) retired=true;
   }
   bool contains(double x,double y) const {
     return initialized && !retired && radius>0 && std::hypot(x-anchor.x,y-anchor.y)<=radius;

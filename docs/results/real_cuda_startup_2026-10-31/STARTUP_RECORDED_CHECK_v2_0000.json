@@ -1,0 +1,3677 @@
+{
+  "scope": "one unchanged old recorded map and pose, eight .4m target directions; offline HT-only fixture, no independent collision cloud/vehicle/control test",
+  "source_frame_sha256": "2de4a24fc6e981c036941cef4dc656b2235bad717521c1d4cfcfb8f74cfcdc95",
+  "cdr_sha256": "70dbc124a6ab76d2cc5715e150a2a385d9e104cb6d976325583a80477064a01d",
+  "pose": [
+    -2.9308969093137445,
+    16.772326825650467,
+    -1.0397969371903117
+  ],
+  "source_ns": 1793177602361947775,
+  "results": {
+    "disabled": {
+      "schema": "ht_xytheta_offline_v1",
+      "scope": "Frozen HT snapshot + actual C++ HtCostMap/Hybrid A*. Excludes TARE goal selection, independent collision_cloud, live freshness, tracking and physical execution.",
+      "clock_policy": "ROS time frozen at each unmodified input map stamp; no stamp refresh",
+      "ros_domain_id": "183",
+      "ros_localhost_only": "1",
+      "parameters": {
+        "baseline_parameters": {
+          "ht_enabled": true,
+          "ht_directions_calibrated": true,
+          "ht_exploration_mode": "tare_waypoint",
+          "ht_score_semantics": "configuration",
+          "ht_unknown_policy": "strict",
+          "ht_min_probability": 0.5,
+          "ht_validity_radius": 0.6,
+          "ht_map_timeout": 1,
+          "ht_startup_radius": 0,
+          "ht_startup_duration": 30,
+          "ht_require_reversible_motion": false,
+          "ht_heading_offset": 0,
+          "ht_channel_order": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "ht_sample_step": 0.02,
+          "ht_lookahead_distance": 2,
+          "ht_waypoint_reached_distance": 0.3,
+          "xytheta_cell": 0.3,
+          "xytheta_headings": 32,
+          "xytheta_turn_angles_deg": [
+            11.25,
+            22.5
+          ],
+          "xytheta_drive_step": 0.4,
+          "forward_speed": 0.5,
+          "reverse_speed": 0.25,
+          "max_yaw_rate": 0.8,
+          "xytheta_goal_radius": 0.35,
+          "xytheta_max_radius": 7,
+          "xytheta_max_expansions": 8000,
+          "xytheta_search_seconds": 0.15,
+          "try_direct_connection": true,
+          "startup_prior_initialized": false,
+          "publish_permission": true
+        },
+        "fixture_overrides": {
+          "ht_startup_radius": 0,
+          "ht_startup_duration": 30,
+          "ht_startup_assume_traversable": false,
+          "startup_prior_initialized": false
+        },
+        "scope": "offline HT-only first-step fixture; no collision cloud, motor or vehicle test"
+      },
+      "parameters_sha256": "4becd8fb4bdb53ed1177105d9ecc64d73145069720c6014ed1678fd7daba4766",
+      "executable_sha256": "7a0eebd68de7f0b5921208b4b6b6140ba9dcec1874fe515a9b124c92e9e7ac4c",
+      "queries": [
+        {
+          "label": "first_step_0",
+          "map_file": "/home/lzz/HT_cuda_startup_20261031_134008/startup_fixture_v2_0000/recorded_first.cdr",
+          "map_sha256": "70dbc124a6ab76d2cc5715e150a2a385d9e104cb6d976325583a80477064a01d",
+          "source_stamp": {
+            "sec": 1793177602,
+            "nanosec": 361947775
+          },
+          "map_stamp_ns": 1793177602361947775,
+          "clock_ns": 1793177602361947775,
+          "map_frame": "map",
+          "map_status": "HT_MAP_FRESH",
+          "map_resolution": 0.04,
+          "start": [
+            -2.9308969093137445,
+            16.772326825650467,
+            -1.0397969371903117
+          ],
+          "goal": [
+            -2.5308969093137446,
+            16.772326825650467
+          ],
+          "start_support": "UNKNOWN",
+          "reached": false,
+          "termination": "INVALID_START",
+          "expanded": 0,
+          "dominated_edges_pruned": 0,
+          "direct_connection": false,
+          "seconds": null,
+          "search_wall_ms": 0.0014780000000000001,
+          "path_length_m": 0,
+          "rotation_rad": 0,
+          "source_stamp_unchanged": true,
+          "independent_recheck_passed": false,
+          "all_segments_permitted": false,
+          "poses": [],
+          "segment_support": []
+        },
+        {
+          "label": "first_step_1",
+          "map_file": "/home/lzz/HT_cuda_startup_20261031_134008/startup_fixture_v2_0000/recorded_first.cdr",
+          "map_sha256": "70dbc124a6ab76d2cc5715e150a2a385d9e104cb6d976325583a80477064a01d",
+          "source_stamp": {
+            "sec": 1793177602,
+            "nanosec": 361947775
+          },
+          "map_stamp_ns": 1793177602361947775,
+          "clock_ns": 1793177602361947775,
+          "map_frame": "map",
+          "map_status": "HT_MAP_FRESH",
+          "map_resolution": 0.04,
+          "start": [
+            -2.9308969093137445,
+            16.772326825650467,
+            -1.0397969371903117
+          ],
+          "goal": [
+            -2.6480541968391256,
+            17.055169538125085
+          ],
+          "start_support": "UNKNOWN",
+          "reached": false,
+          "termination": "INVALID_START",
+          "expanded": 0,
+          "dominated_edges_pruned": 0,
+          "direct_connection": false,
+          "seconds": null,
+          "search_wall_ms": 0.001351,
+          "path_length_m": 0,
+          "rotation_rad": 0,
+          "source_stamp_unchanged": true,
+          "independent_recheck_passed": false,
+          "all_segments_permitted": false,
+          "poses": [],
+          "segment_support": []
+        },
+        {
+          "label": "first_step_2",
+          "map_file": "/home/lzz/HT_cuda_startup_20261031_134008/startup_fixture_v2_0000/recorded_first.cdr",
+          "map_sha256": "70dbc124a6ab76d2cc5715e150a2a385d9e104cb6d976325583a80477064a01d",
+          "source_stamp": {
+            "sec": 1793177602,
+            "nanosec": 361947775
+          },
+          "map_stamp_ns": 1793177602361947775,
+          "clock_ns": 1793177602361947775,
+          "map_frame": "map",
+          "map_status": "HT_MAP_FRESH",
+          "map_resolution": 0.04,
+          "start": [
+            -2.9308969093137445,
+            16.772326825650467,
+            -1.0397969371903117
+          ],
+          "goal": [
+            -2.9308969093137445,
+            17.172326825650465
+          ],
+          "start_support": "UNKNOWN",
+          "reached": false,
+          "termination": "INVALID_START",
+          "expanded": 0,
+          "dominated_edges_pruned": 0,
+          "direct_connection": false,
+          "seconds": null,
+          "search_wall_ms": 0.001319,
+          "path_length_m": 0,
+          "rotation_rad": 0,
+          "source_stamp_unchanged": true,
+          "independent_recheck_passed": false,
+          "all_segments_permitted": false,
+          "poses": [],
+          "segment_support": []
+        },
+        {
+          "label": "first_step_3",
+          "map_file": "/home/lzz/HT_cuda_startup_20261031_134008/startup_fixture_v2_0000/recorded_first.cdr",
+          "map_sha256": "70dbc124a6ab76d2cc5715e150a2a385d9e104cb6d976325583a80477064a01d",
+          "source_stamp": {
+            "sec": 1793177602,
+            "nanosec": 361947775
+          },
+          "map_stamp_ns": 1793177602361947775,
+          "clock_ns": 1793177602361947775,
+          "map_frame": "map",
+          "map_status": "HT_MAP_FRESH",
+          "map_resolution": 0.04,
+          "start": [
+            -2.9308969093137445,
+            16.772326825650467,
+            -1.0397969371903117
+          ],
+          "goal": [
+            -3.2137396217883634,
+            17.055169538125085
+          ],
+          "start_support": "UNKNOWN",
+          "reached": false,
+          "termination": "INVALID_START",
+          "expanded": 0,
+          "dominated_edges_pruned": 0,
+          "direct_connection": false,
+          "seconds": null,
+          "search_wall_ms": 0.001356,
+          "path_length_m": 0,
+          "rotation_rad": 0,
+          "source_stamp_unchanged": true,
+          "independent_recheck_passed": false,
+          "all_segments_permitted": false,
+          "poses": [],
+          "segment_support": []
+        },
+        {
+          "label": "first_step_4",
+          "map_file": "/home/lzz/HT_cuda_startup_20261031_134008/startup_fixture_v2_0000/recorded_first.cdr",
+          "map_sha256": "70dbc124a6ab76d2cc5715e150a2a385d9e104cb6d976325583a80477064a01d",
+          "source_stamp": {
+            "sec": 1793177602,
+            "nanosec": 361947775
+          },
+          "map_stamp_ns": 1793177602361947775,
+          "clock_ns": 1793177602361947775,
+          "map_frame": "map",
+          "map_status": "HT_MAP_FRESH",
+          "map_resolution": 0.04,
+          "start": [
+            -2.9308969093137445,
+            16.772326825650467,
+            -1.0397969371903117
+          ],
+          "goal": [
+            -3.3308969093137444,
+            16.772326825650467
+          ],
+          "start_support": "UNKNOWN",
+          "reached": false,
+          "termination": "INVALID_START",
+          "expanded": 0,
+          "dominated_edges_pruned": 0,
+          "direct_connection": false,
+          "seconds": null,
+          "search_wall_ms": 0.00129,
+          "path_length_m": 0,
+          "rotation_rad": 0,
+          "source_stamp_unchanged": true,
+          "independent_recheck_passed": false,
+          "all_segments_permitted": false,
+          "poses": [],
+          "segment_support": []
+        },
+        {
+          "label": "first_step_5",
+          "map_file": "/home/lzz/HT_cuda_startup_20261031_134008/startup_fixture_v2_0000/recorded_first.cdr",
+          "map_sha256": "70dbc124a6ab76d2cc5715e150a2a385d9e104cb6d976325583a80477064a01d",
+          "source_stamp": {
+            "sec": 1793177602,
+            "nanosec": 361947775
+          },
+          "map_stamp_ns": 1793177602361947775,
+          "clock_ns": 1793177602361947775,
+          "map_frame": "map",
+          "map_status": "HT_MAP_FRESH",
+          "map_resolution": 0.04,
+          "start": [
+            -2.9308969093137445,
+            16.772326825650467,
+            -1.0397969371903117
+          ],
+          "goal": [
+            -3.2137396217883634,
+            16.48948411317585
+          ],
+          "start_support": "UNKNOWN",
+          "reached": false,
+          "termination": "INVALID_START",
+          "expanded": 0,
+          "dominated_edges_pruned": 0,
+          "direct_connection": false,
+          "seconds": null,
+          "search_wall_ms": 0.001399,
+          "path_length_m": 0,
+          "rotation_rad": 0,
+          "source_stamp_unchanged": true,
+          "independent_recheck_passed": false,
+          "all_segments_permitted": false,
+          "poses": [],
+          "segment_support": []
+        },
+        {
+          "label": "first_step_6",
+          "map_file": "/home/lzz/HT_cuda_startup_20261031_134008/startup_fixture_v2_0000/recorded_first.cdr",
+          "map_sha256": "70dbc124a6ab76d2cc5715e150a2a385d9e104cb6d976325583a80477064a01d",
+          "source_stamp": {
+            "sec": 1793177602,
+            "nanosec": 361947775
+          },
+          "map_stamp_ns": 1793177602361947775,
+          "clock_ns": 1793177602361947775,
+          "map_frame": "map",
+          "map_status": "HT_MAP_FRESH",
+          "map_resolution": 0.04,
+          "start": [
+            -2.9308969093137445,
+            16.772326825650467,
+            -1.0397969371903117
+          ],
+          "goal": [
+            -2.9308969093137445,
+            16.372326825650468
+          ],
+          "start_support": "UNKNOWN",
+          "reached": false,
+          "termination": "INVALID_START",
+          "expanded": 0,
+          "dominated_edges_pruned": 0,
+          "direct_connection": false,
+          "seconds": null,
+          "search_wall_ms": 0.00155,
+          "path_length_m": 0,
+          "rotation_rad": 0,
+          "source_stamp_unchanged": true,
+          "independent_recheck_passed": false,
+          "all_segments_permitted": false,
+          "poses": [],
+          "segment_support": []
+        },
+        {
+          "label": "first_step_7",
+          "map_file": "/home/lzz/HT_cuda_startup_20261031_134008/startup_fixture_v2_0000/recorded_first.cdr",
+          "map_sha256": "70dbc124a6ab76d2cc5715e150a2a385d9e104cb6d976325583a80477064a01d",
+          "source_stamp": {
+            "sec": 1793177602,
+            "nanosec": 361947775
+          },
+          "map_stamp_ns": 1793177602361947775,
+          "clock_ns": 1793177602361947775,
+          "map_frame": "map",
+          "map_status": "HT_MAP_FRESH",
+          "map_resolution": 0.04,
+          "start": [
+            -2.9308969093137445,
+            16.772326825650467,
+            -1.0397969371903117
+          ],
+          "goal": [
+            -2.6480541968391256,
+            16.48948411317585
+          ],
+          "start_support": "UNKNOWN",
+          "reached": false,
+          "termination": "INVALID_START",
+          "expanded": 0,
+          "dominated_edges_pruned": 0,
+          "direct_connection": false,
+          "seconds": null,
+          "search_wall_ms": 0.0013570000000000001,
+          "path_length_m": 0,
+          "rotation_rad": 0,
+          "source_stamp_unchanged": true,
+          "independent_recheck_passed": false,
+          "all_segments_permitted": false,
+          "poses": [],
+          "segment_support": []
+        }
+      ]
+    },
+    "unknown": {
+      "schema": "ht_xytheta_offline_v1",
+      "scope": "Frozen HT snapshot + actual C++ HtCostMap/Hybrid A*. Excludes TARE goal selection, independent collision_cloud, live freshness, tracking and physical execution.",
+      "clock_policy": "ROS time frozen at each unmodified input map stamp; no stamp refresh",
+      "ros_domain_id": "183",
+      "ros_localhost_only": "1",
+      "parameters": {
+        "baseline_parameters": {
+          "ht_enabled": true,
+          "ht_directions_calibrated": true,
+          "ht_exploration_mode": "tare_waypoint",
+          "ht_score_semantics": "configuration",
+          "ht_unknown_policy": "strict",
+          "ht_min_probability": 0.5,
+          "ht_validity_radius": 0.6,
+          "ht_map_timeout": 1,
+          "ht_startup_radius": 0,
+          "ht_startup_duration": 30,
+          "ht_require_reversible_motion": false,
+          "ht_heading_offset": 0,
+          "ht_channel_order": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "ht_sample_step": 0.02,
+          "ht_lookahead_distance": 2,
+          "ht_waypoint_reached_distance": 0.3,
+          "xytheta_cell": 0.3,
+          "xytheta_headings": 32,
+          "xytheta_turn_angles_deg": [
+            11.25,
+            22.5
+          ],
+          "xytheta_drive_step": 0.4,
+          "forward_speed": 0.5,
+          "reverse_speed": 0.25,
+          "max_yaw_rate": 0.8,
+          "xytheta_goal_radius": 0.35,
+          "xytheta_max_radius": 7,
+          "xytheta_max_expansions": 8000,
+          "xytheta_search_seconds": 0.15,
+          "try_direct_connection": true,
+          "startup_prior_initialized": false,
+          "publish_permission": true
+        },
+        "fixture_overrides": {
+          "ht_startup_radius": 1.2,
+          "ht_startup_duration": 30,
+          "ht_startup_assume_traversable": false,
+          "startup_prior_initialized": true
+        },
+        "scope": "offline HT-only first-step fixture; no collision cloud, motor or vehicle test"
+      },
+      "parameters_sha256": "4f745a0678c8d690528b175b9ee5782af1cab53cacacd8b8a00f324f55993b60",
+      "executable_sha256": "7a0eebd68de7f0b5921208b4b6b6140ba9dcec1874fe515a9b124c92e9e7ac4c",
+      "queries": [
+        {
+          "label": "first_step_0",
+          "map_file": "/home/lzz/HT_cuda_startup_20261031_134008/startup_fixture_v2_0000/recorded_first.cdr",
+          "map_sha256": "70dbc124a6ab76d2cc5715e150a2a385d9e104cb6d976325583a80477064a01d",
+          "source_stamp": {
+            "sec": 1793177602,
+            "nanosec": 361947775
+          },
+          "map_stamp_ns": 1793177602361947775,
+          "clock_ns": 1793177602361947775,
+          "map_frame": "map",
+          "map_status": "HT_MAP_FRESH",
+          "map_resolution": 0.04,
+          "start": [
+            -2.9308969093137445,
+            16.772326825650467,
+            -1.0397969371903117
+          ],
+          "goal": [
+            -2.5308969093137446,
+            16.772326825650467
+          ],
+          "start_support": "STARTUP_PRIOR",
+          "reached": true,
+          "termination": "REACHED",
+          "expanded": 0,
+          "dominated_edges_pruned": 0,
+          "direct_connection": true,
+          "seconds": 2.0997461714878893,
+          "search_wall_ms": 0.5867399999999999,
+          "path_length_m": 0.3999999999999999,
+          "rotation_rad": 1.0397969371903117,
+          "source_stamp_unchanged": true,
+          "independent_recheck_passed": true,
+          "all_segments_permitted": true,
+          "poses": [
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.0397969371903117
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.9902827973241064
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.9407686574579011
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.8912545175916958
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.8417403777254905
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.7922262378592851
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.7427120979930799
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.6931979581268746
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.6436838182606692
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.5941696783944639
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.5446555385282585
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.4951413986620532
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.44562725879584797
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.3961131189296426
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.3465989790634373
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.29708483919723194
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.2475706993310266
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.19805655946482137
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.14854241959861592
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.09902827973241068
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.04951413986620523
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              0
+            ],
+            [
+              -2.8808969093137446,
+              16.772326825650467,
+              0
+            ],
+            [
+              -2.8308969093137444,
+              16.772326825650467,
+              0
+            ],
+            [
+              -2.7808969093137446,
+              16.772326825650467,
+              0
+            ],
+            [
+              -2.7308969093137447,
+              16.772326825650467,
+              0
+            ],
+            [
+              -2.6808969093137445,
+              16.772326825650467,
+              0
+            ],
+            [
+              -2.6308969093137446,
+              16.772326825650467,
+              0
+            ],
+            [
+              -2.5808969093137444,
+              16.772326825650467,
+              0
+            ],
+            [
+              -2.5308969093137446,
+              16.772326825650467,
+              0
+            ]
+          ],
+          "segment_support": [
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR"
+          ]
+        },
+        {
+          "label": "first_step_1",
+          "map_file": "/home/lzz/HT_cuda_startup_20261031_134008/startup_fixture_v2_0000/recorded_first.cdr",
+          "map_sha256": "70dbc124a6ab76d2cc5715e150a2a385d9e104cb6d976325583a80477064a01d",
+          "source_stamp": {
+            "sec": 1793177602,
+            "nanosec": 361947775
+          },
+          "map_stamp_ns": 1793177602361947775,
+          "clock_ns": 1793177602361947775,
+          "map_frame": "map",
+          "map_status": "HT_MAP_FRESH",
+          "map_resolution": 0.04,
+          "start": [
+            -2.9308969093137445,
+            16.772326825650467,
+            -1.0397969371903117
+          ],
+          "goal": [
+            -2.6480541968391256,
+            17.055169538125085
+          ],
+          "start_support": "STARTUP_PRIOR",
+          "reached": true,
+          "termination": "REACHED",
+          "expanded": 0,
+          "dominated_edges_pruned": 0,
+          "direct_connection": true,
+          "seconds": 3.081493875734698,
+          "search_wall_ms": 5.9443079999999995,
+          "path_length_m": 0.3999999999999995,
+          "rotation_rad": 1.8251951005877594,
+          "source_stamp_unchanged": true,
+          "independent_recheck_passed": true,
+          "all_segments_permitted": true,
+          "poses": [
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.0397969371903117
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.9904673398771291
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.9411377425639463
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.8918081452507637
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.842478547937581
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.7931489506243983
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.7438193533112156
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.694489755998033
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.6451601586848503
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.5958305613716676
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.5465009640584849
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.49717136674530216
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.4478417694321195
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.39851217211893686
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.3491825748057541
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.29985297749257145
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.2505233801793888
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.20119378286620604
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.1518641855530234
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.10253458823984085
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.05320499092665809
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.00387539361347522
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              0.04545420369970743
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              0.09478380101288986
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              0.14411339832607273
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              0.19344299563925538
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              0.24277259295243803
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              0.2921021902656207
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              0.34143178757880355
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              0.3907613848919862
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              0.44009098220516885
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              0.4894205795183515
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              0.5387501768315341
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              0.588079774144717
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              0.6374093714578997
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              0.6867389687710821
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              0.736068566084265
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              0.7853981633974476
+            ],
+            [
+              -2.895541570254417,
+              16.807682164709796,
+              0.7853981633974475
+            ],
+            [
+              -2.86018623119509,
+              16.84303750376912,
+              0.7853981633974475
+            ],
+            [
+              -2.8248308921357626,
+              16.878392842828447,
+              0.7853981633974475
+            ],
+            [
+              -2.789475553076435,
+              16.913748181887776,
+              0.7853981633974475
+            ],
+            [
+              -2.7541202140171075,
+              16.949103520947105,
+              0.7853981633974475
+            ],
+            [
+              -2.71876487495778,
+              16.98445886000643,
+              0.7853981633974475
+            ],
+            [
+              -2.683409535898453,
+              17.019814199065756,
+              0.7853981633974475
+            ],
+            [
+              -2.6480541968391256,
+              17.055169538125085,
+              0.7853981633974475
+            ]
+          ],
+          "segment_support": [
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR"
+          ]
+        },
+        {
+          "label": "first_step_2",
+          "map_file": "/home/lzz/HT_cuda_startup_20261031_134008/startup_fixture_v2_0000/recorded_first.cdr",
+          "map_sha256": "70dbc124a6ab76d2cc5715e150a2a385d9e104cb6d976325583a80477064a01d",
+          "source_stamp": {
+            "sec": 1793177602,
+            "nanosec": 361947775
+          },
+          "map_stamp_ns": 1793177602361947775,
+          "clock_ns": 1793177602361947775,
+          "map_frame": "map",
+          "map_status": "HT_MAP_FRESH",
+          "map_resolution": 0.04,
+          "start": [
+            -2.9308969093137445,
+            16.772326825650467,
+            -1.0397969371903117
+          ],
+          "goal": [
+            -2.9308969093137445,
+            17.172326825650465
+          ],
+          "start_support": "STARTUP_PRIOR",
+          "reached": true,
+          "termination": "REACHED",
+          "expanded": 0,
+          "dominated_edges_pruned": 0,
+          "direct_connection": true,
+          "seconds": 2.5037492370057244,
+          "search_wall_ms": 2.9319390000000003,
+          "path_length_m": 0.3999999999999986,
+          "rotation_rad": 0.5309993896045848,
+          "source_stamp_unchanged": true,
+          "independent_recheck_passed": true,
+          "all_segments_permitted": true,
+          "poses": [
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.0397969371903117
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.0880696089725468
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.1363422807547816
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.1846149525370167
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.2328876243192517
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.2811602961014867
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.3294329678837216
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.3777056396659566
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.4259783114481916
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.4742509832304265
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.5225236550126615
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.5707963267948966
+            ],
+            [
+              -2.9308969093137445,
+              16.822326825650467,
+              -1.5707963267948966
+            ],
+            [
+              -2.9308969093137445,
+              16.872326825650468,
+              -1.5707963267948966
+            ],
+            [
+              -2.9308969093137445,
+              16.922326825650465,
+              -1.5707963267948966
+            ],
+            [
+              -2.9308969093137445,
+              16.972326825650466,
+              -1.5707963267948966
+            ],
+            [
+              -2.9308969093137445,
+              17.022326825650467,
+              -1.5707963267948966
+            ],
+            [
+              -2.9308969093137445,
+              17.072326825650464,
+              -1.5707963267948966
+            ],
+            [
+              -2.9308969093137445,
+              17.122326825650465,
+              -1.5707963267948966
+            ],
+            [
+              -2.9308969093137445,
+              17.172326825650465,
+              -1.5707963267948966
+            ]
+          ],
+          "segment_support": [
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR"
+          ]
+        },
+        {
+          "label": "first_step_3",
+          "map_file": "/home/lzz/HT_cuda_startup_20261031_134008/startup_fixture_v2_0000/recorded_first.cdr",
+          "map_sha256": "70dbc124a6ab76d2cc5715e150a2a385d9e104cb6d976325583a80477064a01d",
+          "source_stamp": {
+            "sec": 1793177602,
+            "nanosec": 361947775
+          },
+          "map_stamp_ns": 1793177602361947775,
+          "clock_ns": 1793177602361947775,
+          "map_frame": "map",
+          "map_status": "HT_MAP_FRESH",
+          "map_resolution": 0.04,
+          "start": [
+            -2.9308969093137445,
+            16.772326825650467,
+            -1.0397969371903117
+          ],
+          "goal": [
+            -3.2137396217883634,
+            17.055169538125085
+          ],
+          "start_support": "STARTUP_PRIOR",
+          "reached": true,
+          "termination": "REACHED",
+          "expanded": 0,
+          "dominated_edges_pruned": 0,
+          "direct_connection": true,
+          "seconds": 2.157998467241078,
+          "search_wall_ms": 2.459555,
+          "path_length_m": 0.3999999999999995,
+          "rotation_rad": 0.25439877379286435,
+          "source_stamp_unchanged": true,
+          "independent_recheck_passed": true,
+          "all_segments_permitted": true,
+          "poses": [
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.0397969371903117
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.9973971415581677
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.9549973459260236
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.9125975502938796
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.8701977546617355
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.8277979590295914
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.7853981633974474
+            ],
+            [
+              -2.9662522483730718,
+              16.807682164709796,
+              -0.7853981633974474
+            ],
+            [
+              -3.001607587432399,
+              16.84303750376912,
+              -0.7853981633974474
+            ],
+            [
+              -3.0369629264917264,
+              16.878392842828447,
+              -0.7853981633974474
+            ],
+            [
+              -3.072318265551054,
+              16.913748181887776,
+              -0.7853981633974474
+            ],
+            [
+              -3.1076736046103814,
+              16.949103520947105,
+              -0.7853981633974474
+            ],
+            [
+              -3.1430289436697088,
+              16.98445886000643,
+              -0.7853981633974474
+            ],
+            [
+              -3.178384282729036,
+              17.019814199065756,
+              -0.7853981633974474
+            ],
+            [
+              -3.2137396217883634,
+              17.055169538125085,
+              -0.7853981633974474
+            ]
+          ],
+          "segment_support": [
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR"
+          ]
+        },
+        {
+          "label": "first_step_4",
+          "map_file": "/home/lzz/HT_cuda_startup_20261031_134008/startup_fixture_v2_0000/recorded_first.cdr",
+          "map_sha256": "70dbc124a6ab76d2cc5715e150a2a385d9e104cb6d976325583a80477064a01d",
+          "source_stamp": {
+            "sec": 1793177602,
+            "nanosec": 361947775
+          },
+          "map_stamp_ns": 1793177602361947775,
+          "clock_ns": 1793177602361947775,
+          "map_frame": "map",
+          "map_status": "HT_MAP_FRESH",
+          "map_resolution": 0.04,
+          "start": [
+            -2.9308969093137445,
+            16.772326825650467,
+            -1.0397969371903117
+          ],
+          "goal": [
+            -3.3308969093137444,
+            16.772326825650467
+          ],
+          "start_support": "STARTUP_PRIOR",
+          "reached": true,
+          "termination": "REACHED",
+          "expanded": 0,
+          "dominated_edges_pruned": 0,
+          "direct_connection": true,
+          "seconds": 3.139746171487889,
+          "search_wall_ms": 3.822964,
+          "path_length_m": 0.3999999999999999,
+          "rotation_rad": 1.0397969371903117,
+          "source_stamp_unchanged": true,
+          "independent_recheck_passed": true,
+          "all_segments_permitted": true,
+          "poses": [
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.0397969371903117
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.9902827973241064
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.9407686574579011
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.8912545175916958
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.8417403777254905
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.7922262378592851
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.7427120979930799
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.6931979581268746
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.6436838182606692
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.5941696783944639
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.5446555385282585
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.4951413986620532
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.44562725879584797
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.3961131189296426
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.3465989790634373
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.29708483919723194
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.2475706993310266
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.19805655946482137
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.14854241959861592
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.09902827973241068
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.04951413986620523
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              0
+            ],
+            [
+              -2.9808969093137443,
+              16.772326825650467,
+              0
+            ],
+            [
+              -3.0308969093137446,
+              16.772326825650467,
+              0
+            ],
+            [
+              -3.0808969093137444,
+              16.772326825650467,
+              0
+            ],
+            [
+              -3.130896909313744,
+              16.772326825650467,
+              0
+            ],
+            [
+              -3.1808969093137445,
+              16.772326825650467,
+              0
+            ],
+            [
+              -3.2308969093137443,
+              16.772326825650467,
+              0
+            ],
+            [
+              -3.2808969093137446,
+              16.772326825650467,
+              0
+            ],
+            [
+              -3.3308969093137444,
+              16.772326825650467,
+              0
+            ]
+          ],
+          "segment_support": [
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR"
+          ]
+        },
+        {
+          "label": "first_step_5",
+          "map_file": "/home/lzz/HT_cuda_startup_20261031_134008/startup_fixture_v2_0000/recorded_first.cdr",
+          "map_sha256": "70dbc124a6ab76d2cc5715e150a2a385d9e104cb6d976325583a80477064a01d",
+          "source_stamp": {
+            "sec": 1793177602,
+            "nanosec": 361947775
+          },
+          "map_stamp_ns": 1793177602361947775,
+          "clock_ns": 1793177602361947775,
+          "map_frame": "map",
+          "map_status": "HT_MAP_FRESH",
+          "map_resolution": 0.04,
+          "start": [
+            -2.9308969093137445,
+            16.772326825650467,
+            -1.0397969371903117
+          ],
+          "goal": [
+            -3.2137396217883634,
+            16.48948411317585
+          ],
+          "start_support": "STARTUP_PRIOR",
+          "reached": true,
+          "termination": "REACHED",
+          "expanded": 0,
+          "dominated_edges_pruned": 0,
+          "direct_connection": true,
+          "seconds": 2.4454969412525416,
+          "search_wall_ms": 0.903561,
+          "path_length_m": 0.3999999999999995,
+          "rotation_rad": 1.316397553002034,
+          "source_stamp_unchanged": true,
+          "independent_recheck_passed": true,
+          "all_segments_permitted": true,
+          "poses": [
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.0397969371903117
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.088552402116313
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.1373078670423142
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.1860633319683156
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.2348187968943167
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.283574261820318
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.3323297267463192
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.3810851916723206
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.429840656598322
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.478596121524323
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.5273515864503242
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.5761070513763256
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.624862516302327
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.673617981228328
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.7223734461543294
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.7711289110803308
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.819884376006332
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.868639840932333
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.9173953058583344
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.9661507707843358
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -2.014906235710337
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -2.063661700636338
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -2.1124171655623396
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -2.1611726304883407
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -2.209928095414342
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -2.2586835603403435
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -2.3074390252663446
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -2.3561944901923457
+            ],
+            [
+              -2.9662522483730718,
+              16.736971486591138,
+              -2.3561944901923457
+            ],
+            [
+              -3.001607587432399,
+              16.701616147531812,
+              -2.3561944901923457
+            ],
+            [
+              -3.0369629264917264,
+              16.666260808472487,
+              -2.3561944901923457
+            ],
+            [
+              -3.072318265551054,
+              16.630905469413158,
+              -2.3561944901923457
+            ],
+            [
+              -3.1076736046103814,
+              16.59555013035383,
+              -2.3561944901923457
+            ],
+            [
+              -3.1430289436697088,
+              16.560194791294503,
+              -2.3561944901923457
+            ],
+            [
+              -3.178384282729036,
+              16.524839452235177,
+              -2.3561944901923457
+            ],
+            [
+              -3.2137396217883634,
+              16.48948411317585,
+              -2.3561944901923457
+            ]
+          ],
+          "segment_support": [
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR"
+          ]
+        },
+        {
+          "label": "first_step_6",
+          "map_file": "/home/lzz/HT_cuda_startup_20261031_134008/startup_fixture_v2_0000/recorded_first.cdr",
+          "map_sha256": "70dbc124a6ab76d2cc5715e150a2a385d9e104cb6d976325583a80477064a01d",
+          "source_stamp": {
+            "sec": 1793177602,
+            "nanosec": 361947775
+          },
+          "map_stamp_ns": 1793177602361947775,
+          "clock_ns": 1793177602361947775,
+          "map_frame": "map",
+          "map_status": "HT_MAP_FRESH",
+          "map_resolution": 0.04,
+          "start": [
+            -2.9308969093137445,
+            16.772326825650467,
+            -1.0397969371903117
+          ],
+          "goal": [
+            -2.9308969093137445,
+            16.372326825650468
+          ],
+          "start_support": "STARTUP_PRIOR",
+          "reached": true,
+          "termination": "REACHED",
+          "expanded": 0,
+          "dominated_edges_pruned": 0,
+          "direct_connection": true,
+          "seconds": 1.4637492370057281,
+          "search_wall_ms": 0.507422,
+          "path_length_m": 0.3999999999999986,
+          "rotation_rad": 0.5309993896045848,
+          "source_stamp_unchanged": true,
+          "independent_recheck_passed": true,
+          "all_segments_permitted": true,
+          "poses": [
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.0397969371903117
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.0880696089725468
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.1363422807547816
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.1846149525370167
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.2328876243192517
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.2811602961014867
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.3294329678837216
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.3777056396659566
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.4259783114481916
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.4742509832304265
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.5225236550126615
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.5707963267948966
+            ],
+            [
+              -2.9308969093137445,
+              16.722326825650466,
+              -1.5707963267948966
+            ],
+            [
+              -2.9308969093137445,
+              16.672326825650465,
+              -1.5707963267948966
+            ],
+            [
+              -2.9308969093137445,
+              16.622326825650468,
+              -1.5707963267948966
+            ],
+            [
+              -2.9308969093137445,
+              16.572326825650467,
+              -1.5707963267948966
+            ],
+            [
+              -2.9308969093137445,
+              16.522326825650467,
+              -1.5707963267948966
+            ],
+            [
+              -2.9308969093137445,
+              16.47232682565047,
+              -1.5707963267948966
+            ],
+            [
+              -2.9308969093137445,
+              16.42232682565047,
+              -1.5707963267948966
+            ],
+            [
+              -2.9308969093137445,
+              16.372326825650468,
+              -1.5707963267948966
+            ]
+          ],
+          "segment_support": [
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR"
+          ]
+        },
+        {
+          "label": "first_step_7",
+          "map_file": "/home/lzz/HT_cuda_startup_20261031_134008/startup_fixture_v2_0000/recorded_first.cdr",
+          "map_sha256": "70dbc124a6ab76d2cc5715e150a2a385d9e104cb6d976325583a80477064a01d",
+          "source_stamp": {
+            "sec": 1793177602,
+            "nanosec": 361947775
+          },
+          "map_stamp_ns": 1793177602361947775,
+          "clock_ns": 1793177602361947775,
+          "map_frame": "map",
+          "map_status": "HT_MAP_FRESH",
+          "map_resolution": 0.04,
+          "start": [
+            -2.9308969093137445,
+            16.772326825650467,
+            -1.0397969371903117
+          ],
+          "goal": [
+            -2.6480541968391256,
+            16.48948411317585
+          ],
+          "start_support": "STARTUP_PRIOR",
+          "reached": true,
+          "termination": "REACHED",
+          "expanded": 0,
+          "dominated_edges_pruned": 0,
+          "direct_connection": true,
+          "seconds": 1.1179984672410792,
+          "search_wall_ms": 0.6216079999999999,
+          "path_length_m": 0.3999999999999995,
+          "rotation_rad": 0.25439877379286424,
+          "source_stamp_unchanged": true,
+          "independent_recheck_passed": true,
+          "all_segments_permitted": true,
+          "poses": [
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.0397969371903117
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.9973971415581677
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.9549973459260237
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.9125975502938797
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.8701977546617355
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.8277979590295915
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.7853981633974475
+            ],
+            [
+              -2.895541570254417,
+              16.736971486591138,
+              -0.7853981633974475
+            ],
+            [
+              -2.86018623119509,
+              16.701616147531812,
+              -0.7853981633974475
+            ],
+            [
+              -2.8248308921357626,
+              16.666260808472487,
+              -0.7853981633974475
+            ],
+            [
+              -2.789475553076435,
+              16.630905469413158,
+              -0.7853981633974475
+            ],
+            [
+              -2.7541202140171075,
+              16.59555013035383,
+              -0.7853981633974475
+            ],
+            [
+              -2.71876487495778,
+              16.560194791294503,
+              -0.7853981633974475
+            ],
+            [
+              -2.683409535898453,
+              16.524839452235177,
+              -0.7853981633974475
+            ],
+            [
+              -2.6480541968391256,
+              16.48948411317585,
+              -0.7853981633974475
+            ]
+          ],
+          "segment_support": [
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR"
+          ]
+        }
+      ]
+    },
+    "fixed": {
+      "schema": "ht_xytheta_offline_v1",
+      "scope": "Frozen HT snapshot + actual C++ HtCostMap/Hybrid A*. Excludes TARE goal selection, independent collision_cloud, live freshness, tracking and physical execution.",
+      "clock_policy": "ROS time frozen at each unmodified input map stamp; no stamp refresh",
+      "ros_domain_id": "183",
+      "ros_localhost_only": "1",
+      "parameters": {
+        "baseline_parameters": {
+          "ht_enabled": true,
+          "ht_directions_calibrated": true,
+          "ht_exploration_mode": "tare_waypoint",
+          "ht_score_semantics": "configuration",
+          "ht_unknown_policy": "strict",
+          "ht_min_probability": 0.5,
+          "ht_validity_radius": 0.6,
+          "ht_map_timeout": 1,
+          "ht_startup_radius": 0,
+          "ht_startup_duration": 30,
+          "ht_require_reversible_motion": false,
+          "ht_heading_offset": 0,
+          "ht_channel_order": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "ht_sample_step": 0.02,
+          "ht_lookahead_distance": 2,
+          "ht_waypoint_reached_distance": 0.3,
+          "xytheta_cell": 0.3,
+          "xytheta_headings": 32,
+          "xytheta_turn_angles_deg": [
+            11.25,
+            22.5
+          ],
+          "xytheta_drive_step": 0.4,
+          "forward_speed": 0.5,
+          "reverse_speed": 0.25,
+          "max_yaw_rate": 0.8,
+          "xytheta_goal_radius": 0.35,
+          "xytheta_max_radius": 7,
+          "xytheta_max_expansions": 8000,
+          "xytheta_search_seconds": 0.15,
+          "try_direct_connection": true,
+          "startup_prior_initialized": false,
+          "publish_permission": true
+        },
+        "fixture_overrides": {
+          "ht_startup_radius": 1.5,
+          "ht_startup_duration": 30,
+          "ht_startup_assume_traversable": true,
+          "startup_prior_initialized": true
+        },
+        "scope": "offline HT-only first-step fixture; no collision cloud, motor or vehicle test"
+      },
+      "parameters_sha256": "9df0a7f71cbe0da1758e17380a47db444771535f16bc84ea789e2ecccf247da9",
+      "executable_sha256": "7a0eebd68de7f0b5921208b4b6b6140ba9dcec1874fe515a9b124c92e9e7ac4c",
+      "queries": [
+        {
+          "label": "first_step_0",
+          "map_file": "/home/lzz/HT_cuda_startup_20261031_134008/startup_fixture_v2_0000/recorded_first.cdr",
+          "map_sha256": "70dbc124a6ab76d2cc5715e150a2a385d9e104cb6d976325583a80477064a01d",
+          "source_stamp": {
+            "sec": 1793177602,
+            "nanosec": 361947775
+          },
+          "map_stamp_ns": 1793177602361947775,
+          "clock_ns": 1793177602361947775,
+          "map_frame": "map",
+          "map_status": "HT_MAP_FRESH",
+          "map_resolution": 0.04,
+          "start": [
+            -2.9308969093137445,
+            16.772326825650467,
+            -1.0397969371903117
+          ],
+          "goal": [
+            -2.5308969093137446,
+            16.772326825650467
+          ],
+          "start_support": "STARTUP_PRIOR",
+          "reached": true,
+          "termination": "REACHED",
+          "expanded": 0,
+          "dominated_edges_pruned": 0,
+          "direct_connection": true,
+          "seconds": 2.0997461714878893,
+          "search_wall_ms": 0.013491,
+          "path_length_m": 0.3999999999999999,
+          "rotation_rad": 1.0397969371903117,
+          "source_stamp_unchanged": true,
+          "independent_recheck_passed": true,
+          "all_segments_permitted": true,
+          "poses": [
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.0397969371903117
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.9902827973241064
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.9407686574579011
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.8912545175916958
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.8417403777254905
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.7922262378592851
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.7427120979930799
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.6931979581268746
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.6436838182606692
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.5941696783944639
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.5446555385282585
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.4951413986620532
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.44562725879584797
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.3961131189296426
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.3465989790634373
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.29708483919723194
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.2475706993310266
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.19805655946482137
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.14854241959861592
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.09902827973241068
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.04951413986620523
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              0
+            ],
+            [
+              -2.8808969093137446,
+              16.772326825650467,
+              0
+            ],
+            [
+              -2.8308969093137444,
+              16.772326825650467,
+              0
+            ],
+            [
+              -2.7808969093137446,
+              16.772326825650467,
+              0
+            ],
+            [
+              -2.7308969093137447,
+              16.772326825650467,
+              0
+            ],
+            [
+              -2.6808969093137445,
+              16.772326825650467,
+              0
+            ],
+            [
+              -2.6308969093137446,
+              16.772326825650467,
+              0
+            ],
+            [
+              -2.5808969093137444,
+              16.772326825650467,
+              0
+            ],
+            [
+              -2.5308969093137446,
+              16.772326825650467,
+              0
+            ]
+          ],
+          "segment_support": [
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR"
+          ]
+        },
+        {
+          "label": "first_step_1",
+          "map_file": "/home/lzz/HT_cuda_startup_20261031_134008/startup_fixture_v2_0000/recorded_first.cdr",
+          "map_sha256": "70dbc124a6ab76d2cc5715e150a2a385d9e104cb6d976325583a80477064a01d",
+          "source_stamp": {
+            "sec": 1793177602,
+            "nanosec": 361947775
+          },
+          "map_stamp_ns": 1793177602361947775,
+          "clock_ns": 1793177602361947775,
+          "map_frame": "map",
+          "map_status": "HT_MAP_FRESH",
+          "map_resolution": 0.04,
+          "start": [
+            -2.9308969093137445,
+            16.772326825650467,
+            -1.0397969371903117
+          ],
+          "goal": [
+            -2.6480541968391256,
+            17.055169538125085
+          ],
+          "start_support": "STARTUP_PRIOR",
+          "reached": true,
+          "termination": "REACHED",
+          "expanded": 0,
+          "dominated_edges_pruned": 0,
+          "direct_connection": true,
+          "seconds": 3.081493875734698,
+          "search_wall_ms": 0.023325000000000002,
+          "path_length_m": 0.3999999999999995,
+          "rotation_rad": 1.8251951005877594,
+          "source_stamp_unchanged": true,
+          "independent_recheck_passed": true,
+          "all_segments_permitted": true,
+          "poses": [
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.0397969371903117
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.9904673398771291
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.9411377425639463
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.8918081452507637
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.842478547937581
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.7931489506243983
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.7438193533112156
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.694489755998033
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.6451601586848503
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.5958305613716676
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.5465009640584849
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.49717136674530216
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.4478417694321195
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.39851217211893686
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.3491825748057541
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.29985297749257145
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.2505233801793888
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.20119378286620604
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.1518641855530234
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.10253458823984085
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.05320499092665809
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.00387539361347522
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              0.04545420369970743
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              0.09478380101288986
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              0.14411339832607273
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              0.19344299563925538
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              0.24277259295243803
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              0.2921021902656207
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              0.34143178757880355
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              0.3907613848919862
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              0.44009098220516885
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              0.4894205795183515
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              0.5387501768315341
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              0.588079774144717
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              0.6374093714578997
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              0.6867389687710821
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              0.736068566084265
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              0.7853981633974476
+            ],
+            [
+              -2.895541570254417,
+              16.807682164709796,
+              0.7853981633974475
+            ],
+            [
+              -2.86018623119509,
+              16.84303750376912,
+              0.7853981633974475
+            ],
+            [
+              -2.8248308921357626,
+              16.878392842828447,
+              0.7853981633974475
+            ],
+            [
+              -2.789475553076435,
+              16.913748181887776,
+              0.7853981633974475
+            ],
+            [
+              -2.7541202140171075,
+              16.949103520947105,
+              0.7853981633974475
+            ],
+            [
+              -2.71876487495778,
+              16.98445886000643,
+              0.7853981633974475
+            ],
+            [
+              -2.683409535898453,
+              17.019814199065756,
+              0.7853981633974475
+            ],
+            [
+              -2.6480541968391256,
+              17.055169538125085,
+              0.7853981633974475
+            ]
+          ],
+          "segment_support": [
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR"
+          ]
+        },
+        {
+          "label": "first_step_2",
+          "map_file": "/home/lzz/HT_cuda_startup_20261031_134008/startup_fixture_v2_0000/recorded_first.cdr",
+          "map_sha256": "70dbc124a6ab76d2cc5715e150a2a385d9e104cb6d976325583a80477064a01d",
+          "source_stamp": {
+            "sec": 1793177602,
+            "nanosec": 361947775
+          },
+          "map_stamp_ns": 1793177602361947775,
+          "clock_ns": 1793177602361947775,
+          "map_frame": "map",
+          "map_status": "HT_MAP_FRESH",
+          "map_resolution": 0.04,
+          "start": [
+            -2.9308969093137445,
+            16.772326825650467,
+            -1.0397969371903117
+          ],
+          "goal": [
+            -2.9308969093137445,
+            17.172326825650465
+          ],
+          "start_support": "STARTUP_PRIOR",
+          "reached": true,
+          "termination": "REACHED",
+          "expanded": 0,
+          "dominated_edges_pruned": 0,
+          "direct_connection": true,
+          "seconds": 2.5037492370057244,
+          "search_wall_ms": 0.013519,
+          "path_length_m": 0.3999999999999986,
+          "rotation_rad": 0.5309993896045848,
+          "source_stamp_unchanged": true,
+          "independent_recheck_passed": true,
+          "all_segments_permitted": true,
+          "poses": [
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.0397969371903117
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.0880696089725468
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.1363422807547816
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.1846149525370167
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.2328876243192517
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.2811602961014867
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.3294329678837216
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.3777056396659566
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.4259783114481916
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.4742509832304265
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.5225236550126615
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.5707963267948966
+            ],
+            [
+              -2.9308969093137445,
+              16.822326825650467,
+              -1.5707963267948966
+            ],
+            [
+              -2.9308969093137445,
+              16.872326825650468,
+              -1.5707963267948966
+            ],
+            [
+              -2.9308969093137445,
+              16.922326825650465,
+              -1.5707963267948966
+            ],
+            [
+              -2.9308969093137445,
+              16.972326825650466,
+              -1.5707963267948966
+            ],
+            [
+              -2.9308969093137445,
+              17.022326825650467,
+              -1.5707963267948966
+            ],
+            [
+              -2.9308969093137445,
+              17.072326825650464,
+              -1.5707963267948966
+            ],
+            [
+              -2.9308969093137445,
+              17.122326825650465,
+              -1.5707963267948966
+            ],
+            [
+              -2.9308969093137445,
+              17.172326825650465,
+              -1.5707963267948966
+            ]
+          ],
+          "segment_support": [
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR"
+          ]
+        },
+        {
+          "label": "first_step_3",
+          "map_file": "/home/lzz/HT_cuda_startup_20261031_134008/startup_fixture_v2_0000/recorded_first.cdr",
+          "map_sha256": "70dbc124a6ab76d2cc5715e150a2a385d9e104cb6d976325583a80477064a01d",
+          "source_stamp": {
+            "sec": 1793177602,
+            "nanosec": 361947775
+          },
+          "map_stamp_ns": 1793177602361947775,
+          "clock_ns": 1793177602361947775,
+          "map_frame": "map",
+          "map_status": "HT_MAP_FRESH",
+          "map_resolution": 0.04,
+          "start": [
+            -2.9308969093137445,
+            16.772326825650467,
+            -1.0397969371903117
+          ],
+          "goal": [
+            -3.2137396217883634,
+            17.055169538125085
+          ],
+          "start_support": "STARTUP_PRIOR",
+          "reached": true,
+          "termination": "REACHED",
+          "expanded": 0,
+          "dominated_edges_pruned": 0,
+          "direct_connection": true,
+          "seconds": 2.157998467241078,
+          "search_wall_ms": 0.008252,
+          "path_length_m": 0.3999999999999995,
+          "rotation_rad": 0.25439877379286435,
+          "source_stamp_unchanged": true,
+          "independent_recheck_passed": true,
+          "all_segments_permitted": true,
+          "poses": [
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.0397969371903117
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.9973971415581677
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.9549973459260236
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.9125975502938796
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.8701977546617355
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.8277979590295914
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.7853981633974474
+            ],
+            [
+              -2.9662522483730718,
+              16.807682164709796,
+              -0.7853981633974474
+            ],
+            [
+              -3.001607587432399,
+              16.84303750376912,
+              -0.7853981633974474
+            ],
+            [
+              -3.0369629264917264,
+              16.878392842828447,
+              -0.7853981633974474
+            ],
+            [
+              -3.072318265551054,
+              16.913748181887776,
+              -0.7853981633974474
+            ],
+            [
+              -3.1076736046103814,
+              16.949103520947105,
+              -0.7853981633974474
+            ],
+            [
+              -3.1430289436697088,
+              16.98445886000643,
+              -0.7853981633974474
+            ],
+            [
+              -3.178384282729036,
+              17.019814199065756,
+              -0.7853981633974474
+            ],
+            [
+              -3.2137396217883634,
+              17.055169538125085,
+              -0.7853981633974474
+            ]
+          ],
+          "segment_support": [
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR"
+          ]
+        },
+        {
+          "label": "first_step_4",
+          "map_file": "/home/lzz/HT_cuda_startup_20261031_134008/startup_fixture_v2_0000/recorded_first.cdr",
+          "map_sha256": "70dbc124a6ab76d2cc5715e150a2a385d9e104cb6d976325583a80477064a01d",
+          "source_stamp": {
+            "sec": 1793177602,
+            "nanosec": 361947775
+          },
+          "map_stamp_ns": 1793177602361947775,
+          "clock_ns": 1793177602361947775,
+          "map_frame": "map",
+          "map_status": "HT_MAP_FRESH",
+          "map_resolution": 0.04,
+          "start": [
+            -2.9308969093137445,
+            16.772326825650467,
+            -1.0397969371903117
+          ],
+          "goal": [
+            -3.3308969093137444,
+            16.772326825650467
+          ],
+          "start_support": "STARTUP_PRIOR",
+          "reached": true,
+          "termination": "REACHED",
+          "expanded": 0,
+          "dominated_edges_pruned": 0,
+          "direct_connection": true,
+          "seconds": 3.139746171487889,
+          "search_wall_ms": 0.013477,
+          "path_length_m": 0.3999999999999999,
+          "rotation_rad": 1.0397969371903117,
+          "source_stamp_unchanged": true,
+          "independent_recheck_passed": true,
+          "all_segments_permitted": true,
+          "poses": [
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.0397969371903117
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.9902827973241064
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.9407686574579011
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.8912545175916958
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.8417403777254905
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.7922262378592851
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.7427120979930799
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.6931979581268746
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.6436838182606692
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.5941696783944639
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.5446555385282585
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.4951413986620532
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.44562725879584797
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.3961131189296426
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.3465989790634373
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.29708483919723194
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.2475706993310266
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.19805655946482137
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.14854241959861592
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.09902827973241068
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.04951413986620523
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              0
+            ],
+            [
+              -2.9808969093137443,
+              16.772326825650467,
+              0
+            ],
+            [
+              -3.0308969093137446,
+              16.772326825650467,
+              0
+            ],
+            [
+              -3.0808969093137444,
+              16.772326825650467,
+              0
+            ],
+            [
+              -3.130896909313744,
+              16.772326825650467,
+              0
+            ],
+            [
+              -3.1808969093137445,
+              16.772326825650467,
+              0
+            ],
+            [
+              -3.2308969093137443,
+              16.772326825650467,
+              0
+            ],
+            [
+              -3.2808969093137446,
+              16.772326825650467,
+              0
+            ],
+            [
+              -3.3308969093137444,
+              16.772326825650467,
+              0
+            ]
+          ],
+          "segment_support": [
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR"
+          ]
+        },
+        {
+          "label": "first_step_5",
+          "map_file": "/home/lzz/HT_cuda_startup_20261031_134008/startup_fixture_v2_0000/recorded_first.cdr",
+          "map_sha256": "70dbc124a6ab76d2cc5715e150a2a385d9e104cb6d976325583a80477064a01d",
+          "source_stamp": {
+            "sec": 1793177602,
+            "nanosec": 361947775
+          },
+          "map_stamp_ns": 1793177602361947775,
+          "clock_ns": 1793177602361947775,
+          "map_frame": "map",
+          "map_status": "HT_MAP_FRESH",
+          "map_resolution": 0.04,
+          "start": [
+            -2.9308969093137445,
+            16.772326825650467,
+            -1.0397969371903117
+          ],
+          "goal": [
+            -3.2137396217883634,
+            16.48948411317585
+          ],
+          "start_support": "STARTUP_PRIOR",
+          "reached": true,
+          "termination": "REACHED",
+          "expanded": 0,
+          "dominated_edges_pruned": 0,
+          "direct_connection": true,
+          "seconds": 2.4454969412525416,
+          "search_wall_ms": 0.015099999999999999,
+          "path_length_m": 0.3999999999999995,
+          "rotation_rad": 1.316397553002034,
+          "source_stamp_unchanged": true,
+          "independent_recheck_passed": true,
+          "all_segments_permitted": true,
+          "poses": [
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.0397969371903117
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.088552402116313
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.1373078670423142
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.1860633319683156
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.2348187968943167
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.283574261820318
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.3323297267463192
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.3810851916723206
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.429840656598322
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.478596121524323
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.5273515864503242
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.5761070513763256
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.624862516302327
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.673617981228328
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.7223734461543294
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.7711289110803308
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.819884376006332
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.868639840932333
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.9173953058583344
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.9661507707843358
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -2.014906235710337
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -2.063661700636338
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -2.1124171655623396
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -2.1611726304883407
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -2.209928095414342
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -2.2586835603403435
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -2.3074390252663446
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -2.3561944901923457
+            ],
+            [
+              -2.9662522483730718,
+              16.736971486591138,
+              -2.3561944901923457
+            ],
+            [
+              -3.001607587432399,
+              16.701616147531812,
+              -2.3561944901923457
+            ],
+            [
+              -3.0369629264917264,
+              16.666260808472487,
+              -2.3561944901923457
+            ],
+            [
+              -3.072318265551054,
+              16.630905469413158,
+              -2.3561944901923457
+            ],
+            [
+              -3.1076736046103814,
+              16.59555013035383,
+              -2.3561944901923457
+            ],
+            [
+              -3.1430289436697088,
+              16.560194791294503,
+              -2.3561944901923457
+            ],
+            [
+              -3.178384282729036,
+              16.524839452235177,
+              -2.3561944901923457
+            ],
+            [
+              -3.2137396217883634,
+              16.48948411317585,
+              -2.3561944901923457
+            ]
+          ],
+          "segment_support": [
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR"
+          ]
+        },
+        {
+          "label": "first_step_6",
+          "map_file": "/home/lzz/HT_cuda_startup_20261031_134008/startup_fixture_v2_0000/recorded_first.cdr",
+          "map_sha256": "70dbc124a6ab76d2cc5715e150a2a385d9e104cb6d976325583a80477064a01d",
+          "source_stamp": {
+            "sec": 1793177602,
+            "nanosec": 361947775
+          },
+          "map_stamp_ns": 1793177602361947775,
+          "clock_ns": 1793177602361947775,
+          "map_frame": "map",
+          "map_status": "HT_MAP_FRESH",
+          "map_resolution": 0.04,
+          "start": [
+            -2.9308969093137445,
+            16.772326825650467,
+            -1.0397969371903117
+          ],
+          "goal": [
+            -2.9308969093137445,
+            16.372326825650468
+          ],
+          "start_support": "STARTUP_PRIOR",
+          "reached": true,
+          "termination": "REACHED",
+          "expanded": 0,
+          "dominated_edges_pruned": 0,
+          "direct_connection": true,
+          "seconds": 1.4637492370057281,
+          "search_wall_ms": 0.009252,
+          "path_length_m": 0.3999999999999986,
+          "rotation_rad": 0.5309993896045848,
+          "source_stamp_unchanged": true,
+          "independent_recheck_passed": true,
+          "all_segments_permitted": true,
+          "poses": [
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.0397969371903117
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.0880696089725468
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.1363422807547816
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.1846149525370167
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.2328876243192517
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.2811602961014867
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.3294329678837216
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.3777056396659566
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.4259783114481916
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.4742509832304265
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.5225236550126615
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.5707963267948966
+            ],
+            [
+              -2.9308969093137445,
+              16.722326825650466,
+              -1.5707963267948966
+            ],
+            [
+              -2.9308969093137445,
+              16.672326825650465,
+              -1.5707963267948966
+            ],
+            [
+              -2.9308969093137445,
+              16.622326825650468,
+              -1.5707963267948966
+            ],
+            [
+              -2.9308969093137445,
+              16.572326825650467,
+              -1.5707963267948966
+            ],
+            [
+              -2.9308969093137445,
+              16.522326825650467,
+              -1.5707963267948966
+            ],
+            [
+              -2.9308969093137445,
+              16.47232682565047,
+              -1.5707963267948966
+            ],
+            [
+              -2.9308969093137445,
+              16.42232682565047,
+              -1.5707963267948966
+            ],
+            [
+              -2.9308969093137445,
+              16.372326825650468,
+              -1.5707963267948966
+            ]
+          ],
+          "segment_support": [
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR"
+          ]
+        },
+        {
+          "label": "first_step_7",
+          "map_file": "/home/lzz/HT_cuda_startup_20261031_134008/startup_fixture_v2_0000/recorded_first.cdr",
+          "map_sha256": "70dbc124a6ab76d2cc5715e150a2a385d9e104cb6d976325583a80477064a01d",
+          "source_stamp": {
+            "sec": 1793177602,
+            "nanosec": 361947775
+          },
+          "map_stamp_ns": 1793177602361947775,
+          "clock_ns": 1793177602361947775,
+          "map_frame": "map",
+          "map_status": "HT_MAP_FRESH",
+          "map_resolution": 0.04,
+          "start": [
+            -2.9308969093137445,
+            16.772326825650467,
+            -1.0397969371903117
+          ],
+          "goal": [
+            -2.6480541968391256,
+            16.48948411317585
+          ],
+          "start_support": "STARTUP_PRIOR",
+          "reached": true,
+          "termination": "REACHED",
+          "expanded": 0,
+          "dominated_edges_pruned": 0,
+          "direct_connection": true,
+          "seconds": 1.1179984672410792,
+          "search_wall_ms": 0.007710000000000001,
+          "path_length_m": 0.3999999999999995,
+          "rotation_rad": 0.25439877379286424,
+          "source_stamp_unchanged": true,
+          "independent_recheck_passed": true,
+          "all_segments_permitted": true,
+          "poses": [
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -1.0397969371903117
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.9973971415581677
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.9549973459260237
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.9125975502938797
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.8701977546617355
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.8277979590295915
+            ],
+            [
+              -2.9308969093137445,
+              16.772326825650467,
+              -0.7853981633974475
+            ],
+            [
+              -2.895541570254417,
+              16.736971486591138,
+              -0.7853981633974475
+            ],
+            [
+              -2.86018623119509,
+              16.701616147531812,
+              -0.7853981633974475
+            ],
+            [
+              -2.8248308921357626,
+              16.666260808472487,
+              -0.7853981633974475
+            ],
+            [
+              -2.789475553076435,
+              16.630905469413158,
+              -0.7853981633974475
+            ],
+            [
+              -2.7541202140171075,
+              16.59555013035383,
+              -0.7853981633974475
+            ],
+            [
+              -2.71876487495778,
+              16.560194791294503,
+              -0.7853981633974475
+            ],
+            [
+              -2.683409535898453,
+              16.524839452235177,
+              -0.7853981633974475
+            ],
+            [
+              -2.6480541968391256,
+              16.48948411317585,
+              -0.7853981633974475
+            ]
+          ],
+          "segment_support": [
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR",
+            "STARTUP_PRIOR"
+          ]
+        }
+      ]
+    }
+  }
+}

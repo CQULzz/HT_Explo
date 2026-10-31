@@ -116,3 +116,6 @@ RViz中：灰点是实测高程，外围红绿是HT最佳概率；白圈是0.6m�
 独立CuPy发布补丁由`tools/install_elevation_fixes.py --workspace /path/to/independent_cupy_ws --publication-performance`安装，只改已知ROS wrapper，不切换融合/配准或trial参数；按原独立build/install路径重建。无订阅时跳过地图锁/GPU取图；有订阅时仍发完整图。需要无订阅录制/捕获的发布器可设`publish_without_subscribers: true`，离线预加载默认保持无条件发布。不使用重复旧图、降低阈值或放宽时效制造高频。
 
 641帧有效录包点云与117帧高程的新旧转换全部字段及载荷字节一致；235项回归通过。本机点云转换中位数20.83→10.72ms，P95 25.62→11.72ms，均不含DDS与在线排队，尚未在Jetson部署或保证车上频率。[输入桥接报告](../results/real_input_pipeline_2026-10-30/REPORT.md)保留完整慢帧、失败尝试及版本哈希。
+
+
+2026-10-31新增CUDA上下文与固定启动许可，见[本轮说明](HT_CUDA_STARTUP.md)。HT环境需要与CUDA兼容的CuPy/NVRTC来运行新上下文；`ht_context_backend=auto`会在不可用时明确告警并使用NumPy，`cuda`显式要求该后端。模型的CUDA设备配置保持独立。部署时同时重建规划器与跟踪器的StartupPrior消息接口。新策略仍仅完成x86离线验证，尚无Jetson/ARM实测。

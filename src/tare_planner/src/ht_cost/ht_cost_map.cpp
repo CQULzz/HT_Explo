@@ -50,6 +50,7 @@ HtCostMap::HtCostMap(rclcpp::Node::SharedPtr node,bool publish_permission)
   geometric_fallback_=policy=="geometric_fallback";
   prior_.radius=node->declare_parameter<double>("ht_startup_radius",1.2);
   prior_.lifetime=node->declare_parameter<double>("ht_startup_duration",30.0);
+  prior_.assume_traversable=node->declare_parameter<bool>("ht_startup_assume_traversable",false);
   fallback_lookahead_=node->declare_parameter<double>("ht_fallback_lookahead",0.5);
   fallback_speed_=node->declare_parameter<double>("ht_fallback_speed",0.2);
   budget_.max_seconds=node->declare_parameter<double>("ht_fallback_max_seconds",60.0);
@@ -123,7 +124,7 @@ void HtCostMap::publishStartupPrior() {
   msg.header.stamp=rclcpp::Time(static_cast<int64_t>(std::llround(prior.start*1e9)),clock_->get_clock_type());
   msg.expires_at=rclcpp::Time(static_cast<int64_t>(std::llround((prior.start+prior.lifetime)*1e9)),clock_->get_clock_type());
   msg.anchor.x=prior.anchor.x;msg.anchor.y=prior.anchor.y;msg.anchor.z=prior.anchor.z;
-  msg.radius=prior.radius;msg.retired=prior.retired;
+  msg.radius=prior.radius;msg.retired=prior.retired;msg.assume_traversable=prior.assume_traversable;
   startup_pub_->publish(msg);
 }
 
@@ -162,13 +163,14 @@ void HtCostMap::receiveStartupPrior(const tare_planner::msg::StartupPrior& msg) 
   std::lock_guard<std::mutex> lock(prior_mutex_);
   if (prior_.initialized && (std::abs(prior_.start-start)>1e-6 ||
       std::abs(prior_.start+prior_.lifetime-expiry)>1e-6 || prior_.radius!=msg.radius ||
-      prior_.anchor.x!=p.x || prior_.anchor.y!=p.y || prior_.anchor.z!=p.z)) {
+      prior_.anchor.x!=p.x || prior_.anchor.y!=p.y || prior_.anchor.z!=p.z ||
+      prior_.assume_traversable!=msg.assume_traversable)) {
     // A follower must not silently join another mission or reset its disk.
     startup_sync_fault_=true;prior_.retired=true;return;
   }
   if (!prior_.initialized) {
     prior_.initialize({p.x,p.y,p.z},start);
-    prior_.radius=msg.radius;prior_.lifetime=expiry-start;
+    prior_.radius=msg.radius;prior_.lifetime=expiry-start;prior_.assume_traversable=msg.assume_traversable;
   }
   // Even tolerated floating-point round trips cannot accumulate time/radius.
   prior_.retired=prior_.retired || msg.retired || now>=prior_.start+prior_.lifetime;
@@ -346,17 +348,25 @@ void HtCostMap::receive(grid_map_msgs::msg::GridMap::ConstSharedPtr msg) {
   }
 }
 std::vector<HtCostMap::TerrainCell> HtCostMap::terrainWindow(double x,double y,double radius) {
+  const auto prior=startupPrior();
   std::lock_guard<std::mutex> lock(mutex_);
-  return terrain_history_.window(x,y,radius);
+  auto cells=terrain_history_.window(x,y,radius);
+  if (prior.assume_traversable) for (auto& cell:cells)
+    if (prior.contains(cell.x,cell.y)) cell.feasible=true;
+  return cells;
 }
 bool HtCostMap::terrainAdmissible(double x,double y) {
+  const auto prior=startupPrior();
+  if (prior.assume_traversable && prior.contains(x,y)) return true;
   std::lock_guard<std::mutex> lock(mutex_);
   return terrainGuidanceAllowed(terrain_history_,latest_.get(),configuration_scores_,x,y);
 }
 std::vector<bool> HtCostMap::terrainAdmissible(const std::vector<Point>& points) {
+  const auto prior=startupPrior();
   std::lock_guard<std::mutex> lock(mutex_);std::vector<bool> allowed;allowed.reserve(points.size());
   for(const auto& p:points) {
-    allowed.push_back(terrainGuidanceAllowed(terrain_history_,latest_.get(),configuration_scores_,p.x,p.y));
+    allowed.push_back((prior.assume_traversable && prior.contains(p.x,p.y)) ||
+      terrainGuidanceAllowed(terrain_history_,latest_.get(),configuration_scores_,p.x,p.y));
   }
   return allowed;
 }
@@ -481,6 +491,10 @@ Support HtCostMap::supportDirected(const Point& a,const Point& b,double heading)
   auto inspect=[&](int r,int c) {
     if (r<0 || c<0 || r>=cycle_->rows || c>=cycle_->cols) return Support::UNKNOWN;
     const size_t index=static_cast<size_t>(r)*cycle_->cols+c;
+    const double mx=(cycle_->rows*.5-r-.5)*res,my=(cycle_->cols*.5-c-.5)*res;
+    const double cx=cycle_->center_x+co*mx-si*my,cy=cycle_->center_y+si*mx+co*my;
+    // Explicit mission-local HT override; original observations remain intact.
+    if (prior.assume_traversable && prior.contains(cx,cy)) return Support::STARTUP_PRIOR;
     if (cycle_->blocked_footprint[channel][index]) return Support::BLOCKED;
     if (cycle_->valid[index] && cycle_->probabilities[channel][index]<min_probability_)
       return Support::BLOCKED;
@@ -488,8 +502,6 @@ Support HtCostMap::supportDirected(const Point& a,const Point& b,double heading)
     // Unknown uses the same rasterized support mask as known-unsafe terrain.
     // Re-scanning at arbitrary sub-cell offsets made split edges disagree.
     if (!prior.initialized || prior.retired) return Support::UNKNOWN;
-    const double mx=(cycle_->rows*.5-r-.5)*res,my=(cycle_->cols*.5-c-.5)*res;
-    const double cx=cycle_->center_x+co*mx-si*my,cy=cycle_->center_y+si*mx+co*my;
     if (!cycle_->valid[index] && !prior.contains(cx,cy)) return Support::UNKNOWN;
     const int radius=static_cast<int>(std::ceil(footprint_radius_/res))+1;
     Support s=Support::STARTUP_PRIOR;

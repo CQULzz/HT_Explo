@@ -1,0 +1,16 @@
+{
+  "request": "使用cuda提速；稍微扩大起点；默认前30s区域可通行，期间不考虑观测变化",
+  "radius_m": 1.5,
+  "duration_s": 30,
+  "override": "HT/terrain only, fixed anchor, no early leave retirement",
+  "retained": "independent collision, emergency/communications, localization/map freshness, explicit drive mode",
+  "cuda": "exact SciPy-compatible nearest feature ties and FP32 support; device input shared with PyTorch",
+  "gates": {
+    "input_and_mask_exact": true,
+    "no_threshold_flips": true,
+    "max_probability_error": 2e-05,
+    "median_reduction_at_least_5_percent": true,
+    "p95_regression_no_more_than_5_percent": true
+  },
+  "no_devices_or_simulation": true
+}

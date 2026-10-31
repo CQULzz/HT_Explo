@@ -404,6 +404,10 @@ int main() {
   prior.update({1.3,0,0},11);check(!prior.contains(0,0));
   prior.update({0,0,0},12);check(!prior.contains(0,0));
   StartupPrior expired;expired.initialize({},10);expired.update({},40);check(!expired.contains(0,0));
+  StartupPrior fixed;fixed.assume_traversable=true;fixed.radius=1.5;fixed.initialize({},10);
+  fixed.update({2,0,0},11);check(fixed.contains(0,0));check(!fixed.contains(2,0));
+  fixed.update({},39.999);check(fixed.contains(1.49,0));
+  fixed.update({},40);check(!fixed.contains(0,0));
   FallbackBudget budget;budget.max_seconds=2;budget.max_distance=1;
   budget.update(0,{},false);budget.update(1,{0.6,0,0},true);check(!budget.exhausted());
   budget.update(10,{5,0,0},false);near(budget.seconds,1);near(budget.distance,0.6);

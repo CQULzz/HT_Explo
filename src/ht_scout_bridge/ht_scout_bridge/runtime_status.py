@@ -94,6 +94,7 @@ class RuntimeStatus(Node):
             'input':self.current('input',3.),'ht_input':self.current('ht_input',3.),'odometry_age_s':odom_age,
             'ht_map_age_s':map_age,'mapping_verified':self.mapping,'terrain_response_validated':self.terrain,
             'direction_acceptance':self.acceptance,'startup_prior_active':active,'startup_remaining_s':remaining,
+            'startup_assume_traversable':bool(self.prior and getattr(self.prior,'assume_traversable',False)),
             'motor_output_enabled':self.mode=='drive','wheel_motion_confirmed':False}
         if self.command:
             result['command']={'topic':self.command_topic,'age_s':now-self.stamp(self.command),
