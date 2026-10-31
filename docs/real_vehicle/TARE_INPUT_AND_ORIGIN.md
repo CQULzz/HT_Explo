@@ -11,3 +11,6 @@
 可选共享内存配置位于包内`config/fastdds_large_clouds.xml`。使用Fast DDS时，`dds_profile:=/绝对路径/fastdds_large_clouds.xml`会在本launch的子进程中设置`FASTRTPS_DEFAULT_PROFILES_FILE`；默认空，不改当前DDS配置。独立雷达、配准、CuPy进程不继承这个launch的环境，应在各自启动环境分别设置同一文件，才能比较整条链路。不改内核或全局网络。本机16MiB补充测试两次160/160；车上实际FastDDS版本和配置仍未验收。
 
 构建/部署继续使用实车分支和独立工作区。该版本仅代码/离线验证，不能把一次良好输入率或观测原点修正视为已经解决提前完成、所有近车未知或车上吞吐问题。
+
+
+安装补丁`real-scout-tare-input-fix-20261101-r1`补齐XML的data_files规则；全新安装的share/ht_scout_bridge/config/fastdds_large_clouds.xml已逐字节核对。原实验tag保持不动，算法与数据沿用原候选，见[安装核对](../results/real_tare_input_fix_2026-11-01/PACKAGING_FIX.md)。

@@ -3,7 +3,7 @@ from glob import glob
 setup(name='ht_scout_bridge', version='0.1.0', packages=['ht_scout_bridge'],
       data_files=[('share/ament_index/resource_index/packages',['resource/ht_scout_bridge']),
                   ('share/ht_scout_bridge',['package.xml']),
-                  ('share/ht_scout_bridge/config',glob('config/*.yaml')),
+                  ('share/ht_scout_bridge/config',glob('config/*.yaml')+glob('config/*.xml')),
                   ('share/ht_scout_bridge/launch',glob('launch/*.launch.py')),
                   ('share/ht_scout_bridge/rviz',glob('rviz/*.rviz'))],
       install_requires=['setuptools'], zip_safe=True,

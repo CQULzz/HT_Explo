@@ -2,6 +2,8 @@
 
 **URDF→静态TF和base_link定位转换一致；TARE接入层混用了车体原点与雷达观测原点，已修正。** 本机复现的大点云接收问题明显改善，仍有一次连续9帧缺口。没有完成车上ARM或完整TARE闭环验收，不能宣称提前结束、无法起步或降频已经全部解决。
 
+部署包装补丁见[PACKAGING_FIX.md](PACKAGING_FIX.md)：r1仅补齐可选XML安装，原实验tag和冻结数据保持。
+
 固定版本`real-scout-tare-input-fix-20261101`，目标分支`real/scout-helios32`。确切提交、附件和远端SHA以本目录发布回执为准。独立CuPy工作区未修改、未加载；使用本轮独立build/install，没有覆盖原build_real/install_real，没有启动设备、仿真或车辆，没有操作待审周报。
 
 ## 输入与已有事实
