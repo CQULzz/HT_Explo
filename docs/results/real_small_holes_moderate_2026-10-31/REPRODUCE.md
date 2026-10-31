@@ -1,0 +1,9 @@
+# 复现
+
+使用已有GPU Python并source scripts/source_real_scout.sh，只加载实车工作区。原117张native_stream.pkl和stationary_required_topics.db3复用RAW_SOURCE_ASSETS引用的已校验数据，不重新解压或覆盖。
+
+完整归档run_validation.py记录全部三轮命令，baseline不传新参数，candidate传--parameter ht_small_hole_profile:=moderate。audit_profiles.py双调用同参保存profile_audit，耗时不计性能；installed_check对照冻结candidate_1。首次5帧保留但不计统计，所有其余慢帧保留。
+
+构建bash scripts/build_real_scout.sh。Python检查显式选取tools/ht_cupy_bridge/test_*.py和src/ht_scout_bridge/test/test_*.py，排除依赖独立CuPy节点的test_cupy_tf_worker_ros.py、test_publication_demand.py。C++未改，本轮不重跑。
+
+独立ROS_DOMAIN_ID、ROS_AUTOMATIC_DISCOVERY_RANGE=LOCALHOST；不启动设备或仿真。归档采用zstd长窗口去重压缩，tar成员逐文件大小和SHA256全验证，未省略任何本轮科学数据。

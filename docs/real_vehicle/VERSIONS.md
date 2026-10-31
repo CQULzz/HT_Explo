@@ -16,6 +16,7 @@
 
 | Tag | tag指向的完整提交 | 算法修复提交 | 资料 |
 |---|---|---|---|
+| [`real-scout-small-holes-moderate-20261031`](https://github.com/CQULzz/HT_Explo/tree/real-scout-small-holes-moderate-20261031) | 完整SHA见回执，沿用远端实车祖先 | 适度放宽小孔填补，新增插值影响模型输出；旧观测/填补/支持保持，321项检查通过；无ARM/实车验收 | [Release](https://github.com/CQULzz/HT_Explo/releases/tag/real-scout-small-holes-moderate-20261031)、[报告](../results/real_small_holes_moderate_2026-10-31/REPORT.md) |
 | [`real-scout-cuda-startup-20261031`](https://github.com/CQULzz/HT_Explo/tree/real-scout-cuda-startup-20261031) | 完整SHA见本轮发布回执，沿用远端实车祖先 | CUDA上下文；启动区域1.5m固定30s覆盖HT观测许可；中位改善7.93%、P95改善27.35%，仍有慢帧，未验收ARM/实车 | [Release](https://github.com/CQULzz/HT_Explo/releases/tag/real-scout-cuda-startup-20261031)、[报告](../results/real_cuda_startup_2026-10-31/REPORT.md) |
 | [`real-scout-ht-latency-20261031`](https://github.com/CQULzz/HT_Explo/tree/real-scout-ht-latency-20261031) | 完整SHA见本轮发布回执，以远端实车父提交叠加 | 小孔候选精确减负、延迟/原因/资源诊断与退出修复；中位减少11.8%、P95减少8.5%，仍有极慢帧，ARM/实车未验收 | [Release](https://github.com/CQULzz/HT_Explo/releases/tag/real-scout-ht-latency-20261031)、[报告](../results/real_ht_latency_2026-10-31/REPORT.md) |
 | [`real-scout-system-foundation-20261030`](https://github.com/CQULzz/HT_Explo/tree/real-scout-system-foundation-20261030) | 完整SHA见发布回执；以远端实车历史追加，不移动旧tag | 候选：运行身份、有界诊断和地形历史索引；不约束调度HT回调P95未通过，用户明确要求上传，不代表实车验收 | [Release](https://github.com/CQULzz/HT_Explo/releases/tag/real-scout-system-foundation-20261030)、[报告](../results/real_system_foundation_2026-10-30/REPORT.md) |

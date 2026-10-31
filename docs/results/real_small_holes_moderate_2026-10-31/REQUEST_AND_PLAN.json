@@ -1,0 +1,40 @@
+{
+  "request": "稍放宽小孔填补",
+  "profiles": {
+    "strict": {
+      "nearest_m": 0.12,
+      "window_radius_m": 0.16,
+      "minimum_samples": 12,
+      "quadrant_samples": 2,
+      "rms_m": 0.006
+    },
+    "moderate": {
+      "nearest_m": 0.18,
+      "window_radius_m": 0.16,
+      "minimum_samples": 8,
+      "quadrant_samples": 1,
+      "rms_m": 0.01
+    }
+  },
+  "retained": {
+    "slope": 0.35,
+    "jump_m": 0.018,
+    "fresh_age_s": 2.0,
+    "variance_max": 0.25,
+    "model_threshold": 0.5,
+    "no_observation_support_expansion": true,
+    "no_history_writeback": true,
+    "no_iterative_growth": true,
+    "startup_policy_unchanged": true
+  },
+  "gates": {
+    "measured_values_and_support_masks_exact": true,
+    "protection_and_negative_feature_tests_pass": true,
+    "full_117_frame_replay": true,
+    "p95_callback_regression_no_more_than_10_percent": true,
+    "original_strict_filled_pixels_and_heights_preserved": true
+  },
+  "model_predictions_may_change": true,
+  "no_vehicle_or_simulation": true,
+  "design_note": "Keep the same support window/fit arithmetic so acceptance is monotonic and original filled pixels retain their exact heights; expand eligibility only."
+}

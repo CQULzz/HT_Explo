@@ -1,7 +1,7 @@
 """Bounded local interpolation; never persisted as a new observation.
 
 Small gaps require fresh, quality-approved samples in all four quadrants,
-a nearest measurement within 12cm and a locally planar 9x9 window at 4cm resolution. Unobserved pits are intrinsically ambiguous:
+profile-bounded nearest measurements and locally planar support. Unobserved pits are intrinsically ambiguous:
 this is a bounded interpolation assumption, not negative-obstacle detection.
 """
 import numpy as np
@@ -9,6 +9,11 @@ from functools import lru_cache
 from scipy.ndimage import label,uniform_filter,maximum_filter,minimum_filter,distance_transform_edt
 from small_hole_kernels import warmup_small_holes,distance_offsets
 
+
+HOLE_PROFILES={
+    'strict':{'nearest_m':.12,'minimum_samples':12,'quadrant_samples':2,'rms_m':.006},
+    'moderate':{'nearest_m':.18,'minimum_samples':8,'quadrant_samples':1,'rms_m':.010},
+}
 
 @lru_cache(maxsize=8)
 def _geometry(shape,resolution):
@@ -19,7 +24,8 @@ def _geometry(shape,resolution):
 
 
 def repair_small_holes(height, observed, rejected, obstacle, fresh_height,
-                       fresh_variance, fresh_age, resolution, protected=None, *, backend='auto'):
+                       fresh_variance, fresh_age, resolution, protected=None, *, backend='auto', profile='strict'):
+    if profile not in HOLE_PROFILES:raise ValueError('Unknown small-hole profile')
     z=np.asarray(height,np.float32)
     arrays=[np.asarray(v) for v in (observed,rejected,obstacle,fresh_height,fresh_variance,fresh_age)]
     if z.ndim!=2 or any(v.shape!=z.shape for v in arrays) or not .02<=resolution<=.1:
@@ -33,7 +39,7 @@ def repair_small_holes(height, observed, rejected, obstacle, fresh_height,
     # Fit every candidate from original measurements in one vectorized pass.
     # No iterative propagation and no fitted value enters the historical map.
     _,kernel=warmup_small_holes(backend)
-    output,filled=_narrow_gaps(z,observed,blocked,current,var,age,resolution,kernel=kernel)
+    output,filled=_narrow_gaps(z,observed,blocked,current,var,age,resolution,kernel=kernel,settings=HOLE_PROFILES[profile])
     _,missing_components=label(~np.isfinite(z),structure=np.ones((3,3)))
     _,filled_components=label(filled,structure=np.ones((3,3)))
     stats={'candidate_components':missing_components,'filled_components':filled_components,
@@ -41,7 +47,8 @@ def repair_small_holes(height, observed, rejected, obstacle, fresh_height,
     return output,filled,stats
 
 
-def _narrow_gaps(z,observed,blocked,current,var,age,resolution,*,kernel=None):
+def _narrow_gaps(z,observed,blocked,current,var,age,resolution,*,kernel=None,settings=None):
+    settings=HOLE_PROFILES['strict'] if settings is None else settings
     radius=max(1,int(np.floor(.16/resolution+1e-8)));size=2*radius+1
     known=(np.asarray(observed,bool)&np.isfinite(z)&np.isfinite(current)&np.isfinite(var)
         &(var>=0)&(var<=.25)&np.isfinite(age)&(age>=-.001)&(age<=2.)
@@ -51,7 +58,7 @@ def _narrow_gaps(z,observed,blocked,current,var,age,resolution,*,kernel=None):
     count=known_mean*size**2
     changed_surface=np.isfinite(z)&np.isfinite(current)&(np.abs(current-z)>.03)&np.isfinite(age)&(age<=2.)
     protected=maximum_filter(blocked|changed_surface,size=size,mode='constant')
-    candidate=~np.isfinite(z)&~protected&(count>=12)
+    candidate=~np.isfinite(z)&~protected&(count>=settings['minimum_samples'])
     # Integrals count original samples strictly in each of four quadrants.
     n,m=z.shape
     if kernel is None:
@@ -65,8 +72,8 @@ def _narrow_gaps(z,observed,blocked,current,var,age,resolution,*,kernel=None):
                 c0=np.maximum(0,cc-radius) if dc<0 else np.minimum(m,cc+1)
                 c1=cc if dc<0 else np.minimum(m,cc+radius+1)
                 q=ii[r1[:,None],c1]-ii[r0[:,None],c1]-ii[r1[:,None],c0]+ii[r0[:,None],c0]
-                candidate&=q>=2
-        candidate&=distance_transform_edt(~known)*resolution<=.12+1e-9
+                candidate&=q>=settings['quadrant_samples']
+        candidate&=distance_transform_edt(~known)*resolution<=settings['nearest_m']+1e-9
     else:
         if not np.any(candidate):return z,np.zeros(z.shape,bool)
         # Identical integral counts, indexed only at original candidates.
@@ -81,9 +88,9 @@ def _narrow_gaps(z,observed,blocked,current,var,age,resolution,*,kernel=None):
                 c0=np.maximum(0,cc-radius) if dc<0 else np.minimum(m,cc+1)
                 c1=cc if dc<0 else np.minimum(m,cc+radius+1)
                 q=integral[r1,c1]-integral[r0,c1]-integral[r1,c0]+integral[r0,c0]
-                eligible&=q>=2
+                eligible&=q>=settings['quadrant_samples']
         rr=np.ascontiguousarray(rr[eligible]);cc=np.ascontiguousarray(cc[eligible])
-        close=kernel(np.ascontiguousarray(known),rr,cc,distance_offsets(float(resolution)))
+        close=kernel(np.ascontiguousarray(known),rr,cc,distance_offsets(float(resolution),settings['nearest_m']))
         candidate[:]=False
         candidate[rr[close],cc[close]]=True
     if not np.any(candidate):return z,np.zeros(z.shape,bool)
@@ -105,7 +112,7 @@ def _narrow_gaps(z,observed,blocked,current,var,age,resolution,*,kernel=None):
     rms=np.sqrt(np.maximum(0.,zz-a*xz-b*yz));pred=ez+a*(x[index]-ex)+b*(y[index]-ey)
     lo=minimum_filter(np.where(known,z,np.inf),size=size,mode='constant',cval=np.inf)[index]
     hi=maximum_filter(np.where(known,z,-np.inf),size=size,mode='constant',cval=-np.inf)[index]
-    accepted=good&(np.hypot(a,b)<=.35)&(rms<=.006)&(pred>=lo-.01)&(pred<=hi+.01)
+    accepted=good&(np.hypot(a,b)<=.35)&(rms<=settings['rms_m'])&(pred>=lo-.01)&(pred<=hi+.01)
     # Reject measured jumps at the edge of the support window (including pits).
     jumps=np.zeros(z.shape,bool)
     v=known[:-1]&known[1:]&(np.abs(np.diff(z,axis=0))>.018)

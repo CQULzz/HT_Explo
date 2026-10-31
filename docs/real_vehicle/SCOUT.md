@@ -104,3 +104,6 @@ CUDA 的 `ht_channels_last` 默认改为 false（连续 NCHW）；CPU 默认仍 
 `ht_quality_backend` 可选 auto/numpy/numba，默认 auto；Numba 不可用时用原 NumPy 实现，显式 numba 不可用则报错。只编译邻域掩码判断（串行、无 fastmath），只在已满足原平滑条件的格子执行原 NumPy 平滑计算，保留源质量判断和历史图过滤两次处理。启动时预热，不刷新输入时间戳。
 
 本机同一实车输入的全部输出图层精确一致，157项测试通过；两次过滤合计约140→20毫秒，完整回调369→238毫秒。静止短测约3.60Hz、地图年龄中位数0.54秒；仍未达到10Hz，中心 HT 上下文有效性仍未通过。速度输出保持关闭。完整证据见 `validation/jetson_scout_2026-10-23/quality_optimization/REPORT.md`。
+
+
+2026-10-31实车小孔填补默认moderate：最近邻18cm、总8点、四象限各1点、RMS10mm；其余保护与原测量/支撑保持。可设ht_small_hole_profile=strict回到旧强度，见[参数与边界](SMALL_HOLE_PROFILES.md)。新增插值会影响模型概率，不保证所有0.5判定不变。

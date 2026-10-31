@@ -36,6 +36,7 @@ def test_actual_launch_modes_and_start_topic(monkeypatch,mode):
     assert rows['cupy_to_ht.py']['params']['ht_history_backend']=='auto'
     assert rows['cupy_to_ht.py']['params']['ht_fuse_bn'] is True
     assert rows['cupy_to_ht.py']['params']['ht_small_hole_backend']=='auto'
+    assert rows['cupy_to_ht.py']['params']['ht_small_hole_profile']=='moderate'
     assert rows['cupy_to_ht.py']['params']['ht_context_backend']=='auto'
     assert rows['cupy_to_ht.py']['params']['ht_profile_runtime'] is True
     assert rows['cupy_to_ht.py']['params']['ht_reason_interval_s']==1.

@@ -17,10 +17,12 @@ def _near_known(known,rows,columns,offsets):
 
 
 @lru_cache(maxsize=32)
-def distance_offsets(resolution):
-    radius=int(np.ceil((.12+1e-9)/resolution))
+def distance_offsets(resolution,maximum_distance=.12):
+    if not np.isfinite(resolution) or resolution<=0 or maximum_distance not in (.12,.18):
+        raise ValueError('Invalid bounded-distance geometry')
+    radius=int(np.ceil((maximum_distance+1e-9)/resolution))
     offsets=np.array([(r,c) for r in range(-radius,radius+1) for c in range(-radius,radius+1)
-                      if np.sqrt(float(r*r+c*c))*resolution<=.12+1e-9],np.int64).reshape(-1,2)
+                      if np.sqrt(float(r*r+c*c))*resolution<=maximum_distance+1e-9],np.int64).reshape(-1,2)
     offsets.flags.writeable=False
     return offsets
 

@@ -12,6 +12,7 @@
 
 | 固定版本 tag | 主要内容 | 对应资料 |
 |---|---|---|
+| `real-scout-small-holes-moderate-20261031` | 实车小孔填补moderate：18cm/8点/每象限1点/RMS10mm；旧数据每帧填补中位1144→1465；原填补/观测/支撑保持，概率和门限决策可改变；321项检查通过，未验收实车 | [报告](docs/results/real_small_holes_moderate_2026-10-31/REPORT.md)、[数据与视频](https://github.com/CQULzz/HT_Explo/releases/tag/real-scout-small-holes-moderate-20261031) |
 | `real-scout-cuda-startup-20261031` | CUDA上下文与1.5m固定启动许可；前30s圈内覆盖HT观测判定，到期恢复；同批回调41.07→37.81ms、P95 56.15→40.80ms，351帧输入/输出一致；307项Python与8组C++通过，未验收实车 | [报告](docs/results/real_cuda_startup_2026-10-31/REPORT.md)、[数据与视频](https://github.com/CQULzz/HT_Explo/releases/tag/real-scout-cuda-startup-20261031) |
 | `real-scout-ht-latency-20261031` | 精确减少小孔候选计算，补排队/阶段/资源及可重叠红区原因诊断，修正退出竞态；旧数据三次回调中位40.68→35.86ms、P95 56.57→51.74ms，351帧输入与输出一致；仍有9/336个>100ms慢帧，未验收ARM/实车 | [报告](docs/results/real_ht_latency_2026-10-31/REPORT.md)、[数据与视频](https://github.com/CQULzz/HT_Explo/releases/tag/real-scout-ht-latency-20261031)、[诊断说明](docs/real_vehicle/HT_LATENCY_DIAGNOSTICS.md) |
 | `real-scout-system-foundation-20261030` | 候选：HT实际运行身份、有界在线诊断/全量实验归档、地形历史索引；351帧模型输入及输出一致，8组C++与50项Python检查通过；不约束调度HT回调P95未通过，按用户明确要求上传，未验收ARM/实车 | [复核与实验报告](docs/results/real_system_foundation_2026-10-30/REPORT.md)、[完整数据与失败记录](https://github.com/CQULzz/HT_Explo/releases/tag/real-scout-system-foundation-20261030)、[诊断使用说明](docs/real_vehicle/HT_RUNTIME_DIAGNOSTICS.md) |
