@@ -1,0 +1,288 @@
+{
+  "branch": "real/scout-helios32",
+  "tag": "real-scout-history-fusion-speed-20261101",
+  "code_commit": "1c5e621a817998ac0cb60e955a4c3e6a20d6d340",
+  "parent": "f69f55b1ca1ad51baad0f0df20aad43ff8e481c8",
+  "release_url": "https://github.com/CQULzz/HT_Explo/releases/tag/real-scout-history-fusion-speed-20261101",
+  "classification": "candidate / prerelease",
+  "authorization": {
+    "upload_requested": true,
+    "authorization": "User requested raising low effective HT frequency, prior repeated modify/test/upload authorization persists; AGENTS requires complete behavior-round code/data/plots/video publication.",
+    "branch": "real/scout-helios32",
+    "tag": "real-scout-history-fusion-speed-20261101",
+    "classification": "FP32-equivalent offline history acceleration candidate; median/mean improved, separate-process P95 regressed; ARM/vehicle not accepted",
+    "validation_gate": {
+      "frozen_sources_exact": true,
+      "81_model_inputs_and_all_outputs_exact": true,
+      "329_python_tests_passed": true,
+      "all3_interleaved_mean_and_median_improved": true,
+      "installed_sources_weights_exact": true,
+      "separate_process_tail_regression_disclosed": true,
+      "no_arm_or_vehicle_frequency_claim": true,
+      "81_frame_video_full_decode_passed": true
+    },
+    "reused_input_release": "https://github.com/CQULzz/HT_Explo/releases/tag/real-scout-tare-input-fix-20261101"
+  },
+  "validation_gate": {
+    "frozen_sources_exact": true,
+    "81_model_inputs_and_all_outputs_exact": true,
+    "329_python_tests_passed": true,
+    "all3_interleaved_mean_and_median_improved": true,
+    "installed_sources_weights_exact": true,
+    "separate_process_tail_regression_disclosed": true,
+    "no_arm_or_vehicle_frequency_claim": true,
+    "81_frame_video_full_decode_passed": true
+  },
+  "code_check": {
+    "code_commit": "1c5e621a817998ac0cb60e955a4c3e6a20d6d340",
+    "parent": "f69f55b1ca1ad51baad0f0df20aad43ff8e481c8",
+    "tree": "cc98d02e4413bd8f25d9f4da5de9f8d1c55897af",
+    "files_verified": 22,
+    "only_declared_paths_changed": true,
+    "changed_paths": [
+      "README.md",
+      "docs/real_vehicle/HT_RUNTIME_DIAGNOSTICS.md",
+      "docs/real_vehicle/VERSIONS.md",
+      "docs/results/real_history_fusion_speed_2026-11-01/CANDIDATE_FREEZE.json",
+      "docs/results/real_history_fusion_speed_2026-11-01/CPP_REUSE_CHECK.json",
+      "docs/results/real_history_fusion_speed_2026-11-01/ENVIRONMENT.json",
+      "docs/results/real_history_fusion_speed_2026-11-01/FINAL_CHECK.json",
+      "docs/results/real_history_fusion_speed_2026-11-01/INPUT_CHECK.json",
+      "docs/results/real_history_fusion_speed_2026-11-01/INSTALLED_CHECK.json",
+      "docs/results/real_history_fusion_speed_2026-11-01/NUMERICAL_CHECK.json",
+      "docs/results/real_history_fusion_speed_2026-11-01/PUBLICATION_AUTHORIZATION.json",
+      "docs/results/real_history_fusion_speed_2026-11-01/REPORT.md",
+      "docs/results/real_history_fusion_speed_2026-11-01/REPRODUCE.md",
+      "docs/results/real_history_fusion_speed_2026-11-01/REUSED_INPUT_ASSETS.json",
+      "docs/results/real_history_fusion_speed_2026-11-01/SUMMARY.json",
+      "docs/results/real_history_fusion_speed_2026-11-01/VIDEO_CHECK.json",
+      "docs/results/real_history_fusion_speed_2026-11-01/recorded_context.png",
+      "docs/results/real_history_fusion_speed_2026-11-01/timing_comparison.png",
+      "tools/ht_cupy_bridge/cupy_to_ht.py",
+      "tools/ht_cupy_bridge/historical_elevation.py",
+      "tools/ht_cupy_bridge/history_fusion.py",
+      "tools/ht_cupy_bridge/test_history_fusion.py"
+    ],
+    "all_declared_blob_hashes_and_modes_verified": true,
+    "local_imported_history_not_pushed": true
+  },
+  "assets": [
+    {
+      "name": "ARCHIVE_CHECK.json",
+      "bytes": 126,
+      "sha256": "a308f41baa73da2bd12ba55620f34ed078d44945d6e1926e382d13a9b38104c8",
+      "url": "https://github.com/CQULzz/HT_Explo/releases/download/untagged-3772f466a12d742cf172/ARCHIVE_CHECK.json"
+    },
+    {
+      "name": "CANDIDATE_FREEZE.json",
+      "bytes": 18891,
+      "sha256": "40ff15b0466542c0eba8f9be2b755bf3e3911f75ef62cee2c17ad953bb01f731",
+      "url": "https://github.com/CQULzz/HT_Explo/releases/download/untagged-3772f466a12d742cf172/CANDIDATE_FREEZE.json"
+    },
+    {
+      "name": "CPP_REUSE_CHECK.json",
+      "bytes": 891,
+      "sha256": "fa96923ffa1a969483b6142fc2570ddadc45d4e8d2912b124fe0be884a387d32",
+      "url": "https://github.com/CQULzz/HT_Explo/releases/download/untagged-3772f466a12d742cf172/CPP_REUSE_CHECK.json"
+    },
+    {
+      "name": "ENVIRONMENT.json",
+      "bytes": 458,
+      "sha256": "2df431f3373bfd662d02bf1c9ba11bf76b586f58a3d4e20291dd66d08f6077fe",
+      "url": "https://github.com/CQULzz/HT_Explo/releases/download/untagged-3772f466a12d742cf172/ENVIRONMENT.json"
+    },
+    {
+      "name": "FINAL_CHECK.json",
+      "bytes": 768,
+      "sha256": "27e70deac557230fbccd5f9e82b7353757db3bd95ddd193c54780370a2960391",
+      "url": "https://github.com/CQULzz/HT_Explo/releases/download/untagged-3772f466a12d742cf172/FINAL_CHECK.json"
+    },
+    {
+      "name": "FULL_DATA_MANIFEST.json",
+      "bytes": 77882,
+      "sha256": "a6b57ab4da1f00f896e836d75b55b5dea8471874cf7b819b05572ae749e15a3a",
+      "url": "https://github.com/CQULzz/HT_Explo/releases/download/untagged-3772f466a12d742cf172/FULL_DATA_MANIFEST.json"
+    },
+    {
+      "name": "HT_history_fusion_speed_data.tar.zst",
+      "bytes": 79164982,
+      "sha256": "2edda6c4a8ae017641144c534cfed515521c35e3c963a8b4151b64ba5dfb972c",
+      "url": "https://github.com/CQULzz/HT_Explo/releases/download/untagged-3772f466a12d742cf172/HT_history_fusion_speed_data.tar.zst"
+    },
+    {
+      "name": "INPUT_CHECK.json",
+      "bytes": 28144,
+      "sha256": "d13cecbed125ad72e63410990502954d634163ad3d050d20ea7b503c5e01337a",
+      "url": "https://github.com/CQULzz/HT_Explo/releases/download/untagged-3772f466a12d742cf172/INPUT_CHECK.json"
+    },
+    {
+      "name": "INSTALLED_CHECK.json",
+      "bytes": 1061,
+      "sha256": "3364d6b33943c607d9b110eaec49f5cdc71bdbc61d848f81e03e284ac5ebcab8",
+      "url": "https://github.com/CQULzz/HT_Explo/releases/download/untagged-3772f466a12d742cf172/INSTALLED_CHECK.json"
+    },
+    {
+      "name": "NUMERICAL_CHECK.json",
+      "bytes": 152,
+      "sha256": "efe40775a1afe4a72b62702831a0b35f2e1755aca689232583d8bf4b8f65fd17",
+      "url": "https://github.com/CQULzz/HT_Explo/releases/download/untagged-3772f466a12d742cf172/NUMERICAL_CHECK.json"
+    },
+    {
+      "name": "PUBLICATION_AUTHORIZATION.json",
+      "bytes": 994,
+      "sha256": "028b3efb4b54f014648f322b50e48caa12c7172a835967674832d08d0a9c4d04",
+      "url": "https://github.com/CQULzz/HT_Explo/releases/download/untagged-3772f466a12d742cf172/PUBLICATION_AUTHORIZATION.json"
+    },
+    {
+      "name": "PUBLICATION_FILES.json",
+      "bytes": 13456,
+      "sha256": "47a800afc26b2d5c97cc385199de60278584730a59947a606ff44a79ed85d6d1",
+      "url": "https://github.com/CQULzz/HT_Explo/releases/download/untagged-3772f466a12d742cf172/PUBLICATION_FILES.json"
+    },
+    {
+      "name": "RELEASE_NOTES.md",
+      "bytes": 1285,
+      "sha256": "55f073a932159e4f0129a56aec70f834d649b7f463553973281345edded35302",
+      "url": "https://github.com/CQULzz/HT_Explo/releases/download/untagged-3772f466a12d742cf172/RELEASE_NOTES.md"
+    },
+    {
+      "name": "REPORT.md",
+      "bytes": 7297,
+      "sha256": "13ab1b7d0644acc28aad787cd41a761de5b3f1ea3ce5b14d5906a969d0adae7b",
+      "url": "https://github.com/CQULzz/HT_Explo/releases/download/untagged-3772f466a12d742cf172/REPORT.md"
+    },
+    {
+      "name": "REPRODUCE.md",
+      "bytes": 2658,
+      "sha256": "19fb03b6d1f8dfebaf44caa5ac3f4db6966e18517e8f9c26d00a998107513304",
+      "url": "https://github.com/CQULzz/HT_Explo/releases/download/untagged-3772f466a12d742cf172/REPRODUCE.md"
+    },
+    {
+      "name": "REUSED_INPUT_ASSETS.json",
+      "bytes": 1620,
+      "sha256": "029bb50ac9bfd57699b5af679cd7bbdd77ffbf336ceb0e04286f4715289b30a8",
+      "url": "https://github.com/CQULzz/HT_Explo/releases/download/untagged-3772f466a12d742cf172/REUSED_INPUT_ASSETS.json"
+    },
+    {
+      "name": "SUMMARY.json",
+      "bytes": 6979,
+      "sha256": "779ae1e341382b4e8aa1bb8343da8de7bd264da442f1c39e4569fad05a818ce2",
+      "url": "https://github.com/CQULzz/HT_Explo/releases/download/untagged-3772f466a12d742cf172/SUMMARY.json"
+    },
+    {
+      "name": "VIDEO_CHECK.json",
+      "bytes": 358,
+      "sha256": "3cc6a2a0d8b244490b6e0b68ebcd6b898dfa89f5151bf5cd20d87d116362ff79",
+      "url": "https://github.com/CQULzz/HT_Explo/releases/download/untagged-3772f466a12d742cf172/VIDEO_CHECK.json"
+    },
+    {
+      "name": "offline_history_speed.mp4",
+      "bytes": 173053,
+      "sha256": "d5655ace911aab22cccad7e70f71118907eb51bd78ba7e45f61c295de334c68d",
+      "url": "https://github.com/CQULzz/HT_Explo/releases/download/untagged-3772f466a12d742cf172/offline_history_speed.mp4"
+    },
+    {
+      "name": "recorded_context.png",
+      "bytes": 85201,
+      "sha256": "23fa5021e054057ef70f7f7bf6f9b5576fabc7d3c4abda25d5c533cffd345276",
+      "url": "https://github.com/CQULzz/HT_Explo/releases/download/untagged-3772f466a12d742cf172/recorded_context.png"
+    },
+    {
+      "name": "timing_comparison.png",
+      "bytes": 119097,
+      "sha256": "d5dc5cc134c935369e2d9c2c27b0dd520e2fe5366935edd4c1a1b41ff0f192dc",
+      "url": "https://github.com/CQULzz/HT_Explo/releases/download/untagged-3772f466a12d742cf172/timing_comparison.png"
+    },
+    {
+      "name": "CODE_PUBLICATION_CHECK.json",
+      "bytes": 1801,
+      "sha256": "983aa5da67282add39848d64b6bc43d7bc3dbf7ea43cb8a8a801a7611549408b",
+      "url": "https://github.com/CQULzz/HT_Explo/releases/download/untagged-3772f466a12d742cf172/CODE_PUBLICATION_CHECK.json"
+    }
+  ],
+  "all_remote_sizes_and_sha256_verified": true,
+  "protected_refs": {
+    "main": "649dad0479a47bf6ba32980c1c73d235bf2c84da",
+    "develop": "8b10207a705d73a00c830872570eabf61748ada5"
+  },
+  "protected_old_tags": {
+    "ht-garage-repeat-20261015-1225": "0b842e4ab71a1ed0249cc32da923a0f51940106a",
+    "ht-sim-20261022-indoor-repeat": "d3dce26ceaf3200dc112c1d85b753c1f6d388ffc",
+    "ht-sim-20261022-input-contracts": "8cbdb77baf36b38b1251a46b3013f651c12c65bc",
+    "ht-stage-20260914-ht8dir": "69608f8da8ccfd8c0af887f3b2cdc621f596ce20",
+    "ht-stage-20260915-jazzy": "0690018492979e805c3ccafdae6a311643ca35e1",
+    "ht-stage-20260920-corner": "8f5c04a43b0a8726b7f0fd6a8a2f941c07048c82",
+    "ht-stage-20260921-real-ht": "ba93fda4db713ae645586bdb10957a6272f79c86",
+    "ht-stage-20260922-return": "cf40012c8a34725ccba6240f8b1eca5571e39fcf",
+    "ht-stage-20261010-drivers": "701308613a4694d3f18ae2762261ee63c170b64f",
+    "ht-stage-20261011-campus": "39f3075dbcd9dfa46afb11c3714a0902434af939",
+    "ht-stage-20261015-elevation-xytheta": "16103d760dc9bf1c071dd0528ade4eb21d92cac6",
+    "ht-stage-20261015-goal-continuity": "6aafe0f9d76ebde7fa10d1f5f4079abfdabb25ba",
+    "ht-stage-20261016-endurance": "ebe550cbf906d45ea0b369c4b292165f8f5ff32e",
+    "ht-stage-20261016-progress-memory": "55bc2898d1685a932ecd14c0d5680dda0b089029",
+    "ht-stage-20261016-swept-check": "e55aac5fc6885a7ea80a75529d26697599bf0ff1",
+    "ht-stage-20261016-tare-compare": "df8152c172380c15ac7260fa40c71f4baad595d3",
+    "ht-stage-20261017-blas-threads": "34298480df107a7dbe51a386ffb8318ce0567fd8",
+    "ht-stage-20261017-context-recovery": "dee873db9a25778eb67060100025bea2f619c0ee",
+    "ht-stage-20261017-crossguide-lifecycle": "3ef20e936ca4ba005b569f0dd581bd780b7b3a88",
+    "ht-stage-20261017-endurance-return": "6206d8be3a60f35ed33cbd88fad6bed97571da85",
+    "ht-stage-20261017-indoor-viewpoints": "d12812b11aa11913e0e6d8b8ea9196e19d003b48",
+    "ht-stage-20261017-multiscene-10min": "b1ac0f8551e6bcd5084e090daa07c50f99b2b7f2",
+    "ht-stage-20261018-cell-audit": "b6010156cc26431cc23bac33ac543982f7d5e4c1",
+    "ht-stage-20261018-configuration-gate": "149566de09c48a528140b6ec950c08c5fa29539c",
+    "ht-stage-20261018-continuous-geometry": "43069a7b11b8028b53f6eae0d6bdc53c13e8affd",
+    "ht-stage-20261018-execution-geometry": "65efef749493fdfac0960f7b98013ec666d4efff",
+    "ht-stage-20261018-geometry-index": "4721764fa77eb634f4a0ba50b1381a05b3790195",
+    "ht-stage-20261018-latency-diagnosis": "bada7bad52fca98a3eb0942c1bc3d9c0a7d84185",
+    "ht-stage-20261018-mixed-turns": "12d85d871ce84bcab1191a20bbea6e1748449cd5",
+    "ht-stage-20261018-pending-gain": "ce7202bb14fa493d6ee2e4cb68dd8d56b32aef0b",
+    "ht-stage-20261018-postfilter-obstacles": "22c2749f395af8bb5dc6705b1e92548acf69494e",
+    "ht-stage-20261018-zero-hold": "50c239f7a53f290daaa13c28c96fee073516417e",
+    "ht-stage-20261019-atomic-context": "445b5c1490d6bb198c35bee23e95fc0f7781407e",
+    "ht-stage-20261019-checked-connections": "391fa0f98fc2a0adab2c018b4c5a1c7c29efff91",
+    "ht-stage-20261019-deferred-gain": "b05ed9e717a3e430cc6243ed61666b5120f76e5b",
+    "ht-stage-20261019-deferred-repeat": "867ba1f5d40c813291bbb148fad2d5fc5b8907d1",
+    "ht-stage-20261019-frozen-garage": "7b4c3589366c6a0bb4f8f1984c14951aa446d1ad",
+    "ht-stage-20261019-guide-handoff": "16bdbe4cb1fddd632d061a5710c3e7b294971891",
+    "ht-stage-20261019-recovery-slot": "ba7942ce176378d68b0eeab99a4f4bb9a5e68913",
+    "ht-stage-20261019-serial-mapper": "d6d87878a4e8982e3a4850a5a17f8e1be1608a24",
+    "ht-stage-20261020-successor-pruning": "6fc754903f0e7c9aafe4b2a2b13c3fa24266551a",
+    "ht-stage-20261020-tare-boundaries": "68701319b333165dd9cd5acf8e226ba52c174434",
+    "ht-stage-20261020-tare-multiscene": "dccfcc93232f0f27f9ae2d63b59ae93c4c1168c4",
+    "ht-stage-20261020-tare-waypoint": "42966cb22b0f719df035391f3850b9a654f161e1",
+    "ht-stage-20261021-campus-matched": "f7fd77b66fc442752599ead359e8aa60e7773ae4",
+    "ht-stage-20261021-continuous-domain": "07c1abd334f83cb8d602e2234134b4286862c916",
+    "ht-stage-20261021-sparse-height": "454efa230fae337cfa8f87b2aa87ee9917040621",
+    "ht-stage-20261021-tare-matched": "1ded85a7b66ad9506bb26b7abe4e1c1def946648",
+    "ht-stage-20261021-tare-short-prefix": "d7e0741c1aeeb65f4c0ff404521a4c54f992a330",
+    "ht-stage-20261021-terrain-footprint": "15e197eca16bee3dea1fcd3870a05ee84f2ecd12",
+    "ht-viz-20261022-xytheta-voxel-grid": "d8827d59641a67cac98c3f88b7eaafae492b56fc",
+    "nav/ht-soft-cost-20260914": "1d9e83a20c9fa919090fb2cfd41c3491f3c8e391",
+    "nav/ht-xytheta-20261015": "8834b47aaf8212379804c6f1d137623ab93df6ba",
+    "nav/tare-ht-20261021": "bb568c7092444da1cb07ecd666d6caa7eab3457e",
+    "nav/tare-waypoint-20261020": "9f15fd99c84a19dce7c5b26706b761cf98beb58e",
+    "real-scout-cuda-startup-20261031": "47fc96f59d9f5d74e516c2df8fd3f2556f7a0f4c",
+    "real-scout-cupy-stable-20261028": "cbf0528b836b81c8a9a99b34563c50c999edd700",
+    "real-scout-filter-xy-trials-20261029": "503fc90f2926d5053abf3c5bdfb52dc9a823fbc3",
+    "real-scout-ht-latency-20261031": "b67cd0be96047e46da094a496bcf836e3eb8d538",
+    "real-scout-ht-performance-20261030": "1f3523606b7c24fdca1ca133697c2443fbebad5d",
+    "real-scout-newbags-20261028": "ad16a1ed50deb3ccbe70055efde9174b14761fb8",
+    "real-scout-offline-replay-20261028": "856a6ea68c2dfa780e8802b8c8896f5543f17a91",
+    "real-scout-rear-red-audit-20261029": "d063a63a2dd73483369bedc5faa30d4b52bd4ab8",
+    "real-scout-round2-20261028": "37c7cd37a44b9b1b35e7df9ac3a4f7454d290cc6",
+    "real-scout-small-holes-moderate-20261031": "faf03df1b67def4fd031dd9ba067d5e794faff53",
+    "real-scout-surface-registration-20261029": "7b84641fe67317c1080f7bf39d044a9f412270c5",
+    "real-scout-system-foundation-20261030": "b21f876f4cc897d529fd3d9b44f09a91a3f117dc",
+    "real-scout-tare-input-fix-20261101": "95fa279b8b934df7ff01ad24e76184fc5408be6a",
+    "real-scout-tare-input-fix-20261101-r1": "885f334de624aab6043f99b25d592201c10141d0",
+    "real-scout-texture-multigroup-20261029": "f5766cbc5fce4ac68a224657ee4bc25be61db078",
+    "real-scout-urdf-visual-20261028": "86c33e0742f5fc06a743031e2da452d2b4ecafdf",
+    "real-scout-wheel-shadow-20261029": "93a554d8c9d5d31724286e02d6f29ed83093cffe",
+    "real-scout-wide-replay-20261029": "3b4f483e3bff909d35882a60d9474e84350878ac",
+    "real-scout-xytheta-20261028": "added33629d8f7ce83075775039fb291e9f79b30",
+    "real-scout-xytheta-full208-20261028": "571017d6f8eeb7cbf5cfc34ac7cc47b708ffc568",
+    "viz/xytheta-transparent-20261022": "e6673a3d68f336e162a6794f93ba03473925fa1b"
+  },
+  "verified_at": "2026-10-31T18:29:07.302751+00:00",
+  "scope": "Desktop original81map direct callbacks, byte-exact inputs/outputs; paired median14.00% lower, separate-process P95 regression retained. No ARM, stable vehicleHz or closed-loop acceptance."
+}
