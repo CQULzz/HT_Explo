@@ -1,13 +1,15 @@
 """HT hardware consumer launch; external sensor/TF/mapping remains independent."""
 import os
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument,OpaqueFunction
+from launch.actions import DeclareLaunchArgument,OpaqueFunction,SetEnvironmentVariable
 from launch.conditions import IfCondition
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 from ament_index_python.packages import get_package_share_directory,get_package_prefix
 import yaml
+import numpy as np
 from ht_scout_bridge.runtime_policy import direction_evidence,resolve_runtime
+from ht_scout_bridge.geometry import load_calibration
 
 
 # TARE contains both relative and absolute topic names. Namespace relative
@@ -38,6 +40,10 @@ def start(context):
     hw=get_package_share_directory('ht_scout_bridge')
     config=os.path.join(hw,'config','ht_real.yaml')
     profile=yaml.safe_load(open(config))['/**']['ros__parameters']
+    # The very same verified calibration drives cloud registration and TARE's
+    # observation lever arm. Vehicle odometry remains base_link throughout.
+    _,poi_base,poi_lidar=load_calibration(arg('calibration_file'))
+    sensor_offset=(np.linalg.inv(poi_base)@poi_lidar)[:3,3].tolist()
     evidence=arg('direction_validation_file',os.path.join(hw,'config','direction_validation.yaml'))
     weights=os.path.join(get_package_prefix('tare_planner'),'lib','tare_planner','student_best_epoch_weights.pth')
     mapped,physical=direction_evidence(evidence,weights,profile['ht_channel_order'],profile['ht_heading_offset'])
@@ -47,14 +53,20 @@ def start(context):
     # it does not silently substitute a simulated terrain/world launch.
     common={'use_sim_time':arg('use_sim_time').lower()=='true','odometry_child_frame':'base_link',
             'ht_topic':'/ht_real/traversability','ht_directions_calibrated':policy.direction_accepted}
-    nodes=[
+    nodes=[]
+    dds_profile=arg('dds_profile','')
+    if dds_profile:
+        if not os.path.isfile(dds_profile):raise ValueError('dds_profile must name an existing Fast DDS XML file')
+        nodes.append(SetEnvironmentVariable('FASTRTPS_DEFAULT_PROFILES_FILE',dds_profile))
+    nodes += [
         Node(package='ht_scout_bridge',executable='scout_command_bridge',namespace='ht_real',output='screen',
              condition=IfCondition(str(policy.command_bridge).lower()),
              parameters=[{'use_sim_time':common['use_sim_time'],'input_topic':policy.command_topic,
                           'output_topic':arg('chassis_command_topic')}]),
         Node(package='ht_scout_bridge',executable='scout_inputs',name='ht_scout_inputs',namespace='ht_real',output='screen',
              parameters=[{'calibration_file':arg('calibration_file'),'odometry_topic':arg('odometry_topic'),
-                'cloud_topic':arg('cloud_topic'),'elevation_topic':arg('elevation_topic'),
+                'cloud_topic':arg('cloud_topic'),'cloud_reliability':arg('cloud_reliability','reliable'),
+                'elevation_topic':arg('elevation_topic'),
                 'source_age_layer':arg('source_age_layer'),'use_sim_time':common['use_sim_time']}]),
         Node(package='tare_planner',executable='cupy_to_ht.py',name='cupy_to_ht_bridge',namespace='ht_real',output='screen',remappings=HARDWARE_REMAPS,
              parameters=[common,{'surface_odometry_topic':'/ht_real/odometry',
@@ -69,7 +81,8 @@ def start(context):
                 'ht_small_hole_repair':arg('small_hole_repair','true').lower()=='true'}]),
         Node(package='tare_planner',executable='tare_planner_node',name='tare_planner_node',namespace='ht_real',output='screen',remappings=HARDWARE_REMAPS,
              parameters=[os.path.join(hw,'config','tare_scout.yaml'),config,common,
-                {'sub_start_exploration_topic_':'/ht_real/exploration_start','sub_state_estimation_topic_':'/ht_real/odometry','sub_registered_scan_topic_':'/ht_real/registered_scan'}]),
+                {'sub_start_exploration_topic_':'/ht_real/exploration_start','sub_state_estimation_topic_':'/ht_real/odometry','sub_registered_scan_topic_':'/ht_real/registered_scan',
+                 'sensor_origin_offset':sensor_offset}]),
         Node(package='tare_planner',executable='xytheta_follower',name='xytheta_follower',namespace='ht_real',output='screen',
              condition=IfCondition(str(policy.follower).lower()),
              parameters=[config,common,{'odometry_topic':'/ht_real/odometry',
@@ -110,6 +123,8 @@ def generate_launch_description():
         DeclareLaunchArgument('calibration_file',default_value=os.path.join(hw,'config','scout_extrinsics.yaml')),
         DeclareLaunchArgument('odometry_topic',default_value='/fixposition/odometry_enu'),
         DeclareLaunchArgument('cloud_topic',default_value='/rslidar_points'),
+        DeclareLaunchArgument('cloud_reliability',default_value='reliable'),
+        DeclareLaunchArgument('dds_profile',default_value=''),
         DeclareLaunchArgument('elevation_topic',default_value='/elevation_mapping_node/elevation_map_raw'),
         DeclareLaunchArgument('source_age_layer',default_value='observation_age'),
         # Avoid competing with an external chassis controller. Hardware launch

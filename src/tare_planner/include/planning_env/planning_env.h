@@ -129,6 +129,12 @@ public:
   template <class PCLPointType>
   void UpdateRegisteredCloud(typename pcl::PointCloud<PCLPointType>::Ptr& cloud)
   {
+    UpdateRegisteredCloud<PCLPointType>(cloud, robot_position_);
+  }
+  template <class PCLPointType>
+  void UpdateRegisteredCloud(typename pcl::PointCloud<PCLPointType>::Ptr& cloud,
+                             const Eigen::Vector3d& sensor_origin)
+  {
     if (cloud->points.empty())
     {
       RCLCPP_WARN(rclcpp::get_logger("standalone_logger"),
@@ -140,7 +146,7 @@ public:
       if (parameters_.kUseFrontier)
       {
         rolling_occupancy_grid_->UpdateOccupancy<PCLPointType>(cloud);
-        rolling_occupancy_grid_->RayTrace(robot_position_);
+        rolling_occupancy_grid_->RayTrace(sensor_origin);
         rolling_occupancy_grid_->GetVisualizationCloud(rolling_occupancy_grid_cloud_->cloud_);
         // rolling_occupancy_grid_cloud_->Publish();
       }

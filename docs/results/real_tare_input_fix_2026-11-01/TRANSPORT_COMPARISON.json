@@ -1,0 +1,121 @@
+{
+  "primary_fixed_3_repeats": [
+    {
+      "version": "baseline",
+      "repeat": 1,
+      "sent": 160,
+      "bridge_cloud_received": 11,
+      "bridge_cloud_published": 11,
+      "reliable_reference": 160,
+      "lightweight_best_effort": 9
+    },
+    {
+      "version": "baseline",
+      "repeat": 2,
+      "sent": 160,
+      "bridge_cloud_received": 15,
+      "bridge_cloud_published": 15,
+      "reliable_reference": 160,
+      "lightweight_best_effort": 13
+    },
+    {
+      "version": "baseline",
+      "repeat": 3,
+      "sent": 160,
+      "bridge_cloud_received": 27,
+      "bridge_cloud_published": 27,
+      "reliable_reference": 160,
+      "lightweight_best_effort": 25
+    },
+    {
+      "version": "candidate",
+      "repeat": 1,
+      "sent": 160,
+      "bridge_cloud_received": 160,
+      "bridge_cloud_published": 160,
+      "reliable_reference": 160,
+      "lightweight_best_effort": 131
+    },
+    {
+      "version": "candidate",
+      "repeat": 2,
+      "sent": 160,
+      "bridge_cloud_received": 160,
+      "bridge_cloud_published": 160,
+      "reliable_reference": 160,
+      "lightweight_best_effort": 133
+    },
+    {
+      "version": "candidate",
+      "repeat": 3,
+      "sent": 160,
+      "bridge_cloud_received": 151,
+      "bridge_cloud_published": 151,
+      "reliable_reference": 160,
+      "lightweight_best_effort": 128
+    }
+  ],
+  "supplementary_instrumented": [
+    {
+      "name": "default_1",
+      "sent": 160,
+      "received": 160,
+      "published": 160,
+      "diagnostic_callback_s": {
+        "min": 0.0006639869998252834,
+        "median": 0.0010142020000785124,
+        "p95": 0.0013173048500448202,
+        "max": 0.0013964390000182902
+      }
+    },
+    {
+      "name": "default_2",
+      "sent": 160,
+      "received": 160,
+      "published": 160,
+      "diagnostic_callback_s": {
+        "min": 0.0005938869999226881,
+        "median": 0.0007497139999941282,
+        "p95": 0.0011468555500869114,
+        "max": 0.0012000119995718705
+      }
+    },
+    {
+      "name": "profile_1",
+      "sent": 160,
+      "received": 160,
+      "published": 160,
+      "diagnostic_callback_s": {
+        "min": 0.0006236970002646558,
+        "median": 0.0007452969998666958,
+        "p95": 0.001364894499874933,
+        "max": 0.00297869600035483
+      }
+    },
+    {
+      "name": "profile_2",
+      "sent": 160,
+      "received": 160,
+      "published": 160,
+      "diagnostic_callback_s": {
+        "min": 0.0006156660001579439,
+        "median": 0.0007740414998806955,
+        "p95": 0.0015119312994102073,
+        "max": 0.001527606999843556
+      }
+    }
+  ],
+  "candidate_3_missing_indexes": [
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26
+  ],
+  "candidate_3_source_gap_max_s": 0.100159235,
+  "remaining": "Candidate third primary trial missed9consecutive callbacks despite reliable reference receiving160. Not eliminated by reporting later successful runs; cause not uniquely identified. Later instrumentation had no comparable stall. Desktop localhost only."
+}

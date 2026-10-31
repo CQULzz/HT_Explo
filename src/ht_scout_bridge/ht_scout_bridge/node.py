@@ -4,12 +4,16 @@ from copy import deepcopy
 import math
 from pathlib import Path
 from threading import Lock, RLock
+import hashlib
+import json
+import time
 import numpy as np
 from scipy.spatial.transform import Rotation
 from threadpoolctl import threadpool_limits
 import rclpy
 from rclpy.node import Node
 from rclpy.time import Time
+from rclpy.utilities import get_rmw_implementation_identifier
 from rclpy.qos import QoSProfile, ReliabilityPolicy
 from rclpy.callback_groups import MutuallyExclusiveCallbackGroup
 from rclpy.executors import MultiThreadedExecutor, ExternalShutdownException
@@ -47,7 +51,8 @@ class ScoutInputs(Node):
         self.blas_limit=threadpool_limits(limits=blas_threads,user_api='blas')
         self.get_logger().info(f'Input bridge BLAS threads: {blas_threads}')
         default=Path(get_package_share_directory('ht_scout_bridge'))/'config/scout_extrinsics.yaml'
-        self.profile,self.poi_base,self.poi_lidar=load_calibration(self.declare_parameter('calibration_file',str(default)).value)
+        self.calibration_file=self.declare_parameter('calibration_file',str(default)).value
+        self.profile,self.poi_base,self.poi_lidar=load_calibration(self.calibration_file)
         self.frames=self.profile['frames']
         self.base_from_lidar=np.linalg.inv(self.poi_base)@self.poi_lidar
         self.age_layer=self.declare_parameter('source_age_layer','observation_age').value
@@ -70,16 +75,58 @@ class ScoutInputs(Node):
         self.pending={k:deque() for k in self.last_stamp}
         self.inflight={k:None for k in self.last_stamp}
         self.processing_locks={k:Lock() for k in self.last_stamp}
+        names=('received','queued','duplicate_or_old','taken_attempts','tf_wait_attempts',
+               'queue_overflow','source_time_invalid','rejected','processed','published')
+        self.input_counts={k:dict.fromkeys(names,0) for k in self.last_stamp}
+        self.input_times={k:{name:deque(maxlen=200) for name in ('conversion_s','publish_s')}
+                          for k in self.last_stamp}
+        self.last_receive={k:None for k in self.last_stamp}
+        self.receive_gap={k:None for k in self.last_stamp}
+        self.max_receive_gap={k:0. for k in self.last_stamp}
+        self.cloud_topic=self.declare_parameter('cloud_topic','/rslidar_points').value
+        self.cloud_reliability=self.declare_parameter('cloud_reliability','reliable').value
+        policies={'reliable':ReliabilityPolicy.RELIABLE,'best_effort':ReliabilityPolicy.BEST_EFFORT}
+        if self.cloud_reliability not in policies:
+            raise ValueError('cloud_reliability must be reliable or best_effort')
+        from . import geometry
+        self.input_identity={'node_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+            'geometry_sha256':hashlib.sha256(Path(geometry.__file__).read_bytes()).hexdigest(),
+            'calibration_sha256':hashlib.sha256(Path(self.calibration_file).read_bytes()).hexdigest(),
+            'rmw':get_rmw_implementation_identifier()}
+        self.performance_pub=self.create_publisher(String,'/ht_real/input_performance',1)
         sensor=QoSProfile(depth=20,reliability=ReliabilityPolicy.BEST_EFFORT)
         self.odom_sub=self.create_subscription(Odometry,self.declare_parameter('odometry_topic','/fixposition/odometry_enu').value,
             lambda m:self.enqueue('odom',m),sensor)
-        self.cloud_sub=self.create_subscription(PointCloud2,self.declare_parameter('cloud_topic','/rslidar_points').value,
-            lambda m:self.enqueue('cloud',m),QoSProfile(depth=2,reliability=ReliabilityPolicy.BEST_EFFORT))
+        self.cloud_sub=self.create_subscription(PointCloud2,self.cloud_topic,
+            lambda m:self.enqueue('cloud',m),QoSProfile(depth=2,reliability=policies[self.cloud_reliability]))
         self.elevation_sub=self.create_subscription(GridMap,self.declare_parameter('elevation_topic','/elevation_mapping_node/elevation_map_raw').value,
             lambda m:self.enqueue('elevation',m),QoSProfile(depth=1,reliability=ReliabilityPolicy.RELIABLE))
         self.timer=self.create_timer(.05,self.drain)
         self.cloud_group=MutuallyExclusiveCallbackGroup()
         self.cloud_timer=self.create_timer(.005,self.drain_cloud,callback_group=self.cloud_group)
+        self.performance_timer=self.create_timer(1.,self.publish_input_performance)
+
+    def publish_input_performance(self):
+        with self.state_lock:
+            if self.closing:return
+            result={'identity':self.input_identity,'fault':self.fault,
+                'cloud_topic':self.cloud_topic,'cloud_reliability':self.cloud_reliability,
+                'cloud_depth':2,'counts':{k:dict(v) for k,v in self.input_counts.items()},
+                'pending':{k:len(v) for k,v in self.pending.items()},
+                'receive_interval_s':dict(self.receive_gap),'timing_window_samples':200,
+                'max_receive_interval_s':dict(self.max_receive_gap),
+                'receive_silence_s':{k:None if v is None else time.monotonic()-v
+                                     for k,v in self.last_receive.items()},
+                'timing':{k:{name:dict(zip(('median','p95','max'),map(float,np.percentile(values,[50,95,100]))))
+                             if values else None for name,values in stats.items()}
+                          for k,stats in self.input_times.items()}}
+        offered=self.get_publishers_info_by_topic(self.cloud_topic)
+        result['cloud_publishers']=[{'node':p.node_namespace.rstrip('/')+'/'+p.node_name,
+                                    'reliability':p.qos_profile.reliability.name} for p in offered]
+        result['cloud_qos_compatible']=None if not offered else (
+            self.cloud_reliability=='best_effort' or
+            any(p.qos_profile.reliability==ReliabilityPolicy.RELIABLE for p in offered))
+        self.performance_pub.publish(String(data=json.dumps(result)))
 
     def status(self,text):
         self.status_pub.publish(String(data=text))
@@ -114,12 +161,19 @@ class ScoutInputs(Node):
 
     def enqueue(self,kind,msg):
         with self.state_lock:
+            received=time.monotonic();previous=self.last_receive[kind]
+            self.input_counts[kind]['received']+=1
+            self.receive_gap[kind]=None if previous is None else received-previous
+            if previous is not None:self.max_receive_gap[kind]=max(self.max_receive_gap[kind],received-previous)
+            self.last_receive[kind]=received
             self.clock_ok()
             if self.fault or self.closing:return
             n=stamp_ns(msg);active=self.inflight[kind]
             if (n<=self.last_stamp[kind] or (active is not None and n<=stamp_ns(active))
-                    or any(stamp_ns(m)==n for m in self.pending[kind])):return
+                    or any(stamp_ns(m)==n for m in self.pending[kind])):
+                self.input_counts[kind]['duplicate_or_old']+=1;return
             self.pending[kind].append(msg)
+            self.input_counts[kind]['queued']+=1
             self.pending[kind]=deque(sorted(self.pending[kind],key=stamp_ns))
             self._bound_queue(kind)
         # Reception of a cloud does no heavy work and cannot drain old clouds
@@ -129,6 +183,7 @@ class ScoutInputs(Node):
     def _bound_queue(self,kind):
         limit=64 if kind=='odom' else 10 if kind=='cloud' else 2
         while len(self.pending[kind])>limit:
+            self.input_counts[kind]['queue_overflow']+=1
             self.pending[kind].popleft();self.status(kind.upper()+'_QUEUE_OVERFLOW_DROPPED_OLDEST')
 
     def drain(self):
@@ -149,33 +204,44 @@ class ScoutInputs(Node):
                     if self.closing or not self.pending[kind]:return
                     msg=self.pending[kind].popleft();age=now-stamp_ns(msg)/1e9
                     self.inflight[kind]=msg
+                    self.input_counts[kind]['taken_attempts']+=1
                 if age>self.max_age or age<-.1 or stamp_ns(msg)<=0:
+                    with self.state_lock:self.input_counts[kind]['source_time_invalid']+=1
                     self.status(kind.upper()+'_SOURCE_TIME_INVALID');continue
                 if stamp_ns(msg)<=self.last_stamp[kind]:continue
                 try:
+                    conversion_started=time.monotonic()
                     result=getattr(self,'convert_'+kind)(msg)
                 except TransformException:
                     with self.state_lock:
+                        self.input_counts[kind]['tf_wait_attempts']+=1
                         if not self.fault and not self.closing:
                             self.pending[kind].append(msg)
                             self.pending[kind]=deque(sorted(self.pending[kind],key=stamp_ns))
                             self._bound_queue(kind)
                     self.status(kind.upper()+'_WAIT_TIMESTAMPED_TF');return
                 except (ValueError,OverflowError) as error:
+                    with self.state_lock:self.input_counts[kind]['rejected']+=1
                     self.status(kind.upper()+'_REJECTED: '+str(error));continue
                 # Heavy conversion is outside the state lock. Commit both
                 # cloud frames together only after rechecking clock, age and
                 # latched faults; a concurrent discontinuity discards the pair.
                 with self.state_lock:
+                    self.input_times[kind]['conversion_s'].append(time.monotonic()-conversion_started)
+                    self.input_counts[kind]['processed']+=1
                     now=self.clock_ok();age=now-stamp_ns(msg)/1e9
                     if self.fault or self.closing:return
                     if age>self.max_age or age<-.1:
+                        self.input_counts[kind]['source_time_invalid']+=1
                         self.status(kind.upper()+'_SOURCE_TIME_INVALID');continue
                     if stamp_ns(msg)<=self.last_stamp[kind]:continue
+                    publish_started=time.monotonic()
                     if kind=='cloud':
                         filtered,result=result
                         self.filtered_cloud_pub.publish(filtered)
                     getattr(self,kind+'_pub' if kind!='cloud' else 'cloud_pub').publish(result)
+                    self.input_times[kind]['publish_s'].append(time.monotonic()-publish_started)
+                    self.input_counts[kind]['published']+=1
                     self.last_stamp[kind]=stamp_ns(msg)
                     self.status(kind.upper()+'_READY')
         finally:

@@ -107,3 +107,6 @@ CUDA 的 `ht_channels_last` 默认改为 false（连续 NCHW）；CPU 默认仍 
 
 
 2026-10-31实车小孔填补默认moderate：最近邻18cm、总8点、四象限各1点、RMS10mm；其余保护与原测量/支撑保持。可设ht_small_hole_profile=strict回到旧强度，见[参数与边界](SMALL_HOLE_PROFILES.md)。新增插值会影响模型概率，不保证所有0.5判定不变。
+
+
+2026-11-01离线候选：原始/注册点云采用可靠订阅，新增输入计数与QoS诊断；TARE射线/覆盖使用扫描时刻的雷达原点，车辆参考点和已核验外参保持。可选16MiB DDS配置默认不启用，外部进程须独立配置。仍有一次连续9帧缺口，提前完成及ARM未验收，见[接口、参数与诊断](TARE_INPUT_AND_ORIGIN.md)及[实验报告](../results/real_tare_input_fix_2026-11-01/REPORT.md)。

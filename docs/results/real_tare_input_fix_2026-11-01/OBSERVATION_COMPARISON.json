@@ -1,0 +1,49 @@
+{
+  "frames": 81,
+  "original_stamps_exact": true,
+  "downsampled_points_exact": true,
+  "occupied_cells_exact": true,
+  "queries": 2750,
+  "metrics": {
+    "free_cells": {
+      "baseline_median": 102927.0,
+      "candidate_median": 64777.0,
+      "baseline_final": 109670.0,
+      "candidate_final": 69473.0,
+      "increase_frames": 0,
+      "decrease_frames": 81
+    },
+    "free_volume_m3": {
+      "baseline_median": 2779.029,
+      "candidate_median": 1748.979,
+      "baseline_final": 2961.09,
+      "candidate_final": 1875.771,
+      "increase_frames": 0,
+      "decrease_frames": 81
+    },
+    "frontier_points": {
+      "baseline_median": 9794.0,
+      "candidate_median": 6880.0,
+      "baseline_final": 9906.0,
+      "candidate_final": 7009.0,
+      "increase_frames": 0,
+      "decrease_frames": 81
+    },
+    "visible_queries": {
+      "baseline_median": 41.0,
+      "candidate_median": 177.0,
+      "baseline_final": 48.0,
+      "candidate_final": 198.0,
+      "increase_frames": 81,
+      "decrease_frames": 0
+    }
+  },
+  "scope": "Production rolling grid and LiDAR visibility component ablation only; no full TARE/HT planning or sensor ground truth. Free volume counts current rolling grid, not monotonically accumulated true mapped area.",
+  "occupied_coordinates_exact": true,
+  "cumulative_ray_free_final_m3": {
+    "baseline": 3377.025,
+    "candidate": 2076.408
+  },
+  "recorded_wheel_odom_travel_m": 0.0,
+  "cumulative_metric": "Union of current rolling-grid ray-marked free voxel world keys across81 scans; not ground truth coverage or completed exploration."
+}

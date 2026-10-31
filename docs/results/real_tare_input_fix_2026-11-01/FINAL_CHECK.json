@@ -1,0 +1,28 @@
+{
+  "checked_at_utc": "2026-10-31T17:40:26Z",
+  "release_gate": {
+    "frozen_sources_unchanged": true,
+    "tested_binaries_unchanged": true,
+    "python_325_passed": true,
+    "cpp_8_suites_passed": true,
+    "urdf_chain_checked": true,
+    "original_tare_algorithm_files_unchanged": true,
+    "same_81_scan_inputs_and_occupied_coordinates": true,
+    "transport_improvement_observed_with_residual_gap_disclosed": true,
+    "complete_video_decode": true,
+    "offline_only_no_arm_or_closed_loop_claim": true
+  },
+  "remaining": {
+    "full_tare_planner_replay_performed": false,
+    "car_arm_acceptance_performed": false,
+    "all_transport_trials_lossless": false,
+    "premature_completion_verified_fixed": false
+  },
+  "isolated_build": "/home/lzz/HT_tare_input_fix_20261101/build",
+  "unchanged_native_files": [
+    "src/tare_planner/src/local_coverage_planner/tare_original.cpp",
+    "src/tare_planner/src/grid_world/tare_original.cpp",
+    "src/tare_planner/src/sensor_coverage_planner/tare_original.cpp"
+  ],
+  "source_changes": 16
+}

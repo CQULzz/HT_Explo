@@ -4,6 +4,26 @@
 #include <limits>
 
 using namespace ht_cost_ns;
+
+TEST(InputPose, ObservationLeverArmFollowsFullAttitudeWithoutMovingVehicle) {
+  const std::array<double,3> offset{.1725,0,.5502};
+  const double s=std::sqrt(.5);
+  for(const auto& test:std::vector<std::pair<std::array<double,4>,std::array<double,3>>>{
+      {{0,0,0,1},{.1725,0,.5502}},
+      {{0,0,s,s},{0,.1725,.5502}},
+      {{s,0,0,s},{.1725,-.5502,0}},
+      {{0,s,0,s},{.5502,0,-.1725}}}) {
+    InputPose vehicle{10,{2,4,-.4},test.first};
+    const auto sensor=observationOrigin(vehicle,offset);ASSERT_TRUE(sensor);
+    for(int i=0;i<3;++i) EXPECT_NEAR((*sensor)[i],vehicle.xyz[i]+test.second[i],1e-12);
+    EXPECT_DOUBLE_EQ(vehicle.xyz[2],-.4);
+    const auto legacy=observationOrigin(vehicle,{0,0,0});ASSERT_TRUE(legacy);
+    EXPECT_EQ(*legacy,vehicle.xyz);
+  }
+  InputPose invalid{10,{0,0,0},{0,0,0,0}};
+  EXPECT_FALSE(observationOrigin(invalid,offset));
+  invalid.q={0,0,0,1};EXPECT_FALSE(observationOrigin(invalid,{0,0,NAN}));
+}
 TEST(InputPose, InvalidQuaternionsAndNonfiniteCoordinatesAreRejected) {
   InputPose p{1,{0,0,0},{0,0,0,1}};EXPECT_TRUE(validInputPose(p));
   p.q={0,0,0,0};EXPECT_FALSE(validInputPose(p));

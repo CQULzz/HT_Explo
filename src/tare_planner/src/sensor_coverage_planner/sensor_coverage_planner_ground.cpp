@@ -375,6 +375,10 @@ SensorCoveragePlanner3D::SensorCoveragePlanner3D()
 
 bool SensorCoveragePlanner3D::initialize() {
   ReadParameters();
+  const auto offset=declare_parameter<std::vector<double>>("sensor_origin_offset",{0.,0.,0.});
+  if(offset.size()!=3 || !std::all_of(offset.begin(),offset.end(),[](double v){return std::isfinite(v);}))
+    throw std::invalid_argument("sensor_origin_offset must contain three finite child-frame metres");
+  std::copy(offset.begin(),offset.end(),sensor_origin_offset_.begin());
   // if (!ReadParameters(shared_from_this()))
   // {
   //   RCLCPP_ERROR(this->get_logger(), "Read parameters failed");
@@ -398,7 +402,7 @@ bool SensorCoveragePlanner3D::initialize() {
                 std::placeholders::_1));
   registered_scan_sub_ =
       this->create_subscription<sensor_msgs::msg::PointCloud2>(
-          sub_registered_scan_topic_, rclcpp::SensorDataQoS().keep_last(5),
+          sub_registered_scan_topic_, rclcpp::QoS(5).reliable(),
           std::bind(&SensorCoveragePlanner3D::RegisteredScanCallback, this,
                     std::placeholders::_1));
   terrain_map_sub_ = this->create_subscription<sensor_msgs::msg::PointCloud2>(
@@ -564,6 +568,9 @@ void SensorCoveragePlanner3D::RegisteredScanCallback(
     // No renewal of last good sensor time; freshness still expires normally.
     return;
   }
+  const auto origin=ht_cost_ns::observationOrigin(*scan_pose,sensor_origin_offset_);
+  if(!origin) {scan_received_=-1;return;}
+  sensor_position_.x=(*origin)[0];sensor_position_.y=(*origin)[1];sensor_position_.z=(*origin)[2];
   scan_received_=now;scan_stamp_=stamp;
   if (!initialized_) {
     return;
@@ -585,7 +592,7 @@ void SensorCoveragePlanner3D::RegisteredScanCallback(
   scan_position.x=scan_pose->xyz[0];scan_position.y=scan_pose->xyz[1];scan_position.z=scan_pose->xyz[2];
   planning_env_->UpdateRobotPosition(scan_position);
   planning_env_->UpdateRegisteredCloud<pcl::PointXYZI>(
-      registered_cloud_->cloud_);
+      registered_cloud_->cloud_,Eigen::Vector3d(sensor_position_.x,sensor_position_.y,sensor_position_.z));
 
   registered_cloud_count_ = (registered_cloud_count_ + 1) % 5;
   if (registered_cloud_count_ == 0) {
@@ -814,7 +821,7 @@ void SensorCoveragePlanner3D::UpdateViewPointCoverage() {
   // Update robot coverage
   robot_viewpoint_.ResetCoverage();
   geometry_msgs::msg::Pose robot_pose;
-  robot_pose.position = robot_position_;
+  robot_pose.position = sensor_position_;
   robot_viewpoint_.setPose(robot_pose);
   UpdateRobotViewPointCoverage();
   update_coverage_timer.Stop(false);
@@ -826,8 +833,8 @@ void SensorCoveragePlanner3D::UpdateRobotViewPointCoverage() {
   for (const auto &point : cloud->points) {
     if (viewpoint_manager_->InFOVAndRange(
             Eigen::Vector3d(point.x, point.y, point.z),
-            Eigen::Vector3d(robot_position_.x, robot_position_.y,
-                            robot_position_.z))) {
+            Eigen::Vector3d(sensor_position_.x, sensor_position_.y,
+                            sensor_position_.z))) {
       robot_viewpoint_.UpdateCoverage<pcl::PointXYZI>(point);
     }
   }

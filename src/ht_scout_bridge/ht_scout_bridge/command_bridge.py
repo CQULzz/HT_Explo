@@ -4,8 +4,7 @@ import time
 import signal
 import rclpy
 from rclpy.node import Node
-from rclpy.clock import Clock
-from rclpy.clock_type import ClockType
+from rclpy.clock import Clock, ClockType
 from rclpy.signals import SignalHandlerOptions
 from geometry_msgs.msg import Twist, TwistStamped
 from nav_msgs.msg import Odometry

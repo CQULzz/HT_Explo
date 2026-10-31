@@ -1,11 +1,12 @@
 # 实车分支、固定版本与实验资料
 
-更新时间：2026-10-30。此页标注近期固定版本；更早版本保持原有tag和归档，不重打标签。
+更新时间：2026-11-01。此页标注近期固定版本；更早版本保持原有tag和归档，不重打标签。
 
 ## Branch用途
 
 | Branch | 用途 |
 |---|---|
+| [`real-scout-tare-input-fix-20261101`](https://github.com/CQULzz/HT_Explo/tree/real-scout-tare-input-fix-20261101) | 完整SHA见本轮回执，沿用远端实车祖先 | 观测原点/可靠点云/有界输入诊断；325项Python、8组C++通过；仍有传输缺口，提前完成及ARM未验收 | [Release](https://github.com/CQULzz/HT_Explo/releases/tag/real-scout-tare-input-fix-20261101)、[报告](../results/real_tare_input_fix_2026-11-01/REPORT.md) |
 | [`real/scout-helios32`](https://github.com/CQULzz/HT_Explo/tree/real/scout-helios32) | Scout + Helios32实车专用外参、输入桥接、HT、TARE/XYθ代码及离线实验记录；本次只向此分支追加代码/文档 |
 | `main` | 保留原仿真/实验归档基线，本次未改动 |
 | `develop` | 保留通用开发候选，本次未改动 |

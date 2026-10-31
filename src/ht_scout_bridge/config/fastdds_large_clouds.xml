@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Opt-in process profile. Apply to the LiDAR writer as well as consumers.
+     No global kernel, network-interface, affinity, or power changes. -->
+<profiles xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+  <transport_descriptors>
+    <transport_descriptor>
+      <transport_id>ht_udp</transport_id><type>UDPv4</type>
+    </transport_descriptor>
+    <transport_descriptor>
+      <transport_id>ht_shm</transport_id><type>SHM</type>
+      <segment_size>16777216</segment_size>
+    </transport_descriptor>
+  </transport_descriptors>
+  <participant profile_name="ht_large_clouds" is_default_profile="true">
+    <rtps>
+      <userTransports><transport_id>ht_udp</transport_id><transport_id>ht_shm</transport_id></userTransports>
+      <useBuiltinTransports>false</useBuiltinTransports>
+    </rtps>
+  </participant>
+</profiles>

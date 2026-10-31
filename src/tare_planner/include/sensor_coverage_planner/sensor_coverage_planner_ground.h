@@ -214,6 +214,8 @@ private:
   bool fallback_commanded_=false, startup_commanded_=false;
   double odom_received_=-1, scan_received_=-1, odom_stamp_=-1, scan_stamp_=-1;
   ht_cost_ns::InputPoseBuffer odom_history_;
+  std::array<double,3> sensor_origin_offset_{};
+  geometry_msgs::msg::Point sensor_position_;
   std::deque<sensor_msgs::msg::PointCloud2::ConstSharedPtr> pending_scans_;
   friend struct InputCallbackTestAccess;
   double scan_pose_max_skew_=.05,last_input_ros_time_=-1;

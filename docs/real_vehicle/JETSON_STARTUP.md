@@ -119,3 +119,6 @@ RViz中：灰点是实测高程，外围红绿是HT最佳概率；白圈是0.6m�
 
 
 2026-10-31新增CUDA上下文与固定启动许可，见[本轮说明](HT_CUDA_STARTUP.md)。HT环境需要与CUDA兼容的CuPy/NVRTC来运行新上下文；`ht_context_backend=auto`会在不可用时明确告警并使用NumPy，`cuda`显式要求该后端。模型的CUDA设备配置保持独立。部署时同时重建规划器与跟踪器的StartupPrior消息接口。新策略仍仅完成x86离线验证，尚无Jetson/ARM实测。
+
+
+2026-11-01离线候选：原始/注册点云采用可靠订阅，新增输入计数与QoS诊断；TARE射线/覆盖使用扫描时刻的雷达原点，车辆参考点和已核验外参保持。可选16MiB DDS配置默认不启用，外部进程须独立配置。仍有一次连续9帧缺口，提前完成及ARM未验收，见[接口、参数与诊断](TARE_INPUT_AND_ORIGIN.md)及[实验报告](../results/real_tare_input_fix_2026-11-01/REPORT.md)。

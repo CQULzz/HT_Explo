@@ -25,6 +25,24 @@ inline bool validInputPose(const InputPose& p) {
   return std::isfinite(norm) && std::abs(norm-1)<=.01;
 }
 
+// A sensor lever arm is expressed in the odometry child frame. Rotate it
+// with the full measured attitude; adding its Z component in map coordinates
+// is incorrect on a slope. This changes the observation origin, not the
+// vehicle pose used by routing, collision checks, or the startup assumption.
+inline std::optional<std::array<double,3>> observationOrigin(
+    const InputPose& p,const std::array<double,3>& offset) {
+  if(!validInputPose(p)) return {};
+  for(double v:offset) if(!std::isfinite(v)) return {};
+  double norm=0;for(double v:p.q) norm+=v*v;
+  const double scale=1/std::sqrt(norm);
+  const double x=p.q[0]*scale,y=p.q[1]*scale,z=p.q[2]*scale,w=p.q[3]*scale;
+  const std::array<double,3> t{2*(y*offset[2]-z*offset[1]),
+    2*(z*offset[0]-x*offset[2]),2*(x*offset[1]-y*offset[0])};
+  return std::array<double,3>{p.xyz[0]+offset[0]+w*t[0]+y*t[2]-z*t[1],
+    p.xyz[1]+offset[1]+w*t[1]+z*t[0]-x*t[2],
+    p.xyz[2]+offset[2]+w*t[2]+x*t[1]-y*t[0]};
+}
+
 class InputPoseBuffer {
  public:
   // Duplicates and out-of-order packets are dropped. A clock reset is a

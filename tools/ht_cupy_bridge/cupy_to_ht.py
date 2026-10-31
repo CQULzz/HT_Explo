@@ -14,6 +14,7 @@ from threading import RLock
 
 import numpy as np
 import torch
+import cuda_ht_context  # Safe on CPU: CuPy is imported only when its backend is constructed.
 
 import rclpy
 from grid_map_msgs.msg import GridMap

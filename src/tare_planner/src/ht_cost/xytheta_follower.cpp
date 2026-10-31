@@ -150,7 +150,7 @@ class XYThetaFollower : public rclcpp::Node {
         odom_received_=now().seconds();
         odom_stamp_=rclcpp::Time(msg->header.stamp).seconds();
       });
-    scan_sub_=create_subscription<sensor_msgs::msg::PointCloud2>(registered_scan_topic,rclcpp::SensorDataQoS(),
+    scan_sub_=create_subscription<sensor_msgs::msg::PointCloud2>(registered_scan_topic,rclcpp::QoS(5).reliable(),
       [this](sensor_msgs::msg::PointCloud2::ConstSharedPtr msg) {
         if(!ht_cost_ns::mapFrame(msg->header.frame_id)){scan_received_=-1;return;}
         scan_received_=now().seconds();scan_stamp_=rclcpp::Time(msg->header.stamp).seconds();

@@ -44,6 +44,8 @@ def test_actual_launch_modes_and_start_topic(monkeypatch,mode):
     assert ('/ht_runtime','/ht_real/ht_runtime') in m.HARDWARE_REMAPS
     assert ('/ht_reasons','/ht_real/ht_reasons') in m.HARDWARE_REMAPS
     assert rows['scout_inputs']['params']['source_age_layer']=='observation_age'
+    assert rows['scout_inputs']['params']['cloud_reliability']=='reliable'
+    assert rows['tare_planner_node']['params']['sensor_origin_offset']==pytest.approx([.1725,0.,.5502])
 
 
 def test_mapper_profile_preserves_sensor_origin_and_measured_age():

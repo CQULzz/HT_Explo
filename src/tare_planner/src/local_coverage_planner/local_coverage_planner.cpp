@@ -222,6 +222,28 @@ void LocalCoveragePlanner::EnqueueViewpointCandidates(
   if (use_frontier_) {
     std::sort(frontier_queue.begin(), frontier_queue.end(), SortPairInRev);
   }
+  if(viewpoint_manager_->HT()->tareCoverage()) {
+    // Read-only audit of the inputs and queues used by the unmodified native
+    // selector. "No target" must be explainable without changing its order.
+    int visited=0,other_cell=0,preselected=0,eligible=0,raw_gain=0,raw_frontier=0;
+    for(const int id:viewpoint_manager_->GetViewPointCandidateIndices()) {
+      if(viewpoint_manager_->ViewPointVisited(id)) {++visited;continue;}
+      if(!viewpoint_manager_->ViewPointInExploringCell(id)) {++other_cell;continue;}
+      const int array=viewpoint_manager_->GetViewPointArrayInd(id);
+      if(std::find(selected_viewpoint_array_indices.begin(),selected_viewpoint_array_indices.end(),array)
+          !=selected_viewpoint_array_indices.end()) {++preselected;continue;}
+      ++eligible;
+      raw_gain+=viewpoint_manager_->GetViewPointCoveredPointNum(id)>=parameters_.kMinAddPointNum;
+      raw_frontier+=viewpoint_manager_->GetViewPointCoveredFrontierPointNum(id)>=parameters_.kMinAddFrontierPointNum;
+    }
+    RCLCPP_INFO(node_->get_logger(),
+      "TARE_SELECTION candidates=%zu visited=%d other_cell=%d preselected=%d eligible=%d raw_gain=%d raw_frontier=%d virtual_points=%zu virtual_frontier=%zu queue=%zu queue_best=%d frontier_queue=%zu use_frontier=%d min_points=%d min_frontier=%d",
+      viewpoint_manager_->GetViewPointCandidateIndices().size(),visited,other_cell,preselected,eligible,raw_gain,raw_frontier,
+      static_cast<size_t>(std::count(covered_point_list.begin(),covered_point_list.end(),true)),
+      static_cast<size_t>(std::count(covered_frontier_point_list.begin(),covered_frontier_point_list.end(),true)),
+      cover_point_queue.size(),cover_point_queue.empty()?0:cover_point_queue.front().first,
+      frontier_queue.size(),use_frontier_,parameters_.kMinAddPointNum,parameters_.kMinAddFrontierPointNum);
+  }
 }
 
 void LocalCoveragePlanner::SelectViewPoint(
