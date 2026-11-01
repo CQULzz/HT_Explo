@@ -14,3 +14,6 @@
 需要原来的强度时，在原实车launch参数中添加`ht_small_hole_profile:=strict`；不必改代码。显式关掉仍使用`small_hole_repair:=false`。运行诊断`small_hole_profile`、`small_holes.filled_cells`和`ht_interpolated`可识别实际配置和插值来源，插值不是直接观测。
 
 CUDA上下文和1.5m固定30秒起点策略保持本轮之前的配置。参数选择必须记录进运行清单，部署后查看实际生效值；本轮只有x86离线验证，未在ARM或实车验收。
+
+
+2026-11-01新增`ht_small_hole_fit_backend=auto/numpy/cuda`（同名实车launch参数）。auto在CUDA设备及4组精确启动自检通过后使用CUDA FP64窗口统计；CPU设备或初始化/自检失败用原CPU统计。numpy强制原统计、保留其他Numba优化；修补开启时显式cuda失败提前报错。候选、阈值、拟合求解、保护、四象限/距离与连通分量仍在原CPU路径，strict/moderate参数不改。网络仍为FP32。auto不按速度自动选择，ARM/GPU竞争需实测，见[报告与回退说明](../results/real_cuda_hole_fit_2026-11-01/REPORT.md)。

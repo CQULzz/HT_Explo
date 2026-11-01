@@ -1,0 +1,22 @@
+{
+  "release_gate": {
+    "frozen_sources_unchanged": true,
+    "342_python_tests_passed": true,
+    "198frames_bothprofiles_height_mask_stats_exact": true,
+    "81_model_inputs_and_all_outputs_byte_exact": true,
+    "all3paired_median_and_mean_improved": true,
+    "installed_cuda_and_launch_verified": true,
+    "p95_regression_2runs_disclosed": true,
+    "no_arm_or_vehicle_frequency_claim": true,
+    "81_video_frames_full_decode_passed": true
+  },
+  "remaining": {
+    "arm_speedup_measured": false,
+    "tail_stability_accepted": false,
+    "interleaved_p95_regression_repeats": [
+      2,
+      3
+    ]
+  },
+  "stage": "All code/numerical/regression/install/plot/video checks complete; publication pending."
+}

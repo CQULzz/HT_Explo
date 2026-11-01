@@ -12,6 +12,7 @@
 
 | 固定版本 tag | 主要内容 | 对应资料 |
 |---|---|---|
+| `real-scout-cuda-hole-fit-20261101` | 小孔9组FP64统计移到CUDA，CPU判定保持；198帧两档及81帧完整HT输入/输出一致；整回调中位32.43→30.08ms，342项检查通过，慢帧/ARM仍未验收 | [报告](docs/results/real_cuda_hole_fit_2026-11-01/REPORT.md)、[数据与视频](https://github.com/CQULzz/HT_Explo/releases/tag/real-scout-cuda-hole-fit-20261101) |
 | `real-scout-history-fusion-speed-20261101` | 编译FP32历史融合、避免窗口整块复制；81帧输入/输出一致；逐帧交替回调36.32→31.23ms，平均减17.83%；其他分组P95有退步，ARM/实车未验收 | [报告](docs/results/real_history_fusion_speed_2026-11-01/REPORT.md)、[完整数据与视频](https://github.com/CQULzz/HT_Explo/releases/tag/real-scout-history-fusion-speed-20261101) |
 | `real-scout-tare-input-fix-20261101-r1` | 补齐可选DDS XML安装规则；运行算法及实验沿用同日冻结候选，完整数据保留原Release；已核对实际安装文件 | [包装补丁](docs/results/real_tare_input_fix_2026-11-01/PACKAGING_FIX.md)、[源码与安装证据](https://github.com/CQULzz/HT_Explo/releases/tag/real-scout-tare-input-fix-20261101-r1) |
 | `real-scout-tare-input-fix-20261101` | 修正TARE车体/雷达观测原点混用；三处大点云可靠订阅与输入诊断；正式传输53/480→471/480，仍有连续9帧缺口；325项Python、8组C++通过，未验收提前完成或ARM | [报告](docs/results/real_tare_input_fix_2026-11-01/REPORT.md)、[接口说明](docs/real_vehicle/TARE_INPUT_AND_ORIGIN.md)、[数据与视频](https://github.com/CQULzz/HT_Explo/releases/tag/real-scout-tare-input-fix-20261101) |

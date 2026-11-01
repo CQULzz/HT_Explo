@@ -32,4 +32,7 @@ HT节点参数`ht_diagnostics_capacity`默认600，必须为正整数。保留�
 此诊断功能不更改地图发布源时间戳、通行阈值、未知或障碍掩码。不能通过重复旧图、放宽超时或关闭检查来提高测得频率。
 
 
-2026-11-01历史提速候选：运行身份effective.history_fusion_backend及history_fusion模块SHA记录实际融合路径。ht_history_backend控制历史编译后端；numpy保留原NumPy更新和选择，auto可回退。新模块在订阅前预热；输入非FP32使用原更新公式。具体81帧一致性、独立进程P95反例与交替计时见[报告](../results/real_history_fusion_speed_2026-11-01/REPORT.md)。这些是服务耗时，不能当成车上有效发布率。
+2026-11-01历史提速候选：运行身份actual.history_fusion_backend及history_fusion模块SHA记录实际融合路径。ht_history_backend控制历史编译后端；numpy保留原NumPy更新和选择，auto可回退。新模块在订阅前预热；输入非FP32使用原更新公式。具体81帧一致性、独立进程P95反例与交替计时见[报告](../results/real_history_fusion_speed_2026-11-01/REPORT.md)。这些是服务耗时，不能当成车上有效发布率。
+
+
+小孔CUDA统计实际后端见runtime JSON的`actual.small_hole_fit_backend`及`actual.small_hole_fit_details`，包括自检次数或回退原因；新cuda_small_holes模块SHA进入身份。性能消息和每帧诊断也有small_hole_fit_backend。仅看device=cuda不能确认小孔路径，见[参数与完整对照](../results/real_cuda_hole_fit_2026-11-01/REPORT.md)。

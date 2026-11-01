@@ -31,6 +31,7 @@ from model import load_student_model, fuse_student_for_inference
 from historical_elevation import HistoricalElevation
 from history_window import warmup_history_window
 from history_fusion import warmup_history_fusion
+from cuda_small_holes import create_small_hole_moments
 from elevation_quality import preprocess_elevation, retain_recent_obstacle_edges, warmup_quality
 from local_surface import SurfaceReferenceEstimator
 from cpu_threads import configure_cpu_threads
@@ -121,6 +122,14 @@ class CupyToHt(Node):
             torch.backends.cuda.matmul.allow_tf32=False
             torch.backends.cudnn.allow_tf32=False
         self.device=torch.device(requested_device)
+        hole_fit_backend=self.declare_parameter('ht_small_hole_fit_backend','auto').value
+        if hole_fit_backend not in ('auto','numpy','cuda'):raise ValueError('Invalid small-hole fit backend')
+        self.small_hole_fit_backend,self.small_hole_moments,self.small_hole_fit_details=(
+            create_small_hole_moments(hole_fit_backend,self.device) if self.small_holes
+            else ('numpy',None,{'reason':'small_hole_repair_disabled'}))
+        self.get_logger().info(f'Small-hole fit backend: {self.small_hole_fit_backend}; {self.small_hole_fit_details}')
+        if 'error' in self.small_hole_fit_details:
+            self.get_logger().warning(f'CUDA hole moments unavailable; using CPU: {self.small_hole_fit_details["error"]}')
         context_backend=self.declare_parameter('ht_context_backend','auto').value
         if context_backend not in ('auto','numpy','cuda'):raise ValueError('Invalid HT context backend')
         self.cuda_context=None
@@ -183,7 +192,7 @@ class CupyToHt(Node):
         capacity=self.declare_parameter('ht_diagnostics_capacity',600).value
         parameter_names=('use_sim_time','ht_device','ht_torch_threads','ht_channels_last',
                          'ht_quality_backend','ht_history_backend','ht_cpu_fuse_bn','ht_fuse_bn',
-                         'ht_small_hole_repair','ht_small_hole_backend','ht_small_hole_profile','ht_context_backend','ht_reason_interval_s','ht_profile_runtime',
+                         'ht_small_hole_repair','ht_small_hole_backend','ht_small_hole_profile','ht_small_hole_fit_backend','ht_context_backend','ht_reason_interval_s','ht_profile_runtime',
                          'ht_diagnostics_capacity','ht_topic',
                          'elevation_topic','surface_odometry_topic','surface_sensor_ground_offset_m',
                          'odometry_child_frame')
@@ -196,6 +205,8 @@ class CupyToHt(Node):
              'history_backend':self.history_backend,'fused_batchnorm':self.fused_batchnorm,
              'history_fusion_backend':self.history_fusion_backend,
              'small_hole_backend':self.small_hole_backend,
+             'small_hole_fit_backend':self.small_hole_fit_backend,
+             'small_hole_fit_details':self.small_hole_fit_details,
              'channels_last':self.channels_last,'torch_threads':torch.get_num_threads(),
              'cpu_pools':cpu_threads,
              'cuda_matmul_allow_tf32':torch.backends.cuda.matmul.allow_tf32,
@@ -204,7 +215,7 @@ class CupyToHt(Node):
             {name:sys.modules[name] for name in ('model','historical_elevation','history_window',
                 'elevation_quality','local_surface','ht_support','small_holes','input_odometry',
                 'latest_input','cpu_threads','diagnostic_history','runtime_manifest',
-                'small_hole_kernels','cuda_ht_context','runtime_probe','ht_reasons','history_fusion')})
+                'small_hole_kernels','cuda_ht_context','runtime_probe','ht_reasons','history_fusion','cuda_small_holes')})
         self.runtime_pub=self.create_publisher(String,'/ht_runtime',QoSProfile(
             depth=1,reliability=ReliabilityPolicy.RELIABLE,durability=DurabilityPolicy.TRANSIENT_LOCAL))
         self.runtime_pub.publish(String(data=json.dumps(self.runtime_manifest,sort_keys=True)))
@@ -355,7 +366,8 @@ class CupyToHt(Node):
         if self.small_holes:
             inference_elevation,inferred,hole_stats=repair_small_holes(
                 elevation,observed,rejected,obstacle_context,current,current_var,current_age,resolution,
-                protected=quality.edge_mask,backend=self.small_hole_backend,profile=self.hole_profile)
+                protected=quality.edge_mask,backend=self.small_hole_backend,profile=self.hole_profile,
+                moment_provider=self.small_hole_moments)
         holes_finished=time.monotonic()
         if self.cuda_context is not None:
             height,support,occupied,physical_support=self.cuda_context.prepare(
@@ -481,6 +493,7 @@ class CupyToHt(Node):
                        'out_of_order_inputs': self.pending_maps.out_of_order,
                        'history_backend': self.history_backend,
                        'fused_batchnorm': self.fused_batchnorm, 'device': str(self.device), 'context_backend':self.context_backend, 'small_hole_profile':self.hole_profile,
+                       'small_hole_fit_backend':self.small_hole_fit_backend,
                        'runtime_id': self.runtime_manifest['runtime_id'],
                        'queue_wait_s':queue_wait,'input_queue':self.pending_maps.status(),
                        'stages':stages,'runtime_profile':profile,'reason_summary':reason_summary,
@@ -519,7 +532,7 @@ class CupyToHt(Node):
         self.diagnostics.append({'stamp_s': stamp_s, 'runtime_id':self.runtime_manifest['runtime_id'], 'fused_cells': fused,
                                  'observed_cells': int(observed.sum()), 'supported_cells': int(support.sum()),
                                  'surface': surface_stats, 'quality': quality.stats,'small_holes':hole_stats,
-                                 'small_hole_profile':self.hole_profile,
+                                 'small_hole_profile':self.hole_profile,'small_hole_fit_backend':self.small_hole_fit_backend,
                                  'source_rejected_cells': int(source_rejected.sum()),
                                  'known_obstacle_cells': int(occupied.sum()),
                                  'retained_filtered_obstacle_cells': int(retained_filtered_obstacles.sum()),

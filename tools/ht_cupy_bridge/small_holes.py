@@ -24,7 +24,8 @@ def _geometry(shape,resolution):
 
 
 def repair_small_holes(height, observed, rejected, obstacle, fresh_height,
-                       fresh_variance, fresh_age, resolution, protected=None, *, backend='auto', profile='strict'):
+                       fresh_variance, fresh_age, resolution, protected=None, *, backend='auto', profile='strict',
+                       moment_provider=None):
     if profile not in HOLE_PROFILES:raise ValueError('Unknown small-hole profile')
     z=np.asarray(height,np.float32)
     arrays=[np.asarray(v) for v in (observed,rejected,obstacle,fresh_height,fresh_variance,fresh_age)]
@@ -39,7 +40,8 @@ def repair_small_holes(height, observed, rejected, obstacle, fresh_height,
     # Fit every candidate from original measurements in one vectorized pass.
     # No iterative propagation and no fitted value enters the historical map.
     _,kernel=warmup_small_holes(backend)
-    output,filled=_narrow_gaps(z,observed,blocked,current,var,age,resolution,kernel=kernel,settings=HOLE_PROFILES[profile])
+    output,filled=_narrow_gaps(z,observed,blocked,current,var,age,resolution,kernel=kernel,
+                            settings=HOLE_PROFILES[profile],moment_provider=moment_provider)
     _,missing_components=label(~np.isfinite(z),structure=np.ones((3,3)))
     _,filled_components=label(filled,structure=np.ones((3,3)))
     stats={'candidate_components':missing_components,'filled_components':filled_components,
@@ -47,7 +49,7 @@ def repair_small_holes(height, observed, rejected, obstacle, fresh_height,
     return output,filled,stats
 
 
-def _narrow_gaps(z,observed,blocked,current,var,age,resolution,*,kernel=None,settings=None):
+def _narrow_gaps(z,observed,blocked,current,var,age,resolution,*,kernel=None,settings=None,moment_provider=None):
     settings=HOLE_PROFILES['strict'] if settings is None else settings
     radius=max(1,int(np.floor(.16/resolution+1e-8)));size=2*radius+1
     known=(np.asarray(observed,bool)&np.isfinite(z)&np.isfinite(current)&np.isfinite(var)
@@ -101,11 +103,17 @@ def _narrow_gaps(z,observed,blocked,current,var,age,resolution,*,kernel=None,set
     index=np.nonzero(candidate)
     sample_mean=lambda a:mean(a)[index]
     x,y=_geometry(z.shape,float(resolution))
-    h=np.where(known,z,0.).astype(np.float64);k=known.astype(np.float64)
     norm=np.maximum(known_mean[index],1e-15)
-    ex=sample_mean(k*x)/norm;ey=sample_mean(k*y)/norm;ez=sample_mean(h)/norm
-    xx=sample_mean(k*x*x)/norm-ex*ex;yy=sample_mean(k*y*y)/norm-ey*ey;xy=sample_mean(k*x*y)/norm-ex*ey
-    xz=sample_mean(h*x)/norm-ex*ez;yz=sample_mean(h*y)/norm-ey*ez;zz=sample_mean(h*h)/norm-ez*ez
+    if moment_provider is None:
+        h=np.where(known,z,0.).astype(np.float64);k=known.astype(np.float64)
+        ex=sample_mean(k*x)/norm;ey=sample_mean(k*y)/norm;ez=sample_mean(h)/norm
+        xx=sample_mean(k*x*x)/norm-ex*ex;yy=sample_mean(k*y*y)/norm-ey*ey;xy=sample_mean(k*x*y)/norm-ex*ey
+        xz=sample_mean(h*x)/norm-ex*ez;yz=sample_mean(h*y)/norm-ey*ez;zz=sample_mean(h*h)/norm-ez*ez
+    else:
+        means=moment_provider.sample(z,known,float(resolution),size,index)
+        ex=means[0]/norm;ey=means[1]/norm;ez=means[2]/norm
+        xx=means[3]/norm-ex*ex;yy=means[4]/norm-ey*ey;xy=means[5]/norm-ex*ey
+        xz=means[6]/norm-ex*ez;yz=means[7]/norm-ey*ez;zz=means[8]/norm-ez*ez
     det=xx*yy-xy*xy;good=det>1e-8
     a=np.divide(xz*yy-yz*xy,det,out=np.zeros_like(det),where=good)
     b=np.divide(yz*xx-xz*xy,det,out=np.zeros_like(det),where=good)

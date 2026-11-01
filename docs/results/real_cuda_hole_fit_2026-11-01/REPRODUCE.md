@@ -1,0 +1,15 @@
+# 复现与完整数据索引
+
+基线为上轮历史优化1c5e621a。baseline/candidate及两个FREEZE文件保存实际源码和SHA，测试期间未改。REQUEST_AND_PLAN、reference_source保存规划、官方SciPy v1.11.4 C实现/许可证/blob/SHA；自检依据本机实际安装SciPy，而非假定目标机版本。
+
+输入直接复用：inputs.pkl/INPUT_CHECK为81个原Oct31GridMap+匹配原Odometry CDR；profile_inputs为此前117个填补参数NPZ，PROFILE_INPUT_CHECK逐文件SHA，不重新解压。verify_baseline/hole_inputs还捕获81个完整修补参数。component_audit.py在198参数帧上对两档比较，共396高度/掩码NPZ和完整计时，COMPONENT_AUDIT原始汇总保留；SUMMARY组件口径为两个数据集分别排除前5帧、每档/版本564次计时。
+
+benchmark.py直接运行冻结生产节点，不启动executor/控制器/车辆。原CDR/源时间/年龄/网格不变，离线时钟仅设源时间+50ms，所有话题诊断命名空间和localhost隔离域，结果用进程内Sink。verify_baseline/verify_candidate保存81模型输入/完整输出，捕获运行不作为正式测速；baseline_i/candidate_i为独立进程交替3轮，interleaved_i为两个各自状态独立的冻结生产类逐帧轮换3轮。动态加载各版本small_holes和historical_elevation后构造节点，其他共享模块相同，完整脚本与runtime身份保留。候选每次要求actual小孔后端为cuda，防止静默回退影响结论。正式计时排除文件I/O和压缩，每次排除前5帧，其余慢帧不删，无并行本任务性能测试/回归。
+
+NUMERICAL_CHECK：81捕获模型输入/输出字节一致，972帧次其他运行输出哈希一致，0.5零翻转；CHECK_NOTES记录首次把逻辑C-order矩阵hash与原GridMapF-order序列化hash混比的检查错误，布局归一后全通过，原结果未改。342项Python检查见regression_frozen.log；新13项覆盖双档/分辨率/保护/只读/时效/自动回退。C++源和原安装ELF未变，CPP_REUSE_CHECK沿用此前8组，不重复未改测试。
+
+INSTALLED_TARE_CHECK和INSTALLED_CHECK确认新独立安装的模块、权重、实际CUDA自检/修补及launch与源一致；源码仍由同工作树原CMake安装计划与Python包安装，无相邻工作树或原build_real/install_real覆盖。Numba/CuPy JIT缓存可再建，归档保留内核源、精度/编译选项、实际参数和版本，而不复制缓存。
+
+RECORDED_CAR_PERFORMANCE、轮里程/任务事件、prior_component_ray_free_volume复用同原记录已验证证据。体素曲线不是本轮新探索或真值，实际轮里程0。offline_cuda_hole_fit.mp4展示81实际HT结果与回调曲线，6fps、13.5秒，源时间不均匀且逐帧标注；VIDEO_CHECK完整解码通过，不是实车/实时播放。
+
+需在新机器将脚本绝对路径映射到归档位置，使用ENVIRONMENT及runtime_manifest对应已有依赖；不要升级框架/驱动、加载独立CuPy映射工作区、运行实车launch或全话题bag play。完整原包与已发布证据继续复用已核验Release，见REUSED_INPUT_ASSETS；本轮科学归档含源快照、全部原CDR子集/参数、396组件输出、完整HT输入/输出及所有计时/反例/日志，不重复原始大ZIP。FULL_DATA_MANIFEST逐项SHA，发布完成以PUBLICATION_RECEIPT/FINAL_REMOTE_CHECK为准。
