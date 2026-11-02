@@ -84,6 +84,44 @@ class HtRosTest : public ::testing::Test {
   }
 };
 
+TEST_F(HtRosTest,ConsumerReportsLatestAndFrozenCycleSeparatelyAndCountsRejectedMaps) {
+  std::string last;
+  auto sub=node->create_subscription<std_msgs::msg::String>("ht_map_diagnostics",1,
+    [&](std_msgs::msg::String::ConstSharedPtr message){last=message->data;});
+  send(grid());
+  const double old_stamp=ht->cycleStamp();
+  auto newer=grid();pub->publish(*grid_map::GridMapRosConverter::toMessage(newer));
+  // Unlike the fixture's spin(), deliberately leave beginCycle uncalled.
+  const auto until=std::chrono::steady_clock::now()+1200ms;
+  while(std::chrono::steady_clock::now()<until) {
+    rclcpp::spin_some(node);std::this_thread::sleep_for(5ms);
+  }
+  ASSERT_FALSE(last.empty());
+  EXPECT_NE(last.find("\"consumer\":\"/ht_ros_test\""),std::string::npos);
+  EXPECT_NE(last.find("\"accepted\":2"),std::string::npos);
+  EXPECT_NE(last.find("\"cycle_source_age_s\":"),std::string::npos);
+  EXPECT_NE(last.find("\"latest_source_age_s\":"),std::string::npos);
+  auto number=[&](const std::string& key) {
+    const auto begin=last.find("\""+key+"\":");
+    if(begin==std::string::npos)throw std::runtime_error("Missing diagnostic key");
+    return std::stod(last.substr(begin+key.size()+3));
+  };
+  EXPECT_DOUBLE_EQ(ht->cycleStamp(),old_stamp);
+  EXPECT_NEAR(number("cycle_source_stamp_s"),old_stamp,1e-6);
+  EXPECT_GT(number("latest_source_stamp_s"),number("cycle_source_stamp_s"));
+  auto invalid=*grid_map::GridMapRosConverter::toMessage(newer);
+  invalid.data[0].data.clear();pub->publish(invalid);
+  const auto end=std::chrono::steady_clock::now()+1200ms;
+  while(std::chrono::steady_clock::now()<end) {
+    rclcpp::spin_some(node);std::this_thread::sleep_for(5ms);
+  }
+  EXPECT_NE(last.find("\"received\":3"),std::string::npos);
+  EXPECT_NE(last.find("\"accepted\":2"),std::string::npos);
+  EXPECT_NE(last.find("\"rejected\":1"),std::string::npos);
+  EXPECT_NE(last.find("\"latest_source_stamp_s\":null"),std::string::npos);
+  EXPECT_NE(last.find("HT_MAP_REJECTED:"),std::string::npos);
+}
+
 class HtConfigurationRosTest : public HtRosTest {
  protected:
   std::string scoreSemantics() const override {return "configuration";}

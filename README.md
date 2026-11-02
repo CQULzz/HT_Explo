@@ -80,3 +80,7 @@ ros2 run ht_scout_bridge check_scout_calibration \
 构建使用本工作区的`build_real/install_real`，HT终端只source ROS和本工作区install。两个独立工作区通过ROS话题通信，不互相source构建产物。
 
 完整探索源码仍在[src/tare_planner](src/tare_planner)，HT模型和历史融合在[tools/ht_cupy_bridge](tools/ht_cupy_bridge)，新增实车专用代码在[src/ht_scout_bridge](src/ht_scout_bridge)。原实验资料和标签保留于Git历史及[归档索引](https://github.com/CQULzz/HT_Explo/blob/main/docs/experiments/catalog/INDEX.md)。
+# 2026-11-02 实车近车空洞复核
+
+已对完整B录包独立复核：净位移约35厘米，实际起点许可60秒，记录在许可截止前结束。近车有真实地面支撑不足，车端HT还存在未同步到GitHub的源码差异。本轮加速C++地图接收并增加各消费者快照年龄诊断，193张实测图内部数组/查询一致，117项Python及8组C++检查通过；未宣称修复盲区或完成实车持续探索。见[报告与限制](docs/results/real_near_field_audit_2026-11-02/REPORT.md)。
+

@@ -48,7 +48,7 @@ class RuntimeStatus(Node):
         self.acceptance=self.declare_parameter('direction_acceptance','mapping').value
         self.command_topic=self.declare_parameter('command_topic','/ht_real/cmd_vel_stamped').value
         self.output_topic=self.declare_parameter('chassis_command_topic','/cmd_vel').value
-        self.latest={};self.grid=None;self.decoded=None;self.odom=None;self.prior=None;self.command=None;self.last_reason=None
+        self.latest={};self.map_consumers={};self.grid=None;self.decoded=None;self.odom=None;self.prior=None;self.command=None;self.last_reason=None
         self.statuspub=self.create_publisher(String,'/ht_real/runtime_status',1)
         self.markpub=self.create_publisher(MarkerArray,'/ht_real/runtime_markers',1)
         self.bestpub=self.create_publisher(PointCloud2,'/ht_real/visualization/best_probability',1)
@@ -62,8 +62,20 @@ class RuntimeStatus(Node):
         self.create_subscription(StartupPrior,'/ht_real/ht_startup_prior',self.prior_received,
             QoSProfile(depth=1,durability=DurabilityPolicy.TRANSIENT_LOCAL))
         self.create_subscription(TwistStamped,self.command_topic,self.command_received,1)
+        self.create_subscription(String,'/ht_real/ht_map_diagnostics',self.map_diagnostics_received,5)
         self.raw=None;self.create_timer(.5,self.tick)
     def receive(self,key,text):self.latest[key]=(text,time.monotonic())
+    def map_diagnostics_received(self,msg):
+        # Aggregate only bounded, read-only consumer reports. A fresh consumer
+        # callback does not make its source map (or its cycle snapshot) fresh.
+        if len(msg.data)>16384:return
+        try:data=json.loads(msg.data)
+        except (ValueError,TypeError):return
+        if not isinstance(data,dict) or data.get('diagnostic_only') is not True:return
+        consumer=data.get('consumer')
+        if not isinstance(consumer,str) or not consumer or len(consumer)>256:return
+        if consumer not in self.map_consumers and len(self.map_consumers)>=8:return
+        self.map_consumers[consumer]=(data,time.monotonic())
     def odom_received(self,m):self.odom=m
     def map_received(self,m):
         self.grid=m
@@ -96,6 +108,8 @@ class RuntimeStatus(Node):
             'direction_acceptance':self.acceptance,'startup_prior_active':active,'startup_remaining_s':remaining,
             'startup_assume_traversable':bool(self.prior and getattr(self.prior,'assume_traversable',False)),
             'motor_output_enabled':self.mode=='drive','wheel_motion_confirmed':False}
+        result['ht_map_consumers']={k:v for k,(v,received) in self.map_consumers.items()
+            if time.monotonic()-received<=3.}
         if self.command:
             result['command']={'topic':self.command_topic,'age_s':now-self.stamp(self.command),
                 'linear_x':self.command.twist.linear.x,'angular_z':self.command.twist.angular.z}

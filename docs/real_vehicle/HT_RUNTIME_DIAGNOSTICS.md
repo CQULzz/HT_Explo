@@ -36,3 +36,9 @@ HT节点参数`ht_diagnostics_capacity`默认600，必须为正整数。保留�
 
 
 小孔CUDA统计实际后端见runtime JSON的`actual.small_hole_fit_backend`及`actual.small_hole_fit_details`，包括自检次数或回退原因；新cuda_small_holes模块SHA进入身份。性能消息和每帧诊断也有small_hole_fit_backend。仅看device=cuda不能确认小孔路径，见[参数与完整对照](../results/real_cuda_hole_fit_2026-11-01/REPORT.md)。
+# 2026-11-02 消费者地图诊断
+
+新增只读`/ht_real/ht_map_diagnostics`，规划器和跟踪器用各自`consumer`全名区分。包含`received/accepted/rejected`、`callback_source_age_s`、`last_decode_s`、`latest_source_stamp_s/age_s`、`cycle_source_stamp_s/age_s`、`map_timeout_s`和`latest_error`。每消费者最多1Hz，有订阅者时发布，不改变地图源时间或通行许可。
+
+`/ht_real/runtime_status`的`ht_map_consumers`汇总最近3秒收到的消费者报告。各年龄是消费者发布报告时的采样值，不是汇总当前时刻重新计算的值；可用源时间戳与当前ROS时间核对。它能帮助区分网络可见新图、消费者已接受新图、周期仍持旧快照，不能单凭录包接收顺序推断消费顺序。详见[本轮复核](../results/real_near_field_audit_2026-11-02/REPORT.md)。
+

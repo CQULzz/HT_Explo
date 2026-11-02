@@ -1,0 +1,91 @@
+{
+  "release_gate": {
+    "python117_pass": true,
+    "cpp8_suites_pass": true,
+    "193_frames_all_runs_exact": true,
+    "median_decode_improved": true,
+    "p95_decode_improved": true,
+    "frozen_sources_verified": true,
+    "control_gate_sources_unchanged": true,
+    "video193_full_decode_pass": true
+  },
+  "cpp_gtest_results": [
+    {
+      "suite": "planner_input_test.gtest.xml",
+      "tests": "3",
+      "failures": "0",
+      "disabled": "0",
+      "errors": "0",
+      "time": "0.024",
+      "timestamp": "2026-11-02T21:35:22.966",
+      "name": "AllTests"
+    },
+    {
+      "suite": "input_pose_test.gtest.xml",
+      "tests": "7",
+      "failures": "0",
+      "disabled": "0",
+      "errors": "0",
+      "time": "0.",
+      "timestamp": "2026-11-02T21:35:22.854",
+      "name": "AllTests"
+    },
+    {
+      "suite": "ht_startup_sync_test.gtest.xml",
+      "tests": "11",
+      "failures": "0",
+      "disabled": "0",
+      "errors": "0",
+      "time": "8.005",
+      "timestamp": "2026-11-02T21:35:14.692",
+      "name": "AllTests"
+    },
+    {
+      "suite": "ht_ros_test.gtest.xml",
+      "tests": "36",
+      "failures": "0",
+      "disabled": "0",
+      "errors": "0",
+      "time": "15.471",
+      "timestamp": "2026-11-02T21:34:59.020",
+      "name": "AllTests"
+    },
+    {
+      "suite": "xytheta_follower_test.gtest.xml",
+      "tests": "23",
+      "failures": "0",
+      "disabled": "0",
+      "errors": "0",
+      "time": "36.63",
+      "timestamp": "2026-11-02T21:35:23.184",
+      "name": "AllTests"
+    },
+    {
+      "suite": "geometry_pose_test.gtest.xml",
+      "tests": "23",
+      "failures": "0",
+      "disabled": "0",
+      "errors": "0",
+      "time": "8.23",
+      "timestamp": "2026-11-02T21:34:50.572",
+      "name": "AllTests"
+    },
+    {
+      "suite": "terrain_history_test.gtest.xml",
+      "tests": "3",
+      "failures": "0",
+      "disabled": "0",
+      "errors": "0",
+      "time": "0.18",
+      "timestamp": "2026-11-02T21:34:50.170",
+      "name": "AllTests"
+    }
+  ],
+  "known_limits": [
+    "No A/C originals",
+    "Car HT has five source differences, one module missing locally",
+    "B ends before60s expiry",
+    "Real blind ground remains unsupported",
+    "No ARM/vehicle acceptance"
+  ]
+}

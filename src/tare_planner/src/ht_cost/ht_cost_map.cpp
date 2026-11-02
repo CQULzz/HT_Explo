@@ -5,9 +5,21 @@
 #include <tf2/LinearMath/Matrix3x3.h>
 #include <tf2/LinearMath/Transform.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
+#include <chrono>
+#include <iomanip>
+#include <sstream>
 
 namespace ht_cost_ns {
 namespace {
+std::string jsonString(const std::string& text) {
+  std::ostringstream out;out << '"';
+  for (unsigned char c:text) {
+    if(c=='"' || c=='\\')out << '\\' << c;
+    else if(c<0x20)out << "\\u00" << std::hex << std::setw(2) << std::setfill('0') << int(c) << std::dec;
+    else out << c;
+  }
+  out << '"';return out.str();
+}
 bool terrainGuidanceAllowed(const TerrainHistory& history,const Map* latest,
                             bool configuration_scores,double x,double y) {
   // Coarse OR aggregation can include a nearby safe center in the same0.2m
@@ -102,6 +114,10 @@ HtCostMap::HtCostMap(rclcpp::Node::SharedPtr node,bool publish_permission)
     subscription_=node->create_subscription<grid_map_msgs::msg::GridMap>(
       topic,rclcpp::QoS(1).reliable(),
       [this](grid_map_msgs::msg::GridMap::ConstSharedPtr msg){receive(msg);},options);
+    consumer_name_=node->get_fully_qualified_name();
+    map_diagnostics_pub_=node->create_publisher<std_msgs::msg::String>("ht_map_diagnostics",1);
+    map_diagnostics_timer_=node->create_wall_timer(std::chrono::seconds(1),
+      [this](){publishMapDiagnostics();},map_callback_group_);
     RCLCPP_INFO(logger_,"HT hard gate: min_probability=%.3f unknown_policy=%s calibrated=%d reversible=%d scores=%s",
                 min_probability_,policy.c_str(),calibrated_,require_reversible_motion_,score_semantics.c_str());
   }
@@ -177,6 +193,13 @@ void HtCostMap::receiveStartupPrior(const tare_planner::msg::StartupPrior& msg) 
 }
 
 void HtCostMap::receive(grid_map_msgs::msg::GridMap::ConstSharedPtr msg) {
+  const auto started=std::chrono::steady_clock::now();
+  {
+    std::lock_guard<std::mutex> lock(mutex_);
+    ++received_maps_;
+    last_callback_source_age_s_=clock_->now().seconds()-
+      (double(msg->header.stamp.sec)+double(msg->header.stamp.nanosec)*1e-9);
+  }
   try {
     // The upstream converter indexes layout.dim and maps the raw buffer
     // without checking its length. Validate before entering Eigen/GridMap.
@@ -247,6 +270,14 @@ void HtCostMap::receive(grid_map_msgs::msg::GridMap::ConstSharedPtr msg) {
     struct Aggregate { double x=0,y=0,z=0; int count=0; bool feasible=false; };
     std::map<std::pair<int,int>,Aggregate> terrain;
 
+    // Resolve names once per frame. Rebuilding eight strings and searching
+    // the layer map at every cell used most of the scalar decoder's work.
+    const auto& valid_layer=grid.get("ht_valid");
+    const auto* physical_layer=separate_observation ? &grid.get("ht_observation_valid"):nullptr;
+    const auto* obstacle_layer=grid.exists("ht_obstacle") ? &grid.get("ht_obstacle"):nullptr;
+    std::array<const grid_map::Matrix*,8> probability_layers;
+    for(int k=0;k<8;++k)probability_layers[k]=&grid.get("ht_dir_"+std::to_string(k));
+
     for (grid_map::GridMapIterator it(grid); !it.isPastEnd(); ++it) {
       grid_map::Position pos;
       grid.getPosition(*it,pos);
@@ -257,18 +288,18 @@ void HtCostMap::receive(grid_map_msgs::msg::GridMap::ConstSharedPtr msg) {
       if (row<0 || col<0 || row>=out->rows || col>=out->cols)
         throw std::runtime_error("Invalid GridMap index");
       const size_t index=static_cast<size_t>(row)*out->cols+col;
-      const float valid=grid.at("ht_valid",*it);
+      const float valid=valid_layer((*it)(0),(*it)(1));
       out->valid[index]=std::isfinite(valid) && valid>=0.5;
-      const float physical=separate_observation ? grid.at("ht_observation_valid",*it):valid;
+      const float physical=physical_layer ? (*physical_layer)((*it)(0),(*it)(1)):valid;
       physical_valid[index]=std::isfinite(physical) && physical>=0.5;
       if (configuration_scores_) {
-        const float obstacle=grid.at("ht_obstacle",*it);
+        const float obstacle=(*obstacle_layer)((*it)(0),(*it)(1));
         if (!std::isfinite(obstacle) || (obstacle!=0.f && obstacle!=1.f))
           throw std::runtime_error("Invalid HT obstacle mask");
         occupied[index]=obstacle>=.5;
       }
       for (int k=0;k<8;++k) {
-        const float p=grid.at("ht_dir_"+std::to_string(k),*it);
+        const float p=(*probability_layers[k])((*it)(0),(*it)(1));
         out->probabilities[k][index]=p;
         if (!std::isfinite(p) || p<0 || p>1) {
           if (std::isfinite(valid) && valid>=0.5)
@@ -298,6 +329,12 @@ void HtCostMap::receive(grid_map_msgs::msg::GridMap::ConstSharedPtr msg) {
     out->unknown_footprint.assign(dst.datastart,dst.dataend);
     out->physical_valid=std::move(physical_valid);
     for (int k=0;k<8;++k) {
+      // Configuration channels share a physical occupied mask. Compute its
+      // identical dilation once; point-score mode still needs all eight.
+      if(configuration_scores_ && k>0) {
+        out->blocked_footprint[k]=out->blocked_footprint[0];
+        continue;
+      }
       for (size_t i=0;i<size;++i)
         source[i]=configuration_scores_ ? occupied[i] :
           (out->valid[i] && out->probabilities[k][i]<min_probability_ ? 1 : 0);
@@ -341,11 +378,42 @@ void HtCostMap::receive(grid_map_msgs::msg::GridMap::ConstSharedPtr msg) {
       cell.height=a.count ? a.z/a.count : std::numeric_limits<double>::quiet_NaN();
     }
     latest_=std::move(out);latest_error_.clear();
+    ++accepted_maps_;
+    last_decode_s_=std::chrono::duration<double>(std::chrono::steady_clock::now()-started).count();
   } catch (const std::exception& e) {
     std::lock_guard<std::mutex> lock(mutex_);
     latest_.reset();latest_error_=std::string("HT_MAP_REJECTED: ")+e.what();
+    ++rejected_maps_;
+    last_decode_s_=std::chrono::duration<double>(std::chrono::steady_clock::now()-started).count();
     RCLCPP_WARN_THROTTLE(logger_,*clock_,2000,"HT map rejected: %s",e.what());
   }
+}
+
+void HtCostMap::publishMapDiagnostics() {
+  if(!map_diagnostics_pub_ || !map_diagnostics_pub_->get_subscription_count())return;
+  std::ostringstream out;out << std::setprecision(17);
+  {
+    std::lock_guard<std::mutex> lock(mutex_);
+    const double now=clock_->now().seconds();
+    out << "{\"consumer\":" << jsonString(consumer_name_)
+        << ",\"received\":" << received_maps_ << ",\"accepted\":" << accepted_maps_
+        << ",\"rejected\":" << rejected_maps_ << ",\"last_decode_s\":";
+    auto number=[&](double value){if(std::isfinite(value))out << value;else out << "null";};
+    if(received_maps_)number(last_decode_s_);else out << "null";
+    out << ",\"callback_source_age_s\":";
+    if(received_maps_)number(last_callback_source_age_s_);else out << "null";
+    out << ",\"latest_source_stamp_s\":";
+    if(latest_)number(latest_->stamp);else out << "null";
+    out << ",\"latest_source_age_s\":";
+    if(latest_)number(now-latest_->stamp);else out << "null";
+    out << ",\"cycle_source_stamp_s\":";
+    if(cycle_)number(cycle_->stamp);else out << "null";
+    out << ",\"cycle_source_age_s\":";
+    if(cycle_)number(now-cycle_->stamp);else out << "null";
+    out << ",\"map_timeout_s\":" << timeout_ << ",\"latest_error\":" << jsonString(latest_error_)
+        << ",\"diagnostic_only\":true}";
+  }
+  std_msgs::msg::String message;message.data=out.str();map_diagnostics_pub_->publish(message);
 }
 std::vector<HtCostMap::TerrainCell> HtCostMap::terrainWindow(double x,double y,double radius) {
   const auto prior=startupPrior();

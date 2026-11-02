@@ -5,6 +5,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include <grid_map_msgs/msg/grid_map.hpp>
 #include <std_msgs/msg/bool.hpp>
+#include <std_msgs/msg/string.hpp>
 #include <tare_planner/msg/startup_prior.hpp>
 #include <tf2_ros/buffer.h>
 #include <tf2_ros/transform_listener.h>
@@ -52,6 +53,7 @@ class HtCostMap {
  private:
   Support supportDirected(const Point& a,const Point& b,double heading) const;
   void receive(grid_map_msgs::msg::GridMap::ConstSharedPtr msg);
+  void publishMapDiagnostics();
   rclcpp::Clock::SharedPtr clock_;
   rclcpp::Logger logger_;
   StartupPrior prior_;
@@ -86,5 +88,10 @@ class HtCostMap {
   rclcpp::CallbackGroup::SharedPtr map_callback_group_;
   rclcpp::Subscription<grid_map_msgs::msg::GridMap>::SharedPtr subscription_;
   rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr permission_;
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr map_diagnostics_pub_;
+  rclcpp::TimerBase::SharedPtr map_diagnostics_timer_;
+  std::string consumer_name_;
+  uint64_t received_maps_=0, accepted_maps_=0, rejected_maps_=0;
+  double last_callback_source_age_s_=0, last_decode_s_=0;
 };
 }
