@@ -19,7 +19,8 @@ def preserve_rejected_obstacles(obstacle_elevation, raw_height, rejected):
                     np.where(mask & np.isfinite(raw), raw, np.nan)).astype(np.float32)
 
 
-def prepare_ht_context(elevation, observed, rejected, obstacle_elevation, resolution):
+def prepare_ht_context(elevation, observed, rejected, obstacle_elevation, resolution,
+                       physical_exclusion=None):
     height = np.asarray(elevation, np.float32).copy()
     occupied = np.isfinite(obstacle_elevation)
     height[occupied] = np.asarray(obstacle_elevation)[occupied]
@@ -34,4 +35,10 @@ def prepare_ht_context(elevation, observed, rejected, obstacle_elevation, resolu
     # describes observed terrain at each XY cell; footprint inflation belongs
     # to the consumer and must not inflate the neural context a second time.
     physical = near & ~uncertain
+    if physical_exclusion is not None:
+        exclusion = np.asarray(physical_exclusion, bool)
+        if exclusion.shape != height.shape:
+            raise ValueError('Physical exclusion shape mismatch')
+        physical &= ~exclusion
+        support &= ~exclusion[25:-25,25:-25]
     return network_height, support, occupied[25:-25,25:-25], physical[25:-25,25:-25]

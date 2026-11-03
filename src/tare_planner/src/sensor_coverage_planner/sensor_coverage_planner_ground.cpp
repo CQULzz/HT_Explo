@@ -113,6 +113,7 @@ void SensorCoveragePlanner3D::ReadParameters() {
   this->declare_parameter<int>("kLocalPathOptimizationItrMax", 10);
 
   // planning_env
+  this->declare_parameter<bool>("kUseFrontier", true);
   this->declare_parameter<double>("kSurfaceCloudDwzLeafSize", 0.2);
   this->declare_parameter<double>("kCollisionCloudDwzLeafSize", 0.2);
   this->declare_parameter<int>("kKeyposeCloudStackNum", 5);
@@ -360,8 +361,8 @@ void SensorCoveragePlanner3D::InitializeData() {
   last_robot_position_ = robot_position_;
 }
 
-SensorCoveragePlanner3D::SensorCoveragePlanner3D()
-    : Node("tare_planner_node"), keypose_cloud_update_(false),
+SensorCoveragePlanner3D::SensorCoveragePlanner3D(const rclcpp::NodeOptions& options)
+    : Node("tare_planner_node",options), keypose_cloud_update_(false),
       initialized_(false), lookahead_point_update_(false), relocation_(false),
       start_exploration_(false), exploration_finished_(false),
       near_home_(false), at_home_(false), stopped_(false),
@@ -1622,6 +1623,16 @@ void SensorCoveragePlanner3D::PublishExplorationState() {
     !lookahead_point_update_ ? (viewpoint_manager_->HT()->budget().exhausted() ? "FALLBACK_BUDGET_EXHAUSTED" : "NO_EXECUTABLE_ROUTE") :
     fallback_commanded_ ? "GEOMETRIC_FALLBACK" : startup_commanded_ ? "STARTUP_PRIOR" :
     viewpoint_manager_->HT()->enabled() ? "HT_ASSISTED" : "GEOMETRIC";
+  if (!force_hold_ && !stopped_ && !at_return_goal && !lookahead_point_update_ &&
+      viewpoint_manager_->HT()->enabled()) {
+    const auto rejection=viewpoint_manager_->HT()->poseRejection(
+      robot_position_.x,robot_position_.y,robot_yaw_);
+    if (!rejection.empty()) status.data=rejection;
+    else if (viewpoint_manager_->InCollisionAtPose(
+        Eigen::Vector3d(robot_position_.x,robot_position_.y,robot_position_.z)))
+      status.data="GEOMETRY_CURRENT_POSE_BLOCKED";
+    else if (status.data=="NO_EXECUTABLE_ROUTE") status.data="PATH_NO_EXECUTABLE_ROUTE";
+  }
   mission_state_pub_->publish(state);execution_status_pub_->publish(status);
 }
 

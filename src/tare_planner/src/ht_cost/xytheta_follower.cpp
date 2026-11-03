@@ -172,6 +172,7 @@ class XYThetaFollower : public rclcpp::Node {
   }
   void initialize() {ht_=std::make_unique<ht_cost_ns::HtCostMap>(shared_from_this(),false);}
  private:
+  friend struct FollowerTestAccess;
   static ht_cost_ns::InputPose inputPose(const geometry_msgs::msg::Pose& p,double stamp) {
     return {stamp,{p.position.x,p.position.y,p.position.z},
                   {p.orientation.x,p.orientation.y,p.orientation.z,p.orientation.w}};
@@ -226,7 +227,11 @@ class XYThetaFollower : public rclcpp::Node {
       if (!ht_->ready()) {hold(ht_->status());return;}
       // A fresh map and a bounded-age plan are checked here independently of
       // TARE's expensive planning callback. Never renew a stale Bool blindly.
-      if (!ht_->permits(ht_->poseSupport(robot_.x,robot_.y,robot_.yaw))) {hold("HT_CURRENT_POSE_BLOCKED");return;}
+      const auto current=ht_->poseSupport(robot_.x,robot_.y,robot_.yaw);
+      if (!ht_->permits(current)) {
+        hold(current==ht_cost_ns::Support::FAULT || !ht_->ready() ? htFaultReason():
+          ht_->poseRejection(robot_.x,robot_.y,robot_.yaw));return;
+      }
       if (!fresh(geometry_received_,geometry_timeout_) || !fresh(geometry_stamp_,geometry_timeout_)) {hold("GEOMETRY_STALE");return;}
       if (geometryBlocked(robot_)) {hold("GEOMETRY_CURRENT_POSE_BLOCKED");return;}
     } else if (!fresh(permission_received_,permission_timeout_)) {hold("PERMISSION_STALE");return;}
@@ -263,9 +268,8 @@ class XYThetaFollower : public rclcpp::Node {
                   wrapYaw(previous.yaw+angle*fraction)};
           if(geometryBlocked(q)) {rejectEdge(previous,p);hold("GEOMETRY_PATH_BLOCKED");return;}
         }
-        if (!ht_->permits(ht_->motionSupport(previous,p))) {
-          rejectEdge(previous,p);hold("HT_PATH_BLOCKED");return;
-        }
+        const auto rejection=htMotionRejection(previous,p,false,now_s);
+        if (!rejection.empty()) {hold(rejection);return;}
         distance+=length;previous=p;
         if (distance>=1.0) break;
       }
@@ -311,15 +315,15 @@ class XYThetaFollower : public rclcpp::Node {
         if (geometryBlocked(next)) {
           rejectEdge(p,next);hold("GEOMETRY_COMMAND_BLOCKED");return;
         }
-        if (!ht_->permits(ht_->motionSupport(p,next))) {
-          if (command_blocked_since_<0) command_blocked_since_=now_s;
-          if (now_s-command_blocked_since_>=.5) rejectEdge(p,next);
-          hold("HT_COMMAND_BLOCKED");return;
-        }
+        const auto rejection=htMotionRejection(p,next,true,now_s);
+        if (!rejection.empty()) {hold(rejection);return;}
         p=next;
       }
     }
     command_blocked_since_=-1;
+    // Swept validation consumes time too. Keep the original TTL at the
+    // actual output boundary, even if the last query began on a fresh map.
+    if (ht_ && ht_->enabled() && !ht_->ready()) {hold(htFaultReason());return;}
     status(std::abs(linear_)>.01 ? "DRIVING" : std::abs(angular_)>.05 ? "TURNING" : "ALIGNING");
     publishCommand(cmd);
   }
@@ -337,6 +341,29 @@ class XYThetaFollower : public rclcpp::Node {
   }
   bool geometryBlocked(Pose2 p) {
     return geometry_.blocked(p.x,p.y,robot_z_,geometry_radius_,geometry_z_plus_,geometry_z_minus_);
+  }
+  std::string htMotionRejection(Pose2 a,Pose2 b,bool command_arc,double now_s) {
+    const auto support=ht_->motionSupport(a,b);
+    // FAULT can mean the immutable map expired during this tick. It is not
+    // evidence against this edge: rejection feedback would poison the
+    // planner's execution-failure memory even after a fresh map arrives.
+    if (support==ht_cost_ns::Support::FAULT || !ht_->ready()) {
+      command_blocked_since_=-1;
+      return htFaultReason();
+    }
+    if (ht_->permits(support)) return {};
+    RCLCPP_WARN_THROTTLE(get_logger(),*get_clock(),1000,
+      "HT_MOTION_REJECT support=%d command_arc=%d map_stamp=%.9f map_age_s=%.6f a=(%.3f,%.3f,%.3f) b=(%.3f,%.3f,%.3f)",
+      static_cast<int>(support),command_arc,ht_->cycleStamp(),now().seconds()-ht_->cycleStamp(),
+      a.x,a.y,a.yaw,b.x,b.y,b.yaw);
+    if (!command_arc) {rejectEdge(a,b);return "HT_PATH_BLOCKED";}
+    if (command_blocked_since_<0) command_blocked_since_=now_s;
+    if (now_s-command_blocked_since_>=.5) rejectEdge(a,b);
+    return "HT_COMMAND_BLOCKED";
+  }
+  std::string htFaultReason() const {
+    const auto status=ht_->status();
+    return status=="HT_MAP_FRESH" ? "HT_SUPPORT_FAULT":status;
   }
   void rejectEdge(Pose2 a,Pose2 b) {
     // Header identifies the rejected plan, not the observation time. Delayed

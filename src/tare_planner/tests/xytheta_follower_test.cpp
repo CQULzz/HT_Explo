@@ -5,6 +5,14 @@
 #include <thread>
 
 using namespace std::chrono_literals;
+struct FollowerTestAccess {
+  static bool ready(XYThetaFollower& n) {n.ht_->beginCycle();return n.ht_->ready();}
+  static std::string motion(XYThetaFollower& n,bool command_arc) {
+    const double now=n.now().seconds();
+    n.command_blocked_since_=now-.6;
+    return n.htMotionRejection({0,0,0},{.1,0,0},command_arc,now);
+  }
+};
 class FollowerTest : public ::testing::Test {
  protected:
   static void SetUpTestSuite() {if (!rclcpp::ok()) rclcpp::init(0,nullptr);}
@@ -30,7 +38,7 @@ class FollowerTest : public ::testing::Test {
   std::vector<double> command_rejection_times,geometry_rejection_times;
   double speed=0;std::string reason;bool blocked=false,unknown=false,send_odom=true;
   double robot_yaw=0,robot_yaw_rate=0;
-  bool physical_obstacle=false,physical_hole=false;
+  bool physical_obstacle=false,physical_hole=false,send_map=true;
   virtual std::string scoreSemantics() const {return "point";}
   virtual double startupRadius() const {return 0.;}
   void SetUp() override {
@@ -102,7 +110,7 @@ class FollowerTest : public ::testing::Test {
       if (future_unknown) {
         grid_map::Index cell;g.getIndex(grid_map::Position(1.3,0),cell);g.at("ht_valid",cell)=0;
       }
-      map->publish(*grid_map::GridMapRosConverter::toMessage(g));
+      if(send_map)map->publish(*grid_map::GridMapRosConverter::toMessage(g));
       executor.spin_some();std::this_thread::sleep_for(20ms);
     }
     executor.spin_some();
@@ -112,13 +120,41 @@ class ConfigurationFollowerTest : public FollowerTest {
  protected:
   std::string scoreSemantics() const override {return "configuration";}
 };
+TEST_F(ConfigurationFollowerTest, MapExpiryDuringSweptChecksDoesNotRejectThePlan) {
+  ASSERT_TRUE(FollowerTestAccess::ready(*follower));
+  // Deterministically cross the map TTL AFTER the entry readiness check.
+  // This reproduces a long path/geometry check without wall-time race tests.
+  const auto time=follower->now().nanoseconds()+2000000000LL;
+  auto clock=follower->get_clock()->get_clock_handle();
+  ASSERT_EQ(rcl_enable_ros_time_override(clock),RCL_RET_OK);
+  ASSERT_EQ(rcl_set_ros_time_override(clock,time),RCL_RET_OK);
+  const int before=rejection_count;
+  EXPECT_EQ(FollowerTestAccess::motion(*follower,false),"HT_MAP_STALE");
+  EXPECT_EQ(FollowerTestAccess::motion(*follower,true),"HT_MAP_STALE");
+  // Drain DDS feedback without feeding a newer map. Any timer that fires
+  // must still stop; the source already belongs to this executor.
+  for(int i=0;i<10;++i) {executor.spin_some();std::this_thread::sleep_for(5ms);}
+  EXPECT_EQ(rejection_count,before);
+  EXPECT_EQ(rcl_disable_ros_time_override(clock),RCL_RET_OK);
+}
+TEST_F(ConfigurationFollowerTest, ExpiredMapStopsWithoutFeedbackAndFreshMapResumes) {
+  spin(200ms);ASSERT_GT(speed,0);
+  const int before=rejection_count;
+  send_map=false;spin(1200ms);
+  EXPECT_EQ(reason,"HT_MAP_STALE");EXPECT_DOUBLE_EQ(speed,0);
+  EXPECT_EQ(rejection_count,before);
+  ASSERT_FALSE(received_commands.empty());
+  EXPECT_DOUBLE_EQ(received_commands.back().twist.angular.z,0);
+  send_map=true;spin(250ms);
+  EXPECT_EQ(reason,"DRIVING");EXPECT_GT(speed,0);
+}
 TEST_F(ConfigurationFollowerTest, SeparateObstacleAndUnknownRevokeRealCommands) {
   spin(300ms);EXPECT_GT(speed,.1);
   physical_obstacle=true;spin(200ms);EXPECT_DOUBLE_EQ(speed,0);
-  EXPECT_EQ(reason,"HT_CURRENT_POSE_BLOCKED");
+  EXPECT_EQ(reason,"HT_CURRENT_POSE_OCCUPIED");
   physical_obstacle=false;sendPath();spin(250ms);EXPECT_GT(speed,0);
   physical_hole=true;spin(200ms);EXPECT_DOUBLE_EQ(speed,0);
-  EXPECT_EQ(reason,"HT_CURRENT_POSE_BLOCKED");
+  EXPECT_EQ(reason,"HT_CURRENT_POSE_MISSING_SUPPORT");
 }
 TEST_F(FollowerTest, FreshMapMaintainsExecutionAcrossSlowPlannerPermission) {
   spin(1700ms);EXPECT_GT(speed,.1);EXPECT_EQ(reason,"DRIVING");
@@ -199,7 +235,7 @@ TEST_F(FollowerTest, CompletionHeartbeatExplainsTerminalStopButCannotRenewDrivin
   spin(200ms);EXPECT_GT(speed,0);EXPECT_EQ(reason,"DRIVING");
 }
 TEST_F(FollowerTest, NewObstacleAndUnknownRevokeExecution) {
-  blocked=true;spin(200ms);EXPECT_DOUBLE_EQ(speed,0);EXPECT_EQ(reason,"HT_CURRENT_POSE_BLOCKED");
+  blocked=true;spin(200ms);EXPECT_DOUBLE_EQ(speed,0);EXPECT_EQ(reason,"HT_CURRENT_HEADING_LOW_SCORE");
   blocked=false;unknown=true;spin(200ms);EXPECT_DOUBLE_EQ(speed,0);
 }
 TEST_F(FollowerTest, ExplicitHoldAndMissingOdometryStillStop) {
@@ -310,7 +346,7 @@ class SharedPriorFollowerTest : public FollowerTest {
   void SetUp() override {unknown=true;FollowerTest::SetUp();}
 };
 TEST_F(SharedPriorFollowerTest,FirstPathCannotCreateOwnPriorAndReplansCannotRenewExpiry) {
-  EXPECT_DOUBLE_EQ(speed,0);EXPECT_EQ(reason,"HT_CURRENT_POSE_BLOCKED");
+  EXPECT_DOUBLE_EQ(speed,0);EXPECT_EQ(reason,"HT_CURRENT_POSE_MISSING_SUPPORT");
   // Keep the whole test route and swept body inside the bounded prior;
   // a default 2m route is correctly rejected independently of its expiry.
   auto replan=[&]() {
@@ -323,7 +359,7 @@ TEST_F(SharedPriorFollowerTest,FirstPathCannotCreateOwnPriorAndReplansCannotRene
   tare_planner::msg::StartupPrior m;m.header.frame_id="map";m.header.stamp=source->now();
   m.expires_at=rclcpp::Time(rclcpp::Time(m.header.stamp).nanoseconds()+700000000LL);m.radius=1.2;
   prior->publish(m);spin(250ms);EXPECT_GT(speed,0);
-  replan();allow(true);spin(650ms);EXPECT_DOUBLE_EQ(speed,0);EXPECT_EQ(reason,"HT_CURRENT_POSE_BLOCKED");
+  replan();allow(true);spin(650ms);EXPECT_DOUBLE_EQ(speed,0);EXPECT_EQ(reason,"HT_CURRENT_POSE_MISSING_SUPPORT");
   prior->publish(m);replan();allow(true);spin(200ms);
-  EXPECT_DOUBLE_EQ(speed,0);EXPECT_EQ(reason,"HT_CURRENT_POSE_BLOCKED");
+  EXPECT_DOUBLE_EQ(speed,0);EXPECT_EQ(reason,"HT_CURRENT_POSE_MISSING_SUPPORT");
 }

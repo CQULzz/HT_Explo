@@ -183,3 +183,19 @@ def test_grid_world_translation_updates_cell_heights_and_center_without_double_z
     assert out.info.pose.position.z==0 and out.data[0].data[0]==pytest.approx(1.5)
     np.testing.assert_array_equal(out.data[1].data,m.data[1].data)
     np.testing.assert_array_equal(out.data[2].data,m.data[2].data)
+
+
+def test_requested_filter_trace_is_published_after_both_scan_outputs(node):
+    events=[]
+    class OrderedSink(Sink):
+        def __init__(self,label):super().__init__();self.label=label
+        def publish(self,m):events.append(self.label);super().publish(m)
+    node.filtered_cloud_pub=OrderedSink('filtered')
+    node.cloud_pub=OrderedSink('registered')
+    node.filter_trace_pub=OrderedSink('audit')
+    m=cloud();node.enqueue('cloud',m);node.drain_cloud()
+    assert events==['filtered','registered','audit']
+    trace=node.filter_trace_pub.messages[0]
+    assert trace.header.stamp==m.header.stamp and trace.header.frame_id=='map'
+    assert {'reject_flags','raw_index'}.issubset(f.name for f in trace.fields)
+    assert node.pending_filter_trace is None

@@ -40,3 +40,15 @@ def test_cuda_context_rejects_cpu_and_bad_geometry():
     gpu=CudaHtContext(torch.device('cuda'))
     z=np.zeros((10,10),np.float32);mask=z.astype(bool)
     with pytest.raises(ValueError):gpu.prepare(z,mask,mask,z,.041,mask,z)
+
+
+def test_uncertain_evidence_is_local_unknown_on_both_backends():
+    gpu=CudaHtContext(torch.device('cuda'));z=np.zeros((91,91),np.float32)
+    known=np.ones_like(z,bool);rejected=np.zeros_like(known)
+    obstacle=np.full_like(z,np.nan);exclude=np.zeros_like(known);exclude[45,45]=True
+    expected=prepare_ht_context(z,known,rejected,obstacle,.04,physical_exclusion=exclude)
+    actual=gpu.prepare(z,known,rejected,obstacle,.04,rejected,z,physical_exclusion=exclude)
+    np.testing.assert_array_equal(actual[0].cpu().numpy(),expected[0])
+    for got,want in zip(actual[1:],expected[1:]):np.testing.assert_array_equal(got,want)
+    assert not actual[1][20,20] and not actual[3][20,20]
+    assert actual[1][20,21] and actual[3][20,21]

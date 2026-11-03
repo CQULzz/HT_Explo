@@ -96,7 +96,7 @@ def retain_recent_obstacle_edges(history_height, history_variance, current_heigh
 
 
 def preprocess_elevation_reference(elevation_m, variance_m2, resolution_m,
-                         config=None) -> ElevationQualityResult:
+                         config=None, *, denoise=True) -> ElevationQualityResult:
     """Denoise small texture while preserving measured steps and narrow posts.
 
     Uncertain *isolated* positive or negative height jumps become unknown only
@@ -179,6 +179,8 @@ def preprocess_elevation_reference(elevation_m, variance_m2, resolution_m,
                 opposite = _neighbor_view(padded, z.shape, radius, -dx, -dy)
                 balanced = known & np.isfinite(opposite)
             balanced_neighbors += balanced
+            if not denoise:
+                continue
             eligible = balanced & (np.abs(difference) < cfg.preserve_height_jump_m)
             safe_difference = np.where(eligible, difference, 0.)
             spatial = ((dx * resolution_m) ** 2 + (dy * resolution_m) ** 2)
@@ -204,7 +206,7 @@ def preprocess_elevation_reference(elevation_m, variance_m2, resolution_m,
     edge |= small_feature
     partial = cfg.sparse_symmetric and radius == 1
     enough_support = full_neighborhood | (partial & (balanced_neighbors >= 5))
-    smoothable = observed & enough_support & ~edge
+    smoothable = observed & enough_support & ~edge & denoise
     candidate = np.divide(numerator, denominator, out=height.copy(),
                           where=denominator > 0)
     std_m = np.sqrt(np.maximum(variance, 0))
@@ -245,14 +247,14 @@ def warmup_quality(backend='auto'):
     return selected
 
 
-def preprocess_elevation(elevation_m, variance_m2, resolution_m, config=None, *, backend='auto'):
+def preprocess_elevation(elevation_m, variance_m2, resolution_m, config=None, *, backend='auto', denoise=True):
     """Same filter/gates as the NumPy oracle, with optional compiled mask loops.
 
     Only cells proven smoothable need bilateral arithmetic. NumPy retains its
     original float32 exponent/accumulation order for those selected cells.
     """
     if quality_backend_name(backend)=='numpy':
-        return preprocess_elevation_reference(elevation_m,variance_m2,resolution_m,config)
+        return preprocess_elevation_reference(elevation_m,variance_m2,resolution_m,config,denoise=denoise)
     from quality_kernels import isolated_mask,neighborhood_masks
     started=time.perf_counter();cfg=config or ElevationQualityConfig()
     z=np.ascontiguousarray(elevation_m,np.float32);variance=np.ascontiguousarray(variance_m2,np.float32)
@@ -269,7 +271,7 @@ def preprocess_elevation(elevation_m, variance_m2, resolution_m, config=None, *,
     edge,full,balanced,small=neighborhood_masks(height,observed,cfg.radius_cells,cfg.sparse_symmetric,
         np.float32(cfg.preserve_height_jump_m),np.float32(cfg.small_feature_match_m),np.float32(cfg.small_feature_jump_m))
     enough=full | ((cfg.sparse_symmetric and cfg.radius_cells==1) & (balanced>=5))
-    smoothable=observed & enough & ~edge
+    smoothable=observed & enough & ~edge & denoise
     ii,jj=np.nonzero(smoothable);filtered=height.copy()
     if len(ii):
         radius=cfg.radius_cells;padded=np.pad(height,radius,constant_values=np.nan);center=height[ii,jj]

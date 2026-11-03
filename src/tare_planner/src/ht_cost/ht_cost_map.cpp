@@ -120,6 +120,8 @@ HtCostMap::HtCostMap(rclcpp::Node::SharedPtr node,bool publish_permission)
       [this](){publishMapDiagnostics();},map_callback_group_);
     RCLCPP_INFO(logger_,"HT hard gate: min_probability=%.3f unknown_policy=%s calibrated=%d reversible=%d scores=%s",
                 min_probability_,policy.c_str(),calibrated_,require_reversible_motion_,score_semantics.c_str());
+    RCLCPP_INFO(logger_,"HT startup prior: radius=%.3fm duration=%.3fs assume_traversable=%d fixed_anchor_and_deadline=1",
+                prior_.radius,prior_.lifetime,prior_.assume_traversable);
   }
 }
 
@@ -241,6 +243,8 @@ void HtCostMap::receive(grid_map_msgs::msg::GridMap::ConstSharedPtr msg) {
       throw std::runtime_error("Configuration HT requires separate physical observation and obstacle layers");
     if (collect_terrain_ && !grid.exists("ht_elevation"))
       throw std::runtime_error("TARE waypoint mode requires same-source ht_elevation");
+    if (collect_terrain_ && (!grid.exists("ht_observation_valid") || !grid.exists("ht_obstacle")))
+      throw std::runtime_error("TARE terrain requires separate observation and obstacle layers");
     tf2::Transform transform;
     transform.setIdentity();
     if (msg->header.frame_id != frame_) {
@@ -346,9 +350,10 @@ void HtCostMap::receive(grid_map_msgs::msg::GridMap::ConstSharedPtr msg) {
     // Unknown body observations remain optimistic exploration guidance; making
     // them a new hard coarse barrier would seal off every unseen frontier at
     // the local-map rim. Execution keeps its independent strict unknown gate.
+    const auto* elevation_layer=collect_terrain_ ? &grid.get("ht_elevation"):nullptr;
     if (collect_terrain_) for (grid_map::GridMapIterator it(grid); !it.isPastEnd(); ++it) {
-      const float observed=grid.at("ht_observation_valid",*it);
-      const float scored=grid.at("ht_valid",*it);
+      const float observed=(*physical_layer)((*it)(0),(*it)(1));
+      const float scored=valid_layer((*it)(0),(*it)(1));
       const bool measured=std::isfinite(observed) && observed>=.5;
       const bool eligible=measured && std::isfinite(scored) && scored>=.5;
       grid_map::Position p;grid.getPosition(*it,p);
@@ -367,8 +372,8 @@ void HtCostMap::receive(grid_map_msgs::msg::GridMap::ConstSharedPtr msg) {
         const bool known_obstacle=configuration_scores_ && out->blocked_footprint[k][index];
         a.feasible=a.feasible || (eligible && std::isfinite(score) && score>=min_probability_ && !known_obstacle);
       }
-      const float z=grid.at("ht_elevation",*it);
-      if (measured && grid.at("ht_obstacle",*it)<.5 && std::isfinite(z)) {a.z+=z+transform.getOrigin().z();++a.count;}
+      const float z=(*elevation_layer)((*it)(0),(*it)(1));
+      if (measured && (*obstacle_layer)((*it)(0),(*it)(1))<.5 && std::isfinite(z)) {a.z+=z+transform.getOrigin().z();++a.count;}
     }
     std::lock_guard<std::mutex> lock(mutex_);
     for (const auto& entry:terrain) {
@@ -378,6 +383,7 @@ void HtCostMap::receive(grid_map_msgs::msg::GridMap::ConstSharedPtr msg) {
       cell.height=a.count ? a.z/a.count : std::numeric_limits<double>::quiet_NaN();
     }
     latest_=std::move(out);latest_error_.clear();
+    latest_committed_at_s_=clock_->now().seconds();
     ++accepted_maps_;
     last_decode_s_=std::chrono::duration<double>(std::chrono::steady_clock::now()-started).count();
   } catch (const std::exception& e) {
@@ -410,6 +416,13 @@ void HtCostMap::publishMapDiagnostics() {
     if(cycle_)number(cycle_->stamp);else out << "null";
     out << ",\"cycle_source_age_s\":";
     if(cycle_)number(now-cycle_->stamp);else out << "null";
+    out << ",\"latest_commit_age_s\":";
+    if(latest_)number(now-latest_committed_at_s_);else out << "null";
+    out << ",\"cycle_selected_at_s\":";
+    if(cycle_selected_at_s_>=0)number(cycle_selected_at_s_);else out << "null";
+    out << ",\"cycle_held_s\":";
+    if(cycle_selected_at_s_>=0)number(now-cycle_selected_at_s_);else out << "null";
+    out << ",\"cycle_updates\":" << cycle_updates_;
     out << ",\"map_timeout_s\":" << timeout_ << ",\"latest_error\":" << jsonString(latest_error_)
         << ",\"diagnostic_only\":true}";
   }
@@ -441,6 +454,7 @@ std::vector<bool> HtCostMap::terrainAdmissible(const std::vector<Point>& points)
 void HtCostMap::beginCycle() {
   std::lock_guard<std::mutex> lock(mutex_);
   cycle_=latest_;cycle_error_=latest_error_;
+  cycle_selected_at_s_=clock_->now().seconds();++cycle_updates_;
 }
 bool HtCostMap::ready() const {
   std::lock_guard<std::mutex> lock(prior_mutex_);
@@ -480,6 +494,21 @@ Support HtCostMap::support(const Point& a,const Point& b) const {
 Support HtCostMap::poseSupport(double x,double y,double yaw) const {
   const Point p{x,y,0};
   return supportDirected(p,p,yaw);
+}
+std::string HtCostMap::poseRejection(double x,double y,double yaw) const {
+  if (!std::isfinite(x) || !std::isfinite(y) || !std::isfinite(yaw)) return "HT_CURRENT_POSE_INVALID";
+  const auto support=poseSupport(x,y,yaw);
+  if (permits(support)) return "";
+  if (support==Support::FAULT) return status();
+  size_t index;int channel;
+  if (!cycle_ || !cycle_->cellAndChannel(x,y,yaw,index,channel)) return "HT_CURRENT_POSE_OUTSIDE_MAP";
+  if (cycle_->blocked_footprint[channel][index])
+    return configuration_scores_ ? "HT_CURRENT_POSE_OCCUPIED":"HT_CURRENT_HEADING_LOW_SCORE";
+  if (cycle_->valid[index] && cycle_->probabilities[channel][index]<min_probability_)
+    return "HT_CURRENT_HEADING_LOW_SCORE";
+  if (cycle_->unknown_footprint[index]) return "HT_CURRENT_POSE_MISSING_SUPPORT";
+  if (!cycle_->valid[index]) return "HT_CURRENT_POSE_CONTEXT_INVALID";
+  return "HT_CURRENT_POSE_UNSUPPORTED";
 }
 Support HtCostMap::motionSupport(Pose2 a,Pose2 b) const {
   if (!enabled_) return Support::KNOWN;

@@ -109,6 +109,13 @@ TEST_F(HtRosTest,ConsumerReportsLatestAndFrozenCycleSeparatelyAndCountsRejectedM
   EXPECT_DOUBLE_EQ(ht->cycleStamp(),old_stamp);
   EXPECT_NEAR(number("cycle_source_stamp_s"),old_stamp,1e-6);
   EXPECT_GT(number("latest_source_stamp_s"),number("cycle_source_stamp_s"));
+  // The 1Hz report can precede the end of this wait. Check its own
+  // timestamp identity rather than assuming timer phase relative to spin().
+  EXPECT_GT(number("cycle_held_s"),0.);
+  EXPECT_NEAR(number("cycle_held_s"),number("cycle_source_age_s")-
+    (number("cycle_selected_at_s")-number("cycle_source_stamp_s")),1e-6);
+  EXPECT_GT(number("cycle_updates"),0.);
+  EXPECT_GE(number("latest_commit_age_s"),0.);
   auto invalid=*grid_map::GridMapRosConverter::toMessage(newer);
   invalid.data[0].data.clear();pub->publish(invalid);
   const auto end=std::chrono::steady_clock::now()+1200ms;
@@ -126,6 +133,27 @@ class HtConfigurationRosTest : public HtRosTest {
  protected:
   std::string scoreSemantics() const override {return "configuration";}
 };
+
+TEST_F(HtConfigurationRosTest, PoseReasonsSeparateObstacleHeadingSupportAndContext) {
+  auto map=grid();
+  for(int k=0;k<8;++k)map["ht_dir_"+std::to_string(k)].setConstant(.9f);
+  send(map);ASSERT_TRUE(ht->ready());EXPECT_EQ(ht->poseRejection(0,0,0),"");
+  map["ht_dir_0"].setConstant(.1f);map.setTimestamp(node->now().nanoseconds());send(map);
+  EXPECT_EQ(ht->poseRejection(0,0,0),"HT_CURRENT_HEADING_LOW_SCORE");
+  EXPECT_EQ(ht->poseRejection(0,0,ht_cost_ns::kPi/2),"");
+  grid_map::Index side;ASSERT_TRUE(map.getIndex(grid_map::Position(0,.5),side));
+  map.at("ht_obstacle",side)=1;map.setTimestamp(node->now().nanoseconds());send(map);
+  EXPECT_EQ(ht->poseRejection(0,0,0),"HT_CURRENT_POSE_OCCUPIED");
+  map.at("ht_obstacle",side)=0;map["ht_dir_0"].setConstant(.9f);
+  map.at("ht_observation_valid",side)=0;map.setTimestamp(node->now().nanoseconds());send(map);
+  EXPECT_EQ(ht->poseRejection(0,0,0),"HT_CURRENT_POSE_MISSING_SUPPORT");
+  map.at("ht_observation_valid",side)=1;map["ht_valid"].setZero();
+  map.setTimestamp(node->now().nanoseconds());send(map);
+  EXPECT_EQ(ht->poseRejection(0,0,0),"HT_CURRENT_POSE_CONTEXT_INVALID");
+  EXPECT_EQ(ht->poseRejection(50,0,0),"HT_CURRENT_POSE_OUTSIDE_MAP");
+  map.setTimestamp(node->now().nanoseconds()-3000000000LL);send(map);
+  EXPECT_EQ(ht->poseRejection(0,0,0),"HT_MAP_STALE");
+}
 
 TEST_F(HtConfigurationRosTest, ReverseUsesActualBodyYawAndProducesAnExecutableRoute) {
   auto map=grid();

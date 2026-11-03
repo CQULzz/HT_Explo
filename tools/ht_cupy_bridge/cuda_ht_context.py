@@ -58,7 +58,8 @@ class CudaHtContext:
         z=np.zeros((291,291),np.float32);mask=np.ones(z.shape,bool)
         self.prepare(z,mask,~mask,np.full_like(z,np.nan),.041,~mask,z)
 
-    def prepare(self,elevation,observed,rejected,obstacle,resolution,inferred,filled):
+    def prepare(self,elevation,observed,rejected,obstacle,resolution,inferred,filled,
+                physical_exclusion=None):
         cp,torch=self.cp,self.torch
         z=np.asarray(elevation,np.float32);n,m=z.shape
         if min(n,m)<51 or max(n,m)>1024 or not .02<=resolution<=.1:
@@ -78,5 +79,10 @@ class CudaHtContext:
             self.kernels[3](grid,(256,),(average,veto,support,*sizes))
             crop=(slice(25,-25),slice(25,-25))
             masks=[a[crop].get() for a in (support,cp.isfinite(db),near&~uncertain)]
+            if physical_exclusion is not None:
+                exclusion=np.asarray(physical_exclusion,bool)
+                if exclusion.shape!=z.shape:raise ValueError('Physical exclusion shape mismatch')
+                masks[2] &= ~exclusion[crop]
+                masks[0] &= ~exclusion[crop]
             tensor=torch.from_dlpack(height)
         return tensor,*masks

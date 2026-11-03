@@ -31,6 +31,7 @@ HARDWARE_REMAPS.append(('/ht_input_status','/ht_real/ht_input_status'))
 HARDWARE_REMAPS.append(('/ht_performance','/ht_real/ht_performance'))
 HARDWARE_REMAPS.append(('/ht_runtime','/ht_real/ht_runtime'))
 HARDWARE_REMAPS.append(('/ht_reasons','/ht_real/ht_reasons'))
+HARDWARE_REMAPS.append(('/ht_evidence','/ht_real/ht_evidence'))
 HARDWARE_REMAPS.append(('/start_exploration','/ht_real/exploration_start'))
 
 
@@ -76,6 +77,10 @@ def start(context):
                 'ht_small_hole_backend':arg('ht_small_hole_backend','auto'),
                 'ht_small_hole_fit_backend':arg('ht_small_hole_fit_backend','auto'),
                 'ht_small_hole_profile':arg('ht_small_hole_profile','moderate'),
+                'ht_qualify_evidence':(profile.get('ht_qualify_evidence',True)
+                    if arg('qualify_evidence','auto')=='auto' else arg('qualify_evidence').lower()=='true'),
+                'ht_stale_surface_s':profile.get('ht_stale_surface_s',5.0),
+                'ht_surface_margin_m':profile.get('ht_surface_margin_m',.15),
                 'ht_profile_runtime':arg('ht_profile_runtime','true').lower()=='true',
                 'ht_reason_interval_s':float(arg('ht_reason_interval_s','1.0')),
                 'ht_fuse_bn':arg('ht_fuse_bn', 'true').lower()=='true',
@@ -93,6 +98,8 @@ def start(context):
              parameters=[{'use_sim_time':common['use_sim_time'],'run_mode':policy.mode,
                 'direction_acceptance':policy.direction_acceptance,'mapping_verified':policy.mapping_verified,
                 'terrain_validated':policy.terrain_validated,'command_topic':policy.command_topic,
+                'ht_footprint_radius':profile['ht_validity_radius'],
+                'ht_heading_offset':profile['ht_heading_offset'],'ht_channel_order':profile['ht_channel_order'],
                 'chassis_command_topic':arg('chassis_command_topic','/cmd_vel')}])]
     if arg('start_rviz','false').lower()=='true':
         nodes.append(Node(package='rviz2',executable='rviz2',arguments=['-d',os.path.join(hw,'rviz','scout_real.rviz')],
@@ -107,6 +114,7 @@ def generate_launch_description():
         DeclareLaunchArgument('direction_acceptance',default_value='mapping'),
         DeclareLaunchArgument('direction_validation_file',default_value=os.path.join(hw,'config','direction_validation.yaml')),
         DeclareLaunchArgument('small_hole_repair',default_value='true'),
+        DeclareLaunchArgument('qualify_evidence',default_value='auto',choices=['auto','true','false']),
         DeclareLaunchArgument('start_rviz',default_value='false'),
         DeclareLaunchArgument('ht_quality_backend',default_value='auto'),
         DeclareLaunchArgument('ht_history_backend',default_value='auto'),

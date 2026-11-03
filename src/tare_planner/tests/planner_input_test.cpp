@@ -3,6 +3,7 @@
 
 namespace sensor_coverage_planner_3d_ns {
 struct InputCallbackTestAccess {
+  static void parameters(SensorCoveragePlanner3D& n) {n.ReadParameters();}
   static void odom(SensorCoveragePlanner3D& n,double t,double x=0) {
     auto m=std::make_shared<nav_msgs::msg::Odometry>();m->header.frame_id="map";
     m->header.stamp=rclcpp::Time(int64_t(t*1e9));m->pose.pose.orientation.w=1;m->pose.pose.position.x=x;
@@ -22,6 +23,24 @@ struct InputCallbackTestAccess {
   static void offset(SensorCoveragePlanner3D& n) {n.sensor_origin_offset_={.1725,0,.5502};}
   static geometry_msgs::msg::Point sensor(const SensorCoveragePlanner3D& n){return n.sensor_position_;}
 };
+TEST(PlannerParameters, FrontierDefaultAndOverridesReachBothConsumers) {
+  if(!rclcpp::ok())rclcpp::init(0,nullptr);
+  for(int setting:{-1,0,1}) {
+    rclcpp::NodeOptions options;
+    if(setting>=0) options.parameter_overrides({rclcpp::Parameter("kUseFrontier",setting==1)});
+    auto n=std::make_shared<SensorCoveragePlanner3D>(options);
+    InputCallbackTestAccess::parameters(*n);
+    ASSERT_TRUE(n->has_parameter("kUseFrontier"));
+    const bool expected=setting!=0;
+    EXPECT_EQ(n->get_parameter("kUseFrontier").as_bool(),expected);
+    viewpoint_manager_ns::ViewPointManagerParameter vp;
+    planning_env_ns::PlanningEnvParameters env;
+    // Sentinels make a failed read deterministic, without reading invalid bools.
+    vp.kUseFrontier=!expected;env.kUseFrontier=!expected;
+    ASSERT_TRUE(vp.ReadParameters(n));env.ReadParameters(n);
+    EXPECT_EQ(vp.kUseFrontier,expected);EXPECT_EQ(env.kUseFrontier,expected);
+  }
+}
 TEST(PlannerInputs, DelayedMatchingOdometryDrainsBufferedScansWithoutStarvation) {
   if(!rclcpp::ok())rclcpp::init(0,nullptr);
   auto n=std::make_shared<SensorCoveragePlanner3D>();double t=n->now().seconds()-.3;

@@ -36,3 +36,23 @@ def test_map_reports_preserve_source_ages_and_reject_malformed_or_unbounded_cons
     receive(' '*16385)
     for i in range(12):receive(json.dumps({**report,'consumer':f'/consumer_{i}'}))
     assert len(status.map_consumers)==8
+
+
+def test_current_heading_and_discrete_footprint_do_not_use_best_direction_as_permission():
+    import math
+    import numpy as np
+    from ht_scout_bridge.runtime_status import footprint_diagnosis,heading_channel
+    r=.04;rr,cc=np.indices((61,61));x=(30-rr)*r;y=(30-cc)*r
+    a={'ht_valid':np.ones(x.shape),'ht_observation_valid':np.ones(x.shape),'ht_obstacle':np.zeros(x.shape)}
+    for k in range(8):a[f'ht_dir_{k}']=np.full(x.shape,.9 if k==2 else .1)
+    # Unknown lies outside the diagnostic disk, inside the execution mask.
+    a['ht_observation_valid'][14,30]=0
+    d,mask=footprint_diagnosis(a,x,y,.001,0,r,.6,0.)
+    assert d['best_probability']==.9 and d['current_heading_probability']==.1 and d['current_heading_low']
+    assert d['unknown']==1 and mask[14,30]
+    assert ((x**2+y**2<=.6**2)&(a['ht_observation_valid']<.5)).sum()==0
+    assert d['center_x']==0 and d['discrete_radius_m']>.6
+    assert heading_channel(-math.pi/4)==7
+    assert heading_channel(math.pi/4,math.pi/4,[7,6,5,4,3,2,1,0])==7
+    d,_=footprint_diagnosis(a,x,y,0,0,r,.6,math.pi/2)
+    assert d['current_heading_probability']==.9 and not d['current_heading_low']

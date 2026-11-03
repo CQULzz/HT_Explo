@@ -4,7 +4,7 @@ Panels:
   Property Tree Widget:
     Expanded:
     - /Global Options1
-    - /Body support diagnosis - R0.6m1
+    - /Diagnostic disk R0.6m and discrete execution support1
     Splitter Ratio: 0.5
   Tree Height: 560
 - Class: rviz_common/Views
@@ -78,7 +78,39 @@ Visualization Manager:
     Invert Rainbow: false
     Max Color: 255; 255; 255
     Min Color: 0; 0; 0
-    Name: HT best probability - green high red low
+    Name: HT current heading - gray unknown orange context magenta occupied red low
+    Position Transformer: XYZ
+    Selectable: true
+    Size (Pixels): 4
+    Size (m): 0.04
+    Style: Flat Squares
+    Topic:
+      Depth: 5
+      Durability Policy: Volatile
+      Filter size: 10
+      History Policy: Keep Last
+      Reliability Policy: Best Effort
+      Value: /ht_real/visualization/current_heading
+    Use Fixed Frame: true
+    Use rainbow: true
+    Value: true
+  - Alpha: 1.0
+    Autocompute Intensity Bounds: true
+    Autocompute Value Bounds:
+      Max Value: 10
+      Min Value: -10
+      Value: false
+    Axis: Z
+    Channel Name: intensity
+    Class: rviz_default_plugins/PointCloud2
+    Color: 255; 255; 255
+    Color Transformer: RGB8
+    Decay Time: 0
+    Enabled: false
+    Invert Rainbow: false
+    Max Color: 255; 255; 255
+    Min Color: 0; 0; 0
+    Name: HT best direction - diagnostic only, NOT execution permission
     Position Transformer: XYZ
     Selectable: true
     Size (Pixels): 4
@@ -93,7 +125,7 @@ Visualization Manager:
       Value: /ht_real/visualization/best_probability
     Use Fixed Frame: true
     Use rainbow: true
-    Value: true
+    Value: false
   - Class: rviz_default_plugins/MarkerArray
     Name: Runtime reason and startup prior
     Enabled: true

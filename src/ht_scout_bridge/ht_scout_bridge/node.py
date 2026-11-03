@@ -23,7 +23,7 @@ from nav_msgs.msg import Odometry
 from sensor_msgs.msg import PointCloud2
 from grid_map_msgs.msg import GridMap
 from std_msgs.msg import String, Int8
-from .geometry import load_calibration,transform,convert_reference,transform_cloud_pair,covariance
+from .geometry import load_calibration,transform,convert_reference,transform_cloud_pair,covariance,cloud_filter_trace
 
 
 def pose_matrix(p):
@@ -68,6 +68,8 @@ class ScoutInputs(Node):
         self.odom_pub=self.create_publisher(Odometry,'/ht_real/odometry',20)
         self.cloud_pub=self.create_publisher(PointCloud2,'/ht_real/registered_scan',2)
         self.filtered_cloud_pub=self.create_publisher(PointCloud2,'/ht_real/lidar_filtered',2)
+        self.filter_trace_pub=self.create_publisher(PointCloud2,'/ht_real/cloud_filter_trace',1)
+        self.last_filter_trace=None;self.pending_filter_trace=None
         self.elevation_pub=self.create_publisher(GridMap,'/ht_real/elevation_raw',1)
         self.last_clock=None;self.fault=None;self.last_pose=None
         self.state_lock=RLock();self.closing=False
@@ -244,6 +246,15 @@ class ScoutInputs(Node):
                     self.input_counts[kind]['published']+=1
                     self.last_stamp[kind]=stamp_ns(msg)
                     self.status(kind.upper()+'_READY')
+                # Optional diagnostics follow both critical scan publications
+                # outside the state lock, so they cannot hold odom/elevation.
+                if kind=='cloud' and self.pending_filter_trace is not None:
+                    source,t,audit=self.pending_filter_trace;self.pending_filter_trace=None
+                    try:
+                        trace=cloud_filter_trace(source,t,audit);trace.header.frame_id=self.frames['world']
+                        self.filter_trace_pub.publish(trace);self.last_filter_trace=time.monotonic()
+                    except (ValueError,OverflowError) as error:
+                        self.get_logger().warning('Cloud filter trace unavailable: '+str(error))
         finally:
             with self.state_lock:self.inflight[kind]=None
             processing.release()
@@ -288,10 +299,14 @@ class ScoutInputs(Node):
         return out
 
     def convert_cloud(self,msg):
+        self.pending_filter_trace=None
         if msg.header.frame_id!=self.frames['lidar']:raise ValueError('Expected calibrated rslidar-frame cloud')
         self.check_static(self.frames['lidar'],self.poi_lidar,msg)
         t=self.lookup(self.frames['world'],self.frames['poi'],msg)@self.poi_lidar
-        filtered,out=transform_cloud_pair(msg,t,self.profile.get('lidar_self_filter'),self.base_from_lidar)
+        audit={} if (self.filter_trace_pub.get_subscription_count()>0 and
+            (self.last_filter_trace is None or time.monotonic()-self.last_filter_trace>=1.)) else None
+        filtered,out=transform_cloud_pair(msg,t,self.profile.get('lidar_self_filter'),self.base_from_lidar,audit=audit)
+        if audit is not None:self.pending_filter_trace=(msg,t,audit)
         out.header.frame_id=self.frames['world']
         if not out.width:raise ValueError('No finite cloud points')
         # Mapping needs the real sensor origin for ray geometry/covariance.

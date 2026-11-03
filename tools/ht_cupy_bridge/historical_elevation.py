@@ -8,12 +8,13 @@ Unknown cells stay NaN rather than being filled from neighbouring cells.
 import numpy as np
 from history_window import warmup_history_window
 from history_fusion import warmup_history_fusion
+from height_evidence import warmup_evidence_times
 
 
 class HistoricalElevation:
     def __init__(self, resolution, tile_size=64, max_tiles=1024, max_age_s=600.0,
                  max_layers=4, association_gap_m=0.6, reference_tolerance_m=1.0,
-                 window_backend='auto', fusion_backend=None):
+                 window_backend='auto', fusion_backend=None, track_evidence_times=False):
         self.resolution = float(resolution)
         self.tile_size = int(tile_size)
         self.max_tiles = int(max_tiles)
@@ -36,6 +37,10 @@ class HistoricalElevation:
         # reconstructed as free ground by downstream nearest-value padding.
         self.last_window_incompatible_mask = None
         self.last_window_obstacle_elevation = None
+        self.track_evidence_times = bool(track_evidence_times)
+        self._time_selector=(warmup_evidence_times(self.window_backend) if self.track_evidence_times else None)
+        self.last_window_observation_time = None
+        self.last_window_obstacle_time = None
 
     def _tile(self, tx, ty):
         key = (int(tx), int(ty))
@@ -207,6 +212,11 @@ class HistoricalElevation:
         variance = np.full((side, side), np.inf, np.float32)
         self.last_window_incompatible_mask = np.zeros((side, side), dtype=bool)
         self.last_window_obstacle_elevation = np.full((side, side), np.nan, np.float32)
+        if self.track_evidence_times:
+            self.last_window_observation_time = np.full((side, side), -np.inf, np.float64)
+            self.last_window_obstacle_time = np.full((side, side), -np.inf, np.float64)
+            self.last_window_last_accepted_time = np.full((side, side), -np.inf, np.float64)
+            self.last_window_last_rejected_time = np.full((side, side), -np.inf, np.float64)
         for tx in np.unique(gx // self.tile_size):
             ix = np.flatnonzero(gx // self.tile_size == tx)
             for ty in np.unique(gy // self.tile_size):
@@ -240,6 +250,7 @@ class HistoricalElevation:
                     elevation[output_index], variance[output_index] = selected[:2]
                     self.last_window_incompatible_mask[output_index] = selected[2]
                     self.last_window_obstacle_elevation[output_index] = selected[3]
+                    self._record_window_times(output_index, z, last, selected[0], selected[3], rt, rh)
                     continue
                 usable = (np.isfinite(z) & (stamp_s-last <= self.max_age_s)
                           & (last <= stamp_s + 1e-3))
@@ -305,7 +316,26 @@ class HistoricalElevation:
                 self.last_window_obstacle_elevation[output_index] = obstacle_height
                 elevation[output_index] = np.where(found, chosen_z, np.nan)
                 variance[output_index] = np.where(found, chosen_v, np.inf)
+                if self.track_evidence_times:
+                    rt = self.rejections.get((int(tx), int(ty)))
+                    rh = self.rejected_heights.get((int(tx), int(ty)))
+                    rt = np.full(found.shape, -np.inf) if rt is None else rt[lx[:, None], ly[None, :]]
+                    rh = np.full(found.shape, np.nan) if rh is None else rh[lx[:, None], ly[None, :]]
+                    self._record_window_times(output_index, z, last, elevation[output_index],
+                                              obstacle_height, rt, rh)
         return elevation, variance, exact_x, exact_y
+
+    def _record_window_times(self, output_index, z, last, selected, obstacle, rejected_at, rejected_z):
+        if not self.track_evidence_times:
+            return
+        # Recover the actual selected mode's timestamp, not the last raw map's
+        # age: a different retained floor may have a different observation time.
+        chosen_at,obstacle_at=self._time_selector(z,last,selected,obstacle,rejected_at,rejected_z)
+        self.last_window_observation_time[output_index] = chosen_at
+        self.last_window_obstacle_time[output_index] = obstacle_at
+        self.last_window_last_accepted_time[output_index] = np.max(
+            np.where(np.isfinite(z), last, -np.inf), axis=0)
+        self.last_window_last_rejected_time[output_index] = rejected_at
 
     @staticmethod
     def _tile_groups(tx,ty):

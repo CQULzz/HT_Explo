@@ -264,7 +264,7 @@ def self_filter_keep_mask(xyz, self_filter=None, filter_from_lidar=None):
     return valid
 
 
-def _filtered_cloud_arrays(msg, self_filter, filter_from_lidar):
+def _filtered_cloud_arrays(msg, self_filter, filter_from_lidar, audit=None):
     """Decode once without changing the incoming message's byte storage."""
     if (msg.point_step<=0 or msg.row_step<msg.point_step*msg.width or
             len(msg.data)!=msg.row_step*msg.height or not msg.width or not msg.height):
@@ -284,6 +284,8 @@ def _filtered_cloud_arrays(msg, self_filter, filter_from_lidar):
     xyz=np.stack([np.ndarray((len(raw),),dtype=dtype,buffer=raw,
                   offset=fields[n].offset,strides=(msg.point_step,)) for n in ['x','y','z']],axis=1)
     valid=self_filter_keep_mask(xyz,self_filter,filter_from_lidar)
+    if audit is not None:
+        audit.update(xyz=xyz,kept=valid)
     # Boolean indexing already owns a packed copy, including organized inputs
     # with row padding. All later XYZ writes target this private allocation.
     return raw[valid],xyz[valid],dtype,fields
@@ -323,7 +325,7 @@ def transform_cloud(msg, target_from_lidar, self_filter=None, filter_from_lidar=
     return _cloud_message(msg,raw)
 
 
-def transform_cloud_pair(msg, target_from_lidar, self_filter=None, filter_from_lidar=None):
+def transform_cloud_pair(msg, target_from_lidar, self_filter=None, filter_from_lidar=None, *, audit=None):
     """Two independent messages from one decode/filter, with legacy rounding.
 
     The mapper retains the real sensor frame and origin. The second message
@@ -331,7 +333,7 @@ def transform_cloud_pair(msg, target_from_lidar, self_filter=None, filter_from_l
     identity-transform -> float32 serialization -> second decode did.
     """
     t=validate_transform(target_from_lidar)
-    raw,xyz,dtype,fields=_filtered_cloud_arrays(msg,self_filter,filter_from_lidar)
+    raw,xyz,dtype,fields=_filtered_cloud_arrays(msg,self_filter,filter_from_lidar,audit)
     if not len(raw):raise ValueError('No finite cloud points')
     identity=np.eye(4)
     rounded=(xyz@identity[:3,:3].T+identity[:3,3]).astype(np.float32)
@@ -339,6 +341,30 @@ def transform_cloud_pair(msg, target_from_lidar, self_filter=None, filter_from_l
     filtered=_cloud_message(msg,raw)
     _write_cloud_xyz(raw,rounded@t[:3,:3].T+t[:3,3],dtype,fields)
     return filtered,_cloud_message(msg,raw)
+
+
+def cloud_filter_trace(msg, target_from_lidar, audit):
+    """Original finite returns in world coordinates, with filter provenance.
+
+    reject_flags=1 means removed by the configured body/occlusion filter;
+    zero means retained. Neither value classifies a return as ground.
+    raw_index identifies the original flattened point, including row padding.
+    """
+    from copy import deepcopy
+    from sensor_msgs.msg import PointCloud2,PointField
+    t=validate_transform(target_from_lidar);xyz=np.asarray(audit['xyz'])
+    finite=np.isfinite(xyz).all(axis=1);points=xyz[finite]@t[:3,:3].T+t[:3,3]
+    out=np.empty(len(points),dtype=[('x','<f4'),('y','<f4'),('z','<f4'),('reject_flags','<u4'),('raw_index','<u4')])
+    for i,name in enumerate(('x','y','z')):out[name]=points[:,i]
+    if not np.isfinite(points).all() or not all(np.isfinite(out[n]).all() for n in ('x','y','z')):
+        raise ValueError('Filter trace coordinates overflow')
+    out['reject_flags']=~np.asarray(audit['kept'],bool)[finite]
+    out['raw_index']=np.flatnonzero(finite)
+    result=PointCloud2();result.header=deepcopy(msg.header);result.height=1;result.width=len(out)
+    result.point_step=20;result.row_step=result.width*20;result.is_dense=True
+    result.fields=[PointField(name=n,offset=i*4,datatype=7 if i<3 else 6,count=1)
+                   for i,n in enumerate(out.dtype.names)]
+    result.data=out.tobytes();return result
 
 
 def main():

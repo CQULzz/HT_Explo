@@ -33,6 +33,8 @@ def test_actual_launch_modes_and_start_topic(monkeypatch,mode):
     assert rows['xytheta_follower']['params']['command_topic']==topic
     assert rows['scout_command_bridge']['params']['input_topic']==topic
     assert rows['cupy_to_ht.py']['params']['ht_small_hole_repair'] is True
+    assert rows['cupy_to_ht.py']['params']['ht_qualify_evidence'] is True
+    assert rows['cupy_to_ht.py']['params']['ht_stale_surface_s']==5.0
     assert rows['cupy_to_ht.py']['params']['ht_history_backend']=='auto'
     assert rows['cupy_to_ht.py']['params']['ht_fuse_bn'] is True
     assert rows['cupy_to_ht.py']['params']['ht_small_hole_backend']=='auto'

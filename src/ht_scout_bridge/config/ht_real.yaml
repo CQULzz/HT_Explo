@@ -17,13 +17,18 @@
     ht_require_reversible_motion: false
     ht_heading_offset: 0.0
     ht_channel_order: [0, 1, 2, 3, 4, 5, 6, 7]
-    # User-requested fixed initial region: HT observations cannot veto it for30s.
+    # User-requested fixed initial region: HT observations cannot veto it for60s.
     # Original measurements remain unchanged. Independent collision/stop gates apply.
     # Fixed mission anchor/deadline; leaving does not retire or move the region.
     ht_startup_assume_traversable: true
     ht_startup_radius: 1.5
-    ht_startup_duration: 30.0
+    ht_startup_duration: 60.0
     ht_unknown_policy: strict
+    # Separate stale/uncertain height from fresh occupied evidence. Unknown
+    # cells remain physically unsupported even when neural context is usable.
+    ht_qualify_evidence: true
+    ht_stale_surface_s: 5.0
+    ht_surface_margin_m: 0.15
     xytheta_cell: 0.3
     xytheta_headings: 32
     xytheta_turn_angles_deg: [11.25, 22.5]

@@ -9,6 +9,13 @@
     initialize_frame_id:
     - FP_POI
     enable_deterministic_fusion: true
+    # Clear old elevated cells only when a current measured ray contradicts
+    # them. This does not fill blind ground or clear the vehicle's footprint.
+    enable_visibility_cleanup: true
+    enable_overlap_clearance: false
+    # Bounds visibility ray tracing only; point-cloud fusion keeps its normal
+    # range. Near-car cleanup must not sort ten metres of rays every scan.
+    max_ray_length: 3.0
     enable_drift_compensation: true
     min_height_drift_cnt: 100
     max_drift: 0.1

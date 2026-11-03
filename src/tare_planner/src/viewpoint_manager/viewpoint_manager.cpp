@@ -16,7 +16,7 @@ namespace viewpoint_manager_ns
 {
 bool ViewPointManagerParameter::ReadParameters(rclcpp::Node::SharedPtr nh)
 {
-  nh->get_parameter("kUseFrontier", kUseFrontier);
+  kUseFrontier = nh->get_parameter("kUseFrontier").as_bool();
   kNumber.x() = nh->get_parameter("viewpoint_manager/number_x").as_int();
   kNumber.y() = nh->get_parameter("viewpoint_manager/number_y").as_int();
   kNumber.z() = nh->get_parameter("viewpoint_manager/number_z").as_int();

@@ -39,6 +39,44 @@ def decode_grid(m):
     x=m.info.pose.position.x+((nx-1)/2-rr)*r;y=m.info.pose.position.y+((ny-1)/2-cc)*r
     return a,x,y
 
+def heading_channel(yaw, offset=0., order=tuple(range(8))):
+    return int(order[int(math.floor(((yaw-offset)%(2*math.pi))/(math.pi/4)+.5))%8])
+
+
+def support_counts(a, mask):
+    return {'cells':int(mask.sum()),
+        'unknown':int((mask&~(np.isfinite(a['ht_observation_valid'])&(a['ht_observation_valid']>=.5))).sum()),
+        'context_invalid':int((mask&~(np.isfinite(a['ht_valid'])&(a['ht_valid']>=.5))).sum()),
+        'obstacle':int((mask&(a['ht_obstacle']>=.5)).sum()),
+        'interpolated':int((mask&(a.get('ht_interpolated',np.zeros(mask.shape))>=.5)).sum())}
+
+
+def footprint_diagnosis(a,x,y,px,py,resolution,radius,yaw,offset=0.,order=tuple(range(8))):
+    # Match C++ cell selection and its discrete physical-mask dilation. This
+    # differs from the continuous 0.6m disk centred at the measured pose.
+    row=math.floor(x.shape[0]*.5-(px-(x[0,0]+x[-1,0])/2)/resolution)
+    col=math.floor(x.shape[1]*.5-(py-(y[0,0]+y[0,-1])/2)/resolution)
+    channel=heading_channel(yaw,offset,order)
+    if not 0<=row<x.shape[0] or not 0<=col<x.shape[1]:
+        return {'outside_map':True,'channel':channel},np.zeros(x.shape,bool)
+    cx,cy=float(x[row,col]),float(y[row,col]);effective=radius+math.sqrt(2)*resolution
+    mask=(x-cx)**2+(y-cy)**2<=effective**2+1e-12
+    result=support_counts(a,mask)
+    reach=math.ceil(radius/resolution)+1
+    result.update(outside_map=False,channel=channel,center_x=cx,center_y=cy,
+        configured_radius_m=radius,discrete_radius_m=effective,
+        extends_outside_map=(row<reach or col<reach or row+reach>=x.shape[0] or col+reach>=x.shape[1]),
+        current_context_valid=bool(np.isfinite(a['ht_valid'][row,col]) and a['ht_valid'][row,col]>=.5))
+    scores=[float(a[f'ht_dir_{k}'][row,col]) for k in range(8)] if all(f'ht_dir_{k}' in a for k in range(8)) else []
+    probability=scores[channel] if scores else float('nan')
+    result['current_heading_probability']=probability if math.isfinite(probability) else None
+    finite=[v for v in scores if math.isfinite(v)]
+    result['best_probability']=max(finite) if finite else None
+    result['current_heading_low']=bool(result['current_context_valid'] and math.isfinite(probability) and probability<.5)
+    result['diagnostic_only']=True
+    return result,mask
+
+
 class RuntimeStatus(Node):
     def __init__(self):
         super().__init__('scout_runtime_status')
@@ -48,9 +86,15 @@ class RuntimeStatus(Node):
         self.acceptance=self.declare_parameter('direction_acceptance','mapping').value
         self.command_topic=self.declare_parameter('command_topic','/ht_real/cmd_vel_stamped').value
         self.output_topic=self.declare_parameter('chassis_command_topic','/cmd_vel').value
+        self.footprint_radius=float(self.declare_parameter('ht_footprint_radius',.6).value)
+        self.heading_offset=float(self.declare_parameter('ht_heading_offset',0.).value)
+        self.channel_order=self.declare_parameter('ht_channel_order',list(range(8))).value
+        if not math.isfinite(self.footprint_radius) or self.footprint_radius<0 or not math.isfinite(self.heading_offset) or sorted(self.channel_order)!=list(range(8)):
+            raise ValueError('Invalid HT display geometry/direction mapping')
         self.latest={};self.map_consumers={};self.grid=None;self.decoded=None;self.odom=None;self.prior=None;self.command=None;self.last_reason=None
         self.statuspub=self.create_publisher(String,'/ht_real/runtime_status',1)
         self.markpub=self.create_publisher(MarkerArray,'/ht_real/runtime_markers',1)
+        self.headingpub=self.create_publisher(PointCloud2,'/ht_real/visualization/current_heading',1)
         self.bestpub=self.create_publisher(PointCloud2,'/ht_real/visualization/best_probability',1)
         self.rawpub=self.create_publisher(PointCloud2,'/ht_real/visualization/measured_height',1)
         for key,topic in [('planner','/ht_real/ht_execution_status'),('follower','/ht_real/ht_follower_status'),
@@ -115,11 +159,14 @@ class RuntimeStatus(Node):
                 'linear_x':self.command.twist.linear.x,'angular_z':self.command.twist.angular.z}
         if self.decoded is not None and self.odom and map_age is not None and 0<=map_age<=1.:
             a,x,y=self.decoded;pos=self.odom.pose.pose.position
-            inside=(x-pos.x)**2+(y-pos.y)**2<=.6**2
-            result['body']={'cells':int(inside.sum()),'unknown':int((inside&(a['ht_observation_valid']<.5)).sum()),
-                'context_invalid':int((inside&(a['ht_valid']<.5)).sum()),'obstacle':int((inside&(a['ht_obstacle']>=.5)).sum()),
-                'interpolated':int((inside&(a.get('ht_interpolated',np.zeros_like(x))>=.5)).sum())}
-        if self.markpub.get_subscription_count() or self.bestpub.get_subscription_count() or self.rawpub.get_subscription_count():
+            q=self.odom.pose.pose.orientation
+            yaw=math.atan2(2*(q.w*q.z+q.x*q.y),1-2*(q.y*q.y+q.z*q.z))
+            result['body']=support_counts(a,(x-pos.x)**2+(y-pos.y)**2<=.6**2)
+            result['diagnostic_disk']={'radius_m':.6,**result['body']}
+            result['execution_footprint'],_=footprint_diagnosis(a,x,y,pos.x,pos.y,self.grid.info.resolution,
+                self.footprint_radius,yaw,self.heading_offset,self.channel_order)
+
+        if self.markpub.get_subscription_count() or self.bestpub.get_subscription_count() or self.rawpub.get_subscription_count() or self.headingpub.get_subscription_count():
             try:self.visualize(result,active,remaining)
             except (ValueError,KeyError,IndexError) as e:result['display_error']=str(e)
         self.statuspub.publish(String(data=json.dumps(result,ensure_ascii=False)))
@@ -136,7 +183,7 @@ class RuntimeStatus(Node):
         ground=pos.z-.23479;markers=[]
         text=self.marker(0,Marker.TEXT_VIEW_FACING);text.pose.position=Point(x=pos.x,y=pos.y,z=pos.z+1.3)
         text.scale.z=.10;text.color=ColorRGBA(r=1.,g=1.,b=1.,a=1.)
-        text.text=f'{self.mode}: {result["reason"]}\nMapping={self.mapping} terrain_test={self.terrain}\nPrior={active} remaining={remaining or 0:.1f}s\nWhite=body; cyan=HT; green ring=start prior'
+        text.text=f'{self.mode}: {result["reason"]}\nMapping={self.mapping} terrain_test={self.terrain}\nPrior={active} remaining={remaining or 0:.1f}s\nWhite=0.6m diagnosis; blue=HT support footprint\nGray=unknown orange=context magenta=occupied red=current yaw low\nBest green is NOT execution permission; prior has fixed expiry'
         markers.append(text)
         def ring(i,x,y,r,color):
             m=self.marker(i,Marker.LINE_STRIP);m.scale.x=.025;m.color=color
@@ -147,19 +194,34 @@ class RuntimeStatus(Node):
                 ColorRGBA(r=.1 if active else .5,g=1. if active else .5,b=.1 if active else .5,a=1.)))
         if self.grid and self.decoded is not None and result['ht_map_age_s'] is not None and 0<=result['ht_map_age_s']<=1.:
             m=self.grid;a,x,y=self.decoded;valid=a['ht_valid']>=.5;physical=a['ht_observation_valid']>=.5;blocked=a['ht_obstacle']>=.5
-            inside=(x-pos.x)**2+(y-pos.y)**2<=.6**2
-            result['body']={'cells':int(inside.sum()),'unknown':int((inside&~physical).sum()),
-                'context_invalid':int((inside&~valid).sum()),'obstacle':int((inside&blocked).sum()),
-                'interpolated':int((inside&(a.get('ht_interpolated',np.zeros_like(x))>=.5)).sum())}
+            q=self.odom.pose.pose.orientation if self.odom else None
+            yaw=math.atan2(2*(q.w*q.z+q.x*q.y),1-2*(q.y*q.y+q.z*q.z)) if q else 0.
+            diagnosis,inside=footprint_diagnosis(a,x,y,pos.x,pos.y,m.info.resolution,
+                self.footprint_radius,yaw,self.heading_offset,self.channel_order)
+            result['execution_footprint']=diagnosis
+            result['body']=support_counts(a,(x-pos.x)**2+(y-pos.y)**2<=.6**2)
+            channel=diagnosis.get('channel',0)
+            score=a.get(f'ht_dir_{channel}',np.full(x.shape,np.nan))
+            if not diagnosis.get('outside_map',True):
+                markers.append(ring(5,diagnosis['center_x'],diagnosis['center_y'],diagnosis['discrete_radius_m'],
+                    ColorRGBA(r=.2,g=.4,b=1.,a=1.)))
             body=self.marker(3,Marker.CUBE_LIST);body.scale.x=body.scale.y=m.info.resolution*.9;body.scale.z=.015
             for i,j in zip(*np.nonzero(inside)):
                 body.points.append(Point(x=float(x[i,j]),y=float(y[i,j]),z=float(ground+.04)))
-                rgb=(1.,.05,1.) if blocked[i,j] else (1.,.1,.05) if not physical[i,j] else (1.,.75,.05) if not valid[i,j] else (.1,.8,.2)
+                rgb=(1.,.05,1.) if blocked[i,j] else (.5,.5,.5) if not physical[i,j] else (1.,.65,.05) if not valid[i,j] else (1.,.05,.05) if score[i,j]<.5 else (.1,.8,.2)
                 body.colors.append(ColorRGBA(r=rgb[0],g=rgb[1],b=rgb[2],a=1.))
             markers.append(body)
             edge=self.marker(4,Marker.LINE_STRIP);edge.scale.x=.025;edge.color=ColorRGBA(r=.1,g=.8,b=1.,a=1.)
             cx=m.info.pose.position.x;cy=m.info.pose.position.y;hx=m.info.length_x/2;hy=m.info.length_y/2
             edge.points=[Point(x=cx+dx*hx,y=cy+dy*hy,z=ground) for dx,dy in [(-1,-1),(-1,1),(1,1),(1,-1),(-1,-1)]];markers.append(edge)
+            if self.headingpub.get_subscription_count():
+                rgb=np.full(x.shape,0x808080,np.uint32)
+                rgb[physical&~valid]=0xffa500
+                rgb[physical&valid&(score>=.5)]=0x19cc33
+                rgb[physical&valid&(score<.5)]=0xff0d0d
+                rgb[blocked]=0xff0dff
+                z=np.where(np.isfinite(a['ht_elevation']),a['ht_elevation']+.035,ground+.035)
+                self.headingpub.publish(self.cloud(m,x,y,z,np.ones(x.shape,bool),rgb))
             if self.bestpub.get_subscription_count():
                 prob=np.max(np.nan_to_num(np.stack([a[f'ht_dir_{k}'] for k in range(8)]),nan=0),axis=0);v=np.clip(prob,0,1)
                 rgb=(((1-v)*255).astype(np.uint32)<<16)|((v*255).astype(np.uint32)<<8)

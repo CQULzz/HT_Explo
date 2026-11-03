@@ -69,7 +69,7 @@ typedef misc_utils_ns::Timer Timer;
 
 class SensorCoveragePlanner3D : public rclcpp::Node {
 public:
-  explicit SensorCoveragePlanner3D();
+  explicit SensorCoveragePlanner3D(const rclcpp::NodeOptions& options=rclcpp::NodeOptions());
   bool initialize();
   void execute();
   ~SensorCoveragePlanner3D() = default;

@@ -30,7 +30,7 @@ def test_diagnostic_ring_is_distinct_from_prior_and_cloud_is_valid():
         markers={m.id:m for m in n.markpub.messages[0].markers}
         assert abs(markers[1].points[0].x-.6)<1e-6
         assert abs(markers[2].points[0].x-1.2)<1e-6
-        assert len(markers[3].points)==result['body']['cells']>0
+        assert len(markers[3].points)==result['execution_footprint']['cells']>result['body']['cells']>0
         c=n.bestpub.messages[0];assert c.width==61*61 and len(c.data)==c.width*c.point_step
         assert n.count_publishers('/cmd_vel')==0
     finally:n.destroy_node();rclpy.try_shutdown()

@@ -31,6 +31,8 @@ class HtCostMap {
   bool knownSegment(const Point& a, const Point& b) const;
   Support support(const Point& a, const Point& b) const;
   Support poseSupport(double x,double y,double yaw) const;
+  // Explanation of the same pose gate; never grants additional permission.
+  std::string poseRejection(double x,double y,double yaw) const;
   // Shared swept gate for search, publication and tracking. Configuration
   // scores use actual body yaw throughout the sweep, including reverse.
   // Legacy point/travel scores additionally check translation direction.
@@ -93,5 +95,7 @@ class HtCostMap {
   std::string consumer_name_;
   uint64_t received_maps_=0, accepted_maps_=0, rejected_maps_=0;
   double last_callback_source_age_s_=0, last_decode_s_=0;
+  double latest_committed_at_s_=-1, cycle_selected_at_s_=-1;
+  uint64_t cycle_updates_=0;
 };
 }

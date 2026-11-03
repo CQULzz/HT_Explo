@@ -36,6 +36,7 @@ from elevation_quality import preprocess_elevation, retain_recent_obstacle_edges
 from local_surface import SurfaceReferenceEstimator
 from cpu_threads import configure_cpu_threads
 from ht_support import prepare_ht_context, preserve_rejected_obstacles
+from height_evidence import qualify_height_evidence, warmup_evidence_times, overlay_observation_times
 from inference_context_io import ContextCaptureSchedule, GracefulStop, save_immutable_npz
 from input_odometry import InputOdometry
 from latest_input import LatestInput
@@ -43,6 +44,7 @@ from small_holes import repair_small_holes, HOLE_PROFILES
 from small_hole_kernels import warmup_small_holes
 from runtime_probe import RuntimeProbe
 from ht_reasons import explain_ht
+from evidence_trace import trace_evidence, EVIDENCE_FLAGS
 from diagnostic_history import DiagnosticHistory
 from runtime_manifest import collect_runtime_manifest
 
@@ -89,6 +91,11 @@ class CupyToHt(Node):
         requested_device=self.declare_parameter('ht_device','cpu').value
         self.channels_last=self.declare_parameter('ht_channels_last',requested_device!='cuda').value
         self.small_holes=self.declare_parameter('ht_small_hole_repair',False).value
+        self.qualify_evidence=self.declare_parameter('ht_qualify_evidence',False).value
+        self.stale_surface_s=float(self.declare_parameter('ht_stale_surface_s',5.).value)
+        self.surface_margin_m=float(self.declare_parameter('ht_surface_margin_m',.15).value)
+        if not all(math.isfinite(v) and v>0 for v in (self.stale_surface_s,self.surface_margin_m)):
+            raise ValueError('Invalid height evidence parameters')
         self.hole_profile=self.declare_parameter('ht_small_hole_profile','strict').value
         if self.hole_profile not in HOLE_PROFILES:raise ValueError('Invalid small-hole profile')
         self.cpu_fuse_bn=self.declare_parameter('ht_cpu_fuse_bn',True).value and requested_device=='cpu'
@@ -160,6 +167,7 @@ class CupyToHt(Node):
                 torch.cuda.synchronize()
         self.pub = self.create_publisher(GridMap, self.declare_parameter('ht_topic', '/ht_traversability/global_local').value, 1)
         self.history_pub = self.create_publisher(GridMap, "/elevation_mapping/historical_local", 1)
+        if self.qualify_evidence:warmup_evidence_times(self.history_backend)
         self.history = None
         offset = self.declare_parameter('surface_sensor_ground_offset_m', -1.0).value
         self.surface = SurfaceReferenceEstimator(sensor_ground_offset_m=offset if offset >= 0 else None)
@@ -170,6 +178,8 @@ class CupyToHt(Node):
         self.input_status = self.create_publisher(String, '/ht_input_status', 1)
         self.performance_pub = self.create_publisher(String, '/ht_performance', 1)
         self.reason_pub=self.create_publisher(GridMap,'/ht_reasons',1)
+        self.evidence_pub=self.create_publisher(GridMap,'/ht_evidence',1)
+        self.last_evidence_monotonic=None
         self.last_published_monotonic = None
         self.last_published_source_s = None
         self.last_performance_monotonic = None
@@ -193,7 +203,8 @@ class CupyToHt(Node):
         parameter_names=('use_sim_time','ht_device','ht_torch_threads','ht_channels_last',
                          'ht_quality_backend','ht_history_backend','ht_cpu_fuse_bn','ht_fuse_bn',
                          'ht_small_hole_repair','ht_small_hole_backend','ht_small_hole_profile','ht_small_hole_fit_backend','ht_context_backend','ht_reason_interval_s','ht_profile_runtime',
-                         'ht_diagnostics_capacity','ht_topic',
+                         'ht_diagnostics_capacity','ht_topic','ht_qualify_evidence',
+                         'ht_stale_surface_s','ht_surface_margin_m',
                          'elevation_topic','surface_odometry_topic','surface_sensor_ground_offset_m',
                          'odometry_child_frame')
         self.runtime_manifest=collect_runtime_manifest(
@@ -215,7 +226,8 @@ class CupyToHt(Node):
             {name:sys.modules[name] for name in ('model','historical_elevation','history_window',
                 'elevation_quality','local_surface','ht_support','small_holes','input_odometry',
                 'latest_input','cpu_threads','diagnostic_history','runtime_manifest',
-                'small_hole_kernels','cuda_ht_context','runtime_probe','ht_reasons','history_fusion','cuda_small_holes')})
+                'small_hole_kernels','cuda_ht_context','runtime_probe','ht_reasons','history_fusion','cuda_small_holes','height_evidence','evidence_trace')})
+        self.runtime_manifest['evidence_flags']=EVIDENCE_FLAGS
         self.runtime_pub=self.create_publisher(String,'/ht_runtime',QoSProfile(
             depth=1,reliability=ReliabilityPolicy.RELIABLE,durability=DurabilityPolicy.TRANSIENT_LOCAL))
         self.runtime_pub.publish(String(data=json.dumps(self.runtime_manifest,sort_keys=True)))
@@ -280,7 +292,8 @@ class CupyToHt(Node):
         nx = ny = 291
         if self.history is None:
             self.history = HistoricalElevation(resolution, window_backend=self.history_backend,
-                                               fusion_backend=self.history_fusion_backend)
+                                               fusion_backend=self.history_fusion_backend,
+                                               track_evidence_times=self.qualify_evidence)
         elif abs(self.history.resolution - resolution) > 1e-6:
             self.get_logger().error("Historical map resolution changed; refusing mixed-resolution fusion")
             return
@@ -290,7 +303,7 @@ class CupyToHt(Node):
             # Input arrays have already been decoded into logical GridMap order.
             source_elevation, source_variance = elevation.copy(), variance.copy()
             source_age = age.copy()
-            source_quality = preprocess_elevation(elevation, variance, resolution, backend=self.quality_backend)
+            source_quality = preprocess_elevation(elevation, variance, resolution, backend=self.quality_backend, denoise=False)
             source_quality_done=time.monotonic()
             # Store original measured heights after quality rejection; denoise
             # only the selected historical crop, avoiding repeated smoothing.
@@ -319,6 +332,11 @@ class CupyToHt(Node):
             elevation, variance, retained_edges = retain_recent_obstacle_edges(
                 elevation, variance, current, current_var, current_age,
                 align(source_quality.edge_mask.astype(np.float32), 0) >= .5)
+            # The edge overlay contains a current measurement, not the older
+            # selected history mode. Carry its actual time into qualification.
+            if self.qualify_evidence:
+                self.history.last_window_observation_time = overlay_observation_times(
+                    self.history.last_window_observation_time,current_age,retained_edges,stamp_s)
             source_rejected = self.history.last_window_incompatible_mask.copy()
             elevation[source_rejected] = np.nan
             raw_history = elevation.copy()
@@ -335,46 +353,44 @@ class CupyToHt(Node):
         if not np.any(observed):
             return
 
-        # Historical display is optional; never serialize an unused 5-layer map.
-        if self.history_pub.get_subscription_count()>0:
-            local = GridMap()
-            local.header = deepcopy(source.header)
-            local.info = deepcopy(source.info)
-            local.info.pose.position.x = center_x
-            local.info.pose.position.y = center_y
-            local.layers = ['elevation', 'variance', 'elevation_raw', 'input_valid', 'rejected']
-            local.basic_layers = ["elevation"]
-            local.outer_start_index = local.inner_start_index = 0
-            for layer in (elevation, variance, raw_history, observed.astype(np.float32),
-                          rejected.astype(np.float32)):
-                data = Float32MultiArray()
-                data.layout = MultiArrayLayout(dim=[
-                    MultiArrayDimension(label="column_index", size=ny, stride=nx * ny),
-                    MultiArrayDimension(label="row_index", size=nx, stride=nx)], data_offset=0)
-                data.data = FloatArray('f', layer.flatten(order="F").tobytes())
-                local.data.append(data)
-            self.history_pub.publish(local)
+        history_display=(elevation,variance,raw_history,observed,rejected)
 
         obstacle_context = preserve_rejected_obstacles(
             self.history.last_window_obstacle_elevation, raw_history, quality.rejected_mask)
         retained_filtered_obstacles = (np.isfinite(obstacle_context) &
             ~np.isfinite(self.history.last_window_obstacle_elevation))
+        physical_exclusion=None
+        evidence_stats={'enabled':False}
+        if self.qualify_evidence:
+            candidate_at=np.where(np.isfinite(self.history.last_window_obstacle_elevation),
+                self.history.last_window_obstacle_time,self.history.last_window_observation_time)
+            evidence=qualify_height_evidence(elevation,observed,rejected,obstacle_context,
+                self.history.last_window_observation_time,candidate_at,reference,stamp_s,
+                stale_surface_s=self.stale_surface_s,surface_margin_m=self.surface_margin_m)
+            elevation,observed,obstacle_context=evidence.height,evidence.observed,evidence.obstacle
+            physical_exclusion=evidence.physical_unknown
+            # Uncertain heights do not contaminate an entire neural receptive
+            # field, but remain explicitly unsupported for the physical body.
+            rejected=np.zeros_like(rejected)
+            evidence_stats={'enabled':True,**evidence.stats}
         inferred=np.zeros(elevation.shape,bool)
         hole_stats={'filled_cells':0,'filled_components':0,'candidate_components':0}
         inference_elevation=elevation
         holes_started=time.monotonic()
         if self.small_holes:
             inference_elevation,inferred,hole_stats=repair_small_holes(
-                elevation,observed,rejected,obstacle_context,current,current_var,current_age,resolution,
+                elevation,observed,(rejected if physical_exclusion is None else rejected|physical_exclusion),obstacle_context,current,current_var,current_age,resolution,
                 protected=quality.edge_mask,backend=self.small_hole_backend,profile=self.hole_profile,
                 moment_provider=self.small_hole_moments)
         holes_finished=time.monotonic()
         if self.cuda_context is not None:
             height,support,occupied,physical_support=self.cuda_context.prepare(
-                elevation,observed,rejected,obstacle_context,resolution,inferred,inference_elevation)
+                elevation,observed,rejected,obstacle_context,resolution,inferred,inference_elevation,
+                physical_exclusion=physical_exclusion)
         else:
             height, support, occupied, physical_support = prepare_ht_context(
-                elevation, observed, rejected, obstacle_context, resolution)
+                elevation, observed, rejected, obstacle_context, resolution,
+                physical_exclusion=physical_exclusion)
             # Inferred heights change model input, never physical support.
             height[inferred]=inference_elevation[inferred]
         inference_started = time.monotonic()
@@ -415,6 +431,7 @@ class CupyToHt(Node):
         # Keep measured obstacle geometry distinct from learned vehicle scores.
         result.layers = [f"ht_dir_{k}" for k in range(8)] + ["ht_valid", "ht_observation_valid", "ht_obstacle", "ht_elevation"]
         if self.small_holes:result.layers += ['ht_measured_valid','ht_interpolated']
+        if self.qualify_evidence:result.layers += ['ht_uncertain_evidence']
         result.basic_layers = ["ht_valid"]
         result.outer_start_index = 0
         result.inner_start_index = 0
@@ -431,6 +448,8 @@ class CupyToHt(Node):
                 # Same world geometry, crop and physical observations as HT.
                 layer = np.where(physical_support & ~occupied,
                                  inference_elevation[25:-25, 25:-25], np.nan).astype(np.float32)
+            elif result.layers[k]=='ht_uncertain_evidence':
+                layer=physical_exclusion[25:-25,25:-25].astype(np.float32)
             elif k == 12:
                 layer=observed[25:-25,25:-25].astype(np.float32)
             else:
@@ -474,6 +493,51 @@ class CupyToHt(Node):
                 reason_map.data.append(data)
             self.reason_pub.publish(reason_map)
             reason_publish_s=time.monotonic()-reason_start
+        evidence_publish_s=0.
+        if (self.qualify_evidence and self.evidence_pub.get_subscription_count()>0 and
+                (self.last_evidence_monotonic is None or published-self.last_evidence_monotonic>=1.)):
+            trace_started=time.monotonic()
+            crop=lambda a:a[25:-25,25:-25]
+            trace=trace_evidence(
+                source_height=crop(align(source_elevation)), source_variance=crop(align(source_variance)),
+                source_age=crop(align(source_age)),
+                source_rejected=crop(align(source_quality.rejected_mask.astype(np.float32),0))>=.5,
+                history_height=crop(raw_history), history_incompatible=crop(source_rejected),
+                final_rejected=crop(quality.rejected_mask), stale_surface=crop(evidence.stale_surface),
+                quarantined_candidate=crop(evidence.quarantined_candidate),
+                physical=physical_support, context=support, occupied=occupied,
+                selected_time=crop(self.history.last_window_observation_time),
+                last_accepted_time=crop(self.history.last_window_last_accepted_time),
+                last_rejected_time=crop(self.history.last_window_last_rejected_time), stamp_s=stamp_s)
+            trace_map=GridMap();trace_map.header=deepcopy(result.header);trace_map.info=deepcopy(result.info)
+            trace_map.layers=list(trace)
+            for layer in trace.values():
+                data=Float32MultiArray();data.layout=deepcopy(result.data[0].layout)
+                data.data=FloatArray('f',np.asarray(layer,np.float32).flatten(order='F').tobytes())
+                trace_map.data.append(data)
+            self.evidence_pub.publish(trace_map);self.last_evidence_monotonic=published
+            evidence_publish_s=time.monotonic()-trace_started
+        history_publish_started=time.monotonic()
+        # Historical display is optional; never serialize an unused 5-layer map.
+        if self.history_pub.get_subscription_count()>0:
+            local = GridMap()
+            local.header = deepcopy(source.header)
+            local.info = deepcopy(source.info)
+            local.info.pose.position.x = center_x
+            local.info.pose.position.y = center_y
+            local.layers = ['elevation', 'variance', 'elevation_raw', 'input_valid', 'rejected']
+            local.basic_layers = ["elevation"]
+            local.outer_start_index = local.inner_start_index = 0
+            for layer in history_display:
+                data = Float32MultiArray()
+                data.layout = MultiArrayLayout(dim=[
+                    MultiArrayDimension(label="column_index", size=ny, stride=nx * ny),
+                    MultiArrayDimension(label="row_index", size=nx, stride=nx)], data_offset=0)
+                data.data = FloatArray('f', np.asarray(layer,np.float32).flatten(order="F").tobytes())
+                local.data.append(data)
+            self.history_pub.publish(local)
+
+        history_publish_s=time.monotonic()-history_publish_started
         publish_interval = (None if self.last_published_monotonic is None
                             else published-self.last_published_monotonic)
         source_interval = (None if self.last_published_source_s is None
@@ -497,7 +561,8 @@ class CupyToHt(Node):
                        'runtime_id': self.runtime_manifest['runtime_id'],
                        'queue_wait_s':queue_wait,'input_queue':self.pending_maps.status(),
                        'stages':stages,'runtime_profile':profile,'reason_summary':reason_summary,
-                       'reason_publish_s':reason_publish_s,
+                       'reason_publish_s':reason_publish_s,'evidence_publish_s':evidence_publish_s,
+                       'history_publish_s':history_publish_s,
                        'diagnostics_before_current_record': self.diagnostics.status()}
         if self.last_performance_monotonic is None or published-self.last_performance_monotonic >= 1.:
             resource_getter=getattr(self.history,'resource_usage',None)
@@ -524,6 +589,7 @@ class CupyToHt(Node):
                     quality_rejected=quality.rejected_mask, obstacle_context=obstacle_context,
                     support=support, physical_support=physical_support, occupied=occupied,
                     inferred_ground=inferred,
+                    physical_exclusion=(np.zeros_like(observed) if physical_exclusion is None else physical_exclusion),
                     probabilities=probabilities)
             self.last_context_dump_stamp = stamp_s
             self.context_schedule.saved(stamp_s)
@@ -532,6 +598,7 @@ class CupyToHt(Node):
         self.diagnostics.append({'stamp_s': stamp_s, 'runtime_id':self.runtime_manifest['runtime_id'], 'fused_cells': fused,
                                  'observed_cells': int(observed.sum()), 'supported_cells': int(support.sum()),
                                  'surface': surface_stats, 'quality': quality.stats,'small_holes':hole_stats,
+                                 'height_evidence':evidence_stats,
                                  'small_hole_profile':self.hole_profile,'small_hole_fit_backend':self.small_hole_fit_backend,
                                  'source_rejected_cells': int(source_rejected.sum()),
                                  'known_obstacle_cells': int(occupied.sum()),
@@ -553,7 +620,8 @@ class CupyToHt(Node):
                                  'ht_serialize_publish_s': published-inference_finished,
                                  'context_dump_s': context_dump_s,
                                  'queue_wait_s':queue_wait,'stages':stages,'runtime_profile':profile,
-                                 'reason_summary':reason_summary,'reason_publish_s':reason_publish_s,
+                                 'reason_summary':reason_summary,'reason_publish_s':reason_publish_s,'evidence_publish_s':evidence_publish_s,
+                       'history_publish_s':history_publish_s,
                                  'post_publish_diagnostics_s':time.monotonic()-published,
                                  'elapsed_s': time.monotonic()-started})
         if self.diagnostics.error is not None and not self.diagnostic_error_reported:

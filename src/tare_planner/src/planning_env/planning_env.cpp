@@ -29,7 +29,7 @@ void PlanningEnvParameters::ReadParameters(rclcpp::Node::SharedPtr nh)
   nh->get_parameter("kPointCloudCellHeight", kPointCloudCellHeight);
   nh->get_parameter("kPointCloudManagerNeighborCellNum", kPointCloudManagerNeighborCellNum);
   nh->get_parameter("kCoverCloudZSqueezeRatio", kCoverCloudZSqueezeRatio);
-  nh->get_parameter("kUseFrontier", kUseFrontier);
+  kUseFrontier = nh->get_parameter("kUseFrontier").as_bool();
   nh->get_parameter("kFrontierClusterTolerance", kFrontierClusterTolerance);
   nh->get_parameter("kFrontierClusterMinSize", kFrontierClusterMinSize);
   nh->get_parameter("kUseCoverageBoundaryOnFrontier", kUseCoverageBoundaryOnFrontier);
