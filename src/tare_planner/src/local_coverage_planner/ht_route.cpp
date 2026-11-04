@@ -219,7 +219,9 @@ exploration_path_ns::ExplorationPath LocalCoveragePlanner::SolveHTTSP(
       const Eigen::Vector3d point(next.x,next.y,robot_position_.z());
       if (!viewpoint_manager_->InContinuousPlanningHorizon(point)) {++geometry_rejections;return false;}
       const auto geometry_started=std::chrono::steady_clock::now();
-      const bool colliding=viewpoint_manager_->InCollisionAtPose(point,std::abs(v)>1e-9 ? ht_tracking_margin_:0.0);
+      const bool colliding=(std::abs(v)>1e-9 ? !viewpoint_manager_->TrackingMotionAllowed(
+          Eigen::Vector3d(previous.x,previous.y,robot_position_.z()),point,ht_tracking_margin_) :
+          viewpoint_manager_->InCollisionAtPose(point));
       geometry_seconds+=std::chrono::duration<double>(std::chrono::steady_clock::now()-geometry_started).count();
       ++geometry_queries;
       if (colliding) {++geometry_rejections;return false;}
@@ -310,13 +312,20 @@ exploration_path_ns::ExplorationPath LocalCoveragePlanner::PlanHTReturn(const Ei
   const auto ht=viewpoint_manager_->HT();
   if (!ht->ready() || !std::isfinite(robot_yaw_)) return result;
   const ht_cost_ns::Pose2 start{robot_position_.x(),robot_position_.y(),robot_yaw_};
+  int geometry_rejections=0,ht_rejections=0,horizon_rejections=0,memory_rejections=0;
+  const bool root_geometry=viewpoint_manager_->InCollisionAtPose(robot_position_);
+  const bool root_tracking=viewpoint_manager_->InCollisionAtPose(robot_position_,ht_tracking_margin_);
   auto valid=[&](ht_cost_ns::Pose2 previous,ht_cost_ns::Pose2 next,double v) {
     const Eigen::Vector3d point(next.x,next.y,robot_position_.z());
-    if (!viewpoint_manager_->InContinuousPlanningHorizon(point) ||
-        viewpoint_manager_->InCollisionAtPose(point,std::abs(v)>1e-9 ? ht_tracking_margin_:0.0) ||
-        !ht->permits(ht->motionSupport(previous,next)) ||
-        !ht_execution_failures_.permits(previous,next,node_->now().seconds()) ||
-        !ht_cost_ns::successorHeadingReserve(start,previous,next,ht_heading_margin_,
+    if (!viewpoint_manager_->InContinuousPlanningHorizon(point)) {++horizon_rejections;return false;}
+    if ((std::abs(v)>1e-9 ? !viewpoint_manager_->TrackingMotionAllowed(
+          Eigen::Vector3d(previous.x,previous.y,robot_position_.z()),point,ht_tracking_margin_) :
+          viewpoint_manager_->InCollisionAtPose(point))) {
+      ++geometry_rejections;return false;
+    }
+    if (!ht->permits(ht->motionSupport(previous,next))) {++ht_rejections;return false;}
+    if (!ht_execution_failures_.permits(previous,next,node_->now().seconds())) {++memory_rejections;return false;}
+    if (!ht_cost_ns::successorHeadingReserve(start,previous,next,ht_heading_margin_,
           [&](ht_cost_ns::Pose2 p){return ht->permits(ht->poseSupport(p.x,p.y,p.yaw));})) return false;
     (void)v;
     return true;
@@ -326,9 +335,9 @@ exploration_path_ns::ExplorationPath LocalCoveragePlanner::PlanHTReturn(const Ei
   if(search_seconds>=0) config.max_search_seconds=std::min(config.max_search_seconds,search_seconds);
   const auto plan=ht_cost_ns::planXYTheta(start,{target.x(),target.y(),target.z()},
                                          config,valid);
-  RCLCPP_INFO(node_->get_logger(),"HT_WAYPOINT_SEARCH target=(%.3f,%.3f) reached=%d termination=%s poses=%zu expanded=%d direct=%d pruned=%zu",
+  RCLCPP_INFO(node_->get_logger(),"HT_WAYPOINT_SEARCH target=(%.3f,%.3f) reached=%d termination=%s poses=%zu expanded=%d direct=%d pruned=%zu geometry_reject=%d ht_reject=%d horizon_reject=%d memory_reject=%d root_geometry=%d root_tracking=%d",
     target.x(),target.y(),plan.reached,ht_cost_ns::terminationName(plan.termination),plan.poses.size(),plan.expanded,
-    plan.direct_connection,static_cast<size_t>(plan.dominated_edges_pruned));
+    plan.direct_connection,static_cast<size_t>(plan.dominated_edges_pruned),geometry_rejections,ht_rejections,horizon_rejections,memory_rejections,root_geometry,root_tracking);
   if (!plan.reached || plan.poses.size()<2) {
     RCLCPP_WARN_THROTTLE(node_->get_logger(),*node_->get_clock(),3000,
       "HT return search failed: robot=(%.3f,%.3f) checkpoint=(%.3f,%.3f) distance=%.3f reached=%d poses=%zu expanded=%d",

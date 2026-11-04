@@ -79,7 +79,8 @@
     kCollisionGridResolutionZ: 0.0
     kCollisionPointThr: 1
     kLineOfSightStopAtNearestObstacle: true
-    kViewPointHeightFromTerrain: 0.75
+    # Candidate references must match calibrated base_link odometry, not a simulated LiDAR origin.
+    kViewPointHeightFromTerrain: 0.23479
     kViewPointHeightFromTerrainChangeThreshold: 0.6
     kCheckDynamicObstacleCollision: false
     kCollisionFrameCountMax: 3

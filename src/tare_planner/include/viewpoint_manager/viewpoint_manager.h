@@ -138,6 +138,8 @@ public:
   bool InCollision(const Eigen::Vector3d& position);
   // Continuous vehicle reference position, separate from coverage viewpoint marks.
   bool InCollisionAtPose(const Eigen::Vector3d& position, double extra_margin=0.0);
+  bool TrackingMotionAllowed(const Eigen::Vector3d& previous,const Eigen::Vector3d& next,double extra_margin);
+  double PoseObstacleClearance(const Eigen::Vector3d& position);
   bool InCurrentFrameLineOfSight(const Eigen::Vector3d& position);
   void CheckViewPointBoundaryCollision();
   void CheckViewPointCollisionWithCollisionGrid(const pcl::PointCloud<pcl::PointXYZI>::Ptr& collision_cloud);

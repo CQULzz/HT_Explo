@@ -91,7 +91,7 @@ def start(context):
                  'sensor_origin_offset':sensor_offset}]),
         Node(package='tare_planner',executable='xytheta_follower',name='xytheta_follower',namespace='ht_real',output='screen',
              condition=IfCondition(str(policy.follower).lower()),
-             parameters=[config,common,{'odometry_topic':'/ht_real/odometry',
+             parameters=[os.path.join(hw,'config','tare_scout.yaml'),config,common,{'odometry_topic':'/ht_real/odometry',
                 'registered_scan_topic':'/ht_real/registered_scan','command_topic':policy.command_topic,'command_frame':'base_link'}],
              remappings=HARDWARE_REMAPS),
         Node(package='ht_scout_bridge',executable='scout_runtime_status',namespace='ht_real',output='screen',

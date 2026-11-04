@@ -300,3 +300,44 @@ TEST_F(PendingCell, ExternalCoveredOrResetClearsPendingRegistry) {
   world->UpdateCellStatus(manager);ASSERT_EQ(world->PendingHTCoverageCells(),1u);
   world->Reset();EXPECT_EQ(world->PendingHTCoverageCells(),0u);
 }
+
+TEST(GeometryPose, TrackingBufferTrapCanEscapeWithoutCrossingPhysicalBoundary) {
+  if (!rclcpp::ok())rclcpp::init(0,nullptr);
+  rclcpp::NodeOptions options;
+  options.arguments({"--ros-args","--params-file",HT_SOURCE_ROOT "/config/indoor.yaml"});
+  options.automatically_declare_parameters_from_overrides(true);
+  options.parameter_overrides({rclcpp::Parameter("kCollisionPointThr",1)});
+  auto n=std::make_shared<rclcpp::Node>("tare_planner_node",options);
+  viewpoint_manager_ns::ViewPointManager manager(n);
+  manager.UpdateRobotPosition(Eigen::Vector3d(0,0,.75));
+  auto cloud=std::make_shared<pcl::PointCloud<pcl::PointXYZI>>();
+  pcl::PointXYZI point;point.x=0;point.y=0;point.z=.75;cloud->push_back(point);
+  manager.CheckViewPointCollision(cloud);
+  const double radius=n->get_parameter("kViewPointCollisionMargin").as_double()+
+      .5*std::hypot(n->get_parameter("kCollisionGridResolutionX").as_double(),n->get_parameter("kCollisionGridResolutionY").as_double());
+  using namespace ht_cost_ns;
+  Pose2 start{radius+.005,0,0};Point goal{start.x+1.5,0,0};
+  const Eigen::Vector3d root(start.x,0,.75);
+  ASSERT_FALSE(manager.InCollisionAtPose(root));ASSERT_TRUE(manager.InCollisionAtPose(root,.12));
+  EXPECT_NEAR(manager.PoseObstacleClearance(root),.005,1e-6);
+  XYThetaConfig c;c.headings=32;c.turn_angles={kPi/16,kPi/8};c.try_direct_connection=true;
+  c.max_search_seconds=1;c.goal_radius=.35;
+  auto old=planXYTheta(start,goal,c,[&](Pose2,Pose2 b,double v){
+    return !manager.InCollisionAtPose(Eigen::Vector3d(b.x,b.y,.75),std::abs(v)>1e-9?.12:0.);
+  });
+  EXPECT_FALSE(old.reached);EXPECT_EQ(old.termination,XYThetaTermination::EXHAUSTED);
+  auto fixed=planXYTheta(start,goal,c,[&](Pose2 a,Pose2 b,double v){
+    if(std::abs(v)<1e-9)return !manager.InCollisionAtPose(Eigen::Vector3d(b.x,b.y,.75));
+    return manager.TrackingMotionAllowed(Eigen::Vector3d(a.x,a.y,.75),Eigen::Vector3d(b.x,b.y,.75),.12);
+  });
+  ASSERT_TRUE(fixed.reached);
+  for(size_t i=1;i<fixed.poses.size();++i) {
+    const auto& a=fixed.poses[i-1];const auto& b=fixed.poses[i];
+    EXPECT_FALSE(manager.InCollisionAtPose(Eigen::Vector3d(b.x,b.y,.75)));
+    if(manager.InCollisionAtPose(Eigen::Vector3d(b.x,b.y,.75),.12))
+      EXPECT_GT(std::hypot(b.x,b.y),std::hypot(a.x,a.y));
+  }
+  EXPECT_FALSE(manager.TrackingMotionAllowed(root,Eigen::Vector3d(radius-.001,0,.75),.12));
+  EXPECT_FALSE(manager.TrackingMotionAllowed(Eigen::Vector3d(radius-.001,0,.75),Eigen::Vector3d(radius+1,0,.75),.12));
+  EXPECT_FALSE(manager.TrackingMotionAllowed(Eigen::Vector3d(radius+.2,0,.75),root,.12));
+}

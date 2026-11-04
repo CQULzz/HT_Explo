@@ -59,3 +59,29 @@ def test_mapper_profile_preserves_sensor_origin_and_measured_age():
     assert not p['self_filter_enabled']  # Already filtered by the physical body geometry.
     assert p['publishers']['elevation_map_raw']['layers']==['elevation','variance','observation_age']
     assert p['map_length']/p['resolution']==pytest.approx(291)
+
+
+def test_hardware_geometry_reference_and_follower_envelope_agree(monkeypatch):
+    import yaml
+    from ht_scout_bridge.geometry import load_calibration
+    profile=ROOT/'src/ht_scout_bridge/config'
+    _,poi_base,poi_lidar=load_calibration(str(profile/'scout_extrinsics.yaml'))
+    calib=yaml.safe_load((profile/'scout_extrinsics.yaml').read_text())
+    height=calib['transforms']['base_footprint_to_base_link']['xyz'][2]
+    tare=yaml.safe_load((profile/'tare_scout.yaml').read_text())['/**']['ros__parameters']
+    assert tare['kViewPointHeightFromTerrain']==pytest.approx(height)
+    monkeypatch.setattr(m,'get_package_share_directory',lambda name:str(ROOT/'src'/name))
+    c=LaunchContext()
+    for a in m.generate_launch_description().entities:
+        if isinstance(a,DeclareLaunchArgument):c.launch_configurations[a.name]=perform_substitutions(c,a.default_value)
+    c.launch_configurations['run_mode']='drive'
+    effective={}
+    for node in m.start(c):
+        if node.node_executable not in ('tare_planner_node','xytheta_follower'):continue
+        values={}
+        for item in evaluate_parameters(c,node._Node__parameters):
+            if isinstance(item,dict):values.update(item)
+            else:values.update(yaml.safe_load(Path(item).read_text())['/**']['ros__parameters'])
+        effective[node.node_executable]=values
+    for key in ['kViewPointCollisionMargin','kViewPointCollisionMarginZPlus','kViewPointCollisionMarginZMinus','kCollisionGridResolutionX','kCollisionGridResolutionY']:
+        assert effective['xytheta_follower'][key]==effective['tare_planner_node'][key]

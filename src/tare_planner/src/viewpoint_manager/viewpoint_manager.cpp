@@ -1,3 +1,4 @@
+#include "ht_cost/tracking_margin.h"
 /**
  * @file viewpoint_manager.cpp
  * @author Chao Cao (ccao1@andrew.cmu.edu)
@@ -524,6 +525,47 @@ bool ViewPointManager::InCollisionAtPose(const Eigen::Vector3d& position, double
         std::hypot(obstacle.x-position.x(),obstacle.y-position.y())<=radius+1e-7) return true;
   }
   return false;
+}
+
+double ViewPointManager::PoseObstacleClearance(const Eigen::Vector3d& position) {
+  if (!position.allFinite() || !pose_collision_ready_ || !InContinuousPlanningHorizon(position))
+    return -std::numeric_limits<double>::infinity();
+  const double radius=vp_.kViewPointCollisionMargin+
+      .5*std::hypot(vp_.kCollisionGridResolution.x(),vp_.kCollisionGridResolution.y());
+  double distance=std::numeric_limits<double>::infinity();
+  if (position.z()==pose_collision_reference_z_) {
+    if (pose_collision_xy_cloud_->empty()) return distance;
+    pcl::PointXYZI query;query.x=position.x();query.y=position.y();query.z=0;
+    std::vector<int> nearest(1);std::vector<float> squared(1);
+    if (pose_collision_xy_tree_->nearestKSearch(query,1,nearest,squared)!=1) return -radius;
+    const auto& p=pose_collision_xy_cloud_->points[nearest[0]];
+    distance=std::hypot(double(p.x)-position.x(),double(p.y)-position.y());
+    // Query-coordinate rounding can reorder nearly tied neighbours. Include
+    // every possible nearer point, then compare its original coordinates.
+    const double error=std::hypot(double(query.x)-position.x(),double(query.y)-position.y());
+    std::vector<int> indices;std::vector<float> distances;
+    pose_collision_xy_tree_->radiusSearch(query,distance+2*error+
+        8*std::numeric_limits<float>::epsilon()*(distance+1)+1e-6,indices,distances);
+    for (int i:indices) {
+      const auto& v=pose_collision_xy_cloud_->points[i];
+      distance=std::min(distance,std::hypot(double(v.x)-position.x(),double(v.y)-position.y()));
+    }
+  } else {
+    for (const auto& p:pose_collision_cloud_->points) {
+      const double dz=p.z-position.z();
+      if (dz<=vp_.kViewPointCollisionMarginZPlus && dz>=-vp_.kViewPointCollisionMarginZMinus)
+        distance=std::min(distance,std::hypot(double(p.x)-position.x(),double(p.y)-position.y()));
+    }
+  }
+  return distance-radius;
+}
+
+bool ViewPointManager::TrackingMotionAllowed(const Eigen::Vector3d& previous,
+                                            const Eigen::Vector3d& next,double extra_margin) {
+  if (!std::isfinite(extra_margin) || extra_margin<0 || extra_margin>1 ||
+      InCollisionAtPose(previous) || InCollisionAtPose(next)) return false;
+  if (!InCollisionAtPose(next,extra_margin)) return true;
+  return ht_cost_ns::trackingMarginAllows(PoseObstacleClearance(previous),PoseObstacleClearance(next),extra_margin);
 }
 
 bool ViewPointManager::InCollision(const Eigen::Vector3d& position)

@@ -1,3 +1,4 @@
+#include "ht_cost/tracking_margin.h"
 #include "ht_cost/xytheta_planner.h"
 #include "ht_cost/ht_cost_map.h"
 #include "ht_cost/measured_collision_field.h"
@@ -58,6 +59,11 @@ class XYThetaFollower : public rclcpp::Node {
     const double cell_y=declare_parameter<double>("kCollisionGridResolutionY",0.2);
     geometry_z_plus_=declare_parameter<double>("kViewPointCollisionMarginZPlus",0.5);
     geometry_z_minus_=declare_parameter<double>("kViewPointCollisionMarginZMinus",0.5);
+    tracking_margin_=declare_parameter<double>("xytheta_tracking_margin",0.12);
+    margin_recovery_speed_=declare_parameter<double>("tracking_margin_recovery_speed",0.1);
+    if (!std::isfinite(tracking_margin_) || tracking_margin_<0 || tracking_margin_>1 ||
+        !std::isfinite(margin_recovery_speed_) || margin_recovery_speed_<=0)
+      throw std::invalid_argument("Invalid tracking margin recovery limits");
     geometry_radius_=margin+.5*std::hypot(cell_x,cell_y);
     for(double value:{geometry_timeout_,margin,cell_x,cell_y,geometry_z_plus_,geometry_z_minus_})
       if (!std::isfinite(value)||value<=0)throw std::invalid_argument("Invalid execution geometry envelope");
@@ -299,6 +305,10 @@ class XYThetaFollower : public rclcpp::Node {
       if (std::abs(bearing_error)<0.65 && std::abs(pose_error)<0.8)
         wanted_v=direction*(direction>0?max_speed_:max_reverse_);
     }
+    const double root_clearance=geometry_.clearance(robot_.x,robot_.y,robot_z_,geometry_radius_,
+        tracking_margin_,geometry_z_plus_,geometry_z_minus_);
+    if (ht_ && ht_->enabled() && root_clearance<=tracking_margin_)
+      wanted_v=clamp(wanted_v,margin_recovery_speed_);
     const double dt=command_interval_.elapsed(steadySeconds());
     linear_+=clamp(wanted_v-linear_,max_accel_*dt);
     angular_+=clamp(wanted_w-angular_,max_yaw_accel_*dt);
@@ -314,6 +324,13 @@ class XYThetaFollower : public rclcpp::Node {
         next.y+=linear_*.05*std::sin(p.yaw+angular_*.025);next.yaw=wrapYaw(p.yaw+angular_*.05);
         if (geometryBlocked(next)) {
           rejectEdge(p,next);hold("GEOMETRY_COMMAND_BLOCKED");return;
+        }
+        if (std::abs(linear_)>1e-6) {
+          const double a=geometry_.clearance(p.x,p.y,robot_z_,geometry_radius_,tracking_margin_,geometry_z_plus_,geometry_z_minus_);
+          const double b=geometry_.clearance(next.x,next.y,robot_z_,geometry_radius_,tracking_margin_,geometry_z_plus_,geometry_z_minus_);
+          if (!ht_cost_ns::trackingMarginAllows(a,b,tracking_margin_)) {
+            rejectEdge(p,next);hold("GEOMETRY_COMMAND_BLOCKED");return;
+          }
         }
         const auto rejection=htMotionRejection(p,next,true,now_s);
         if (!rejection.empty()) {hold(rejection);return;}
@@ -382,6 +399,7 @@ class XYThetaFollower : public rclcpp::Node {
   ht_cost_ns::MeasuredCollisionField geometry_;
   double robot_z_=0,geometry_received_=-1,geometry_stamp_=-1;
   double geometry_timeout_,geometry_radius_,geometry_z_plus_,geometry_z_minus_;
+  double tracking_margin_,margin_recovery_speed_;
   rclcpp::Subscription<sensor_msgs::msg::PointCloud2>::SharedPtr geometry_sub_;
   std::vector<Pose2> path_;
   size_t index_=1;

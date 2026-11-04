@@ -92,7 +92,7 @@ class FollowerTest : public ::testing::Test {
       modifier.resize(geometry_mode ? 1:0);
       if(geometry_mode) {
         sensor_msgs::PointCloud2Iterator<float> x(cloud,"x"),y(cloud,"y"),z(cloud,"z");
-        *x=geometry_mode==1 ? .5f:(geometry_mode==4 ? .15f:1.2f);*y=geometry_mode==4 ? .68f:0.f;*z=geometry_mode==3 ? 2.f:0.f;
+        *x=geometry_mode==5 ? -.65f:(geometry_mode==6 ? .65f:(geometry_mode==1 ? .5f:(geometry_mode==4 ? .15f:1.2f)));*y=geometry_mode==4 ? .68f:0.f;*z=geometry_mode==3 ? 2.f:0.f;
       }
       if(send_geometry)geometry->publish(cloud);
       grid_map::GridMap g;g.setGeometry(grid_map::Length(10,10),.2);g.setFrameId("map");
@@ -362,4 +362,14 @@ TEST_F(SharedPriorFollowerTest,FirstPathCannotCreateOwnPriorAndReplansCannotRene
   replan();allow(true);spin(650ms);EXPECT_DOUBLE_EQ(speed,0);EXPECT_EQ(reason,"HT_CURRENT_POSE_MISSING_SUPPORT");
   prior->publish(m);replan();allow(true);spin(200ms);
   EXPECT_DOUBLE_EQ(speed,0);EXPECT_EQ(reason,"HT_CURRENT_POSE_MISSING_SUPPORT");
+}
+
+TEST_F(FollowerTest, TrackingBufferEscapeCommandsAwayAtReducedSpeed) {
+  geometry_mode=5;sendPath();allow(true);spin(1000ms);
+  EXPECT_EQ(reason,"DRIVING");EXPECT_GT(speed,0.);
+  EXPECT_LE(speed,.100001);
+  ASSERT_FALSE(received_commands.empty());
+  // A buffer is not permission to move toward an obstacle on the other side.
+  geometry_mode=6;sendPath();allow(true);spin(300ms);
+  EXPECT_DOUBLE_EQ(speed,0.);
 }

@@ -14,6 +14,11 @@ bool SensorCoveragePlanner3D::RouteTareWaypoint(const exploration_path_ns::Explo
       "TARE_ROUTE start rejected: %s",ht->poseRejection(robot_position_.x,robot_position_.y,robot_yaw_).c_str());
     return false;
   }
+  if(viewpoint_manager_->InCollisionAtPose(Eigen::Vector3d(robot_position_.x,robot_position_.y,robot_position_.z))) {
+    RCLCPP_WARN_THROTTLE(get_logger(),*get_clock(),3000,
+      "TARE_ROUTE physical start occupied; do not repeat identical invalid-start searches");
+    return false;
+  }
   std::vector<Point> points;std::vector<bool> robots;
   for(const auto& n:route.nodes_) {
     points.push_back({n.position_.x(),n.position_.y(),n.position_.z()});
