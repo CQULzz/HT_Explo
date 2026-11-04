@@ -544,7 +544,7 @@ class CupyToHt(Node):
                            else stamp_s-self.last_published_source_s)
         self.last_published_monotonic = published
         self.last_published_source_s = stamp_s
-        performance = {'source_stamp_s': stamp_s, 'publish_interval_s': publish_interval,
+        performance = {'surface_reference': surface_stats, 'source_stamp_s': stamp_s, 'publish_interval_s': publish_interval,
                        'source_interval_s': source_interval,
                        'source_age_at_callback_s': source_age_at_start,
                        'source_age_at_publish_s': source_age_at_publish,

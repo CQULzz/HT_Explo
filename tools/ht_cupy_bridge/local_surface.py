@@ -13,6 +13,7 @@ class SurfaceReferenceEstimator:
         self.fresh_age_s = float(fresh_age_s)
         self.radius_m = float(radius_m)
         self.offset_m = sensor_ground_offset_m
+        self.calibrated_offset = sensor_ground_offset_m is not None
 
     def estimate(self, elevation, variance, resolution, ages=None, robot_z=None):
         z = np.asarray(elevation, np.float32)
@@ -65,7 +66,23 @@ class SurfaceReferenceEstimator:
         if expected is not None and abs(coef[2]-expected) > .25:
             coef = np.array([0., 0., expected])
         rms = float(np.sqrt(np.mean(np.minimum((b-A@coef)**2, .1**2))))
-        if robot_z is not None:
+        # A plane is a selection hint, but an unreliable hint can still delete
+        # valid measured history downstream. Mixed obstacle/floor returns must
+        # not become a new floor merely because the least-squares solve succeeds.
+        # Reuse the 2.5cm fit-quality bound already required for offset learning.
+        # The fallback is a reference only: no observation or timestamp is made.
+        center_error = None if expected is None else float(coef[2]-expected)
+        reliable = rms < .025 and (center_error is None or abs(center_error) < .1)
+        if not reliable:
+            fallback = expected if expected is not None else np.nan
+            return np.full(z.shape, fallback, np.float32), {
+                'fresh_ground_cells': count, 'reference_center_m': fallback,
+                'slope_xy': [0., 0.], 'offset_m': self.offset_m, 'plane_fit': False,
+                'fit_rms_m': rms, 'rejected_fit_center_m': float(coef[2]),
+                'rejected_fit_slope_xy': coef[:2].tolist(),
+                'fallback_reason': 'UNTRUSTED_LOCAL_PLANE',
+                'calibrated_offset': self.calibrated_offset}
+        if robot_z is not None and not self.calibrated_offset:
             candidate = float(robot_z)-float(coef[2])
             if self.offset_m is None:
                 self.offset_m = candidate
