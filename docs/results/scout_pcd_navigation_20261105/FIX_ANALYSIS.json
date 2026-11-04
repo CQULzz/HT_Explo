@@ -1,0 +1,168 @@
+{
+  "searches": 151,
+  "search_terminations": {
+    "REACHED": 151
+  },
+  "reached_from_inside_tracking_buffer": 5,
+  "same_goal_holds": 246,
+  "held_goal_outside_scene_crop": 246,
+  "held_without_search_unsupported_prefixes": 246,
+  "dominant_held_goals": [
+    [
+      [
+        3.326,
+        -20.465
+      ],
+      65
+    ],
+    [
+      [
+        3.325,
+        -20.463
+      ],
+      60
+    ],
+    [
+      [
+        3.325,
+        -20.464
+      ],
+      40
+    ],
+    [
+      [
+        3.324,
+        -20.462
+      ],
+      37
+    ],
+    [
+      [
+        3.326,
+        -20.464
+      ],
+      30
+    ]
+  ],
+  "plane_samples": 468,
+  "untrusted_plane_fallbacks": 320,
+  "plane_offset_min_median_p95_max": [
+    0.23479,
+    0.23479,
+    0.23479,
+    0.23479
+  ],
+  "ht_publish_age_min_median_p95_max": [
+    0.25,
+    0.5099999999999945,
+    1.4164999999999819,
+    1.8299999999999983
+  ],
+  "ht_service_min_median_p95_max": [
+    0.040805151000313344,
+    0.10154549299977589,
+    0.8207349365501155,
+    1.3077058850003596
+  ],
+  "runtime_map_age_gt1_fraction": 0.185,
+  "last_runtime": {
+    "mode": "drive",
+    "reason": "PATH_NO_EXECUTABLE_ROUTE",
+    "planner": "PATH_NO_EXECUTABLE_ROUTE",
+    "follower": "PLANNER_HOLD",
+    "command_bridge": "PERMISSION_MISSING_OR_STALE",
+    "input": "CLOUD_READY",
+    "ht_input": null,
+    "odometry_age_s": 0.049999999999954525,
+    "ht_map_age_s": 0.6000000000000227,
+    "mapping_verified": true,
+    "terrain_response_validated": false,
+    "direction_acceptance": "mapping",
+    "startup_prior_active": false,
+    "startup_remaining_s": 0.0,
+    "startup_assume_traversable": true,
+    "motor_output_enabled": true,
+    "wheel_motion_confirmed": false,
+    "ht_map_consumers": {
+      "/ht_real/xytheta_follower": {
+        "consumer": "/ht_real/xytheta_follower",
+        "received": 2218,
+        "accepted": 2218,
+        "rejected": 0,
+        "last_decode_s": 0.00808522,
+        "callback_source_age_s": 0.3100000000000591,
+        "latest_source_stamp_s": 598.8,
+        "latest_source_age_s": 0.4700000000000273,
+        "cycle_source_stamp_s": 229.6,
+        "cycle_source_age_s": 369.66999999999996,
+        "latest_commit_age_s": 0.14999999999997726,
+        "cycle_selected_at_s": 230.17,
+        "cycle_held_s": 369.1,
+        "cycle_updates": 3081,
+        "map_timeout_s": 1,
+        "latest_error": "",
+        "diagnostic_only": true
+      },
+      "/ht_real/tare_planner_node": {
+        "consumer": "/ht_real/tare_planner_node",
+        "received": 2219,
+        "accepted": 2219,
+        "rejected": 0,
+        "last_decode_s": 0.015553485,
+        "callback_source_age_s": 0.2899999999999636,
+        "latest_source_stamp_s": 599,
+        "latest_source_age_s": 0.3300000000000409,
+        "cycle_source_stamp_s": 598.8,
+        "cycle_source_age_s": 0.5300000000000864,
+        "latest_commit_age_s": 0.030000000000086402,
+        "cycle_selected_at_s": 599.13,
+        "cycle_held_s": 0.20000000000004547,
+        "cycle_updates": 43076,
+        "map_timeout_s": 1,
+        "latest_error": "",
+        "diagnostic_only": true
+      }
+    },
+    "command": {
+      "topic": "/ht_real/cmd_vel_stamped",
+      "age_s": 0.029999999999972715,
+      "linear_x": 0.0,
+      "angular_z": 0.0
+    },
+    "body": {
+      "cells": 712,
+      "unknown": 0,
+      "context_invalid": 300,
+      "obstacle": 0,
+      "interpolated": 0
+    },
+    "diagnostic_disk": {
+      "radius_m": 0.6,
+      "cells": 712,
+      "unknown": 0,
+      "context_invalid": 300,
+      "obstacle": 0,
+      "interpolated": 0
+    },
+    "execution_footprint": {
+      "cells": 853,
+      "unknown": 0,
+      "context_invalid": 349,
+      "obstacle": 0,
+      "interpolated": 0,
+      "outside_map": false,
+      "channel": 5,
+      "center_x": -1.56,
+      "center_y": -14.120000000000001,
+      "configured_radius_m": 0.6,
+      "discrete_radius_m": 0.6565685424949238,
+      "extends_outside_map": false,
+      "current_context_valid": true,
+      "current_heading_probability": 0.9354783296585083,
+      "best_probability": 0.9946088790893555,
+      "current_heading_low": false,
+      "diagnostic_only": true
+    },
+    "_time": 600.0
+  }
+}
