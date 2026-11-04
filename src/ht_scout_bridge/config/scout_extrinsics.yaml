@@ -336,3 +336,14 @@ lidar_self_filter:
     preserve_vertical_support: true
     support_radius_m: 0.04
     support_height_m: 0.04
+  rack_occlusion:
+    enabled: true
+    source: 'Confirmed cf0b73d URDF frame.STL rear top surface: 536 actual triangles at base_link Z=0.3052m; holes retained'
+    max_lidar_range_m: 1.6
+    min_behind_m: 0.03
+    max_behind_m: 0.5
+    ground_z_m: -0.23479
+    min_height_above_ground_m: 0.03
+    preserve_vertical_support: true
+    support_radius_m: 0.04
+    support_height_m: 0.04

@@ -1528,6 +1528,11 @@ bool SensorCoveragePlanner3D::GetLookAheadPoint(
 void SensorCoveragePlanner3D::PublishWaypoint() {
   geometry_msgs::msg::PointStamped waypoint;
   auto ht=viewpoint_manager_->HT();
+  // Search keeps its immutable map, but it can outlive that map's remaining
+  // freshness. Select the latest committed evidence at the publication
+  // boundary, including new obstacles/unknowns. The follower independently
+  // checks its swept path and command against its own fresh map.
+  ht->beginCycle();
   if (ht->enabled() && lookahead_point_update_ && !force_hold_) {
     if (!ht->permits(ht->poseSupport(robot_position_.x,robot_position_.y,robot_yaw_)))
       lookahead_point_update_=false;

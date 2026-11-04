@@ -261,6 +261,14 @@ def self_filter_keep_mask(xyz, self_filter=None, filter_from_lidar=None):
         blocked=wheel_occlusion_mask(body_points[indices],t[:3,3],
                                      self_filter.get('cylinders',[]),visibility)
         valid[indices[blocked]]=False
+    rack=self_filter.get('rack_occlusion',{})
+    if not isinstance(rack,dict) or not isinstance(rack.get('enabled',False),bool):
+        raise ValueError('Invalid rack visibility configuration')
+    if rack.get('enabled',False):
+        from .planar_occlusion import rack_occlusion_mask
+        indices=np.flatnonzero(valid)
+        blocked=rack_occlusion_mask(body_points[indices],t[:3,3],rack)
+        valid[indices[blocked]]=False
     return valid
 
 

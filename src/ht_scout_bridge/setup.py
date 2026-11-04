@@ -1,6 +1,7 @@
 from setuptools import setup
 from glob import glob
 setup(name='ht_scout_bridge', version='0.1.0', packages=['ht_scout_bridge'],
+      package_data={'ht_scout_bridge':['data/*.npz']},
       data_files=[('share/ament_index/resource_index/packages',['resource/ht_scout_bridge']),
                   ('share/ht_scout_bridge',['package.xml']),
                   ('share/ht_scout_bridge/config',glob('config/*.yaml')+glob('config/*.xml')),

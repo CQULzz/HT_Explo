@@ -7,6 +7,13 @@ bool SensorCoveragePlanner3D::RouteTareWaypoint(const exploration_path_ns::Explo
   tare_route_pub_->publish(visual);
   local_coverage_planner_->ClearHTPath();
   if(!lookahead_point_update_ || route.nodes_.empty()) return false;
+  const auto ht=viewpoint_manager_->HT();
+  ht->beginCycle();
+  if(!ht->permits(ht->poseSupport(robot_position_.x,robot_position_.y,robot_yaw_))) {
+    RCLCPP_WARN_THROTTLE(get_logger(),*get_clock(),3000,
+      "TARE_ROUTE start rejected: %s",ht->poseRejection(robot_position_.x,robot_position_.y,robot_yaw_).c_str());
+    return false;
+  }
   std::vector<Point> points;std::vector<bool> robots;
   for(const auto& n:route.nodes_) {
     points.push_back({n.position_.x(),n.position_.y(),n.position_.z()});
@@ -42,11 +49,19 @@ bool SensorCoveragePlanner3D::RouteTareWaypoint(const exploration_path_ns::Explo
   const auto started=std::chrono::steady_clock::now();
   std::vector<Point> checked;
   int unsupported=0,too_close=0,searches=0;
+  bool start_rejected=false;
   auto attempt=[&](Point p,double length,bool adaptive) {
     for(const auto& previous:checked)
       if(std::hypot(p.x-previous.x,p.y-previous.y)<1e-6) return false;
     checked.push_back(p);
     if(std::hypot(p.x-robot_position_.x,p.y-robot_position_.y)<.4) {++too_close;return false;}
+    // Each target is an independent search. A previous attempt must not
+    // pin all subsequent prefixes to an expired map when new evidence has
+    // arrived. Never change the snapshot inside PlanHTReturn itself.
+    ht->beginCycle();
+    if(!ht->permits(ht->poseSupport(robot_position_.x,robot_position_.y,robot_yaw_))) {
+      start_rejected=true;return false;
+    }
     bool supported=false;
     for(int k=0;k<8;++k) if(viewpoint_manager_->HT()->permits(
       viewpoint_manager_->HT()->poseSupport(p.x,p.y,k*ht_cost_ns::kPi/4))) {supported=true;break;}
@@ -64,14 +79,14 @@ bool SensorCoveragePlanner3D::RouteTareWaypoint(const exploration_path_ns::Explo
   // Preserve the existing fast path and its behavior when an integer target
   // works. All fallbacks share its original 0.35s wall-time search budget.
   for(double length:{4.,3.,2.,1.}) {
-    if(std::chrono::duration<double>(std::chrono::steady_clock::now()-started).count()>=.35) break;
+    if(start_rejected || std::chrono::duration<double>(std::chrono::steady_clock::now()-started).count()>=.35) break;
     if(attempt(ht_cost_ns::tarePrefix(branch,length),length,false)) return true;
   }
-  if(std::chrono::duration<double>(std::chrono::steady_clock::now()-started).count()<.35) {
+  if(!start_rejected && std::chrono::duration<double>(std::chrono::steady_clock::now()-started).count()<.35) {
     const auto targets=ht_cost_ns::tareAdaptivePrefixes(branch,
       {robot_position_.x,robot_position_.y,robot_position_.z},viewpoint_manager_->HT()->resolution());
     for(const auto& target:targets) {
-      if(std::chrono::duration<double>(std::chrono::steady_clock::now()-started).count()>=.35) break;
+      if(start_rejected || std::chrono::duration<double>(std::chrono::steady_clock::now()-started).count()>=.35) break;
       if(attempt(target.point,target.arc,true)) return true;
     }
   }

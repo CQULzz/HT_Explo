@@ -95,6 +95,13 @@ class ScoutInputs(Node):
             'geometry_sha256':hashlib.sha256(Path(geometry.__file__).read_bytes()).hexdigest(),
             'calibration_sha256':hashlib.sha256(Path(self.calibration_file).read_bytes()).hexdigest(),
             'rmw':get_rmw_implementation_identifier()}
+        if self.profile.get('lidar_self_filter',{}).get('rack_occlusion',{}).get('enabled',False):
+            from . import planar_occlusion
+            planar_occlusion.rear_deck()  # Validate/warm the packaged surface before inputs.
+            self.input_identity.update(
+                rack_occlusion_sha256=hashlib.sha256(Path(planar_occlusion.__file__).read_bytes()).hexdigest(),
+                rack_surface_sha256=hashlib.sha256(
+                    Path(planar_occlusion.__file__).with_name('data').joinpath('rack_rear_deck.npz').read_bytes()).hexdigest())
         self.performance_pub=self.create_publisher(String,'/ht_real/input_performance',1)
         sensor=QoSProfile(depth=20,reliability=ReliabilityPolicy.BEST_EFFORT)
         self.odom_sub=self.create_subscription(Odometry,self.declare_parameter('odometry_topic','/fixposition/odometry_enu').value,
