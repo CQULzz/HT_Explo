@@ -1,5 +1,7 @@
 # Scout 点云场景导航修复与600秒复测
 
+Publication complete: [Verified publication receipt](PUBLICATION_RECEIPT.json) · [Delivery details](DELIVERY.md)
+
 测试代码固定为 `53fcb471ee9b36bf238355d530a9f00d02a6ab14`，开发分支为 `fix/scout-navigation-pcd-20261105`。本轮完成代码修复、回归和600.3秒采集；**任务未完成，不能宣布任意场景或实车持续探索已验收**。发布记录及完整原始数据见 [GitHub实验Release](https://github.com/CQULzz/HT_Explo/releases/tag/ht-scout-pcd-fix-20261105-v1)，是否完成远端核验以发布回执为准。
 
 ## 修改与证据

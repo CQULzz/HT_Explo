@@ -9,6 +9,10 @@ def digest(p):
  return h.hexdigest()
 def gh(*args):
  return subprocess.check_output(['gh',*args],text=True)
+def release_info():
+ # REST tag lookup omits drafts; resolve a draft or published release ID first.
+ rid=json.loads(gh('release','view',tag,'--repo',repo,'--json','databaseId'))['databaseId']
+ return json.loads(gh('api',f'repos/{repo}/releases/{rid}'))
 class Writer:
  def __init__(self,label):self.label=label;self.i=-1;self.f=None;self.size=0;self.parts=[];self.total=hashlib.sha256()
  def write(self,b):
@@ -69,14 +73,14 @@ if a.prepare_only:print('Prepared and verified',len(state['assets']),'assets',fl
 obj=json.loads(gh('api',f'repos/{repo}/git/ref/tags/{tag}'))['object']
 while obj['type']=='tag':obj=json.loads(gh('api',f'repos/{repo}/git/tags/'+obj['sha']))['object']
 assert obj['type']=='commit' and obj['sha']==cfg['tested_commit'],'Remote tag must identify tested code'
-try:release=json.loads(gh('api',f'repos/{repo}/releases/tags/{tag}'))
+try:release=release_info()
 except subprocess.CalledProcessError:
- gh('release','create',tag,'--repo',repo,'--verify-tag','--draft','--prerelease','--title',cfg['title'],'--notes-file',cfg['notes']);release=json.loads(gh('api',f'repos/{repo}/releases/tags/{tag}'))
+ gh('release','create',tag,'--repo',repo,'--verify-tag','--draft','--prerelease','--title',cfg['title'],'--notes-file',cfg['notes']);release=release_info()
 proof=out/'EVIDENCE_MANIFEST.json'
 if not proof.exists():proof.write_text(json.dumps(state,ensure_ascii=False,indent=2))
 assets=state['assets']+[{'name':proof.name,'bytes':proof.stat().st_size,'sha256':digest(proof)}];verified=[]
 for asset in assets:
- release=json.loads(gh('api',f'repos/{repo}/releases/tags/{tag}'));existing={x['name']:x for x in release['assets']}
+ release=release_info();existing={x['name']:x for x in release['assets']}
  if asset['name'] not in existing:
   for attempt in range(3):
    print('Uploading',asset['name'],asset['bytes'],flush=True)
@@ -84,7 +88,7 @@ for asset in assets:
    if not r.returncode:break
    # A timed-out request may have completed server-side. Reuse only a
    # verified completed object; delete only an empty draft transport stub.
-   check=json.loads(gh('api',f'repos/{repo}/releases/tags/{tag}'))
+   check=release_info()
    item=next((x for x in check['assets'] if x['name']==asset['name']),None)
    if item:
     detail=json.loads(gh('api',f'repos/{repo}/releases/assets/'+str(item['id'])))
@@ -94,13 +98,14 @@ for asset in assets:
     else:raise RuntimeError('Unverified conflicting asset; refusing overwrite: '+asset['name'])
    time.sleep(min(5*(attempt+1),15))
   else:raise RuntimeError('Upload failed: '+asset['name'])
-  release=json.loads(gh('api',f'repos/{repo}/releases/tags/{tag}'));existing={x['name']:x for x in release['assets']}
+  release=release_info();existing={x['name']:x for x in release['assets']}
  remote=existing[asset['name']];detail=json.loads(gh('api',f'repos/{repo}/releases/assets/'+str(remote['id'])))
  assert remote['size']==asset['bytes'] and detail.get('digest')=='sha256:'+asset['sha256'],('Remote size/digest differs; never overwrite',asset['name'],detail.get('digest'))
  verified.append({**asset,'url':remote['browser_download_url'],'id':remote['id']});(out/'UPLOAD_PROGRESS.json').write_text(json.dumps({'verified':verified,'total_assets':len(assets)},indent=2));print('Verified',asset['name'],flush=True)
 receipt={'release':f'https://github.com/{repo}/releases/tag/{tag}','tested_commit':cfg['tested_commit'],'all_assets_verified':True,'assets':verified,'recording_scope':cfg['recording_scope']};receiptfile=out/'PUBLICATION_RECEIPT.json';receiptfile.write_text(json.dumps(receipt,ensure_ascii=False,indent=2))
-gh('release','upload',tag,str(receiptfile),'--repo',repo)
-release=json.loads(gh('api',f'repos/{repo}/releases/tags/{tag}'));item=next(x for x in release['assets'] if x['name']==receiptfile.name);detail=json.loads(gh('api',f'repos/{repo}/releases/assets/'+str(item['id'])));assert item['size']==receiptfile.stat().st_size and detail.get('digest')=='sha256:'+digest(receiptfile)
+existing_release=release_info()
+if not any(x['name']==receiptfile.name for x in existing_release['assets']):gh('release','upload',tag,str(receiptfile),'--repo',repo)
+release=release_info();item=next(x for x in release['assets'] if x['name']==receiptfile.name);detail=json.loads(gh('api',f'repos/{repo}/releases/assets/'+str(item['id'])));assert item['size']==receiptfile.stat().st_size and detail.get('digest')=='sha256:'+digest(receiptfile)
 gh('release','edit',tag,'--repo',repo,'--draft=false','--prerelease','--latest=false')
-release=json.loads(gh('api',f'repos/{repo}/releases/tags/{tag}'));assert release['draft'] is False
+release=release_info();assert release['draft'] is False
 (out/'PUBLISHED.json').write_text(json.dumps({'release':release['html_url'],'tested_commit':cfg['tested_commit'],'receipt_sha256':digest(receiptfile),'published':True},indent=2));print('Published and verified:',release['html_url'],flush=True)
