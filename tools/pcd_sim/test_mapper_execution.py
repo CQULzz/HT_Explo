@@ -201,12 +201,12 @@ def test_main_failure_still_closes_worker_and_context(monkeypatch):
         tf_worker=SimpleNamespace(close=lambda: closed.append(True)),
         destroy_node=lambda: destroyed.append(True))
     monkeypatch.setattr(module, 'ElevationMappingNode', lambda: node)
-    monkeypatch.setattr(module, 'make_executor', lambda *args: object())
+    monkeypatch.setattr(module, 'make_executor', lambda *args: SimpleNamespace(
+        add_node=lambda node:None, spin_once=lambda **kwargs:spin_failure()))
     def spin_failure(*args, **kwargs):
         raise RuntimeError('injected map callback failure')
     def stop_failure(*args, **kwargs):
         raise RuntimeError('injected executor stop failure')
-    monkeypatch.setattr(module.rclpy, 'spin', spin_failure)
     monkeypatch.setattr(module, '_stop_executor', stop_failure)
     try:
         with pytest.raises(RuntimeError):
@@ -242,3 +242,29 @@ def test_main_constructor_failure_restores_context_and_signals(monkeypatch):
             rclpy.shutdown()
         for sig, handler in signals.items():
             signal.signal(sig, handler)
+
+
+def test_single_mapper_signal_finishes_current_callback_before_shutdown(monkeypatch):
+    import signal
+    path=os.environ.get('MAPPER_TEST_WRAPPER')
+    if not path:pytest.skip('Set MAPPER_TEST_WRAPPER')
+    spec=importlib.util.spec_from_file_location('signal_mapper',path)
+    module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+    completed=[];destroyed=[]
+    class Mapper(Node):
+        def __init__(self):
+            super().__init__('signal_callback_fixture')
+            self.executor_mode='single';self.tf_worker=None
+            self.create_timer(.001,self.work)
+        def work(self):
+            # Actual POSIX signal inside the active executor callback.
+            os.kill(os.getpid(),signal.SIGINT)
+            completed.append(True)
+        def destroy_node(self):
+            destroyed.append(bool(completed));return super().destroy_node()
+    monkeypatch.setattr(module,'ElevationMappingNode',Mapper)
+    before={s:signal.getsignal(s) for s in (signal.SIGINT,signal.SIGTERM)}
+    module.main()
+    assert completed==[True] and destroyed==[True]
+    assert not rclpy.ok()
+    assert all(signal.getsignal(s)==handler for s,handler in before.items())

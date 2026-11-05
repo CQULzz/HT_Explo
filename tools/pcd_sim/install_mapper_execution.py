@@ -35,6 +35,13 @@ def install(runtime, bundle=None, apply=False):
                 raise RuntimeError('Unexpected wrapper patch context')
             text = text.replace(old, new)
         candidate = text.encode()
+    elif digest == manifest.get('upgrade_from_sha256'):
+        text = original.decode()
+        for old, new in manifest['upgrade_replacements']:
+            if text.count(old) != 1:
+                raise RuntimeError('Unexpected wrapper upgrade context')
+            text = text.replace(old, new)
+        candidate = text.encode()
     elif digest == manifest['after_sha256']:
         candidate = original
     else:

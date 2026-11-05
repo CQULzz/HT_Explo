@@ -1,7 +1,7 @@
 {
   "file": "mapper_strict.py",
   "before_sha256": "b2fe0f8a2c49a1ccf233c1b878b19abff6538e2b1f80ab1dd188b176a63d16e8",
-  "after_sha256": "8c9a18494f7cd23f982afb73b397158175fa008bcb6f573ab4b0915f8aa2a7f4",
+  "after_sha256": "06588c2ea2e046e6f6d4cb832aefcbd4d6088707caa121b23a0b6f92d4216331",
   "helper_sha256": "82d8fef3b23a496c11b338b0bf8fb45158050f3964222ed2c124755ae3b52fa9",
   "replacements": [
     [
@@ -47,8 +47,35 @@
     [
       "                if node.tf_worker is not None:\n                    node.tf_worker.close()\n            finally:\n                try:\n                    node.destroy_node()\n",
       "                if node is not None and node.tf_worker is not None:\n                    node.tf_worker.close()\n            finally:\n                try:\n                    if node is not None:\n                        node.destroy_node()\n"
+    ],
+    [
+      "    # A signal requests loop exit first. Keep ROS context valid until worker\n",
+      "    stop_requested = False\n    def request_stop(signum, frame):\n        nonlocal stop_requested\n        stop_requested = True\n    # A signal requests loop exit first. Keep ROS context valid until worker\n"
+    ],
+    [
+      "        signal.signal(sig, signal.default_int_handler)",
+      "        signal.signal(sig, request_stop)"
+    ],
+    [
+      "        rclpy.spin(node, executor=executor)",
+      "        executor.add_node(node)\n        while rclpy.ok() and not stop_requested:\n            executor.spin_once(timeout_sec=0.1)"
     ]
   ],
   "default": "multi; original topology retained",
-  "candidate": "single; serial map executor + independent TF node"
+  "candidate": "single; serial map executor + independent TF node",
+  "upgrade_from_sha256": "8c9a18494f7cd23f982afb73b397158175fa008bcb6f573ab4b0915f8aa2a7f4",
+  "upgrade_replacements": [
+    [
+      "    # A signal requests loop exit first. Keep ROS context valid until worker\n",
+      "    stop_requested = False\n    def request_stop(signum, frame):\n        nonlocal stop_requested\n        stop_requested = True\n    # A signal requests loop exit first. Keep ROS context valid until worker\n"
+    ],
+    [
+      "        signal.signal(sig, signal.default_int_handler)",
+      "        signal.signal(sig, request_stop)"
+    ],
+    [
+      "        rclpy.spin(node, executor=executor)",
+      "        executor.add_node(node)\n        while rclpy.ok() and not stop_requested:\n            executor.spin_once(timeout_sec=0.1)"
+    ]
+  ]
 }

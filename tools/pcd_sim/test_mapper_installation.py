@@ -95,3 +95,17 @@ def test_runner_rejects_unverified_candidate_before_any_child(tmp_path, monkeypa
     with pytest.raises(RuntimeError, match='hash-verified'):
         runpy.run_path(str(runner), run_name='__main__')
     assert not output.exists()
+
+
+def test_known_previous_scheduler_upgrade_then_idempotent(fixture):
+    runtime,bundle,_,after,_=fixture
+    old=b'known previous scheduler\n'
+    (runtime/'mapper_strict.py').write_bytes(old)
+    path=bundle/'mapper_execution_manifest.json'
+    manifest=json.loads(path.read_text())
+    manifest.update(upgrade_from_sha256=installer.sha(old),
+        upgrade_replacements=[['known previous scheduler','candidate wrapper']])
+    path.write_text(json.dumps(manifest))
+    assert installer.install(runtime,bundle,apply=True)['applied']
+    assert (runtime/'mapper_strict.py').read_bytes()==after
+    assert not installer.install(runtime,bundle,apply=True)['applied']

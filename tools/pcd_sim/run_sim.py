@@ -60,7 +60,9 @@ finally:
  for sig,timeout in [(signal.SIGINT,8),(signal.SIGTERM,3),(signal.SIGKILL,3)]:
   for k,p in reversed(ps):
    if p.poll() is None:
-    try:os.killpg(p.pid,sig)
+    try:
+     if k=='navigation' and sig==signal.SIGINT:os.kill(p.pid,sig)
+     else:os.killpg(p.pid,sig)
     except ProcessLookupError:pass
   deadline=time.monotonic()+timeout
   for k,p in ps:
@@ -71,6 +73,10 @@ finally:
  renderers=re.findall(r'GL_RENDERER = (.+)',renderer_text)
  renderer_verified=bool(renderers) and (args.render_backend!='wsl-d3d12' or all('D3D12' in x and 'NVIDIA' in x for x in renderers))
  if not renderer_verified and error is None:error='Renderer log missing or requested backend not verified'
+ child_nonzero={label:int(code) for label,code in re.findall(
+  r'\[ERROR\] \[([^\]]+)\]: process has died \[pid \d+, exit code (-?\d+),',
+  (out/'navigation.log').read_text(errors='replace') if (out/'navigation.log').exists() else '') if int(code)!=0}
+ if child_nonzero and error is None:error='ROS launch child nonzero exits: '+repr(child_nonzero)
  shutdown_nonzero={k:p.poll() for k,p in ps if p.poll()!=0}
- resources.close();completion=json.loads((out/'DONE.json').read_text()) if (out/'DONE.json').exists() else {};actual_duration=completion.get('elapsed_sim',-1.);full_duration=actual_duration>=args.duration;now=hashes();changed=[k for k,v in frozen.items() if now.get(k)!=v];result={'render_backend':args.render_backend,'actual_gl_renderers':renderers,'renderer_verified':renderer_verified,'managed_shutdown_nonzero':shutdown_nonzero,'error':error,'requested_duration_sim_s':args.duration,'actual_duration_sim_s':actual_duration,'full_requested_duration':full_duration,'full_600_sim_s':args.duration>=600 and full_duration,'failure_stage':None if full_duration else ('startup' if not (out/'READY.json').exists() else 'collection'),'frozen_files_changed':changed,'wall_elapsed':time.monotonic()-started,'exit_codes':{k:p.poll() for k,p in ps}};(out/'RUN_RESULT.json').write_text(json.dumps(result,indent=2));print(result,flush=True)
+ resources.close();completion=json.loads((out/'DONE.json').read_text()) if (out/'DONE.json').exists() else {};actual_duration=completion.get('elapsed_sim',-1.);full_duration=actual_duration>=args.duration;now=hashes();changed=[k for k,v in frozen.items() if now.get(k)!=v];result={'render_backend':args.render_backend,'actual_gl_renderers':renderers,'renderer_verified':renderer_verified,'managed_shutdown_nonzero':shutdown_nonzero,'ros_launch_child_nonzero':child_nonzero,'error':error,'requested_duration_sim_s':args.duration,'actual_duration_sim_s':actual_duration,'full_requested_duration':full_duration,'full_600_sim_s':args.duration>=600 and full_duration,'failure_stage':None if full_duration else ('startup' if not (out/'READY.json').exists() else 'collection'),'frozen_files_changed':changed,'wall_elapsed':time.monotonic()-started,'exit_codes':{k:p.poll() for k,p in ps}};(out/'RUN_RESULT.json').write_text(json.dumps(result,indent=2));print(result,flush=True)
 if error or changed or not full_duration or shutdown_nonzero:sys.exit(1)

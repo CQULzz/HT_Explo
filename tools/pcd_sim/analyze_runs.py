@@ -39,6 +39,6 @@ axs[0,1].set(xlabel='Elapsed simulation (s)',ylabel='Cumulative XY distance (m)'
 axs[1,0].set(xlabel='Elapsed simulation (s)',ylabel='Observed free volume (m3)',title='Source-second sampled ray-voxel union')
 axs[1,1].axhline(1,color='red',linestyle='--',label='Unchanged 1 s age gate');axs[1,1].set(xlabel='Elapsed simulation (s)',ylabel='Source age at HT publication (s)',title='Measured source stamps, no restamping')
 for ax in axs.flat:ax.grid(alpha=.25);ax.legend(fontsize=8)
-fig.suptitle('WSL Scout PCD - full 120 second trials');fig.tight_layout();fig.savefig(dest/'comparison.png',dpi=160);plt.close(fig)
+fig.suptitle('Scout recorded-PCD scene - 120 second trials');fig.tight_layout();fig.savefig(dest/'comparison.png',dpi=160);plt.close(fig)
 if a.comparison:(dest/'COMPARISON.json').write_text(json.dumps({'baseline':metrics(R/a.comparison),'candidate':summary},indent=2))
 print(json.dumps(summary,indent=2));print(dest)
