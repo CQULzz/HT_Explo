@@ -1,0 +1,81 @@
+{
+  "acceptance": [
+    "No COMPLETED with confirmed reachable unfinished task",
+    "Normal completion/return and safety regressions pass",
+    "Published HT source age P95 <1s"
+  ],
+  "max_candidates": 4,
+  "max_formal_runs": 8,
+  "duration_each_s": 120,
+  "candidates_used": 0,
+  "formal_runs": [
+    {
+      "id": "b00",
+      "seed": null,
+      "path": "/home/w_lzz/ht-iterations-20261105/cycle2/baseline_unseeded_b00",
+      "duration_s": 120.3,
+      "purpose": "uncontrolled original baseline"
+    },
+    {
+      "id": "baseline_seed42_b01",
+      "seed": 42,
+      "kind": "baseline",
+      "candidate": null,
+      "path": "/home/w_lzz/ht-iterations-20261105/cycle2/baseline_seed42_b01",
+      "tested_commit": "a24631d0265b1ddaf19346f4374b2bf3f76c562c",
+      "command": [
+        "/home/lzz/.venvs/ht_real_gpu_20261028/bin/python",
+        "/home/w_lzz/ht-iterations-20261105/runtime/run_sim.py",
+        "--label",
+        "baseline_seed42_b01",
+        "--output-root",
+        "/home/w_lzz/ht-iterations-20261105/cycle2",
+        "--duration",
+        "120",
+        "--domain",
+        "228",
+        "--render-backend",
+        "egl",
+        "--ht-processing-mode",
+        "worker",
+        "--seed",
+        "42"
+      ],
+      "state": "COMPLETE_COLLECTION",
+      "runner_exit_code": 0,
+      "wall_s": 126.365913009,
+      "duration_s": 120.1
+    },
+    {
+      "id": "baseline_seed99_b02",
+      "seed": 99,
+      "kind": "baseline",
+      "candidate": null,
+      "path": "/home/w_lzz/ht-iterations-20261105/cycle2/baseline_seed99_b02",
+      "tested_commit": "a24631d0265b1ddaf19346f4374b2bf3f76c562c",
+      "command": [
+        "/home/lzz/.venvs/ht_real_gpu_20261028/bin/python",
+        "/home/w_lzz/ht-iterations-20261105/runtime/run_sim.py",
+        "--label",
+        "baseline_seed99_b02",
+        "--output-root",
+        "/home/w_lzz/ht-iterations-20261105/cycle2",
+        "--duration",
+        "120",
+        "--domain",
+        "228",
+        "--render-backend",
+        "egl",
+        "--ht-processing-mode",
+        "worker",
+        "--seed",
+        "99"
+      ],
+      "state": "FAILED",
+      "runner_exit_code": 1,
+      "wall_s": 136.47370270599993,
+      "duration_s": 120.1
+    }
+  ],
+  "release_authorized": false
+}
