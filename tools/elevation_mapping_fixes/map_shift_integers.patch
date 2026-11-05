@@ -1,0 +1,15 @@
+--- a/elevation_mapping_cupy/script/elevation_mapping_cupy/elevation_mapping.py
++++ b/elevation_mapping_cupy/script/elevation_mapping_cupy/elevation_mapping.py
+@@ -227,8 +227,10 @@
+             delta_pixel (cupy._core.core.ndarray):
+ 
+         """
+-        shift_value = delta_pixel.astype(cp.int32)
+-        if cp.abs(shift_value).sum() == 0:
++        # Preserve GPU rounding/casting, then read both integer shifts once.
++        # Reusing host integers avoids a device synchronization per branch/slice.
++        shift_value = cp.asnumpy(delta_pixel.astype(cp.int32))
++        if np.abs(shift_value).sum() == 0:
+             return
+         with self.map_lock:
+             self.elevation_map = cp.roll(self.elevation_map, shift_value, axis=(1, 2))
