@@ -1,0 +1,67 @@
+Running main() from /opt/ros/jazzy/src/gtest_vendor/src/gtest_main.cc
+Note: Google Test filter = TareSamplingQueue.*
+[==========] Running 4 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 4 tests from TareSamplingQueue
+[ RUN      ] TareSamplingQueue.ShrinkingQueueNeverSamplesAnErasedEntry
+[       OK ] TareSamplingQueue.ShrinkingQueueNeverSamplesAnErasedEntry (305 ms)
+[ RUN      ] TareSamplingQueue.FrontierRemainderUsesItsOwnAcceptedThreshold
+[WARN] [1793868142.416875954] [rcl]: ROS_LOCALHOST_ONLY is deprecated but still honored if it is enabled. Use ROS_AUTOMATIC_DISCOVERY_RANGE and ROS_STATIC_PEERS instead.
+[WARN] [1793868142.416901813] [rcl]: 'localhost_only' is enabled, 'automatic_discovery_range' and 'static_peers' will be ignored.
+[INFO] [1793868142.626941965] [tare_planner_node]: TARE_RANDOM seed=42 mode=fixed_stream
+[INFO] [1793868142.630127798] [tare_planner_node]: XYtheta configuration: headings=32 cell=0.300 step=0.400 heading_reserve_rad=0.000 search_s=0.150 cycle_search_s=0.350
+[INFO] [1793868142.630268197] [tare_planner_node]: XYtheta motion angle=11.250 deg (independent of heading bins)
+[INFO] [1793868142.630272456] [tare_planner_node]: XYtheta motion angle=22.500 deg (independent of heading bins)
+[INFO] [1793868142.630291696] [tare_planner_node]: TARE_RANDOM_CALL seed=42 call=1 frontier=1 range=2
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/tests/local_sampling_test.cpp:96: Failure
+Expected equality of these values:
+  selected.size()
+    Which is: 1
+  2u
+    Which is: 2
+
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/tests/local_sampling_test.cpp:97: Failure
+Expected equality of these values:
+  std::set<int>(selected.begin(),selected.end())
+    Which is: { 0 }
+  std::set<int>({0,1})
+    Which is: { 0, 1 }
+
+[  FAILED  ] TareSamplingQueue.FrontierRemainderUsesItsOwnAcceptedThreshold (228 ms)
+[ RUN      ] TareSamplingQueue.UpdatedResidualGainBelowThresholdIsNotSampled
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/tests/local_sampling_test.cpp:101: Failure
+Death test: { std::thread([]{std::this_thread::sleep_for(std::chrono::seconds(5));std::_Exit(124);}).detach(); SamplingFixture f(9); for(int id=0;id<3;++id)f.manager->ResetViewPointCoveredPointList(id); for(int i=0;i<80;++i)f.manager->AddUncoveredPoint(0,i); for(int i=0;i<40;++i)f.manager->AddUncoveredPoint(1,i); for(int i=80;i<120;++i)f.manager->AddUncoveredPoint(1,i); for(int i=0;i<70;++i)f.manager->AddUncoveredPoint(2,i); for(int i=120;i<130;++i)f.manager->AddUncoveredPoint(2,i); auto selected=LocalCoveragePlannerTestAccess::select(*f.planner,{{80,0},{80,1},{80,2}},130); std::vector<bool> observed(130,false); for(int id:selected) { int gain=0;for(int p:f.manager->GetViewPointCoveredPointList(id))if(!observed[p])++gain; if(gain<40)std::_Exit(4); for(int p:f.manager->GetViewPointCoveredPointList(id))observed[p]=true; } std::_Exit(selected.size()==2?0:5); }
+    Result: died but not with expected exit code:
+            Exited with exit status 4
+Actual msg:
+[  DEATH   ] [WARN] [1793868142.715941527] [rcl]: ROS_LOCALHOST_ONLY is deprecated but still honored if it is enabled. Use ROS_AUTOMATIC_DISCOVERY_RANGE and ROS_STATIC_PEERS instead.
+[  DEATH   ] [WARN] [1793868142.715973311] [rcl]: 'localhost_only' is enabled, 'automatic_discovery_range' and 'static_peers' will be ignored.
+[  DEATH   ] [INFO] [1793868142.930669546] [tare_planner_node]: TARE_RANDOM seed=9 mode=fixed_stream
+[  DEATH   ] [INFO] [1793868142.933924272] [tare_planner_node]: XYtheta configuration: headings=32 cell=0.300 step=0.400 heading_reserve_rad=0.000 search_s=0.150 cycle_search_s=0.350
+[  DEATH   ] [INFO] [1793868142.933946320] [tare_planner_node]: XYtheta motion angle=11.250 deg (independent of heading bins)
+[  DEATH   ] [INFO] [1793868142.933949453] [tare_planner_node]: XYtheta motion angle=22.500 deg (independent of heading bins)
+[  DEATH   ] [INFO] [1793868142.933968810] [tare_planner_node]: TARE_RANDOM_CALL seed=9 call=1 frontier=0 range=3
+[  DEATH   ] 
+
+[  FAILED  ] TareSamplingQueue.UpdatedResidualGainBelowThresholdIsNotSampled (302 ms)
+[ RUN      ] TareSamplingQueue.InvalidSamplingWindowFailsBeforePlanning
+[INFO] [1793868143.144312370] [tare_planner_node]: TARE_RANDOM seed=42 mode=fixed_stream
+[INFO] [1793868143.147044952] [tare_planner_node]: XYtheta configuration: headings=32 cell=0.300 step=0.400 heading_reserve_rad=0.000 search_s=0.150 cycle_search_s=0.350
+[INFO] [1793868143.147068721] [tare_planner_node]: XYtheta motion angle=11.250 deg (independent of heading bins)
+[INFO] [1793868143.147072232] [tare_planner_node]: XYtheta motion angle=22.500 deg (independent of heading bins)
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/tests/local_sampling_test.cpp:122: Failure
+Expected: SamplingFixture(42,0) throws an exception of type std::invalid_argument.
+  Actual: it throws nothing.
+
+[  FAILED  ] TareSamplingQueue.InvalidSamplingWindowFailsBeforePlanning (212 ms)
+[----------] 4 tests from TareSamplingQueue (1049 ms total)
+
+[----------] Global test environment tear-down
+[==========] 4 tests from 1 test suite ran. (1049 ms total)
+[  PASSED  ] 1 test.
+[  FAILED  ] 3 tests, listed below:
+[  FAILED  ] TareSamplingQueue.FrontierRemainderUsesItsOwnAcceptedThreshold
+[  FAILED  ] TareSamplingQueue.UpdatedResidualGainBelowThresholdIsNotSampled
+[  FAILED  ] TareSamplingQueue.InvalidSamplingWindowFailsBeforePlanning
+
+ 3 FAILED TESTS

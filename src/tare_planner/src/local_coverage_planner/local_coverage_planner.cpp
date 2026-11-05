@@ -34,6 +34,8 @@ LocalCoveragePlanner::LocalCoveragePlanner(rclcpp::Node::SharedPtr nh)
   RCLCPP_INFO(nh->get_logger(),"TARE_RANDOM seed=%lld mode=%s",
     static_cast<long long>(sampling_seed_),sampling_seed_<0?"random_device":"fixed_stream");
   parameters_.ReadParameters(nh);
+  if (parameters_.kGreedyViewPointSampleRange <= 0)
+    throw std::invalid_argument("kGreedyViewPointSampleRange must be positive");
   tare_order_pub_=nh->create_publisher<std_msgs::msg::String>("/tare_tsp_order",10);
   ht_path_pub_=nh->create_publisher<nav_msgs::msg::Path>("/ht_xytheta_path",rclcpp::QoS(1).reliable());
   ht_rejection_sub_=nh->create_subscription<nav_msgs::msg::Path>("/ht_execution_rejected_edge",5,
@@ -257,15 +259,19 @@ void LocalCoveragePlanner::SelectViewPoint(
     const std::vector<std::pair<int, int>> &queue,
     const std::vector<bool> &covered,
     std::vector<int> &selected_viewpoint_indices, bool use_frontier) {
-  if (use_frontier) {
-    if (queue.empty() || queue[0].first < parameters_.kMinAddFrontierPointNum) {
-      return;
+  const int min_gain = use_frontier ? parameters_.kMinAddFrontierPointNum
+                                    : parameters_.kMinAddPointNum;
+  if (queue.empty() || queue.front().first < min_gain) return;
+  // The sorted, updated queue defines the live eligible prefix. Never use
+  // original gains or removed entries to size a later sampling window.
+  auto eligible_range = [&](const std::vector<std::pair<int, int>>& live) {
+    int count = 0;
+    for (const auto& entry : live) {
+      if (entry.first < min_gain) break;
+      if (++count == parameters_.kGreedyViewPointSampleRange) break;
     }
-  } else {
-    if (queue.empty() || queue[0].first < parameters_.kMinAddPointNum) {
-      return;
-    }
-  }
+    return count;
+  };
 
   std::vector<bool> covered_copy;
   for (int i = 0; i < covered.size(); i++) {
@@ -276,21 +282,7 @@ void LocalCoveragePlanner::SelectViewPoint(
     queue_copy.push_back(queue[i]);
   }
 
-  int sample_range = 0;
-  for (int i = 0; i < queue_copy.size(); i++) {
-    if (use_frontier) {
-      if (queue_copy[i].first >= parameters_.kMinAddFrontierPointNum) {
-        sample_range++;
-      }
-    } else {
-      if (queue_copy[i].first >= parameters_.kMinAddPointNum) {
-        sample_range++;
-      }
-    }
-  }
-
-  sample_range =
-      std::min(parameters_.kGreedyViewPointSampleRange, sample_range);
+  int sample_range = eligible_range(queue_copy);
   std::mt19937 gen;
   if (sampling_seed_<0) gen.seed(std::random_device{}());
   else gen=sampling_rng_;
@@ -357,32 +349,9 @@ void LocalCoveragePlanner::SelectViewPoint(
 
     std::sort(queue_copy.begin(), queue_copy.end(), SortPairInRev);
 
-    if (queue_copy.empty() ||
-        queue_copy[0].first < parameters_.kMinAddPointNum) {
-      break;
-    }
-    if (use_frontier) {
-      if (queue_copy.empty() ||
-          queue_copy[0].first < parameters_.kMinAddFrontierPointNum) {
-        break;
-      }
-    }
-
-    // Randomly select the next point
-    int sample_range = 0;
-    for (int i = 0; i < queue.size(); i++) {
-      if (use_frontier) {
-        if (queue[i].first >= parameters_.kMinAddFrontierPointNum) {
-          sample_range++;
-        }
-      } else {
-        if (queue[i].first >= parameters_.kMinAddPointNum) {
-          sample_range++;
-        }
-      }
-    }
-    sample_range =
-        std::min(parameters_.kGreedyViewPointSampleRange, sample_range);
+    sample_range = eligible_range(queue_copy);
+    if (sample_range == 0) break;
+    // Randomly select only among remaining views with sufficient residual gain.
     std::uniform_int_distribution<int> gen_next_queue_idx(0, sample_range - 1);
     queue_idx = gen_next_queue_idx(gen);
     cur_ind = queue_copy[queue_idx].second;
