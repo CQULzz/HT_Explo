@@ -11,6 +11,9 @@ import numpy as np
 class ContextCaptureSchedule:
     """Capture every startup frame, including delayed TARE startup, then periodically."""
     def __init__(self, warmup_s=45., interval_s=10.):
+        if (not math.isfinite(warmup_s) or warmup_s < 0 or
+                not math.isfinite(interval_s) or interval_s <= 0):
+            raise ValueError('Invalid diagnostic capture schedule')
         self.warmup_s, self.interval_s = warmup_s, interval_s
         self.first_source = self.first_runtime = self.last_saved = None
 
@@ -26,7 +29,7 @@ class ContextCaptureSchedule:
         if self.last_saved is not None and stamp <= self.last_saved:
             return False
         warm = 0 <= stamp-self.first_source <= self.warmup_s
-        if self.first_runtime is not None:
+        if self.first_runtime is not None and self.warmup_s > 0:
             warm |= -3. <= stamp-self.first_runtime <= self.warmup_s
         return warm or self.last_saved is None or stamp-self.last_saved >= self.interval_s
 

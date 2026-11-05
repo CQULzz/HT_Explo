@@ -186,7 +186,9 @@ class CupyToHt(Node):
         self.last_performance_monotonic = None
         self.last_source_stamp = None
         self.last_context_dump_stamp = None
-        self.context_schedule = ContextCaptureSchedule()
+        self.context_schedule = ContextCaptureSchedule(
+            warmup_s=float(os.environ.get('HT_CONTEXT_WARMUP_S','45')),
+            interval_s=float(os.environ.get('HT_CONTEXT_INTERVAL_S','10')))
         if os.environ.get('HT_CONTEXT_DUMP'):
             self.create_subscription(Float32, '/runtime',
                 lambda _: self.context_schedule.begin_runtime(self.get_clock().now().nanoseconds/1e9), 2)

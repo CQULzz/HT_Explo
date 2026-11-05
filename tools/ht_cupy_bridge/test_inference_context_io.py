@@ -105,3 +105,16 @@ class ContextIOTest(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+def test_sparse_capture_has_no_startup_burst_and_rejects_invalid_period():
+    from inference_context_io import ContextCaptureSchedule
+    import pytest
+    s=ContextCaptureSchedule(warmup_s=0,interval_s=10)
+    assert s.due(1);s.saved(1)
+    assert not s.due(1.2) and not s.due(10.9)
+    assert s.due(11);s.saved(11)
+    s.begin_runtime(12)
+    assert not s.due(11) and not s.due(11.1)
+    for warm,interval in [(-1,10),(0,0),(0,-1),(float('nan'),10),(0,float('inf'))]:
+        with pytest.raises(ValueError):ContextCaptureSchedule(warmup_s=warm,interval_s=interval)
