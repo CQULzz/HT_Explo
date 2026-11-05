@@ -1,0 +1,39 @@
+{
+  "scope": "Read-only telemetry diagnostic, not independent reachable-ground-truth coverage certification. Negative-time startup rows excluded from state counts. Command is requested, not wheel-confirmed.",
+  "first_completed_elapsed_s": null,
+  "final_execution": "HT_ASSISTED",
+  "final_runtime_reason": "COMMAND_SENT_NOT_WHEEL_CONFIRMED",
+  "final_follower": "DRIVING",
+  "final_xy_m": [
+    4.379297964053006,
+    -1.7093057460260423
+  ],
+  "final_distance_from_scene_origin_xy_m": 4.701061240970644,
+  "final_command_vw": [
+    0.0747755519999771,
+    -0.028942564254057328
+  ],
+  "nonzero_command_rows_while_completed": 0,
+  "state_rows": {
+    "WAIT_START": 1,
+    "HT_MAP_MISSING": 2,
+    "GEOMETRY_CURRENT_POSE_BLOCKED": 2,
+    "PLANNER_STALE": 3,
+    "HT_ASSISTED": 143,
+    "HT_MAP_STALE": 89
+  },
+  "follower_rows": {
+    "PATH_STALE": 48,
+    "DRIVING": 87,
+    "TURNING": 36,
+    "ALIGNING": 9,
+    "HT_MAP_STALE": 11,
+    "PLANNER_HOLD": 49
+  },
+  "final_selection_and_completion_audit": [
+    "[tare_planner_node-4] [INFO] [1793868790.285812767] [ht_real.tare_planner_node]: TARE_SELECTION candidates=240 visited=40 other_cell=91 preselected=5 eligible=104 raw_gain=43 raw_frontier=22 virtual_points=224 virtual_frontier=56 queue=0 queue_best=0 frontier_queue=0 use_frontier=1 min_points=40 min_frontier=15",
+    "[tare_planner_node-4] [INFO] [1793868790.287574315] [ht_real.tare_planner_node]: TARE_COMPLETION global_return=1 local_complete=0 global_order_nodes=0 local_route_nodes=55 uncovered=368 frontier=88",
+    "[tare_planner_node-4] [INFO] [1793868791.294284307] [ht_real.tare_planner_node]: TARE_SELECTION candidates=246 visited=40 other_cell=92 preselected=5 eligible=109 raw_gain=43 raw_frontier=22 virtual_points=225 virtual_frontier=56 queue=0 queue_best=0 frontier_queue=0 use_frontier=1 min_points=40 min_frontier=15",
+    "[tare_planner_node-4] [INFO] [1793868791.295906062] [ht_real.tare_planner_node]: TARE_COMPLETION global_return=1 local_complete=0 global_order_nodes=0 local_route_nodes=55 uncovered=369 frontier=88"
+  ]
+}

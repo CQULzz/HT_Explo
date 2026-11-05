@@ -8,6 +8,8 @@ for label in sys.argv[1:]:
  context={'tested_commit':manifest['project_head'],'seed':manifest.get('seed'),'seed_scope':manifest.get('seed_scope'),'requested_duration':manifest['requested_duration_sim_s'],'mode':manifest['ht_processing_mode'],'render_backend':manifest['render_backend'],'actual_renderer':summary['run_result'].get('actual_gl_renderers'),'local_raw':str(run),'publication_status':'LOCAL_ONLY_NO_RELEASE_OR_DEPLOYMENT','first_internal_completed_s':complete,'config_sha256':{name:hashlib.sha256((R/'runtime'/name).read_bytes()).hexdigest() for name in ['scene.sdf','mapper_core.yaml','mapper_setup.yaml','candidate_extrinsics.yaml']},'run_command':next((x.get('command') for x in json.loads((root/'BUDGET.json').read_text())['formal_runs'] if x['id']==label),None)}
  (run/'EXPERIMENT_CONTEXT.json').write_text(json.dumps(context,indent=2));(dest/'EXPERIMENT_CONTEXT.json').write_text(json.dumps(context,indent=2))
  for name in ['RUN_RESULT.json','BAG_VERIFICATION.json','VIDEO_VERIFICATION.json','manifest.json']:shutil.copy2(run/name,dest/name)
+ for name in ['DELIVERY_AGE.json','STATE_DIAGNOSTICS.json']:
+  if (run/name).exists():shutil.copy2(run/name,dest/name)
  for file in (summaryroot/label).glob('*'):
   if file.is_file():shutil.copy2(file,dest/file.name)
  (dest/'completion_evidence.log').write_text('\n'.join(audit)+'\n')

@@ -1,0 +1,41 @@
+{
+  "scope": "Read-only telemetry diagnostic, not independent reachable-ground-truth coverage certification. Negative-time startup rows excluded from state counts. Command is requested, not wheel-confirmed.",
+  "first_completed_elapsed_s": 29.6,
+  "final_execution": "COMPLETED",
+  "final_runtime_reason": "COMPLETED",
+  "final_follower": "COMPLETED",
+  "final_xy_m": [
+    0.39043458287871713,
+    -0.04450081529743403
+  ],
+  "final_distance_from_scene_origin_xy_m": 0.3929624486764787,
+  "final_command_vw": [
+    0.0,
+    0.0
+  ],
+  "nonzero_command_rows_while_completed": 0,
+  "state_rows": {
+    "WAIT_START": 1,
+    "HT_MAP_MISSING": 2,
+    "GEOMETRY_CURRENT_POSE_BLOCKED": 2,
+    "PLANNER_STALE": 3,
+    "HT_ASSISTED": 45,
+    "HOME_SETTLING": 4,
+    "COMPLETED": 180,
+    "HT_MAP_STALE": 2
+  },
+  "follower_rows": {
+    "PATH_STALE": 8,
+    "DRIVING": 22,
+    "ALIGNING": 2,
+    "TURNING": 21,
+    "PLANNER_HOLD": 4,
+    "COMPLETED": 182
+  },
+  "final_selection_and_completion_audit": [
+    "[tare_planner_node-4] [INFO] [1793866713.975543175] [ht_real.tare_planner_node]: TARE_SELECTION candidates=94 visited=19 other_cell=14 preselected=0 eligible=61 raw_gain=0 raw_frontier=0 virtual_points=0 virtual_frontier=0 queue=0 queue_best=0 frontier_queue=0 use_frontier=1 min_points=40 min_frontier=15",
+    "[tare_planner_node-4] [INFO] [1793866715.006966139] [ht_real.tare_planner_node]: TARE_SELECTION candidates=94 visited=19 other_cell=14 preselected=0 eligible=61 raw_gain=0 raw_frontier=0 virtual_points=0 virtual_frontier=0 queue=0 queue_best=0 frontier_queue=0 use_frontier=1 min_points=40 min_frontier=15",
+    "[tare_planner_node-4] [INFO] [1793866715.985377912] [ht_real.tare_planner_node]: TARE_SELECTION candidates=94 visited=19 other_cell=14 preselected=0 eligible=61 raw_gain=0 raw_frontier=0 virtual_points=0 virtual_frontier=0 queue=0 queue_best=0 frontier_queue=0 use_frontier=1 min_points=40 min_frontier=15",
+    "[tare_planner_node-4] [INFO] [1793866716.975756438] [ht_real.tare_planner_node]: TARE_SELECTION candidates=94 visited=19 other_cell=14 preselected=0 eligible=61 raw_gain=0 raw_frontier=0 virtual_points=0 virtual_frontier=0 queue=0 queue_best=0 frontier_queue=0 use_frontier=1 min_points=40 min_frontier=15"
+  ]
+}

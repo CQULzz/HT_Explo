@@ -7,7 +7,7 @@
   "max_candidates": 4,
   "max_formal_runs": 8,
   "duration_each_s": 120,
-  "candidates_used": 1,
+  "candidates_used": 2,
   "formal_runs": [
     {
       "id": "b00",
@@ -135,6 +135,66 @@
       "runner_exit_code": 0,
       "wall_s": 128.86007987,
       "duration_s": 120.3
+    },
+    {
+      "id": "queue_seed42_c03",
+      "seed": 42,
+      "kind": "candidate",
+      "candidate": "queue_sampling",
+      "path": "/home/w_lzz/ht-iterations-20261105/cycle2/queue_seed42_c03",
+      "tested_commit": "120dcf2500624c23e906710be3af4ba784207790",
+      "command": [
+        "/home/lzz/.venvs/ht_real_gpu_20261028/bin/python",
+        "/home/w_lzz/ht-iterations-20261105/runtime/run_sim.py",
+        "--label",
+        "queue_seed42_c03",
+        "--output-root",
+        "/home/w_lzz/ht-iterations-20261105/cycle2",
+        "--duration",
+        "120",
+        "--domain",
+        "228",
+        "--render-backend",
+        "egl",
+        "--ht-processing-mode",
+        "worker",
+        "--seed",
+        "42"
+      ],
+      "state": "COMPLETE_COLLECTION",
+      "runner_exit_code": 0,
+      "wall_s": 128.920262072,
+      "duration_s": 120.2
+    },
+    {
+      "id": "queue_seed99_c04",
+      "seed": 99,
+      "kind": "candidate",
+      "candidate": "queue_sampling",
+      "path": "/home/w_lzz/ht-iterations-20261105/cycle2/queue_seed99_c04",
+      "tested_commit": "120dcf2500624c23e906710be3af4ba784207790",
+      "command": [
+        "/home/lzz/.venvs/ht_real_gpu_20261028/bin/python",
+        "/home/w_lzz/ht-iterations-20261105/runtime/run_sim.py",
+        "--label",
+        "queue_seed99_c04",
+        "--output-root",
+        "/home/w_lzz/ht-iterations-20261105/cycle2",
+        "--duration",
+        "120",
+        "--domain",
+        "228",
+        "--render-backend",
+        "egl",
+        "--ht-processing-mode",
+        "worker",
+        "--seed",
+        "99"
+      ],
+      "state": "FAILED",
+      "runner_exit_code": 1,
+      "wall_s": 126.46710705599997,
+      "duration_s": 120.2
     }
   ],
   "release_authorized": false
