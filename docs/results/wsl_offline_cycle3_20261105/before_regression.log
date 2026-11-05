@@ -1,0 +1,67 @@
+Running main() from /opt/ros/jazzy/src/gtest_vendor/src/gtest_main.cc
+Note: Google Test filter = TareResidualSampling.*
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from TareResidualSampling
+[ RUN      ] TareResidualSampling.NeverChoosesAViewWhoseUpdatedGainIsBelowThreshold
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/tests/local_sampling_test.cpp:77: Failure
+Death test: { std::thread([] {std::this_thread::sleep_for(std::chrono::seconds(15));std::_Exit(124);}).detach(); for (int seed=0;seed<32;++seed) { SamplingFixture f(seed); for (int id=0;id<3;++id) f.manager->ResetViewPointCoveredPointList(id); for (int p=0;p<80;++p) f.manager->AddUncoveredPoint(0,p); for (int p=0;p<40;++p) f.manager->AddUncoveredPoint(1,p); for (int p=80;p<120;++p) f.manager->AddUncoveredPoint(1,p); for (int p=0;p<70;++p) f.manager->AddUncoveredPoint(2,p); for (int p=120;p<130;++p) f.manager->AddUncoveredPoint(2,p); const auto selected=LocalCoveragePlannerTestAccess::select( *f.planner,{{80,0},{80,1},{80,2}},130); std::vector<bool> observed(130,false); for (const int id:selected) { if (id<0 || id>=3) std::_Exit(2); int gain=0; for (const int p:f.manager->GetViewPointCoveredPointList(id)) if (!observed[p]) ++gain; if (gain<40) std::_Exit(3); for (const int p:f.manager->GetViewPointCoveredPointList(id)) observed[p]=true; } if (selected.size()!=2) std::_Exit(4); } std::_Exit(0); }
+    Result: died but not with expected exit code:
+            Exited with exit status 3
+Actual msg:
+[  DEATH   ] [WARN] [1793876114.250986562] [rcl]: ROS_LOCALHOST_ONLY is deprecated but still honored if it is enabled. Use ROS_AUTOMATIC_DISCOVERY_RANGE and ROS_STATIC_PEERS instead.
+[  DEATH   ] [WARN] [1793876114.251010600] [rcl]: 'localhost_only' is enabled, 'automatic_discovery_range' and 'static_peers' will be ignored.
+[  DEATH   ] [INFO] [1793876114.464132392] [tare_planner_node]: TARE_RANDOM seed=0 mode=fixed_stream
+[  DEATH   ] [INFO] [1793876114.467154843] [tare_planner_node]: XYtheta configuration: headings=32 cell=0.300 step=0.400 heading_reserve_rad=0.000 search_s=0.150 cycle_search_s=0.350
+[  DEATH   ] [INFO] [1793876114.467173198] [tare_planner_node]: XYtheta motion angle=11.250 deg (independent of heading bins)
+[  DEATH   ] [INFO] [1793876114.467176427] [tare_planner_node]: XYtheta motion angle=22.500 deg (independent of heading bins)
+[  DEATH   ] [INFO] [1793876114.467194994] [tare_planner_node]: TARE_RANDOM_CALL seed=0 call=1 frontier=0 range=3
+[  DEATH   ] [INFO] [1793876114.654234398] [tare_planner_node]: TARE_RANDOM seed=1 mode=fixed_stream
+[  DEATH   ] [INFO] [1793876114.655236737] [tare_planner_node]: XYtheta configuration: headings=32 cell=0.300 step=0.400 heading_reserve_rad=0.000 search_s=0.150 cycle_search_s=0.350
+[  DEATH   ] [INFO] [1793876114.655256461] [tare_planner_node]: XYtheta motion angle=11.250 deg (independent of heading bins)
+[  DEATH   ] [INFO] [1793876114.655259581] [tare_planner_node]: XYtheta motion angle=22.500 deg (independent of heading bins)
+[  DEATH   ] [INFO] [1793876114.655276779] [tare_planner_node]: TARE_RANDOM_CALL seed=1 call=1 frontier=0 range=3
+[  DEATH   ] [INFO] [1793876114.840933875] [tare_planner_node]: TARE_RANDOM seed=2 mode=fixed_stream
+[  DEATH   ] [INFO] [1793876114.841914246] [tare_planner_node]: XYtheta configuration: headings=32 cell=0.300 step=0.400 heading_reserve_rad=0.000 search_s=0.150 cycle_search_s=0.350
+[  DEATH   ] [INFO] [1793876114.841933553] [tare_planner_node]: XYtheta motion angle=11.250 deg (independent of heading bins)
+[  DEATH   ] [INFO] [1793876114.841936615] [tare_planner_node]: XYtheta motion angle=22.500 deg (independent of heading bins)
+[  DEATH   ] [INFO] [1793876114.841951799] [tare_planner_node]: TARE_RANDOM_CALL seed=2 call=1 frontier=0 range=3
+[  DEATH   ] [INFO] [1793876115.027728527] [tare_planner_node]: TARE_RANDOM seed=3 mode=fixed_stream
+[  DEATH   ] [INFO] [1793876115.028725672] [tare_planner_node]: XYtheta configuration: headings=32 cell=0.300 step=0.400 heading_reserve_rad=0.000 search_s=0.150 cycle_search_s=0.350
+[  DEATH   ] [INFO] [1793876115.028741065] [tare_planner_node]: XYtheta motion angle=11.250 deg (independent of heading bins)
+[  DEATH   ] [INFO] [1793876115.028744076] [tare_planner_node]: XYtheta motion angle=22.500 deg (independent of heading bins)
+[  DEATH   ] [INFO] [1793876115.028759400] [tare_planner_node]: TARE_RANDOM_CALL seed=3 call=1 frontier=0 range=3
+[  DEATH   ] [INFO] [1793876115.217596452] [tare_planner_node]: TARE_RANDOM seed=4 mode=fixed_stream
+[  DEATH   ] [INFO] [1793876115.218622965] [tare_planner_node]: XYtheta configuration: headings=32 cell=0.300 step=0.400 heading_reserve_rad=0.000 search_s=0.150 cycle_search_s=0.350
+[  DEATH   ] [INFO] [1793876115.218641926] [tare_planner_node]: XYtheta motion angle=11.250 deg (independent of heading bins)
+[  DEATH   ] [INFO] [1793876115.218644872] [tare_planner_node]: XYtheta motion angle=22.500 deg (independent of heading bins)
+[  DEATH   ] [INFO] [1793876115.218661514] [tare_planner_node]: TARE_RANDOM_CALL seed=4 call=1 frontier=0 range=3
+[  DEATH   ] 
+
+[  FAILED  ] TareResidualSampling.NeverChoosesAViewWhoseUpdatedGainIsBelowThreshold (1069 ms)
+[ RUN      ] TareResidualSampling.DisjointEligibleViewsAreSelectedExactlyOnce
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/tests/local_sampling_test.cpp:108: Failure
+Death test: { std::thread([] {std::this_thread::sleep_for(std::chrono::seconds(5));std::_Exit(124);}).detach(); SamplingFixture f(42); for (int id=0;id<3;++id) { f.manager->ResetViewPointCoveredPointList(id); for (int p=0;p<80;++p) f.manager->AddUncoveredPoint(id,80*id+p); } const auto selected=LocalCoveragePlannerTestAccess::select( *f.planner,{{80,0},{80,1},{80,2}},240); const std::set<int> unique(selected.begin(),selected.end()); std::_Exit(selected.size()==3 && unique==std::set<int>({0,1,2}) ? 0:5); }
+    Result: died but not with expected exit code:
+            Exited with exit status 5
+Actual msg:
+[  DEATH   ] [WARN] [1793876115.294786356] [rcl]: ROS_LOCALHOST_ONLY is deprecated but still honored if it is enabled. Use ROS_AUTOMATIC_DISCOVERY_RANGE and ROS_STATIC_PEERS instead.
+[  DEATH   ] [WARN] [1793876115.294812613] [rcl]: 'localhost_only' is enabled, 'automatic_discovery_range' and 'static_peers' will be ignored.
+[  DEATH   ] [INFO] [1793876115.502086109] [tare_planner_node]: TARE_RANDOM seed=42 mode=fixed_stream
+[  DEATH   ] [INFO] [1793876115.505221060] [tare_planner_node]: XYtheta configuration: headings=32 cell=0.300 step=0.400 heading_reserve_rad=0.000 search_s=0.150 cycle_search_s=0.350
+[  DEATH   ] [INFO] [1793876115.505238327] [tare_planner_node]: XYtheta motion angle=11.250 deg (independent of heading bins)
+[  DEATH   ] [INFO] [1793876115.505241446] [tare_planner_node]: XYtheta motion angle=22.500 deg (independent of heading bins)
+[  DEATH   ] [INFO] [1793876115.505260842] [tare_planner_node]: TARE_RANDOM_CALL seed=42 call=1 frontier=0 range=3
+[  DEATH   ] 
+
+[  FAILED  ] TareResidualSampling.DisjointEligibleViewsAreSelectedExactlyOnce (286 ms)
+[----------] 2 tests from TareResidualSampling (1355 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (1355 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] TareResidualSampling.NeverChoosesAViewWhoseUpdatedGainIsBelowThreshold
+[  FAILED  ] TareResidualSampling.DisjointEligibleViewsAreSelectedExactlyOnce
+
+ 2 FAILED TESTS

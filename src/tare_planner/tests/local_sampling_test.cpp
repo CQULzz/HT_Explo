@@ -1,6 +1,9 @@
 #include <gtest/gtest.h>
 #include "local_coverage_planner/local_coverage_planner.h"
 #include <set>
+#include <thread>
+#include <chrono>
+#include <cstdlib>
 
 namespace local_coverage_planner_ns {
 struct LocalCoveragePlannerTestAccess {
@@ -67,4 +70,51 @@ TEST(TareSamplingSeed, DefaultsRemainUncontrolledAndUint32BoundsAreValidated) {
   EXPECT_NO_THROW(SamplingFixture(4294967295LL));
   EXPECT_THROW(SamplingFixture(-2),std::invalid_argument);
   EXPECT_THROW(SamplingFixture(4294967296LL),std::invalid_argument);
+}
+
+TEST(TareResidualSampling, NeverChoosesAViewWhoseUpdatedGainIsBelowThreshold) {
+  ::testing::FLAGS_gtest_death_test_style="threadsafe";
+  EXPECT_EXIT({
+    std::thread([] {std::this_thread::sleep_for(std::chrono::seconds(15));std::_Exit(124);}).detach();
+    // Different first draws exercise every branch, including shrinking the
+    // eligible prefix to one while a below-threshold entry remains allocated.
+    for (int seed=0;seed<32;++seed) {
+      SamplingFixture f(seed);
+      for (int id=0;id<3;++id) f.manager->ResetViewPointCoveredPointList(id);
+      for (int p=0;p<80;++p) f.manager->AddUncoveredPoint(0,p);
+      for (int p=0;p<40;++p) f.manager->AddUncoveredPoint(1,p);
+      for (int p=80;p<120;++p) f.manager->AddUncoveredPoint(1,p);
+      for (int p=0;p<70;++p) f.manager->AddUncoveredPoint(2,p);
+      for (int p=120;p<130;++p) f.manager->AddUncoveredPoint(2,p);
+      const auto selected=LocalCoveragePlannerTestAccess::select(
+        *f.planner,{{80,0},{80,1},{80,2}},130);
+      std::vector<bool> observed(130,false);
+      for (const int id:selected) {
+        if (id<0 || id>=3) std::_Exit(2);
+        int gain=0;
+        for (const int p:f.manager->GetViewPointCoveredPointList(id))
+          if (!observed[p]) ++gain;
+        if (gain<40) std::_Exit(3);
+        for (const int p:f.manager->GetViewPointCoveredPointList(id)) observed[p]=true;
+      }
+      if (selected.size()!=2) std::_Exit(4);
+    }
+    std::_Exit(0);
+  },::testing::ExitedWithCode(0),"");
+}
+
+TEST(TareResidualSampling, DisjointEligibleViewsAreSelectedExactlyOnce) {
+  ::testing::FLAGS_gtest_death_test_style="threadsafe";
+  EXPECT_EXIT({
+    std::thread([] {std::this_thread::sleep_for(std::chrono::seconds(5));std::_Exit(124);}).detach();
+    SamplingFixture f(42);
+    for (int id=0;id<3;++id) {
+      f.manager->ResetViewPointCoveredPointList(id);
+      for (int p=0;p<80;++p) f.manager->AddUncoveredPoint(id,80*id+p);
+    }
+    const auto selected=LocalCoveragePlannerTestAccess::select(
+      *f.planner,{{80,0},{80,1},{80,2}},240);
+    const std::set<int> unique(selected.begin(),selected.end());
+    std::_Exit(selected.size()==3 && unique==std::set<int>({0,1,2}) ? 0:5);
+  },::testing::ExitedWithCode(0),"");
 }

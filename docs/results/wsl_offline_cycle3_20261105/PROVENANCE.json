@@ -1,0 +1,17 @@
+{
+  "baseline_head": "61bc68a66e18dc2b3317acffd47917233223e3cb",
+  "baseline_production_sha256": "d6b7063452ee43ee1c1a17ec6540ddb15ebd0ff230d1b5044e35752e5d4c2a5f",
+  "shared_before_after_test_sha256": "f516e0b2fe4b25bf4e1ced5fdc730de47bddf28f8ab46b571fefa03923c23f48",
+  "before_command": "source runtime/env.sh; ROS_DOMAIN_ID=229 ./build_real/tare_planner/local_sampling_test --gtest_filter=TareResidualSampling.*",
+  "simulation_runs_this_cycle": 0,
+  "constraint": "User explicitly selected diagnosis and code only; no Gazebo or ROS bag playback.",
+  "candidate_production_sha256": "6c49e904700e398cdb3fec40682d0e0f35592a91c158f64c0a87c055cbcaef81",
+  "after_command": "source runtime/env.sh; colcon build --build-base build_real --install-base install_real --packages-select tare_planner --cmake-args -DBUILD_TESTING=ON; ROS_DOMAIN_ID=229 HT_CONFIGURATION_FIXTURE=$PWD/docs/fixes/fixtures/mixed_turn_stop.txt ctest --test-dir build_real/tare_planner --output-on-failure",
+  "after_artifacts_sha256": {
+    "build_real/tare_planner/local_sampling_test": "147894726a8bdc72f10f2fd2170b135ae7bfa5eddac02c6781b65e9df7f485df",
+    "build_real/tare_planner/liblocal_coverage_planner.a": "846670d678ee40fe6c1a6438693e8f70d54bdf498c134546ca02bdea1a1bfa8b",
+    "src/tare_planner/tests/local_coverage_completion_test.cpp": "8a3e8369bbe939bfc30f3a0e9db5fa9883128852cfc0594304c6b83dde90547c",
+    "docs/fixes/fixtures/mixed_turn_stop.txt": "353b2dc5de952073fa29d97be7fb7e1106075f4263c16dab95f23e477adf251e"
+  },
+  "test_scope": "Read-only prior recordings; fixed synthetic unit fixtures and isolated ROS test processes in domain229. No physics simulation, bag playback, hardware or deployment."
+}

@@ -368,15 +368,16 @@ void LocalCoveragePlanner::SelectViewPoint(
       }
     }
 
-    // Randomly select the next point
+    // Size the next draw from remaining entries and their updated gains.
+    // Original queue gains/sizes can select an ineligible or erased entry.
     int sample_range = 0;
-    for (int i = 0; i < queue.size(); i++) {
+    for (int i = 0; i < queue_copy.size(); i++) {
       if (use_frontier) {
-        if (queue[i].first >= parameters_.kMinAddFrontierPointNum) {
+        if (queue_copy[i].first >= parameters_.kMinAddFrontierPointNum) {
           sample_range++;
         }
       } else {
-        if (queue[i].first >= parameters_.kMinAddPointNum) {
+        if (queue_copy[i].first >= parameters_.kMinAddPointNum) {
           sample_range++;
         }
       }
