@@ -1,3 +1,19 @@
+# 最新交接：2026-11-05 WSL两分钟迭代
+
+原Linux Codex聊天 `01a1a5cc-f846-7723-8735-190876a2c2f5` 的用户/助手历史与PROJECT_HANDOFF已完整通读；原始日志/实验数据保持只读。当前执行环境是用户新授权的WSL Ubuntu-24.04/Jazzy，不是把双系统日志误当WSL日志。
+
+继续前请先读 `docs/results/wsl120_20261105/STATUS.md` 与 `docs/experiments/ITERATIONS.md`。最新实测代码8e06489fe3fabed32cda97239ca7c713e50586cf，分支fix/scout-wsl120-20261105，两个无采样正式复测标签r06/r07均指向它；后续文档提交不是新候选。
+
+每轮完整120秒（不再600秒），冻结/保留坏数据/先发布核验再下一候选。显式`--ht-processing-mode worker`已重复验证降低HT延迟：215→64ms，地图发布源龄0.965→0.55–0.58s，严格1秒门限不变；两次内部返航完成，但TARE覆盖/早返航判据尚需独立验真，不能称全场景探索或实车通过。
+
+WSL工程 `/home/w_lzz/ht-iterations-20261105/repo`，独立运行文件在其同级runtime；`/home/lzz/...`兼容路径是WSL内链接，不是原双系统Linux目录。CuPy核心为固定私有上游+公共稳定补丁重建，原Linux定制核心不可盲覆盖。两个优化安装器检查前后SHA256，不匹配就保留本地差异、单独移植；权重/概率/未知/时效/足迹/TARE顺序均不可放宽。实车默认旧执行器，未部署设备。
+
+最新完整数据：https://github.com/CQULzz/HT_Explo/releases/tag/ht-wsl120-worker-repeat-20261105-r07 ，当前HT安装产物在r06，场景模型在r00。r00–r07含坏结果均已发布并校验SHA256/大小，报告有逐项回执。Windows发布辅助程序与配置在D:/HT-Resume，已用当前GitHub账号完成；不要把密码/令牌写进交接。
+
+此文件是持久交接，不会自动注入离线原Linux聊天。原Linux Codex需要拉取/读取该分支后才能获知更新；原始会话JSONL未被伪造或改写。下面保留上一轮交接以便溯源。
+
+---
+
 # Linux Codex 交付状态同步
 
 用户要求同步 Windows 端已完成的交付，请阅读并只确认收到，不要自动重跑仿真或重复上传。

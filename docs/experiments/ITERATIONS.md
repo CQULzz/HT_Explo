@@ -1,9 +1,13 @@
 # 2026-11-05 WSL两分钟迭代
 
+[当前结果、重现入口与未解决问题](../results/wsl120_20261105/STATUS.md)。HT事件驱动模式已做两次无采样120秒复测；延迟改善，内部完成尚不能代替覆盖验收。
+
 最新要求为每轮完整120秒；以下较早阶段的600秒仍是历史原值。
 
 |轮次|实测代码|结果|完整证据|
 |---|---|---|---|
+|r07 同码工作线程复跑|`8e06489`|120.3s；6.726m/540.360m³；回调64ms、源龄0.55s；内部返航完成，覆盖未独立验真。|[报告](../results/wsl120_20261105/r07_repeat/REPORT.md) · [已核验Release](https://github.com/CQULzz/HT_Explo/releases/tag/ht-wsl120-worker-repeat-20261105-r07)|
+|r06 工作线程候选|`8e06489`|120.3s；5.616m/527.192m³；回调64ms、源龄0.58s；内部返航完成，覆盖未独立验真。|[报告](../results/wsl120_20261105/r06_worker/REPORT.md) · [已核验Release](https://github.com/CQULzz/HT_Explo/releases/tag/ht-wsl120-worker-20261105-r06)|
 |r05 同码诊断复跑|`6af4a20`|120.3s；3.475m / 571.976m³，未完成；附45秒GIL采样，HT主执行器占约79%持GIL样本，非CPU占用率/因果证明。|[报告](../results/wsl120_20261105/r05_profile/REPORT.md) · [已核验Release](https://github.com/CQULzz/HT_Explo/releases/tag/ht-wsl120-profile-20261105-r05)|
 |r04 源就绪适配器|`6af4a20`|120.1s；4.452m / 633.184m³，未完成；发零85.77%，源龄p50 0.965s，7项测试通过。|[报告](../results/wsl120_20261105/r04_adapter/REPORT.md) · [已核验Release](https://github.com/CQULzz/HT_Explo/releases/tag/ht-wsl120-adapter-20261105-r04)|
 |r03 地图平移整数复用|`920e39c`|120.3s；2.774m / 504.976m³，未完成；源龄p50 0.96s/P95 1.2185s，发零93.72%。30组完整地图移动逐字节相同，离线平移14.73→1.95ms。|[报告](../results/wsl120_20261105/r03_map_shift/REPORT.md) · [已核验Release](https://github.com/CQULzz/HT_Explo/releases/tag/ht-wsl120-mapshift-20261105-r03)|
