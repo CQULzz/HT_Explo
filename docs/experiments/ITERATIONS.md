@@ -4,6 +4,7 @@
 
 |轮次|实测代码|结果|完整证据|
 |---|---|---|---|
+|r01 D3D12候选（未采用为默认）|`fe464fd`|120.3s；0.736m / 373.36m³，未完成；发布源龄p50 0.98s，Gazebo在退出时SIGSEGV。|[报告](../results/wsl120_20261105/r01_d3d12/REPORT.md) · [已核验Release](https://github.com/CQULzz/HT_Explo/releases/tag/ht-wsl120-d3d12-20261105-r01)|
 |r00 WSL软件渲染基线|`354b79d`|120.3s；0.878m / 377.08m³，任务未完成。地图发布源龄p50 1.02s；99.16%遥测采样发零；里程含初始物理沉降。启动失败A另列保留。|[报告](../results/wsl120_20261105/r00_baseline/REPORT.md) · [已核验Release](https://github.com/CQULzz/HT_Explo/releases/tag/ht-wsl120-baseline-20261105-r00)|
 
 输入/外参/遮挡/策略56项当前WSL回归通过，记录在r00报告目录的补充日志；该检查在r00打包后执行，未伪装成原包附件。先前8组C++检查含缺夹具失败后恢复原始夹具的重试。尚需解决WSL源图延迟和近车支撑；120秒不能证明旧233秒后场景裁剪边界故障已解决。
