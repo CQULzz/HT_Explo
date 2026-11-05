@@ -1,0 +1,908 @@
+{
+  "simulations_used": 6,
+  "maximum": 6,
+  "summaries": [
+    {
+      "label": "b01_single42",
+      "arm": "ht",
+      "seed": 42,
+      "tested_commit": "b9da86da0ac1f6920d914908fdfc6fdf6f27e9a2",
+      "state": "FAILED",
+      "duration_s": 120.3,
+      "distance_m": 35.52681032789089,
+      "distance_before_first_ready_sample_m": 0.3199560020392915,
+      "sampled_free_volume_m3": 1082.96,
+      "completed": false,
+      "completed_at_sim_s": null,
+      "final_mission_state": "RETURNING_HOME",
+      "final_execution_status": "HT_ASSISTED",
+      "map_source_age_p95_s": 0.2780000000000015,
+      "map_source_age_samples": 105,
+      "current_heading_low_runtime_samples": 0,
+      "zero_command_sample_fraction": 0.07531380753138076,
+      "first_context_source_s": 1.8,
+      "first_random_calls": [
+        "TARE_RANDOM_CALL seed=42 call=1 frontier=0 range=1",
+        "TARE_RANDOM_CALL seed=42 call=2 frontier=1 range=3",
+        "TARE_RANDOM_CALL seed=42 call=3 frontier=0 range=1",
+        "TARE_RANDOM_CALL seed=42 call=4 frontier=1 range=3",
+        "TARE_RANDOM_CALL seed=42 call=5 frontier=0 range=1"
+      ],
+      "runtime_reason_events": {
+        "ODOMETRY_MISSING_OR_STALE": 1,
+        "HT_MAP_MISSING_OR_STALE": 5,
+        "HT_MAP_MISSING": 1,
+        "GEOMETRY_CURRENT_POSE_BLOCKED": 8,
+        "COMMAND_SENT_NOT_WHEEL_CONFIRMED": 224,
+        "EMPTY_PATH": 1
+      },
+      "state_transitions": [
+        [
+          0.0,
+          "ht_execution_status",
+          "WAIT_START"
+        ],
+        [
+          0.0,
+          "mission_state",
+          "WAIT_START"
+        ],
+        [
+          1.68,
+          "ht_execution_status",
+          "HT_MAP_MISSING"
+        ],
+        [
+          2.68,
+          "ht_execution_status",
+          "GEOMETRY_CURRENT_POSE_BLOCKED"
+        ],
+        [
+          3.95,
+          "ht_execution_status",
+          "PATH_NO_EXECUTABLE_ROUTE"
+        ],
+        [
+          3.95,
+          "mission_state",
+          "BLOCKED"
+        ],
+        [
+          3.95,
+          "ht_execution_status",
+          "HT_ASSISTED"
+        ],
+        [
+          3.95,
+          "mission_state",
+          "EXPLORING"
+        ],
+        [
+          19.91,
+          "mission_state",
+          "BLOCKED"
+        ],
+        [
+          19.91,
+          "ht_execution_status",
+          "GEOMETRY_CURRENT_POSE_BLOCKED"
+        ],
+        [
+          22.86,
+          "ht_execution_status",
+          "PATH_NO_EXECUTABLE_ROUTE"
+        ],
+        [
+          22.86,
+          "ht_execution_status",
+          "HT_ASSISTED"
+        ],
+        [
+          22.86,
+          "mission_state",
+          "EXPLORING"
+        ],
+        [
+          99.88,
+          "mission_state",
+          "RETURNING_HOME"
+        ]
+      ],
+      "run_result": {
+        "render_backend": "egl",
+        "actual_gl_renderers": [
+          "NVIDIA GeForce RTX 5060 Ti/PCIe/SSE2"
+        ],
+        "renderer_verified": true,
+        "managed_shutdown_nonzero": {
+          "mapper": -9
+        },
+        "error": null,
+        "requested_duration_sim_s": 120.0,
+        "actual_duration_sim_s": 120.3,
+        "full_requested_duration": true,
+        "full_600_sim_s": false,
+        "failure_stage": null,
+        "frozen_files_changed": [],
+        "wall_elapsed": 136.71295533600005,
+        "exit_codes": {
+          "record": 0,
+          "observer": 0,
+          "bridge": 0,
+          "adapter": 0,
+          "mapper": -9,
+          "navigation": 0,
+          "gazebo": 0
+        }
+      },
+      "bag_messages": 36006,
+      "all_video_frames_decoded": true,
+      "final_xy": [
+        -0.9920517713393853,
+        -6.16794870088731
+      ]
+    },
+    {
+      "label": "b02_single42",
+      "arm": "ht",
+      "seed": 42,
+      "tested_commit": "4a963de1d407164b0bb14b5d532ed8d8151ae89b",
+      "state": "RECORDED",
+      "duration_s": 120.3,
+      "distance_m": 27.37037498389858,
+      "distance_before_first_ready_sample_m": 0.3199560020392915,
+      "sampled_free_volume_m3": 993.8480000000001,
+      "completed": false,
+      "completed_at_sim_s": null,
+      "final_mission_state": "BLOCKED",
+      "final_execution_status": "BASE_SENSOR_FAULT",
+      "map_source_age_p95_s": 0.4800000000000004,
+      "map_source_age_samples": 101,
+      "current_heading_low_runtime_samples": 0,
+      "zero_command_sample_fraction": 0.29707112970711297,
+      "first_context_source_s": 1.2,
+      "first_random_calls": [
+        "TARE_RANDOM_CALL seed=42 call=1 frontier=0 range=3",
+        "TARE_RANDOM_CALL seed=42 call=2 frontier=1 range=3",
+        "TARE_RANDOM_CALL seed=42 call=3 frontier=0 range=3",
+        "TARE_RANDOM_CALL seed=42 call=4 frontier=1 range=3",
+        "TARE_RANDOM_CALL seed=42 call=5 frontier=0 range=3"
+      ],
+      "runtime_reason_events": {
+        "HT_MAP_MISSING_OR_STALE": 5,
+        "HT_MAP_MISSING": 2,
+        "GEOMETRY_CURRENT_POSE_BLOCKED": 3,
+        "COMMAND_SENT_NOT_WHEEL_CONFIRMED": 186,
+        "HT_MAP_STALE": 3,
+        "BASE_SENSOR_FAULT": 2,
+        "ODOMETRY_MISSING_OR_STALE": 2,
+        "PATH_NO_EXECUTABLE_ROUTE": 37
+      },
+      "state_transitions": [
+        [
+          0.0,
+          "ht_execution_status",
+          "WAIT_START"
+        ],
+        [
+          0.0,
+          "mission_state",
+          "WAIT_START"
+        ],
+        [
+          1.18,
+          "ht_execution_status",
+          "HT_MAP_MISSING"
+        ],
+        [
+          2.18,
+          "ht_execution_status",
+          "GEOMETRY_CURRENT_POSE_BLOCKED"
+        ],
+        [
+          3.5,
+          "ht_execution_status",
+          "PATH_NO_EXECUTABLE_ROUTE"
+        ],
+        [
+          3.5,
+          "mission_state",
+          "BLOCKED"
+        ],
+        [
+          3.5,
+          "ht_execution_status",
+          "HT_ASSISTED"
+        ],
+        [
+          3.5,
+          "mission_state",
+          "EXPLORING"
+        ],
+        [
+          29.18,
+          "ht_execution_status",
+          "BASE_SENSOR_FAULT"
+        ],
+        [
+          29.18,
+          "mission_state",
+          "BLOCKED"
+        ],
+        [
+          30.37,
+          "ht_execution_status",
+          "PATH_NO_EXECUTABLE_ROUTE"
+        ],
+        [
+          30.37,
+          "mission_state",
+          "EXPLORING"
+        ],
+        [
+          30.37,
+          "ht_execution_status",
+          "HT_ASSISTED"
+        ],
+        [
+          63.18,
+          "ht_execution_status",
+          "BASE_SENSOR_FAULT"
+        ],
+        [
+          63.18,
+          "mission_state",
+          "BLOCKED"
+        ],
+        [
+          64.39,
+          "ht_execution_status",
+          "PATH_NO_EXECUTABLE_ROUTE"
+        ],
+        [
+          64.39,
+          "mission_state",
+          "EXPLORING"
+        ],
+        [
+          64.39,
+          "ht_execution_status",
+          "HT_ASSISTED"
+        ],
+        [
+          68.18,
+          "mission_state",
+          "BLOCKED"
+        ],
+        [
+          68.18,
+          "ht_execution_status",
+          "HT_MAP_STALE"
+        ],
+        [
+          69.43,
+          "ht_execution_status",
+          "PATH_NO_EXECUTABLE_ROUTE"
+        ],
+        [
+          69.43,
+          "ht_execution_status",
+          "HT_ASSISTED"
+        ],
+        [
+          69.43,
+          "mission_state",
+          "EXPLORING"
+        ],
+        [
+          101.41,
+          "ht_execution_status",
+          "PATH_NO_EXECUTABLE_ROUTE"
+        ],
+        [
+          101.41,
+          "mission_state",
+          "BLOCKED"
+        ],
+        [
+          120.18,
+          "ht_execution_status",
+          "BASE_SENSOR_FAULT"
+        ]
+      ],
+      "run_result": {
+        "render_backend": "egl",
+        "actual_gl_renderers": [
+          "NVIDIA GeForce RTX 5060 Ti/PCIe/SSE2"
+        ],
+        "renderer_verified": true,
+        "managed_shutdown_nonzero": {},
+        "ros_launch_child_nonzero": {},
+        "error": null,
+        "requested_duration_sim_s": 120.0,
+        "actual_duration_sim_s": 120.3,
+        "full_requested_duration": true,
+        "full_600_sim_s": false,
+        "failure_stage": null,
+        "frozen_files_changed": [],
+        "wall_elapsed": 126.31916924799998,
+        "exit_codes": {
+          "record": 0,
+          "observer": 0,
+          "bridge": 0,
+          "adapter": 0,
+          "mapper": 0,
+          "navigation": 0,
+          "gazebo": 0
+        }
+      },
+      "bag_messages": 36064,
+      "all_video_frames_decoded": true,
+      "final_xy": [
+        -1.5916889490069301,
+        -13.829301395808013
+      ]
+    },
+    {
+      "label": "b03_single99",
+      "arm": "ht",
+      "seed": 99,
+      "tested_commit": "f19ca249b8b2d586f5f1254ac12a115315c54e5a",
+      "state": "RECORDED",
+      "duration_s": 120.3,
+      "distance_m": 1.2300815990900087,
+      "distance_before_first_ready_sample_m": 0.3199560020392915,
+      "sampled_free_volume_m3": 420.624,
+      "completed": true,
+      "completed_at_sim_s": 13.92,
+      "final_mission_state": "COMPLETED",
+      "final_execution_status": "COMPLETED",
+      "map_source_age_p95_s": 0.4564999999999988,
+      "map_source_age_samples": 104,
+      "current_heading_low_runtime_samples": 0,
+      "zero_command_sample_fraction": 0.9414225941422594,
+      "first_context_source_s": 1.2,
+      "first_random_calls": [
+        "TARE_RANDOM_CALL seed=99 call=1 frontier=0 range=3",
+        "TARE_RANDOM_CALL seed=99 call=2 frontier=1 range=3",
+        "TARE_RANDOM_CALL seed=99 call=3 frontier=0 range=3",
+        "TARE_RANDOM_CALL seed=99 call=4 frontier=1 range=3",
+        "TARE_RANDOM_CALL seed=99 call=5 frontier=0 range=3"
+      ],
+      "runtime_reason_events": {
+        "ODOMETRY_MISSING_OR_STALE": 3,
+        "HT_MAP_MISSING_OR_STALE": 5,
+        "GEOMETRY_CURRENT_POSE_BLOCKED": 3,
+        "COMMAND_SENT_NOT_WHEEL_CONFIRMED": 14,
+        "HOME_SETTLING": 7,
+        "COMPLETED": 205,
+        "BASE_SENSOR_FAULT": 2,
+        "HT_MAP_STALE": 1
+      },
+      "state_transitions": [
+        [
+          0.0,
+          "ht_execution_status",
+          "WAIT_START"
+        ],
+        [
+          0.0,
+          "mission_state",
+          "WAIT_START"
+        ],
+        [
+          1.92,
+          "ht_execution_status",
+          "GEOMETRY_CURRENT_POSE_BLOCKED"
+        ],
+        [
+          3.18,
+          "ht_execution_status",
+          "PATH_NO_EXECUTABLE_ROUTE"
+        ],
+        [
+          3.18,
+          "mission_state",
+          "BLOCKED"
+        ],
+        [
+          3.18,
+          "ht_execution_status",
+          "HT_ASSISTED"
+        ],
+        [
+          3.18,
+          "mission_state",
+          "EXPLORING"
+        ],
+        [
+          10.08,
+          "mission_state",
+          "RETURNING_HOME"
+        ],
+        [
+          10.08,
+          "ht_execution_status",
+          "HOME_SETTLING"
+        ],
+        [
+          13.92,
+          "ht_execution_status",
+          "COMPLETED"
+        ],
+        [
+          13.92,
+          "mission_state",
+          "COMPLETED"
+        ],
+        [
+          61.92,
+          "ht_execution_status",
+          "HT_MAP_STALE"
+        ],
+        [
+          62.92,
+          "ht_execution_status",
+          "COMPLETED"
+        ],
+        [
+          73.92,
+          "ht_execution_status",
+          "BASE_SENSOR_FAULT"
+        ],
+        [
+          74.92,
+          "ht_execution_status",
+          "COMPLETED"
+        ],
+        [
+          85.92,
+          "ht_execution_status",
+          "HT_MAP_STALE"
+        ],
+        [
+          86.92,
+          "ht_execution_status",
+          "COMPLETED"
+        ],
+        [
+          90.92,
+          "ht_execution_status",
+          "BASE_SENSOR_FAULT"
+        ],
+        [
+          91.92,
+          "ht_execution_status",
+          "COMPLETED"
+        ]
+      ],
+      "run_result": {
+        "render_backend": "egl",
+        "actual_gl_renderers": [
+          "NVIDIA GeForce RTX 5060 Ti/PCIe/SSE2"
+        ],
+        "renderer_verified": true,
+        "managed_shutdown_nonzero": {},
+        "ros_launch_child_nonzero": {},
+        "error": null,
+        "requested_duration_sim_s": 120.0,
+        "actual_duration_sim_s": 120.3,
+        "full_requested_duration": true,
+        "full_600_sim_s": false,
+        "failure_stage": null,
+        "frozen_files_changed": [],
+        "wall_elapsed": 126.39257769000005,
+        "exit_codes": {
+          "record": 0,
+          "observer": 0,
+          "bridge": 0,
+          "adapter": 0,
+          "mapper": 0,
+          "navigation": 0,
+          "gazebo": 0
+        }
+      },
+      "bag_messages": 35186,
+      "all_video_frames_decoded": true,
+      "final_xy": [
+        0.28682948674477304,
+        -0.06561179895830488
+      ]
+    },
+    {
+      "label": "b04_tare42",
+      "arm": "tare-geometric",
+      "seed": 42,
+      "tested_commit": "916202c0ae624197342d50dba39ca0b55cca70dc",
+      "state": "FAILED",
+      "duration_s": 120.3,
+      "distance_m": 1.2068309507390307,
+      "distance_before_first_ready_sample_m": 0.3199560020392915,
+      "sampled_free_volume_m3": 363.976,
+      "completed": true,
+      "completed_at_sim_s": 10.92,
+      "final_mission_state": "COMPLETED",
+      "final_execution_status": "COMPLETED",
+      "map_source_age_p95_s": null,
+      "map_source_age_samples": 0,
+      "current_heading_low_runtime_samples": 0,
+      "zero_command_sample_fraction": 0.9707112970711297,
+      "first_context_source_s": null,
+      "first_random_calls": [
+        "TARE_RANDOM_CALL seed=42 call=1 frontier=1 range=3",
+        "TARE_RANDOM_CALL seed=42 call=2 frontier=1 range=1",
+        "TARE_RANDOM_CALL seed=42 call=3 frontier=1 range=2"
+      ],
+      "runtime_reason_events": {
+        "TARE_STATE_STALE": 24,
+        "TARE_WAIT_START": 80,
+        "TARE_BLOCKED": 25,
+        "TARE_GEOMETRIC_COMMAND": 112,
+        "COMMAND_STALE_OR_INVALID": 3,
+        "GEOMETRY_STALE_OR_INVALID": 20,
+        "TARE_COMPLETED": 2191
+      },
+      "state_transitions": [
+        [
+          0.0,
+          "ht_execution_status",
+          "WAIT_START"
+        ],
+        [
+          0.0,
+          "mission_state",
+          "WAIT_START"
+        ],
+        [
+          1.92,
+          "ht_execution_status",
+          "NO_EXECUTABLE_ROUTE"
+        ],
+        [
+          2.92,
+          "mission_state",
+          "BLOCKED"
+        ],
+        [
+          2.92,
+          "ht_execution_status",
+          "PLANNER_STALE"
+        ],
+        [
+          4.19,
+          "ht_execution_status",
+          "NO_EXECUTABLE_ROUTE"
+        ],
+        [
+          4.19,
+          "mission_state",
+          "EXPLORING"
+        ],
+        [
+          4.19,
+          "ht_execution_status",
+          "GEOMETRIC"
+        ],
+        [
+          7.11,
+          "ht_execution_status",
+          "HOME_SETTLING"
+        ],
+        [
+          7.11,
+          "mission_state",
+          "RETURNING_HOME"
+        ],
+        [
+          10.92,
+          "mission_state",
+          "COMPLETED"
+        ],
+        [
+          10.92,
+          "ht_execution_status",
+          "COMPLETED"
+        ]
+      ],
+      "run_result": {
+        "render_backend": "egl",
+        "actual_gl_renderers": [
+          "NVIDIA GeForce RTX 5060 Ti/PCIe/SSE2"
+        ],
+        "renderer_verified": true,
+        "managed_shutdown_nonzero": {},
+        "ros_launch_child_nonzero": {
+          "localPlanner-6": -6,
+          "pathFollower-7": -6,
+          "terrainAnalysis-4": -6,
+          "terrainAnalysisExt-5": -6
+        },
+        "error": "ROS launch child nonzero exits: {'localPlanner-6': -6, 'pathFollower-7': -6, 'terrainAnalysis-4': -6, 'terrainAnalysisExt-5': -6}",
+        "requested_duration_sim_s": 120.0,
+        "actual_duration_sim_s": 120.3,
+        "full_requested_duration": true,
+        "full_600_sim_s": false,
+        "failure_stage": null,
+        "frozen_files_changed": [],
+        "wall_elapsed": 129.75211879899962,
+        "exit_codes": {
+          "record": 0,
+          "observer": 0,
+          "bridge": 0,
+          "adapter": 0,
+          "mapper": 0,
+          "navigation": 0,
+          "gazebo": 0
+        }
+      },
+      "bag_messages": 41673,
+      "all_video_frames_decoded": true,
+      "final_xy": [
+        0.22550264913490672,
+        0.2025162328909957
+      ]
+    },
+    {
+      "label": "b05_tare99",
+      "arm": "tare-geometric",
+      "seed": 99,
+      "tested_commit": "0e8d72c00a527a937438defaf147832b0699c33f",
+      "state": "RECORDED",
+      "duration_s": 120.3,
+      "distance_m": 4.493771693525095,
+      "distance_before_first_ready_sample_m": 0.3199560020392915,
+      "sampled_free_volume_m3": 501.04,
+      "completed": true,
+      "completed_at_sim_s": 18.87,
+      "final_mission_state": "COMPLETED",
+      "final_execution_status": "COMPLETED",
+      "map_source_age_p95_s": null,
+      "map_source_age_samples": 0,
+      "current_heading_low_runtime_samples": 0,
+      "zero_command_sample_fraction": 0.899581589958159,
+      "first_context_source_s": null,
+      "first_random_calls": [
+        "TARE_RANDOM_CALL seed=99 call=1 frontier=1 range=3",
+        "TARE_RANDOM_CALL seed=99 call=2 frontier=1 range=3",
+        "TARE_RANDOM_CALL seed=99 call=3 frontier=1 range=3",
+        "TARE_RANDOM_CALL seed=99 call=4 frontier=1 range=1"
+      ],
+      "runtime_reason_events": {
+        "TARE_STATE_STALE": 25,
+        "TARE_WAIT_START": 85,
+        "TARE_GEOMETRIC_COMMAND": 273,
+        "GEOMETRY_STALE_OR_INVALID": 42,
+        "TARE_COMPLETED": 2032
+      },
+      "state_transitions": [
+        [
+          0.0,
+          "mission_state",
+          "WAIT_START"
+        ],
+        [
+          0.0,
+          "ht_execution_status",
+          "WAIT_START"
+        ],
+        [
+          1.87,
+          "ht_execution_status",
+          "NO_EXECUTABLE_ROUTE"
+        ],
+        [
+          3.12,
+          "mission_state",
+          "BLOCKED"
+        ],
+        [
+          3.12,
+          "ht_execution_status",
+          "GEOMETRIC"
+        ],
+        [
+          3.12,
+          "mission_state",
+          "EXPLORING"
+        ],
+        [
+          9.05,
+          "mission_state",
+          "RETURNING_HOME"
+        ],
+        [
+          15.94,
+          "ht_execution_status",
+          "HOME_SETTLING"
+        ],
+        [
+          18.87,
+          "mission_state",
+          "COMPLETED"
+        ],
+        [
+          18.87,
+          "ht_execution_status",
+          "COMPLETED"
+        ]
+      ],
+      "run_result": {
+        "render_backend": "egl",
+        "actual_gl_renderers": [
+          "NVIDIA GeForce RTX 5060 Ti/PCIe/SSE2"
+        ],
+        "renderer_verified": true,
+        "managed_shutdown_nonzero": {},
+        "ros_launch_child_nonzero": {},
+        "error": null,
+        "requested_duration_sim_s": 120.0,
+        "actual_duration_sim_s": 120.3,
+        "full_requested_duration": true,
+        "full_600_sim_s": false,
+        "failure_stage": null,
+        "frozen_files_changed": [],
+        "wall_elapsed": 126.18375163199971,
+        "exit_codes": {
+          "record": 0,
+          "observer": 0,
+          "bridge": 0,
+          "adapter": 0,
+          "mapper": 0,
+          "navigation": 0,
+          "gazebo": 0
+        }
+      },
+      "bag_messages": 41797,
+      "all_video_frames_decoded": true,
+      "final_xy": [
+        0.2823685727308473,
+        0.0384579603697917
+      ]
+    },
+    {
+      "label": "b06_tare42_repeat",
+      "arm": "tare-geometric",
+      "seed": 42,
+      "tested_commit": "8dba24a3d6f3d23dfacbdb4fc05e1e0cddac7384",
+      "state": "RECORDED",
+      "duration_s": 120.3,
+      "distance_m": 5.366062827621515,
+      "distance_before_first_ready_sample_m": 0.3199560020392915,
+      "sampled_free_volume_m3": 490.088,
+      "completed": true,
+      "completed_at_sim_s": 20.15,
+      "final_mission_state": "COMPLETED",
+      "final_execution_status": "COMPLETED",
+      "map_source_age_p95_s": null,
+      "map_source_age_samples": 0,
+      "current_heading_low_runtime_samples": 0,
+      "zero_command_sample_fraction": 0.895397489539749,
+      "first_context_source_s": null,
+      "first_random_calls": [
+        "TARE_RANDOM_CALL seed=42 call=1 frontier=1 range=3",
+        "TARE_RANDOM_CALL seed=42 call=2 frontier=1 range=2",
+        "TARE_RANDOM_CALL seed=42 call=3 frontier=1 range=1"
+      ],
+      "runtime_reason_events": {
+        "TARE_STATE_STALE": 25,
+        "TARE_WAIT_START": 88,
+        "TARE_GEOMETRIC_COMMAND": 301,
+        "GEOMETRY_STALE_OR_INVALID": 46,
+        "TARE_PATH_STALE_OR_EMPTY": 5,
+        "TARE_COMPLETED": 2007
+      },
+      "state_transitions": [
+        [
+          0.0,
+          "mission_state",
+          "WAIT_START"
+        ],
+        [
+          0.0,
+          "ht_execution_status",
+          "WAIT_START"
+        ],
+        [
+          1.15,
+          "ht_execution_status",
+          "NO_EXECUTABLE_ROUTE"
+        ],
+        [
+          2.58,
+          "mission_state",
+          "BLOCKED"
+        ],
+        [
+          2.58,
+          "mission_state",
+          "EXPLORING"
+        ],
+        [
+          2.58,
+          "ht_execution_status",
+          "GEOMETRIC"
+        ],
+        [
+          8.33,
+          "mission_state",
+          "RETURNING_HOME"
+        ],
+        [
+          17.21,
+          "ht_execution_status",
+          "HOME_SETTLING"
+        ],
+        [
+          20.15,
+          "ht_execution_status",
+          "COMPLETED"
+        ],
+        [
+          20.15,
+          "mission_state",
+          "COMPLETED"
+        ]
+      ],
+      "run_result": {
+        "render_backend": "egl",
+        "actual_gl_renderers": [
+          "NVIDIA GeForce RTX 5060 Ti/PCIe/SSE2"
+        ],
+        "renderer_verified": true,
+        "managed_shutdown_nonzero": {},
+        "ros_launch_child_nonzero": {},
+        "error": null,
+        "requested_duration_sim_s": 120.0,
+        "actual_duration_sim_s": 120.3,
+        "full_requested_duration": true,
+        "full_600_sim_s": false,
+        "failure_stage": null,
+        "frozen_files_changed": [],
+        "wall_elapsed": 126.29993496599991,
+        "exit_codes": {
+          "record": 0,
+          "observer": 0,
+          "bridge": 0,
+          "adapter": 0,
+          "mapper": 0,
+          "navigation": 0,
+          "gazebo": 0
+        }
+      },
+      "bag_messages": 41647,
+      "all_video_frames_decoded": true,
+      "final_xy": [
+        0.33113640802774297,
+        0.02230982309286884
+      ]
+    }
+  ],
+  "comparison_type": "Current-fork TARE geometric+CMU vs HT-assisted native TARE, end-to-end, not untouched-upstream baseline or neural-only ablation",
+  "metric_note": "Observed free volume is the common source-second sampled LiDAR ray/voxel union inside the +/-15m crop, not physical coverage truth; tiny stationary pose/ray changes may increase it. No externally certified reachable task set is available. Failed teardown runs are shown and retained, not counted as all-checks-passed. Source-age metric remains producer1Hz.",
+  "clean_pairs": [
+    {
+      "seed": 42,
+      "ht": "b02_single42",
+      "tare": "b06_tare42_repeat",
+      "ht_free_volume_m3": 993.8480000000001,
+      "tare_free_volume_m3": 490.088,
+      "ht_vs_tare_volume_percent": 102.78970307373369,
+      "ht_distance_m": 27.37037498389858,
+      "tare_distance_m": 5.366062827621515,
+      "both_clean": true,
+      "note": "One pair per seed; fixed run order and asynchronous inputs; lifecycle-only differences recorded. No statistical superiority claim."
+    },
+    {
+      "seed": 99,
+      "ht": "b03_single99",
+      "tare": "b05_tare99",
+      "ht_free_volume_m3": 420.624,
+      "tare_free_volume_m3": 501.04,
+      "ht_vs_tare_volume_percent": -16.049816381925595,
+      "ht_distance_m": 1.2300815990900087,
+      "tare_distance_m": 4.493771693525095,
+      "both_clean": true,
+      "note": "One pair per seed; fixed run order and asynchronous inputs; lifecycle-only differences recorded. No statistical superiority claim."
+    }
+  ]
+}

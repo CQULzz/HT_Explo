@@ -2,7 +2,7 @@
   "batch": "linux-cycle7-20261106",
   "authorized_max_simulations": 6,
   "duration_sim_seconds": 120,
-  "used": 5,
+  "used": 6,
   "runs": [
     {
       "number": 1,
@@ -225,6 +225,53 @@
       "actual_duration_s": 120.3,
       "error": null,
       "nonzero": {}
+    },
+    {
+      "navigation": "tare-geometric",
+      "number": 6,
+      "label": "b06_tare42_repeat",
+      "role": "control",
+      "seed": 42,
+      "state": "RECORDED",
+      "tested_commit": "8dba24a3d6f3d23dfacbdb4fc05e1e0cddac7384",
+      "command": [
+        "/usr/bin/python3",
+        "/home/lzz/HT_linux_cycle7_20261106/repo/tools/pcd_sim/run_sim.py",
+        "--runtime",
+        "/home/lzz/HT_linux_cycle7_20261106/runtime",
+        "--project",
+        "/home/lzz/HT_linux_cycle7_20261106/repo",
+        "--mapper-workspace",
+        "/home/lzz/my test/ht_cupy_gpu_ws_20261028",
+        "--output-root",
+        "/home/lzz/HT_linux_cycle7_20261106/runs",
+        "--label",
+        "b06_tare42_repeat",
+        "--duration",
+        "120",
+        "--domain",
+        "221",
+        "--render-backend",
+        "egl",
+        "--ht-processing-mode",
+        "worker",
+        "--mapper-executor",
+        "single",
+        "--context-interval",
+        "10",
+        "--seed",
+        "42",
+        "--navigation",
+        "tare-geometric",
+        "--cmu-workspace",
+        "/home/lzz/HT_linux_cycle7_20261106/cmu"
+      ],
+      "started_utc": "2026-11-05T17:28:03.529741+00:00",
+      "runner_exit_code": 0,
+      "wall_s": 126.50008426700015,
+      "actual_duration_s": 120.3,
+      "error": null,
+      "nonzero": {}
     }
   ],
   "failures_count": true,
@@ -232,5 +279,9 @@
   "release_authorized": false,
   "hardware_authorized": false,
   "source_branch": "fix/scout-wsl120-20261105",
-  "handoff_commit": "ea9bdcb71611452a795958b000fe7b5a0f51257c"
+  "handoff_commit": "ea9bdcb71611452a795958b000fe7b5a0f51257c",
+  "batch_state": "STOPPED_BUDGET_EXHAUSTED",
+  "coverage_acceptance_met": false,
+  "stop_reason": "Authorized six attempts exhausted; no seventh simulation",
+  "closed_utc": "2026-11-05T17:34:04.524960+00:00"
 }

@@ -1,0 +1,63 @@
+{
+  "label": "b06_tare42_repeat",
+  "tested_commit": "8dba24a3d6f3d23dfacbdb4fc05e1e0cddac7384",
+  "done": {
+    "elapsed_sim": 120.3,
+    "elapsed_wall": 123.88059302200008,
+    "distance": 5.366062827621515,
+    "free_volume": 490.088,
+    "mission_completed": true,
+    "counts": {
+      "ht_follower_status": 2472,
+      "runtime_status": 2472,
+      "mission_state": 139,
+      "ht_execution_status": 139,
+      "odom": 2409,
+      "input_status": 3656,
+      "input_performance": 120
+    },
+    "video_frames": 241
+  },
+  "run_result": {
+    "render_backend": "egl",
+    "actual_gl_renderers": [
+      "NVIDIA GeForce RTX 5060 Ti/PCIe/SSE2"
+    ],
+    "renderer_verified": true,
+    "managed_shutdown_nonzero": {},
+    "ros_launch_child_nonzero": {},
+    "error": null,
+    "requested_duration_sim_s": 120.0,
+    "actual_duration_sim_s": 120.3,
+    "full_requested_duration": true,
+    "full_600_sim_s": false,
+    "failure_stage": null,
+    "frozen_files_changed": [],
+    "wall_elapsed": 126.29993496599991,
+    "exit_codes": {
+      "record": 0,
+      "observer": 0,
+      "bridge": 0,
+      "adapter": 0,
+      "mapper": 0,
+      "navigation": 0,
+      "gazebo": 0
+    }
+  },
+  "runtime_reason_event_counts": {
+    "TARE_STATE_STALE": 25,
+    "TARE_WAIT_START": 88,
+    "TARE_GEOMETRIC_COMMAND": 301,
+    "GEOMETRY_STALE_OR_INVALID": 46,
+    "TARE_PATH_STALE_OR_EMPTY": 5,
+    "TARE_COMPLETED": 2007
+  },
+  "map_source_age_at_publish_s": null,
+  "map_source_age_at_callback_s": null,
+  "ht_callback_service_s": null,
+  "sampled_zero_command_fraction": 0.895397489539749,
+  "distance_before_ready_m": 0.3199560020392915,
+  "distance_after_first_ready_sample_m": 5.046106825582223,
+  "map_age_sample_count": 0,
+  "metric_note": "Distance is cumulative ground-truth XY, includes gravity settling/slip before READY. Free volume is sampled LiDAR ray-voxel union, not ground-truth scene coverage. Runtime reason counts are events, not seconds; zero fraction is ~2Hz telemetry samples."
+}
