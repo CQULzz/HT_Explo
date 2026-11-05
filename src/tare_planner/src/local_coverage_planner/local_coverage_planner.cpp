@@ -26,6 +26,13 @@ bool LocalCoveragePlannerParameter::ReadParameters(rclcpp::Node::SharedPtr nh) {
 LocalCoveragePlanner::LocalCoveragePlanner(rclcpp::Node::SharedPtr nh)
     : node_(nh),lookahead_point_update_(false), use_frontier_(true),
       local_coverage_complete_(false) {
+  if (!nh->has_parameter("tare_sampling_seed")) nh->declare_parameter<std::int64_t>("tare_sampling_seed",-1);
+  sampling_seed_=nh->get_parameter("tare_sampling_seed").as_int();
+  if (sampling_seed_<-1 || sampling_seed_>4294967295LL)
+    throw std::invalid_argument("tare_sampling_seed must be -1 or uint32");
+  if (sampling_seed_>=0) sampling_rng_.seed(static_cast<std::uint32_t>(sampling_seed_));
+  RCLCPP_INFO(nh->get_logger(),"TARE_RANDOM seed=%lld mode=%s",
+    static_cast<long long>(sampling_seed_),sampling_seed_<0?"random_device":"fixed_stream");
   parameters_.ReadParameters(nh);
   tare_order_pub_=nh->create_publisher<std_msgs::msg::String>("/tare_tsp_order",10);
   ht_path_pub_=nh->create_publisher<nav_msgs::msg::Path>("/ht_xytheta_path",rclcpp::QoS(1).reliable());
@@ -284,8 +291,12 @@ void LocalCoveragePlanner::SelectViewPoint(
 
   sample_range =
       std::min(parameters_.kGreedyViewPointSampleRange, sample_range);
-  std::random_device rd;
-  std::mt19937 gen(rd());
+  std::mt19937 gen;
+  if (sampling_seed_<0) gen.seed(std::random_device{}());
+  else gen=sampling_rng_;
+  ++sampling_calls_;
+  RCLCPP_INFO(node_->get_logger(),"TARE_RANDOM_CALL seed=%lld call=%lu frontier=%d range=%d",
+    static_cast<long long>(sampling_seed_),static_cast<unsigned long>(sampling_calls_),use_frontier,sample_range);
   std::uniform_int_distribution<int> gen_next_queue_idx(0, sample_range - 1);
   int queue_idx = gen_next_queue_idx(gen);
   int cur_ind = queue_copy[queue_idx].second;
@@ -376,6 +387,7 @@ void LocalCoveragePlanner::SelectViewPoint(
     queue_idx = gen_next_queue_idx(gen);
     cur_ind = queue_copy[queue_idx].second;
   }
+  if (sampling_seed_>=0) sampling_rng_=gen;
 }
 
 void LocalCoveragePlanner::SelectViewPointFromFrontierQueue(

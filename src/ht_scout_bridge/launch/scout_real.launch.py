@@ -87,7 +87,7 @@ def start(context):
                 'ht_small_hole_repair':arg('small_hole_repair','true').lower()=='true'}]),
         Node(package='tare_planner',executable='tare_planner_node',name='tare_planner_node',namespace='ht_real',output='screen',remappings=HARDWARE_REMAPS,
              parameters=[os.path.join(hw,'config','tare_scout.yaml'),config,common,
-                {'sub_start_exploration_topic_':'/ht_real/exploration_start','sub_state_estimation_topic_':'/ht_real/odometry','sub_registered_scan_topic_':'/ht_real/registered_scan',
+                {'tare_sampling_seed':int(arg('tare_sampling_seed','-1')),'sub_start_exploration_topic_':'/ht_real/exploration_start','sub_state_estimation_topic_':'/ht_real/odometry','sub_registered_scan_topic_':'/ht_real/registered_scan',
                  'sensor_origin_offset':sensor_offset}]),
         Node(package='tare_planner',executable='xytheta_follower',name='xytheta_follower',namespace='ht_real',output='screen',
              condition=IfCondition(str(policy.follower).lower()),
@@ -110,6 +110,7 @@ def start(context):
 def generate_launch_description():
     hw=get_package_share_directory('ht_scout_bridge')
     return LaunchDescription([
+        DeclareLaunchArgument('tare_sampling_seed',default_value='-1'),
         DeclareLaunchArgument('run_mode',default_value='inspect'),
         DeclareLaunchArgument('direction_acceptance',default_value='mapping'),
         DeclareLaunchArgument('direction_validation_file',default_value=os.path.join(hw,'config','direction_validation.yaml')),

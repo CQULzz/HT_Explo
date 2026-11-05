@@ -12,6 +12,8 @@
 
 #include <Eigen/Core>
 #include <set>
+#include <random>
+#include <cstdint>
 
 #include <rclcpp/rclcpp.hpp>
 #include <nav_msgs/msg/path.hpp>
@@ -107,6 +109,10 @@ public:
   void GetSelectedViewPointVisCloud(pcl::PointCloud<pcl::PointXYZI>::Ptr& cloud);
 
 private:
+  friend struct LocalCoveragePlannerTestAccess;
+  std::int64_t sampling_seed_=-1;
+  std::mt19937 sampling_rng_;
+  std::uint64_t sampling_calls_=0;
   int GetBoundaryViewpointIndex(const exploration_path_ns::ExplorationPath& global_path);
   void GetBoundaryViewpointIndices(exploration_path_ns::ExplorationPath global_path);
   void GetNavigationViewPointIndices(exploration_path_ns::ExplorationPath global_path,
