@@ -23,7 +23,7 @@ struct SamplingFixture {
   rclcpp::Node::SharedPtr node;
   std::shared_ptr<viewpoint_manager_ns::ViewPointManager> manager;
   std::unique_ptr<LocalCoveragePlanner> planner;
-  explicit SamplingFixture(std::int64_t seed=-1) {
+  explicit SamplingFixture(std::int64_t seed=-1,int window=3) {
     if (!rclcpp::ok()) rclcpp::init(0,nullptr);
     rclcpp::NodeOptions options;
     options.arguments({"--ros-args","--params-file",HT_SOURCE_ROOT "/config/indoor.yaml"});
@@ -31,7 +31,7 @@ struct SamplingFixture {
       rclcpp::Parameter("tare_sampling_seed",seed),
       rclcpp::Parameter("kMinAddPointNumSmall",40),
       rclcpp::Parameter("kMinAddFrontierPointNum",15),
-      rclcpp::Parameter("kGreedyViewPointSampleRange",3)});
+      rclcpp::Parameter("kGreedyViewPointSampleRange",window)});
     node=std::make_shared<rclcpp::Node>("tare_planner_node",options);
     for (const auto& entry:node->get_node_parameters_interface()->get_parameter_overrides())
       if (entry.first.rfind("ht_",0)!=0 && !node->has_parameter(entry.first))
@@ -117,4 +117,47 @@ TEST(TareResidualSampling, DisjointEligibleViewsAreSelectedExactlyOnce) {
     const std::set<int> unique(selected.begin(),selected.end());
     std::_Exit(selected.size()==3 && unique==std::set<int>({0,1,2}) ? 0:5);
   },::testing::ExitedWithCode(0),"");
+}
+
+TEST(TareFrontierContinuation, ResidualFrontiersUseTheirAcceptedMinimum) {
+  for (const int seed : {0,1,42,99}) {
+    for (const int gain : {14,15,39,40}) {
+      SCOPED_TRACE("seed=" + std::to_string(seed) + " gain=" + std::to_string(gain));
+      SamplingFixture f(seed);
+      for (int id=0;id<2;++id) {
+        f.manager->ResetViewPointCoveredPointList(id);
+        for (int p=0;p<gain;++p)
+          f.manager->AddUncoveredFrontierPoint(id,id*gain+p);
+      }
+      const auto selected=LocalCoveragePlannerTestAccess::select(
+        *f.planner,{{gain,0},{gain,1}},gain*2,true);
+      if (gain<15) {
+        EXPECT_TRUE(selected.empty());
+      } else {
+        EXPECT_EQ(selected.size(),2u);
+        EXPECT_EQ(std::set<int>(selected.begin(),selected.end()),std::set<int>({0,1}));
+      }
+    }
+  }
+}
+
+TEST(TareFrontierContinuation, SurfaceMinimumRemainsForty) {
+  for (const int gain : {39,40}) {
+    SamplingFixture f(42);
+    for (int id=0;id<2;++id) {
+      f.manager->ResetViewPointCoveredPointList(id);
+      for (int p=0;p<gain;++p) f.manager->AddUncoveredPoint(id,id*gain+p);
+    }
+    const auto selected=LocalCoveragePlannerTestAccess::select(
+      *f.planner,{{gain,0},{gain,1}},gain*2);
+    if (gain<40) EXPECT_TRUE(selected.empty());
+    else EXPECT_EQ(std::set<int>(selected.begin(),selected.end()),std::set<int>({0,1}));
+  }
+}
+
+TEST(TareSamplingWindow, NonpositiveWindowIsRejectedBeforeSelection) {
+  EXPECT_THROW(SamplingFixture(42,0),std::invalid_argument);
+  EXPECT_THROW(SamplingFixture(42,-1),std::invalid_argument);
+  EXPECT_NO_THROW(SamplingFixture(42,1));
+  EXPECT_NO_THROW(SamplingFixture(42,3));
 }

@@ -1,0 +1,9 @@
+{
+  "baseline_head": "ec1a14564f6687d9946a50bd48b5cd5ebdc1ddbb",
+  "baseline_production_sha256": "6c49e904700e398cdb3fec40682d0e0f35592a91c158f64c0a87c055cbcaef81",
+  "shared_test_sha256": "5739b48343956f0d694cd31ae58e25dedbced49a0f33478790ac092b4212e502",
+  "simulation_runs": 0,
+  "candidate_production_sha256": "d36f7909d41bfb0445be7ebbcb8e4b5d7dd9bdce9759d8cea0c495b3dc08967c",
+  "command": "source runtime/env.sh; colcon build --build-base build_real --install-base install_real --packages-select tare_planner --cmake-args -DBUILD_TESTING=ON; ROS_DOMAIN_ID=229 HT_CONFIGURATION_FIXTURE=$PWD/docs/fixes/fixtures/mixed_turn_stop.txt ctest --test-dir build_real/tare_planner --output-on-failure",
+  "local_sampling_test_binary_sha256": "d8f4e17cd30a777c46b49deca9e77297b86763895749ba0070c02cae2a944e38"
+}

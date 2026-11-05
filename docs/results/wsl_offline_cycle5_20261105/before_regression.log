@@ -1,0 +1,279 @@
+Running main() from /opt/ros/jazzy/src/gtest_vendor/src/gtest_main.cc
+Note: Google Test filter = TareFrontierContinuation.*:TareSamplingWindow.*
+[==========] Running 3 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 2 tests from TareFrontierContinuation
+[ RUN      ] TareFrontierContinuation.ResidualFrontiersUseTheirAcceptedMinimum
+[WARN] [1793879140.631620439] [rcl]: ROS_LOCALHOST_ONLY is deprecated but still honored if it is enabled. Use ROS_AUTOMATIC_DISCOVERY_RANGE and ROS_STATIC_PEERS instead.
+[WARN] [1793879140.631639072] [rcl]: 'localhost_only' is enabled, 'automatic_discovery_range' and 'static_peers' will be ignored.
+[INFO] [1793879140.859398659] [tare_planner_node]: TARE_RANDOM seed=0 mode=fixed_stream
+[INFO] [1793879140.863350311] [tare_planner_node]: XYtheta configuration: headings=32 cell=0.300 step=0.400 heading_reserve_rad=0.000 search_s=0.150 cycle_search_s=0.350
+[INFO] [1793879140.863380971] [tare_planner_node]: XYtheta motion angle=11.250 deg (independent of heading bins)
+[INFO] [1793879140.863384396] [tare_planner_node]: XYtheta motion angle=22.500 deg (independent of heading bins)
+[INFO] [1793879141.071883104] [tare_planner_node]: TARE_RANDOM seed=0 mode=fixed_stream
+[INFO] [1793879141.073567125] [tare_planner_node]: XYtheta configuration: headings=32 cell=0.300 step=0.400 heading_reserve_rad=0.000 search_s=0.150 cycle_search_s=0.350
+[INFO] [1793879141.073606984] [tare_planner_node]: XYtheta motion angle=11.250 deg (independent of heading bins)
+[INFO] [1793879141.073611082] [tare_planner_node]: XYtheta motion angle=22.500 deg (independent of heading bins)
+[INFO] [1793879141.073628823] [tare_planner_node]: TARE_RANDOM_CALL seed=0 call=1 frontier=1 range=2
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/tests/local_sampling_test.cpp:137: Failure
+Expected equality of these values:
+  selected.size()
+    Which is: 1
+  2u
+    Which is: 2
+Google Test trace:
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/tests/local_sampling_test.cpp:125: seed=0 gain=15
+
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/tests/local_sampling_test.cpp:138: Failure
+Expected equality of these values:
+  std::set<int>(selected.begin(),selected.end())
+    Which is: { 1 }
+  std::set<int>({0,1})
+    Which is: { 0, 1 }
+Google Test trace:
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/tests/local_sampling_test.cpp:125: seed=0 gain=15
+
+[INFO] [1793879141.291701875] [tare_planner_node]: TARE_RANDOM seed=0 mode=fixed_stream
+[INFO] [1793879141.292921138] [tare_planner_node]: XYtheta configuration: headings=32 cell=0.300 step=0.400 heading_reserve_rad=0.000 search_s=0.150 cycle_search_s=0.350
+[INFO] [1793879141.292944638] [tare_planner_node]: XYtheta motion angle=11.250 deg (independent of heading bins)
+[INFO] [1793879141.292948434] [tare_planner_node]: XYtheta motion angle=22.500 deg (independent of heading bins)
+[INFO] [1793879141.292970975] [tare_planner_node]: TARE_RANDOM_CALL seed=0 call=1 frontier=1 range=2
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/tests/local_sampling_test.cpp:137: Failure
+Expected equality of these values:
+  selected.size()
+    Which is: 1
+  2u
+    Which is: 2
+Google Test trace:
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/tests/local_sampling_test.cpp:125: seed=0 gain=39
+
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/tests/local_sampling_test.cpp:138: Failure
+Expected equality of these values:
+  std::set<int>(selected.begin(),selected.end())
+    Which is: { 1 }
+  std::set<int>({0,1})
+    Which is: { 0, 1 }
+Google Test trace:
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/tests/local_sampling_test.cpp:125: seed=0 gain=39
+
+[INFO] [1793879141.489228355] [tare_planner_node]: TARE_RANDOM seed=0 mode=fixed_stream
+[INFO] [1793879141.490202938] [tare_planner_node]: XYtheta configuration: headings=32 cell=0.300 step=0.400 heading_reserve_rad=0.000 search_s=0.150 cycle_search_s=0.350
+[INFO] [1793879141.490218788] [tare_planner_node]: XYtheta motion angle=11.250 deg (independent of heading bins)
+[INFO] [1793879141.490221964] [tare_planner_node]: XYtheta motion angle=22.500 deg (independent of heading bins)
+[INFO] [1793879141.490241096] [tare_planner_node]: TARE_RANDOM_CALL seed=0 call=1 frontier=1 range=2
+[INFO] [1793879141.676768774] [tare_planner_node]: TARE_RANDOM seed=1 mode=fixed_stream
+[INFO] [1793879141.677921287] [tare_planner_node]: XYtheta configuration: headings=32 cell=0.300 step=0.400 heading_reserve_rad=0.000 search_s=0.150 cycle_search_s=0.350
+[INFO] [1793879141.677946503] [tare_planner_node]: XYtheta motion angle=11.250 deg (independent of heading bins)
+[INFO] [1793879141.677963827] [tare_planner_node]: XYtheta motion angle=22.500 deg (independent of heading bins)
+[INFO] [1793879141.863775820] [tare_planner_node]: TARE_RANDOM seed=1 mode=fixed_stream
+[INFO] [1793879141.864766146] [tare_planner_node]: XYtheta configuration: headings=32 cell=0.300 step=0.400 heading_reserve_rad=0.000 search_s=0.150 cycle_search_s=0.350
+[INFO] [1793879141.864783393] [tare_planner_node]: XYtheta motion angle=11.250 deg (independent of heading bins)
+[INFO] [1793879141.864786659] [tare_planner_node]: XYtheta motion angle=22.500 deg (independent of heading bins)
+[INFO] [1793879141.864800548] [tare_planner_node]: TARE_RANDOM_CALL seed=1 call=1 frontier=1 range=2
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/tests/local_sampling_test.cpp:137: Failure
+Expected equality of these values:
+  selected.size()
+    Which is: 1
+  2u
+    Which is: 2
+Google Test trace:
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/tests/local_sampling_test.cpp:125: seed=1 gain=15
+
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/tests/local_sampling_test.cpp:138: Failure
+Expected equality of these values:
+  std::set<int>(selected.begin(),selected.end())
+    Which is: { 0 }
+  std::set<int>({0,1})
+    Which is: { 0, 1 }
+Google Test trace:
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/tests/local_sampling_test.cpp:125: seed=1 gain=15
+
+[INFO] [1793879142.049115732] [tare_planner_node]: TARE_RANDOM seed=1 mode=fixed_stream
+[INFO] [1793879142.050198868] [tare_planner_node]: XYtheta configuration: headings=32 cell=0.300 step=0.400 heading_reserve_rad=0.000 search_s=0.150 cycle_search_s=0.350
+[INFO] [1793879142.050220617] [tare_planner_node]: XYtheta motion angle=11.250 deg (independent of heading bins)
+[INFO] [1793879142.050223660] [tare_planner_node]: XYtheta motion angle=22.500 deg (independent of heading bins)
+[INFO] [1793879142.050253320] [tare_planner_node]: TARE_RANDOM_CALL seed=1 call=1 frontier=1 range=2
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/tests/local_sampling_test.cpp:137: Failure
+Expected equality of these values:
+  selected.size()
+    Which is: 1
+  2u
+    Which is: 2
+Google Test trace:
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/tests/local_sampling_test.cpp:125: seed=1 gain=39
+
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/tests/local_sampling_test.cpp:138: Failure
+Expected equality of these values:
+  std::set<int>(selected.begin(),selected.end())
+    Which is: { 0 }
+  std::set<int>({0,1})
+    Which is: { 0, 1 }
+Google Test trace:
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/tests/local_sampling_test.cpp:125: seed=1 gain=39
+
+[INFO] [1793879142.236043006] [tare_planner_node]: TARE_RANDOM seed=1 mode=fixed_stream
+[INFO] [1793879142.237043489] [tare_planner_node]: XYtheta configuration: headings=32 cell=0.300 step=0.400 heading_reserve_rad=0.000 search_s=0.150 cycle_search_s=0.350
+[INFO] [1793879142.237076003] [tare_planner_node]: XYtheta motion angle=11.250 deg (independent of heading bins)
+[INFO] [1793879142.237079257] [tare_planner_node]: XYtheta motion angle=22.500 deg (independent of heading bins)
+[INFO] [1793879142.237096020] [tare_planner_node]: TARE_RANDOM_CALL seed=1 call=1 frontier=1 range=2
+[INFO] [1793879142.426808137] [tare_planner_node]: TARE_RANDOM seed=42 mode=fixed_stream
+[INFO] [1793879142.428007027] [tare_planner_node]: XYtheta configuration: headings=32 cell=0.300 step=0.400 heading_reserve_rad=0.000 search_s=0.150 cycle_search_s=0.350
+[INFO] [1793879142.428029167] [tare_planner_node]: XYtheta motion angle=11.250 deg (independent of heading bins)
+[INFO] [1793879142.428037191] [tare_planner_node]: XYtheta motion angle=22.500 deg (independent of heading bins)
+[INFO] [1793879142.631335618] [tare_planner_node]: TARE_RANDOM seed=42 mode=fixed_stream
+[INFO] [1793879142.632553498] [tare_planner_node]: XYtheta configuration: headings=32 cell=0.300 step=0.400 heading_reserve_rad=0.000 search_s=0.150 cycle_search_s=0.350
+[INFO] [1793879142.632575440] [tare_planner_node]: XYtheta motion angle=11.250 deg (independent of heading bins)
+[INFO] [1793879142.632579173] [tare_planner_node]: XYtheta motion angle=22.500 deg (independent of heading bins)
+[INFO] [1793879142.632595616] [tare_planner_node]: TARE_RANDOM_CALL seed=42 call=1 frontier=1 range=2
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/tests/local_sampling_test.cpp:137: Failure
+Expected equality of these values:
+  selected.size()
+    Which is: 1
+  2u
+    Which is: 2
+Google Test trace:
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/tests/local_sampling_test.cpp:125: seed=42 gain=15
+
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/tests/local_sampling_test.cpp:138: Failure
+Expected equality of these values:
+  std::set<int>(selected.begin(),selected.end())
+    Which is: { 0 }
+  std::set<int>({0,1})
+    Which is: { 0, 1 }
+Google Test trace:
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/tests/local_sampling_test.cpp:125: seed=42 gain=15
+
+[INFO] [1793879142.834148731] [tare_planner_node]: TARE_RANDOM seed=42 mode=fixed_stream
+[INFO] [1793879142.835275378] [tare_planner_node]: XYtheta configuration: headings=32 cell=0.300 step=0.400 heading_reserve_rad=0.000 search_s=0.150 cycle_search_s=0.350
+[INFO] [1793879142.835295630] [tare_planner_node]: XYtheta motion angle=11.250 deg (independent of heading bins)
+[INFO] [1793879142.835298660] [tare_planner_node]: XYtheta motion angle=22.500 deg (independent of heading bins)
+[INFO] [1793879142.835313671] [tare_planner_node]: TARE_RANDOM_CALL seed=42 call=1 frontier=1 range=2
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/tests/local_sampling_test.cpp:137: Failure
+Expected equality of these values:
+  selected.size()
+    Which is: 1
+  2u
+    Which is: 2
+Google Test trace:
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/tests/local_sampling_test.cpp:125: seed=42 gain=39
+
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/tests/local_sampling_test.cpp:138: Failure
+Expected equality of these values:
+  std::set<int>(selected.begin(),selected.end())
+    Which is: { 0 }
+  std::set<int>({0,1})
+    Which is: { 0, 1 }
+Google Test trace:
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/tests/local_sampling_test.cpp:125: seed=42 gain=39
+
+[INFO] [1793879143.024827181] [tare_planner_node]: TARE_RANDOM seed=42 mode=fixed_stream
+[INFO] [1793879143.025805012] [tare_planner_node]: XYtheta configuration: headings=32 cell=0.300 step=0.400 heading_reserve_rad=0.000 search_s=0.150 cycle_search_s=0.350
+[INFO] [1793879143.025821093] [tare_planner_node]: XYtheta motion angle=11.250 deg (independent of heading bins)
+[INFO] [1793879143.025824079] [tare_planner_node]: XYtheta motion angle=22.500 deg (independent of heading bins)
+[INFO] [1793879143.025838021] [tare_planner_node]: TARE_RANDOM_CALL seed=42 call=1 frontier=1 range=2
+[INFO] [1793879143.210966511] [tare_planner_node]: TARE_RANDOM seed=99 mode=fixed_stream
+[INFO] [1793879143.212205762] [tare_planner_node]: XYtheta configuration: headings=32 cell=0.300 step=0.400 heading_reserve_rad=0.000 search_s=0.150 cycle_search_s=0.350
+[INFO] [1793879143.212224350] [tare_planner_node]: XYtheta motion angle=11.250 deg (independent of heading bins)
+[INFO] [1793879143.212228825] [tare_planner_node]: XYtheta motion angle=22.500 deg (independent of heading bins)
+[INFO] [1793879143.396691520] [tare_planner_node]: TARE_RANDOM seed=99 mode=fixed_stream
+[INFO] [1793879143.397918967] [tare_planner_node]: XYtheta configuration: headings=32 cell=0.300 step=0.400 heading_reserve_rad=0.000 search_s=0.150 cycle_search_s=0.350
+[INFO] [1793879143.397940744] [tare_planner_node]: XYtheta motion angle=11.250 deg (independent of heading bins)
+[INFO] [1793879143.397943795] [tare_planner_node]: XYtheta motion angle=22.500 deg (independent of heading bins)
+[INFO] [1793879143.397974002] [tare_planner_node]: TARE_RANDOM_CALL seed=99 call=1 frontier=1 range=2
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/tests/local_sampling_test.cpp:137: Failure
+Expected equality of these values:
+  selected.size()
+    Which is: 1
+  2u
+    Which is: 2
+Google Test trace:
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/tests/local_sampling_test.cpp:125: seed=99 gain=15
+
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/tests/local_sampling_test.cpp:138: Failure
+Expected equality of these values:
+  std::set<int>(selected.begin(),selected.end())
+    Which is: { 1 }
+  std::set<int>({0,1})
+    Which is: { 0, 1 }
+Google Test trace:
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/tests/local_sampling_test.cpp:125: seed=99 gain=15
+
+[INFO] [1793879143.588357695] [tare_planner_node]: TARE_RANDOM seed=99 mode=fixed_stream
+[INFO] [1793879143.589562490] [tare_planner_node]: XYtheta configuration: headings=32 cell=0.300 step=0.400 heading_reserve_rad=0.000 search_s=0.150 cycle_search_s=0.350
+[INFO] [1793879143.589583278] [tare_planner_node]: XYtheta motion angle=11.250 deg (independent of heading bins)
+[INFO] [1793879143.589586532] [tare_planner_node]: XYtheta motion angle=22.500 deg (independent of heading bins)
+[INFO] [1793879143.589611003] [tare_planner_node]: TARE_RANDOM_CALL seed=99 call=1 frontier=1 range=2
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/tests/local_sampling_test.cpp:137: Failure
+Expected equality of these values:
+  selected.size()
+    Which is: 1
+  2u
+    Which is: 2
+Google Test trace:
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/tests/local_sampling_test.cpp:125: seed=99 gain=39
+
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/tests/local_sampling_test.cpp:138: Failure
+Expected equality of these values:
+  std::set<int>(selected.begin(),selected.end())
+    Which is: { 1 }
+  std::set<int>({0,1})
+    Which is: { 0, 1 }
+Google Test trace:
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/tests/local_sampling_test.cpp:125: seed=99 gain=39
+
+[INFO] [1793879143.797082161] [tare_planner_node]: TARE_RANDOM seed=99 mode=fixed_stream
+[INFO] [1793879143.798342278] [tare_planner_node]: XYtheta configuration: headings=32 cell=0.300 step=0.400 heading_reserve_rad=0.000 search_s=0.150 cycle_search_s=0.350
+[INFO] [1793879143.798379308] [tare_planner_node]: XYtheta motion angle=11.250 deg (independent of heading bins)
+[INFO] [1793879143.798384590] [tare_planner_node]: XYtheta motion angle=22.500 deg (independent of heading bins)
+[INFO] [1793879143.798408043] [tare_planner_node]: TARE_RANDOM_CALL seed=99 call=1 frontier=1 range=2
+[  FAILED  ] TareFrontierContinuation.ResidualFrontiersUseTheirAcceptedMinimum (3186 ms)
+[ RUN      ] TareFrontierContinuation.SurfaceMinimumRemainsForty
+[INFO] [1793879144.010227867] [tare_planner_node]: TARE_RANDOM seed=42 mode=fixed_stream
+[INFO] [1793879144.011268699] [tare_planner_node]: XYtheta configuration: headings=32 cell=0.300 step=0.400 heading_reserve_rad=0.000 search_s=0.150 cycle_search_s=0.350
+[INFO] [1793879144.011289312] [tare_planner_node]: XYtheta motion angle=11.250 deg (independent of heading bins)
+[INFO] [1793879144.011292426] [tare_planner_node]: XYtheta motion angle=22.500 deg (independent of heading bins)
+[INFO] [1793879144.208056287] [tare_planner_node]: TARE_RANDOM seed=42 mode=fixed_stream
+[INFO] [1793879144.209217493] [tare_planner_node]: XYtheta configuration: headings=32 cell=0.300 step=0.400 heading_reserve_rad=0.000 search_s=0.150 cycle_search_s=0.350
+[INFO] [1793879144.209238766] [tare_planner_node]: XYtheta motion angle=11.250 deg (independent of heading bins)
+[INFO] [1793879144.209242273] [tare_planner_node]: XYtheta motion angle=22.500 deg (independent of heading bins)
+[INFO] [1793879144.209259022] [tare_planner_node]: TARE_RANDOM_CALL seed=42 call=1 frontier=0 range=2
+[       OK ] TareFrontierContinuation.SurfaceMinimumRemainsForty (410 ms)
+[----------] 2 tests from TareFrontierContinuation (3596 ms total)
+
+[----------] 1 test from TareSamplingWindow
+[ RUN      ] TareSamplingWindow.NonpositiveWindowIsRejectedBeforeSelection
+[INFO] [1793879144.414407476] [tare_planner_node]: TARE_RANDOM seed=42 mode=fixed_stream
+[INFO] [1793879144.415472433] [tare_planner_node]: XYtheta configuration: headings=32 cell=0.300 step=0.400 heading_reserve_rad=0.000 search_s=0.150 cycle_search_s=0.350
+[INFO] [1793879144.415491824] [tare_planner_node]: XYtheta motion angle=11.250 deg (independent of heading bins)
+[INFO] [1793879144.415495003] [tare_planner_node]: XYtheta motion angle=22.500 deg (independent of heading bins)
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/tests/local_sampling_test.cpp:159: Failure
+Expected: SamplingFixture(42,0) throws an exception of type std::invalid_argument.
+  Actual: it throws nothing.
+
+[INFO] [1793879144.607015013] [tare_planner_node]: TARE_RANDOM seed=42 mode=fixed_stream
+[INFO] [1793879144.608107229] [tare_planner_node]: XYtheta configuration: headings=32 cell=0.300 step=0.400 heading_reserve_rad=0.000 search_s=0.150 cycle_search_s=0.350
+[INFO] [1793879144.608124048] [tare_planner_node]: XYtheta motion angle=11.250 deg (independent of heading bins)
+[INFO] [1793879144.608127134] [tare_planner_node]: XYtheta motion angle=22.500 deg (independent of heading bins)
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/tests/local_sampling_test.cpp:160: Failure
+Expected: SamplingFixture(42,-1) throws an exception of type std::invalid_argument.
+  Actual: it throws nothing.
+
+[INFO] [1793879144.798497822] [tare_planner_node]: TARE_RANDOM seed=42 mode=fixed_stream
+[INFO] [1793879144.799504497] [tare_planner_node]: XYtheta configuration: headings=32 cell=0.300 step=0.400 heading_reserve_rad=0.000 search_s=0.150 cycle_search_s=0.350
+[INFO] [1793879144.799520331] [tare_planner_node]: XYtheta motion angle=11.250 deg (independent of heading bins)
+[INFO] [1793879144.799523377] [tare_planner_node]: XYtheta motion angle=22.500 deg (independent of heading bins)
+[INFO] [1793879144.989796835] [tare_planner_node]: TARE_RANDOM seed=42 mode=fixed_stream
+[INFO] [1793879144.991016300] [tare_planner_node]: XYtheta configuration: headings=32 cell=0.300 step=0.400 heading_reserve_rad=0.000 search_s=0.150 cycle_search_s=0.350
+[INFO] [1793879144.991035580] [tare_planner_node]: XYtheta motion angle=11.250 deg (independent of heading bins)
+[INFO] [1793879144.991038834] [tare_planner_node]: XYtheta motion angle=22.500 deg (independent of heading bins)
+[  FAILED  ] TareSamplingWindow.NonpositiveWindowIsRejectedBeforeSelection (780 ms)
+[----------] 1 test from TareSamplingWindow (780 ms total)
+
+[----------] Global test environment tear-down
+[==========] 3 tests from 2 test suites ran. (4377 ms total)
+[  PASSED  ] 1 test.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] TareFrontierContinuation.ResidualFrontiersUseTheirAcceptedMinimum
+[  FAILED  ] TareSamplingWindow.NonpositiveWindowIsRejectedBeforeSelection
+
+ 2 FAILED TESTS

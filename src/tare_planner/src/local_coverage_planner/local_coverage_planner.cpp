@@ -34,6 +34,8 @@ LocalCoveragePlanner::LocalCoveragePlanner(rclcpp::Node::SharedPtr nh)
   RCLCPP_INFO(nh->get_logger(),"TARE_RANDOM seed=%lld mode=%s",
     static_cast<long long>(sampling_seed_),sampling_seed_<0?"random_device":"fixed_stream");
   parameters_.ReadParameters(nh);
+  if (parameters_.kGreedyViewPointSampleRange <= 0)
+    throw std::invalid_argument("kGreedyViewPointSampleRange must be positive");
   tare_order_pub_=nh->create_publisher<std_msgs::msg::String>("/tare_tsp_order",10);
   ht_path_pub_=nh->create_publisher<nav_msgs::msg::Path>("/ht_xytheta_path",rclcpp::QoS(1).reliable());
   ht_rejection_sub_=nh->create_subscription<nav_msgs::msg::Path>("/ht_execution_rejected_edge",5,
@@ -357,15 +359,11 @@ void LocalCoveragePlanner::SelectViewPoint(
 
     std::sort(queue_copy.begin(), queue_copy.end(), SortPairInRev);
 
-    if (queue_copy.empty() ||
-        queue_copy[0].first < parameters_.kMinAddPointNum) {
+    // Residual eligibility must match the queue admission threshold.
+    const int min_gain = use_frontier ? parameters_.kMinAddFrontierPointNum
+                                     : parameters_.kMinAddPointNum;
+    if (queue_copy.empty() || queue_copy[0].first < min_gain) {
       break;
-    }
-    if (use_frontier) {
-      if (queue_copy.empty() ||
-          queue_copy[0].first < parameters_.kMinAddFrontierPointNum) {
-        break;
-      }
     }
 
     // Size the next draw from remaining entries and their updated gains.

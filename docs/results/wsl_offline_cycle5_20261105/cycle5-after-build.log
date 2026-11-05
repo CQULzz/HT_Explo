@@ -1,0 +1,121 @@
+[0.675s] WARNING:colcon.colcon_core.package_selection:Some selected packages are already built in one or more underlay workspaces:
+	'tare_planner' is in: /home/lzz/HT_stop_fix_20261104/project/install_real/tare_planner
+If a package in a merged underlay workspace is overridden and it installs headers, then all packages in the overlay must sort their include directories by workspace order. Failure to do so may result in build failures or undefined behavior at run time.
+If the overridden package is used by another package in any underlay, then the overriding package in the overlay must be API and ABI compatible or undefined behavior at run time may occur.
+
+If you understand the risks and want to override a package anyways, add the following to the command line:
+	--allow-overriding tare_planner
+
+This may be promoted to an error in a future release of colcon-override-check.
+Starting >>> tare_planner
+--- stderr: tare_planner
+In file included from /home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/include/grid/grid.h:15,
+                 from /home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/include/grid_world/grid_world.h:27,
+                 from /home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/include/local_coverage_planner/local_coverage_planner.h:22,
+                 from /home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp:12:
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/include/utils/misc_utils.h:69:85: warning: ‘nav_msgs::msg::Odometry_<std::allocator<void> >::ConstPtr’ is deprecated [-Wdeprecated-declarations]
+   69 | void KeyposeToMap(CloudType& cloud, const nav_msgs::msg::Odometry::ConstPtr& keypose);
+      |                                                                                     ^
+In file included from /opt/ros/jazzy/include/nav_msgs/nav_msgs/msg/odometry.hpp:7,
+                 from /home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/include/utils/misc_utils.h:15:
+/opt/ros/jazzy/include/nav_msgs/nav_msgs/msg/detail/odometry__struct.hpp:150:5: note: declared here
+  150 |     ConstPtr;
+      |     ^~~~~~~~
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/include/utils/misc_utils.h: In constructor ‘misc_utils_ns::Marker::Marker(rclcpp::Node::SharedPtr, std::string, std::string)’:
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/include/utils/misc_utils.h:299:27: warning: ‘misc_utils_ns::Marker::nh_’ will be initialized after [-Wreorder]
+  299 |   rclcpp::Node::SharedPtr nh_;
+      |                           ^~~
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/include/utils/misc_utils.h:296:15: warning:   ‘std::string misc_utils_ns::Marker::pub_topic_’ [-Wreorder]
+  296 |   std::string pub_topic_;
+      |               ^~~~~~~~~~
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/include/utils/misc_utils.h:304:12: warning:   when initialized here [-Wreorder]
+  304 |   explicit Marker(rclcpp::Node::SharedPtr nh, std::string pub_topic, std::string frame_id)
+      |            ^~~~~~
+In file included from /home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/include/grid_world/grid_world.h:29:
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/include/keypose_graph/keypose_graph.h: In member function ‘bool keypose_graph_ns::KeyposeGraph::InBound(int)’:
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/include/keypose_graph/keypose_graph.h:118:32: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<std::vector<int> >::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  118 |     return index >= 0 && index < graph_.size();
+      |                          ~~~~~~^~~~~~~~~~~~~~~
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp: In member function ‘int local_coverage_planner_ns::LocalCoveragePlanner::GetBoundaryViewpointIndex(const exploration_path_ns::ExplorationPath&)’:
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp:128:25: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<exploration_path_ns::Node>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  128 |       for (int i = 0; i < global_path.nodes_.size(); i++) {
+      |                       ~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp: In member function ‘void local_coverage_planner_ns::LocalCoveragePlanner::SelectViewPoint(const std::vector<std::pair<int, int> >&, const std::vector<bool, std::allocator<bool> >&, std::vector<int>&, bool)’:
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp:273:21: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<bool, std::allocator<bool> >::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  273 |   for (int i = 0; i < covered.size(); i++) {
+      |                   ~~^~~~~~~~~~~~~~~~
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp:277:21: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<std::pair<int, int> >::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  277 |   for (int i = 0; i < queue.size(); i++) {
+      |                   ~~^~~~~~~~~~~~~~
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp:282:21: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<std::pair<int, int> >::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  282 |   for (int i = 0; i < queue_copy.size(); i++) {
+      |                   ~~^~~~~~~~~~~~~~~~~~~
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp:333:23: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<std::pair<int, int> >::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  333 |     for (int i = 0; i < queue_copy.size(); i++) {
+      |                     ~~^~~~~~~~~~~~~~~~~~~
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp:372:23: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<std::pair<int, int> >::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  372 |     for (int i = 0; i < queue_copy.size(); i++) {
+      |                     ~~^~~~~~~~~~~~~~~~~~~
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp: In member function ‘void local_coverage_planner_ns::LocalCoveragePlanner::SelectViewPointFromFrontierQueue(std::vector<std::pair<int, int> >&, std::vector<bool, std::allocator<bool> >&, std::vector<int>&)’:
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp:402:23: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<std::pair<int, int> >::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  402 |     for (int i = 0; i < frontier_queue.size(); i++) {
+      |                     ~~^~~~~~~~~~~~~~~~~~~~~~~
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp: In member function ‘exploration_path_ns::ExplorationPath local_coverage_planner_ns::LocalCoveragePlanner::SolveTSP(const std::vector<int>&, std::vector<int>&)’:
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp:437:21: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<int>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  437 |   for (int i = 0; i < selected_viewpoint_indices.size(); i++) {
+      |                   ~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp:469:21: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<int>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  469 |   for (int i = 0; i < selected_viewpoint_indices.size(); i++) {
+      |                   ~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp:488:21: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<int>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  488 |   for (int i = 0; i < selected_viewpoint_indices.size(); i++) {
+      |                   ~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp:489:27: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<int>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  489 |     for (int j = i + 1; j < selected_viewpoint_indices.size(); j++) {
+      |                         ~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp:498:23: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<int>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  498 |     for (int i = 0; i < selected_viewpoint_indices.size(); i++) {
+      |                     ~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp:521:23: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<int>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  521 |     for (int i = 0; i < selected_viewpoint_indices.size(); i++) {
+      |                     ~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp:532:23: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<int>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  532 |     for (int i = 0; i < selected_viewpoint_indices.size(); i++) {
+      |                     ~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp:564:21: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<int>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  564 |   for (int i = 0; i < path_index.size(); i++) {
+      |                   ~~^~~~~~~~~~~~~~~~~~~
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp:565:23: warning: comparison of integer expressions of different signedness: ‘__gnu_cxx::__alloc_traits<std::allocator<int>, int>::value_type’ {aka ‘int’} and ‘std::vector<int>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  565 |     if (path_index[i] >= selected_viewpoint_indices.size() ||
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp:573:21: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<int>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  573 |   for (int i = 0; i < path_index.size(); i++) {
+      |                   ~~^~~~~~~~~~~~~~~~~~~
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp:592:23: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<int>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  592 |     for (int i = 0; i < path_index.size() - 1; i++) {
+      |                     ~~^~~~~~~~~~~~~~~~~~~~~~~
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp:640:27: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<geometry_msgs::msg::PoseStamped_<std::allocator<void> >, std::allocator<geometry_msgs::msg::PoseStamped_<std::allocator<void> > > >::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  640 |         for (int j = 1; j < path_between_viewpoints.poses.size() - 1; j++) {
+      |                         ~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp:589:9: warning: unused variable ‘from_graph_idx’ [-Wunused-variable]
+  589 |     int from_graph_idx;
+      |         ^~~~~~~~~~~~~~
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp:590:9: warning: unused variable ‘to_graph_idx’ [-Wunused-variable]
+  590 |     int to_graph_idx;
+      |         ^~~~~~~~~~~~
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp: In member function ‘exploration_path_ns::ExplorationPath local_coverage_planner_ns::LocalCoveragePlanner::SolveLocalCoverageProblem(const exploration_path_ns::ExplorationPath&, int, int)’:
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp:688:7: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+  688 |       if(i) order.data+=",";order.data+=std::to_string(last_selected_viewpoint_indices_[i]);
+      |       ^~
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp:688:29: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+  688 |       if(i) order.data+=",";order.data+=std::to_string(last_selected_viewpoint_indices_[i]);
+      |                             ^~~~~
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/include/utils/misc_utils.h: In instantiation of ‘bool misc_utils_ns::InRange(const std::vector<_RealType>&, int) [with T = bool]’:
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp:179:5:   required from here
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/include/utils/misc_utils.h:161:30: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<bool, std::allocator<bool> >::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  161 |   return index >= 0 && index < list.size();
+      |                        ~~~~~~^~~~~~~~~~~~~
+---
+Finished <<< tare_planner [27.3s]
+
+Summary: 1 package finished [27.6s]
+  1 package had stderr output: tare_planner

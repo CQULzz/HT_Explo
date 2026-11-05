@@ -1,3 +1,9 @@
+# 最新交接：循环5离线逻辑修复，仍未恢复仿真
+
+读docs/results/wsl_offline_cycle5_20261105/REPORT.md及循环4调度报告。前沿剩余收益15..39被表面40门限截停已修复；构造拒绝非正窗口；完整9组CTest通过。循环3剩余队列修复与循环4可选single+独立TF均保留，默认建图multi不变。旧几何云有点落在现有保护包络内，未删除/降低几何拦截。用户仍要求暂不仿真，当前无新120秒闭环成绩，禁止自动启动；不能套用旧成绩。只Git代码/精简证据推送，不Release/部署，旧原始数据继续保留。
+
+---
+
 # 最新交接：循环4可选建图调度，尚未运行仿真
 
 先读docs/results/wsl_offline_cycle4_20261105/REPORT.md。runtime已准备single地图执行器+独立TF接收候选，runner显式--mapper-executor single选择，默认multi不变；20项离线检查通过，三对合成调度负载CPU约下降63%、处理量相近。这不是地图源龄闭环验收，用户仍要求暂不启动仿真；禁止自动开启。补丁/installer验证wrapper/helper SHA，不覆盖未知CuPy差异。不发布Release或硬件部署，旧原始数据继续保留。此文件需离线Linux拉取后阅读。
