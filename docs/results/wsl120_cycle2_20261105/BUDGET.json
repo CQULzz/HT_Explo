@@ -7,7 +7,7 @@
   "max_candidates": 4,
   "max_formal_runs": 8,
   "duration_each_s": 120,
-  "candidates_used": 0,
+  "candidates_used": 1,
   "formal_runs": [
     {
       "id": "b00",
@@ -75,6 +75,66 @@
       "runner_exit_code": 1,
       "wall_s": 136.47370270599993,
       "duration_s": 120.1
+    },
+    {
+      "id": "threshold_seed42_c01",
+      "seed": 42,
+      "kind": "candidate",
+      "candidate": "threshold_entry",
+      "path": "/home/w_lzz/ht-iterations-20261105/cycle2/threshold_seed42_c01",
+      "tested_commit": "c293b565d9fd8fa9460c4c5b717a14963ee260ea",
+      "command": [
+        "/home/lzz/.venvs/ht_real_gpu_20261028/bin/python",
+        "/home/w_lzz/ht-iterations-20261105/runtime/run_sim.py",
+        "--label",
+        "threshold_seed42_c01",
+        "--output-root",
+        "/home/w_lzz/ht-iterations-20261105/cycle2",
+        "--duration",
+        "120",
+        "--domain",
+        "228",
+        "--render-backend",
+        "egl",
+        "--ht-processing-mode",
+        "worker",
+        "--seed",
+        "42"
+      ],
+      "state": "COMPLETE_COLLECTION",
+      "runner_exit_code": 0,
+      "wall_s": 126.403478667,
+      "duration_s": 120.1
+    },
+    {
+      "id": "threshold_seed99_c02",
+      "seed": 99,
+      "kind": "candidate",
+      "candidate": "threshold_entry",
+      "path": "/home/w_lzz/ht-iterations-20261105/cycle2/threshold_seed99_c02",
+      "tested_commit": "c293b565d9fd8fa9460c4c5b717a14963ee260ea",
+      "command": [
+        "/home/lzz/.venvs/ht_real_gpu_20261028/bin/python",
+        "/home/w_lzz/ht-iterations-20261105/runtime/run_sim.py",
+        "--label",
+        "threshold_seed99_c02",
+        "--output-root",
+        "/home/w_lzz/ht-iterations-20261105/cycle2",
+        "--duration",
+        "120",
+        "--domain",
+        "228",
+        "--render-backend",
+        "egl",
+        "--ht-processing-mode",
+        "worker",
+        "--seed",
+        "99"
+      ],
+      "state": "COMPLETE_COLLECTION",
+      "runner_exit_code": 0,
+      "wall_s": 128.86007987,
+      "duration_s": 120.3
     }
   ],
   "release_authorized": false
