@@ -4,6 +4,8 @@
 
 |轮次|实测代码|结果|完整证据|
 |---|---|---|---|
+|r05 同码诊断复跑|`6af4a20`|120.3s；3.475m / 571.976m³，未完成；附45秒GIL采样，HT主执行器占约79%持GIL样本，非CPU占用率/因果证明。|[报告](../results/wsl120_20261105/r05_profile/REPORT.md) · [已核验Release](https://github.com/CQULzz/HT_Explo/releases/tag/ht-wsl120-profile-20261105-r05)|
+|r04 源就绪适配器|`6af4a20`|120.1s；4.452m / 633.184m³，未完成；发零85.77%，源龄p50 0.965s，7项测试通过。|[报告](../results/wsl120_20261105/r04_adapter/REPORT.md) · [已核验Release](https://github.com/CQULzz/HT_Explo/releases/tag/ht-wsl120-adapter-20261105-r04)|
 |r03 地图平移整数复用|`920e39c`|120.3s；2.774m / 504.976m³，未完成；源龄p50 0.96s/P95 1.2185s，发零93.72%。30组完整地图移动逐字节相同，离线平移14.73→1.95ms。|[报告](../results/wsl120_20261105/r03_map_shift/REPORT.md) · [已核验Release](https://github.com/CQULzz/HT_Explo/releases/tag/ht-wsl120-mapshift-20261105-r03)|
 |r02 射线事件初始化|`aa89e9c`|120.3s；0.993m / 438.832m³，未完成；源龄p50 0.97s，发零92.05%。12组CUDA全事件/地图逐字节相同，离线融合201→127ms。|[报告](../results/wsl120_20261105/r02_ray_init/REPORT.md) · [已核验Release](https://github.com/CQULzz/HT_Explo/releases/tag/ht-wsl120-rayinit-20261105-r02)|
 |r01 D3D12候选（未采用为默认）|`fe464fd`|120.3s；0.736m / 373.36m³，未完成；发布源龄p50 0.98s，Gazebo在退出时SIGSEGV。|[报告](../results/wsl120_20261105/r01_d3d12/REPORT.md) · [已核验Release](https://github.com/CQULzz/HT_Explo/releases/tag/ht-wsl120-d3d12-20261105-r01)|

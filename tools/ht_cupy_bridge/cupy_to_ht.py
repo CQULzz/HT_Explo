@@ -23,7 +23,7 @@ from rclpy.callback_groups import MutuallyExclusiveCallbackGroup
 from rclpy.qos import QoSProfile, ReliabilityPolicy, DurabilityPolicy
 from rclpy.utilities import get_rmw_implementation_identifier
 from rclpy.signals import SignalHandlerOptions
-from rclpy.executors import ExternalShutdownException, MultiThreadedExecutor
+from rclpy.executors import ExternalShutdownException, MultiThreadedExecutor, SingleThreadedExecutor
 from nav_msgs.msg import Odometry
 from std_msgs.msg import Float32, Float32MultiArray, MultiArrayDimension, MultiArrayLayout, String
 
@@ -40,6 +40,7 @@ from height_evidence import qualify_height_evidence, warmup_evidence_times, over
 from inference_context_io import ContextCaptureSchedule, GracefulStop, save_immutable_npz
 from input_odometry import InputOdometry
 from latest_input import LatestInput
+from map_worker import MapWorker
 from small_holes import repair_small_holes, HOLE_PROFILES
 from small_hole_kernels import warmup_small_holes
 from runtime_probe import RuntimeProbe
@@ -197,10 +198,14 @@ class CupyToHt(Node):
             QoSProfile(depth=1, reliability=ReliabilityPolicy.RELIABLE)
         )
         self.count = 0
-        self.processing_group=MutuallyExclusiveCallbackGroup()
-        self.processing_timer=self.create_timer(.005,self.process_pending,callback_group=self.processing_group)
+        self.processing_mode=self.declare_parameter('ht_processing_mode',os.environ.get('HT_PROCESSING_MODE','executor')).value
+        if self.processing_mode not in ('executor','worker'):raise ValueError('Invalid ht_processing_mode')
+        self.map_worker=None;self.processing_timer=None
+        if self.processing_mode=='executor':
+            self.processing_group=MutuallyExclusiveCallbackGroup()
+            self.processing_timer=self.create_timer(.005,self.process_pending,callback_group=self.processing_group)
         capacity=self.declare_parameter('ht_diagnostics_capacity',600).value
-        parameter_names=('use_sim_time','ht_device','ht_torch_threads','ht_channels_last',
+        parameter_names=('ht_processing_mode','use_sim_time','ht_device','ht_torch_threads','ht_channels_last',
                          'ht_quality_backend','ht_history_backend','ht_cpu_fuse_bn','ht_fuse_bn',
                          'ht_small_hole_repair','ht_small_hole_backend','ht_small_hole_profile','ht_small_hole_fit_backend','ht_context_backend','ht_reason_interval_s','ht_profile_runtime',
                          'ht_diagnostics_capacity','ht_topic','ht_qualify_evidence',
@@ -210,7 +215,7 @@ class CupyToHt(Node):
         self.runtime_manifest=collect_runtime_manifest(
             __file__,Path(__file__).with_name('student_best_epoch_weights.pth'),
             {name:self.get_parameter(name).value for name in parameter_names},
-            {'device':str(self.device),'device_name':torch.cuda.get_device_name(self.device) if self.device.type=='cuda' else 'cpu',
+            {'processing_mode':self.processing_mode,'device':str(self.device),'device_name':torch.cuda.get_device_name(self.device) if self.device.type=='cuda' else 'cpu',
              'torch':str(torch.__version__),'numpy':np.__version__,'cuda_runtime':torch.version.cuda,
              'rmw':get_rmw_implementation_identifier(),'quality_backend':self.quality_backend,
              'history_backend':self.history_backend,'fused_batchnorm':self.fused_batchnorm,
@@ -225,7 +230,7 @@ class CupyToHt(Node):
             {'ht':self.pub.topic_name,'elevation':self.sub.topic_name},
             {name:sys.modules[name] for name in ('model','historical_elevation','history_window',
                 'elevation_quality','local_surface','ht_support','small_holes','input_odometry',
-                'latest_input','cpu_threads','diagnostic_history','runtime_manifest',
+                'map_worker','latest_input','cpu_threads','diagnostic_history','runtime_manifest',
                 'small_hole_kernels','cuda_ht_context','runtime_probe','ht_reasons','history_fusion','cuda_small_holes','height_evidence','evidence_trace')})
         self.runtime_manifest['evidence_flags']=EVIDENCE_FLAGS
         self.runtime_pub=self.create_publisher(String,'/ht_runtime',QoSProfile(
@@ -235,8 +240,10 @@ class CupyToHt(Node):
         self.diagnostics=DiagnosticHistory(capacity,os.environ.get('HT_DIAGNOSTICS_DUMP'),metadata=self.runtime_manifest)
         self.diagnostic_error_reported=False
         self.runtime_probe=RuntimeProbe() if self.profile_runtime else None
+        if self.processing_mode=='worker':self.map_worker=MapWorker(self.pending_maps,self.on_map)
 
     def destroy_node(self):
+        if hasattr(self,'pending_maps'):self.begin_shutdown()
         probe=getattr(self,'runtime_probe',None)
         if probe is not None:probe.close()
         diagnostics=getattr(self,'diagnostics',None)
@@ -245,15 +252,17 @@ class CupyToHt(Node):
 
     def begin_shutdown(self):
         self.closing=True
-        self.processing_timer.cancel()
-        self.pending_maps.clear_for_shutdown()
+        if self.processing_timer is not None:self.processing_timer.cancel()
+        if self.map_worker is not None:self.map_worker.close()
+        else:self.pending_maps.clear_for_shutdown()
 
     def enqueue_map(self, msg):
         if self.closing:return
-        self.pending_maps.put(msg)
+        if self.map_worker is not None:self.map_worker.submit(msg)
+        else:self.pending_maps.put(msg)
 
     def process_pending(self):
-        if self.closing:return
+        if self.closing or self.map_worker is not None:return
         item=self.pending_maps.take_with_metadata()
         if item is not None:self.on_map(item[0],received_monotonic=item[1])
 
@@ -643,11 +652,14 @@ def main():
     stop = GracefulStop()
     previous = signal.signal(signal.SIGINT, stop.request)
     node = None
-    executor = MultiThreadedExecutor(num_threads=2)
+    executor = None
     try:
         node = CupyToHt()
+        executor = SingleThreadedExecutor() if node.processing_mode=='worker' else MultiThreadedExecutor(num_threads=2)
         executor.add_node(node)
         while rclpy.ok() and not stop.requested:
+            if node.map_worker is not None and node.map_worker.failure is not None:
+                raise RuntimeError('HT inference worker failed') from node.map_worker.failure
             executor.spin_once(timeout_sec=.1)
     except (KeyboardInterrupt, ExternalShutdownException):
         pass
@@ -663,7 +675,7 @@ def main():
                 for timer in list(node.timers):timer.cancel()
             pool=getattr(executor,"_executor",None)
             if pool is not None:pool.shutdown(wait=True)
-            executor.shutdown()
+            if executor is not None:executor.shutdown()
             if node is not None:
                 try:
                     if node.history is not None and os.environ.get("HT_HISTORY_DUMP"):
