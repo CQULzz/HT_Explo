@@ -1,0 +1,36 @@
+{
+  "source_commit": "8314318d784c0db75b299b2c14161652c19275a5",
+  "header": "#include <csignal>\nnamespace {\nvolatile std::sig_atomic_t cmu_stop_requested = 0;\nvoid cmu_request_stop(int) { cmu_stop_requested = 1; }\n}\n",
+  "replacements": [
+    [
+      "rclcpp::init(argc, argv);",
+      "rclcpp::init(argc, argv, rclcpp::InitOptions(), rclcpp::SignalHandlerOptions::None);\n  std::signal(SIGINT, cmu_request_stop);\n  std::signal(SIGTERM, cmu_request_stop);"
+    ],
+    [
+      "while (status)",
+      "while (status && !cmu_stop_requested)"
+    ],
+    [
+      "\n  return 0;\n}",
+      "\n  nh.reset();\n  rclcpp::shutdown();\n  return 0;\n}"
+    ]
+  ],
+  "files": {
+    "local_planner/src/localPlanner.cpp": {
+      "before_sha256": "a0f6be211a3a3a367452ccaa2ebe715a63edbcfe300673ae684fb9df1f02445f",
+      "after_sha256": "2517a12d2c7ebd6d15b7549ada4840cf7a1fea9a50c98801b8f8435cf678b800"
+    },
+    "local_planner/src/pathFollower.cpp": {
+      "before_sha256": "0767f1306db761bc41c44595021b3be5f416b4a87bc75d94e581730d8688986c",
+      "after_sha256": "b3611bbb38354f9f2511fd17de1dc01fb160887132fc1a05198ef269de648682"
+    },
+    "terrain_analysis/src/terrainAnalysis.cpp": {
+      "before_sha256": "60a79ecf9450355f0927d0137936258adc7fa57cc8f302ffa7b78165c8ce1d38",
+      "after_sha256": "42bae0ccd0a98e505aa6036b2bcf0ffbeb8134188a142bf0f33cf08437ecf9ec"
+    },
+    "terrain_analysis_ext/src/terrainAnalysisExt.cpp": {
+      "before_sha256": "240768c3016a7130a3c0406eeff9449f0b2bd9ee1c50a7b7736e7b8d9292e72c",
+      "after_sha256": "ef58c25610c3e3bd70ea8c4236fe78519d65ac4e9a1ae3a542101fef7e7e0514"
+    }
+  }
+}

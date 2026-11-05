@@ -359,12 +359,37 @@ class ScoutInputs(Node):
 
 
 def main():
-    rclpy.init();node=ScoutInputs()
-    executor=MultiThreadedExecutor(num_threads=3);executor.add_node(node)
-    try:executor.spin()
+    import signal
+    from rclpy.signals import SignalHandlerOptions
+    previous={sig:signal.getsignal(sig) for sig in (signal.SIGINT,signal.SIGTERM)}
+    stopping=False
+    def request_stop(signum,frame):
+        nonlocal stopping
+        stopping=True
+    rclpy.init(signal_handler_options=SignalHandlerOptions.NO)
+    node=None;executor=None
+    for sig in previous:signal.signal(sig,request_stop)
+    try:
+        node=ScoutInputs()
+        executor=MultiThreadedExecutor(num_threads=3);executor.add_node(node)
+        while rclpy.ok() and not stopping:executor.spin_once(timeout_sec=.1)
     except (KeyboardInterrupt,ExternalShutdownException):pass
     finally:
-        node.close_inputs();executor.shutdown()
-        pool=getattr(executor,'_executor',None)
-        if pool is not None:pool.shutdown(wait=True)
-        node.destroy_node();rclpy.try_shutdown()
+        try:
+            if node is not None:node.close_inputs()
+            if executor is not None:
+                # This Jazzy version destroys the executor guard during
+                # shutdown. Drain submitted callbacks while it and the ROS
+                # context are still valid; do not hide worker exceptions.
+                try:
+                    pool=getattr(executor,'_executor',None)
+                    if pool is not None:pool.shutdown(wait=True)
+                    for future in getattr(executor,'_futures',[]):
+                        if future.done() and not future.cancelled():future.result()
+                finally:executor.shutdown()
+        finally:
+            try:
+                if node is not None:node.destroy_node()
+                rclpy.try_shutdown()
+            finally:
+                for sig,handler in previous.items():signal.signal(sig,handler)
