@@ -1,0 +1,48 @@
+{
+  "scope": "User now explicitly requests simulation testing, superseding the prior pause. This bounded test plan sets at most 6 runs, not a reuse or rewrite of cycle2 budget.",
+  "max_runs": 6,
+  "duration_each_s": 120,
+  "project_head_at_start": "eb847992f1cb0d61667a1a37c9b667012568d10c",
+  "candidate": "mapper executor multi vs single with fixed current navigation",
+  "seed_scope": "Gazebo/TARE RNG only; ROS/GPU scheduling remains nondeterministic",
+  "acceptance": [
+    "HT producer source-age P95 <1s, same unchanged 1Hz metric",
+    "Normal completion/return and safety regression; no false COMPLETED with confirmed unfinished reachable tasks",
+    "Collection complete, clean exit, frozen files unchanged; failures retained and counted"
+  ],
+  "planned_order": [
+    {
+      "label": "multi42_b01",
+      "mode": "multi",
+      "seed": 42
+    },
+    {
+      "label": "single42_c01",
+      "mode": "single",
+      "seed": 42
+    },
+    {
+      "label": "single99_c02",
+      "mode": "single",
+      "seed": 99
+    },
+    {
+      "label": "multi99_b02",
+      "mode": "multi",
+      "seed": 99
+    },
+    {
+      "label": "multi42_r01",
+      "mode": "multi",
+      "seed": 42
+    },
+    {
+      "label": "single42_r01",
+      "mode": "single",
+      "seed": 42
+    }
+  ],
+  "runs": [],
+  "release_created": false,
+  "hardware_deployed": false
+}
