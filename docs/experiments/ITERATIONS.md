@@ -4,6 +4,7 @@
 
 |轮次|实测代码|结果|完整证据|
 |---|---|---|---|
+|r03 地图平移整数复用|`920e39c`|120.3s；2.774m / 504.976m³，未完成；源龄p50 0.96s/P95 1.2185s，发零93.72%。30组完整地图移动逐字节相同，离线平移14.73→1.95ms。|[报告](../results/wsl120_20261105/r03_map_shift/REPORT.md) · [已核验Release](https://github.com/CQULzz/HT_Explo/releases/tag/ht-wsl120-mapshift-20261105-r03)|
 |r02 射线事件初始化|`aa89e9c`|120.3s；0.993m / 438.832m³，未完成；源龄p50 0.97s，发零92.05%。12组CUDA全事件/地图逐字节相同，离线融合201→127ms。|[报告](../results/wsl120_20261105/r02_ray_init/REPORT.md) · [已核验Release](https://github.com/CQULzz/HT_Explo/releases/tag/ht-wsl120-rayinit-20261105-r02)|
 |r01 D3D12候选（未采用为默认）|`fe464fd`|120.3s；0.736m / 373.36m³，未完成；发布源龄p50 0.98s，Gazebo在退出时SIGSEGV。|[报告](../results/wsl120_20261105/r01_d3d12/REPORT.md) · [已核验Release](https://github.com/CQULzz/HT_Explo/releases/tag/ht-wsl120-d3d12-20261105-r01)|
 |r00 WSL软件渲染基线|`354b79d`|120.3s；0.878m / 377.08m³，任务未完成。地图发布源龄p50 1.02s；99.16%遥测采样发零；里程含初始物理沉降。启动失败A另列保留。|[报告](../results/wsl120_20261105/r00_baseline/REPORT.md) · [已核验Release](https://github.com/CQULzz/HT_Explo/releases/tag/ht-wsl120-baseline-20261105-r00)|

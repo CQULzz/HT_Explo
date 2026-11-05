@@ -1,0 +1,18 @@
+# WSL Scout PCD r03: read GPU-computed map shift integers once
+
+Tested `920e39c94d10e9ee8677d422ebc8f7d9e93c9f5c`. External core elevation_mapping.py changes from f66637c47a73b95a41606f66a99ff5d033ad1eaed497546547f67d9107d7d66e to 3ba55a9eff56012402d2e4ce4dc2ea1bfe74d6e50a7e271db79ef4419bdfa14e; r02 ray initialization remains installed. Independent mapper workspace and explicit hash-verified installer/patch, preserving original upstream CRLF.
+
+Previously each conditional/slice consumed GPU scalar shifts and caused repeated device-to-host synchronization. The same two int32 integers, computed/rounded/cast by the unchanged GPU path, are now copied once and reused by existing roll/pad operations. Coordinates, height arithmetic, map/observation validity, semantic handling, sensors, TARE policy and strict gates are unchanged. Thirty offline CUDA movement cases compare the complete map/age/center/rotation/normal/new-map/semantic state byte-for-byte: all equal. Cases include zero motion, half-cell boundaries, negative/diagonal XY, Z changes and shifts beyond map width. Paired offline move service p50 14.73→1.95ms (~86.7% less); not a vehicle-throughput or universal equivalence claim. No private upstream core is included in validation; authorized users reconstruct the baseline via pinned private upstream + public stable patches before running the published test.
+
+|Full 120s trial|GT cumulative XY m|Sampled free volume m³|HT publication source age p50/p95 s|Zero command telemetry fraction|
+|---|---:|---:|---|---:|
+|r02 ray initialization|0.9928|438.832|0.970 / 1.180|92.05%|
+|r03 plus host shift integers|2.7743|504.976|0.960 / 1.2185|93.72%|
+
+Both EGL/llvmpipe, same scene/start/sensors/speed/safety, 120.3 simulation seconds, unchanged frozen files and all managed exits zero. The current trial moved in the first ~20s then remained stopped. Source age is still close to/exceeding the unchanged1s gate; mission **incomplete**. More travel/volume but slightly more zero telemetry samples and worse P95 age do not establish a stable navigation improvement. One nondeterministic closed-loop trial per version limits causality. Distance includes initial settling/slip; free volume is sampled ray-voxel union, not scene-truth coverage. Two minutes cannot verify the historical scene-edge failure after~233s.
+
+MCAP counts/available CRCs/source spans/SHA256 checked; full241/241 frame120.5s2fps trajectory/telemetry video decoded. Full run and runtime archives, per-file inventories, hashes and remote receipt included. Every MCAP retained; only regenerable query_cdr and __pycache__ excluded. Recording is controls/poses/status/publishedHT/source-second sampledLiDAR/10s snapshots, not full-rate raw sensor or CuPy input. Video is actual2D simulated trajectory, not Gazebo camera footage.
+
+Scene/model/unchangedHT binaries remain pinned in r00 https://github.com/CQULzz/HT_Explo/releases/tag/ht-wsl120-baseline-20261105-r00 ; apply stable mapper patches then both r02/r03 installers and rebuild. Each archive is a tar stream split into128MiB parts: concatenate in numeric order and extract. The installer refused an initial manifest generated with newline normalization before any target mutation; its corrected CRLF-preserving hash passed and idempotent reinstallation was verified. This was a preparation failure, not a discarded formal trial.
+
+Remaining: freshness holds, near-car support, mapper timer scheduling, the ignored built-in-traversability config flag documented in r02, and original cropped-scene limits. D3D12 was rejected due shutdown SIGSEGV. No real vehicle commands or edits to original dual-boot Linux history/data.
