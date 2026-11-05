@@ -395,7 +395,7 @@ void LocalCoveragePlanner::SelectViewPointFromFrontierQueue(
     std::vector<bool> &frontier_covered,
     std::vector<int> &selected_viewpoint_indices) {
   if (use_frontier_ && !frontier_queue.empty() &&
-      frontier_queue[0].first > parameters_.kMinAddFrontierPointNum) {
+      frontier_queue[0].first >= parameters_.kMinAddFrontierPointNum) {
     // Update the frontier queue
     for (const auto &ind : selected_viewpoint_indices) {
       UpdateViewPointCoveredFrontierPoint(frontier_covered, ind);
@@ -857,7 +857,7 @@ LocalCoveragePlanner::SolveLocalCoverageProblem(
       viewpoint_sampling_timer.GetDuration(kRuntimeUnit);
 
   std::vector<int> ordered_viewpoint_indices;
-  if (!queue.empty() && queue[0].first > parameters_.kMinAddPointNum) {
+  if (!queue.empty() && queue[0].first >= parameters_.kMinAddPointNum) {
     double min_path_length = DBL_MAX;
     const int iterations=viewpoint_manager_->HT()->enabled() ? 1 : parameters_.kLocalPathOptimizationItrMax;
     for (int itr = 0; itr < iterations; itr++) {

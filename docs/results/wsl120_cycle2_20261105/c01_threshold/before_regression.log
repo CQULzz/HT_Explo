@@ -1,0 +1,88 @@
+Running main() from /opt/ros/jazzy/src/gtest_vendor/src/gtest_main.cc
+Note: Google Test filter = LocalCompletion.*
+[==========] Running 5 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 5 tests from LocalCompletion
+[ RUN      ] LocalCompletion.ReachableSurfaceAtExactAcceptedThresholdMustNotComplete
+[WARN] [1793867357.526776083] [rcl]: ROS_LOCALHOST_ONLY is deprecated but still honored if it is enabled. Use ROS_AUTOMATIC_DISCOVERY_RANGE and ROS_STATIC_PEERS instead.
+[WARN] [1793867357.526793394] [rcl]: 'localhost_only' is enabled, 'automatic_discovery_range' and 'static_peers' will be ignored.
+[INFO] [1793867357.561873564] [tare_planner_node]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0 scores=configuration
+[INFO] [1793867357.561942362] [tare_planner_node]: HT startup prior: radius=1.200m duration=30.000s assume_traversable=0 fixed_anchor_and_deadline=1
+[INFO] [1793867358.242113443] [tare_planner_node]: TARE_RANDOM seed=42 mode=fixed_stream
+[INFO] [1793867358.244305491] [tare_planner_node]: XYtheta configuration: headings=32 cell=0.300 step=0.400 heading_reserve_rad=0.000 search_s=0.150 cycle_search_s=0.350
+[INFO] [1793867358.244326035] [tare_planner_node]: XYtheta motion angle=11.250 deg (independent of heading bins)
+[INFO] [1793867358.244328939] [tare_planner_node]: XYtheta motion angle=22.500 deg (independent of heading bins)
+[INFO] [1793867358.245142891] [tare_planner_node]: TARE_SELECTION candidates=10000 visited=0 other_cell=0 preselected=1 eligible=9999 raw_gain=1 raw_frontier=0 virtual_points=0 virtual_frontier=0 queue=1 queue_best=40 frontier_queue=0 use_frontier=1 min_points=40 min_frontier=15
+[INFO] [1793867358.246599748] [tare_planner_node]: TARE_COVERAGE native=1 tsp_calls=1 iterations=1 selected=1 route_nodes=1 route_length=0.000 complete=1
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/tests/local_coverage_completion_test.cpp:82: Failure
+Value of: planner->IsLocalCoverageComplete()
+  Actual: true
+Expected: false
+
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/tests/local_coverage_completion_test.cpp:82: Failure
+Expected: (route.nodes_.size()) > (1u), actual: 1 vs 1
+
+[  FAILED  ] LocalCompletion.ReachableSurfaceAtExactAcceptedThresholdMustNotComplete (740 ms)
+[ RUN      ] LocalCompletion.ReachableFrontierAtExactAcceptedThresholdMustNotComplete
+[INFO] [1793867358.267704512] [tare_planner_node]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0 scores=configuration
+[INFO] [1793867358.267737203] [tare_planner_node]: HT startup prior: radius=1.200m duration=30.000s assume_traversable=0 fixed_anchor_and_deadline=1
+[INFO] [1793867358.893889848] [tare_planner_node]: TARE_RANDOM seed=42 mode=fixed_stream
+[INFO] [1793867358.894944361] [tare_planner_node]: XYtheta configuration: headings=32 cell=0.300 step=0.400 heading_reserve_rad=0.000 search_s=0.150 cycle_search_s=0.350
+[INFO] [1793867358.894963648] [tare_planner_node]: XYtheta motion angle=11.250 deg (independent of heading bins)
+[INFO] [1793867358.894966386] [tare_planner_node]: XYtheta motion angle=22.500 deg (independent of heading bins)
+[INFO] [1793867358.895775849] [tare_planner_node]: TARE_SELECTION candidates=10000 visited=0 other_cell=0 preselected=1 eligible=9999 raw_gain=0 raw_frontier=1 virtual_points=0 virtual_frontier=0 queue=0 queue_best=0 frontier_queue=1 use_frontier=1 min_points=40 min_frontier=15
+[INFO] [1793867358.896258665] [tare_planner_node]: TARE_COVERAGE native=1 tsp_calls=1 iterations=1 selected=1 route_nodes=1 route_length=0.000 complete=1
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/tests/local_coverage_completion_test.cpp:86: Failure
+Value of: planner->IsLocalCoverageComplete()
+  Actual: true
+Expected: false
+
+/home/w_lzz/ht-iterations-20261105/repo/src/tare_planner/tests/local_coverage_completion_test.cpp:86: Failure
+Expected: (route.nodes_.size()) > (1u), actual: 1 vs 1
+
+[  FAILED  ] LocalCompletion.ReachableFrontierAtExactAcceptedThresholdMustNotComplete (649 ms)
+[ RUN      ] LocalCompletion.AboveThresholdKeepsPlanningAndDrainedTaskCanFinish
+[INFO] [1793867358.916599221] [tare_planner_node]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0 scores=configuration
+[INFO] [1793867358.916630647] [tare_planner_node]: HT startup prior: radius=1.200m duration=30.000s assume_traversable=0 fixed_anchor_and_deadline=1
+[INFO] [1793867359.540009861] [tare_planner_node]: TARE_RANDOM seed=42 mode=fixed_stream
+[INFO] [1793867359.541033872] [tare_planner_node]: XYtheta configuration: headings=32 cell=0.300 step=0.400 heading_reserve_rad=0.000 search_s=0.150 cycle_search_s=0.350
+[INFO] [1793867359.541052595] [tare_planner_node]: XYtheta motion angle=11.250 deg (independent of heading bins)
+[INFO] [1793867359.541055408] [tare_planner_node]: XYtheta motion angle=22.500 deg (independent of heading bins)
+[INFO] [1793867359.541888567] [tare_planner_node]: TARE_SELECTION candidates=10000 visited=0 other_cell=0 preselected=1 eligible=9999 raw_gain=1 raw_frontier=0 virtual_points=0 virtual_frontier=0 queue=1 queue_best=41 frontier_queue=0 use_frontier=1 min_points=40 min_frontier=15
+[INFO] [1793867359.541909279] [tare_planner_node]: TARE_RANDOM_CALL seed=42 call=1 frontier=0 range=1
+[INFO] [1793867359.542519628] [tare_planner_node]: TARE_COVERAGE native=1 tsp_calls=1 iterations=1 selected=2 route_nodes=27 route_length=7.800 complete=0
+[INFO] [1793867359.543349246] [tare_planner_node]: TARE_SELECTION candidates=10000 visited=0 other_cell=0 preselected=1 eligible=9999 raw_gain=0 raw_frontier=0 virtual_points=0 virtual_frontier=0 queue=0 queue_best=0 frontier_queue=0 use_frontier=1 min_points=40 min_frontier=15
+[INFO] [1793867359.543664077] [tare_planner_node]: TARE_COVERAGE native=1 tsp_calls=1 iterations=1 selected=1 route_nodes=1 route_length=0.000 complete=1
+[       OK ] LocalCompletion.AboveThresholdKeepsPlanningAndDrainedTaskCanFinish (646 ms)
+[ RUN      ] LocalCompletion.BelowThresholdOrAlreadyVisitedTasksDoNotPreventNormalCompletion
+[INFO] [1793867359.563874325] [tare_planner_node]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0 scores=configuration
+[INFO] [1793867359.563906427] [tare_planner_node]: HT startup prior: radius=1.200m duration=30.000s assume_traversable=0 fixed_anchor_and_deadline=1
+[INFO] [1793867360.190006809] [tare_planner_node]: TARE_RANDOM seed=42 mode=fixed_stream
+[INFO] [1793867360.191078721] [tare_planner_node]: XYtheta configuration: headings=32 cell=0.300 step=0.400 heading_reserve_rad=0.000 search_s=0.150 cycle_search_s=0.350
+[INFO] [1793867360.191099757] [tare_planner_node]: XYtheta motion angle=11.250 deg (independent of heading bins)
+[INFO] [1793867360.191102589] [tare_planner_node]: XYtheta motion angle=22.500 deg (independent of heading bins)
+[INFO] [1793867360.191915630] [tare_planner_node]: TARE_SELECTION candidates=10000 visited=0 other_cell=0 preselected=1 eligible=9999 raw_gain=0 raw_frontier=0 virtual_points=0 virtual_frontier=0 queue=0 queue_best=0 frontier_queue=0 use_frontier=1 min_points=40 min_frontier=15
+[INFO] [1793867360.192385790] [tare_planner_node]: TARE_COVERAGE native=1 tsp_calls=1 iterations=1 selected=1 route_nodes=1 route_length=0.000 complete=1
+[INFO] [1793867360.193070078] [tare_planner_node]: TARE_SELECTION candidates=10000 visited=1 other_cell=0 preselected=1 eligible=9998 raw_gain=0 raw_frontier=0 virtual_points=0 virtual_frontier=0 queue=0 queue_best=0 frontier_queue=0 use_frontier=1 min_points=40 min_frontier=15
+[INFO] [1793867360.193407336] [tare_planner_node]: TARE_COVERAGE native=1 tsp_calls=1 iterations=1 selected=1 route_nodes=1 route_length=0.000 complete=1
+[       OK ] LocalCompletion.BelowThresholdOrAlreadyVisitedTasksDoNotPreventNormalCompletion (650 ms)
+[ RUN      ] LocalCompletion.UnknownTerrainDoesNotCreateExecutionPermission
+[INFO] [1793867360.214440271] [tare_planner_node]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=0 scores=configuration
+[INFO] [1793867360.214465492] [tare_planner_node]: HT startup prior: radius=1.200m duration=30.000s assume_traversable=0 fixed_anchor_and_deadline=1
+[INFO] [1793867360.840879210] [tare_planner_node]: TARE_RANDOM seed=42 mode=fixed_stream
+[INFO] [1793867360.842105483] [tare_planner_node]: XYtheta configuration: headings=32 cell=0.300 step=0.400 heading_reserve_rad=0.000 search_s=0.150 cycle_search_s=0.350
+[INFO] [1793867360.842128132] [tare_planner_node]: XYtheta motion angle=11.250 deg (independent of heading bins)
+[INFO] [1793867360.842130826] [tare_planner_node]: XYtheta motion angle=22.500 deg (independent of heading bins)
+[INFO] [1793867361.093052682] [tare_planner_node]: TARE_SELECTION candidates=10000 visited=0 other_cell=0 preselected=1 eligible=9999 raw_gain=1 raw_frontier=0 virtual_points=0 virtual_frontier=0 queue=1 queue_best=40 frontier_queue=0 use_frontier=1 min_points=40 min_frontier=15
+[INFO] [1793867361.093538646] [tare_planner_node]: TARE_COVERAGE native=1 tsp_calls=1 iterations=1 selected=1 route_nodes=1 route_length=0.000 complete=1
+[       OK ] LocalCompletion.UnknownTerrainDoesNotCreateExecutionPermission (900 ms)
+[----------] 5 tests from LocalCompletion (3588 ms total)
+
+[----------] Global test environment tear-down
+[==========] 5 tests from 1 test suite ran. (3588 ms total)
+[  PASSED  ] 3 tests.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] LocalCompletion.ReachableSurfaceAtExactAcceptedThresholdMustNotComplete
+[  FAILED  ] LocalCompletion.ReachableFrontierAtExactAcceptedThresholdMustNotComplete
+
+ 2 FAILED TESTS

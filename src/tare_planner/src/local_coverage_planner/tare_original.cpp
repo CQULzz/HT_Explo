@@ -1,5 +1,6 @@
 // Upstream TARE ROS2 baseline b6760adb4280b379567c76f4e684ce628e28ef71.
-// Function bodies preserved; only method names differ. See docs/plans/2026-10-20_tare_ht_waypoint_plan.md.
+// Native policy preserved except the audited >= threshold-entry correction.
+// See docs/results/wsl120_cycle2_20261105/c01_threshold/REPORT.md and the original waypoint plan.
 #include "local_coverage_planner/local_coverage_planner.h"
 namespace local_coverage_planner_ns {
 exploration_path_ns::ExplorationPath LocalCoveragePlanner::SolveTareTSP(
@@ -342,7 +343,7 @@ LocalCoveragePlanner::SolveTareCoverageProblem(
       viewpoint_sampling_timer.GetDuration(kRuntimeUnit);
 
   std::vector<int> ordered_viewpoint_indices;
-  if (!queue.empty() && queue[0].first > parameters_.kMinAddPointNum) {
+  if (!queue.empty() && queue[0].first >= parameters_.kMinAddPointNum) {
     double min_path_length = DBL_MAX;
     for (int itr = 0; itr < parameters_.kLocalPathOptimizationItrMax; itr++) {
       std::vector<int> selected_viewpoint_indices_itr;
