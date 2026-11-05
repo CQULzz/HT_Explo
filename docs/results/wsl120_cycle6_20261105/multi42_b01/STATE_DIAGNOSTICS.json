@@ -1,0 +1,37 @@
+{
+  "scope": "Read-only telemetry diagnostic, not independent reachable-ground-truth coverage certification. Negative-time startup rows excluded from state counts. Command is requested, not wheel-confirmed.",
+  "first_completed_elapsed_s": null,
+  "final_execution": "HT_CURRENT_POSE_MISSING_SUPPORT",
+  "final_runtime_reason": "HT_CURRENT_POSE_MISSING_SUPPORT",
+  "final_follower": "PLANNER_HOLD",
+  "final_xy_m": [
+    0.8408537468243098,
+    -1.4381696429559534
+  ],
+  "final_distance_from_scene_origin_xy_m": 1.665943259978723,
+  "final_command_vw": [
+    0.0,
+    0.0
+  ],
+  "nonzero_command_rows_while_completed": 0,
+  "state_rows": {
+    "WAIT_START": 1,
+    "HT_MAP_MISSING": 4,
+    "HT_MAP_STALE": 8,
+    "GEOMETRY_CURRENT_POSE_BLOCKED": 8,
+    "HT_ASSISTED": 10,
+    "HT_CURRENT_POSE_MISSING_SUPPORT": 208
+  },
+  "follower_rows": {
+    "PATH_STALE": 10,
+    "DRIVING": 8,
+    "EMPTY_PATH": 2,
+    "PLANNER_HOLD": 219
+  },
+  "final_selection_and_completion_audit": [
+    "[tare_planner_node-4] [INFO] [1793880410.235446057] [ht_real.tare_planner_node]: TARE_SELECTION candidates=164 visited=16 other_cell=22 preselected=7 eligible=119 raw_gain=27 raw_frontier=37 virtual_points=130 virtual_frontier=199 queue=0 queue_best=0 frontier_queue=0 use_frontier=1 min_points=40 min_frontier=15",
+    "[tare_planner_node-4] [INFO] [1793880410.236589242] [ht_real.tare_planner_node]: TARE_COMPLETION global_return=1 local_complete=0 global_order_nodes=0 local_route_nodes=40 uncovered=190 frontier=212",
+    "[tare_planner_node-4] [INFO] [1793880411.228952030] [ht_real.tare_planner_node]: TARE_SELECTION candidates=164 visited=16 other_cell=22 preselected=7 eligible=119 raw_gain=27 raw_frontier=37 virtual_points=130 virtual_frontier=199 queue=0 queue_best=0 frontier_queue=0 use_frontier=1 min_points=40 min_frontier=15",
+    "[tare_planner_node-4] [INFO] [1793880411.230330610] [ht_real.tare_planner_node]: TARE_COMPLETION global_return=1 local_complete=0 global_order_nodes=0 local_route_nodes=40 uncovered=190 frontier=212"
+  ]
+}

@@ -1,0 +1,454 @@
+{
+  "multi42_b01": {
+    "label": "multi42_b01",
+    "mode": "multi",
+    "seed": 42,
+    "collection": {
+      "duration_s": 120.3,
+      "error": null,
+      "nonzero": {
+        "observer": -2
+      },
+      "changed": []
+    },
+    "age": {
+      "p50": 0.5900000000000034,
+      "p95": 0.7780000000000029,
+      "max": 0.9199999999999999
+    },
+    "callback_s": {
+      "p50": 0.07336859299999787,
+      "p95": 0.08448216140000113,
+      "max": 0.17651234699999918
+    },
+    "distance_m": 3.077961627749697,
+    "volume_m3": 408.24,
+    "mission_completed": false,
+    "first_completed_s": null,
+    "final_reason": "HT_CURRENT_POSE_MISSING_SUPPORT",
+    "wall_s": 126.320296446,
+    "mapper": {
+      "received_cloud_callbacks": 593,
+      "processed_clouds": 593,
+      "first_cloud_source_stamp_s": 0.2,
+      "last_cloud_source_stamp_s": 120.2,
+      "last_processed_cloud_source_stamp_s": 120.2,
+      "first_cloud_receive_clock_s": 1.19,
+      "last_cloud_receive_clock_s": 120.45,
+      "processing_mean_s": 0.15000178189544677,
+      "processing_max_s": 1.2967762609999998,
+      "queue_age_median_s": 0.29000000000000004,
+      "queue_age_p95_s": 0.4200000000000017,
+      "queue_age_max_s": 0.99,
+      "timer_profile": {
+        "publish/elevation_map_raw": {
+          "count": 913,
+          "total_s": 105.10179723099995,
+          "max_s": 0.3512726080000004,
+          "mean_s": 0.11511697396604595
+        },
+        "pose": {
+          "count": 440,
+          "total_s": 48.68717393899995,
+          "max_s": 1.3953969320000006,
+          "mean_s": 0.1106526680431817
+        },
+        "time": {
+          "count": 107,
+          "total_s": 3.5373730190000323,
+          "max_s": 0.15310640700000278,
+          "mean_s": 0.03305956092523395
+        },
+        "variance": {
+          "count": 572,
+          "total_s": 62.61905050499993,
+          "max_s": 0.3361256889999993,
+          "mean_s": 0.10947386451923065
+        }
+      },
+      "publication_skipped_no_subscribers": {}
+    },
+    "resource": {
+      "scope": "ps %CPU samples are process lifetime-average estimates at each sample, not instantaneous CPU or the offline benchmark process_time; RSS in KiB. Includes TF worker threads in the mapper process.",
+      "samples": 24,
+      "mapper_cpu_lifetime_percent_median": 107.0,
+      "mapper_cpu_lifetime_percent_last": 110.0,
+      "mapper_peak_sampled_rss_kib": 1666608
+    }
+  },
+  "single42_c01": {
+    "label": "single42_c01",
+    "mode": "single",
+    "seed": 42,
+    "collection": {
+      "duration_s": 120.3,
+      "error": null,
+      "nonzero": {},
+      "changed": []
+    },
+    "age": {
+      "p50": 0.4299999999999997,
+      "p95": 0.5179999999999964,
+      "max": 0.5899999999999999
+    },
+    "callback_s": {
+      "p50": 0.0685499249999566,
+      "p95": 0.07702236519999132,
+      "max": 0.1590133399999729
+    },
+    "distance_m": 6.871559452069494,
+    "volume_m3": 631.04,
+    "mission_completed": false,
+    "first_completed_s": null,
+    "final_reason": "HT_CURRENT_HEADING_LOW_SCORE",
+    "wall_s": 127.44924903200004,
+    "mapper": {
+      "received_cloud_callbacks": 596,
+      "processed_clouds": 596,
+      "first_cloud_source_stamp_s": 0.2,
+      "last_cloud_source_stamp_s": 120.6,
+      "last_processed_cloud_source_stamp_s": 120.6,
+      "first_cloud_receive_clock_s": 1.17,
+      "last_cloud_receive_clock_s": 120.83,
+      "processing_mean_s": 0.059532443001676906,
+      "processing_max_s": 1.0353085159999864,
+      "queue_age_median_s": 0.2599999999999909,
+      "queue_age_p95_s": 0.3625000000000007,
+      "queue_age_max_s": 0.97,
+      "timer_profile": {
+        "publish/elevation_map_raw": {
+          "count": 1199,
+          "total_s": 22.399173176000573,
+          "max_s": 0.027205972999979622,
+          "mean_s": 0.018681545601334924
+        },
+        "pose": {
+          "count": 1198,
+          "total_s": 10.983492880999364,
+          "max_s": 0.02265340499997137,
+          "mean_s": 0.009168191052587116
+        },
+        "time": {
+          "count": 1198,
+          "total_s": 0.08826590999962036,
+          "max_s": 0.000936507000005804,
+          "mean_s": 7.367772120168644e-05
+        },
+        "variance": {
+          "count": 599,
+          "total_s": 1.6021781500001282,
+          "max_s": 0.006245588000012958,
+          "mean_s": 0.002674754841402551
+        }
+      },
+      "publication_skipped_no_subscribers": {}
+    },
+    "resource": {
+      "scope": "ps %CPU samples are process lifetime-average estimates at each sample, not instantaneous CPU or the offline benchmark process_time; RSS in KiB. Includes TF worker threads in the mapper process.",
+      "samples": 24,
+      "mapper_cpu_lifetime_percent_median": 67.45,
+      "mapper_cpu_lifetime_percent_last": 68.0,
+      "mapper_peak_sampled_rss_kib": 1740112
+    }
+  },
+  "single99_c02": {
+    "label": "single99_c02",
+    "mode": "single",
+    "seed": 99,
+    "collection": {
+      "duration_s": 120.3,
+      "error": null,
+      "nonzero": {},
+      "changed": []
+    },
+    "age": {
+      "p50": 0.4399999999999977,
+      "p95": 0.642000000000002,
+      "max": 0.7200000000000006
+    },
+    "callback_s": {
+      "p50": 0.06641370900001675,
+      "p95": 0.0815979300999686,
+      "max": 0.1600397109999676
+    },
+    "distance_m": 26.078253977297276,
+    "volume_m3": 947.7520000000001,
+    "mission_completed": false,
+    "first_completed_s": null,
+    "final_reason": "PATH_NO_EXECUTABLE_ROUTE",
+    "wall_s": 126.38887079800003,
+    "mapper": {
+      "received_cloud_callbacks": 596,
+      "processed_clouds": 595,
+      "first_cloud_source_stamp_s": 0.2,
+      "last_cloud_source_stamp_s": 120.6,
+      "last_processed_cloud_source_stamp_s": 120.4,
+      "first_cloud_receive_clock_s": 1.13,
+      "last_cloud_receive_clock_s": 120.93,
+      "processing_mean_s": 0.06489846481344658,
+      "processing_max_s": 1.0337388890000057,
+      "queue_age_median_s": 0.27000000000000135,
+      "queue_age_p95_s": 0.4299999999999997,
+      "queue_age_max_s": 0.9299999999999999,
+      "timer_profile": {
+        "publish/elevation_map_raw": {
+          "count": 1200,
+          "total_s": 23.91058091899839,
+          "max_s": 0.029942294999955266,
+          "mean_s": 0.019925484099165326
+        },
+        "pose": {
+          "count": 1200,
+          "total_s": 12.803017552000256,
+          "max_s": 0.02286600500002578,
+          "mean_s": 0.010669181293333546
+        },
+        "time": {
+          "count": 1200,
+          "total_s": 0.10097311399920272,
+          "max_s": 0.0010698079999542642,
+          "mean_s": 8.414426166600227e-05
+        },
+        "variance": {
+          "count": 600,
+          "total_s": 1.6814746590000595,
+          "max_s": 0.00819448099997544,
+          "mean_s": 0.0028024577650000992
+        }
+      },
+      "publication_skipped_no_subscribers": {}
+    },
+    "resource": {
+      "scope": "ps %CPU samples are process lifetime-average estimates at each sample, not instantaneous CPU or the offline benchmark process_time; RSS in KiB. Includes TF worker threads in the mapper process.",
+      "samples": 24,
+      "mapper_cpu_lifetime_percent_median": 72.05000000000001,
+      "mapper_cpu_lifetime_percent_last": 73.1,
+      "mapper_peak_sampled_rss_kib": 1776028
+    }
+  },
+  "multi99_b02": {
+    "label": "multi99_b02",
+    "mode": "multi",
+    "seed": 99,
+    "collection": {
+      "duration_s": 120.3,
+      "error": null,
+      "nonzero": {},
+      "changed": []
+    },
+    "age": {
+      "p50": 0.7199999999999989,
+      "p95": 0.9724999999999988,
+      "max": 1.0899999999999963
+    },
+    "callback_s": {
+      "p50": 0.07313216649998822,
+      "p95": 0.08318488849999994,
+      "max": 0.1533407999999099
+    },
+    "distance_m": 4.19485327459092,
+    "volume_m3": 482.024,
+    "mission_completed": true,
+    "first_completed_s": 28.8,
+    "final_reason": "COMPLETED",
+    "wall_s": 126.39685846400005,
+    "mapper": {
+      "received_cloud_callbacks": 594,
+      "processed_clouds": 594,
+      "first_cloud_source_stamp_s": 0.2,
+      "last_cloud_source_stamp_s": 120.8,
+      "last_processed_cloud_source_stamp_s": 120.8,
+      "first_cloud_receive_clock_s": 0.43,
+      "last_cloud_receive_clock_s": 121.04,
+      "processing_mean_s": 0.17444300320370296,
+      "processing_max_s": 1.4677867419999302,
+      "queue_age_median_s": 0.35999999999999943,
+      "queue_age_p95_s": 0.5600000000000023,
+      "queue_age_max_s": 0.6599999999999966,
+      "timer_profile": {
+        "publish/elevation_map_raw": {
+          "count": 727,
+          "total_s": 114.43848861899994,
+          "max_s": 0.37959380799998144,
+          "mean_s": 0.15741195133287475
+        },
+        "pose": {
+          "count": 207,
+          "total_s": 32.26444399899981,
+          "max_s": 1.5406418750000057,
+          "mean_s": 0.1558668792222213
+        },
+        "time": {
+          "count": 16,
+          "total_s": 0.31773699099960595,
+          "max_s": 0.11343971799999508,
+          "mean_s": 0.019858561937475372
+        },
+        "variance": {
+          "count": 546,
+          "total_s": 86.02369732399984,
+          "max_s": 0.357745029000057,
+          "mean_s": 0.1575525592014649
+        }
+      },
+      "publication_skipped_no_subscribers": {}
+    },
+    "resource": {
+      "scope": "ps %CPU samples are process lifetime-average estimates at each sample, not instantaneous CPU or the offline benchmark process_time; RSS in KiB. Includes TF worker threads in the mapper process.",
+      "samples": 24,
+      "mapper_cpu_lifetime_percent_median": 110.0,
+      "mapper_cpu_lifetime_percent_last": 112.0,
+      "mapper_peak_sampled_rss_kib": 1779064
+    }
+  },
+  "multi42_r01": {
+    "label": "multi42_r01",
+    "mode": "multi",
+    "seed": 42,
+    "collection": {
+      "duration_s": 120.3,
+      "error": null,
+      "nonzero": {},
+      "changed": []
+    },
+    "age": {
+      "p50": 0.8949999999999996,
+      "p95": 1.0500000000000043,
+      "max": 1.0800000000000125
+    },
+    "callback_s": {
+      "p50": 0.07409220049999021,
+      "p95": 0.08304673844994567,
+      "max": 0.17049114999997528
+    },
+    "distance_m": 8.277455478342457,
+    "volume_m3": 716.088,
+    "mission_completed": false,
+    "first_completed_s": null,
+    "final_reason": "HT_MAP_MISSING_OR_STALE",
+    "wall_s": 126.39915317600003,
+    "mapper": {
+      "received_cloud_callbacks": 541,
+      "processed_clouds": 541,
+      "first_cloud_source_stamp_s": 0.2,
+      "last_cloud_source_stamp_s": 120.4,
+      "last_processed_cloud_source_stamp_s": 120.4,
+      "first_cloud_receive_clock_s": 1.13,
+      "last_cloud_receive_clock_s": 120.98,
+      "processing_mean_s": 0.2098670244824437,
+      "processing_max_s": 1.3380773129999852,
+      "queue_age_median_s": 0.5,
+      "queue_age_p95_s": 0.6400000000000006,
+      "queue_age_max_s": 0.9299999999999999,
+      "timer_profile": {
+        "publish/elevation_map_raw": {
+          "count": 576,
+          "total_s": 116.30976067999939,
+          "max_s": 0.36182109100002435,
+          "mean_s": 0.20192666784722116
+        },
+        "pose": {
+          "count": 57,
+          "total_s": 9.030948634000083,
+          "max_s": 0.36488403599992125,
+          "mean_s": 0.1584376953333348
+        },
+        "time": {
+          "count": 14,
+          "total_s": 0.02163261300006525,
+          "max_s": 0.01635592100001304,
+          "mean_s": 0.0015451866428618035
+        },
+        "variance": {
+          "count": 520,
+          "total_s": 109.58900784799982,
+          "max_s": 1.3083040220000157,
+          "mean_s": 0.21074809201538428
+        }
+      },
+      "publication_skipped_no_subscribers": {}
+    },
+    "resource": {
+      "scope": "ps %CPU samples are process lifetime-average estimates at each sample, not instantaneous CPU or the offline benchmark process_time; RSS in KiB. Includes TF worker threads in the mapper process.",
+      "samples": 24,
+      "mapper_cpu_lifetime_percent_median": 109.5,
+      "mapper_cpu_lifetime_percent_last": 112.0,
+      "mapper_peak_sampled_rss_kib": 2035900
+    }
+  },
+  "single42_r01": {
+    "label": "single42_r01",
+    "mode": "single",
+    "seed": 42,
+    "collection": {
+      "duration_s": 120.1,
+      "error": null,
+      "nonzero": {},
+      "changed": []
+    },
+    "age": {
+      "p50": 0.40500000000000114,
+      "p95": 0.5525000000000002,
+      "max": 0.6699999999999946
+    },
+    "callback_s": {
+      "p50": 0.06990433400000029,
+      "p95": 0.08041765249993205,
+      "max": 0.14420291299995824
+    },
+    "distance_m": 3.3324154226526415,
+    "volume_m3": 417.296,
+    "mission_completed": true,
+    "first_completed_s": 17.6,
+    "final_reason": "COMPLETED",
+    "wall_s": 126.06165872499992,
+    "mapper": {
+      "received_cloud_callbacks": 599,
+      "processed_clouds": 599,
+      "first_cloud_source_stamp_s": 0.4,
+      "last_cloud_source_stamp_s": 121.0,
+      "last_processed_cloud_source_stamp_s": 121.0,
+      "first_cloud_receive_clock_s": 1.29,
+      "last_cloud_receive_clock_s": 121.27,
+      "processing_mean_s": 0.047101570420700525,
+      "processing_max_s": 0.8832095320000235,
+      "queue_age_median_s": 0.25,
+      "queue_age_p95_s": 0.3899999999999972,
+      "queue_age_max_s": 0.89,
+      "timer_profile": {
+        "publish/elevation_map_raw": {
+          "count": 1205,
+          "total_s": 17.74540432699689,
+          "max_s": 0.024460309999994934,
+          "mean_s": 0.014726476619914433
+        },
+        "pose": {
+          "count": 1204,
+          "total_s": 8.936204880994637,
+          "max_s": 0.015894598999921072,
+          "mean_s": 0.007422097077238071
+        },
+        "time": {
+          "count": 1204,
+          "total_s": 0.10296364099804123,
+          "max_s": 0.000978843999973833,
+          "mean_s": 8.551797425086481e-05
+        },
+        "variance": {
+          "count": 603,
+          "total_s": 1.173482691001368,
+          "max_s": 0.005347733000007793,
+          "mean_s": 0.0019460741144301293
+        }
+      },
+      "publication_skipped_no_subscribers": {}
+    },
+    "resource": {
+      "scope": "ps %CPU samples are process lifetime-average estimates at each sample, not instantaneous CPU or the offline benchmark process_time; RSS in KiB. Includes TF worker threads in the mapper process.",
+      "samples": 24,
+      "mapper_cpu_lifetime_percent_median": 58.45,
+      "mapper_cpu_lifetime_percent_last": 57.2,
+      "mapper_peak_sampled_rss_kib": 1518872
+    }
+  }
+}

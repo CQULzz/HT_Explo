@@ -1,0 +1,229 @@
+{
+  "scope": "User now explicitly requests simulation testing, superseding the prior pause. This bounded test plan sets at most 6 runs, not a reuse or rewrite of cycle2 budget.",
+  "max_runs": 6,
+  "duration_each_s": 120,
+  "project_head_at_start": "eb847992f1cb0d61667a1a37c9b667012568d10c",
+  "candidate": "mapper executor multi vs single with fixed current navigation",
+  "seed_scope": "Gazebo/TARE RNG only; ROS/GPU scheduling remains nondeterministic",
+  "acceptance": [
+    "HT producer source-age P95 <1s, same unchanged 1Hz metric",
+    "Normal completion/return and safety regression; no false COMPLETED with confirmed unfinished reachable tasks",
+    "Collection complete, clean exit, frozen files unchanged; failures retained and counted"
+  ],
+  "planned_order": [
+    {
+      "label": "multi42_b01",
+      "mode": "multi",
+      "seed": 42
+    },
+    {
+      "label": "single42_c01",
+      "mode": "single",
+      "seed": 42
+    },
+    {
+      "label": "single99_c02",
+      "mode": "single",
+      "seed": 99
+    },
+    {
+      "label": "multi99_b02",
+      "mode": "multi",
+      "seed": 99
+    },
+    {
+      "label": "multi42_r01",
+      "mode": "multi",
+      "seed": 42
+    },
+    {
+      "label": "single42_r01",
+      "mode": "single",
+      "seed": 42
+    }
+  ],
+  "runs": [
+    {
+      "label": "multi42_b01",
+      "mode": "multi",
+      "seed": 42,
+      "tested_commit": "7a6a7737d10649fcbac4228cbcf5ecc3eaf09325",
+      "command": [
+        "/home/lzz/.venvs/ht_real_gpu_20261028/bin/python",
+        "/home/w_lzz/ht-iterations-20261105/runtime/run_sim.py",
+        "--label",
+        "multi42_b01",
+        "--output-root",
+        "/home/w_lzz/ht-iterations-20261105/cycle6",
+        "--duration",
+        "120",
+        "--domain",
+        "228",
+        "--render-backend",
+        "egl",
+        "--ht-processing-mode",
+        "worker",
+        "--mapper-executor",
+        "multi",
+        "--seed",
+        "42"
+      ],
+      "state": "FAILED",
+      "runner_exit_code": 1,
+      "wall_s": 126.59629956299999,
+      "duration_s": 120.3
+    },
+    {
+      "label": "single42_c01",
+      "mode": "single",
+      "seed": 42,
+      "tested_commit": "7a6a7737d10649fcbac4228cbcf5ecc3eaf09325",
+      "command": [
+        "/home/lzz/.venvs/ht_real_gpu_20261028/bin/python",
+        "/home/w_lzz/ht-iterations-20261105/runtime/run_sim.py",
+        "--label",
+        "single42_c01",
+        "--output-root",
+        "/home/w_lzz/ht-iterations-20261105/cycle6",
+        "--duration",
+        "120",
+        "--domain",
+        "228",
+        "--render-backend",
+        "egl",
+        "--ht-processing-mode",
+        "worker",
+        "--mapper-executor",
+        "single",
+        "--seed",
+        "42"
+      ],
+      "state": "COMPLETE_COLLECTION",
+      "runner_exit_code": 0,
+      "wall_s": 127.74846165299999,
+      "duration_s": 120.3
+    },
+    {
+      "label": "single99_c02",
+      "mode": "single",
+      "seed": 99,
+      "tested_commit": "7a6a7737d10649fcbac4228cbcf5ecc3eaf09325",
+      "command": [
+        "/home/lzz/.venvs/ht_real_gpu_20261028/bin/python",
+        "/home/w_lzz/ht-iterations-20261105/runtime/run_sim.py",
+        "--label",
+        "single99_c02",
+        "--output-root",
+        "/home/w_lzz/ht-iterations-20261105/cycle6",
+        "--duration",
+        "120",
+        "--domain",
+        "228",
+        "--render-backend",
+        "egl",
+        "--ht-processing-mode",
+        "worker",
+        "--mapper-executor",
+        "single",
+        "--seed",
+        "99"
+      ],
+      "state": "COMPLETE_COLLECTION",
+      "runner_exit_code": 0,
+      "wall_s": 126.6624397,
+      "duration_s": 120.3
+    },
+    {
+      "label": "multi99_b02",
+      "mode": "multi",
+      "seed": 99,
+      "tested_commit": "7a6a7737d10649fcbac4228cbcf5ecc3eaf09325",
+      "command": [
+        "/home/lzz/.venvs/ht_real_gpu_20261028/bin/python",
+        "/home/w_lzz/ht-iterations-20261105/runtime/run_sim.py",
+        "--label",
+        "multi99_b02",
+        "--output-root",
+        "/home/w_lzz/ht-iterations-20261105/cycle6",
+        "--duration",
+        "120",
+        "--domain",
+        "228",
+        "--render-backend",
+        "egl",
+        "--ht-processing-mode",
+        "worker",
+        "--mapper-executor",
+        "multi",
+        "--seed",
+        "99"
+      ],
+      "state": "COMPLETE_COLLECTION",
+      "runner_exit_code": 0,
+      "wall_s": 126.64853511699994,
+      "duration_s": 120.3
+    },
+    {
+      "label": "multi42_r01",
+      "mode": "multi",
+      "seed": 42,
+      "tested_commit": "7a6a7737d10649fcbac4228cbcf5ecc3eaf09325",
+      "command": [
+        "/home/lzz/.venvs/ht_real_gpu_20261028/bin/python",
+        "/home/w_lzz/ht-iterations-20261105/runtime/run_sim.py",
+        "--label",
+        "multi42_r01",
+        "--output-root",
+        "/home/w_lzz/ht-iterations-20261105/cycle6",
+        "--duration",
+        "120",
+        "--domain",
+        "228",
+        "--render-backend",
+        "egl",
+        "--ht-processing-mode",
+        "worker",
+        "--mapper-executor",
+        "multi",
+        "--seed",
+        "42"
+      ],
+      "state": "COMPLETE_COLLECTION",
+      "runner_exit_code": 0,
+      "wall_s": 126.68155281700001,
+      "duration_s": 120.3
+    },
+    {
+      "label": "single42_r01",
+      "mode": "single",
+      "seed": 42,
+      "tested_commit": "7a6a7737d10649fcbac4228cbcf5ecc3eaf09325",
+      "command": [
+        "/home/lzz/.venvs/ht_real_gpu_20261028/bin/python",
+        "/home/w_lzz/ht-iterations-20261105/runtime/run_sim.py",
+        "--label",
+        "single42_r01",
+        "--output-root",
+        "/home/w_lzz/ht-iterations-20261105/cycle6",
+        "--duration",
+        "120",
+        "--domain",
+        "228",
+        "--render-backend",
+        "egl",
+        "--ht-processing-mode",
+        "worker",
+        "--mapper-executor",
+        "single",
+        "--seed",
+        "42"
+      ],
+      "state": "COMPLETE_COLLECTION",
+      "runner_exit_code": 0,
+      "wall_s": 126.22288983600004,
+      "duration_s": 120.1
+    }
+  ],
+  "release_created": false,
+  "hardware_deployed": false
+}

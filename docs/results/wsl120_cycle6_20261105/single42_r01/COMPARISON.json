@@ -1,0 +1,154 @@
+{
+  "baseline": {
+    "label": "multi42_r01",
+    "tested_commit": "7a6a7737d10649fcbac4228cbcf5ecc3eaf09325",
+    "done": {
+      "elapsed_sim": 120.3,
+      "elapsed_wall": 123.86350928600007,
+      "distance": 8.277455478342457,
+      "free_volume": 716.088,
+      "mission_completed": false,
+      "counts": {
+        "ht_follower_status": 2470,
+        "ht_execution_status": 204,
+        "mission_state": 204,
+        "odom": 2409,
+        "input_status": 3596,
+        "runtime_status": 240,
+        "input_performance": 120,
+        "map": 524,
+        "ht_performance": 104
+      },
+      "video_frames": 241
+    },
+    "run_result": {
+      "render_backend": "egl",
+      "actual_gl_renderers": [
+        "llvmpipe (LLVM 20.1.2, 256 bits)"
+      ],
+      "renderer_verified": true,
+      "managed_shutdown_nonzero": {},
+      "error": null,
+      "requested_duration_sim_s": 120.0,
+      "actual_duration_sim_s": 120.3,
+      "full_requested_duration": true,
+      "full_600_sim_s": false,
+      "failure_stage": null,
+      "frozen_files_changed": [],
+      "wall_elapsed": 126.39915317600003,
+      "exit_codes": {
+        "record": 0,
+        "observer": 0,
+        "bridge": 0,
+        "adapter": 0,
+        "mapper": 0,
+        "navigation": 0,
+        "gazebo": 0
+      }
+    },
+    "runtime_reason_event_counts": {
+      "HT_MAP_MISSING_OR_STALE": 100,
+      "HT_MAP_MISSING": 1,
+      "GEOMETRY_CURRENT_POSE_BLOCKED": 3,
+      "COMMAND_SENT_NOT_WHEEL_CONFIRMED": 56,
+      "HT_MAP_STALE": 79,
+      "PATH_NO_EXECUTABLE_ROUTE": 1
+    },
+    "map_source_age_at_publish_s": {
+      "p50": 0.8949999999999996,
+      "p95": 1.0500000000000043,
+      "max": 1.0800000000000125
+    },
+    "map_source_age_at_callback_s": {
+      "p50": 0.8150000000000013,
+      "p95": 0.9785000000000031,
+      "max": 1.0100000000000051
+    },
+    "ht_callback_service_s": {
+      "p50": 0.07409220049999021,
+      "p95": 0.08304673844994567,
+      "max": 0.17049114999997528
+    },
+    "sampled_zero_command_fraction": 0.7698744769874477,
+    "distance_before_ready_m": 0.3199560020392915,
+    "distance_after_first_ready_sample_m": 7.957499476303165,
+    "map_age_sample_count": 104,
+    "metric_note": "Distance is cumulative ground-truth XY, includes gravity settling/slip before READY. Free volume is sampled LiDAR ray-voxel union, not ground-truth scene coverage. Runtime reason counts are events, not seconds; zero fraction is ~2Hz telemetry samples."
+  },
+  "candidate": {
+    "label": "single42_r01",
+    "tested_commit": "7a6a7737d10649fcbac4228cbcf5ecc3eaf09325",
+    "done": {
+      "elapsed_sim": 120.1,
+      "elapsed_wall": 123.6049655999999,
+      "distance": 3.3324154226526415,
+      "free_volume": 417.296,
+      "mission_completed": true,
+      "counts": {
+        "ht_follower_status": 2472,
+        "ht_execution_status": 135,
+        "mission_state": 135,
+        "odom": 2409,
+        "input_status": 3630,
+        "runtime_status": 240,
+        "input_performance": 120,
+        "map": 579,
+        "ht_performance": 106
+      },
+      "video_frames": 241
+    },
+    "run_result": {
+      "render_backend": "egl",
+      "actual_gl_renderers": [
+        "llvmpipe (LLVM 20.1.2, 256 bits)"
+      ],
+      "renderer_verified": true,
+      "managed_shutdown_nonzero": {},
+      "error": null,
+      "requested_duration_sim_s": 120.0,
+      "actual_duration_sim_s": 120.1,
+      "full_requested_duration": true,
+      "full_600_sim_s": false,
+      "failure_stage": null,
+      "frozen_files_changed": [],
+      "wall_elapsed": 126.06165872499992,
+      "exit_codes": {
+        "record": 0,
+        "observer": 0,
+        "bridge": 0,
+        "adapter": 0,
+        "mapper": 0,
+        "navigation": 0,
+        "gazebo": 0
+      }
+    },
+    "runtime_reason_event_counts": {
+      "HT_MAP_MISSING_OR_STALE": 4,
+      "HT_MAP_MISSING": 1,
+      "GEOMETRY_CURRENT_POSE_BLOCKED": 3,
+      "COMMAND_SENT_NOT_WHEEL_CONFIRMED": 23,
+      "HOME_SETTLING": 4,
+      "COMPLETED": 205
+    },
+    "map_source_age_at_publish_s": {
+      "p50": 0.40500000000000114,
+      "p95": 0.5525000000000002,
+      "max": 0.6699999999999946
+    },
+    "map_source_age_at_callback_s": {
+      "p50": 0.3399999999999981,
+      "p95": 0.48249999999999993,
+      "max": 0.5899999999999963
+    },
+    "ht_callback_service_s": {
+      "p50": 0.06990433400000029,
+      "p95": 0.08041765249993205,
+      "max": 0.14420291299995824
+    },
+    "sampled_zero_command_fraction": 0.9079497907949791,
+    "distance_before_ready_m": 0.3199560020392915,
+    "distance_after_first_ready_sample_m": 3.01245942061335,
+    "map_age_sample_count": 106,
+    "metric_note": "Distance is cumulative ground-truth XY, includes gravity settling/slip before READY. Free volume is sampled LiDAR ray-voxel union, not ground-truth scene coverage. Runtime reason counts are events, not seconds; zero fraction is ~2Hz telemetry samples."
+  }
+}
