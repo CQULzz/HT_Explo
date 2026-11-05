@@ -1,0 +1,32 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+__________ test_main_constructor_failure_restores_context_and_signals __________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x77cb4435b350>
+
+    def test_main_constructor_failure_restores_context_and_signals(monkeypatch):
+        path = os.environ.get('MAPPER_TEST_WRAPPER')
+        if not path:
+            pytest.skip('Set MAPPER_TEST_WRAPPER to the staged wrapper')
+        import signal
+        spec = importlib.util.spec_from_file_location('failing_start_wrapper', path)
+        module = importlib.util.module_from_spec(spec); spec.loader.exec_module(module)
+        signals = {s: signal.getsignal(s) for s in (signal.SIGINT, signal.SIGTERM)}
+        def fail():
+            raise RuntimeError('injected constructor failure')
+        monkeypatch.setattr(module, 'ElevationMappingNode', fail)
+        try:
+            with pytest.raises(RuntimeError, match='injected constructor failure'):
+                module.main()
+>           assert not rclpy.ok()
+E           assert not True
+E            +  where True = <function ok at 0x77cb4699be20>()
+E            +    where <function ok at 0x77cb4699be20> = rclpy.ok
+
+tools/pcd_sim/test_mapper_execution.py:238: AssertionError
+----------------------------- Captured stderr call -----------------------------
+[WARN] [1793878802.490517134] [rcl]: ROS_LOCALHOST_ONLY is deprecated but still honored if it is enabled. Use ROS_AUTOMATIC_DISCOVERY_RANGE and ROS_STATIC_PEERS instead.
+[WARN] [1793878802.490532224] [rcl]: 'localhost_only' is enabled, 'automatic_discovery_range' and 'static_peers' will be ignored.
+=========================== short test summary info ============================
+FAILED tools/pcd_sim/test_mapper_execution.py::test_main_constructor_failure_restores_context_and_signals
+1 failed, 8 deselected in 1.06s

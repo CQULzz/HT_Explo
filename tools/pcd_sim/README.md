@@ -33,3 +33,6 @@ The r06 scheduling candidate is explicitly opt-in with `--ht-processing-mode wor
 
 
 Cycle2: `--seed 42` or `--seed 99` seeds the TARE greedy stream and Gazebo RNG. Default-1 retains uncontrolled random_device behavior. Seed and sampling-call counters are logged; the same sequence of calls can be replayed, but fixed RNG does not make ROS/GPU event scheduling deterministic. The current user permits commit/push only, no automaticRelease/deployment. New unuploaded raw outputs must stay local.
+
+
+Opt-in mapper scheduling candidate: prepare a known runtime with `python tools/pcd_sim/install_mapper_execution.py --runtime /path/to/runtime --apply` (omit --apply for a check). This starts nothing and refuses unknown wrapper/helper bytes. `--mapper-executor single` then uses one map executor plus an independent TF receiver; default `multi` keeps the previous topology. The runner verifies candidate hashes before creating a trial or child process and records the mode. See docs/results/wsl_offline_cycle4_20261105/REPORT.md for offline-only evidence; this candidate has no new 120-second validation. User currently defers simulations. Publication contract tests can explicitly select the executed file with CUPY_WRAPPER_UNDER_TEST; do not silently test a different installed wrapper.

@@ -1,0 +1,40 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+______________ test_failed_map_initialization_closes_tf_receiver _______________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7eabf1bf0f20>
+
+    def test_failed_map_initialization_closes_tf_receiver(monkeypatch):
+        path = os.environ.get('MAPPER_TEST_WRAPPER')
+        if not path:
+            pytest.skip('Set MAPPER_TEST_WRAPPER to the staged wrapper')
+        spec = importlib.util.spec_from_file_location('failing_mapper_wrapper', path)
+        module = importlib.util.module_from_spec(spec); spec.loader.exec_module(module)
+        monkeypatch.setenv('CUPY_MAPPER_EXECUTOR_MODE', 'single')
+        captured = []
+        class Receiver:
+            def __init__(self, buffer, owner):
+                self.owner = owner; self.listener = object(); self.closed = False
+                captured.append(self)
+            def close(self):
+                self.closed = True
+        def fail_map(_):
+            raise RuntimeError('injected map initialization failure')
+        monkeypatch.setattr(module, 'TfListenerWorker', Receiver)
+        monkeypatch.setattr(module, 'ElevationMap', fail_map)
+        rclpy.init()
+        try:
+            with pytest.raises(RuntimeError, match='injected map initialization'):
+                module.ElevationMappingNode()
+            assert len(captured) == 1
+>           assert captured[0].closed
+E           assert False
+E            +  where False = <test_mapper_execution.test_failed_map_initialization_closes_tf_receiver.<locals>.Receiver object at 0x7eabeafe0080>.closed
+
+tools/pcd_sim/test_mapper_execution.py:185: AssertionError
+----------------------------- Captured stderr call -----------------------------
+[WARN] [1793878654.779697567] [rcl]: ROS_LOCALHOST_ONLY is deprecated but still honored if it is enabled. Use ROS_AUTOMATIC_DISCOVERY_RANGE and ROS_STATIC_PEERS instead.
+[WARN] [1793878654.779716434] [rcl]: 'localhost_only' is enabled, 'automatic_discovery_range' and 'static_peers' will be ignored.
+=========================== short test summary info ============================
+FAILED tools/pcd_sim/test_mapper_execution.py::test_failed_map_initialization_closes_tf_receiver
+1 failed, 6 deselected in 1.41s

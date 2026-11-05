@@ -5,7 +5,17 @@ from types import SimpleNamespace as S
 import numpy as np
 import pytest
 from rclpy.time import Time
-from elevation_mapping_cupy.elevation_mapping_ros import ElevationMappingNode
+import os
+import importlib.util
+
+if os.environ.get('CUPY_WRAPPER_UNDER_TEST'):
+    spec = importlib.util.spec_from_file_location('publication_wrapper_under_test',
+        os.environ['CUPY_WRAPPER_UNDER_TEST'])
+    wrapper = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(wrapper)
+    ElevationMappingNode = wrapper.ElevationMappingNode
+else:
+    from elevation_mapping_cupy.elevation_mapping_ros import ElevationMappingNode
 
 
 class Publisher:

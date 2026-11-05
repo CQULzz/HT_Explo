@@ -1,0 +1,54 @@
+{
+  "file": "mapper_strict.py",
+  "before_sha256": "b2fe0f8a2c49a1ccf233c1b878b19abff6538e2b1f80ab1dd188b176a63d16e8",
+  "after_sha256": "8c9a18494f7cd23f982afb73b397158175fa008bcb6f573ab4b0915f8aa2a7f4",
+  "helper_sha256": "82d8fef3b23a496c11b338b0bf8fb45158050f3964222ed2c124755ae3b52fa9",
+  "replacements": [
+    [
+      "from elevation_mapping_cupy import ElevationMap, Parameter",
+      "from elevation_mapping_cupy import ElevationMap, Parameter\nfrom mapper_execution import TfListenerWorker, execution_mode, make_executor"
+    ],
+    [
+      "        self.share_dir = get_package_share_directory",
+      "        self.executor_mode = execution_mode()\n        self.tf_worker = None\n        self.share_dir = get_package_share_directory"
+    ],
+    [
+      "        else:\n            self.tf_listener = TransformListener(self.tf_buffer, self)",
+      "        elif self.executor_mode == \"single\":\n            self.tf_worker = TfListenerWorker(self.tf_buffer, self)\n            self.tf_listener = self.tf_worker.listener\n        else:\n            self.tf_listener = TransformListener(self.tf_buffer, self)"
+    ],
+    [
+      "        self.register_timers()",
+      "        self.register_timers()\n        if self.tf_worker is not None:\n            self.create_timer(0.25, self.tf_worker.check_health, callback_group=self.timer_callback_group)\n        self.get_logger().info(f\"Mapper executor mode={self.executor_mode}; dedicated_tf={self.tf_worker is not None}\")"
+    ],
+    [
+      "    executor = MultiThreadedExecutor(num_threads=4)",
+      "    executor = make_executor(node.executor_mode, node.context)"
+    ],
+    [
+      "        node.destroy_node()",
+      "        if node.tf_worker is not None:\n            node.tf_worker.close()\n        node.destroy_node()"
+    ],
+    [
+      "        self.map = ElevationMap(self.param)\n        # Incoming scans and periodic work must be scheduled independently.\n        # Protect the complete map operation (including move_to's center)\n        # because the core lock does not cover every wrapper-visible field.\n        self.map_access_lock = threading.RLock()\n        self.scan_callback_group = MutuallyExclusiveCallbackGroup()\n        self.timer_callback_group = MutuallyExclusiveCallbackGroup()\n        self.publish_callback_group = MutuallyExclusiveCallbackGroup()\n        self.map_data = np.zeros((self.map.cell_n - 2, self.map.cell_n - 2), dtype=np.float32)\n        self.map_translation = None\n        self.map_rotation = None\n        self.last_stamp = None\n        self.last_integrated_stamp = None\n        self.pointcloud_process_counter = 0\n        self.pointcloud_receive_counter = 0\n        self.first_cloud_stamp_s = None\n        self.last_cloud_stamp_s = None\n        self.first_cloud_receive_clock_s = None\n        self.last_cloud_receive_clock_s = None\n        self.last_processed_cloud_stamp_s = None\n        self.pointcloud_processing_total_s = 0.0\n        self.pointcloud_processing_max_s = 0.0\n        self.cloud_queue_ages_s = []\n        self.timer_profile = {}\n        self.publication_skipped_no_subscribers = {}\n\n        self.pointcloud_subscriptions = []\n        self.map_publishers = {}\n        self.map_timers = []\n        self.register_subscribers()\n        self.register_publishers()\n        self.register_timers()\n        if self.tf_worker is not None:\n            self.create_timer(0.25, self.tf_worker.check_health, callback_group=self.timer_callback_group)\n        self.get_logger().info(f\"Mapper executor mode={self.executor_mode}; dedicated_tf={self.tf_worker is not None}\")\n        self.get_logger().info(\"[ElevationMappingCupy] ROS 2 node initialized\")\n        if os.environ.get(\"CUPY_READY_FILE\"):\n            Path(os.environ[\"CUPY_READY_FILE\"]).write_text(\"ready\\n\")\n",
+      "        try:\n            self.map = ElevationMap(self.param)\n            # Incoming scans and periodic work must be scheduled independently.\n            # Protect the complete map operation (including move_to's center)\n            # because the core lock does not cover every wrapper-visible field.\n            self.map_access_lock = threading.RLock()\n            self.scan_callback_group = MutuallyExclusiveCallbackGroup()\n            self.timer_callback_group = MutuallyExclusiveCallbackGroup()\n            self.publish_callback_group = MutuallyExclusiveCallbackGroup()\n            self.map_data = np.zeros((self.map.cell_n - 2, self.map.cell_n - 2), dtype=np.float32)\n            self.map_translation = None\n            self.map_rotation = None\n            self.last_stamp = None\n            self.last_integrated_stamp = None\n            self.pointcloud_process_counter = 0\n            self.pointcloud_receive_counter = 0\n            self.first_cloud_stamp_s = None\n            self.last_cloud_stamp_s = None\n            self.first_cloud_receive_clock_s = None\n            self.last_cloud_receive_clock_s = None\n            self.last_processed_cloud_stamp_s = None\n            self.pointcloud_processing_total_s = 0.0\n            self.pointcloud_processing_max_s = 0.0\n            self.cloud_queue_ages_s = []\n            self.timer_profile = {}\n            self.publication_skipped_no_subscribers = {}\n\n            self.pointcloud_subscriptions = []\n            self.map_publishers = {}\n            self.map_timers = []\n            self.register_subscribers()\n            self.register_publishers()\n            self.register_timers()\n            if self.tf_worker is not None:\n                self.create_timer(0.25, self.tf_worker.check_health, callback_group=self.timer_callback_group)\n            self.get_logger().info(f\"Mapper executor mode={self.executor_mode}; dedicated_tf={self.tf_worker is not None}\")\n            self.get_logger().info(\"[ElevationMappingCupy] ROS 2 node initialized\")\n            if os.environ.get(\"CUPY_READY_FILE\"):\n                Path(os.environ[\"CUPY_READY_FILE\"]).write_text(\"ready\\n\")\n        except BaseException:\n            try:\n                if self.tf_worker is not None:\n                    self.tf_worker.close()\n            finally:\n                self.destroy_node()\n            raise\n"
+    ],
+    [
+      "        _stop_executor(executor)\n        if os.environ.get(\"CUPY_STATS_DUMP\"):\n            node.write_processing_stats()\n        if node.tf_worker is not None:\n            node.tf_worker.close()\n        node.destroy_node()\n        if rclpy.ok():\n            rclpy.shutdown()\n        for sig, handler in previous_signals.items():\n            signal.signal(sig, handler)\n",
+      "        try:\n            _stop_executor(executor)\n            if os.environ.get(\"CUPY_STATS_DUMP\"):\n                node.write_processing_stats()\n        finally:\n            try:\n                if node.tf_worker is not None:\n                    node.tf_worker.close()\n            finally:\n                try:\n                    node.destroy_node()\n                    if rclpy.ok():\n                        rclpy.shutdown()\n                finally:\n                    for sig, handler in previous_signals.items():\n                        signal.signal(sig, handler)\n"
+    ],
+    [
+      "    node = ElevationMappingNode()\n    executor = make_executor(node.executor_mode, node.context)\n    try:\n",
+      "    node = None\n    executor = None\n    try:\n        node = ElevationMappingNode()\n        executor = make_executor(node.executor_mode, node.context)\n"
+    ],
+    [
+      "            _stop_executor(executor)\n            if os.environ.get(\"CUPY_STATS_DUMP\"):\n",
+      "            if executor is not None:\n                _stop_executor(executor)\n            if node is not None and os.environ.get(\"CUPY_STATS_DUMP\"):\n"
+    ],
+    [
+      "                if node.tf_worker is not None:\n                    node.tf_worker.close()\n            finally:\n                try:\n                    node.destroy_node()\n",
+      "                if node is not None and node.tf_worker is not None:\n                    node.tf_worker.close()\n            finally:\n                try:\n                    if node is not None:\n                        node.destroy_node()\n"
+    ]
+  ],
+  "default": "multi; original topology retained",
+  "candidate": "single; serial map executor + independent TF node"
+}

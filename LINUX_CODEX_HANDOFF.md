@@ -1,3 +1,9 @@
+# 最新交接：循环4可选建图调度，尚未运行仿真
+
+先读docs/results/wsl_offline_cycle4_20261105/REPORT.md。runtime已准备single地图执行器+独立TF接收候选，runner显式--mapper-executor single选择，默认multi不变；20项离线检查通过，三对合成调度负载CPU约下降63%、处理量相近。这不是地图源龄闭环验收，用户仍要求暂不启动仿真；禁止自动开启。补丁/installer验证wrapper/helper SHA，不覆盖未知CuPy差异。不发布Release或硬件部署，旧原始数据继续保留。此文件需离线Linux拉取后阅读。
+
+---
+
 # 最新交接：循环3离线候选，禁止自动启动仿真
 
 用户明确要求先诊断和改代码，暂不运行仿真。本轮只读取cycle2数据、修复剩余收益抽样对原队列的3处误用、补充反例并通过完整9组CTest；没有新的120秒成绩，不能称已闭环验收。先读docs/results/wsl_offline_cycle3_20261105/REPORT.md和PROVENANCE.json。地图上游延迟、前沿继续选择门限及几何阻塞仍待解决；旧仿真结果不适用于当前候选。仅代码/精简记录推送，不发布Release或部署。原Linux聊天不会自动收到交接，需拉取本分支阅读。

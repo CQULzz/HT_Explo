@@ -1,0 +1,58 @@
+.[WARN] [1793878655.881635179] [rcl]: ROS_LOCALHOST_ONLY is deprecated but still honored if it is enabled. Use ROS_AUTOMATIC_DISCOVERY_RANGE and ROS_STATIC_PEERS instead.
+[WARN] [1793878655.881644188] [rcl]: 'localhost_only' is enabled, 'automatic_discovery_range' and 'static_peers' will be ignored.
+exact_tf_lookup_wall_s 0.06425770900000316
+.[WARN] [1793878656.022709995] [rcl]: ROS_LOCALHOST_ONLY is deprecated but still honored if it is enabled. Use ROS_AUTOMATIC_DISCOVERY_RANGE and ROS_STATIC_PEERS instead.
+[WARN] [1793878656.022722107] [rcl]: 'localhost_only' is enabled, 'automatic_discovery_range' and 'static_peers' will be ignored.
+.[WARN] [1793878656.057872981] [rcl]: ROS_LOCALHOST_ONLY is deprecated but still honored if it is enabled. Use ROS_AUTOMATIC_DISCOVERY_RANGE and ROS_STATIC_PEERS instead.
+[WARN] [1793878656.057881009] [rcl]: 'localhost_only' is enabled, 'automatic_discovery_range' and 'static_peers' will be ignored.
+.[WARN] [1793878656.081934066] [rcl]: ROS_LOCALHOST_ONLY is deprecated but still honored if it is enabled. Use ROS_AUTOMATIC_DISCOVERY_RANGE and ROS_STATIC_PEERS instead.
+[WARN] [1793878656.081942829] [rcl]: 'localhost_only' is enabled, 'automatic_discovery_range' and 'static_peers' will be ignored.
+[INFO] [1793878656.145427367] [elevation_mapping]: Subscribed to PointCloud2 topic: /camera/depth/points reliability=BEST_EFFORT depth=5
+[WARN] [1793878656.146516653] [elevation_mapping]: ROS 2 wrapper currently skips non-pointcloud subscriber [color_cam]
+[WARN] [1793878656.147339318] [elevation_mapping]: ROS 2 wrapper currently skips non-pointcloud subscriber [semantic_cam]
+[INFO] [1793878656.155845079] [elevation_mapping]: Mapper executor mode=multi; dedicated_tf=False
+[INFO] [1793878656.156849779] [elevation_mapping]: [ElevationMappingCupy] ROS 2 node initialized
+.[WARN] [1793878656.161130919] [rcl]: ROS_LOCALHOST_ONLY is deprecated but still honored if it is enabled. Use ROS_AUTOMATIC_DISCOVERY_RANGE and ROS_STATIC_PEERS instead.
+[WARN] [1793878656.161136199] [rcl]: 'localhost_only' is enabled, 'automatic_discovery_range' and 'static_peers' will be ignored.
+[INFO] [1793878656.183975975] [elevation_mapping]: Subscribed to PointCloud2 topic: /camera/depth/points reliability=BEST_EFFORT depth=5
+[WARN] [1793878656.184868717] [elevation_mapping]: ROS 2 wrapper currently skips non-pointcloud subscriber [color_cam]
+[WARN] [1793878656.185613840] [elevation_mapping]: ROS 2 wrapper currently skips non-pointcloud subscriber [semantic_cam]
+[INFO] [1793878656.188399908] [elevation_mapping]: Mapper executor mode=single; dedicated_tf=True
+[INFO] [1793878656.189408008] [elevation_mapping]: [ElevationMappingCupy] ROS 2 node initialized
+.[WARN] [1793878656.194207777] [rcl]: ROS_LOCALHOST_ONLY is deprecated but still honored if it is enabled. Use ROS_AUTOMATIC_DISCOVERY_RANGE and ROS_STATIC_PEERS instead.
+[WARN] [1793878656.194213206] [rcl]: 'localhost_only' is enabled, 'automatic_discovery_range' and 'static_peers' will be ignored.
+........F...
+=================================== FAILURES ===================================
+_ test_zero_demand_skips_lock_and_layers_then_late_subscriber_gets_coherent_map _
+
+    def test_zero_demand_skips_lock_and_layers_then_late_subscriber_gets_coherent_map():
+        n=proxy()
+        class ForbiddenLock:
+            def __enter__(self):raise AssertionError('unused publication acquired the map lock')
+        n.map_access_lock=ForbiddenLock()
+>       ElevationMappingNode.publish_map(n,'raw')
+
+tools/ht_cupy_bridge/test_publication_demand.py:35: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = namespace(map_translation=True, last_integrated_stamp=Time(nanoseconds=10000000000, clock_type=SYSTEM_TIME), offline_t...0., 0., ..., 0., 0., 0.],
+       [0., 0., 0., ..., 0., 0., 0.]], dtype=float32), publication_skipped_no_subscribers={})
+name = 'raw'
+
+    def publish_map(self, name: str) -> None:
+        if self.map_translation is None or self.last_integrated_stamp is None:
+            return
+        config = self.publisher_configs[name]
+        msg = GridMap()
+        msg.header.frame_id = self.map_frame
+        # Freeze geometry and every GPU layer under the same lock. Serialize
+        # the CPU copies afterward, allowing new scans to update the map while
+        # DDS prepares/publishes the previous coherent snapshot.
+        snapshots = []
+>       with self.map_access_lock:
+E       TypeError: 'ForbiddenLock' object does not support the context manager protocol (missed __exit__ method)
+
+/home/lzz/my test/ht_cupy_gpu_ws_20261028/install_stable/elevation_mapping_cupy/lib/python3.12/site-packages/elevation_mapping_cupy/elevation_mapping_ros.py:365: TypeError
+=========================== short test summary info ============================
+FAILED tools/ht_cupy_bridge/test_publication_demand.py::test_zero_demand_skips_lock_and_layers_then_late_subscriber_gets_coherent_map
+1 failed, 17 passed in 0.93s

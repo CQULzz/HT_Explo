@@ -1,0 +1,24 @@
+{
+  "baseline_project_head": "0bc1510bbaa87f97bb9c8230921c00bbb546a32d",
+  "before_runtime_wrapper_sha256": "b2fe0f8a2c49a1ccf233c1b878b19abff6538e2b1f80ab1dd188b176a63d16e8",
+  "before_runner_sha256": "ac67d3cdc3edb5099ac88fa18ac0004216e8ae791c3efabfdc33bea2161bfabe",
+  "simulation_runs_this_cycle": 0,
+  "scope": "User deferred simulation; only offline ROS mechanism and scheduler load tests, no physics or bag playback.",
+  "candidate_sha256": {
+    "/home/w_lzz/ht-iterations-20261105/repo/tools/pcd_sim/mapper_execution.py": "82d8fef3b23a496c11b338b0bf8fb45158050f3964222ed2c124755ae3b52fa9",
+    "/home/w_lzz/ht-iterations-20261105/repo/tools/pcd_sim/mapper_execution_manifest.json": "e0091586982434084bd9fed3301f687e716366572dd7acca984bbd9711618078",
+    "/home/w_lzz/ht-iterations-20261105/repo/tools/pcd_sim/run_sim.py": "fd966b0c54dda51203e795f094d8fdba3d90e4a1a68aa7ac6d50db34c19d4d6e",
+    "/home/w_lzz/ht-iterations-20261105/repo/tools/pcd_sim/test_mapper_execution.py": "23315e3be69e2faa8b5164af00c73e269791f3ede5504d340b27140dadfd1e2c",
+    "/home/w_lzz/ht-iterations-20261105/repo/tools/pcd_sim/test_mapper_installation.py": "ffe3aa97206b13d92e9237dead223dfadd70103d8939d789ee20a379537b98e9",
+    "/home/w_lzz/ht-iterations-20261105/repo/tools/pcd_sim/benchmark_mapper_execution.py": "e572d059177314ab2a6f9fc3fd9eb10d2128e2b55914ba5f537197ae49e6a7ec",
+    "/home/w_lzz/ht-iterations-20261105/repo/tools/pcd_sim/install_mapper_execution.py": "407907b63a82706708e282df44ea5aefa1afae05552f814f4ca1d59f8e6fc4f0",
+    "/home/w_lzz/ht-iterations-20261105/runtime/mapper_strict.py": "8c9a18494f7cd23f982afb73b397158175fa008bcb6f573ab4b0915f8aa2a7f4",
+    "/home/w_lzz/ht-iterations-20261105/runtime/mapper_execution.py": "82d8fef3b23a496c11b338b0bf8fb45158050f3964222ed2c124755ae3b52fa9",
+    "/home/w_lzz/ht-iterations-20261105/runtime/run_sim.py": "fd966b0c54dda51203e795f094d8fdba3d90e4a1a68aa7ac6d50db34c19d4d6e"
+  },
+  "evidence_sha256": {
+    "/home/w_lzz/ht-iterations-20261105/profile_repeat120_r05/GIL_PROFILE_SUMMARY.json": "549b2ee00f4e5c7543a8424117aeae3a2cb058285859e0f3544d6ca6cb6261f6"
+  },
+  "command": "source runtime/env.sh; ROS_DOMAIN_ID=229 MAPPER_TEST_WRAPPER=runtime/mapper_strict.py MAPPER_TEST_BASELINE=setup/cycle4-before-mapper.py CUPY_WRAPPER_UNDER_TEST=runtime/mapper_strict.py python -m pytest -q -s tools/pcd_sim/test_mapper_execution.py tools/pcd_sim/test_mapper_installation.py tools/ht_cupy_bridge/test_publication_demand.py",
+  "benchmark_command": "ROS_DOMAIN_ID=229 python tools/pcd_sim/benchmark_mapper_execution.py --output setup/cycle4-scheduler-benchmark.json"
+}

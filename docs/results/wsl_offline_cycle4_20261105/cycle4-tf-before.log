@@ -1,0 +1,64 @@
+[WARN] [1793878429.646094142] [rcl]: ROS_LOCALHOST_ONLY is deprecated but still honored if it is enabled. Use ROS_AUTOMATIC_DISCOVERY_RANGE and ROS_STATIC_PEERS instead.
+[WARN] [1793878429.646119184] [rcl]: 'localhost_only' is enabled, 'automatic_discovery_range' and 'static_peers' will be ignored.
+F
+=================================== FAILURES ===================================
+_______________ test_receives_exact_tf_while_map_callback_waits ________________
+
+owner = <rclpy.node.Node object at 0x75bf614ac3e0>
+
+    def test_receives_exact_tf_while_map_callback_waits(owner):
+        buffer = Buffer()
+        legacy = os.environ.get('MAPPER_TEST_LEGACY_TF') == '1'
+        worker = None if legacy else TfListenerWorker(buffer, owner)
+        listener = TransformListener(buffer, owner) if legacy else worker.listener
+        broadcaster = TransformBroadcaster(owner)
+        executor = SingleThreadedExecutor(context=owner.context)
+        executor.add_node(owner)
+        deadline = time.monotonic() + 4
+        while broadcaster.pub_tf.get_subscription_count() == 0 and time.monotonic() < deadline:
+            time.sleep(.01)
+        assert broadcaster.pub_tf.get_subscription_count() > 0
+        requested = owner.get_clock().now() + Duration(seconds=1)
+        transform = TransformStamped()
+        transform.header.frame_id = 'scheduler_test_map'
+        transform.child_frame_id = 'scheduler_test_sensor'
+        transform.header.stamp = requested.to_msg()
+        transform.transform.translation.x = .37
+        transform.transform.rotation.w = 1.
+        waiting = threading.Event()
+        elapsed = []
+        errors = []
+    
+        def send():
+            if waiting.wait(2):
+                time.sleep(.05)
+                broadcaster.sendTransform(transform)
+    
+        def lookup():
+            timer.cancel()
+            waiting.set()
+            start = time.monotonic()
+            try:
+                result = buffer.lookup_transform('scheduler_test_map', 'scheduler_test_sensor',
+                           requested, timeout=Duration(seconds=.6))
+                assert result.header.stamp == transform.header.stamp
+                assert result.transform.translation.x == .37
+                elapsed.append(time.monotonic() - start)
+            except Exception as error:
+                errors.append(error)
+    
+        timer = owner.create_timer(.01, lookup)
+        sender = threading.Thread(target=send)
+        sender.start()
+        try:
+            deadline = time.monotonic() + 3
+            while not elapsed and not errors and time.monotonic() < deadline:
+                executor.spin_once(timeout_sec=.1)
+>           assert not errors, errors
+E           AssertionError: [LookupException('"scheduler_test_map" passed to lookupTransform argument target_frame does not exist. ')]
+E           assert not [LookupException('"scheduler_test_map" passed to lookupTransform argument target_frame does not exist. ')]
+
+tools/pcd_sim/test_mapper_execution.py:88: AssertionError
+=========================== short test summary info ============================
+FAILED tools/pcd_sim/test_mapper_execution.py::test_receives_exact_tf_while_map_callback_waits
+1 failed, 5 deselected in 1.16s

@@ -1,0 +1,41 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+______________ test_main_failure_still_closes_worker_and_context _______________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x713023c60e60>
+
+    def test_main_failure_still_closes_worker_and_context(monkeypatch):
+        path = os.environ.get('MAPPER_TEST_WRAPPER')
+        if not path:
+            pytest.skip('Set MAPPER_TEST_WRAPPER to the staged wrapper')
+        import signal
+        spec = importlib.util.spec_from_file_location('failing_main_wrapper', path)
+        module = importlib.util.module_from_spec(spec); spec.loader.exec_module(module)
+        closed = []; destroyed = []
+        signals = {s: signal.getsignal(s) for s in (signal.SIGINT, signal.SIGTERM)}
+        node = SimpleNamespace(executor_mode='single', context=None,
+            tf_worker=SimpleNamespace(close=lambda: closed.append(True)),
+            destroy_node=lambda: destroyed.append(True))
+        monkeypatch.setattr(module, 'ElevationMappingNode', lambda: node)
+        monkeypatch.setattr(module, 'make_executor', lambda *args: object())
+        def spin_failure(*args, **kwargs):
+            raise RuntimeError('injected map callback failure')
+        def stop_failure(*args, **kwargs):
+            raise RuntimeError('injected executor stop failure')
+        monkeypatch.setattr(module.rclpy, 'spin', spin_failure)
+        monkeypatch.setattr(module, '_stop_executor', stop_failure)
+        try:
+            with pytest.raises(RuntimeError):
+                module.main()
+>           assert closed == [True]
+E           assert [] == [True]
+E             Right contains one more item: True
+E             Use -v to get more diff
+
+tools/pcd_sim/test_mapper_execution.py:214: AssertionError
+----------------------------- Captured stderr call -----------------------------
+[WARN] [1793878743.467470849] [rcl]: ROS_LOCALHOST_ONLY is deprecated but still honored if it is enabled. Use ROS_AUTOMATIC_DISCOVERY_RANGE and ROS_STATIC_PEERS instead.
+[WARN] [1793878743.467489060] [rcl]: 'localhost_only' is enabled, 'automatic_discovery_range' and 'static_peers' will be ignored.
+=========================== short test summary info ============================
+FAILED tools/pcd_sim/test_mapper_execution.py::test_main_failure_still_closes_worker_and_context
+1 failed, 7 deselected in 1.16s

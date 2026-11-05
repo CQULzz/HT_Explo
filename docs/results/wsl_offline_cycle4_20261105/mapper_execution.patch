@@ -1,0 +1,159 @@
+--- a/mapper_strict.py
++++ b/mapper_strict.py
+@@ -32,6 +32,7 @@
+ from tf2_ros import Buffer, ConnectivityException, ExtrapolationException, LookupException, TransformListener
+ 
+ from elevation_mapping_cupy import ElevationMap, Parameter
++from mapper_execution import TfListenerWorker, execution_mode, make_executor
+ 
+ 
+ def _load_yaml(path: str) -> dict[str, Any]:
+@@ -87,6 +88,8 @@
+ class ElevationMappingNode(Node):
+     def __init__(self) -> None:
+         super().__init__("elevation_mapping")
++        self.executor_mode = execution_mode()
++        self.tf_worker = None
+         self.share_dir = get_package_share_directory("elevation_mapping_cupy")
+         self.declare_parameter("core_param_file", f"{self.share_dir}/config/core/core_param.yaml")
+         self.declare_parameter("setup_file", f"{self.share_dir}/config/core/example_setup.yaml")
+@@ -128,43 +131,57 @@
+                     count += 1
+             self.tf_listener = None
+             self.get_logger().info(f"Preloaded {count} recorded transforms for offline mapping")
++        elif self.executor_mode == "single":
++            self.tf_worker = TfListenerWorker(self.tf_buffer, self)
++            self.tf_listener = self.tf_worker.listener
+         else:
+             self.tf_listener = TransformListener(self.tf_buffer, self)
+-        self.map = ElevationMap(self.param)
+-        # Incoming scans and periodic work must be scheduled independently.
+-        # Protect the complete map operation (including move_to's center)
+-        # because the core lock does not cover every wrapper-visible field.
+-        self.map_access_lock = threading.RLock()
+-        self.scan_callback_group = MutuallyExclusiveCallbackGroup()
+-        self.timer_callback_group = MutuallyExclusiveCallbackGroup()
+-        self.publish_callback_group = MutuallyExclusiveCallbackGroup()
+-        self.map_data = np.zeros((self.map.cell_n - 2, self.map.cell_n - 2), dtype=np.float32)
+-        self.map_translation = None
+-        self.map_rotation = None
+-        self.last_stamp = None
+-        self.last_integrated_stamp = None
+-        self.pointcloud_process_counter = 0
+-        self.pointcloud_receive_counter = 0
+-        self.first_cloud_stamp_s = None
+-        self.last_cloud_stamp_s = None
+-        self.first_cloud_receive_clock_s = None
+-        self.last_cloud_receive_clock_s = None
+-        self.last_processed_cloud_stamp_s = None
+-        self.pointcloud_processing_total_s = 0.0
+-        self.pointcloud_processing_max_s = 0.0
+-        self.cloud_queue_ages_s = []
+-        self.timer_profile = {}
+-        self.publication_skipped_no_subscribers = {}
+-
+-        self.pointcloud_subscriptions = []
+-        self.map_publishers = {}
+-        self.map_timers = []
+-        self.register_subscribers()
+-        self.register_publishers()
+-        self.register_timers()
+-        self.get_logger().info("[ElevationMappingCupy] ROS 2 node initialized")
+-        if os.environ.get("CUPY_READY_FILE"):
+-            Path(os.environ["CUPY_READY_FILE"]).write_text("ready\n")
++        try:
++            self.map = ElevationMap(self.param)
++            # Incoming scans and periodic work must be scheduled independently.
++            # Protect the complete map operation (including move_to's center)
++            # because the core lock does not cover every wrapper-visible field.
++            self.map_access_lock = threading.RLock()
++            self.scan_callback_group = MutuallyExclusiveCallbackGroup()
++            self.timer_callback_group = MutuallyExclusiveCallbackGroup()
++            self.publish_callback_group = MutuallyExclusiveCallbackGroup()
++            self.map_data = np.zeros((self.map.cell_n - 2, self.map.cell_n - 2), dtype=np.float32)
++            self.map_translation = None
++            self.map_rotation = None
++            self.last_stamp = None
++            self.last_integrated_stamp = None
++            self.pointcloud_process_counter = 0
++            self.pointcloud_receive_counter = 0
++            self.first_cloud_stamp_s = None
++            self.last_cloud_stamp_s = None
++            self.first_cloud_receive_clock_s = None
++            self.last_cloud_receive_clock_s = None
++            self.last_processed_cloud_stamp_s = None
++            self.pointcloud_processing_total_s = 0.0
++            self.pointcloud_processing_max_s = 0.0
++            self.cloud_queue_ages_s = []
++            self.timer_profile = {}
++            self.publication_skipped_no_subscribers = {}
++
++            self.pointcloud_subscriptions = []
++            self.map_publishers = {}
++            self.map_timers = []
++            self.register_subscribers()
++            self.register_publishers()
++            self.register_timers()
++            if self.tf_worker is not None:
++                self.create_timer(0.25, self.tf_worker.check_health, callback_group=self.timer_callback_group)
++            self.get_logger().info(f"Mapper executor mode={self.executor_mode}; dedicated_tf={self.tf_worker is not None}")
++            self.get_logger().info("[ElevationMappingCupy] ROS 2 node initialized")
++            if os.environ.get("CUPY_READY_FILE"):
++                Path(os.environ["CUPY_READY_FILE"]).write_text("ready\n")
++        except BaseException:
++            try:
++                if self.tf_worker is not None:
++                    self.tf_worker.close()
++            finally:
++                self.destroy_node()
++            raise
+ 
+     def register_subscribers(self) -> None:
+         for key, config in self.subscriber_configs.items():
+@@ -449,9 +466,11 @@
+     for sig in previous_signals:
+         signal.signal(sig, signal.default_int_handler)
+     rclpy.init(args=args, signal_handler_options=SignalHandlerOptions.NO)
+-    node = ElevationMappingNode()
+-    executor = MultiThreadedExecutor(num_threads=4)
++    node = None
++    executor = None
+     try:
++        node = ElevationMappingNode()
++        executor = make_executor(node.executor_mode, node.context)
+         # Separate workers serve TF, scans and timers. Map snapshots/mutations
+         # stay serialized by the node lock while TF waits occur outside it.
+         rclpy.spin(node, executor=executor)
+@@ -460,14 +479,24 @@
+     finally:
+         # Workers may still own GPU/map operations when spin is interrupted.
+         # Join them before reading final statistics or destroying ROS entities.
+-        _stop_executor(executor)
+-        if os.environ.get("CUPY_STATS_DUMP"):
+-            node.write_processing_stats()
+-        node.destroy_node()
+-        if rclpy.ok():
+-            rclpy.shutdown()
+-        for sig, handler in previous_signals.items():
+-            signal.signal(sig, handler)
++        try:
++            if executor is not None:
++                _stop_executor(executor)
++            if node is not None and os.environ.get("CUPY_STATS_DUMP"):
++                node.write_processing_stats()
++        finally:
++            try:
++                if node is not None and node.tf_worker is not None:
++                    node.tf_worker.close()
++            finally:
++                try:
++                    if node is not None:
++                        node.destroy_node()
++                    if rclpy.ok():
++                        rclpy.shutdown()
++                finally:
++                    for sig, handler in previous_signals.items():
++                        signal.signal(sig, handler)
+ 
+ 
+ if __name__ == "__main__":
