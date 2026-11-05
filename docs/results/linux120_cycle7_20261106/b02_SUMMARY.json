@@ -1,0 +1,79 @@
+{
+  "label": "b02_single42",
+  "tested_commit": "4a963de1d407164b0bb14b5d532ed8d8151ae89b",
+  "done": {
+    "elapsed_sim": 120.3,
+    "elapsed_wall": 123.95285945599971,
+    "distance": 27.37037498389858,
+    "free_volume": 993.8480000000001,
+    "mission_completed": false,
+    "counts": {
+      "ht_follower_status": 2478,
+      "ht_execution_status": 235,
+      "mission_state": 235,
+      "odom": 2409,
+      "input_status": 3622,
+      "runtime_status": 240,
+      "input_performance": 120,
+      "map": 544,
+      "ht_performance": 101
+    },
+    "video_frames": 241
+  },
+  "run_result": {
+    "render_backend": "egl",
+    "actual_gl_renderers": [
+      "NVIDIA GeForce RTX 5060 Ti/PCIe/SSE2"
+    ],
+    "renderer_verified": true,
+    "managed_shutdown_nonzero": {},
+    "ros_launch_child_nonzero": {},
+    "error": null,
+    "requested_duration_sim_s": 120.0,
+    "actual_duration_sim_s": 120.3,
+    "full_requested_duration": true,
+    "full_600_sim_s": false,
+    "failure_stage": null,
+    "frozen_files_changed": [],
+    "wall_elapsed": 126.31916924799998,
+    "exit_codes": {
+      "record": 0,
+      "observer": 0,
+      "bridge": 0,
+      "adapter": 0,
+      "mapper": 0,
+      "navigation": 0,
+      "gazebo": 0
+    }
+  },
+  "runtime_reason_event_counts": {
+    "HT_MAP_MISSING_OR_STALE": 5,
+    "HT_MAP_MISSING": 2,
+    "GEOMETRY_CURRENT_POSE_BLOCKED": 3,
+    "COMMAND_SENT_NOT_WHEEL_CONFIRMED": 186,
+    "HT_MAP_STALE": 3,
+    "BASE_SENSOR_FAULT": 2,
+    "ODOMETRY_MISSING_OR_STALE": 2,
+    "PATH_NO_EXECUTABLE_ROUTE": 37
+  },
+  "map_source_age_at_publish_s": {
+    "p50": 0.16000000000000014,
+    "p95": 0.4800000000000004,
+    "max": 1.1899999999999977
+  },
+  "map_source_age_at_callback_s": {
+    "p50": 0.10000000000000853,
+    "p95": 0.4099999999999966,
+    "max": 0.9000000000000057
+  },
+  "ht_callback_service_s": {
+    "p50": 0.05607536500019705,
+    "p95": 0.07060318999992887,
+    "max": 0.47551301200019225
+  },
+  "sampled_zero_command_fraction": 0.29707112970711297,
+  "distance_before_ready_m": 0.3199560020392915,
+  "distance_after_first_ready_sample_m": 27.050418981859288,
+  "map_age_sample_count": 101,
+  "metric_note": "Distance is cumulative ground-truth XY, includes gravity settling/slip before READY. Free volume is sampled LiDAR ray-voxel union, not ground-truth scene coverage. Runtime reason counts are events, not seconds; zero fraction is ~2Hz telemetry samples."
+}
