@@ -1,0 +1,62 @@
+{
+  "label": "b05_tare99",
+  "tested_commit": "0e8d72c00a527a937438defaf147832b0699c33f",
+  "done": {
+    "elapsed_sim": 120.3,
+    "elapsed_wall": 123.17974790100016,
+    "distance": 4.493771693525095,
+    "free_volume": 501.04,
+    "mission_completed": true,
+    "counts": {
+      "runtime_status": 2457,
+      "ht_follower_status": 2457,
+      "mission_state": 136,
+      "ht_execution_status": 136,
+      "odom": 2409,
+      "input_status": 3620,
+      "input_performance": 120
+    },
+    "video_frames": 241
+  },
+  "run_result": {
+    "render_backend": "egl",
+    "actual_gl_renderers": [
+      "NVIDIA GeForce RTX 5060 Ti/PCIe/SSE2"
+    ],
+    "renderer_verified": true,
+    "managed_shutdown_nonzero": {},
+    "ros_launch_child_nonzero": {},
+    "error": null,
+    "requested_duration_sim_s": 120.0,
+    "actual_duration_sim_s": 120.3,
+    "full_requested_duration": true,
+    "full_600_sim_s": false,
+    "failure_stage": null,
+    "frozen_files_changed": [],
+    "wall_elapsed": 126.18375163199971,
+    "exit_codes": {
+      "record": 0,
+      "observer": 0,
+      "bridge": 0,
+      "adapter": 0,
+      "mapper": 0,
+      "navigation": 0,
+      "gazebo": 0
+    }
+  },
+  "runtime_reason_event_counts": {
+    "TARE_STATE_STALE": 25,
+    "TARE_WAIT_START": 85,
+    "TARE_GEOMETRIC_COMMAND": 273,
+    "GEOMETRY_STALE_OR_INVALID": 42,
+    "TARE_COMPLETED": 2032
+  },
+  "map_source_age_at_publish_s": null,
+  "map_source_age_at_callback_s": null,
+  "ht_callback_service_s": null,
+  "sampled_zero_command_fraction": 0.899581589958159,
+  "distance_before_ready_m": 0.3199560020392915,
+  "distance_after_first_ready_sample_m": 4.173815691485803,
+  "map_age_sample_count": 0,
+  "metric_note": "Distance is cumulative ground-truth XY, includes gravity settling/slip before READY. Free volume is sampled LiDAR ray-voxel union, not ground-truth scene coverage. Runtime reason counts are events, not seconds; zero fraction is ~2Hz telemetry samples."
+}
