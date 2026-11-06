@@ -1,0 +1,99 @@
+{
+  "producer_age_p95_s": 0.25,
+  "producer_age_max_s": 0.5499999999999972,
+  "age_samples": 106,
+  "ht_service_p95_s": 0.05241370524890954,
+  "runtime_reason_events": {
+    "HT_MAP_MISSING_OR_STALE": 3,
+    "WAIT_START": 4,
+    "GEOMETRY_CURRENT_POSE_BLOCKED": 2,
+    "PLANNER_STALE": 2,
+    "COMMAND_SENT_NOT_WHEEL_CONFIRMED": 225,
+    "ODOMETRY_MISSING_OR_STALE": 2,
+    "EMPTY_PATH": 1,
+    "GEOMETRY_COMMAND_BLOCKED": 1
+  },
+  "transitions": [
+    [
+      0.0,
+      "ht_execution_status",
+      "WAIT_START"
+    ],
+    [
+      0.0,
+      "mission_state",
+      "WAIT_START"
+    ],
+    [
+      3.52,
+      "ht_execution_status",
+      "GEOMETRY_CURRENT_POSE_BLOCKED"
+    ],
+    [
+      4.52,
+      "ht_execution_status",
+      "PLANNER_STALE"
+    ],
+    [
+      4.52,
+      "mission_state",
+      "BLOCKED"
+    ],
+    [
+      5.72,
+      "ht_execution_status",
+      "PATH_NO_EXECUTABLE_ROUTE"
+    ],
+    [
+      5.72,
+      "mission_state",
+      "EXPLORING"
+    ],
+    [
+      5.72,
+      "ht_execution_status",
+      "HT_ASSISTED"
+    ]
+  ],
+  "completion_diagnostics": 114,
+  "completion_ready_true": 0,
+  "final_completion_diagnostic": {
+    "stage": "completion",
+    "sim_time_s": 119.67,
+    "odom_source_s": 119.5,
+    "scan_source_s": 119.4,
+    "map_source_s": 119.2,
+    "sampling_calls": 117,
+    "completion_ready": false,
+    "global_return": 0,
+    "local_complete": 0,
+    "global_eligible": 0,
+    "global_connected": 0,
+    "global_unreachable": 0,
+    "local_delegated": 0,
+    "candidate_viewpoints": 102,
+    "uncovered_surface": 160,
+    "uncovered_frontier": 285,
+    "surface_threshold": 40,
+    "frontier_threshold": 15,
+    "queue": 0,
+    "queue_best": 0,
+    "frontier_queue": 0,
+    "reused": 4,
+    "raw_gain_candidates": 7,
+    "raw_frontier_candidates": 9,
+    "viewpoint_flag_counts": {
+      "collision_or_boundary": 640,
+      "disconnected": 1498,
+      "visited": 130,
+      "outside_exploring_cells": 1575
+    },
+    "global_route_nodes": 2,
+    "local_route_nodes": 56
+  },
+  "last30s_distance_m": 9.052033840924707,
+  "final_xy": [
+    12.920084108354349,
+    3.5804638277914926
+  ]
+}

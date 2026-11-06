@@ -81,3 +81,7 @@
 ## 循环9 CMU场景测试（2026-11-06）
 
 用户新授权使用本机CMU autonomous environment仿真测试。独立目录`/home/lzz/HT_cmu_indoor_cycle9_20261106`。计划1次120秒、种子42的HT测试，最大2次启动尝试，额外名额仅供基础设施启动失败后修复重试，失败记录保留。使用CMU indoor原生完整环境模型和纹理，沿用Scout URDF/动力学、当前建图与HT控制链。循环7账本仍关闭；本批不创建Release或部署实车，沿用代码/精简记录提交推送授权。
+
+## 循环9 CMU测试结束
+
+独立账本2/2尝试已用完。首次输出目录创建失败发生于任何子进程启动前，保留并修复；第二次CMU indoor+Scout HT完整120.3秒、32.96米，末30秒9.05米，结束EXPLORING/DRIVING且正常退出。详情docs/results/cmu_indoor_cycle9_20261106/REPORT.md。当前批次结束，原始数据继续保留。
