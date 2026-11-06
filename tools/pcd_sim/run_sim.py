@@ -31,7 +31,7 @@ if installed_launch.read_bytes()!=source_launch.read_bytes():
  raise RuntimeError('Installed launch differs from this source tree; rebuild ht_scout_bridge')
 scene=load_scene_config(R,args.scene_config)
 verify_scene(R,scene)
-out.mkdir(exist_ok=False)
+out.mkdir(parents=True,exist_ok=False)
 scene.write(out/'scene_config.json')
 def hashes():
  files=[out/'scene_config.json']

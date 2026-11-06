@@ -131,3 +131,20 @@ def test_runner_rejects_mixed_install_or_stale_launch_before_children(tmp_path,m
     expected='rebuild' if stale_launch else 'install-base'
     with pytest.raises(RuntimeError,match=expected):runpy.run_path(str(runner),run_name='__main__')
     assert not output.exists()
+
+
+def test_runner_creates_new_output_parent_before_any_child(tmp_path,monkeypatch):
+    from ament_index_python import packages
+    runner=Path(__file__).with_name('run_sim.py');repo=runner.parents[2]
+    install=tmp_path/'install';runtime=tmp_path/'runtime';runtime.mkdir()
+    launch=install/'ht_scout_bridge/share/ht_scout_bridge/launch/scout_real.launch.py'
+    launch.parent.mkdir(parents=True)
+    launch.write_bytes((repo/'src/ht_scout_bridge/launch/scout_real.launch.py').read_bytes())
+    monkeypatch.setattr(packages,'get_package_prefix',lambda package:str(install/package))
+    output=tmp_path/'new_parent'/'runs'
+    monkeypatch.setattr(sys,'argv',[str(runner),'--label','case','--project',str(repo),
+        '--runtime',str(runtime),'--install-base',str(install),'--output-root',str(output)])
+    def blocked(*args,**kwargs):raise RuntimeError('child blocked by offline test')
+    monkeypatch.setattr(subprocess,'Popen',blocked)
+    with pytest.raises(RuntimeError,match='child blocked'):runpy.run_path(str(runner),run_name='__main__')
+    assert (output/'case/scene_config.json').is_file()
