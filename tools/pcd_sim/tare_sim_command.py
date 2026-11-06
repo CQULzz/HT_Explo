@@ -46,6 +46,10 @@ class TareSimBridge(ScoutCommandBridge):
         super().__init__()
         if self.output_topic!='/sim/cmd_vel' or self.input_topic!='/sim/tare/raw_command':
             raise ValueError('This comparison bridge only accepts isolated simulation topics')
+        self.path_timeout=float(self.declare_parameter('path_timeout',3.).value)
+        self.geometry_timeout=float(self.declare_parameter('geometry_timeout',3.).value)
+        if not all(math.isfinite(value) and value>0 for value in (self.path_timeout,self.geometry_timeout)):
+            raise ValueError('Invalid TARE simulation freshness timeout')
         self.path=None;self.geometry=None;self.previous=(0.,0.);self.last_receive=None
         self.state='WAIT_START';self.state_time=None
         self.create_subscription(Path,'/sim/tare/path',lambda m:setattr(self,'path',(m,time.monotonic())),5)
@@ -78,10 +82,10 @@ class TareSimBridge(ScoutCommandBridge):
         if self.state not in ['EXPLORING','RETURNING_HOME']:return 'TARE_'+self.state
         if not self.path:return 'TARE_PATH_MISSING'
         path,received=self.path;stamp=path.header.stamp.sec+path.header.stamp.nanosec/1e9
-        if not path.poses or not 0<=steady-received<=1 or not 0<=now-stamp<=1:return 'TARE_PATH_STALE_OR_EMPTY'
+        if not path.poses or not 0<=steady-received<=self.path_timeout or not 0<=now-stamp<=self.path_timeout:return 'TARE_PATH_STALE_OR_EMPTY'
         if not self.geometry:return 'GEOMETRY_MISSING'
         header,points,received=self.geometry;stamp=header.stamp.sec+header.stamp.nanosec/1e9
-        if header.frame_id!='map' or not 0<=steady-received<=1 or not 0<=now-stamp<=1:return 'GEOMETRY_STALE_OR_INVALID'
+        if header.frame_id!='map' or not 0<=steady-received<=self.geometry_timeout or not 0<=now-stamp<=self.geometry_timeout:return 'GEOMETRY_STALE_OR_INVALID'
         self.permission=(True,steady)
         reason=super().reason()
         if reason:return reason

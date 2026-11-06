@@ -1,0 +1,8 @@
+[WARN] [1793950640.143986779] [rcl]: ROS_LOCALHOST_ONLY is deprecated but still honored if it is enabled. Use ROS_AUTOMATIC_DISCOVERY_RANGE and ROS_STATIC_PEERS instead.
+[WARN] [1793950640.144006002] [rcl]: 'localhost_only' is enabled, 'automatic_discovery_range' and 'static_peers' will be ignored.
+Traceback (most recent call last):
+  File "<stdin>", line 8, in <module>
+  File "/home/lzz/HT_linux_cycle7_20261106/repo/tools/pcd_sim/test_tare_comparison.py", line 90, in test_actual_ros_bridge_moves_only_with_fresh_geometry_and_stops_on_stale_command
+    assert any(v>0 for v in commands) and all(0<=v<=.4 for v in commands)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

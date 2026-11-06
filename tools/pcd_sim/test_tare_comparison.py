@@ -68,7 +68,7 @@ def test_actual_ros_bridge_moves_only_with_fresh_geometry_and_stops_on_stale_com
     mission=source.create_publisher(String,'/ht_real/mission_state',5)
     commands=[]
     sub=source.create_subscription(Twist,'/sim/cmd_vel',lambda m:commands.append(m.linear.x),10)
-    def spin(duration,send_geometry=True,send_command=True):
+    def spin(duration,send_geometry=True,send_command=True,geometry_age=0.):
         until=time.monotonic()+duration
         while time.monotonic()<until:
             stamp=source.get_clock().now().to_msg()
@@ -76,15 +76,22 @@ def test_actual_ros_bridge_moves_only_with_fresh_geometry_and_stops_on_stale_com
             o.child_frame_id='base_link';o.pose.pose.orientation.w=1.;odom.publish(o)
             p=RosPath();p.header=Header(stamp=stamp,frame_id='vehicle');p.poses=[PoseStamped()];path.publish(p)
             mission.publish(String(data='EXPLORING'))
-            if send_geometry:geo.publish(create_cloud_xyz32(Header(stamp=stamp,frame_id='map'),[]))
+            if send_geometry:
+                from rclpy.time import Time
+                old_stamp=Time(nanoseconds=source.get_clock().now().nanoseconds-int(geometry_age*1e9)).to_msg()
+                geo.publish(create_cloud_xyz32(Header(stamp=old_stamp,frame_id='map'),[]))
             if send_command:
                 c=TwistStamped();c.header=Header(stamp=stamp,frame_id='vehicle');c.twist.linear.x=.4;raw.publish(c)
             executor.spin_once(timeout_sec=.01)
     try:
         spin(.4,send_geometry=False)
         assert commands and all(v==0 for v in commands)
-        commands.clear();spin(.6)
+        commands.clear();spin(.6,geometry_age=1.2)
         assert any(v>0 for v in commands) and all(0<=v<=.4 for v in commands)
+        commands.clear();spin(.35,geometry_age=3.2)
+        assert commands and all(v==0 for v in commands[-3:])
+        commands.clear();spin(.4,geometry_age=1.2)
+        assert any(v>0 for v in commands)
         commands.clear();spin(.6,send_command=False)
         assert commands and all(v==0 for v in commands[-3:])
     finally:

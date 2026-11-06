@@ -48,7 +48,8 @@ def start(context):
                  'sub_registered_scan_topic_':'/ht_real/registered_scan'}],
              remappings=remaps,output='screen'),
         Node(executable='/usr/bin/python3',arguments=[str(tools/'tare_sim_command.py')],
-             parameters=[common,{'input_topic':'/sim/tare/raw_command','output_topic':'/sim/cmd_vel'}],
+             parameters=[common,{'input_topic':'/sim/tare/raw_command','output_topic':'/sim/cmd_vel',
+                'geometry_timeout':3.,'path_timeout':3.}],
              output='screen')]
     parameters=json.loads((tools/'tare_cmu_parameters.json').read_text())
     for package,executable in [('terrain_analysis','terrainAnalysis'),
