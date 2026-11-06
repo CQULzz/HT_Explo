@@ -107,3 +107,15 @@ TEST_F(LocalCompletion, UnknownTerrainDoesNotCreateExecutionPermission) {
   solve(40);
   EXPECT_FALSE(manager->HT()->permits(manager->HT()->motionSupport({0,0,0},{point.x,point.y,0})));
 }
+
+TEST_F(LocalCompletion, NativeCompletionAuditCapturesAndResetsActualQueueThresholds) {
+  assertReachable();add(40);solve(40);
+  const auto first=planner->GetCompletionAudit();
+  EXPECT_EQ(first.min_points,40);EXPECT_EQ(first.min_frontier,15);
+  EXPECT_GT(first.queue,0);EXPECT_GE(first.queue_best,40);
+  EXPECT_GT(first.raw_gain_candidates,0);
+  add(0);solve(0);
+  const auto drained=planner->GetCompletionAudit();
+  EXPECT_EQ(drained.raw_gain_candidates,0);
+  EXPECT_TRUE(planner->IsLocalCoverageComplete());
+}

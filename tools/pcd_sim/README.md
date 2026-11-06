@@ -46,3 +46,29 @@ Both arms keep the same Scout URDF, reconstructed scene, source scans, odometry/
 Terrain and control semantics differ between arms; this is an end-to-end system comparison, not a pure neural ablation. CuPy mapping remains running as a common shadow producer; TARE does not run HT inference or consume the HT map. HT source-age metrics are N/A for TARE. All CMU installed files, paths and comparison sources are included in run hashes; source version/local status must be recorded separately. MCAP also records the CMU path, raw command and terrain topics. No Release or raw-data cleanup is automatic.
 
 CMU shutdown: `stage_cmu_shutdown.py --source-workspace ORIGINAL --destination NEW` accepts only four pinned source hashes, copies three packages to a new destination, and defers context shutdown until the100Hz loop exits after SIGINT/SIGTERM. Build/source the new workspace, then select it explicitly. The original remains untouched. The manifest records all exact edits/hashes; no map/planning/control math changes. Original four binaries exited−6 on an isolated no-sensor signal test; staged binaries each exited0. Independent ROS tests also verify that ScoutInputs drains active callbacks before entity/context teardown and surfaces worker exceptions.
+
+## Shared scene bounds and readiness start
+
+`scene_config.json` supplies `bounds_xy_m` as `[xmin,xmax,ymin,ymax]`, the navigation inset, metric Z limits, voxel size and ray range. The adapter publishes the inset polygon on `/ht_real/navigation_boundary` and `/ht_real/coverage_boundary`. Both simulation launch paths subscribe to these names and enable frontier/surface boundary filtering. HT's existing continuous pose collision checks also honor the navigation polygon.
+
+Prepare a new runtime from an exported map array and an existing verified Scout scene template. The array and template must use the same world coordinates. This command performs offline mesh reconstruction and configuration validation.
+
+```bash
+python tools/pcd_sim/prepare_scene.py \
+  --points /path/to/exported/local_map.npy \
+  --template /path/to/verified/runtime/scene.sdf \
+  --output /path/to/new/runtime \
+  --bounds -30 30 -30 30
+```
+
+The output contains the shared configuration, source/template/mesh hashes, measured ground triangles and original spawn. Available mapper wrappers/YAML and calibration files are copied from the template directory. The builder retains the 0.8m maximum ground edge and 0.16m obstacle voxels. It writes a temporary directory and publishes the completed directory after all files succeed. Existing destinations are refused. The runner checks prepared geometry hashes and bounds before starting children. Larger bounds require corresponding rebuilt geometry.
+
+The observer uses these bounds for display, clipping and volume counting. Its global 0.2m voxel alignment and 15m ray range remain the defaults. Voxel IDs use dimensions derived from the configured bounds, with encoding metadata in `metric_geometry.json`. Original recordings retain their original keys. Existing runtimes without a configuration file use the historical 30m bounds.
+
+Build/source the intended install before running. `run_sim.py --install-base /path/to/install` selects it explicitly, with the default `PROJECT/install_real`. The runner verifies the resolved package prefixes and installed launch bytes. It executes the adapter and observer from the selected project source, passing the runtime/configuration through their environment. Runtime calibration and mapper files come from `--runtime`.
+
+The runner defaults to `--start-policy ready`. The adapter waits for fresh odometry, registered scans and the selected arm's terrain producer, plus acknowledgement that TARE applied both boundaries. Sensor source age and receipt age must be within 1s, with readiness held for 1 simulation second. TARE geometric uses its terrain cloud, while HT uses its traversability map. `START_GATE.json` records the single release and source timestamps. `/sim/start_status` records waiting reasons, and a clock reset requires a restart. `--start-policy legacy` selects the earlier periodic start trigger for controlled start-policy comparisons.
+
+The navigation inset defaults to1.5m and is configurable. It is a scene boundary setting, separate from the fixed startup prior. A 60m crop describes the reconstruction bounds. Traversable support depends on measured triangles within it.
+
+`/ht_real/tare_decision_diagnostics` records completion inputs, queue thresholds, viewpoint flag counts and route-prefix rejection reasons. Viewpoint flag counts can overlap. Random sampling logs now include queue/covered-state fingerprints and cumulative call counts. These diagnostics describe the existing TARE decisions. Closed-loop exploration performance requires a subsequent budgeted simulation batch.

@@ -337,6 +337,8 @@ LocalCoveragePlanner::SolveTareCoverageProblem(
   std::vector<std::pair<int, int>> frontier_queue;
   EnqueueViewpointCandidates(queue, frontier_queue, covered, frontier_covered,
                              pre_selected_viewpoint_array_indices);
+  RecordCompletionAudit(navigation_viewpoint_indices.size(),reused_viewpoint_indices.size(),
+                        covered,frontier_covered,queue,frontier_queue);
 
   viewpoint_sampling_timer.Stop(false, kRuntimeUnit);
   viewpoint_sampling_runtime_ +=

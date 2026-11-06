@@ -265,6 +265,12 @@ private:
   rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr tare_route_pub_,tare_branch_pub_;
   geometry_msgs::msg::Point tare_command_waypoint_;
   bool tare_native_lookahead_update_=false;
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr decision_diagnostics_pub_;
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr boundary_status_pub_;
+  double coverage_boundary_source_s_=-1.,viewpoint_boundary_source_s_=-1.;
+  void PublishBoundaryStatus();
+  void PublishCompletionDiagnostics(bool completion_ready,int uncovered,int frontier,
+                                   size_t global_nodes,size_t local_nodes);
   bool RouteTareWaypoint(const exploration_path_ns::ExplorationPath& route);
   rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr exploration_finish_pub_;
   rclcpp::Publisher<std_msgs::msg::Int32MultiArray>::SharedPtr

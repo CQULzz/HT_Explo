@@ -116,3 +116,22 @@ TEST_F(TareTerrainGraph, ShortNativePrefixStillRequiresAndPassesFullHtPath) {
   EXPECT_FALSE(ht_cost_ns::planXYTheta({0,0,0},{3,0,0},config,
     [&](ht_cost_ns::Pose2 a,ht_cost_ns::Pose2 b,double){return ht->permits(ht->motionSupport(a,b));}).reached);
 }
+
+TEST_F(TareTerrainGraph, SimulationBoundaryRemovesOutsideCandidatesWithFreshSafeHtMap) {
+  send(false);
+  geometry_msgs::msg::Polygon polygon;
+  for(const auto& xy:std::vector<std::pair<float,float>>{{-2,-2},{2,-2},{2,2},{-2,2}}) {
+    geometry_msgs::msg::Point32 point;point.x=xy.first;point.y=xy.second;
+    polygon.points.push_back(point);
+  }
+  manager->UpdateViewPointBoundary(polygon);
+  manager->CheckViewPointCollision(std::make_shared<pcl::PointCloud<pcl::PointXYZI>>());
+  manager->CheckViewPointConnectivity();manager->GetViewPointCandidate();
+  ASSERT_TRUE(manager->InRange(target()));
+  EXPECT_TRUE(manager->ViewPointInCollision(target()));
+  EXPECT_TRUE(manager->InCollisionAtPose(Eigen::Vector3d(5,0,.75)));
+  EXPECT_FALSE(manager->IsViewPointCandidate(target()));
+  const int inside=manager->GetViewPointInd(Eigen::Vector3d(0,0,.75));
+  ASSERT_TRUE(manager->InRange(inside));
+  EXPECT_FALSE(manager->ViewPointInCollision(inside));
+}

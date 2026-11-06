@@ -23,6 +23,27 @@ bool LocalCoveragePlannerParameter::ReadParameters(rclcpp::Node::SharedPtr nh) {
 
   return true;
 }
+void LocalCoveragePlanner::RecordCompletionAudit(size_t navigation,size_t reused,
+    const std::vector<bool>& covered,const std::vector<bool>& frontier_covered,
+    const std::vector<std::pair<int,int>>& queue,
+    const std::vector<std::pair<int,int>>& frontier_queue) {
+  completion_audit_ = {};
+  completion_audit_.navigation=navigation;
+  completion_audit_.reused=reused;
+  completion_audit_.queue=queue.size();
+  completion_audit_.queue_best=queue.empty()?0:queue.front().first;
+  completion_audit_.frontier_queue=frontier_queue.size();
+  completion_audit_.virtually_covered=std::count(covered.begin(),covered.end(),true);
+  completion_audit_.virtually_covered_frontier=std::count(frontier_covered.begin(),frontier_covered.end(),true);
+  completion_audit_.min_points=parameters_.kMinAddPointNum;
+  completion_audit_.min_frontier=parameters_.kMinAddFrontierPointNum;
+  for (int id:viewpoint_manager_->GetViewPointCandidateIndices()) {
+    if (viewpoint_manager_->ViewPointVisited(id) || !viewpoint_manager_->ViewPointInExploringCell(id)) continue;
+    completion_audit_.raw_gain_candidates+=viewpoint_manager_->GetViewPointCoveredPointNum(id)>=parameters_.kMinAddPointNum;
+    completion_audit_.raw_frontier_candidates+=viewpoint_manager_->GetViewPointCoveredFrontierPointNum(id)>=parameters_.kMinAddFrontierPointNum;
+  }
+}
+
 LocalCoveragePlanner::LocalCoveragePlanner(rclcpp::Node::SharedPtr nh)
     : node_(nh),lookahead_point_update_(false), use_frontier_(true),
       local_coverage_complete_(false) {
@@ -297,8 +318,18 @@ void LocalCoveragePlanner::SelectViewPoint(
   if (sampling_seed_<0) gen.seed(std::random_device{}());
   else gen=sampling_rng_;
   ++sampling_calls_;
-  RCLCPP_INFO(node_->get_logger(),"TARE_RANDOM_CALL seed=%lld call=%lu frontier=%d range=%d",
-    static_cast<long long>(sampling_seed_),static_cast<unsigned long>(sampling_calls_),use_frontier,sample_range);
+  std::uint64_t queue_hash=14695981039346656037ULL;
+  for(const auto& candidate:queue_copy) {
+    queue_hash=(queue_hash^static_cast<std::uint64_t>(candidate.first))*1099511628211ULL;
+    queue_hash=(queue_hash^static_cast<std::uint64_t>(candidate.second))*1099511628211ULL;
+  }
+  std::uint64_t covered_hash=14695981039346656037ULL;
+  for(bool value:covered_copy) covered_hash=(covered_hash^value)*1099511628211ULL;
+  RCLCPP_INFO(node_->get_logger(),
+    "TARE_RANDOM_CALL seed=%lld call=%lu frontier=%d range=%d queue_size=%zu queue_hash=%llu covered_hash=%llu",
+    static_cast<long long>(sampling_seed_),static_cast<unsigned long>(sampling_calls_),
+    use_frontier,sample_range,queue_copy.size(),static_cast<unsigned long long>(queue_hash),
+    static_cast<unsigned long long>(covered_hash));
   std::uniform_int_distribution<int> gen_next_queue_idx(0, sample_range - 1);
   int queue_idx = gen_next_queue_idx(gen);
   int cur_ind = queue_copy[queue_idx].second;
@@ -836,20 +867,8 @@ LocalCoveragePlanner::SolveLocalCoverageProblem(
   std::vector<std::pair<int, int>> frontier_queue;
   EnqueueViewpointCandidates(queue, frontier_queue, covered, frontier_covered,
                              pre_selected_viewpoint_array_indices);
-  completion_audit_.navigation=navigation_viewpoint_indices.size();
-  completion_audit_.reused=reused_viewpoint_indices.size();
-  completion_audit_.queue=queue.size();
-  completion_audit_.queue_best=queue.empty()?0:queue.front().first;
-  completion_audit_.frontier_queue=frontier_queue.size();
-  completion_audit_.virtually_covered=std::count(covered.begin(),covered.end(),true);
-  completion_audit_.virtually_covered_frontier=std::count(frontier_covered.begin(),frontier_covered.end(),true);
-  completion_audit_.min_points=parameters_.kMinAddPointNum;
-  completion_audit_.min_frontier=parameters_.kMinAddFrontierPointNum;
-  for (int id:viewpoint_manager_->GetViewPointCandidateIndices()) {
-    if (viewpoint_manager_->ViewPointVisited(id) || !viewpoint_manager_->ViewPointInExploringCell(id)) continue;
-    completion_audit_.raw_gain_candidates+=viewpoint_manager_->GetViewPointCoveredPointNum(id)>=parameters_.kMinAddPointNum;
-    completion_audit_.raw_frontier_candidates+=viewpoint_manager_->GetViewPointCoveredFrontierPointNum(id)>=parameters_.kMinAddFrontierPointNum;
-  }
+  RecordCompletionAudit(navigation_viewpoint_indices.size(),reused_viewpoint_indices.size(),
+                        covered,frontier_covered,queue,frontier_queue);
 
   viewpoint_sampling_timer.Stop(false, kRuntimeUnit);
   viewpoint_sampling_runtime_ +=

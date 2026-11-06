@@ -1,3 +1,5 @@
+#include <sstream>
+#include <iomanip>
 /**
  * @file sensor_coverage_planner_ground.cpp
  * @author Chao Cao (ccao1@andrew.cmu.edu)
@@ -445,6 +447,8 @@ bool SensorCoveragePlanner3D::initialize() {
 
   tare_waypoint_pub_=this->create_publisher<geometry_msgs::msg::PointStamped>("/tare_native_waypoint",10);
   ht_route_goal_pub_=this->create_publisher<geometry_msgs::msg::PointStamped>("/ht_route_goal",10);
+  decision_diagnostics_pub_=this->create_publisher<std_msgs::msg::String>("tare_decision_diagnostics",10);
+  boundary_status_pub_=this->create_publisher<std_msgs::msg::String>("tare_boundary_status",10);
   tare_route_pub_=this->create_publisher<nav_msgs::msg::Path>("/tare_coverage_route",10);
   tare_branch_pub_=this->create_publisher<nav_msgs::msg::Path>("/tare_route_branch",10);
   global_path_full_publisher_ =
@@ -655,11 +659,15 @@ void SensorCoveragePlanner3D::TerrainMapExtCallback(
 void SensorCoveragePlanner3D::CoverageBoundaryCallback(
     const geometry_msgs::msg::PolygonStamped::ConstSharedPtr polygon_msg) {
   planning_env_->UpdateCoverageBoundary((*polygon_msg).polygon);
+  coverage_boundary_source_s_=rclcpp::Time(polygon_msg->header.stamp).seconds();
+  PublishBoundaryStatus();
 }
 
 void SensorCoveragePlanner3D::ViewPointBoundaryCallback(
     const geometry_msgs::msg::PolygonStamped::ConstSharedPtr polygon_msg) {
   viewpoint_manager_->UpdateViewPointBoundary((*polygon_msg).polygon);
+  viewpoint_boundary_source_s_=rclcpp::Time(polygon_msg->header.stamp).seconds();
+  PublishBoundaryStatus();
 }
 
 void SensorCoveragePlanner3D::NogoBoundaryCallback(
@@ -1684,6 +1692,48 @@ void SensorCoveragePlanner3D::CountDirectionChange() {
   momentum_activation_count_pub_->publish(momentum_activation_count_msg);
 }
 
+void SensorCoveragePlanner3D::PublishBoundaryStatus() {
+  std::ostringstream data;
+  data << std::setprecision(17) << "{\"coverage_source_s\":" << coverage_boundary_source_s_
+       << ",\"navigation_source_s\":" << viewpoint_boundary_source_s_ << "}";
+  std_msgs::msg::String message;message.data=data.str();boundary_status_pub_->publish(message);
+}
+
+void SensorCoveragePlanner3D::PublishCompletionDiagnostics(bool completion_ready,int uncovered,
+    int frontier,size_t global_nodes,size_t local_nodes) {
+  const auto& local=local_coverage_planner_->GetCompletionAudit();
+  const auto& global=grid_world_->GetTourAudit();
+  int collision=0,disconnected=0,visited=0,outside_exploring=0;
+  for(int index=0;index<viewpoint_manager_->GetViewPointNum();++index) {
+    collision+=viewpoint_manager_->ViewPointInCollision(index,true);
+    disconnected+=!viewpoint_manager_->ViewPointConnected(index,true);
+    visited+=viewpoint_manager_->ViewPointVisited(index,true);
+    outside_exploring+=!viewpoint_manager_->ViewPointInExploringCell(index,true);
+  }
+  std::ostringstream data;
+  data << std::setprecision(17) << "{\"stage\":\"completion\",\"sim_time_s\":" << now().seconds()
+       << ",\"odom_source_s\":" << odom_stamp_ << ",\"scan_source_s\":" << scan_stamp_
+       << ",\"map_source_s\":" << viewpoint_manager_->HT()->cycleStamp()
+       << ",\"sampling_calls\":" << local_coverage_planner_->SamplingCalls()
+       << ",\"completion_ready\":" << (completion_ready ? "true":"false")
+       << ",\"global_return\":" << grid_world_->IsReturningHome()
+       << ",\"local_complete\":" << local_coverage_planner_->IsLocalCoverageComplete()
+       << ",\"global_eligible\":" << global.eligible << ",\"global_connected\":" << global.connected
+       << ",\"global_unreachable\":" << global.unreachable << ",\"local_delegated\":" << global.local_delegated
+       << ",\"candidate_viewpoints\":" << viewpoint_manager_->GetViewPointCandidateIndices().size()
+       << ",\"uncovered_surface\":" << uncovered << ",\"uncovered_frontier\":" << frontier
+       << ",\"surface_threshold\":" << local.min_points << ",\"frontier_threshold\":" << local.min_frontier
+       << ",\"queue\":" << local.queue << ",\"queue_best\":" << local.queue_best
+       << ",\"frontier_queue\":" << local.frontier_queue << ",\"reused\":" << local.reused
+       << ",\"raw_gain_candidates\":" << local.raw_gain_candidates
+       << ",\"raw_frontier_candidates\":" << local.raw_frontier_candidates
+       << ",\"viewpoint_flag_counts\":{\"collision_or_boundary\":" << collision
+       << ",\"disconnected\":" << disconnected << ",\"visited\":" << visited
+       << ",\"outside_exploring_cells\":" << outside_exploring << "}"
+       << ",\"global_route_nodes\":" << global_nodes << ",\"local_route_nodes\":" << local_nodes << "}";
+  std_msgs::msg::String message;message.data=data.str();decision_diagnostics_pub_->publish(message);
+}
+
 void SensorCoveragePlanner3D::execute() {
   auto ht=viewpoint_manager_->HT();
   const double input_now=this->now().seconds();
@@ -1830,9 +1880,12 @@ void SensorCoveragePlanner3D::execute() {
       RCLCPP_WARN_THROTTLE(this->get_logger(),*this->get_clock(),3000,
         "HT_COVERAGE_DEFERRED pending=%zu: no current tour/local target is not completed coverage",
         grid_world_->PendingHTCoverageCells());
-    if (grid_world_->IsReturningHome() &&
+    const bool completion_ready=grid_world_->IsReturningHome() &&
         local_coverage_planner_->IsLocalCoverageComplete() && !unresolved_ht_coverage &&
-        (current_time - start_time_) > 5) {
+        (current_time-start_time_)>5;
+    PublishCompletionDiagnostics(completion_ready,uncovered_point_num,uncovered_frontier_point_num,
+                                 global_cell_tsp_order.size(),local_path.nodes_.size());
+    if (completion_ready) {
       if (!exploration_finished_) {
         PrintExplorationStatus("Exploration completed, returning home", false);
       }

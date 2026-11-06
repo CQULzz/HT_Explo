@@ -85,3 +85,22 @@ def test_hardware_geometry_reference_and_follower_envelope_agree(monkeypatch):
         effective[node.node_executable]=values
     for key in ['kViewPointCollisionMargin','kViewPointCollisionMarginZPlus','kViewPointCollisionMarginZMinus','kCollisionGridResolutionX','kCollisionGridResolutionY']:
         assert effective['xytheta_follower'][key]==effective['tare_planner_node'][key]
+
+
+def test_simulation_boundary_topics_and_filters_match_adapter(monkeypatch):
+    monkeypatch.setattr(m,'get_package_share_directory',lambda name:str(ROOT/'src'/name))
+    context=LaunchContext()
+    for arg in m.generate_launch_description().entities:
+        if isinstance(arg,DeclareLaunchArgument):
+            context.launch_configurations[arg.name]=perform_substitutions(context,arg.default_value)
+    context.launch_configurations.update(simulation_boundaries='true',use_sim_time='false')
+    with pytest.raises(ValueError,match='simulation time'):m.start(context)
+    context.launch_configurations['use_sim_time']='true'
+    planner=next(node for node in m.start(context) if node.node_executable=='tare_planner_node')
+    values={}
+    for entry in evaluate_parameters(context,planner._Node__parameters):
+        if isinstance(entry,dict):values.update(entry)
+    assert values['sub_coverage_boundary_topic_']=='/ht_real/coverage_boundary'
+    assert values['sub_viewpoint_boundary_topic_']=='/ht_real/navigation_boundary'
+    assert values['kUseCoverageBoundaryOnFrontier'] is True
+    assert values['kUseCoverageBoundaryOnObjectSurface'] is True

@@ -109,3 +109,25 @@ def test_known_previous_scheduler_upgrade_then_idempotent(fixture):
     assert installer.install(runtime,bundle,apply=True)['applied']
     assert (runtime/'mapper_strict.py').read_bytes()==after
     assert not installer.install(runtime,bundle,apply=True)['applied']
+
+
+@pytest.mark.parametrize('stale_launch',[False,True])
+def test_runner_rejects_mixed_install_or_stale_launch_before_children(tmp_path,monkeypatch,stale_launch):
+    from ament_index_python import packages
+    runner=Path(__file__).with_name('run_sim.py')
+    repo=runner.parents[2]
+    install=tmp_path/'install'
+    selected=install if stale_launch else tmp_path/'other_install'
+    monkeypatch.setattr(packages,'get_package_prefix',lambda package:str(selected/package))
+    if stale_launch:
+        launch=install/'ht_scout_bridge/share/ht_scout_bridge/launch/scout_real.launch.py'
+        launch.parent.mkdir(parents=True);launch.write_text('older installed launch')
+    output=tmp_path/'runs'
+    monkeypatch.setattr(sys,'argv',[str(runner),'--label','must_not_start',
+        '--project',str(repo),'--runtime',str(tmp_path),'--install-base',str(install),
+        '--output-root',str(output)])
+    def forbidden(*args,**kwargs):raise AssertionError('No child may start')
+    monkeypatch.setattr(subprocess,'Popen',forbidden)
+    expected='rebuild' if stale_launch else 'install-base'
+    with pytest.raises(RuntimeError,match=expected):runpy.run_path(str(runner),run_name='__main__')
+    assert not output.exists()

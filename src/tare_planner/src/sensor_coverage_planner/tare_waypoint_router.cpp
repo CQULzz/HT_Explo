@@ -1,3 +1,6 @@
+#include <iomanip>
+#include <map>
+#include <sstream>
 #include "sensor_coverage_planner/sensor_coverage_planner_ground.h"
 #include "ht_cost/tare_waypoint_route.h"
 namespace sensor_coverage_planner_3d_ns {
@@ -6,18 +9,38 @@ bool SensorCoveragePlanner3D::RouteTareWaypoint(const exploration_path_ns::Explo
   auto visual=route.GetPath();visual.header.frame_id="map";visual.header.stamp=now();
   tare_route_pub_->publish(visual);
   local_coverage_planner_->ClearHTPath();
-  if(!lookahead_point_update_ || route.nodes_.empty()) return false;
+  std::map<std::string,int> rejected_headings;
+  auto diagnostic=[&](const char* reason,size_t checked,int unsupported,int too_close,int searches) {
+    std::ostringstream data;
+    data << std::setprecision(17) << "{\"stage\":\"route\",\"reason\":" << std::quoted(reason)
+         << ",\"sim_time_s\":" << now().seconds()
+         << ",\"map_source_s\":" << viewpoint_manager_->HT()->cycleStamp()
+         << ",\"checked\":" << checked << ",\"unsupported_endpoints\":" << unsupported
+         << ",\"too_close\":" << too_close << ",\"searches\":" << searches
+         << ",\"rejected_headings\":{";
+    bool first=true;
+    for(const auto& item:rejected_headings) {
+      if(!first)data << ',';
+      first=false;data << std::quoted(item.first) << ':' << item.second;
+    }
+    data << "}}";
+    std_msgs::msg::String message;message.data=data.str();decision_diagnostics_pub_->publish(message);
+  };
+
+  if(!lookahead_point_update_ || route.nodes_.empty()) {
+    diagnostic("NO_NATIVE_ROUTE",0,0,0,0);return false;
+  }
   const auto ht=viewpoint_manager_->HT();
   ht->beginCycle();
   if(!ht->permits(ht->poseSupport(robot_position_.x,robot_position_.y,robot_yaw_))) {
     RCLCPP_WARN_THROTTLE(get_logger(),*get_clock(),3000,
       "TARE_ROUTE start rejected: %s",ht->poseRejection(robot_position_.x,robot_position_.y,robot_yaw_).c_str());
-    return false;
+    diagnostic("CURRENT_POSE_REJECTED",0,0,0,0);return false;
   }
   if(viewpoint_manager_->InCollisionAtPose(Eigen::Vector3d(robot_position_.x,robot_position_.y,robot_position_.z))) {
     RCLCPP_WARN_THROTTLE(get_logger(),*get_clock(),3000,
       "TARE_ROUTE physical start occupied; do not repeat identical invalid-start searches");
-    return false;
+    diagnostic("CURRENT_GEOMETRY_BLOCKED",0,0,0,0);return false;
   }
   std::vector<Point> points;std::vector<bool> robots;
   for(const auto& n:route.nodes_) {
@@ -28,7 +51,8 @@ bool SensorCoveragePlanner3D::RouteTareWaypoint(const exploration_path_ns::Explo
   auto branch=ht_cost_ns::tareBranch(points,robots,raw);
   // Native rush-home path has a ROBOT anchor and HOME endpoint as well.
   if(branch.empty()) {
-    RCLCPP_WARN(get_logger(),"TARE_ROUTE missing native branch; holding without changing TSP goal");return false;
+    RCLCPP_WARN(get_logger(),"TARE_ROUTE missing native branch; holding without changing TSP goal");
+    diagnostic("NO_NATIVE_BRANCH",0,0,0,0);return false;
   }
   // Match upstream PublishWaypoint's extension and rush-home rule. The zero
   // distance guard prevents its undefined dx/r case without selecting a goal.
@@ -68,8 +92,11 @@ bool SensorCoveragePlanner3D::RouteTareWaypoint(const exploration_path_ns::Explo
       start_rejected=true;return false;
     }
     bool supported=false;
-    for(int k=0;k<8;++k) if(viewpoint_manager_->HT()->permits(
-      viewpoint_manager_->HT()->poseSupport(p.x,p.y,k*ht_cost_ns::kPi/4))) {supported=true;break;}
+    for(int k=0;k<8;++k) {
+      const double heading=k*ht_cost_ns::kPi/4;
+      if(ht->permits(ht->poseSupport(p.x,p.y,heading))) {supported=true;break;}
+      ++rejected_headings[ht->poseRejection(p.x,p.y,heading)];
+    }
     if(!supported) {++unsupported;return false;}
     const double remaining=.35-std::chrono::duration<double>(std::chrono::steady_clock::now()-started).count();
     if(remaining<=0) return false;
@@ -79,6 +106,7 @@ bool SensorCoveragePlanner3D::RouteTareWaypoint(const exploration_path_ns::Explo
     RCLCPP_INFO(get_logger(),"TARE_ROUTE native=(%.3f,%.3f) lookahead=(%.3f,%.3f) local=(%.3f,%.3f) prefix=%.3f branch=%zu poses=%zu success=%d adaptive=%d distance=%.3f map_stamp=%.9f",
       native.x,native.y,raw.x,raw.y,p.x,p.y,length,branch.size(),path.nodes_.size(),!path.nodes_.empty(),adaptive,
       std::hypot(p.x-robot_position_.x,p.y-robot_position_.y),viewpoint_manager_->HT()->cycleStamp());
+    if(!path.nodes_.empty()) diagnostic("ROUTE_FOUND",checked.size(),unsupported,too_close,searches);
     return !path.nodes_.empty();
   };
   // Preserve the existing fast path and its behavior when an integer target
@@ -98,6 +126,8 @@ bool SensorCoveragePlanner3D::RouteTareWaypoint(const exploration_path_ns::Explo
   RCLCPP_WARN(get_logger(),"TARE_ROUTE failed same-goal prefixes; holding native=(%.3f,%.3f) checked=%zu unsupported=%d too_close=%d searches=%d elapsed=%.6f map_stamp=%.9f",
     native.x,native.y,checked.size(),unsupported,too_close,searches,
     std::chrono::duration<double>(std::chrono::steady_clock::now()-started).count(),viewpoint_manager_->HT()->cycleStamp());
+  diagnostic(start_rejected ? "CURRENT_POSE_CHANGED":"NO_EXECUTABLE_PREFIX",
+             checked.size(),unsupported,too_close,searches);
   return false;
 }
 }

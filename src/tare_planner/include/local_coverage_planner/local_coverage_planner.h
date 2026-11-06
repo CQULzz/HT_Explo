@@ -104,6 +104,7 @@ public:
     int min_points=0,min_frontier=0,output_target=-1,output_gain=0,output_frontier=0;
   };
   const CompletionAudit& GetCompletionAudit() const { return completion_audit_; }
+  std::uint64_t SamplingCalls() const { return sampling_calls_; }
 
   // Visualization
   void GetSelectedViewPointVisCloud(pcl::PointCloud<pcl::PointXYZI>::Ptr& cloud);
@@ -121,6 +122,10 @@ private:
   void UpdateViewPointCoveredFrontierPoint(std::vector<bool>& frontier_point_list, int viewpoint_index,
                                            bool use_array_ind = false);
 
+  void RecordCompletionAudit(size_t navigation, size_t reused,
+      const std::vector<bool>& covered, const std::vector<bool>& frontier_covered,
+      const std::vector<std::pair<int,int>>& queue,
+      const std::vector<std::pair<int,int>>& frontier_queue);
   void EnqueueViewpointCandidates(std::vector<std::pair<int, int>>& cover_point_queue,
                                   std::vector<std::pair<int, int>>& frontier_queue,
                                   const std::vector<bool>& covered_point_list,
