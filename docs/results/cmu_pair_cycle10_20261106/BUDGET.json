@@ -7,7 +7,7 @@
   ],
   "maximum_attempts": 3,
   "retry_policy": "Maximum remains 3 attempts. Preserve p01 as a full configuration diagnostic after proven 1s/3s bridge freshness mismatch. Remaining slots are corrected TARE and fresh HT. No further retries.",
-  "used": 2,
+  "used": 3,
   "runs": [
     {
       "label": "p01_tare42",
@@ -105,6 +105,54 @@
       "actual_duration_s": 120.1,
       "error": null,
       "managed_shutdown_nonzero": {}
+    },
+    {
+      "role": "formal_pair",
+      "label": "p03_ht42",
+      "navigation": "ht",
+      "state": "RECORDED",
+      "tested_commit": "2b1e04a17b3f7150f39c7380ddeafd8aea220f78",
+      "command": [
+        "/usr/bin/python3",
+        "/home/lzz/HT_linux_cycle7_20261106/repo/tools/pcd_sim/run_sim.py",
+        "--runtime",
+        "/home/lzz/HT_cmu_indoor_cycle9_20261106/runtime",
+        "--project",
+        "/home/lzz/HT_linux_cycle7_20261106/repo",
+        "--install-base",
+        "/home/lzz/HT_linux_offline_cycle8_20261106/install",
+        "--mapper-workspace",
+        "/home/lzz/my test/ht_cupy_gpu_ws_20261028",
+        "--output-root",
+        "/home/lzz/HT_cmu_pair_cycle10_20261106/runs",
+        "--label",
+        "p03_ht42",
+        "--duration",
+        "120",
+        "--domain",
+        "225",
+        "--render-backend",
+        "egl",
+        "--navigation",
+        "ht",
+        "--cmu-workspace",
+        "/home/lzz/HT_linux_cycle7_20261106/cmu",
+        "--ht-processing-mode",
+        "worker",
+        "--mapper-executor",
+        "single",
+        "--context-interval",
+        "10",
+        "--seed",
+        "42"
+      ],
+      "started_utc": "2026-11-06T07:57:58.642654+00:00",
+      "exit_code": 0,
+      "wall_s": 126.57469305000268,
+      "full_requested_duration": true,
+      "actual_duration_s": 120.3,
+      "error": null,
+      "managed_shutdown_nonzero": {}
     }
   ],
   "created_utc": "2026-11-06T07:26:38.337667+00:00",
@@ -115,5 +163,8 @@
       "p03_ht42"
     ],
     "maximum_attempts_unchanged": 3
-  }
+  },
+  "state": "CLOSED",
+  "closed_utc": "2026-11-06T08:27:27.184462+00:00",
+  "stop_reason": "Three of three attempts consumed. Diagnostic p01 preserved. Formal p02 TARE and p03 HT fully collected and verified. No further simulation in this batch."
 }

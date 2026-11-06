@@ -1,0 +1,425 @@
+{
+  "label": "p03_ht42",
+  "tested_commit": "2b1e04a17b3f7150f39c7380ddeafd8aea220f78",
+  "done": {
+    "elapsed_sim": 120.3,
+    "elapsed_wall": 123.57075722599984,
+    "distance": 35.24093049849786,
+    "free_volume": 651.2400000000001,
+    "mission_completed": false,
+    "counts": {
+      "ht_execution_status": 237,
+      "ht_follower_status": 2449,
+      "mission_state": 237,
+      "odom": 2409,
+      "input_status": 3637,
+      "runtime_status": 240,
+      "input_performance": 120,
+      "sim_start_status": 120,
+      "map": 567,
+      "ht_performance": 106,
+      "tare_decision_diagnostics": 230
+    },
+    "video_frames": 241
+  },
+  "run_result": {
+    "render_backend": "egl",
+    "actual_gl_renderers": [
+      "NVIDIA GeForce RTX 5060 Ti/PCIe/SSE2"
+    ],
+    "renderer_verified": true,
+    "managed_shutdown_nonzero": {},
+    "ros_launch_child_nonzero": {},
+    "error": null,
+    "requested_duration_sim_s": 120.0,
+    "actual_duration_sim_s": 120.3,
+    "full_requested_duration": true,
+    "full_600_sim_s": false,
+    "failure_stage": null,
+    "frozen_files_changed": [],
+    "wall_elapsed": 126.32694414000434,
+    "exit_codes": {
+      "record": 0,
+      "observer": 0,
+      "bridge": 0,
+      "adapter": 0,
+      "mapper": 0,
+      "navigation": 0,
+      "gazebo": 0
+    }
+  },
+  "final_states": {
+    "ht_execution_status": "HT_ASSISTED",
+    "ht_follower_status": "DRIVING",
+    "mission_state": "EXPLORING"
+  },
+  "transitions": [
+    [
+      0.0,
+      "ht_execution_status",
+      "WAIT_START"
+    ],
+    [
+      0.0,
+      "ht_follower_status",
+      "ODOM_STALE"
+    ],
+    [
+      0.0,
+      "mission_state",
+      "WAIT_START"
+    ],
+    [
+      0.07,
+      "ht_follower_status",
+      "PATH_STALE"
+    ],
+    [
+      3.53,
+      "ht_execution_status",
+      "GEOMETRY_CURRENT_POSE_BLOCKED"
+    ],
+    [
+      4.72,
+      "ht_execution_status",
+      "PATH_NO_EXECUTABLE_ROUTE"
+    ],
+    [
+      4.72,
+      "mission_state",
+      "BLOCKED"
+    ],
+    [
+      4.72,
+      "ht_execution_status",
+      "HT_ASSISTED"
+    ],
+    [
+      4.72,
+      "mission_state",
+      "EXPLORING"
+    ],
+    [
+      4.72,
+      "ht_follower_status",
+      "TURNING"
+    ],
+    [
+      5.52,
+      "ht_follower_status",
+      "ALIGNING"
+    ],
+    [
+      5.67,
+      "ht_follower_status",
+      "TURNING"
+    ],
+    [
+      6.82,
+      "ht_follower_status",
+      "ALIGNING"
+    ],
+    [
+      7.02,
+      "ht_follower_status",
+      "DRIVING"
+    ],
+    [
+      8.92,
+      "ht_follower_status",
+      "ODOM_STALE"
+    ],
+    [
+      9.22,
+      "ht_follower_status",
+      "SCAN_STALE"
+    ],
+    [
+      9.27,
+      "ht_follower_status",
+      "HT_MAP_STALE"
+    ],
+    [
+      9.37,
+      "ht_follower_status",
+      "DRIVING"
+    ],
+    [
+      9.92,
+      "ht_follower_status",
+      "TURNING"
+    ],
+    [
+      10.47,
+      "ht_follower_status",
+      "ALIGNING"
+    ],
+    [
+      10.62,
+      "ht_follower_status",
+      "DRIVING"
+    ],
+    [
+      20.42,
+      "ht_follower_status",
+      "TURNING"
+    ],
+    [
+      20.72,
+      "ht_follower_status",
+      "ALIGNING"
+    ],
+    [
+      20.77,
+      "ht_follower_status",
+      "TURNING"
+    ],
+    [
+      21.47,
+      "ht_follower_status",
+      "ALIGNING"
+    ],
+    [
+      21.67,
+      "ht_follower_status",
+      "DRIVING"
+    ],
+    [
+      24.47,
+      "ht_follower_status",
+      "TURNING"
+    ],
+    [
+      24.52,
+      "ht_follower_status",
+      "ALIGNING"
+    ],
+    [
+      24.72,
+      "ht_follower_status",
+      "DRIVING"
+    ],
+    [
+      48.02,
+      "ht_follower_status",
+      "SCAN_STALE"
+    ],
+    [
+      48.23,
+      "ht_execution_status",
+      "HT_MAP_STALE"
+    ],
+    [
+      48.23,
+      "mission_state",
+      "BLOCKED"
+    ],
+    [
+      48.27,
+      "ht_follower_status",
+      "PLANNER_HOLD"
+    ],
+    [
+      48.7,
+      "ht_execution_status",
+      "PATH_NO_EXECUTABLE_ROUTE"
+    ],
+    [
+      48.7,
+      "ht_execution_status",
+      "HT_ASSISTED"
+    ],
+    [
+      48.7,
+      "mission_state",
+      "EXPLORING"
+    ],
+    [
+      48.72,
+      "ht_follower_status",
+      "DRIVING"
+    ],
+    [
+      64.47,
+      "ht_follower_status",
+      "TURNING"
+    ],
+    [
+      69.97,
+      "ht_follower_status",
+      "ALIGNING"
+    ],
+    [
+      70.22,
+      "ht_follower_status",
+      "DRIVING"
+    ],
+    [
+      91.12,
+      "ht_follower_status",
+      "GEOMETRY_COMMAND_BLOCKED"
+    ],
+    [
+      91.17,
+      "ht_follower_status",
+      "EMPTY_PATH"
+    ],
+    [
+      91.72,
+      "ht_follower_status",
+      "TURNING"
+    ],
+    [
+      93.02,
+      "ht_follower_status",
+      "ALIGNING"
+    ],
+    [
+      93.22,
+      "ht_follower_status",
+      "DRIVING"
+    ],
+    [
+      98.47,
+      "ht_follower_status",
+      "TURNING"
+    ],
+    [
+      99.27,
+      "ht_follower_status",
+      "ALIGNING"
+    ],
+    [
+      99.42,
+      "ht_follower_status",
+      "DRIVING"
+    ],
+    [
+      110.22,
+      "ht_follower_status",
+      "SCAN_STALE"
+    ],
+    [
+      110.29,
+      "ht_execution_status",
+      "HT_MAP_STALE"
+    ],
+    [
+      110.29,
+      "mission_state",
+      "BLOCKED"
+    ],
+    [
+      110.32,
+      "ht_follower_status",
+      "PLANNER_HOLD"
+    ],
+    [
+      110.67,
+      "ht_execution_status",
+      "PATH_NO_EXECUTABLE_ROUTE"
+    ],
+    [
+      110.67,
+      "ht_execution_status",
+      "HT_ASSISTED"
+    ],
+    [
+      110.67,
+      "mission_state",
+      "EXPLORING"
+    ],
+    [
+      110.72,
+      "ht_follower_status",
+      "TURNING"
+    ],
+    [
+      118.17,
+      "ht_follower_status",
+      "ALIGNING"
+    ],
+    [
+      118.37,
+      "ht_follower_status",
+      "DRIVING"
+    ]
+  ],
+  "runtime_reason_event_counts": {
+    "HT_MAP_MISSING_OR_STALE": 2,
+    "WAIT_START": 5,
+    "GEOMETRY_CURRENT_POSE_BLOCKED": 2,
+    "COMMAND_SENT_NOT_WHEEL_CONFIRMED": 227,
+    "ODOMETRY_MISSING_OR_STALE": 1,
+    "HT_MAP_STALE": 2,
+    "EMPTY_PATH": 1
+  },
+  "runtime_reason_sim_seconds": {
+    "HT_MAP_MISSING_OR_STALE": 1.01,
+    "WAIT_START": 2.49,
+    "GEOMETRY_CURRENT_POSE_BLOCKED": 1.0,
+    "COMMAND_SENT_NOT_WHEEL_CONFIRMED": 113.52,
+    "ODOMETRY_MISSING_OR_STALE": 0.4800000000000004,
+    "HT_MAP_STALE": 1.0,
+    "EMPTY_PATH": 0.5
+  },
+  "command_sample_duration_s": {
+    "forward": 94.0,
+    "reverse": 0.0,
+    "rotation": 19.5,
+    "zero": 5.99
+  },
+  "command_abs_max_v_w": [
+    0.4,
+    0.8
+  ],
+  "first_ready_sample_distance_m": 0.00031842355027619746,
+  "distance_after_first_ready_sample_m": 35.240612074947585,
+  "last30s_distance_m": 6.904954413024573,
+  "final_xy": [
+    10.241511939372938,
+    -4.780883896495958
+  ],
+  "completion_diagnostics_count": 115,
+  "completion_ready_count": 0,
+  "first_completion_ready": null,
+  "final_completion_diagnostic": {
+    "stage": "completion",
+    "sim_time_s": 119.67,
+    "odom_source_s": 119.5,
+    "scan_source_s": 119.4,
+    "map_source_s": 119.2,
+    "sampling_calls": 115,
+    "completion_ready": false,
+    "global_return": 1,
+    "local_complete": 0,
+    "global_eligible": 0,
+    "global_connected": 0,
+    "global_unreachable": 0,
+    "local_delegated": 0,
+    "candidate_viewpoints": 112,
+    "uncovered_surface": 77,
+    "uncovered_frontier": 168,
+    "surface_threshold": 40,
+    "frontier_threshold": 15,
+    "queue": 0,
+    "queue_best": 0,
+    "frontier_queue": 0,
+    "reused": 4,
+    "raw_gain_candidates": 4,
+    "raw_frontier_candidates": 6,
+    "viewpoint_flag_counts": {
+      "collision_or_boundary": 754,
+      "disconnected": 1488,
+      "visited": 131,
+      "outside_exploring_cells": 1581
+    },
+    "global_route_nodes": 0,
+    "local_route_nodes": 42
+  },
+  "ht_source_age_p95_max_s": [
+    0.2750000000000008,
+    0.9600000000000009
+  ],
+  "metric_note": "Distance is ground-truth cumulative XY including settling/slip. Free volume is sampled source-second LiDAR ray-voxel union. Commands are ~2Hz samples. Runtime durations are clipped sample-and-hold simulation time, not raw event counts."
+}

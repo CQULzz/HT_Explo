@@ -1,0 +1,399 @@
+{
+  "label": "p01_tare42",
+  "tested_commit": "72ab90a6d0e0e06c8579effc6400a8107444b8a2",
+  "done": {
+    "elapsed_sim": 120.3,
+    "elapsed_wall": 124.02159596400452,
+    "distance": 8.48542728333939,
+    "free_volume": 199.15200000000004,
+    "mission_completed": true,
+    "counts": {
+      "runtime_status": 2446,
+      "ht_execution_status": 156,
+      "ht_follower_status": 2446,
+      "mission_state": 156,
+      "odom": 2410,
+      "input_status": 3639,
+      "sim_start_status": 120,
+      "input_performance": 120,
+      "tare_decision_diagnostics": 33
+    },
+    "video_frames": 241
+  },
+  "run_result": {
+    "render_backend": "egl",
+    "actual_gl_renderers": [
+      "NVIDIA GeForce RTX 5060 Ti/PCIe/SSE2"
+    ],
+    "renderer_verified": true,
+    "managed_shutdown_nonzero": {},
+    "ros_launch_child_nonzero": {},
+    "error": null,
+    "requested_duration_sim_s": 120.0,
+    "actual_duration_sim_s": 120.3,
+    "full_requested_duration": true,
+    "full_600_sim_s": false,
+    "failure_stage": null,
+    "frozen_files_changed": [],
+    "wall_elapsed": 126.31160724000074,
+    "exit_codes": {
+      "record": 0,
+      "observer": 0,
+      "bridge": 0,
+      "adapter": 0,
+      "mapper": 0,
+      "navigation": 0,
+      "gazebo": 0
+    }
+  },
+  "final_states": {
+    "ht_execution_status": "COMPLETED",
+    "ht_follower_status": "TARE_COMPLETED",
+    "mission_state": "COMPLETED"
+  },
+  "transitions": [
+    [
+      0.0,
+      "ht_execution_status",
+      "WAIT_START"
+    ],
+    [
+      0.0,
+      "ht_follower_status",
+      "TARE_WAIT_START"
+    ],
+    [
+      0.0,
+      "mission_state",
+      "WAIT_START"
+    ],
+    [
+      3.06,
+      "ht_execution_status",
+      "NO_EXECUTABLE_ROUTE"
+    ],
+    [
+      4.25,
+      "mission_state",
+      "BLOCKED"
+    ],
+    [
+      4.25,
+      "ht_execution_status",
+      "GEOMETRIC"
+    ],
+    [
+      4.25,
+      "mission_state",
+      "EXPLORING"
+    ],
+    [
+      4.27,
+      "ht_follower_status",
+      "TARE_GEOMETRIC_COMMAND"
+    ],
+    [
+      6.17,
+      "ht_follower_status",
+      "GEOMETRY_STALE_OR_INVALID"
+    ],
+    [
+      6.22,
+      "ht_follower_status",
+      "TARE_GEOMETRIC_COMMAND"
+    ],
+    [
+      7.22,
+      "ht_follower_status",
+      "GEOMETRY_STALE_OR_INVALID"
+    ],
+    [
+      8.17,
+      "ht_follower_status",
+      "TARE_GEOMETRIC_COMMAND"
+    ],
+    [
+      9.17,
+      "ht_follower_status",
+      "GEOMETRY_STALE_OR_INVALID"
+    ],
+    [
+      10.17,
+      "ht_follower_status",
+      "TARE_GEOMETRIC_COMMAND"
+    ],
+    [
+      15.17,
+      "ht_follower_status",
+      "GEOMETRY_STALE_OR_INVALID"
+    ],
+    [
+      16.18,
+      "ht_follower_status",
+      "TARE_GEOMETRIC_COMMAND"
+    ],
+    [
+      19.17,
+      "ht_follower_status",
+      "GEOMETRY_STALE_OR_INVALID"
+    ],
+    [
+      20.18,
+      "ht_follower_status",
+      "TARE_GEOMETRIC_COMMAND"
+    ],
+    [
+      21.17,
+      "ht_follower_status",
+      "GEOMETRY_STALE_OR_INVALID"
+    ],
+    [
+      22.18,
+      "ht_follower_status",
+      "TARE_GEOMETRIC_COMMAND"
+    ],
+    [
+      23.27,
+      "ht_follower_status",
+      "COMMAND_STALE_OR_INVALID"
+    ],
+    [
+      23.43,
+      "ht_follower_status",
+      "TARE_GEOMETRIC_COMMAND"
+    ],
+    [
+      24.19,
+      "mission_state",
+      "RETURNING_HOME"
+    ],
+    [
+      26.12,
+      "ht_follower_status",
+      "GEOMETRY_STALE_OR_INVALID"
+    ],
+    [
+      27.13,
+      "ht_follower_status",
+      "TARE_GEOMETRIC_COMMAND"
+    ],
+    [
+      28.08,
+      "ht_follower_status",
+      "GEOMETRY_STALE_OR_INVALID"
+    ],
+    [
+      28.13,
+      "ht_follower_status",
+      "TARE_GEOMETRIC_COMMAND"
+    ],
+    [
+      29.08,
+      "ht_follower_status",
+      "GEOMETRY_STALE_OR_INVALID"
+    ],
+    [
+      29.13,
+      "ht_follower_status",
+      "TARE_GEOMETRIC_COMMAND"
+    ],
+    [
+      30.12,
+      "ht_follower_status",
+      "GEOMETRY_STALE_OR_INVALID"
+    ],
+    [
+      31.13,
+      "ht_follower_status",
+      "TARE_GEOMETRIC_COMMAND"
+    ],
+    [
+      32.08,
+      "ht_follower_status",
+      "GEOMETRY_STALE_OR_INVALID"
+    ],
+    [
+      33.13,
+      "ht_follower_status",
+      "TARE_GEOMETRIC_COMMAND"
+    ],
+    [
+      34.08,
+      "ht_follower_status",
+      "GEOMETRY_STALE_OR_INVALID"
+    ],
+    [
+      34.13,
+      "ht_follower_status",
+      "TARE_GEOMETRIC_COMMAND"
+    ],
+    [
+      38.12,
+      "ht_follower_status",
+      "GEOMETRY_STALE_OR_INVALID"
+    ],
+    [
+      39.13,
+      "ht_follower_status",
+      "TARE_GEOMETRIC_COMMAND"
+    ],
+    [
+      40.08,
+      "ht_follower_status",
+      "GEOMETRY_STALE_OR_INVALID"
+    ],
+    [
+      40.13,
+      "ht_follower_status",
+      "TARE_GEOMETRIC_COMMAND"
+    ],
+    [
+      41.12,
+      "ht_follower_status",
+      "GEOMETRY_STALE_OR_INVALID"
+    ],
+    [
+      42.13,
+      "ht_follower_status",
+      "TARE_GEOMETRIC_COMMAND"
+    ],
+    [
+      43.08,
+      "ht_follower_status",
+      "GEOMETRY_STALE_OR_INVALID"
+    ],
+    [
+      43.13,
+      "ht_follower_status",
+      "TARE_GEOMETRIC_COMMAND"
+    ],
+    [
+      47.09,
+      "ht_follower_status",
+      "GEOMETRY_STALE_OR_INVALID"
+    ],
+    [
+      48.06,
+      "ht_execution_status",
+      "HOME_SETTLING"
+    ],
+    [
+      49.06,
+      "ht_execution_status",
+      "COMPLETED"
+    ],
+    [
+      49.06,
+      "mission_state",
+      "COMPLETED"
+    ],
+    [
+      49.07,
+      "ht_follower_status",
+      "TARE_COMPLETED"
+    ]
+  ],
+  "runtime_reason_event_counts": {
+    "TARE_WAIT_START": 121,
+    "TARE_GEOMETRIC_COMMAND": 647,
+    "GEOMETRY_STALE_OR_INVALID": 246,
+    "COMMAND_STALE_OR_INVALID": 3,
+    "TARE_COMPLETED": 1429
+  },
+  "runtime_reason_sim_seconds": {
+    "TARE_WAIT_START": 4.069999999999999,
+    "TARE_GEOMETRIC_COMMAND": 32.289999999999985,
+    "GEOMETRY_STALE_OR_INVALID": 12.350000000000017,
+    "COMMAND_STALE_OR_INVALID": 0.16000000000000014,
+    "TARE_COMPLETED": 71.43
+  },
+  "command_sample_duration_s": {
+    "forward": 14.5,
+    "reverse": 17.0,
+    "rotation": 1.5,
+    "zero": 86.5
+  },
+  "command_abs_max_v_w": [
+    0.4,
+    0.5515846536116441
+  ],
+  "first_ready_sample_distance_m": 0.0003093325667358982,
+  "distance_after_first_ready_sample_m": 8.485117950772654,
+  "last30s_distance_m": 1.1114061265971031e-05,
+  "final_xy": [
+    0.4114156131193866,
+    -0.05795759117006721
+  ],
+  "completion_diagnostics_count": 33,
+  "completion_ready_count": 18,
+  "first_completion_ready": {
+    "stage": "completion",
+    "sim_time_s": 24.19,
+    "odom_source_s": 24,
+    "scan_source_s": 24,
+    "map_source_s": -1,
+    "sampling_calls": 65,
+    "completion_ready": true,
+    "global_return": 1,
+    "local_complete": 1,
+    "global_eligible": 0,
+    "global_connected": 0,
+    "global_unreachable": 0,
+    "local_delegated": 2,
+    "candidate_viewpoints": 16,
+    "uncovered_surface": 0,
+    "uncovered_frontier": 0,
+    "surface_threshold": 40,
+    "frontier_threshold": 15,
+    "queue": 0,
+    "queue_best": 0,
+    "frontier_queue": 0,
+    "reused": 0,
+    "raw_gain_candidates": 0,
+    "raw_frontier_candidates": 0,
+    "viewpoint_flag_counts": {
+      "collision_or_boundary": 909,
+      "disconnected": 1584,
+      "visited": 35,
+      "outside_exploring_cells": 1557
+    },
+    "global_route_nodes": 0,
+    "local_route_nodes": 11
+  },
+  "final_completion_diagnostic": {
+    "stage": "completion",
+    "sim_time_s": 46.09,
+    "odom_source_s": 46.05,
+    "scan_source_s": 46,
+    "map_source_s": -1,
+    "sampling_calls": 65,
+    "completion_ready": true,
+    "global_return": 1,
+    "local_complete": 1,
+    "global_eligible": 0,
+    "global_connected": 0,
+    "global_unreachable": 0,
+    "local_delegated": 0,
+    "candidate_viewpoints": 10,
+    "uncovered_surface": 0,
+    "uncovered_frontier": 0,
+    "surface_threshold": 40,
+    "frontier_threshold": 15,
+    "queue": 0,
+    "queue_best": 0,
+    "frontier_queue": 0,
+    "reused": 0,
+    "raw_gain_candidates": 0,
+    "raw_frontier_candidates": 0,
+    "viewpoint_flag_counts": {
+      "collision_or_boundary": 916,
+      "disconnected": 1590,
+      "visited": 35,
+      "outside_exploring_cells": 1557
+    },
+    "global_route_nodes": 0,
+    "local_route_nodes": 3
+  },
+  "ht_source_age_p95_max_s": null,
+  "metric_note": "Distance is ground-truth cumulative XY including settling/slip. Free volume is sampled source-second LiDAR ray-voxel union. Commands are ~2Hz samples. Runtime durations are clipped sample-and-hold simulation time, not raw event counts."
+}
