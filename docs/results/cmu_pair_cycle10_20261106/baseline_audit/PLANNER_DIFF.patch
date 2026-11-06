@@ -1,0 +1,751 @@
+--- upstream-b6760ad/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp
++++ tested-c6ca9c4/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp
+@@ -1,3 +1,5 @@
++#include <sstream>
++#include <iomanip>
+ /**
+  * @file sensor_coverage_planner_ground.cpp
+  * @author Chao Cao (ccao1@andrew.cmu.edu)
+@@ -10,6 +12,7 @@
+  */
+ 
+ #include "sensor_coverage_planner/sensor_coverage_planner_ground.h"
++#include "ht_cost/tare_waypoint_route.h"
+ #include "graph/graph.h"
+ #include <memory>
+ #include <tf2/LinearMath/Matrix3x3.h>
+@@ -112,6 +115,7 @@
+   this->declare_parameter<int>("kLocalPathOptimizationItrMax", 10);
+ 
+   // planning_env
++  this->declare_parameter<bool>("kUseFrontier", true);
+   this->declare_parameter<double>("kSurfaceCloudDwzLeafSize", 0.2);
+   this->declare_parameter<double>("kCollisionCloudDwzLeafSize", 0.2);
+   this->declare_parameter<int>("kKeyposeCloudStackNum", 5);
+@@ -305,6 +309,9 @@
+       std::make_shared<local_coverage_planner_ns::LocalCoveragePlanner>(
+           shared_from_this());
+   local_coverage_planner_->SetViewPointManager(viewpoint_manager_);
++  local_coverage_planner_->SetHTGlobalTaskQuery([world=grid_world_](int cell) {
++    return world->GetCellStatus(cell)==grid_world_ns::CellStatus::EXPLORING;
++  });
+ 
+   visualizer_ =
+       std::make_shared<tare_visualizer_ns::TAREVisualizer>(shared_from_this());
+@@ -356,8 +363,8 @@
+   last_robot_position_ = robot_position_;
+ }
+ 
+-SensorCoveragePlanner3D::SensorCoveragePlanner3D()
+-    : Node("tare_planner_node"), keypose_cloud_update_(false),
++SensorCoveragePlanner3D::SensorCoveragePlanner3D(const rclcpp::NodeOptions& options)
++    : Node("tare_planner_node",options), keypose_cloud_update_(false),
+       initialized_(false), lookahead_point_update_(false), relocation_(false),
+       start_exploration_(false), exploration_finished_(false),
+       near_home_(false), at_home_(false), stopped_(false),
+@@ -371,6 +378,10 @@
+ 
+ bool SensorCoveragePlanner3D::initialize() {
+   ReadParameters();
++  const auto offset=declare_parameter<std::vector<double>>("sensor_origin_offset",{0.,0.,0.});
++  if(offset.size()!=3 || !std::all_of(offset.begin(),offset.end(),[](double v){return std::isfinite(v);}))
++    throw std::invalid_argument("sensor_origin_offset must contain three finite child-frame metres");
++  std::copy(offset.begin(),offset.end(),sensor_origin_offset_.begin());
+   // if (!ReadParameters(shared_from_this()))
+   // {
+   //   RCLCPP_ERROR(this->get_logger(), "Read parameters failed");
+@@ -394,7 +405,7 @@
+                 std::placeholders::_1));
+   registered_scan_sub_ =
+       this->create_subscription<sensor_msgs::msg::PointCloud2>(
+-          sub_registered_scan_topic_, 5,
++          sub_registered_scan_topic_, rclcpp::QoS(5).reliable(),
+           std::bind(&SensorCoveragePlanner3D::RegisteredScanCallback, this,
+                     std::placeholders::_1));
+   terrain_map_sub_ = this->create_subscription<sensor_msgs::msg::PointCloud2>(
+@@ -407,7 +418,7 @@
+           std::bind(&SensorCoveragePlanner3D::TerrainMapExtCallback, this,
+                     std::placeholders::_1));
+   state_estimation_sub_ = this->create_subscription<nav_msgs::msg::Odometry>(
+-      sub_state_estimation_topic_, 5,
++      sub_state_estimation_topic_, rclcpp::SensorDataQoS().keep_last(100),
+       std::bind(&SensorCoveragePlanner3D::StateEstimationCallback, this,
+                 std::placeholders::_1));
+   coverage_boundary_sub_ =
+@@ -434,6 +445,12 @@
+       std::bind(&SensorCoveragePlanner3D::ResetWaypointCallback, this,
+                 std::placeholders::_1));
+ 
++  tare_waypoint_pub_=this->create_publisher<geometry_msgs::msg::PointStamped>("/tare_native_waypoint",10);
++  ht_route_goal_pub_=this->create_publisher<geometry_msgs::msg::PointStamped>("/ht_route_goal",10);
++  decision_diagnostics_pub_=this->create_publisher<std_msgs::msg::String>("tare_decision_diagnostics",10);
++  boundary_status_pub_=this->create_publisher<std_msgs::msg::String>("tare_boundary_status",10);
++  tare_route_pub_=this->create_publisher<nav_msgs::msg::Path>("/tare_coverage_route",10);
++  tare_branch_pub_=this->create_publisher<nav_msgs::msg::Path>("/tare_route_branch",10);
+   global_path_full_publisher_ =
+       this->create_publisher<nav_msgs::msg::Path>("global_path_full", 1);
+   global_path_publisher_ =
+@@ -451,6 +468,18 @@
+       pub_waypoint_topic_, 2);
+   exploration_finish_pub_ = this->create_publisher<std_msgs::msg::Bool>(
+       pub_exploration_finish_topic_, 2);
++  mission_state_pub_=create_publisher<std_msgs::msg::String>("/mission_state",1);
++  execution_status_pub_=create_publisher<std_msgs::msg::String>("/ht_execution_status",1);
++  mission_completed_pub_=create_publisher<std_msgs::msg::Bool>("/mission_completed",1);
++  speed_pub_=create_publisher<std_msgs::msg::Float32>("/speed",1);
++  normal_speed_=declare_parameter<double>("mission_normal_speed",0.5);
++  sensor_timeout_=declare_parameter<double>("mission_sensor_timeout",3.0);
++  scan_pose_max_skew_=declare_parameter<double>("scan_pose_max_skew",.05);
++  odometry_child_frame_=declare_parameter<std::string>("odometry_child_frame","");
++  home_completion_.radius=declare_parameter<double>("mission_home_radius",0.5);
++  home_completion_.dwell=declare_parameter<double>("mission_home_dwell",1.0);
++  for (double v : {normal_speed_,sensor_timeout_,home_completion_.radius,home_completion_.dwell,scan_pose_max_skew_})
++    if (!std::isfinite(v) || v<=0) throw std::invalid_argument("Invalid mission parameter");
+   runtime_breakdown_pub_ =
+       this->create_publisher<std_msgs::msg::Int32MultiArray>(
+           pub_runtime_breakdown_topic_, 2);
+@@ -476,15 +505,29 @@
+ 
+ void SensorCoveragePlanner3D::StateEstimationCallback(
+     const nav_msgs::msg::Odometry::ConstSharedPtr state_estimation_msg) {
+-  robot_position_ = state_estimation_msg->pose.pose.position;
+-  // Todo: use a boolean
+-  if (std::abs(initial_position_.x()) < 0.01 &&
+-      std::abs(initial_position_.y()) < 0.01 &&
+-      std::abs(initial_position_.z()) < 0.01) {
+-    initial_position_.x() = robot_position_.x;
+-    initial_position_.y() = robot_position_.y;
+-    initial_position_.z() = robot_position_.z;
+-  }
++  const auto& position=state_estimation_msg->pose.pose.position;
++  const auto& q=state_estimation_msg->pose.pose.orientation;
++  const double stamp=rclcpp::Time(state_estimation_msg->header.stamp).seconds();
++  const double now=this->now().seconds();
++  const auto& frame=state_estimation_msg->header.frame_id;
++  if(last_input_ros_time_>=0 && now<last_input_ros_time_-1e-6)input_fault_="CLOCK_RESET_RESTART_REQUIRED";
++  last_input_ros_time_=now;
++  if (!input_fault_.empty()) {odom_received_=-1;return;}
++  if ((frame!="map" && frame!="/map") || stamp<=0 ||
++      (!odometry_child_frame_.empty() && state_estimation_msg->child_frame_id!=odometry_child_frame_) || !std::isfinite(position.x) ||
++      !std::isfinite(position.y) || !std::isfinite(position.z) ||
++      !std::isfinite(q.x+q.y+q.z+q.w) ||
++      std::abs(q.x*q.x+q.y*q.y+q.z*q.z+q.w*q.w-1)>0.01 || stamp>now+0.1 ||
++      now-stamp>sensor_timeout_) {odom_received_=-1;return;}
++  const ht_cost_ns::InputPose input{stamp,{position.x,position.y,position.z},{q.x,q.y,q.z,q.w}};
++  if(!ht_cost_ns::validInputPose(input)){odom_received_=-1;return;}
++  if(stamp<=odom_history_.latestStamp())return;
++  if(odom_history_.jump(input)) {input_fault_="ODOM_JUMP_RESTART_REQUIRED";odom_received_=-1;return;}
++  odom_history_.add(input);
++  // Measure motion from poses: the CMU simulator may publish zero odometry twist.
++  if (odom_stamp_>=0 && stamp>odom_stamp_)
++    measured_speed_=std::hypot(position.x-robot_position_.x,position.y-robot_position_.y)/(stamp-odom_stamp_);
++  robot_position_=position;odom_received_=now;odom_stamp_=stamp;
+   double roll, pitch, yaw;
+   geometry_msgs::msg::Quaternion geo_quat =
+       state_estimation_msg->pose.pose.orientation;
+@@ -500,10 +543,40 @@
+     moving_forward_ = false;
+   }
+   // initialized_ = true;
++  // A registered scan can arrive before its matching odometry. Retry a small
++  // bounded queue once new poses arrive, rather than always dropping that
++  // ordering and starving the planner at a fixed sensor phase offset.
++  auto pending=std::move(pending_scans_);pending_scans_.clear();
++  for(const auto& scan:pending)RegisteredScanCallback(scan);
+ }
+ 
+ void SensorCoveragePlanner3D::RegisteredScanCallback(
+     const sensor_msgs::msg::PointCloud2::ConstSharedPtr registered_scan_msg) {
++  const double stamp=rclcpp::Time(registered_scan_msg->header.stamp).seconds();
++  const double now=this->now().seconds();
++  const auto& frame=registered_scan_msg->header.frame_id;
++  if(last_input_ros_time_>=0 && now<last_input_ros_time_-1e-6)input_fault_="CLOCK_RESET_RESTART_REQUIRED";
++  last_input_ros_time_=now;
++  if(!input_fault_.empty()){scan_received_=-1;return;}
++  if ((frame!="map" && frame!="/map") || registered_scan_msg->width*registered_scan_msg->height==0 ||
++      stamp<=0 || stamp>now+0.1 || now-stamp>sensor_timeout_) {scan_received_=-1;return;}
++  if(stamp<=scan_stamp_)return;
++  const auto scan_pose=odom_history_.at(stamp,scan_pose_max_skew_);
++  if(!scan_pose) {
++    if(stamp>odom_history_.latestStamp()) {
++      auto position=std::lower_bound(pending_scans_.begin(),pending_scans_.end(),stamp,
++        [](const auto& p,double t){return rclcpp::Time(p->header.stamp).seconds()<t;});
++      if(position==pending_scans_.end() || rclcpp::Time((*position)->header.stamp).seconds()!=stamp)
++        pending_scans_.insert(position,registered_scan_msg);
++      while(pending_scans_.size()>10)pending_scans_.pop_front();
++    }
++    // No renewal of last good sensor time; freshness still expires normally.
++    return;
++  }
++  const auto origin=ht_cost_ns::observationOrigin(*scan_pose,sensor_origin_offset_);
++  if(!origin) {scan_received_=-1;return;}
++  sensor_position_.x=(*origin)[0];sensor_position_.y=(*origin)[1];sensor_position_.z=(*origin)[2];
++  scan_received_=now;scan_stamp_=stamp;
+   if (!initialized_) {
+     return;
+   }
+@@ -520,14 +593,19 @@
+   registered_cloud_->cloud_->clear();
+   pcl::copyPointCloud(*registered_scan_tmp, *(registered_cloud_->cloud_));
+ 
+-  planning_env_->UpdateRobotPosition(robot_position_);
++  geometry_msgs::msg::Point scan_position;
++  scan_position.x=scan_pose->xyz[0];scan_position.y=scan_pose->xyz[1];scan_position.z=scan_pose->xyz[2];
++  planning_env_->UpdateRobotPosition(scan_position);
+   planning_env_->UpdateRegisteredCloud<pcl::PointXYZI>(
+-      registered_cloud_->cloud_);
++      registered_cloud_->cloud_,Eigen::Vector3d(sensor_position_.x,sensor_position_.y,sensor_position_.z));
+ 
+   registered_cloud_count_ = (registered_cloud_count_ + 1) % 5;
+   if (registered_cloud_count_ == 0) {
+     // initialized_ = true;
+-    keypose_.pose.pose.position = robot_position_;
++    keypose_.header=registered_scan_msg->header;
++    keypose_.pose.pose.position = scan_position;
++    keypose_.pose.pose.orientation.x=scan_pose->q[0];keypose_.pose.pose.orientation.y=scan_pose->q[1];
++    keypose_.pose.pose.orientation.z=scan_pose->q[2];keypose_.pose.pose.orientation.w=scan_pose->q[3];
+     keypose_.pose.covariance[0] = keypose_count_++;
+     cur_keypose_node_ind_ =
+         keypose_graph_->AddKeyposeNode(keypose_, *(planning_env_));
+@@ -581,11 +659,15 @@
+ void SensorCoveragePlanner3D::CoverageBoundaryCallback(
+     const geometry_msgs::msg::PolygonStamped::ConstSharedPtr polygon_msg) {
+   planning_env_->UpdateCoverageBoundary((*polygon_msg).polygon);
++  coverage_boundary_source_s_=rclcpp::Time(polygon_msg->header.stamp).seconds();
++  PublishBoundaryStatus();
+ }
+ 
+ void SensorCoveragePlanner3D::ViewPointBoundaryCallback(
+     const geometry_msgs::msg::PolygonStamped::ConstSharedPtr polygon_msg) {
+   viewpoint_manager_->UpdateViewPointBoundary((*polygon_msg).polygon);
++  viewpoint_boundary_source_s_=rclcpp::Time(polygon_msg->header.stamp).seconds();
++  PublishBoundaryStatus();
+ }
+ 
+ void SensorCoveragePlanner3D::NogoBoundaryCallback(
+@@ -673,19 +755,8 @@
+ }
+ 
+ void SensorCoveragePlanner3D::SendInitialWaypoint() {
+-  // send waypoint ahead
+-  double lx = 12.0;
+-  double ly = 0.0;
+-  double dx = cos(robot_yaw_) * lx - sin(robot_yaw_) * ly;
+-  double dy = sin(robot_yaw_) * lx + cos(robot_yaw_) * ly;
+-
+-  geometry_msgs::msg::PointStamped waypoint;
+-  waypoint.header.frame_id = "map";
+-  waypoint.header.stamp = this->now();
+-  waypoint.point.x = robot_position_.x + dx;
+-  waypoint.point.y = robot_position_.y + dy;
+-  waypoint.point.z = robot_position_.z;
+-  waypoint_pub_->publish(waypoint);
++  lookahead_point_update_=false;
++  PublishWaypoint();
+ }
+ 
+ void SensorCoveragePlanner3D::UpdateKeyposeGraph() {
+@@ -714,11 +785,17 @@
+   misc_utils_ns::Timer viewpoint_manager_update_timer(
+       "update viewpoint manager");
+   viewpoint_manager_update_timer.Start();
+-  if (kUseTerrainHeight) {
++  if (viewpoint_manager_->HT()->tareCoverage()) {
++    auto terrain=std::make_shared<pcl::PointCloud<pcl::PointXYZI>>();
++    for(const auto& c:viewpoint_manager_->HT()->terrainWindow(robot_position_.x,robot_position_.y,40.)) {
++      pcl::PointXYZI p;p.x=c.x;p.y=c.y;p.z=c.height;p.intensity=0;terrain->push_back(p);
++    }
++    viewpoint_manager_->SetViewPointHeightWithTerrain(terrain);
++  } else if (kUseTerrainHeight) {
+     viewpoint_manager_->SetViewPointHeightWithTerrain(
+         large_terrain_cloud_->cloud_);
+   }
+-  if (kCheckTerrainCollision) {
++  if (kCheckTerrainCollision && !viewpoint_manager_->HT()->tareCoverage()) {
+     *(collision_cloud_->cloud_) += *(terrain_collision_cloud_->cloud_);
+     *(collision_cloud_->cloud_) += *(terrain_ext_collision_cloud_->cloud_);
+   }
+@@ -753,7 +830,7 @@
+   // Update robot coverage
+   robot_viewpoint_.ResetCoverage();
+   geometry_msgs::msg::Pose robot_pose;
+-  robot_pose.position = robot_position_;
++  robot_pose.position = sensor_position_;
+   robot_viewpoint_.setPose(robot_pose);
+   UpdateRobotViewPointCoverage();
+   update_coverage_timer.Stop(false);
+@@ -765,8 +842,8 @@
+   for (const auto &point : cloud->points) {
+     if (viewpoint_manager_->InFOVAndRange(
+             Eigen::Vector3d(point.x, point.y, point.z),
+-            Eigen::Vector3d(robot_position_.x, robot_position_.y,
+-                            robot_position_.z))) {
++            Eigen::Vector3d(sensor_position_.x, sensor_position_.y,
++                            sensor_position_.z))) {
+       robot_viewpoint_.UpdateCoverage<pcl::PointXYZI>(point);
+     }
+   }
+@@ -809,6 +886,7 @@
+ void SensorCoveragePlanner3D::UpdateGlobalRepresentation() {
+   local_coverage_planner_->SetRobotPosition(
+       Eigen::Vector3d(robot_position_.x, robot_position_.y, robot_position_.z));
++  local_coverage_planner_->SetRobotYaw(robot_yaw_);
+   bool viewpoint_rollover = viewpoint_manager_->UpdateRobotPosition(
+       Eigen::Vector3d(robot_position_.x, robot_position_.y, robot_position_.z));
+   if (!grid_world_->Initialized() || viewpoint_rollover) {
+@@ -952,7 +1030,13 @@
+     exploration_path_ns::ExplorationPath &local_path) {
+   misc_utils_ns::Timer local_tsp_timer("Local planning");
+   local_tsp_timer.Start();
+-  if (lookahead_point_update_) {
++  if (exploration_finished_ && viewpoint_manager_->HT()->enabled() && !viewpoint_manager_->HT()->tareCoverage()) {
++    // The return search below owns the output path. Coverage-goal search here
++    // is discarded and needlessly delays each return planning cycle.
++    local_path.Reset();local_coverage_planner_->ClearHTPath();
++    local_tsp_timer.Stop(false);return;
++  }
++  if (viewpoint_manager_->HT()->tareCoverage() ? tare_native_lookahead_update_ : lookahead_point_update_) {
+     local_coverage_planner_->SetLookAheadPoint(lookahead_point_);
+   }
+   local_path = local_coverage_planner_->SolveLocalCoverageProblem(
+@@ -980,19 +1064,54 @@
+ SensorCoveragePlanner3D::ConcatenateGlobalLocalPath(
+     const exploration_path_ns::ExplorationPath &global_path,
+     const exploration_path_ns::ExplorationPath &local_path) {
++  if (viewpoint_manager_->HT()->tareCoverage()) return ConcatenateTarePath(global_path, local_path);
++
+   exploration_path_ns::ExplorationPath full_path;
+-  if (exploration_finished_ && near_home_ && kRushHome) {
++  if (exploration_finished_) {
++    local_coverage_planner_->ClearHTPath();
++    geometry_msgs::msg::Point home;
++    home.x=initial_position_.x();home.y=initial_position_.y();home.z=initial_position_.z();
++    if (return_progress_.checkpoints.empty()) {
++      nav_msgs::msg::Path route;
++      const double distance=keypose_graph_->GetShortestPath(robot_position_,home,true,route,true);
++      if (!std::isfinite(distance) || distance>=1e9 || route.poses.empty()) return full_path;
++      // Ignore the start anchor and persist the remaining ordered checkpoints.
++      for (size_t i=1;i<route.poses.size();++i) {
++        const auto& p=route.poses[i].pose.position;
++        return_progress_.checkpoints.push_back({p.x,p.y,p.z});
++      }
++      return_progress_.checkpoints.push_back({home.x,home.y,home.z});
++    }
++    return_progress_.advance({robot_position_.x,robot_position_.y,robot_position_.z},
++      viewpoint_manager_->HT()->enabled() ? local_coverage_planner_->ReturnCheckpointRadius() :
++        viewpoint_manager_->HT()->reachedDistance(),home_completion_.radius);
+     exploration_path_ns::Node node;
+-    node.position_.x() = robot_position_.x;
+-    node.position_.y() = robot_position_.y;
+-    node.position_.z() = robot_position_.z;
+-    node.type_ = exploration_path_ns::NodeType::ROBOT;
+-    full_path.nodes_.push_back(node);
+-    node.position_ = initial_position_;
+-    node.type_ = exploration_path_ns::NodeType::HOME;
+-    full_path.nodes_.push_back(node);
++    node.position_=Eigen::Vector3d(robot_position_.x,robot_position_.y,robot_position_.z);
++    node.type_=exploration_path_ns::NodeType::ROBOT;full_path.nodes_.push_back(node);
++    for (size_t i=return_progress_.next;i<return_progress_.checkpoints.size();++i) {
++      const auto& p=return_progress_.checkpoints[i];node.position_=Eigen::Vector3d(p.x,p.y,p.z);
++      node.type_=i+1==return_progress_.checkpoints.size() ? exploration_path_ns::NodeType::HOME :
++        exploration_path_ns::NodeType::LOCAL_VIA_POINT;
++      full_path.nodes_.push_back(node);
++    }
++    // Replan the return leg in XYtheta on the current directional HT map.
++    if (viewpoint_manager_->HT()->enabled()) {
++      for (size_t i=1;i<full_path.nodes_.size();++i) {
++        const auto target=full_path.nodes_[i].position_;
++        if ((target-full_path.nodes_.front().position_).head<2>().norm()<=viewpoint_manager_->HT()->reachedDistance()) continue;
++        Eigen::Vector3d local_target=target;
++        const Eigen::Vector2d displacement=(target-full_path.nodes_.front().position_).head<2>();
++        if (displacement.norm()>3.5)
++          local_target.head<2>()=full_path.nodes_.front().position_.head<2>()+
++                                  displacement.normalized()*3.5;
++        return local_coverage_planner_->PlanHTReturn(local_target);
++      }
++    }
++    // This is only a candidate. Execute a currently visible, collision-checked prefix.
+     return full_path;
+   }
++  if (viewpoint_manager_->HT()->enabled()) return local_path;
++  if (local_path.nodes_.empty()) return full_path;
+ 
+   double global_path_length = global_path.GetLength();
+   double local_path_length = local_path.GetLength();
+@@ -1025,6 +1144,74 @@
+     const exploration_path_ns::ExplorationPath &local_path,
+     const exploration_path_ns::ExplorationPath &global_path,
+     Eigen::Vector3d &lookahead_point) {
++  if (viewpoint_manager_->HT()->tareCoverage()) {
++    // Upstream false means a global-route fallback, not necessarily no goal.
++    // Preserve that flag for its next TSP while validating the actual output.
++    lookahead_point=Eigen::Vector3d::Constant(std::numeric_limits<double>::quiet_NaN());
++    tare_native_lookahead_update_=GetTareLookAheadPoint(local_path,global_path,lookahead_point);
++    const auto goal=ht_cost_ns::effectiveTareLookahead(
++      {lookahead_point.x(),lookahead_point.y(),lookahead_point.z()},
++      exploration_finished_ && near_home_ && kRushHome,
++      {initial_position_.x(),initial_position_.y(),initial_position_.z()});
++    lookahead_point=Eigen::Vector3d(goal.x,goal.y,goal.z);
++    return lookahead_point.allFinite();
++  }
++
++  fallback_commanded_=false;startup_commanded_=false;
++  if (viewpoint_manager_->HT()->enabled() || exploration_finished_) {
++    auto ht=viewpoint_manager_->HT();
++    const Eigen::Vector3d robot(robot_position_.x,robot_position_.y,robot_position_.z);
++    lookahead_point=robot;
++    lookahead_point_in_line_of_sight_=false;
++    if (!ht->ready()) return false;
++    if (ht->enabled()) {
++      // The follower executes poses, including zero-distance rotations. The
++      // legacy XY lookahead discards these and checks a shortcut to a distant
++      // point, which can reject an otherwise valid XYtheta route.
++      const auto& path=local_coverage_planner_->GetHTPath();
++      if (path.poses.size()<2) return false;
++      const auto& anchor=path.poses.front().pose.position;
++      if (std::hypot(anchor.x-robot.x(),anchor.y-robot.y())>0.5) return false;
++      ht_cost_ns::Point previous{robot.x(),robot.y(),robot.z()};
++      ht_cost_ns::Pose2 previous_pose{robot.x(),robot.y(),robot_yaw_};
++      if (!ht->permits(ht->poseSupport(previous.x,previous.y,robot_yaw_))) return false;
++      double distance=0;
++      for (size_t i=1;i<path.poses.size();++i) {
++        const auto& pose=path.poses[i].pose;
++        const double yaw=std::atan2(2*(pose.orientation.w*pose.orientation.z+pose.orientation.x*pose.orientation.y),
++          1-2*(pose.orientation.y*pose.orientation.y+pose.orientation.z*pose.orientation.z));
++        const ht_cost_ns::Point point{pose.position.x,pose.position.y,robot.z()};
++        if (!viewpoint_manager_->InLocalPlanningHorizon(Eigen::Vector3d(point.x,point.y,point.z)) ||
++            viewpoint_manager_->InCollisionAtPose(Eigen::Vector3d(point.x,point.y,point.z)) ||
++            !ht->permits(ht->motionSupport(previous_pose,{point.x,point.y,yaw}))) return false;
++        const double step=std::hypot(point.x-previous.x,point.y-previous.y);
++        distance+=step;previous=point;previous_pose={point.x,point.y,yaw};
++        lookahead_point=Eigen::Vector3d(point.x,point.y,point.z);
++        if (distance>=1.0) break;
++      }
++      lookahead_point_in_line_of_sight_=true;
++      return true;
++    }
++    std::vector<ht_cost_ns::Point> route;
++    for (size_t i=0;i<local_path.nodes_.size();++i) {
++      const auto& node=local_path.nodes_[i];
++      if (i==0 && node.type_==exploration_path_ns::NodeType::ROBOT) continue;
++      route.push_back({node.position_.x(),node.position_.y(),node.position_.z()});
++    }
++    const auto target=ht_cost_ns::checkedLookahead(
++      ht_cost_ns::Point{robot.x(),robot.y(),robot.z()},route,ht->reachedDistance(),ht->lookahead(),ht->fallbackLookahead(),
++      [&](ht_cost_ns::Point p) {
++        const Eigen::Vector3d point(p.x,p.y,p.z);
++        return viewpoint_manager_->InLocalPlanningHorizon(point) &&
++          !viewpoint_manager_->InCollision(point);
++      },[&](ht_cost_ns::Point a,ht_cost_ns::Point b) {return ht->support(a,b);},
++      [&](ht_cost_ns::Support support) {return ht->permits(support);});
++    lookahead_point=Eigen::Vector3d(target.point.x,target.point.y,target.point.z);
++    fallback_commanded_=target.valid && target.support==ht_cost_ns::Support::UNKNOWN;
++    startup_commanded_=target.valid && target.support==ht_cost_ns::Support::STARTUP_PRIOR;
++    lookahead_point_in_line_of_sight_=target.valid;
++    return lookahead_point_in_line_of_sight_;
++  }
+   Eigen::Vector3d robot_position(robot_position_.x, robot_position_.y,
+                                  robot_position_.z);
+ 
+@@ -1348,10 +1535,34 @@
+ 
+ void SensorCoveragePlanner3D::PublishWaypoint() {
+   geometry_msgs::msg::PointStamped waypoint;
+-  if (exploration_finished_ && near_home_ && kRushHome) {
+-    waypoint.point.x = initial_position_.x();
+-    waypoint.point.y = initial_position_.y();
+-    waypoint.point.z = initial_position_.z();
++  auto ht=viewpoint_manager_->HT();
++  // Search keeps its immutable map, but it can outlive that map's remaining
++  // freshness. Select the latest committed evidence at the publication
++  // boundary, including new obstacles/unknowns. The follower independently
++  // checks its swept path and command against its own fresh map.
++  ht->beginCycle();
++  if (ht->enabled() && lookahead_point_update_ && !force_hold_) {
++    if (!ht->permits(ht->poseSupport(robot_position_.x,robot_position_.y,robot_yaw_)))
++      lookahead_point_update_=false;
++  }
++  if (!ht->enabled() && lookahead_point_update_ && !force_hold_) {
++    const auto support=ht->support({robot_position_.x,robot_position_.y,robot_position_.z},
++      {lookahead_point_.x(),lookahead_point_.y(),lookahead_point_.z()});
++    if (!ht->permits(support) || (support==ht_cost_ns::Support::UNKNOWN &&
++        std::hypot(lookahead_point_.x()-robot_position_.x,lookahead_point_.y()-robot_position_.y)>ht->fallbackLookahead()+1e-6))
++      lookahead_point_update_=false;
++    fallback_commanded_=support==ht_cost_ns::Support::UNKNOWN && lookahead_point_update_;
++    startup_commanded_=support==ht_cost_ns::Support::STARTUP_PRIOR && lookahead_point_update_;
++  }
++  const bool at_return_goal=exploration_finished_ && home_initialized_ &&
++    GetRobotToHomeDistance()<=home_completion_.radius;
++  if (force_hold_ || stopped_ || at_return_goal || !lookahead_point_update_) {
++    waypoint.point=robot_position_;
++    fallback_commanded_=false;startup_commanded_=false;
++  } else if (viewpoint_manager_->HT()->tareCoverage()) {
++    waypoint.point=tare_command_waypoint_;
++  } else if (viewpoint_manager_->HT()->enabled() || exploration_finished_) {
++    waypoint.point.x=lookahead_point_.x();waypoint.point.y=lookahead_point_.y();waypoint.point.z=lookahead_point_.z();
+   } else {
+     double dx = lookahead_point_.x() - robot_position_.x;
+     double dy = lookahead_point_.y() - robot_position_.y;
+@@ -1359,7 +1570,7 @@
+     double extend_dist = lookahead_point_in_line_of_sight_
+                              ? kExtendWayPointDistanceBig
+                              : kExtendWayPointDistanceSmall;
+-    if (r < extend_dist && kExtendWayPoint) {
++    if (r > 1e-6 && r < extend_dist && kExtendWayPoint) {
+       dx = dx / r * extend_dist;
+       dy = dy / r * extend_dist;
+     }
+@@ -1367,8 +1578,13 @@
+     waypoint.point.y = dy + robot_position_.y;
+     waypoint.point.z = lookahead_point_.z();
+   }
+-  misc_utils_ns::Publish(shared_from_this(), waypoint_pub_, waypoint,
+-                         kWorldFrameID);
++  const bool moving=!force_hold_ && !stopped_ && !at_return_goal && lookahead_point_update_;
++  viewpoint_manager_->HT()->publishPermission(moving);
++  std_msgs::msg::Float32 speed;
++  speed.data=moving ? (fallback_commanded_ ? std::min(normal_speed_,viewpoint_manager_->HT()->fallbackSpeed()) : normal_speed_) : 0.0;
++  speed_pub_->publish(speed);
++  misc_utils_ns::Publish(shared_from_this(), waypoint_pub_, waypoint, kWorldFrameID);
++  PublishExplorationState();
+ }
+ 
+ void SensorCoveragePlanner3D::PublishRuntime() {
+@@ -1403,13 +1619,34 @@
+ double SensorCoveragePlanner3D::GetRobotToHomeDistance() {
+   Eigen::Vector3d robot_position(robot_position_.x, robot_position_.y,
+                                  robot_position_.z);
+-  return (robot_position - initial_position_).norm();
++  return (robot_position - initial_position_).head<2>().norm();
+ }
+ 
+ void SensorCoveragePlanner3D::PublishExplorationState() {
+   std_msgs::msg::Bool exploration_finished_msg;
+   exploration_finished_msg.data = exploration_finished_;
+   exploration_finish_pub_->publish(exploration_finished_msg);
++  std_msgs::msg::Bool completed;completed.data=stopped_;mission_completed_pub_->publish(completed);
++  std_msgs::msg::String state,status;
++  const bool at_return_goal=exploration_finished_ && GetRobotToHomeDistance()<=home_completion_.radius;
++  state.data=stopped_ ? "COMPLETED" : !initialized_ ? "WAIT_START" :
++    (force_hold_ || (!lookahead_point_update_ && !at_return_goal)) ? "BLOCKED" :
++    exploration_finished_ ? "RETURNING_HOME" : "EXPLORING";
++  status.data=force_hold_ ? hold_reason_ : stopped_ ? "COMPLETED" : at_return_goal ? "HOME_SETTLING" :
++    !lookahead_point_update_ ? (viewpoint_manager_->HT()->budget().exhausted() ? "FALLBACK_BUDGET_EXHAUSTED" : "NO_EXECUTABLE_ROUTE") :
++    fallback_commanded_ ? "GEOMETRIC_FALLBACK" : startup_commanded_ ? "STARTUP_PRIOR" :
++    viewpoint_manager_->HT()->enabled() ? "HT_ASSISTED" : "GEOMETRIC";
++  if (!force_hold_ && !stopped_ && !at_return_goal && !lookahead_point_update_ &&
++      viewpoint_manager_->HT()->enabled()) {
++    const auto rejection=viewpoint_manager_->HT()->poseRejection(
++      robot_position_.x,robot_position_.y,robot_yaw_);
++    if (!rejection.empty()) status.data=rejection;
++    else if (viewpoint_manager_->InCollisionAtPose(
++        Eigen::Vector3d(robot_position_.x,robot_position_.y,robot_position_.z)))
++      status.data="GEOMETRY_CURRENT_POSE_BLOCKED";
++    else if (status.data=="NO_EXECUTABLE_ROUTE") status.data="PATH_NO_EXECUTABLE_ROUTE";
++  }
++  mission_state_pub_->publish(state);execution_status_pub_->publish(status);
+ }
+ 
+ void SensorCoveragePlanner3D::PrintExplorationStatus(std::string status,
+@@ -1455,10 +1692,83 @@
+   momentum_activation_count_pub_->publish(momentum_activation_count_msg);
+ }
+ 
++void SensorCoveragePlanner3D::PublishBoundaryStatus() {
++  std::ostringstream data;
++  data << std::setprecision(17) << "{\"coverage_source_s\":" << coverage_boundary_source_s_
++       << ",\"navigation_source_s\":" << viewpoint_boundary_source_s_ << "}";
++  std_msgs::msg::String message;message.data=data.str();boundary_status_pub_->publish(message);
++}
++
++void SensorCoveragePlanner3D::PublishCompletionDiagnostics(bool completion_ready,int uncovered,
++    int frontier,size_t global_nodes,size_t local_nodes) {
++  const auto& local=local_coverage_planner_->GetCompletionAudit();
++  const auto& global=grid_world_->GetTourAudit();
++  int collision=0,disconnected=0,visited=0,outside_exploring=0;
++  for(int index=0;index<viewpoint_manager_->GetViewPointNum();++index) {
++    collision+=viewpoint_manager_->ViewPointInCollision(index,true);
++    disconnected+=!viewpoint_manager_->ViewPointConnected(index,true);
++    visited+=viewpoint_manager_->ViewPointVisited(index,true);
++    outside_exploring+=!viewpoint_manager_->ViewPointInExploringCell(index,true);
++  }
++  std::ostringstream data;
++  data << std::setprecision(17) << "{\"stage\":\"completion\",\"sim_time_s\":" << now().seconds()
++       << ",\"odom_source_s\":" << odom_stamp_ << ",\"scan_source_s\":" << scan_stamp_
++       << ",\"map_source_s\":" << viewpoint_manager_->HT()->cycleStamp()
++       << ",\"sampling_calls\":" << local_coverage_planner_->SamplingCalls()
++       << ",\"completion_ready\":" << (completion_ready ? "true":"false")
++       << ",\"global_return\":" << grid_world_->IsReturningHome()
++       << ",\"local_complete\":" << local_coverage_planner_->IsLocalCoverageComplete()
++       << ",\"global_eligible\":" << global.eligible << ",\"global_connected\":" << global.connected
++       << ",\"global_unreachable\":" << global.unreachable << ",\"local_delegated\":" << global.local_delegated
++       << ",\"candidate_viewpoints\":" << viewpoint_manager_->GetViewPointCandidateIndices().size()
++       << ",\"uncovered_surface\":" << uncovered << ",\"uncovered_frontier\":" << frontier
++       << ",\"surface_threshold\":" << local.min_points << ",\"frontier_threshold\":" << local.min_frontier
++       << ",\"queue\":" << local.queue << ",\"queue_best\":" << local.queue_best
++       << ",\"frontier_queue\":" << local.frontier_queue << ",\"reused\":" << local.reused
++       << ",\"raw_gain_candidates\":" << local.raw_gain_candidates
++       << ",\"raw_frontier_candidates\":" << local.raw_frontier_candidates
++       << ",\"viewpoint_flag_counts\":{\"collision_or_boundary\":" << collision
++       << ",\"disconnected\":" << disconnected << ",\"visited\":" << visited
++       << ",\"outside_exploring_cells\":" << outside_exploring << "}"
++       << ",\"global_route_nodes\":" << global_nodes << ",\"local_route_nodes\":" << local_nodes << "}";
++  std_msgs::msg::String message;message.data=data.str();decision_diagnostics_pub_->publish(message);
++}
++
+ void SensorCoveragePlanner3D::execute() {
++  auto ht=viewpoint_manager_->HT();
++  const double input_now=this->now().seconds();
++  if(last_input_ros_time_>=0 && input_now<last_input_ros_time_-1e-6)input_fault_="CLOCK_RESET_RESTART_REQUIRED";
++  last_input_ros_time_=input_now;
++  if(!input_fault_.empty()) {
++    base_healthy_=false;force_hold_=true;stopped_=false;hold_reason_=input_fault_;
++    lookahead_point_update_=false;ht->publishPermission(false);PublishWaypoint();return;
++  }
++  ht->updateExecution({robot_position_.x,robot_position_.y,robot_position_.z},fallback_commanded_);
++  ht->beginCycle();
++  const double now=this->now().seconds();
++  auto fresh=[&](double time) {return time>=0 && now>=time && now-time<=sensor_timeout_;};
++  base_healthy_=fresh(odom_received_) && fresh(scan_received_) && fresh(odom_stamp_) && fresh(scan_stamp_);
++  force_hold_=true;
+   if (!kAutoStart && !start_exploration_) {
+-    RCLCPP_INFO(this->get_logger(), "Waiting for start signal");
+-    return;
++    hold_reason_="WAIT_START";lookahead_point_update_=false;PublishWaypoint();return;
++  }
++  // Lock the mission origin/time once sensors are healthy, independently of
++  // calibration/map readiness. Waiting for a route must not renew the prior.
++  if (base_healthy_ && !home_initialized_) {
++    initial_position_=Eigen::Vector3d(robot_position_.x,robot_position_.y,robot_position_.z);
++    home_initialized_=true;ht->start({robot_position_.x,robot_position_.y,robot_position_.z});
++  }
++  if (!base_healthy_ || !ht->ready()) {
++    hold_reason_=!base_healthy_ ? "BASE_SENSOR_FAULT" : ht->status();
++    home_completion_.update(now,exploration_finished_,false,0,0);
++    lookahead_point_update_=false;PublishWaypoint();return;
++  }
++  force_hold_=false;
++  stopped_=home_completion_.update(now,exploration_finished_,base_healthy_,GetRobotToHomeDistance(),measured_speed_);
++  if (stopped_) {lookahead_point_update_=false;PublishWaypoint();return;}
++  if (initialized_ && !keypose_cloud_update_) {
++    if (!fresh(last_plan_)) {force_hold_=true;hold_reason_="PLANNER_STALE";lookahead_point_update_=false;}
++    PublishWaypoint();return;
+   }
+   Timer overall_processing_timer("overall processing");
+   update_representation_runtime_ = 0;
+@@ -1489,27 +1799,43 @@
+     misc_utils_ns::Timer update_representation_timer("update representation");
+     update_representation_timer.Start();
+ 
++    auto profile_last=std::chrono::steady_clock::now();
++    auto phase_ms=[&]() {
++      const auto current=std::chrono::steady_clock::now();
++      const double elapsed=std::chrono::duration<double,std::milli>(current-profile_last).count();
++      profile_last=current;return elapsed;
++    };
+     // Update grid world
+     UpdateGlobalRepresentation();
++    const double global_representation_ms=phase_ms();
+ 
+     int viewpoint_candidate_count = UpdateViewPoints();
++    const double viewpoints_ms=phase_ms();
+     if (viewpoint_candidate_count == 0) {
++      lookahead_point_update_=false;
++      hold_reason_="NO_GEOMETRIC_VIEWPOINTS";force_hold_=true;
++      PublishWaypoint();
+       RCLCPP_WARN(rclcpp::get_logger("standalone_logger"),
+                   "Cannot get candidate viewpoints, skipping this round");
+       return;
+     }
+ 
+     UpdateKeyposeGraph();
++    const double keypose_ms=phase_ms();
++    double coverage_ms=0,areas_ms=0;
+ 
+     int uncovered_point_num = 0;
+     int uncovered_frontier_point_num = 0;
+     if (!exploration_finished_ || !kNoExplorationReturnHome) {
+-      UpdateViewPointCoverage();
+-      UpdateCoveredAreas(uncovered_point_num, uncovered_frontier_point_num);
++      UpdateViewPointCoverage();coverage_ms=phase_ms();
++      UpdateCoveredAreas(uncovered_point_num, uncovered_frontier_point_num);areas_ms=phase_ms();
+     } else {
+       viewpoint_manager_->ResetViewPointCoverage();
+     }
+ 
++    if (viewpoint_manager_->HT()->enabled())
++      RCLCPP_INFO(this->get_logger(),"HT_REPRESENTATION_PROFILE global_ms=%.3f viewpoints_ms=%.3f keypose_ms=%.3f coverage_ms=%.3f covered_areas_ms=%.3f",
++        global_representation_ms,viewpoints_ms,keypose_ms,coverage_ms,areas_ms);
+     update_representation_timer.Stop(false);
+     update_representation_runtime_ +=
+         update_representation_timer.GetDuration("ms");
+@@ -1530,27 +1856,61 @@
+     double current_time = this->now().seconds();
+     double delta_time = current_time - start_time_;
+ 
+-    if (grid_world_->IsReturningHome() &&
+-        local_coverage_planner_->IsLocalCoverageComplete() &&
+-        (current_time - start_time_) > 5) {
++    if (viewpoint_manager_->HT()->enabled() && !viewpoint_manager_->HT()->tareCoverage() && !exploration_finished_) {
++      const auto& g=grid_world_->GetTourAudit();
++      const auto& c=local_coverage_planner_->GetCompletionAudit();
++      RCLCPP_INFO(this->get_logger(),
++        "COMPLETION_AUDIT global_return=%d local_complete=%d global_exploring=%d local_delegated=%d eligible=%d connected=%d unreachable=%d uncovered=%d frontier=%d nav=%d reused=%d virtual_points=%d virtual_frontier=%d queue=%d queue_best=%d frontier_queue=%d raw_gain=%d raw_frontier=%d min_points=%d min_frontier=%d ht_target=%d ht_gain=%d ht_frontier=%d ht_poses=%zu ht_pending=%zu",
++        grid_world_->IsReturningHome(),local_coverage_planner_->IsLocalCoverageComplete(),
++        g.exploring,g.local_delegated,g.eligible,g.connected,g.unreachable,
++        uncovered_point_num,uncovered_frontier_point_num,c.navigation,c.reused,
++        c.virtually_covered,c.virtually_covered_frontier,c.queue,c.queue_best,c.frontier_queue,
++        c.raw_gain_candidates,c.raw_frontier_candidates,c.min_points,c.min_frontier,
++        c.output_target,c.output_gain,c.output_frontier,local_coverage_planner_->GetHTPath().poses.size(),grid_world_->PendingHTCoverageCells());
++    }
++
++    if(ht->tareCoverage() && !exploration_finished_)
++      RCLCPP_INFO(get_logger(),"TARE_COMPLETION global_return=%d local_complete=%d global_order_nodes=%zu local_route_nodes=%zu uncovered=%d frontier=%d",
++        grid_world_->IsReturningHome(),local_coverage_planner_->IsLocalCoverageComplete(),
++        global_cell_tsp_order.size(),local_path.nodes_.size(),uncovered_point_num,uncovered_frontier_point_num);
++
++    const bool unresolved_ht_coverage=ht->enabled() && !ht->tareCoverage() && grid_world_->PendingHTCoverageCells()>0;
++    if (unresolved_ht_coverage && grid_world_->IsReturningHome() &&
++        local_coverage_planner_->IsLocalCoverageComplete())
++      RCLCPP_WARN_THROTTLE(this->get_logger(),*this->get_clock(),3000,
++        "HT_COVERAGE_DEFERRED pending=%zu: no current tour/local target is not completed coverage",
++        grid_world_->PendingHTCoverageCells());
++    const bool completion_ready=grid_world_->IsReturningHome() &&
++        local_coverage_planner_->IsLocalCoverageComplete() && !unresolved_ht_coverage &&
++        (current_time-start_time_)>5;
++    PublishCompletionDiagnostics(completion_ready,uncovered_point_num,uncovered_frontier_point_num,
++                                 global_cell_tsp_order.size(),local_path.nodes_.size());
++    if (completion_ready) {
+       if (!exploration_finished_) {
+         PrintExplorationStatus("Exploration completed, returning home", false);
+       }
+       exploration_finished_ = true;
+     }
+ 
+-    if (exploration_finished_ && at_home_ && !stopped_) {
+-      PrintExplorationStatus("Return home completed", false);
+-      stopped_ = true;
+-    }
+-
+     exploration_path_ = ConcatenateGlobalLocalPath(global_path, local_path);
+ 
+     PublishExplorationState();
+ 
++    // Keep each search on its immutable snapshot, then check execution against
++    // the newest received map after potentially long candidate evaluation.
++    ht->beginCycle();
+     lookahead_point_update_ =
+         GetLookAheadPoint(exploration_path_, global_path, lookahead_point_);
++    if (ht->tareCoverage()) {
++      // Native tour and native lookahead remain untouched. Only execution
++      // success gates permission; it cannot choose another coverage target.
++      const bool native_valid=lookahead_point_update_;
++      lookahead_point_update_=RouteTareWaypoint((tare_native_lookahead_update_ ||
++        (exploration_finished_ && near_home_ && kRushHome)) ? exploration_path_ : global_path) && native_valid;
++    }
++    last_plan_=this->now().seconds();
+     PublishWaypoint();
++    local_coverage_planner_->PublishHTPath();
+ 
+     overall_processing_timer.Stop(false);
+     overall_runtime_ = overall_processing_timer.GetDuration("ms");

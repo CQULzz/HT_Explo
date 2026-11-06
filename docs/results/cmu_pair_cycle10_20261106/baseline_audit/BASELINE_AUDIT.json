@@ -1,0 +1,115 @@
+{
+  "scope": "Offline provenance audit of cycle10, no new simulator run and no production parameter mutation",
+  "upstream_repository": "caochao39/tare_planner",
+  "upstream_commit": "b6760adb4280b379567c76f4e684ce628e28ef71",
+  "verified_reference_files": [
+    {
+      "path": "/home/lzz/HT_tare_reference_review_20261101/upstream/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp",
+      "sha256": "c4acc2bd98e35484f21128e7fd4cd7e65ce90dc77d43a760fe23ab5bd881445e",
+      "source": "UPSTREAM_SOURCES.json"
+    },
+    {
+      "path": "/home/lzz/HT_tare_reference_review_20261101/upstream/src/tare_planner/config/indoor.yaml",
+      "sha256": "9ad02bf2ba6f4827146cd80c94a9ad50edce6cadd24fdd2eca650633b02c354e",
+      "source": "ADDITIONAL_SOURCES.json"
+    },
+    {
+      "path": "/home/lzz/HT_tare_reference_review_20261101/upstream/src/tare_planner/config/indoor.yaml",
+      "sha256": "9ad02bf2ba6f4827146cd80c94a9ad50edce6cadd24fdd2eca650633b02c354e",
+      "source": "ARTIFACTS_SHA256.json"
+    },
+    {
+      "path": "/home/lzz/HT_tare_reference_review_20261101/upstream/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp",
+      "sha256": "c4acc2bd98e35484f21128e7fd4cd7e65ce90dc77d43a760fe23ab5bd881445e",
+      "source": "ARTIFACTS_SHA256.json"
+    }
+  ],
+  "tested_launch": "/home/lzz/HT_linux_cycle7_20261106/repo/tools/pcd_sim/tare_geometric.launch.py",
+  "tested_profile": "/home/lzz/HT_linux_cycle7_20261106/repo/src/ht_scout_bridge/config/tare_scout.yaml",
+  "upstream_profile": "/home/lzz/HT_tare_reference_review_20261101/upstream/src/tare_planner/config/indoor.yaml",
+  "profile_differences": {
+    "kAutoStart": {
+      "tested_scout_profile": false,
+      "upstream_indoor": true
+    },
+    "kCoverageDilationRadius": {
+      "tested_scout_profile": 1.0,
+      "upstream_indoor": 0.5
+    },
+    "kExtendWayPointDistanceSmall": {
+      "tested_scout_profile": 4.5,
+      "upstream_indoor": 3.5
+    },
+    "kFrontierClusterMinSize": {
+      "tested_scout_profile": 30,
+      "upstream_indoor": 10
+    },
+    "kLineOfSightStopAtNearestObstacle": {
+      "tested_scout_profile": true,
+      "upstream_indoor": false
+    },
+    "kMinAddFrontierPointNum": {
+      "tested_scout_profile": 15,
+      "upstream_indoor": 20
+    },
+    "kRushHomeDist": {
+      "tested_scout_profile": 10.0,
+      "upstream_indoor": 5.0
+    },
+    "kSensorRange": {
+      "tested_scout_profile": 12.0,
+      "upstream_indoor": 7.5
+    },
+    "kSurfaceCloudDwzLeafSize": {
+      "tested_scout_profile": 0.5,
+      "upstream_indoor": 0.3
+    },
+    "kUseTerrainHeight": {
+      "tested_scout_profile": true,
+      "upstream_indoor": false
+    },
+    "kViewPointCollisionMargin": {
+      "tested_scout_profile": 0.7,
+      "upstream_indoor": 0.5
+    },
+    "kViewPointHeightFromTerrain": {
+      "tested_scout_profile": 0.23479,
+      "upstream_indoor": 0.75
+    },
+    "sub_registered_scan_topic_": {
+      "tested_scout_profile": "/ht_real/registered_scan",
+      "upstream_indoor": "/registered_scan"
+    },
+    "sub_start_exploration_topic_": {
+      "tested_scout_profile": "/ht_real/exploration_start",
+      "upstream_indoor": "/start_exploration"
+    },
+    "sub_state_estimation_topic_": {
+      "tested_scout_profile": "/ht_real/odometry",
+      "upstream_indoor": "/state_estimation_at_scan"
+    },
+    "viewpoint_manager/number_x": {
+      "tested_scout_profile": 40,
+      "upstream_indoor": 50
+    },
+    "viewpoint_manager/number_y": {
+      "tested_scout_profile": 40,
+      "upstream_indoor": 50
+    },
+    "viewpoint_manager/resolution_x": {
+      "tested_scout_profile": 1.2,
+      "upstream_indoor": 0.6
+    },
+    "viewpoint_manager/resolution_y": {
+      "tested_scout_profile": 1.2,
+      "upstream_indoor": 0.6
+    }
+  },
+  "confirmed_design_differences": [
+    "Launcher explicitly loads tare_scout.yaml with ht_enabled=False; upstream indoor profile is not selected.",
+    "Shared ConcatenateGlobalLocalPath return branch and checkedLookahead path remain active with HT disabled.",
+    "World is native indoor geometry plus Scout dynamic model and GPU scanner, not the complete native CMU vehicle/sensor stack.",
+    "Separate CMU terrain/command bridge parameters include deliberate safety and Scout geometry adaptation."
+  ],
+  "causal_limit": "This establishes a confounded baseline. It does not isolate which input, geometry, planner, or parameter caused zero eligible gain at20s, or which return prefix failed at36s."
+}

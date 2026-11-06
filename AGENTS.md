@@ -97,3 +97,7 @@ p01完整120.3秒保留，发现TARE仿真命令桥硬编码1秒期限与HT几�
 ## 循环10 CMU配对结束
 
 3/3尝试已消耗并关闭账本。p01配置诊断保留；正式p02 TARE为120.1秒/9.94米/206立方米，返航阶段BLOCKED；p03 HT为120.3秒/35.24米/651.24立方米，结束仍EXPLORING，末30秒6.90米。所有进程/冻结/录包/视频核验通过，HT12组上下文配对通过。完整探索仍未验收，当前分支TARE返航前缀拒绝细因未细分。详情docs/results/cmu_pair_cycle10_20261106/REPORT.md。不自动启动下一次、发布Release或部署实车，全部原始证据保留本机。
+
+## 循环10基线解释更正
+
+用户质疑CMU中TARE异常表现后，离线核实对照入口加载tare_scout.yaml而非上游indoor.yaml，且ht_enabled=False仍执行项目改写返航逻辑。循环10保留为两套接入配置诊断，3.55/3.16比值不得用于HT优于原生TARE的性能归因。详情docs/results/cmu_pair_cycle10_20261106/baseline_audit/CORRECTION.md。原始记录与关闭账本保留，本轮未新增仿真或导航行为修改。
