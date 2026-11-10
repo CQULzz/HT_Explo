@@ -13,3 +13,5 @@
 先 source `/home/lzz/cmu_test_20261110/env.sh`，再 source其 `install_cmu/setup.bash`、`install_mapper/setup.bash`、`install_native/setup.bash`、`install_gate/setup.bash`。Xvfb使用`:88`。
 
 运行 `python3 tools/user_pcd/run.py --attempt 1`，完整600秒。输出在 `/home/lzz/pcd_test_20261110/runs`；冻结源文件/运行资产/二进制，保存MCAP、参数、状态、CSV、日志及失败记录。完整原始数据留本机，不创建Release，不清理未备份数据。
+
+已完成：600.004秒、24.482米，约58秒后持续停车，finish=false。2854条非零放行候选独立核验未发现违反门禁；连续导航未通过，当前缺少能恢复行驶的局部重搜索/脱困路径。见[完整报告](../../docs/results/user_pcd_8dir_20261110/REPORT.md)。`recover_map.py`为实际恢复脚本副本；本机库存与Release元数据在`/home/lzz/pcd_test_20261110/source`，地图资产留本机。
