@@ -25,12 +25,11 @@ def initial_pose(xy,yaw,flat):
  return float(z),roll,pitch,{'wheel_ground_z':heights,'plane':plane.tolist(),'plane_residual_m':float(np.max(abs(np.c_[wheel_xy,np.ones(4)]@plane-heights)))}
 
 def trial(case,gear,friction,label,flat=False,center_only=False):
- out=ROOT/'runs'/label;out.mkdir(parents=True,exist_ok=False);ids=world(flat);yaw=math.radians(case['heading_deg']);u=np.array([math.cos(yaw),math.sin(yaw)]);n=np.array([-u[1],u[0]]);center=np.array(case['xy']);start=center if center_only else center-gear*.8*u
+ out=ROOT/'runs_batch02'/label;out.mkdir(parents=True,exist_ok=False);ids=world(flat);yaw=math.radians(case['heading_deg']);u=np.array([math.cos(yaw),math.sin(yaw)]);n=np.array([-u[1],u[0]]);center=np.array(case['xy']);start=center if center_only else center-gear*.8*u
  result={'case':case,'gear':gear,'friction':friction,'flat_control':flat,'center_only':center_only,'initial_xy':start.tolist(),'desired_center_crossing_length_m':0 if center_only else 1.6,'pybullet_version':'3.2.7','source_manifest_sha256':hashlib.sha256((ROOT/'MANIFEST.json').read_bytes()).hexdigest()}
  init=initial_pose(start,yaw,flat)
- if init is None:pose_matched=center_only or (center_crossing is not None and abs(center_crossing['lateral_m'])<=.1 and abs(center_crossing['yaw_error_deg'])<=15)
- if crossed and not pose_matched and failure is None:failure='MISSED_REQUESTED_CENTER_POSE'
- result.update(center_crossing=center_crossing,status='UNSUPPORTED_INITIAL_WHEEL_LOCATION',passed=False);(out/'RESULT.json').write_text(json.dumps(result,indent=2));return result
+ if init is None:
+  result.update(status='UNSUPPORTED_INITIAL_WHEEL_LOCATION',passed=False);(out/'RESULT.json').write_text(json.dumps(result,indent=2));return result
  z,roll,pitch,metadata=init;result['initial_geometry']=metadata
  body=p.loadURDF(str(ASSET/'scout.urdf'),[float(start[0]),float(start[1]),z],p.getQuaternionFromEuler([roll,pitch,yaw]),flags=p.URDF_USE_INERTIA_FROM_FILE)
  for link in range(-1,4):p.changeDynamics(body,link,linearDamping=.04,angularDamping=.04,restitution=0.,collisionMargin=.001)
