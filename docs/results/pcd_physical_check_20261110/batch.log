@@ -1,0 +1,9 @@
+pybullet build time: Jan 29 2025 23:16:28
+Traceback (most recent call last):
+  File "/home/lzz/pcd_physics_20261110/test_physics.py", line 89, in <module>
+    if __name__=='__main__':main()
+  File "/home/lzz/pcd_physics_20261110/test_physics.py", line 82, in main
+    c={'id':'flat_control','class':'control','xy':[0.,0.],'heading_deg':0.,'ht_score':None};r=trial(c,1,mode,'flat_'+mode,True);results.append(r);print(r['case']['id'],mode,r['status'],r['maximum_progress_m'],flush=True)
+  File "/home/lzz/pcd_physics_20261110/test_physics.py", line 32, in trial
+    if crossed and not pose_matched and failure is None:failure='MISSED_REQUESTED_CENTER_POSE'
+UnboundLocalError: local variable 'crossed' referenced before assignment

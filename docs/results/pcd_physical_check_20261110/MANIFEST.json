@@ -1,0 +1,166 @@
+{
+  "source": "Archived Scout SDF mass/inertia/collisions/joints converted to URDF; exact environment Collada vertices/indices exported to OBJ, no extra ground plane in map trials.",
+  "vehicle": {
+    "body_box_m": [
+      0.925,
+      0.38,
+      0.21
+    ],
+    "total_mass_kg": 48,
+    "wheel_radius_m": 0.16459,
+    "wheel_track_m": 0.58306,
+    "wheel_base_m": 0.498,
+    "wheel_torque_limit_Nm": 80
+  },
+  "selected_cases": [
+    {
+      "id": "Hpass_Gblock_01",
+      "class": "HT_allow_geometry_proxy_reject",
+      "xy": [
+        0.9005847953216373,
+        -1.5555555555555554
+      ],
+      "heading_deg": 180,
+      "ht_score": 0.9942402839660645,
+      "frame_source_elapsed_s": 5.01536226272583,
+      "geometric_obstacle_voxels": 2
+    },
+    {
+      "id": "Hpass_Gblock_02",
+      "class": "HT_allow_geometry_proxy_reject",
+      "xy": [
+        5.6491228070175445,
+        2.005847953216374
+      ],
+      "heading_deg": 0,
+      "ht_score": 0.9902093410491943,
+      "frame_source_elapsed_s": 10.157357931137085,
+      "geometric_obstacle_voxels": 2
+    },
+    {
+      "id": "Hpass_Gblock_03",
+      "class": "HT_allow_geometry_proxy_reject",
+      "xy": [
+        6.099415204678362,
+        2.005847953216374
+      ],
+      "heading_deg": 0,
+      "ht_score": 0.7413307428359985,
+      "frame_source_elapsed_s": 20.054308652877808,
+      "geometric_obstacle_voxels": 2
+    },
+    {
+      "id": "Hpass_Gblock_04",
+      "class": "HT_allow_geometry_proxy_reject",
+      "xy": [
+        5.035087719298245,
+        -4.584795321637427
+      ],
+      "heading_deg": 225,
+      "ht_score": 0.9824019074440002,
+      "frame_source_elapsed_s": 30.148561000823975,
+      "geometric_obstacle_voxels": 2
+    },
+    {
+      "id": "Hpass_Gblock_05",
+      "class": "HT_allow_geometry_proxy_reject",
+      "xy": [
+        3.5614035087719293,
+        -6.83625730994152
+      ],
+      "heading_deg": 0,
+      "ht_score": 0.989787220954895,
+      "frame_source_elapsed_s": 40.0291850566864,
+      "geometric_obstacle_voxels": 2
+    },
+    {
+      "id": "Hpass_Gblock_06",
+      "class": "HT_allow_geometry_proxy_reject",
+      "xy": [
+        1.7602339181286548,
+        -10.602339181286549
+      ],
+      "heading_deg": 0,
+      "ht_score": 0.9773759841918945,
+      "frame_source_elapsed_s": 50.202637672424316,
+      "geometric_obstacle_voxels": 2
+    },
+    {
+      "id": "Hpass_Gblock_07",
+      "class": "HT_allow_geometry_proxy_reject",
+      "xy": [
+        2.988304093567251,
+        -12.526315789473683
+      ],
+      "heading_deg": 135,
+      "ht_score": 0.9531371593475342,
+      "frame_source_elapsed_s": 59.08994126319885,
+      "geometric_obstacle_voxels": 6
+    },
+    {
+      "id": "Hblock_Gclear_01",
+      "class": "HT_neural_reject_geometry_proxy_clear",
+      "xy": [
+        1.2280701754385963,
+        -1.064327485380117
+      ],
+      "heading_deg": 45,
+      "ht_score": 0.45003312826156616,
+      "frame_source_elapsed_s": 5.01536226272583,
+      "geometric_obstacle_voxels": 0
+    },
+    {
+      "id": "Hblock_Gclear_07",
+      "class": "HT_neural_reject_geometry_proxy_clear",
+      "xy": [
+        2.988304093567251,
+        -12.690058479532162
+      ],
+      "heading_deg": 45,
+      "ht_score": 0.16769978404045105,
+      "frame_source_elapsed_s": 59.08994126319885,
+      "geometric_obstacle_voxels": 0
+    },
+    {
+      "id": "Hblock_Gclear_15",
+      "class": "HT_neural_reject_geometry_proxy_clear",
+      "xy": [
+        2.988304093567251,
+        -12.690058479532162
+      ],
+      "heading_deg": 225,
+      "ht_score": 0.1605214923620224,
+      "frame_source_elapsed_s": 590.3188383579254,
+      "geometric_obstacle_voxels": 0
+    }
+  ],
+  "selection": "One closest-robot HT-allow/geometry-reject counterexample per unique XY from prior 15-frame comparison; choose first allowed heading except image case uses135deg. Other class: closest-robot geometrically clear/physically supported position with a neural-rejected heading in saved frames1/7/15; lowest score heading. Frozen before dynamics results.",
+  "probe": {
+    "distance_each_side_m": 0.8,
+    "command_speed_m_s": 0.2,
+    "settle_s": 2,
+    "drive_s": 12,
+    "post_s": 1,
+    "dt_s": 0.004166666666666667,
+    "forward_and_reverse": true,
+    "friction_modes": [
+      "historical_like",
+      "isotropic_0.4",
+      "isotropic_0.8"
+    ],
+    "center_pose_check_s": 2,
+    "center_crossing_tolerance": {
+      "lateral_m": 0.1,
+      "yaw_error_deg": 15
+    },
+    "clean_pass": "Reaches full1.6m crossing with requested center XY/yaw, no tip/fall, chassis penetration<5mm and chassis loaded contact<0.25s; wheel/ground contact is expected. Initial unsupported/missing points remain inconclusive."
+  },
+  "friction_note": "historical_like: lateralFriction .8 and wheel-local anisotropic [1,1,.125] approximates archive longitudinal .8/lateral .1. ODE slip .03 not exactly transferable; isotropic .4/.8 are sensitivity cases, not calibrated vehicle truth.",
+  "assets": {
+    "scout.urdf": "4e20309666408c4f43d213ef9fc795bafc9dbd8eb094f63d50b1f3355e4540e7",
+    "obstacles.npz": "b8b80ff41e5ac16769287e35624cb513739982370dafd295b06652b53e2c8d04",
+    "ground.npz": "702d7e7bdb5045177b4f17d075890545c4d2260db1ebef7f4e91637ec2db5fdc",
+    "ground.obj": "6d6fbf95483d50d9eda7e1746856504071746cb815221eea903ffc23c46e68de",
+    "obstacles.obj": "2624bdf30c4a34e85d8d9697a81ac63d4f4be0d7dc845f6f605917d62a4f6ad2"
+  }
+}
