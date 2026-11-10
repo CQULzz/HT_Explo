@@ -1,0 +1,43 @@
+{
+  "geometry_pose_test": {
+    "tests": "23",
+    "failures": "0",
+    "disabled": "0",
+    "errors": "0",
+    "time": "9.425",
+    "timestamp": "2026-11-10T17:05:37",
+    "name": "AllTests"
+  },
+  "input_pose_test": {
+    "tests": "7",
+    "failures": "0",
+    "disabled": "0",
+    "errors": "0",
+    "time": "0",
+    "timestamp": "2026-11-10T17:05:47",
+    "name": "AllTests"
+  },
+  "planner_input_test": {
+    "tests": "4",
+    "failures": "0",
+    "disabled": "0",
+    "errors": "0",
+    "time": "0.042",
+    "timestamp": "2026-11-10T17:05:47",
+    "name": "AllTests"
+  },
+  "xytheta_follower_test": {
+    "tests": "25",
+    "failures": "0",
+    "disabled": "0",
+    "errors": "0",
+    "time": "39.814",
+    "timestamp": "2026-11-10T17:06:16",
+    "name": "AllTests"
+  },
+  "ht_core_test": {
+    "result": "passed",
+    "log": "preflight_tests_final.log"
+  },
+  "setup_notes": "Initial checks lacked installed custom-message library environment and sparse geometry fixture; corrected by sourcing isolated install and fetching the tracked CSV. Concurrent follower preflight was cancelled; accepted follower check ran alone in ROS domain 188. No planner source modifications."
+}

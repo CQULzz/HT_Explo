@@ -1,0 +1,27 @@
+/ht_real/cupy_to_ht_bridge:
+  ros__parameters:
+    elevation_topic: /elevation_mapping/elevation_map_raw
+    ht_channels_last: false
+    ht_context_backend: auto
+    ht_cpu_fuse_bn: true
+    ht_device: cuda
+    ht_diagnostics_capacity: 600
+    ht_fuse_bn: true
+    ht_history_backend: auto
+    ht_profile_runtime: true
+    ht_qualify_evidence: true
+    ht_quality_backend: auto
+    ht_reason_interval_s: 1.0
+    ht_small_hole_backend: auto
+    ht_small_hole_fit_backend: auto
+    ht_small_hole_profile: moderate
+    ht_small_hole_repair: true
+    ht_stale_surface_s: 5.0
+    ht_surface_margin_m: 0.15
+    ht_topic: /ht_real/traversability
+    ht_torch_threads: 4
+    odometry_child_frame: ''
+    surface_odometry_topic: /ht_real/odometry
+    surface_sensor_ground_offset_m: 0.23479
+    use_sim_time: false
+

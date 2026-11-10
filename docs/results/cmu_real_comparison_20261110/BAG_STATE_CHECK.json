@@ -1,0 +1,30 @@
+{
+  "counts": {
+    "/cmd_vel": 12000,
+    "/ht_real/ht_follower_status": 12000,
+    "/ht_real/mission_completed": 781,
+    "/ht_real/exploration_finish": 781,
+    "/ht_real/ht_execution_status": 781,
+    "/ht_real/mission_state": 781
+  },
+  "first_mission_state_receipt_elapsed_s": {
+    "WAIT_START": 0.5973544120788574,
+    "BLOCKED": 1.6095712184906006,
+    "EXPLORING": 12.751601219177246,
+    "RETURNING_HOME": 181.84941816329956,
+    "COMPLETED": 223.60577726364136
+  },
+  "follower_status_message_counts": {
+    "PATH_STALE": 255,
+    "TURNING": 383,
+    "PLANNER_HOLD": 103,
+    "DRIVING": 3683,
+    "ALIGNING": 16,
+    "SCAN_STALE": 29,
+    "HT_COMMAND_BLOCKED": 3,
+    "COMPLETED": 7528
+  },
+  "commands_after_completed_plus_100ms": 7526,
+  "nonzero_commands_after_completed_plus_100ms": 0,
+  "scope": "MCAP independently checked against observer; status lacks source header, so bag receipt times are used for transitions; 100ms guard excludes in-flight commands."
+}

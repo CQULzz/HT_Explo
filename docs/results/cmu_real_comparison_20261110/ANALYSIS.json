@@ -1,0 +1,229 @@
+{
+  "old_summary": {
+    "elapsed_s": 600.0043041369972,
+    "distance_m": 64.03238770694165,
+    "position": [
+      0.4031812846660614,
+      0.14305192232131958,
+      0.703541100025177
+    ],
+    "sampled_free_volume_m3": 980.125,
+    "surface_voxel_volume_m3": 506.625,
+    "finish": true,
+    "counts": {
+      "commands": 12251,
+      "/ht_real/ht_follower_status": 12251,
+      "permission": 602,
+      "waypoint": 602,
+      "/ht_real/mission_state": 792,
+      "/ht_real/ht_execution_status": 792,
+      "odom": 118458,
+      "scans": 1661,
+      "ht_maps": 2392,
+      "ray_frames": 486,
+      "paths": 190,
+      "local_path": 38,
+      "finish_transition": 1
+    },
+    "ht_source_age_s": {
+      "p50": 0.3013495206832886,
+      "p95": 0.4282096147537231,
+      "p99": 0.5024163389205935
+    },
+    "free_volume_definition": "union of sampled sensor rays at 0.5m voxel resolution, 1Hz/1024 endpoints/12m range; observation proxy, not ground truth"
+  },
+  "new_summary": {
+    "elapsed_s": 600.0034804409988,
+    "distance_m": 281.92499960716566,
+    "position": [
+      55.99448013305664,
+      61.3565788269043,
+      0.7034285068511963
+    ],
+    "sampled_free_volume_m3": 5408.0,
+    "surface_voxel_volume_m3": 2776.75,
+    "finish": false,
+    "counts": {
+      "/ht_minimal/pathFollower": 612,
+      "/ht_minimal/localPlanner": 612,
+      "/ht_runtime": 1,
+      "odom": 120005,
+      "paths": 2941,
+      "/ht_minimal/command_audit": 30095,
+      "commands": 30087,
+      "scans": 1506,
+      "/ht_performance": 522,
+      "ht_maps": 2403,
+      "local_path": 588,
+      "ray_frames": 463,
+      "waypoint": 584,
+      "/ht_minimal/path_rejection": 265,
+      "/ht_minimal/command_projection": 5
+    },
+    "ht_source_age_s": {
+      "p50": 0.24318790435791016,
+      "p95": 0.33841493129730227,
+      "p99": 0.36562504291534426
+    },
+    "free_volume_definition": "union of sampled sensor rays at 0.5m voxel resolution, 1Hz/1024 endpoints/12m range; observation proxy, not ground truth"
+  },
+  "mission_transitions": [
+    {
+      "elapsed_s": -10.40211534500122,
+      "status": "WAIT_START"
+    },
+    {
+      "elapsed_s": 1.6116042137145996,
+      "status": "BLOCKED"
+    },
+    {
+      "elapsed_s": 12.756243467330933,
+      "status": "EXPLORING"
+    },
+    {
+      "elapsed_s": 12.808775186538696,
+      "status": "BLOCKED"
+    },
+    {
+      "elapsed_s": 13.796014547348022,
+      "status": "EXPLORING"
+    },
+    {
+      "elapsed_s": 129.60561275482178,
+      "status": "BLOCKED"
+    },
+    {
+      "elapsed_s": 130.9080834388733,
+      "status": "EXPLORING"
+    },
+    {
+      "elapsed_s": 181.84986901283264,
+      "status": "RETURNING_HOME"
+    },
+    {
+      "elapsed_s": 223.60648226737976,
+      "status": "COMPLETED"
+    }
+  ],
+  "mission_duration_s": {
+    "WAIT_START": 1.6116042137145996,
+    "NO_FRESH_STATUS": 9.137264728546143,
+    "BLOCKED": 4.29708456993103,
+    "EXPLORING": 166.80391550064087,
+    "RETURNING_HOME": 41.75661325454712,
+    "COMPLETED": 376.3930552005768
+  },
+  "follower_duration_s": {
+    "PATH_STALE": 12.757230281829834,
+    "NO_FRESH_STATUS": 0.0,
+    "TURNING": 19.20314931869507,
+    "PLANNER_HOLD": 5.150674343109131,
+    "DRIVING": 184.0316915512085,
+    "ALIGNING": 0.8087782859802246,
+    "SCAN_STALE": 1.5313236713409424,
+    "HT_COMMAND_BLOCKED": 0.1277768611907959,
+    "COMPLETED": 376.38891315460205
+  },
+  "comparison": {
+    "60": {
+      "old_real": {
+        "elapsed_s": 59.88464541999929,
+        "distance_m": 16.484496127038433,
+        "sampled_free_volume_m3": 569.375,
+        "x": 9.932004928588867,
+        "y": -8.03838062286377
+      },
+      "minimal_8dir": {
+        "elapsed_s": 59.84538709499975,
+        "distance_m": 28.14154845137353,
+        "sampled_free_volume_m3": 815.75,
+        "x": 16.46197509765625,
+        "y": 16.394256591796875
+      }
+    },
+    "120": {
+      "old_real": {
+        "elapsed_s": 119.77983632999894,
+        "distance_m": 35.79075531993976,
+        "sampled_free_volume_m3": 862.5,
+        "x": 12.440892219543457,
+        "y": 3.4340240955352783
+      },
+      "minimal_8dir": {
+        "elapsed_s": 119.77152713800024,
+        "distance_m": 56.51605780662773,
+        "sampled_free_volume_m3": 1691.125,
+        "x": 23.349960327148438,
+        "y": 39.377079010009766
+      }
+    },
+    "181.84986901283264": {
+      "old_real": {
+        "elapsed_s": 181.76323311099986,
+        "distance_m": 54.10470119821855,
+        "sampled_free_volume_m3": 957.875,
+        "x": 3.039973497390747,
+        "y": 7.995247840881348
+      },
+      "minimal_8dir": {
+        "elapsed_s": 181.72848674299894,
+        "distance_m": 85.66560176851242,
+        "sampled_free_volume_m3": 2099.125,
+        "x": 23.242090225219727,
+        "y": 19.372821807861328
+      }
+    },
+    "223.60648226737976": {
+      "old_real": {
+        "elapsed_s": 223.4737787869999,
+        "distance_m": 64.03238770694165,
+        "sampled_free_volume_m3": 980.125,
+        "x": 0.4031812846660614,
+        "y": 0.14305192232131958
+      },
+      "minimal_8dir": {
+        "elapsed_s": 223.42633818799914,
+        "distance_m": 105.38406022534151,
+        "sampled_free_volume_m3": 2456.0,
+        "x": 25.303251266479492,
+        "y": 0.5608936548233032
+      }
+    },
+    "264": {
+      "old_real": {
+        "elapsed_s": 264.2315519199983,
+        "distance_m": 64.03238770694165,
+        "sampled_free_volume_m3": 980.125,
+        "x": 0.4031812846660614,
+        "y": 0.14305192232131958
+      },
+      "minimal_8dir": {
+        "elapsed_s": 264.1525573050003,
+        "distance_m": 124.53549494287854,
+        "sampled_free_volume_m3": 2801.75,
+        "x": 34.261199951171875,
+        "y": -7.43041467666626
+      }
+    },
+    "600": {
+      "old_real": {
+        "elapsed_s": 600.0042082209984,
+        "distance_m": 64.03238770694165,
+        "sampled_free_volume_m3": 980.125,
+        "x": 0.4031812846660614,
+        "y": 0.14305192232131958
+      },
+      "minimal_8dir": {
+        "elapsed_s": 600.003398412,
+        "distance_m": 281.92499960716566,
+        "sampled_free_volume_m3": 5408.0,
+        "x": 55.99448013305664,
+        "y": 61.3565788269043
+      }
+    }
+  },
+  "definitions": {
+    "status_duration": "piecewise hold, clipped to experiment; mission freshness 2s, follower freshness 0.5s; missing freshness counted separately",
+    "volume": "same recorded sampled-ray union as previous experiment; not ground-truth coverage or a proof of confirmed reachable outstanding tasks"
+  }
+}

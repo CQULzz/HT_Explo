@@ -1,0 +1,254 @@
+Internal ctest changing into directory: /home/lzz/cmu_real_compare_20261110/build_old/tare_planner
+Test project /home/lzz/cmu_real_compare_20261110/build_old/tare_planner
+    Start 1: ht_core_test
+1/5 Test #1: ht_core_test .....................   Passed    0.01 sec
+    Start 3: geometry_pose_test
+2/5 Test #3: geometry_pose_test ...............   Passed    9.67 sec
+    Start 6: input_pose_test
+3/5 Test #6: input_pose_test ..................   Passed    0.06 sec
+    Start 7: planner_input_test
+4/5 Test #7: planner_input_test ...............   Passed    0.29 sec
+    Start 8: xytheta_follower_test
+5/5 Test #8: xytheta_follower_test ............***Failed   30.71 sec
+-- run_test.py: invoking following command in '/home/lzz/cmu_real_compare_20261110/build_old/tare_planner':
+ - /home/lzz/cmu_real_compare_20261110/build_old/tare_planner/xytheta_follower_test --gtest_output=xml:/home/lzz/cmu_real_compare_20261110/build_old/tare_planner/test_results/tare_planner/xytheta_follower_test.gtest.xml
+Running main() from /opt/ros/humble/src/gtest_vendor/src/gtest_main.cc
+[==========] Running 25 tests from 4 test suites.
+[----------] Global test environment set-up.
+[----------] 3 tests from ConfigurationFollowerTest
+[ RUN      ] ConfigurationFollowerTest.MapExpiryDuringSweptChecksDoesNotRejectThePlan
+[INFO] [1794301547.589383554] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=1 scores=configuration
+[INFO] [1794301547.589540995] [xytheta_follower]: HT startup prior: radius=0.000m duration=30.000s assume_traversable=0 fixed_anchor_and_deadline=1
+[WARN] [1794301548.172238638] [xytheta_follower]: HT map rejected: Configuration HT requires separate physical observation and obstacle layers
+/home/lzz/HT_Explo_review/src/tare_planner/tests/xytheta_follower_test.cpp:124: Failure
+Value of: FollowerTestAccess::ready(*follower)
+  Actual: false
+Expected: true
+[  FAILED  ] ConfigurationFollowerTest.MapExpiryDuringSweptChecksDoesNotRejectThePlan (606 ms)
+[ RUN      ] ConfigurationFollowerTest.ExpiredMapStopsWithoutFeedbackAndFreshMapResumes
+[INFO] [1794301548.184984380] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=1 scores=configuration
+[INFO] [1794301548.185018036] [xytheta_follower]: HT startup prior: radius=0.000m duration=30.000s assume_traversable=0 fixed_anchor_and_deadline=1
+[WARN] [1794301550.178843195] [xytheta_follower]: HT map rejected: Configuration HT requires separate physical observation and obstacle layers
+/home/lzz/HT_Explo_review/src/tare_planner/tests/xytheta_follower_test.cpp:144: Failure
+Expected equality of these values:
+  reason
+    Which is: "DRIVING"
+  "HT_MAP_STALE"
+/home/lzz/HT_Explo_review/src/tare_planner/tests/xytheta_follower_test.cpp:144: Failure
+Expected equality of these values:
+  speed
+    Which is: 0.045757912499902888
+  0
+[  FAILED  ] ConfigurationFollowerTest.ExpiredMapStopsWithoutFeedbackAndFreshMapResumes (2275 ms)
+[ RUN      ] ConfigurationFollowerTest.SeparateObstacleAndUnknownRevokeRealCommands
+[INFO] [1794301550.460176697] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=1 scores=configuration
+[INFO] [1794301550.460212748] [xytheta_follower]: HT startup prior: radius=0.000m duration=30.000s assume_traversable=0 fixed_anchor_and_deadline=1
+/home/lzz/HT_Explo_review/src/tare_planner/tests/xytheta_follower_test.cpp:155: Failure
+Expected: (speed) > (0), actual: 0 vs 0
+/home/lzz/HT_Explo_review/src/tare_planner/tests/xytheta_follower_test.cpp:157: Failure
+Expected equality of these values:
+  reason
+    Which is: "ODOM_STALE"
+  "HT_CURRENT_POSE_MISSING_SUPPORT"
+[  FAILED  ] ConfigurationFollowerTest.SeparateObstacleAndUnknownRevokeRealCommands (1590 ms)
+[----------] 3 tests from ConfigurationFollowerTest (4471 ms total)
+
+[----------] 20 tests from FollowerTest
+[ RUN      ] FollowerTest.FreshMapMaintainsExecutionAcrossSlowPlannerPermission
+[INFO] [1794301552.049617492] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=1 scores=point
+[INFO] [1794301552.049655621] [xytheta_follower]: HT startup prior: radius=0.000m duration=30.000s assume_traversable=0 fixed_anchor_and_deadline=1
+/home/lzz/HT_Explo_review/src/tare_planner/tests/xytheta_follower_test.cpp:160: Failure
+Expected: (speed) > (.1), actual: 0 vs 0.1
+/home/lzz/HT_Explo_review/src/tare_planner/tests/xytheta_follower_test.cpp:160: Failure
+Expected equality of these values:
+  reason
+    Which is: "ODOM_STALE"
+  "DRIVING"
+[  FAILED  ] FollowerTest.FreshMapMaintainsExecutionAcrossSlowPlannerPermission (2301 ms)
+[ RUN      ] FollowerTest.FineSpinFinishesHeadingAndStopsBeforeTranslation
+[INFO] [1794301554.349989009] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=1 scores=point
+[INFO] [1794301554.350027795] [xytheta_follower]: HT startup prior: radius=0.000m duration=30.000s assume_traversable=0 fixed_anchor_and_deadline=1
+/home/lzz/HT_Explo_review/src/tare_planner/tests/xytheta_follower_test.cpp:176: Failure
+Expected equality of these values:
+  reason
+    Which is: "ODOM_STALE"
+  "TURNING"
+/home/lzz/HT_Explo_review/src/tare_planner/tests/xytheta_follower_test.cpp:177: Failure
+Expected: (received_commands.back().twist.angular.z) > (.1), actual: 0 vs 0.1
+/home/lzz/HT_Explo_review/src/tare_planner/tests/xytheta_follower_test.cpp:182: Failure
+Expected: (speed) > (.1), actual: 0 vs 0.1
+/home/lzz/HT_Explo_review/src/tare_planner/tests/xytheta_follower_test.cpp:182: Failure
+Expected equality of these values:
+  reason
+    Which is: "ODOM_STALE"
+  "DRIVING"
+[  FAILED  ] FollowerTest.FineSpinFinishesHeadingAndStopsBeforeTranslation (2346 ms)
+[ RUN      ] FollowerTest.GroupedSpinStillRejectsAnUnsafeIntermediateDirection
+[INFO] [1794301556.696050155] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=1 scores=point
+[INFO] [1794301556.696089169] [xytheta_follower]: HT startup prior: radius=0.000m duration=30.000s assume_traversable=0 fixed_anchor_and_deadline=1
+[WARN] [1794301557.301895465] [xytheta_follower]: HT_MOTION_REJECT support=3 command_arc=0 map_stamp=1794301557.281188011 map_age_s=0.020707 a=(0.000,0.000,0.000) b=(0.000,0.000,1.571)
+/home/lzz/HT_Explo_review/src/tare_planner/tests/xytheta_follower_test.cpp:193: Failure
+Expected equality of these values:
+  speed
+    Which is: 0.062724730998525047
+  0
+/home/lzz/HT_Explo_review/src/tare_planner/tests/xytheta_follower_test.cpp:193: Failure
+Expected equality of these values:
+  reason
+    Which is: "DRIVING"
+  "HT_PATH_BLOCKED"
+[  FAILED  ] FollowerTest.GroupedSpinStillRejectsAnUnsafeIntermediateDirection (866 ms)
+[ RUN      ] FollowerTest.RejectedTrackingArcPublishesZeroRatherThanTheCandidateCommand
+[INFO] [1794301557.562325877] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=1 scores=point
+[INFO] [1794301557.562396244] [xytheta_follower]: HT startup prior: radius=0.000m duration=30.000s assume_traversable=0 fixed_anchor_and_deadline=1
+[INFO] [1794301557.981166018] [xytheta_follower]: HT_RETURN_MARGIN_BLOCK map_stamp=1794301557.960015297 a=(0.000,0.000,0.000) b=(0.004,-0.000,-0.002) reverse_support=4
+/home/lzz/HT_Explo_review/src/tare_planner/tests/xytheta_follower_test.cpp:205: Failure
+Value of: command_rejection_times.empty()
+  Actual: true
+Expected: false
+[  FAILED  ] FollowerTest.RejectedTrackingArcPublishesZeroRatherThanTheCandidateCommand (2012 ms)
+[ RUN      ] FollowerTest.RefusesAOneWayPathButDoesNotRequireEveryHeadingToBeSafe
+[INFO] [1794301559.575680770] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=1 scores=point
+[INFO] [1794301559.575726813] [xytheta_follower]: HT startup prior: radius=0.000m duration=30.000s assume_traversable=0 fixed_anchor_and_deadline=1
+[INFO] [1794301560.392530750] [xytheta_follower]: HT_RETURN_MARGIN_BLOCK map_stamp=1794301560.371562243 a=(0.000,0.000,0.000) b=(0.200,0.000,0.000) reverse_support=3
+[WARN] [1794301560.392595129] [xytheta_follower]: HT_MOTION_REJECT support=3 command_arc=0 map_stamp=1794301560.371562243 map_age_s=0.021033 a=(0.000,0.000,0.000) b=(0.200,0.000,0.000)
+[       OK ] FollowerTest.RefusesAOneWayPathButDoesNotRequireEveryHeadingToBeSafe (1266 ms)
+[ RUN      ] FollowerTest.FreshMapsCannotExtendAnExpiredPlan
+[INFO] [1794301560.841668152] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=1 scores=point
+[INFO] [1794301560.841705015] [xytheta_follower]: HT startup prior: radius=0.000m duration=30.000s assume_traversable=0 fixed_anchor_and_deadline=1
+[WARN] [1794301564.210014250] [tf2_buffer]: Detected time source change. Clearing TF buffer.
+/home/lzz/HT_Explo_review/src/tare_planner/tests/xytheta_follower_test.cpp:227: Failure
+Expected equality of these values:
+  reason
+    Which is: "HT_CURRENT_POSE_MISSING_SUPPORT"
+  "PATH_STALE"
+[  FAILED  ] FollowerTest.FreshMapsCannotExtendAnExpiredPlan (3507 ms)
+[ RUN      ] FollowerTest.CompletionHeartbeatExplainsTerminalStopButCannotRenewDriving
+[INFO] [1794301564.347678859] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=1 scores=point
+[INFO] [1794301564.347712942] [xytheta_follower]: HT startup prior: radius=0.000m duration=30.000s assume_traversable=0 fixed_anchor_and_deadline=1
+/home/lzz/HT_Explo_review/src/tare_planner/tests/xytheta_follower_test.cpp:230: Failure
+Expected equality of these values:
+  reason
+    Which is: "ODOM_STALE"
+  "PATH_STALE"
+/home/lzz/HT_Explo_review/src/tare_planner/tests/xytheta_follower_test.cpp:233: Failure
+Expected equality of these values:
+  reason
+    Which is: "ODOM_STALE"
+  "PATH_STALE"
+/home/lzz/HT_Explo_review/src/tare_planner/tests/xytheta_follower_test.cpp:235: Failure
+Expected: (speed) > (0), actual: 0 vs 0
+/home/lzz/HT_Explo_review/src/tare_planner/tests/xytheta_follower_test.cpp:235: Failure
+Expected equality of these values:
+  reason
+    Which is: "ODOM_STALE"
+  "DRIVING"
+[  FAILED  ] FollowerTest.CompletionHeartbeatExplainsTerminalStopButCannotRenewDriving (5603 ms)
+[ RUN      ] FollowerTest.NewObstacleAndUnknownRevokeExecution
+[INFO] [1794301569.948587019] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=1 scores=point
+[INFO] [1794301569.948621103] [xytheta_follower]: HT startup prior: radius=0.000m duration=30.000s assume_traversable=0 fixed_anchor_and_deadline=1
+[       OK ] FollowerTest.NewObstacleAndUnknownRevokeExecution (1002 ms)
+[ RUN      ] FollowerTest.ExplicitHoldAndMissingOdometryStillStop
+[INFO] [1794301570.950703879] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=1 scores=point
+[INFO] [1794301570.950738147] [xytheta_follower]: HT startup prior: radius=0.000m duration=30.000s assume_traversable=0 fixed_anchor_and_deadline=1
+[       OK ] FollowerTest.ExplicitHoldAndMissingOdometryStillStop (1415 ms)
+[ RUN      ] FollowerTest.PathFailureReportsItsEdgeAndPlanIdentityOnce
+[INFO] [1794301572.365158571] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=1 scores=point
+[INFO] [1794301572.365193915] [xytheta_follower]: HT startup prior: radius=0.000m duration=30.000s assume_traversable=0 fixed_anchor_and_deadline=1
+[INFO] [1794301572.967107685] [xytheta_follower]: HT_RETURN_MARGIN_BLOCK map_stamp=1794301572.946430206 a=(0.400,0.000,0.000) b=(0.500,0.000,0.000) reverse_support=2
+[WARN] [1794301572.967147010] [xytheta_follower]: HT_MOTION_REJECT support=2 command_arc=0 map_stamp=1794301572.946430206 map_age_s=0.020717 a=(0.400,0.000,0.000) b=(0.500,0.000,0.000)
+[       OK ] FollowerTest.PathFailureReportsItsEdgeAndPlanIdentityOnce (1209 ms)
+[ RUN      ] FollowerTest.MeasuredGeometryRevokesCommandsEvenWhenHtAllows
+[INFO] [1794301573.575693003] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=1 scores=point
+[INFO] [1794301573.575726118] [xytheta_follower]: HT startup prior: radius=0.000m duration=30.000s assume_traversable=0 fixed_anchor_and_deadline=1
+[       OK ] FollowerTest.MeasuredGeometryRevokesCommandsEvenWhenHtAllows (1314 ms)
+[ RUN      ] FollowerTest.GeometryPathCheckPublishesZeroAndInvalidatesExactPath
+[INFO] [1794301574.889804837] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=1 scores=point
+[INFO] [1794301574.889842602] [xytheta_follower]: HT startup prior: radius=0.000m duration=30.000s assume_traversable=0 fixed_anchor_and_deadline=1
+[INFO] [1794301575.763795386] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[       OK ] FollowerTest.GeometryPathCheckPublishesZeroAndInvalidatesExactPath (983 ms)
+[ RUN      ] FollowerTest.GeometryFreshnessAndFrameAreRequired
+unknown file: Failure
+C++ exception with description "failed to create guard condition: the given context is not valid, either rcl_init() was not called or rcl_shutdown() was called., at ./src/rcl/guard_condition.c:67" thrown in the test fixture's constructor.
+[  FAILED  ] FollowerTest.GeometryFreshnessAndFrameAreRequired (0 ms)
+[ RUN      ] FollowerTest.ObstacleAboveVehicleCylinderDoesNotBlockFreePath
+unknown file: Failure
+C++ exception with description "failed to create guard condition: the given context is not valid, either rcl_init() was not called or rcl_shutdown() was called., at ./src/rcl/guard_condition.c:67" thrown in the test fixture's constructor.
+[  FAILED  ] FollowerTest.ObstacleAboveVehicleCylinderDoesNotBlockFreePath (0 ms)
+[ RUN      ] FollowerTest.GeometryCommandArcRejectsTrackingDepartureWithActualZeroTwist
+unknown file: Failure
+C++ exception with description "failed to create guard condition: the given context is not valid, either rcl_init() was not called or rcl_shutdown() was called., at ./src/rcl/guard_condition.c:67" thrown in the test fixture's constructor.
+[  FAILED  ] FollowerTest.GeometryCommandArcRejectsTrackingDepartureWithActualZeroTwist (0 ms)
+[ RUN      ] FollowerTest.BestEffortOdometryPublisherIsCompatible
+unknown file: Failure
+C++ exception with description "failed to create guard condition: the given context is not valid, either rcl_init() was not called or rcl_shutdown() was called., at ./src/rcl/guard_condition.c:67" thrown in the test fixture's constructor.
+[  FAILED  ] FollowerTest.BestEffortOdometryPublisherIsCompatible (0 ms)
+[ RUN      ] FollowerTest.WrongFrameAndInvalidQuaternionCannotRenewOdometry
+unknown file: Failure
+C++ exception with description "failed to create guard condition: the given context is not valid, either rcl_init() was not called or rcl_shutdown() was called., at ./src/rcl/guard_condition.c:67" thrown in the test fixture's constructor.
+[  FAILED  ] FollowerTest.WrongFrameAndInvalidQuaternionCannotRenewOdometry (0 ms)
+[ RUN      ] FollowerTest.DiscontinuousLocalizationRequiresRestartDespiteNewPaths
+unknown file: Failure
+C++ exception with description "failed to create guard condition: the given context is not valid, either rcl_init() was not called or rcl_shutdown() was called., at ./src/rcl/guard_condition.c:67" thrown in the test fixture's constructor.
+[  FAILED  ] FollowerTest.DiscontinuousLocalizationRequiresRestartDespiteNewPaths (0 ms)
+[ RUN      ] FollowerTest.MalformedIndividualPathPoseCannotProduceMotion
+unknown file: Failure
+C++ exception with description "failed to create guard condition: the given context is not valid, either rcl_init() was not called or rcl_shutdown() was called., at ./src/rcl/guard_condition.c:67" thrown in the test fixture's constructor.
+[  FAILED  ] FollowerTest.MalformedIndividualPathPoseCannotProduceMotion (0 ms)
+[ RUN      ] FollowerTest.HardwareCommandNamesTheActualVehicleReferenceFrame
+unknown file: Failure
+C++ exception with description "failed to create guard condition: the given context is not valid, either rcl_init() was not called or rcl_shutdown() was called., at ./src/rcl/guard_condition.c:67" thrown in the test fixture's constructor.
+[  FAILED  ] FollowerTest.HardwareCommandNamesTheActualVehicleReferenceFrame (0 ms)
+[----------] 20 tests from FollowerTest (23825 ms total)
+
+[----------] 1 test from FollowerClock
+[ RUN      ] FollowerClock.ClockRollbackLatchesStopEvenAfterClockRecovers
+[WARN] [1794301576.026500454] [tf2_buffer]: Detected jump back in time. Clearing TF buffer.
+[       OK ] FollowerClock.ClockRollbackLatchesStopEvenAfterClockRecovers (466 ms)
+[----------] 1 test from FollowerClock (466 ms total)
+
+[----------] 1 test from SharedPriorFollowerTest
+[ RUN      ] SharedPriorFollowerTest.FirstPathCannotCreateOwnPriorAndReplansCannotRenewExpiry
+[INFO] [1794301576.339101855] [xytheta_follower]: HT hard gate: min_probability=0.500 unknown_policy=strict calibrated=1 reversible=1 scores=point
+[INFO] [1794301576.339174953] [xytheta_follower]: HT startup prior: radius=1.200m duration=30.000s assume_traversable=0 fixed_anchor_and_deadline=1
+[       OK ] SharedPriorFollowerTest.FirstPathCannotCreateOwnPriorAndReplansCannotRenewExpiry (1727 ms)
+[----------] 1 test from SharedPriorFollowerTest (1727 ms total)
+
+[----------] Global test environment tear-down
+[==========] 25 tests from 4 test suites ran. (30490 ms total)
+[  PASSED  ] 8 tests.
+[  FAILED  ] 17 tests, listed below:
+[  FAILED  ] ConfigurationFollowerTest.MapExpiryDuringSweptChecksDoesNotRejectThePlan
+[  FAILED  ] ConfigurationFollowerTest.ExpiredMapStopsWithoutFeedbackAndFreshMapResumes
+[  FAILED  ] ConfigurationFollowerTest.SeparateObstacleAndUnknownRevokeRealCommands
+[  FAILED  ] FollowerTest.FreshMapMaintainsExecutionAcrossSlowPlannerPermission
+[  FAILED  ] FollowerTest.FineSpinFinishesHeadingAndStopsBeforeTranslation
+[  FAILED  ] FollowerTest.GroupedSpinStillRejectsAnUnsafeIntermediateDirection
+[  FAILED  ] FollowerTest.RejectedTrackingArcPublishesZeroRatherThanTheCandidateCommand
+[  FAILED  ] FollowerTest.FreshMapsCannotExtendAnExpiredPlan
+[  FAILED  ] FollowerTest.CompletionHeartbeatExplainsTerminalStopButCannotRenewDriving
+[  FAILED  ] FollowerTest.GeometryFreshnessAndFrameAreRequired
+[  FAILED  ] FollowerTest.ObstacleAboveVehicleCylinderDoesNotBlockFreePath
+[  FAILED  ] FollowerTest.GeometryCommandArcRejectsTrackingDepartureWithActualZeroTwist
+[  FAILED  ] FollowerTest.BestEffortOdometryPublisherIsCompatible
+[  FAILED  ] FollowerTest.WrongFrameAndInvalidQuaternionCannotRenewOdometry
+[  FAILED  ] FollowerTest.DiscontinuousLocalizationRequiresRestartDespiteNewPaths
+[  FAILED  ] FollowerTest.MalformedIndividualPathPoseCannotProduceMotion
+[  FAILED  ] FollowerTest.HardwareCommandNamesTheActualVehicleReferenceFrame
+
+17 FAILED TESTS
+-- run_test.py: return code 1
+-- run_test.py: inject classname prefix into gtest result file '/home/lzz/cmu_real_compare_20261110/build_old/tare_planner/test_results/tare_planner/xytheta_follower_test.gtest.xml'
+-- run_test.py: verify result file '/home/lzz/cmu_real_compare_20261110/build_old/tare_planner/test_results/tare_planner/xytheta_follower_test.gtest.xml'
+
+
+80% tests passed, 1 tests failed out of 5
+
+Label Time Summary:
+gtest    =  40.73 sec*proc (4 tests)
+
+Total Test time (real) =  40.74 sec
+
+The following tests FAILED:
+	  8 - xytheta_follower_test (Failed)
+Errors while running CTest

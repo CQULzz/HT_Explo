@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="23" failures="0" disabled="0" errors="0" time="9.425" timestamp="2026-11-10T17:05:37" name="AllTests">
+  <testsuite name="SearchPruning" tests="1" failures="0" disabled="0" errors="0" time="0.012" timestamp="2026-11-10T17:05:37">
+    <testcase name="SameAcceptedRoutesWithFewerHardQueries" status="run" result="completed" time="0.012" timestamp="2026-11-10T17:05:37" classname="tare_planner.SearchPruning" />
+  </testsuite>
+  <testsuite name="GeometryPose" tests="3" failures="0" disabled="0" errors="0" time="0.863" timestamp="2026-11-10T17:05:37">
+    <testcase name="CapturedContinuousRootDoesNotInheritNeighbourCollision" status="run" result="completed" time="0.338" timestamp="2026-11-10T17:05:37" classname="tare_planner.GeometryPose" />
+    <testcase name="HeightSliceMatchesBruteForceAtBoundariesAndOtherHeights" status="run" result="completed" time="0.264" timestamp="2026-11-10T17:05:37" classname="tare_planner.GeometryPose" />
+    <testcase name="UnlabelledCoverageCellDoesNotInvalidateFreeContinuousRoot" status="run" result="completed" time="0.261" timestamp="2026-11-10T17:05:38" classname="tare_planner.GeometryPose" />
+  </testsuite>
+  <testsuite name="SearchAudit" tests="1" failures="0" disabled="0" errors="0" time="0" timestamp="2026-11-10T17:05:38">
+    <testcase name="SeparatesDeadlineExpansionLimitAndExhaustedComponent" status="run" result="completed" time="0" timestamp="2026-11-10T17:05:38" classname="tare_planner.SearchAudit" />
+  </testsuite>
+  <testsuite name="PendingCell" tests="14" failures="0" disabled="0" errors="0" time="3.69" timestamp="2026-11-10T17:05:38">
+    <testcase name="GainWithoutSelectedLocalGoalMustEnterGlobalTodo" status="run" result="completed" time="0.282" timestamp="2026-11-10T17:05:38" classname="tare_planner.PendingCell" />
+    <testcase name="PositiveGainMustSurviveLeavingLocalNeighbourhood" status="run" result="completed" time="0.261" timestamp="2026-11-10T17:05:38" classname="tare_planner.PendingCell" />
+    <testcase name="FrontierOnlyObservationRegistersGlobalTodo" status="run" result="completed" time="0.266" timestamp="2026-11-10T17:05:38" classname="tare_planner.PendingCell" />
+    <testcase name="ZeroGainDoesNotCreateGlobalTodo" status="run" result="completed" time="0.262" timestamp="2026-11-10T17:05:39" classname="tare_planner.PendingCell" />
+    <testcase name="VisitedViewpointDoesNotCreateGlobalTodo" status="run" result="completed" time="0.261" timestamp="2026-11-10T17:05:39" classname="tare_planner.PendingCell" />
+    <testcase name="NoCandidateDoesNotInventObservedGain" status="run" result="completed" time="0.261" timestamp="2026-11-10T17:05:39" classname="tare_planner.PendingCell" />
+    <testcase name="ExistingZeroGainTaskCanStillBecomeCovered" status="run" result="completed" time="0.261" timestamp="2026-11-10T17:05:40" classname="tare_planner.PendingCell" />
+    <testcase name="OtherSelectedGoalDoesNotHidePendingCell" status="run" result="completed" time="0.269" timestamp="2026-11-10T17:05:40" classname="tare_planner.PendingCell" />
+    <testcase name="CoveredCellReopeningKeepsExistingHysteresis" status="run" result="completed" time="0.261" timestamp="2026-11-10T17:05:40" classname="tare_planner.PendingCell" />
+    <testcase name="LastObservedGainSurvivesTemporaryNoCandidates" status="run" result="completed" time="0.256" timestamp="2026-11-10T17:05:40" classname="tare_planner.PendingCell" />
+    <testcase name="LastObservedGainSurvivesNoCandidatesNearRobot" status="run" result="completed" time="0.261" timestamp="2026-11-10T17:05:41" classname="tare_planner.PendingCell" />
+    <testcase name="FreshZeroGainCanDischargeRememberedPendingTask" status="run" result="completed" time="0.263" timestamp="2026-11-10T17:05:41" classname="tare_planner.PendingCell" />
+    <testcase name="NavigationOnlyTaskDoesNotInventRememberedGain" status="run" result="completed" time="0.261" timestamp="2026-11-10T17:05:41" classname="tare_planner.PendingCell" />
+    <testcase name="ExternalCoveredOrResetClearsPendingRegistry" status="run" result="completed" time="0.265" timestamp="2026-11-10T17:05:41" classname="tare_planner.PendingCell" />
+  </testsuite>
+  <testsuite name="LegacyPendingCell" tests="1" failures="0" disabled="0" errors="0" time="0.258" timestamp="2026-11-10T17:05:42">
+    <testcase name="DisabledHtPreservesLegacySelectedActivation" status="run" result="completed" time="0.258" timestamp="2026-11-10T17:05:42" classname="tare_planner.LegacyPendingCell" />
+  </testsuite>
+  <testsuite name="TareTerrainGraph" tests="3" failures="0" disabled="0" errors="0" time="4.602" timestamp="2026-11-10T17:05:42">
+    <testcase name="KnownBlockedBandCannotYieldConnectedCandidate" status="run" result="completed" time="0.999" timestamp="2026-11-10T17:05:42" classname="tare_planner.TareTerrainGraph" />
+    <testcase name="AsyncMapCannotRemoveVerticesBetweenBfsAndCandidateGraph" status="run" result="completed" time="2.051" timestamp="2026-11-10T17:05:43" classname="tare_planner.TareTerrainGraph" />
+    <testcase name="ShortNativePrefixStillRequiresAndPassesFullHtPath" status="run" result="completed" time="1.552" timestamp="2026-11-10T17:05:45" classname="tare_planner.TareTerrainGraph" />
+  </testsuite>
+</testsuites>

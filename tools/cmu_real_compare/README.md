@@ -17,3 +17,5 @@
 本机准备：先 source `/home/lzz/cmu_test_20261110/env.sh`，再 source `install_cmu/setup.bash`、`install_mapper/setup.bash` 和 `/home/lzz/cmu_real_compare_20261110/install_old/setup.bash`。Xvfb 使用 `:88`。运行 `python3 tools/cmu_real_compare/run.py --name old_real_600s_01`。
 
 输出在 `/home/lzz/cmu_real_compare_20261110/runs`。每次独立目录，冻结哈希/运行文件、录包、参数、日志、CSV 和状态；失败也保留。完整数据保留本机，未经远端完整核验不清理。结果由报告明确给出，不以入口脚本存在代替实际运行。
+
+已完成：`old_real_600s_01`，600.004秒、64.032米；181.85秒返航、223.61秒COMPLETED，之后持续停车。正式采集期间冻结未变化。59项既有gtest及HT核心检查通过。完整结果及归因边界见 [报告](../../docs/results/cmu_real_comparison_20261110/REPORT.md)。

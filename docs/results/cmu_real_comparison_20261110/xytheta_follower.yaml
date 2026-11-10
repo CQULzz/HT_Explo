@@ -1,0 +1,64 @@
+/ht_real/xytheta_follower:
+  ros__parameters:
+    command_frame: base_link
+    command_topic: /cmd_vel
+    geometry_timeout: 3.0
+    ht_channel_order:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
+    - 6
+    - 7
+    ht_directions_calibrated: true
+    ht_enabled: true
+    ht_exploration_mode: tare_waypoint
+    ht_fallback_lookahead: 0.5
+    ht_fallback_max_distance: 10.0
+    ht_fallback_max_seconds: 60.0
+    ht_fallback_speed: 0.2
+    ht_heading_offset: 0.0
+    ht_lookahead_distance: 2.0
+    ht_map_timeout: 1.0
+    ht_min_probability: 0.5
+    ht_require_reversible_motion: false
+    ht_sample_step: 0.02
+    ht_score_semantics: configuration
+    ht_startup_assume_traversable: true
+    ht_startup_duration: 60.0
+    ht_startup_radius: 1.5
+    ht_startup_topic: /ht_startup_prior
+    ht_topic: /ht_real/traversability
+    ht_unknown_policy: strict
+    ht_validity_radius: 0.6
+    ht_waypoint_reached_distance: 0.3
+    kCollisionGridResolutionX: 0.2
+    kCollisionGridResolutionY: 0.2
+    kViewPointCollisionMargin: 0.5
+    kViewPointCollisionMarginZMinus: 0.5
+    kViewPointCollisionMarginZPlus: 0.5
+    max_accel: 0.5
+    max_reverse: 0.25
+    max_speed: 0.4
+    max_yaw_accel: 1.2
+    max_yaw_rate: 0.8
+    mission_sensor_timeout: 1.0
+    odom_timeout: 0.5
+    odometry_child_frame: base_link
+    odometry_topic: /ht_real/odometry
+    path_timeout: 3.0
+    permission_timeout: 1.5
+    qos_overrides:
+      /parameter_events:
+        publisher:
+          depth: 1000
+          durability: volatile
+          history: keep_last
+          reliability: reliable
+    registered_scan_topic: /ht_real/registered_scan
+    rotation_stop_rate: 0.06
+    rotation_tolerance: 0.04
+    use_sim_time: false
+

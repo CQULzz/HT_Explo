@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="25" failures="0" disabled="0" errors="0" time="39.814" timestamp="2026-11-10T17:06:16" name="AllTests">
+  <testsuite name="ConfigurationFollowerTest" tests="3" failures="0" disabled="0" errors="0" time="4.512" timestamp="2026-11-10T17:06:16">
+    <testcase name="MapExpiryDuringSweptChecksDoesNotRejectThePlan" status="run" result="completed" time="0.653" timestamp="2026-11-10T17:06:16" classname="tare_planner.ConfigurationFollowerTest" />
+    <testcase name="ExpiredMapStopsWithoutFeedbackAndFreshMapResumes" status="run" result="completed" time="2.278" timestamp="2026-11-10T17:06:16" classname="tare_planner.ConfigurationFollowerTest" />
+    <testcase name="SeparateObstacleAndUnknownRevokeRealCommands" status="run" result="completed" time="1.581" timestamp="2026-11-10T17:06:19" classname="tare_planner.ConfigurationFollowerTest" />
+  </testsuite>
+  <testsuite name="FollowerTest" tests="20" failures="0" disabled="0" errors="0" time="33.107" timestamp="2026-11-10T17:06:20">
+    <testcase name="FreshMapMaintainsExecutionAcrossSlowPlannerPermission" status="run" result="completed" time="2.306" timestamp="2026-11-10T17:06:20" classname="tare_planner.FollowerTest" />
+    <testcase name="FineSpinFinishesHeadingAndStopsBeforeTranslation" status="run" result="completed" time="2.326" timestamp="2026-11-10T17:06:22" classname="tare_planner.FollowerTest" />
+    <testcase name="GroupedSpinStillRejectsAnUnsafeIntermediateDirection" status="run" result="completed" time="0.85" timestamp="2026-11-10T17:06:25" classname="tare_planner.FollowerTest" />
+    <testcase name="RejectedTrackingArcPublishesZeroRatherThanTheCandidateCommand" status="run" result="completed" time="2.27" timestamp="2026-11-10T17:06:26" classname="tare_planner.FollowerTest" />
+    <testcase name="RefusesAOneWayPathButDoesNotRequireEveryHeadingToBeSafe" status="run" result="completed" time="1.274" timestamp="2026-11-10T17:06:28" classname="tare_planner.FollowerTest" />
+    <testcase name="FreshMapsCannotExtendAnExpiredPlan" status="run" result="completed" time="3.51" timestamp="2026-11-10T17:06:29" classname="tare_planner.FollowerTest" />
+    <testcase name="CompletionHeartbeatExplainsTerminalStopButCannotRenewDriving" status="run" result="completed" time="5.61" timestamp="2026-11-10T17:06:33" classname="tare_planner.FollowerTest" />
+    <testcase name="NewObstacleAndUnknownRevokeExecution" status="run" result="completed" time="1.034" timestamp="2026-11-10T17:06:38" classname="tare_planner.FollowerTest" />
+    <testcase name="ExplicitHoldAndMissingOdometryStillStop" status="run" result="completed" time="1.401" timestamp="2026-11-10T17:06:39" classname="tare_planner.FollowerTest" />
+    <testcase name="PathFailureReportsItsEdgeAndPlanIdentityOnce" status="run" result="completed" time="1.221" timestamp="2026-11-10T17:06:41" classname="tare_planner.FollowerTest" />
+    <testcase name="MeasuredGeometryRevokesCommandsEvenWhenHtAllows" status="run" result="completed" time="1.328" timestamp="2026-11-10T17:06:42" classname="tare_planner.FollowerTest" />
+    <testcase name="GeometryPathCheckPublishesZeroAndInvalidatesExactPath" status="run" result="completed" time="1.011" timestamp="2026-11-10T17:06:43" classname="tare_planner.FollowerTest" />
+    <testcase name="GeometryFreshnessAndFrameAreRequired" status="run" result="completed" time="1.835" timestamp="2026-11-10T17:06:44" classname="tare_planner.FollowerTest" />
+    <testcase name="ObstacleAboveVehicleCylinderDoesNotBlockFreePath" status="run" result="completed" time="0.796" timestamp="2026-11-10T17:06:46" classname="tare_planner.FollowerTest" />
+    <testcase name="GeometryCommandArcRejectsTrackingDepartureWithActualZeroTwist" status="run" result="completed" time="1.993" timestamp="2026-11-10T17:06:47" classname="tare_planner.FollowerTest" />
+    <testcase name="BestEffortOdometryPublisherIsCompatible" status="run" result="completed" time="0.932" timestamp="2026-11-10T17:06:49" classname="tare_planner.FollowerTest" />
+    <testcase name="WrongFrameAndInvalidQuaternionCannotRenewOdometry" status="run" result="completed" time="1.002" timestamp="2026-11-10T17:06:50" classname="tare_planner.FollowerTest" />
+    <testcase name="DiscontinuousLocalizationRequiresRestartDespiteNewPaths" status="run" result="completed" time="0.954" timestamp="2026-11-10T17:06:51" classname="tare_planner.FollowerTest" />
+    <testcase name="MalformedIndividualPathPoseCannotProduceMotion" status="run" result="completed" time="0.695" timestamp="2026-11-10T17:06:52" classname="tare_planner.FollowerTest" />
+    <testcase name="HardwareCommandNamesTheActualVehicleReferenceFrame" status="run" result="completed" time="0.759" timestamp="2026-11-10T17:06:52" classname="tare_planner.FollowerTest" />
+  </testsuite>
+  <testsuite name="FollowerClock" tests="1" failures="0" disabled="0" errors="0" time="0.476" timestamp="2026-11-10T17:06:53">
+    <testcase name="ClockRollbackLatchesStopEvenAfterClockRecovers" status="run" result="completed" time="0.476" timestamp="2026-11-10T17:06:53" classname="tare_planner.FollowerClock" />
+  </testsuite>
+  <testsuite name="SharedPriorFollowerTest" tests="1" failures="0" disabled="0" errors="0" time="1.718" timestamp="2026-11-10T17:06:54">
+    <testcase name="FirstPathCannotCreateOwnPriorAndReplansCannotRenewExpiry" status="run" result="completed" time="1.718" timestamp="2026-11-10T17:06:54" classname="tare_planner.SharedPriorFollowerTest" />
+  </testsuite>
+</testsuites>

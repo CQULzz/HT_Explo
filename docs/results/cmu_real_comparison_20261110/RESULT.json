@@ -1,0 +1,57 @@
+{
+  "old_commit": "b97d0fad5d15c0c7c37cec0499312f74afe6dd1d",
+  "case": "old_real_600s_01",
+  "requested_duration_s": 600,
+  "started_wall": 1794301597.7555578,
+  "adaptations": [
+    "sensor pose to base_link: local z=-0.51521m; preserve stamps",
+    "sensor_origin_offset=[0,0,0.51521]; surface_ground_offset=0.23479m",
+    "CMU shared downward sensor; shared 4Hz elevation mapper; no physical input/command bridge",
+    "old follower TwistStamped connects directly to CMU /cmd_vel; no second local controller"
+  ],
+  "summary": {
+    "elapsed_s": 600.0043041369972,
+    "distance_m": 64.03238770694165,
+    "position": [
+      0.4031812846660614,
+      0.14305192232131958,
+      0.703541100025177
+    ],
+    "sampled_free_volume_m3": 980.125,
+    "surface_voxel_volume_m3": 506.625,
+    "finish": true,
+    "counts": {
+      "commands": 12251,
+      "/ht_real/ht_follower_status": 12251,
+      "permission": 602,
+      "waypoint": 602,
+      "/ht_real/mission_state": 792,
+      "/ht_real/ht_execution_status": 792,
+      "odom": 118458,
+      "scans": 1661,
+      "ht_maps": 2392,
+      "ray_frames": 486,
+      "paths": 190,
+      "local_path": 38,
+      "finish_transition": 1
+    },
+    "ht_source_age_s": {
+      "p50": 0.3013495206832886,
+      "p95": 0.4282096147537231,
+      "p99": 0.5024163389205935
+    },
+    "free_volume_definition": "union of sampled sensor rays at 0.5m voxel resolution, 1Hz/1024 endpoints/12m range; observation proxy, not ground truth"
+  },
+  "collection_complete": true,
+  "phase_ended_wall": 1794302212.0638738,
+  "exit_codes": {
+    "bag": 0,
+    "model": 0,
+    "mapper": 0,
+    "adapter": 0,
+    "simulation": 0,
+    "observer": 0
+  },
+  "ended_wall": 1794302222.0543506,
+  "freeze_unchanged": true
+}
