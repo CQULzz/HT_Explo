@@ -1,0 +1,52 @@
+{
+  "case": "ht_600s_06",
+  "mode": "ht",
+  "requested_duration_s": 600,
+  "started_wall": 1794292722.2688556,
+  "summary": {
+    "elapsed_s": 600.0034804409988,
+    "distance_m": 281.92499960716566,
+    "position": [
+      55.99448013305664,
+      61.3565788269043,
+      0.7034285068511963
+    ],
+    "sampled_free_volume_m3": 5408.0,
+    "surface_voxel_volume_m3": 2776.75,
+    "finish": false,
+    "counts": {
+      "/ht_minimal/pathFollower": 612,
+      "/ht_minimal/localPlanner": 612,
+      "/ht_runtime": 1,
+      "odom": 120005,
+      "paths": 2941,
+      "/ht_minimal/command_audit": 30095,
+      "commands": 30087,
+      "scans": 1506,
+      "/ht_performance": 522,
+      "ht_maps": 2403,
+      "local_path": 588,
+      "ray_frames": 463,
+      "waypoint": 584,
+      "/ht_minimal/path_rejection": 265,
+      "/ht_minimal/command_projection": 5
+    },
+    "ht_source_age_s": {
+      "p50": 0.24318790435791016,
+      "p95": 0.33841493129730227,
+      "p99": 0.36562504291534426
+    },
+    "free_volume_definition": "union of sampled sensor rays at 0.5m voxel resolution, 1Hz/1024 endpoints/12m range; observation proxy, not ground truth"
+  },
+  "collection_complete": true,
+  "phase_ended_wall": 1794293335.9023983,
+  "exit_codes": {
+    "bag": 0,
+    "model": 0,
+    "mapper": 0,
+    "simulation": 0,
+    "observer": 0
+  },
+  "ended_wall": 1794293345.2779615,
+  "freeze_unchanged": true
+}

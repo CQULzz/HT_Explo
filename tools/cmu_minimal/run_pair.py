@@ -1,0 +1,69 @@
+#!/usr/bin/env python3
+import os,signal,subprocess,json,time,hashlib,argparse
+from pathlib import Path
+ROOT=Path('/home/lzz/cmu_test_20261110');PROJECT=Path('/home/lzz/HT_Explo_cmu_20261110');PY=ROOT/'venv/bin/python'
+TOPICS=['/tf','/tf_static','/clock','/state_estimation','/state_estimation_at_scan','/registered_scan','/sensor_scan','/terrain_map','/terrain_map_ext','/way_point','/path','/cmd_vel','/exploration_finish','/start_exploration','/global_path','/local_path','/exploration_path','/elevation_mapping/elevation_map_raw','/ht_traversability/global_local','/ht_performance','/ht_runtime','/ht_reasons','/ht_minimal/localPlanner','/ht_minimal/pathFollower','/ht_minimal/command_audit','/ht_minimal/path_rejection','/ht_minimal/command_projection']
+
+def freeze():
+ files=list((PROJECT/'src/cmu_local_planner_ht').rglob('*.cpp'))+list((PROJECT/'src/cmu_local_planner_ht').rglob('*.hpp'))+list((PROJECT/'tools/cmu_minimal').glob('*.py'))
+ files+=list((PROJECT/'tools/ht_cupy_bridge').glob('*.py'))+[PROJECT/'tools/ht_cupy_bridge/student_best_epoch_weights.pth']
+ files+=list((ROOT/'common_sensor').glob('*'))+[ROOT/'mapper_setup_4hz.yaml']
+ for base in [ROOT/'install_native/tare_planner',ROOT/'install_gate/cmu_local_planner_ht']:
+  files += [p for p in (base/'lib').rglob('*') if p.is_file() and os.access(p,os.X_OK)]
+ files += [ROOT/'install_native/tare_planner/share/tare_planner/indoor.yaml']
+ return {str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in files if p.is_file()}
+
+def case(name,mode,duration):
+ out=ROOT/'runs'/name;out.mkdir(parents=True,exist_ok=False);children={};logs={};commands={};codes={};before=freeze()
+ (out/'FREEZE.json').write_text(json.dumps(before,indent=2));env=os.environ.copy();env.update(DISPLAY=':88',GAZEBO_MODEL_DATABASE_URI='',GAZEBO_MASTER_URI='http://127.0.0.1:'+str(11500+(0 if mode=='native' else 1)),CUPY_STATS_DUMP=str(out/'mapper_stats.json'),HT_DIAGNOSTICS_DUMP=str(out/'ht_diagnostics.json'),HT_HISTORY_DUMP=str(out/'ht_history.npz'))
+ def spawn(key,args):
+  commands[key]=list(map(str,args));logs[key]=(out/(key+'.log')).open('w');children[key]=subprocess.Popen(commands[key],stdout=logs[key],stderr=subprocess.STDOUT,env=env,start_new_session=True)
+  (out/'COMMANDS.json').write_text(json.dumps(commands,indent=2))
+ def stop(key):
+  p=children.get(key)
+  if p is None:return
+  if p.poll() is None:
+   os.killpg(p.pid,signal.SIGINT)
+   try:p.wait(timeout=25)
+   except subprocess.TimeoutExpired:
+    os.killpg(p.pid,signal.SIGTERM)
+    try:p.wait(timeout=5)
+    except subprocess.TimeoutExpired:os.killpg(p.pid,signal.SIGKILL);p.wait()
+  codes[key]=p.returncode
+ result={'case':name,'mode':mode,'requested_duration_s':duration,'started_wall':time.time()}
+ try:
+  spawn('simulation',['ros2','launch',str(PROJECT/'tools/cmu_minimal/simulation.launch.py'),'mode:='+mode,'sensor:=downward'])
+  spawn('bag',['ros2','bag','record','-s','mcap','--storage-config-file',str(ROOT/'mcap.yaml'),'-b','500000000','-o',str(out/'bag'),*TOPICS])
+  spawn('mapper',[PY,ROOT/'install_mapper/elevation_mapping_cupy/lib/elevation_mapping_cupy/elevation_mapping_node','--ros-args','-p','core_param_file:=/home/lzz/cmu_mapper_20261110/config/trial_core.yaml','-p','setup_file:='+str(ROOT/'mapper_setup_4hz.yaml')])
+  spawn('model',[PY,PROJECT/'tools/ht_cupy_bridge/cupy_to_ht.py','--ros-args','-p','ht_device:=cuda','-p','ht_torch_threads:=2','-p','ht_processing_mode:=worker','-p','ht_context_backend:=numpy','-p','surface_sensor_ground_offset_m:=0.75'])
+  spawn('observer',['python3',PROJECT/'tools/cmu_minimal/collect.py','--output',out/'observations','--duration',str(duration),'--require-ht'])
+  started=time.monotonic()
+  while children['observer'].poll() is None:
+   for key in ['simulation','bag','mapper','model']:
+    if children[key].poll() is not None:raise RuntimeError(key+' exited early '+str(children[key].returncode))
+   text=(out/'simulation.log').read_text(errors='replace')
+   if 'process has died' in text:raise RuntimeError('Simulation child exited before collection finished')
+   if time.monotonic()-started>duration+150:raise RuntimeError('Observer deadline exceeded')
+   time.sleep(1)
+  if children['observer'].returncode:raise RuntimeError('Observer failed')
+  result['summary']=json.loads((out/'observations/SUMMARY.json').read_text());result['collection_complete']=result['summary']['elapsed_s']>=duration
+  result['phase_ended_wall']=time.time()
+  # Stop evidence writer before teardown; preserve cleanup errors separately.
+  stop('bag');stop('model');stop('mapper');stop('simulation');codes['observer']=children['observer'].returncode
+ except BaseException as exc:
+  result['error']=repr(exc);result['collection_complete']=False
+  for key in ['observer','bag','model','mapper','simulation']:stop(key)
+ finally:
+  result['exit_codes']=codes;result['ended_wall']=time.time();result['freeze_unchanged']=before==freeze()
+  (out/'RESULT.json').write_text(json.dumps(result,indent=2));
+  for f in logs.values():f.close()
+  print(json.dumps(result,indent=2),flush=True)
+ if not result.get('collection_complete') or not result['freeze_unchanged']:raise RuntimeError(name+' failed; evidence retained')
+ return result
+
+if __name__=='__main__':
+ p=argparse.ArgumentParser();p.add_argument('--duration',type=float,default=600);p.add_argument('--case',choices=['native','ht','pair'],default='pair');p.add_argument('--attempt',type=int,default=2);a=p.parse_args()
+ results=[]
+ if a.case in ['native','pair']:results.append(case(f'native_600s_{a.attempt:02d}','native',a.duration))
+ if a.case in ['ht','pair']:results.append(case(f'ht_600s_{a.attempt:02d}','ht',a.duration))
+ (ROOT/'PAIR_RESULT.json').write_text(json.dumps(results,indent=2))

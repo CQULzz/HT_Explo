@@ -1,0 +1,12 @@
+diff --git a/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp b/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp
+index f3923fb..e46a025 100644
+--- a/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp
++++ b/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp
+@@ -54,6 +54,7 @@ void SensorCoveragePlanner3D::ReadParameters() {
+ 
+   // Bool
+   this->declare_parameter<bool>("kAutoStart", false);
++  this->declare_parameter<bool>("kUseFrontier", true); // Bind the existing upstream YAML value.
+   this->declare_parameter<bool>("kRushHome", false);
+   this->declare_parameter<bool>("kUseTerrainHeight", true);
+   this->declare_parameter<bool>("kCheckTerrainCollision", true);

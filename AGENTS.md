@@ -101,3 +101,7 @@ p01完整120.3秒保留，发现TARE仿真命令桥硬编码1秒期限与HT几�
 ## 循环10基线解释更正
 
 用户质疑CMU中TARE异常表现后，离线核实对照入口加载tare_scout.yaml而非上游indoor.yaml，且ht_enabled=False仍执行项目改写返航逻辑。循环10保留为两套接入配置诊断，3.55/3.16比值不得用于HT优于原生TARE的性能归因。详情docs/results/cmu_pair_cycle10_20261106/baseline_audit/CORRECTION.md。原始记录与关闭账本保留，本轮未新增仿真或导航行为修改。
+
+## 2026-11-10：收敛到原TARE加八方向约束
+
+用户明确授权下载CMU AEDE并运行仿真；原TARE正常运行一两次即可，主要完成八方向可通过性。新工作树sim/cmu-tare-8dir-20261110使用独立上游TARE/CMU构建；最小接入在cmu_local_planner_ht，不沿用改装版关闭HT作为原生基线。最终ht_600s_06完整600.003秒/281.925米，结束仍探索，17项回归通过，实际候选命令独立核验无门禁越限。记录见docs/results/cmu_minimal_8dir_20261110/REPORT.md。原始及失败数据在/home/lzz/cmu_test_20261110，无完整远端备份，不清理。此批完成后停止，不自动启动下一轮或部署实车；退出清理异常及单场景验证范围如实保留。
