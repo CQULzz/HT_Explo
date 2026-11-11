@@ -1,0 +1,35 @@
+F...                                                                     [100%]
+=================================== FAILURES ===================================
+_ test_zero_demand_skips_lock_and_layers_then_late_subscriber_gets_coherent_map _
+
+    def test_zero_demand_skips_lock_and_layers_then_late_subscriber_gets_coherent_map():
+        n=proxy()
+        class ForbiddenLock:
+            def __enter__(self):raise AssertionError('unused publication acquired the map lock')
+        n.map_access_lock=ForbiddenLock()
+>       ElevationMappingNode.publish_map(n,'raw')
+
+HT_Explo_quality_20261111/tools/ht_cupy_bridge/test_publication_demand.py:45: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = namespace(map_translation=True, last_integrated_stamp=Time(nanoseconds=10000000000, clock_type=SYSTEM_TIME), offline_t...0., 0., ..., 0., 0., 0.],
+       [0., 0., 0., ..., 0., 0., 0.]], dtype=float32), publication_skipped_no_subscribers={})
+name = 'raw'
+
+    def publish_map(self, name: str) -> None:
+        if self.map_translation is None or self.last_integrated_stamp is None:
+            return
+        config = self.publisher_configs[name]
+        msg = GridMap()
+        msg.header.frame_id = self.map_frame
+        # Freeze geometry and every GPU layer under the same lock. Serialize
+        # the CPU copies afterward, allowing new scans to update the map while
+        # DDS prepares/publishes the previous coherent snapshot.
+        snapshots = []
+>       with self.map_access_lock:
+E       AttributeError: __exit__
+
+cmu_test_20261110/install_mapper/elevation_mapping_cupy/local/lib/python3.10/dist-packages/elevation_mapping_cupy/elevation_mapping_ros.py:365: AttributeError
+=========================== short test summary info ============================
+FAILED HT_Explo_quality_20261111/tools/ht_cupy_bridge/test_publication_demand.py::test_zero_demand_skips_lock_and_layers_then_late_subscriber_gets_coherent_map
+1 failed, 3 passed in 0.59s

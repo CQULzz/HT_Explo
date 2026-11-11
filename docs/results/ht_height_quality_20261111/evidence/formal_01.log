@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/home/lzz/HT_Explo_quality_20261111/tools/ht_height_quality/run.py", line 86, in <module>
+    case(a.name,a.scene,a.duration)
+  File "/home/lzz/HT_Explo_quality_20261111/tools/ht_height_quality/run.py", line 20, in case
+    subprocess.run([str(PY),'-c','import elevation_mapping_cupy,torch,cupy,grid_map_msgs.msg,rosbag2_py; assert torch.cuda.is_available(); assert '/ht_quality_20261111/install_mapper/' in elevation_mapping_cupy.__file__; print(\"Dependency preflight passed\")'],check=True)
+NameError: name 'ht_quality_20261111' is not defined
