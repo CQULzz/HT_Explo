@@ -89,6 +89,9 @@ def main():
         by_name={x['name']:x for x in final_assets}
         if any(x['name'] not in by_name or not matches(by_name[x['name']],x) for x in release_plan['assets']):
             raise RuntimeError('Final remote verification failed')
+        for item in verified:
+            item['url']=by_name[item['name']]['browser_download_url']
+            item['remote_digest']=by_name[item['name']]['digest']
         receipt.update(status='complete_verified',release_url=release['html_url'],verified_wall_time=time.time())
         (ROOT/(tag+'--REMOTE_RECEIPT.json')).write_text(json.dumps(receipt,indent=2));receipts.append(receipt)
     (ROOT/'REMOTE_VERIFIED.json').write_text(json.dumps({'status':'complete_verified','repository':REPO,'branch':plan['branch'],'releases':receipts},indent=2))
