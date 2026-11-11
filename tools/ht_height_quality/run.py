@@ -17,7 +17,8 @@ def freeze():
  return {str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in files if p.is_file()}
 
 def case(name,scene,duration):
- subprocess.run([str(PY),'-c','import elevation_mapping_cupy,torch,cupy,grid_map_msgs.msg,rosbag2_py; assert torch.cuda.is_available(); assert '/ht_quality_20261111/install_mapper/' in elevation_mapping_cupy.__file__; print(\"Dependency preflight passed\")'],check=True)
+ preflight = "import elevation_mapping_cupy,torch,cupy,grid_map_msgs.msg,rosbag2_py; assert torch.cuda.is_available(); assert '/ht_quality_20261111/install_mapper/' in elevation_mapping_cupy.__file__; print('Isolated mapper preflight passed')"
+ subprocess.run([str(PY),'-c',preflight],check=True)
  ledger=json.loads((ROOT/'BUDGET.json').read_text())
  if len(ledger['attempts'])>=ledger['maximum_formal_launch_attempts']:raise RuntimeError('Formal attempt budget exhausted')
  if __import__('shutil').disk_usage(ROOT).free<12*1024**3:raise RuntimeError('Insufficient disk before launch; no attempt consumed')
