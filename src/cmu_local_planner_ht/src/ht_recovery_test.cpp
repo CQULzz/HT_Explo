@@ -29,8 +29,10 @@ int main(int argc,char** argv) {
   std::ofstream trace("/home/lzz/ht_recovery_20261111/analysis/fixture_trace.csv");
   trace<<"time,x,y,yaw,linear,angular,map_stamp,query_time\n";trace<<std::setprecision(15);
   double v=0,w=0,previous_v=0,previous_w=0,max_accel=0,max_angular_accel=0;bool complete=false;
+  recovery.setGoal(goal,0);bool updated_goal=false;
   for(int tick=0;tick<2250;++tick) {
-    const double t=tick*.02;recovery.setGoal(goal,t);
+    const double t=tick*.02;
+    if(!updated_goal && t>=5.6){recovery.setGoal({goal.x+(goal.x-origin.x)*.2,goal.y+(goal.y-origin.y)*.2,0},t);updated_goal=true;}
     recovery.select(pose,t,t,true,.5,false,0,0,v,w);
     trace<<t<<","<<pose.x<<","<<pose.y<<","<<pose.yaw<<","<<v<<","<<w<<","<<stamp<<","<<query<<"\n";
     max_accel=std::max(max_accel,std::abs(v-previous_v)/.02);max_angular_accel=std::max(max_angular_accel,std::abs(w-previous_w)/.02);
@@ -45,6 +47,8 @@ int main(int argc,char** argv) {
            <<" movement="<<movement<<" goal_progress="<<progress<<" search_ms="<<recovery.last_search_ms<<" accel="<<max_accel<<" angular_accel="<<max_angular_accel<<std::endl;
   if(!complete || progress<.5 || recovery.invalidated || max_accel>2.50001 || max_angular_accel>3.00001)throw std::runtime_error("Recovery fixture failed");
   std::cout<<"PASS recorded blocked pose executed continuous recovery with progress and limits"<<std::endl;
+  if(recovery.compatible_goal_updates!=1 || recovery.plans!=1)throw std::runtime_error("Compatible waypoint update restarted recovery");
+  std::cout<<"PASS retained waypoint survives publication gap and compatible update preserves recovery"<<std::endl;
   const auto plans=recovery.plans;double rejected_v=1,rejected_w=1;
   recovery.select(pose,100,99,true,.5,false,0,0,rejected_v,rejected_w);
   if(rejected_v || rejected_w || recovery.plans!=plans)throw std::runtime_error("Stale odometry bypassed");
@@ -78,6 +82,14 @@ int main(int argc,char** argv) {
   std::cout<<"reverse state="<<reverse_recovery.state<<" x="<<reverse_pose.x<<" min_v="<<min_v<<" max_yaw="<<max_yaw<<" completed="<<reverse_recovery.completed<<std::endl;
   if(!reverse_recovery.completed || reverse_pose.x>-.5 || min_v>-.1 || max_yaw>.03)throw std::runtime_error("Reverse execution did not preserve actual allowed body yaw");
   std::cout<<"PASS recovery executes reverse while opposite travel-direction channel is forbidden"<<std::endl;
+  double cancel_v=0,cancel_w=0;reverse_recovery.setGoal({-1,0,0},100);
+  reverse_recovery.select({0,0,0},100,100,true,.5,false,0,0,cancel_v,cancel_w);
+  reverse_recovery.select({0,0,0},100.5,100.5,true,.5,false,0,0,cancel_v,cancel_w);
+  if(!reverse_recovery.active())throw std::runtime_error("Cancellation fixture failed to start");
+  reverse_recovery.setGoal({1,0,0},100.52);
+  reverse_recovery.select({0,0,0},100.52,100.52,true,.5,false,0,0,cancel_v,cancel_w);
+  if(reverse_recovery.active() || reverse_recovery.state!="GOAL_CHANGED" || cancel_v || cancel_w || reverse_recovery.goal_cancellations!=1)throw std::runtime_error("Opposite target failed to cancel recovery");
+  std::cout<<"PASS incompatible waypoint update cancels and stops recovery"<<std::endl;
   synthetic.data[9].data[40+40*81]=0;reverse_gate.receive(synthetic);
   if(reverse_recovery.plan({0,0,0},{-1,0,0}))throw std::runtime_error("Recovery search bypassed unknown origin");
   std::cout<<"PASS recovery search rejects unknown footprint at its origin"<<std::endl;

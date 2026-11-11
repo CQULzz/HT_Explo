@@ -35,7 +35,7 @@ class Recovery {
   }
   bool enabled=false;
   bool active() const {return active_;}
-  uint64_t plans=0,completed=0,invalidated=0,search_failures=0;
+  uint64_t plans=0,completed=0,invalidated=0,search_failures=0,goal_cancellations=0,compatible_goal_updates=0;
   std::string state="IDLE";
   double last_search_ms=0;
   const std::vector<Pose>& route() const {return route_;}
@@ -48,10 +48,21 @@ class Recovery {
     if(permitted && (now-odom_stamp<-.01 || now-odom_stamp>odom_timeout_)) {
       reset("ODOMETRY_STALE");v=w=0;report(now,pose,v,w);return true;
     }
-    if(!permitted || finished_ || !have_goal_ || now-goal_at_>3. || (!active_ && distance(pose,goal_)<.25)) {
-      reset("IDLE");last_tick_=now;return false;
+    // A TARE waypoint is a retained target, not a fixed-frequency heartbeat.
+    if(!permitted || finished_ || !have_goal_ || (!active_ && distance(pose,goal_)<.25)) {
+      const bool was_active=active_;
+      reset(finished_?"EXPLORATION_FINISHED":!permitted?"PAUSED":"IDLE");last_tick_=now;
+      if(was_active){v=w=0;report(now,pose,v,w);return true;}
+      return false;
     }
-    if(active_ && distance(goal_,planned_goal_)>1.)reset("GOAL_CHANGED");
+    if(active_ && distance(goal_,planned_goal_)>.05) {
+      // TARE's extended waypoint often shifts along the same route. Retain an
+      // executing prefix if its endpoint still advances toward the new target.
+      if(distance(pose,goal_)<.25 || distance(route_.back(),goal_)>distance(pose,goal_)+.01) {
+        ++goal_cancellations;reset("GOAL_CHANGED");v=w=0;report(now,pose,v,w);return true;
+      }
+      planned_goal_=goal_;++compatible_goal_updates;
+    }
     if(active_)return execute(pose,now,v,w);
     const bool moving=native_allowed&&(std::abs(native_v)+std::abs(native_w)>1e-8);
     if(!moving){if(blocked_at_<0)blocked_at_=now;}else blocked_at_=-1;
@@ -187,6 +198,7 @@ class Recovery {
     last_report_at_=now;last_report_state_=state;std::ostringstream out;out<<std::fixed<<std::setprecision(9)
       <<"{\"time\":"<<now<<",\"map_stamp\":"<<gate_.mapStamp()<<",\"state\":\""<<state<<"\",\"active\":"<<(active_?"true":"false")
       <<",\"plans\":"<<plans<<",\"completed\":"<<completed<<",\"invalidated\":"<<invalidated<<",\"search_failures\":"<<search_failures
+      <<",\"goal_cancellations\":"<<goal_cancellations<<",\"compatible_goal_updates\":"<<compatible_goal_updates<<",\"goal_age_s\":"<<(now-goal_at_)
       <<",\"search_ms\":"<<last_search_ms<<",\"x\":"<<pose.x<<",\"y\":"<<pose.y<<",\"yaw\":"<<pose.yaw
       <<",\"goal_x\":"<<goal_.x<<",\"goal_y\":"<<goal_.y<<",\"segment\":"<<index_<<",\"segments\":"<<route_.size()
       <<",\"progress_m\":"<<distance(origin_,pose)<<",\"linear\":"<<v<<",\"angular\":"<<w<<"}";
