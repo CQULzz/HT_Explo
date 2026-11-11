@@ -1,0 +1,14 @@
+WHO                          UID  USER PID  COMM            WHAT                                                     WHY                                                               MODE
+ModemManager                 0    root 821  ModemManager    sleep                                                    ModemManager needs to reset devices                               delay
+NetworkManager               0    root 722  NetworkManager  sleep                                                    NetworkManager needs to turn off networks                         delay
+UPower                       0    root 867  upowerd         sleep                                                    Pause device polling                                              delay
+Unattended Upgrades Shutdown 0    root 848  unattended-upgr shutdown                                                 Stop ongoing upgrades or perform upgrades before shutdown         delay
+CMU HT experiment            1000 lzz  6031 systemd-inhibit sleep:idle                                               Complete requested 600s recording after interrupted first attempt block
+GNOME Shell                  1000 lzz  2215 gnome-shell     sleep                                                    GNOME 需要锁定屏幕                                                delay
+code                         1000 lzz  3975 code            shutdown                                                 Ensure a clean shutdown                                           delay
+code                         1000 lzz  3975 code            sleep                                                    Application cleanup before suspend                                delay
+lzz                          1000 lzz  2357 gsd-media-keys  handle-power-key:handle-suspend-key:handle-hibernate-key GNOME handling keypresses                                         block
+lzz                          1000 lzz  2357 gsd-media-keys  sleep                                                    GNOME handling keypresses                                         delay
+lzz                          1000 lzz  2358 gsd-power       sleep                                                    GNOME needs to lock the screen                                    delay
+
+11 inhibitors listed.

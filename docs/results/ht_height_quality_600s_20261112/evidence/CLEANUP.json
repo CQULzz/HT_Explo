@@ -1,0 +1,78 @@
+{
+  "recorded_wall_time": 1794423869.691973,
+  "top_level_exit_codes": {
+    "bag": 0,
+    "model": 0,
+    "mapper": 0,
+    "simulation": 0,
+    "observer": 0
+  },
+  "teardown_signal_line": 115,
+  "child_exit_errors": [
+    {
+      "line": 122,
+      "node": "static_transform_publisher-12",
+      "pid": 6160,
+      "exit_code": -2,
+      "after_teardown_signal": true
+    },
+    {
+      "line": 123,
+      "node": "static_transform_publisher-11",
+      "pid": 6158,
+      "exit_code": -2,
+      "after_teardown_signal": true
+    },
+    {
+      "line": 150,
+      "node": "tare_planner_node-13",
+      "pid": 6164,
+      "exit_code": -2,
+      "after_teardown_signal": true
+    },
+    {
+      "line": 151,
+      "node": "pathFollower-10",
+      "pid": 6156,
+      "exit_code": -6,
+      "after_teardown_signal": true
+    },
+    {
+      "line": 152,
+      "node": "sensorScanGeneration-8",
+      "pid": 6150,
+      "exit_code": -6,
+      "after_teardown_signal": true
+    },
+    {
+      "line": 153,
+      "node": "vehicleSimulator-14",
+      "pid": 6393,
+      "exit_code": -6,
+      "after_teardown_signal": true
+    },
+    {
+      "line": 154,
+      "node": "localPlanner-9",
+      "pid": 6154,
+      "exit_code": -6,
+      "after_teardown_signal": true
+    },
+    {
+      "line": 158,
+      "node": "terrainAnalysis-6",
+      "pid": 6146,
+      "exit_code": -6,
+      "after_teardown_signal": true
+    },
+    {
+      "line": 159,
+      "node": "terrainAnalysisExt-7",
+      "pid": 6148,
+      "exit_code": -6,
+      "after_teardown_signal": true
+    }
+  ],
+  "no_child_exit_before_teardown": true,
+  "inhibitors_after_run": "WHO                          UID  USER PID  COMM            WHAT                                                     WHY                                                       MODE\nModemManager                 0    root 821  ModemManager    sleep                                                    ModemManager needs to reset devices                       delay\nNetworkManager               0    root 722  NetworkManager  sleep                                                    NetworkManager needs to turn off networks                 delay\nUPower                       0    root 867  upowerd         sleep                                                    Pause device polling                                      delay\nUnattended Upgrades Shutdown 0    root 848  unattended-upgr shutdown                                                 Stop ongoing upgrades or perform upgrades before shutdown delay\nGNOME Shell                  1000 lzz  2215 gnome-shell     sleep                                                    GNOME \u9700\u8981\u9501\u5b9a\u5c4f\u5e55                                        delay\ncode                         1000 lzz  3975 code            shutdown                                                 Ensure a clean shutdown                                   delay\ncode                         1000 lzz  3975 code            sleep                                                    Application cleanup before suspend                        delay\nlzz                          1000 lzz  2357 gsd-media-keys  handle-power-key:handle-suspend-key:handle-hibernate-key GNOME handling keypresses                                 block\nlzz                          1000 lzz  2357 gsd-media-keys  sleep                                                    GNOME handling keypresses                                 delay\nlzz                          1000 lzz  2358 gsd-power       sleep                                                    GNOME needs to lock the screen                            delay\n\n10 inhibitors listed.\n"
+}

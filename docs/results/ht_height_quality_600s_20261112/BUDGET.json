@@ -1,0 +1,27 @@
+{
+  "maximum_formal_launch_attempts": 2,
+  "duration_s": 600,
+  "planned_successful_runs": 1,
+  "attempts": [
+    {
+      "name": "cmu_quality_600s_01",
+      "scene": "indoor",
+      "wall_time": 1794414400.1726596,
+      "status": "interrupted_by_host_reboot",
+      "last_valid_elapsed_s": 339.25232475099983,
+      "evidence": "/home/lzz/ht_quality_600s_20261112/runs/cmu_quality_600s_01/INTERRUPTED.json"
+    },
+    {
+      "name": "cmu_quality_600s_02",
+      "scene": "indoor",
+      "wall_time": 1794423200.7377262,
+      "status": "complete",
+      "elapsed_s": 600.031926472
+    }
+  ],
+  "status": "closed",
+  "scope": "User-requested one 600s repeat of the previous frozen height-quality candidate. A second attempt only for a demonstrated infrastructure failure. No navigation optimization, Release, hardware or raw-data cleanup.",
+  "completed_runs": 1,
+  "closed_wall_time": 1794424090.580487,
+  "reason": "User-requested one complete 600s repeat obtained on the second infrastructure attempt. Interrupted first trial retained. Stop; no further candidate or formal launch."
+}

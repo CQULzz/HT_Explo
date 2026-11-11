@@ -1,0 +1,64 @@
+Excerpt of original previous_boot_kernel.log
+Original SHA256: eef058ee22c0c6769178395a6b73d36c47abaf7cbbca8614c84f32ddfb48493d
+Selected first 60 matching GPU error/stack lines during the recorded failure; full original retained locally.
+
+Nov 12 02:45:44 lzz kernel: NVRM: nvCheckOkFailedNoLog: Check failed: Out of memory [NV_ERR_NO_MEMORY] (0x00000051) returned from _memdescAllocInternal(pMemDesc) @ mem_desc.c:1393
+Nov 12 02:45:44 lzz kernel: NVRM: GPU0 _clientUnmapInterMappings: Failed to auto-unmap (status=0x11) hClient c1d00070: hMapper: caf000c8
+Nov 12 02:45:44 lzz kernel: NVRM: GPU0 _clientUnmapInterMappings: hMappable: 6d hContext: beef0003
+Nov 12 02:45:44 lzz kernel: NVRM: GPU0 nvAssertFailedNoLog: Assertion failed: 0 @ rs_client.c:1333
+Nov 12 02:45:44 lzz kernel: NVRM: GPU0 nvAssertFailedNoLog: Assertion failed: pEntries != NULL @ gmmu_walk.c:828
+Nov 12 02:45:44 lzz kernel: NVRM: GPU0 nvAssertFailedNoLog: Assertion failed: progress == indexHi_tmp - indexLo_tmp + 1 @ mmu_walk.c:1091
+Nov 12 02:45:44 lzz kernel: NVRM: GPU0 nvAssertFailedNoLog: Assertion failed: NV_OK == status @ mmu_walk.c:487
+Nov 12 02:45:44 lzz kernel: NVRM: GPU0 mmuWalkUnmap: Failed to unmap VA Range 0x42f0000 to 0x42fffff. Status = 0x00000040
+Nov 12 02:45:44 lzz kernel: NVRM: GPU0 nvAssertFailedNoLog: Assertion failed: 0 @ mmu_walk_unmap.c:62
+Nov 12 02:45:44 lzz kernel: NVRM: GPU0 nvAssertOkFailedNoLog: Assertion failed: Generic Error: Invalid state [NV_ERR_INVALID_STATE] (0x00000040) returned from mmuWalkUnmap(userCtx.pGpuState->pWalk, vaLo, vaHi) @ gpu_vaspace.c:2084
+Nov 12 02:45:44 lzz kernel: NVRM: GPU0 nvAssertFailedNoLog: Assertion failed: pEntries != NULL @ gmmu_walk.c:828
+Nov 12 02:45:44 lzz kernel: NVRM: GPU0 nvAssertFailedNoLog: Assertion failed: progress == indexHi_tmp - indexLo_tmp + 1 @ mmu_walk.c:1091
+Nov 12 02:45:44 lzz kernel: NVRM: GPU0 nvAssertFailedNoLog: Assertion failed: NV_OK == status @ mmu_walk.c:487
+Nov 12 02:45:44 lzz kernel: NVRM: GPU0 mmuWalkUnmap: Failed to unmap VA Range 0x42f0000 to 0x42fffff. Status = 0x00000040
+Nov 12 02:45:44 lzz kernel: NVRM: GPU0 nvAssertFailedNoLog: Assertion failed: 0 @ mmu_walk_unmap.c:62
+Nov 12 02:45:44 lzz kernel: NVRM: GPU0 nvAssertFailedNoLog: Assertion failed: NV_OK == status @ gpu_vaspace.c:4910
+Nov 12 02:45:44 lzz kernel: NVRM: GPU0 nvAssertFailedNoLog: Assertion failed: (pKernelBus->pReadToFlush != NULL || pKernelBus->virtualBar2[GPU_GFID_PF].pCpuMapping != NULL) @ kern_bus_gv100.c:388
+Nov 12 02:46:09 lzz kernel: RIP: 0010:kgmmuCheckPendingInvalidates_TU102+0x98/0xe0 [nvidia]
+Nov 12 02:46:09 lzz kernel:  kgmmuInvalidateTlb_GM107+0xfe/0x360 [nvidia]
+Nov 12 02:46:09 lzz kernel:  gvaspaceInvalidateTlb_IMPL+0xd8/0x16d [nvidia]
+Nov 12 02:46:09 lzz kernel:  ? gvaspaceInvalidateTlb_IMPL+0xa5/0x16d [nvidia]
+Nov 12 02:46:09 lzz kernel:  _gvaspaceInternalFree.constprop.0+0x227/0x370 [nvidia]
+Nov 12 02:46:09 lzz kernel:  memmgrFree_IMPL+0x152/0x1e0 [nvidia]
+Nov 12 02:46:09 lzz kernel:  virtmemDestruct_IMPL+0xe8/0x1b0 [nvidia]
+Nov 12 02:46:09 lzz kernel:  __nvoc_dtor_VirtualMemory+0x15/0x30 [nvidia]
+Nov 12 02:46:09 lzz kernel:  __nvoc_objDelete+0x35/0x130 [nvidia]
+Nov 12 02:46:09 lzz kernel:  clientFreeResource_IMPL+0x773/0x870 [nvidia]
+Nov 12 02:46:09 lzz kernel:  ? os_release_spinlock+0x1a/0x30 [nvidia]
+Nov 12 02:46:09 lzz kernel:  ? _rmGpuLocksAcquire.constprop.0+0x331/0xba0 [nvidia]
+Nov 12 02:46:09 lzz kernel:  ? os_acquire_spinlock+0x12/0x30 [nvidia]
+Nov 12 02:46:09 lzz kernel:  ? portSyncSpinlockAcquire+0x18/0x30 [nvidia]
+Nov 12 02:46:09 lzz kernel:  ? os_release_spinlock+0x1a/0x30 [nvidia]
+Nov 12 02:46:09 lzz kernel:  rmclientFreeResource_IMPL+0xba/0xc7 [nvidia]
+Nov 12 02:46:09 lzz kernel:  serverFreeResourceTreeUnderLock+0xbb/0x1b0 [nvidia]
+Nov 12 02:46:09 lzz kernel:  serverFreeResourceTree+0x7c3/0x970 [nvidia]
+Nov 12 02:46:09 lzz kernel:  ? os_acquire_spinlock+0x12/0x30 [nvidia]
+Nov 12 02:46:09 lzz kernel:  ? portSyncSpinlockAcquire+0x18/0x30 [nvidia]
+Nov 12 02:46:09 lzz kernel:  ? os_release_spinlock+0x1a/0x30 [nvidia]
+Nov 12 02:46:09 lzz kernel:  ? _tlsThreadEntryGet+0x82/0x90 [nvidia]
+Nov 12 02:46:09 lzz kernel:  ? tlsEntryGet+0x20/0x70 [nvidia]
+Nov 12 02:46:09 lzz kernel:  ? os_acquire_rwlock_write+0x3c/0x70 [nvidia]
+Nov 12 02:46:09 lzz kernel:  rmapiFreeWithSecInfo+0x12b/0x2b0 [nvidia]
+Nov 12 02:46:09 lzz kernel:  ? _tlsThreadEntryGet+0x82/0x90 [nvidia]
+Nov 12 02:46:09 lzz kernel:  rmapiFreeWithSecInfoTls+0x49/0x70 [nvidia]
+Nov 12 02:46:09 lzz kernel:  Nv01FreeWithSecInfo+0x4e/0x60 [nvidia]
+Nov 12 02:46:09 lzz kernel:  RmIoctl+0x449/0xda0 [nvidia]
+Nov 12 02:46:09 lzz kernel:  ? portSyncSpinlockAcquire+0x18/0x30 [nvidia]
+Nov 12 02:46:09 lzz kernel:  ? os_release_spinlock+0x1a/0x30 [nvidia]
+Nov 12 02:46:09 lzz kernel:  rm_ioctl+0x66/0x4f0 [nvidia]
+Nov 12 02:46:09 lzz kernel:  nvidia_unlocked_ioctl+0x5c1/0x990 [nvidia]
+Nov 12 02:46:09 lzz kernel:  ? os_acquire_spinlock+0x12/0x30 [nvidia]
+Nov 12 02:46:09 lzz kernel:  ? os_release_spinlock+0x1a/0x30 [nvidia]
+Nov 12 02:46:14 lzz kernel: NVRM: GPU0 _clientUnmapInterBackRefMappings: Failed to auto-unmap backref (status=0x11) hClient c1d00070: hMapper: beef0202
+Nov 12 02:46:14 lzz kernel: NVRM: GPU0 _clientUnmapInterBackRefMappings: hMappable: 6b hContext: beef0003
+Nov 12 02:46:14 lzz kernel: NVRM: GPU0 nvAssertFailedNoLog: Assertion failed: 0 @ rs_client.c:1381
+Nov 12 02:46:14 lzz kernel: NVRM: GPU0 _clientUnmapInterMappings: Failed to auto-unmap (status=0x11) hClient c1d00070: hMapper: caf000ca
+Nov 12 02:46:14 lzz kernel: NVRM: GPU0 _clientUnmapInterMappings: hMappable: 77 hContext: beef0003
+Nov 12 02:46:14 lzz kernel: NVRM: GPU0 nvAssertFailedNoLog: Assertion failed: 0 @ rs_client.c:1333
+Nov 12 02:46:14 lzz kernel: NVRM: GPU0 nvAssertFailedNoLog: Assertion failed: pEntries != NULL @ gmmu_walk.c:828
+Nov 12 02:46:14 lzz kernel: NVRM: GPU0 nvAssertFailedNoLog: Assertion failed: progress == indexHi_tmp - indexLo_tmp + 1 @ mmu_walk.c:1091

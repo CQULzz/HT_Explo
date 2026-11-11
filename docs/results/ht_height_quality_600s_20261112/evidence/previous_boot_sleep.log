@@ -1,0 +1,32 @@
+Nov 11 23:03:42 lzz systemd[1]: Starting User Login Management...
+Nov 11 23:03:43 lzz systemd-logind[688]: New seat seat0.
+Nov 11 23:03:43 lzz systemd-logind[688]: Watching system buttons on /dev/input/event1 (Power Button)
+Nov 11 23:03:43 lzz systemd-logind[688]: Watching system buttons on /dev/input/event0 (Lid Switch)
+Nov 11 23:03:43 lzz systemd-logind[688]: Watching system buttons on /dev/input/event2 (AT Translated Set 2 keyboard)
+Nov 11 23:03:43 lzz systemd[1]: Started User Login Management.
+Nov 11 23:03:43 lzz systemd-logind[688]: New session c1 of user gdm.
+Nov 11 23:03:53 lzz systemd-logind[688]: New session 2 of user lzz.
+Nov 11 23:03:59 lzz systemd-logind[688]: Session c1 logged out. Waiting for processes to exit.
+Nov 11 23:03:59 lzz systemd-logind[688]: Removed session c1.
+Nov 11 23:38:37 lzz systemd[1]: Starting NVIDIA system suspend actions...
+Nov 11 23:38:37 lzz suspend[11211]: nvidia-suspend.service
+Nov 11 23:38:37 lzz logger[11211]: <13>Nov 11 23:38:37 suspend: nvidia-suspend.service
+Nov 11 23:38:37 lzz systemd[1]: nvidia-suspend.service: Deactivated successfully.
+Nov 11 23:38:37 lzz systemd[1]: Finished NVIDIA system suspend actions.
+Nov 11 23:38:37 lzz systemd[1]: Starting System Suspend...
+Nov 11 23:38:37 lzz systemd-sleep[11228]: Entering sleep state 'suspend'...
+Nov 12 00:24:21 lzz systemd-sleep[11228]: System returned from sleep state.
+Nov 12 00:24:22 lzz systemd[1]: systemd-suspend.service: Deactivated successfully.
+Nov 12 00:24:22 lzz systemd[1]: Finished System Suspend.
+Nov 12 00:24:22 lzz systemd[1]: Starting NVIDIA system resume actions...
+Nov 12 00:24:22 lzz suspend[11413]: nvidia-resume.service
+Nov 12 00:24:22 lzz logger[11413]: <13>Nov 12 00:24:22 suspend: nvidia-resume.service
+Nov 12 00:24:22 lzz systemd[1]: nvidia-resume.service: Deactivated successfully.
+Nov 12 00:24:22 lzz systemd[1]: Finished NVIDIA system resume actions.
+Nov 12 00:24:22 lzz systemd-logind[688]: Operation 'sleep' finished.
+Nov 12 02:45:43 lzz systemd-logind[688]: Lid closed.
+Nov 12 02:45:44 lzz systemd-logind[688]: Lid opened.
+Nov 12 02:45:44 lzz systemd-logind[688]: Operation 'sleep' finished.
+Nov 12 02:45:48 lzz systemd-logind[688]: Power key pressed.
+Nov 12 02:48:21 lzz systemd-logind[688]: Power key pressed.
+Nov 12 02:48:37 lzz systemd-logind[688]: Power key pressed.
