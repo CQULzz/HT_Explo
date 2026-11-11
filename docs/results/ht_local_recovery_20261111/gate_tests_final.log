@@ -1,0 +1,25 @@
+PASS all-high forward accepted
+PASS all-high reverse accepted
+PASS same XY different body yaw selects different channel
+PASS reverse keeps actual low body yaw
+PASS reverse does not demand opposite travel channel
+PASS recorded turn avoids false constant-1s overshoot rejection
+PASS braking turn still rejects genuinely crossed low direction
+PASS recorded reverse startup native command rejected
+PASS reverse startup projects steering through the same hard gate
+PASS turn checks intermediate direction
+PASS unknown footprint rejected
+PASS command projection cannot bypass unknown support
+PASS measured obstacle footprint rejected
+PASS stale map rejected
+[WARN] [1794369459.051284631] [ht_gate_test]: HT map rejected: layout ht_dir_0
+PASS malformed map rejected
+PASS CMU geometry accepts obstacle outside native .45m envelope plus grid margin
+PASS CMU geometry still blocks obstacle inside native body envelope
+PASS HT-only mode disables CMU geometry
+PASS required task boundary missing rejects
+PASS HT-only command accepted inside task region
+PASS task boundary checks whole footprint
+PASS outside task region rejected without geometry voting
+PASS wrong-frame task boundary rejected
+PASS HT-only cannot silently run with HT disabled

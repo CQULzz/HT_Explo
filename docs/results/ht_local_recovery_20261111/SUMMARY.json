@@ -1,0 +1,994 @@
+{
+  "branch": "sim/ht-local-recovery-20261111",
+  "tested_navigation_commit": "5d91b4b",
+  "problem_two_recovery_demonstrated": true,
+  "continuous_exploration_accepted": false,
+  "probability_std_inference_implemented": false,
+  "fixture": {
+    "rows": 647,
+    "moving_commands": 622,
+    "violations": [],
+    "minimum_swept_score": 0.6506233811378479,
+    "movement_m": 0.8679501906000582,
+    "goal_distance_reduction_m": 0.752225384204225,
+    "max_linear_accel": 2.500000000000003,
+    "max_angular_accel": 3.0000000000000306,
+    "simulated_duration_s": 12.92,
+    "passed": true,
+    "scope": "Independent Python sweep verification of the C++ controller closed-loop trace against unchanged original frozen HT map. Vehicle integrates yaw-first at CMU 200Hz. Query clock stays at the original snapshot time; this verifies static-map execution, not new observations, long-duration TTL, contacts or hardware."
+  },
+  "episodes": {
+    "cmu_recovery_300s_01": {
+      "state_counts": {
+        "START_INVALID:HT_MAP_STALE": 2,
+        "EXECUTING": 5
+      },
+      "episodes": [
+        {
+          "plan": 1,
+          "start_elapsed_s": 2.3936996459960938,
+          "start": {
+            "time": 1794369517.990687,
+            "map_stamp": 1794369517.2693782,
+            "state": "EXECUTING",
+            "active": true,
+            "plans": 1,
+            "completed": 0,
+            "invalidated": 0,
+            "search_failures": 0,
+            "search_ms": 1.053132,
+            "x": 0.424999684,
+            "y": -0.0,
+            "yaw": -0.0,
+            "goal_x": 12.0,
+            "goal_y": -0.0,
+            "segment": 1,
+            "segments": 2,
+            "progress_m": 0.0,
+            "linear": 0.0,
+            "angular": 0.0
+          },
+          "completed": false,
+          "end": null,
+          "limitation": "Candidate01 omitted an exit event; source and waypoint timestamps show the incorrect 3s goal-expiry path. Not counted as completed."
+        }
+      ],
+      "last_moving_command_elapsed_s": 300.00211099100034,
+      "scope": "progress_m is distance from the last recovery origin and can grow after handover. Episode movement uses only its EXECUTING start and its own first COMPLETED event, excluding later normal driving and invalid-start diagnostics."
+    },
+    "cmu_recovery_300s_02": {
+      "state_counts": {
+        "ODOMETRY_STALE": 1,
+        "EXECUTING": 53,
+        "COMPLETED": 1,
+        "START_INVALID:HT_OCCUPIED": 136
+      },
+      "episodes": [
+        {
+          "plan": 1,
+          "start_elapsed_s": 186.01606249809265,
+          "start": {
+            "time": 1794370290.1780405,
+            "map_stamp": 1794370289.7178335,
+            "state": "EXECUTING",
+            "active": true,
+            "plans": 1,
+            "completed": 0,
+            "invalidated": 0,
+            "search_failures": 0,
+            "goal_cancellations": 0,
+            "compatible_goal_updates": 0,
+            "goal_age_s": 0.150271177,
+            "search_ms": 14.974742,
+            "x": 22.168161392,
+            "y": 38.246807098,
+            "yaw": 1.879857898,
+            "goal_x": 19.466939209,
+            "goal_y": 40.464703296,
+            "segment": 1,
+            "segments": 5,
+            "progress_m": 0.0,
+            "linear": 0.0,
+            "angular": 0.0
+          },
+          "completed": true,
+          "end": {
+            "time": 1794370301.3578484,
+            "map_stamp": 1794370300.927784,
+            "state": "COMPLETED",
+            "active": false,
+            "plans": 1,
+            "completed": 1,
+            "invalidated": 0,
+            "search_failures": 0,
+            "goal_cancellations": 0,
+            "compatible_goal_updates": 6,
+            "goal_age_s": 0.340061426,
+            "search_ms": 14.974742,
+            "x": 21.677518845,
+            "y": 38.858417511,
+            "yaw": 2.355324984,
+            "goal_x": 14.111391497,
+            "goal_y": 41.404272112,
+            "segment": 5,
+            "segments": 5,
+            "progress_m": 0.784090177,
+            "linear": 0.0,
+            "angular": 0.0
+          },
+          "end_elapsed_s": 197.1958703994751,
+          "duration_s": 11.179807901382446,
+          "net_displacement_m": 0.7840901773499499,
+          "fixed_initial_goal_distance_reduction_m": 0.762543940028094
+        }
+      ],
+      "last_moving_command_elapsed_s": 264.2019640360004,
+      "scope": "progress_m is distance from the last recovery origin and can grow after handover. Episode movement uses only its EXECUTING start and its own first COMPLETED event, excluding later normal driving and invalid-start diagnostics."
+    }
+  },
+  "first": {
+    "result": {
+      "case": "cmu_recovery_300s_01",
+      "mode": "ht_only",
+      "scene": "indoor",
+      "requested_duration_s": 300.0,
+      "started_wall": 1794369495.9828155,
+      "project_commit": "31ce3217190f54b9564008784daeb7066a35be8b",
+      "cmu_commit": "158e67b31b644ed1e8b06eb1d7f70e183cc62591",
+      "native_tare_commit": "b6760adb4280b379567c76f4e684ce628e28ef71",
+      "scene_manifest": {
+        "scene": "official CMU indoor"
+      },
+      "summary": {
+        "elapsed_s": 300.00219780099997,
+        "distance_m": 147.2791350930893,
+        "position": [
+          71.2298583984375,
+          -24.878097534179688,
+          0.7037932872772217
+        ],
+        "sampled_free_volume_m3": 3134.625,
+        "surface_voxel_volume_m3": 1770.0,
+        "finish": false,
+        "counts": {
+          "/ht_minimal/pathFollower": 318,
+          "/ht_minimal/localPlanner": 318,
+          "odom": 61983,
+          "/ht_runtime": 1,
+          "paths": 1520,
+          "/ht_minimal/local_selection": 1520,
+          "/ht_minimal/command_audit": 15467,
+          "commands": 15455,
+          "scans": 871,
+          "local_path": 304,
+          "/ht_performance": 264,
+          "ht_maps": 1200,
+          "ray_frames": 244,
+          "waypoint": 291,
+          "/ht_minimal/recovery": 7,
+          "/ht_minimal/path_rejection": 486
+        },
+        "ht_source_age_s": {
+          "p50": 0.24693620204925537,
+          "p95": 0.33836997747421266,
+          "p99": 0.36407290697097777
+        },
+        "free_volume_definition": "union of sampled sensor rays at 0.5m voxel resolution, 1Hz/1024 endpoints/12m range; observation proxy, not ground truth"
+      },
+      "collection_complete": true,
+      "phase_ended_wall": 1794369816.657874,
+      "exit_codes": {
+        "bag": 0,
+        "model": 0,
+        "mapper": 0,
+        "simulation": 0,
+        "observer": 0
+      },
+      "ended_wall": 1794369834.3030968,
+      "freeze_unchanged": true
+    },
+    "audit": {
+      "counts": {
+        "maps": 1205,
+        "command_audits": 15005,
+        "allowed": 14935,
+        "allowed_moving": 14899,
+        "rejected_HT_MAP_STALE": 42,
+        "direction_rejection_examples": 486,
+        "direction_distinct_rejections": 486,
+        "direction_examples_map_matched": 482,
+        "rejected_HT_OCCUPIED": 28,
+        "unresolved_commands": 0
+      },
+      "minimum_allowed_swept_score": 0.5336681008338928,
+      "maximum_allowed_source_age_s": 0.9864706993103027,
+      "examples": [
+        {
+          "time": 1794369534.4339468,
+          "map_stamp": 1794369534.170511,
+          "x": 8.124138027,
+          "y": -0.851036784,
+          "yaw": 1.395550461,
+          "channel": 2,
+          "score": 0.242446736,
+          "best_direction_score": 0.999865055,
+          "consumer": "localPlanner",
+          "recorded_eight_scores": [
+            0.999847412109375,
+            0.9987980127334595,
+            0.24244673550128937,
+            0.9993826150894165,
+            0.9998279809951782,
+            0.9998308420181274,
+            0.9998650550842285,
+            0.9997977614402771
+          ],
+          "recorded_selected_score": 0.24244673550128937
+        },
+        {
+          "time": 1794369534.643221,
+          "map_stamp": 1794369534.170511,
+          "x": 8.229040777,
+          "y": -0.846227817,
+          "yaw": 1.395551012,
+          "channel": 2,
+          "score": 0.317058563,
+          "best_direction_score": 0.999870896,
+          "consumer": "localPlanner",
+          "recorded_eight_scores": [
+            0.9998173117637634,
+            0.9988921284675598,
+            0.3170585632324219,
+            0.9997162222862244,
+            0.9998418092727661,
+            0.9998708963394165,
+            0.9998667240142822,
+            0.999818742275238
+          ],
+          "recorded_selected_score": 0.3170585632324219
+        },
+        {
+          "time": 1794369534.8539195,
+          "map_stamp": 1794369534.3805523,
+          "x": 8.331445769,
+          "y": -0.841533134,
+          "yaw": 1.395551455,
+          "channel": 2,
+          "score": 0.432443738,
+          "best_direction_score": 0.999880195,
+          "consumer": "localPlanner",
+          "recorded_eight_scores": [
+            0.9998422861099243,
+            0.9987026453018188,
+            0.4324437379837036,
+            0.9998371601104736,
+            0.9997912049293518,
+            0.9998801946640015,
+            0.9998582601547241,
+            0.9998397827148438
+          ],
+          "recorded_selected_score": 0.4324437379837036
+        },
+        {
+          "time": 1794369535.062932,
+          "map_stamp": 1794369534.600505,
+          "x": 8.429686867,
+          "y": -0.886095933,
+          "yaw": 1.383078569,
+          "channel": 2,
+          "score": 0.206606016,
+          "best_direction_score": 0.999873161,
+          "consumer": "localPlanner",
+          "recorded_eight_scores": [
+            0.9997724890708923,
+            0.9690920114517212,
+            0.20660601556301117,
+            0.9997294545173645,
+            0.9998140931129456,
+            0.999873161315918,
+            0.9998676776885986,
+            0.9998359680175781
+          ],
+          "recorded_selected_score": 0.20660601556301117
+        },
+        {
+          "time": 1794369535.2740335,
+          "map_stamp": 1794369534.8005538,
+          "x": 8.534589613,
+          "y": -0.881286811,
+          "yaw": 1.383079083,
+          "channel": 2,
+          "score": 0.443481654,
+          "best_direction_score": 0.999884486,
+          "consumer": "localPlanner",
+          "recorded_eight_scores": [
+            0.9997777342796326,
+            0.9790557026863098,
+            0.4434816539287567,
+            0.9998651742935181,
+            0.9997959733009338,
+            0.9998525381088257,
+            0.9998844861984253,
+            0.999835729598999
+          ],
+          "recorded_selected_score": 0.4434816539287567
+        },
+        {
+          "time": 1794369541.5637116,
+          "map_stamp": 1794369541.1152165,
+          "x": 11.621791676,
+          "y": -0.922700105,
+          "yaw": 1.33638378,
+          "channel": 2,
+          "score": 0.296563655,
+          "best_direction_score": 0.999900103,
+          "consumer": "localPlanner",
+          "recorded_eight_scores": [
+            0.9998725652694702,
+            0.999699592590332,
+            0.29656365513801575,
+            0.121418796479702,
+            0.9995273351669312,
+            0.9996670484542847,
+            0.9999001026153564,
+            0.999774158000946
+          ],
+          "recorded_selected_score": 0.29656365513801575
+        },
+        {
+          "time": 1794369541.9724808,
+          "map_stamp": 1794369541.7101572,
+          "x": 11.846108942,
+          "y": -0.839432325,
+          "yaw": 1.355055128,
+          "channel": 2,
+          "score": 0.446218908,
+          "best_direction_score": 0.999902844,
+          "consumer": "localPlanner",
+          "recorded_eight_scores": [
+            0.9999028444290161,
+            0.9997593760490417,
+            0.44621890783309937,
+            0.9772113561630249,
+            0.9997466206550598,
+            0.9998071789741516,
+            0.9998984336853027,
+            0.9998034834861755
+          ],
+          "recorded_selected_score": 0.44621890783309937
+        },
+        {
+          "time": 1794369542.374049,
+          "map_stamp": 1794369542.1152623,
+          "x": 11.998260693,
+          "y": -0.850269512,
+          "yaw": 1.442097365,
+          "channel": 2,
+          "score": 0.28647992,
+          "best_direction_score": 0.999885917,
+          "consumer": "localPlanner",
+          "recorded_eight_scores": [
+            0.9998366832733154,
+            0.9995102882385254,
+            0.2864799201488495,
+            0.9838248491287231,
+            0.9997515082359314,
+            0.9997372031211853,
+            0.9998859167098999,
+            0.9998201727867126
+          ],
+          "recorded_selected_score": 0.2864799201488495
+        },
+        {
+          "time": 1794369542.7534585,
+          "map_stamp": 1794369542.3252158,
+          "x": 12.126377844,
+          "y": -0.839983907,
+          "yaw": 1.383852662,
+          "channel": 2,
+          "score": 0.237889975,
+          "best_direction_score": 0.999887705,
+          "consumer": "localPlanner",
+          "recorded_eight_scores": [
+            0.9998223185539246,
+            0.9990050196647644,
+            0.23788997530937195,
+            0.9859929084777832,
+            0.9997230172157288,
+            0.9997586607933044,
+            0.9998877048492432,
+            0.9998119473457336
+          ],
+          "recorded_selected_score": 0.23788997530937195
+        },
+        {
+          "time": 1794369542.9633744,
+          "map_stamp": 1794369542.7152174,
+          "x": 12.231606296,
+          "y": -0.841293025,
+          "yaw": 1.384085623,
+          "channel": 2,
+          "score": 0.206383169,
+          "best_direction_score": 0.999894738,
+          "consumer": "localPlanner",
+          "recorded_eight_scores": [
+            0.9998331069946289,
+            0.9986317753791809,
+            0.20638316869735718,
+            0.9859802722930908,
+            0.9997738003730774,
+            0.9997556805610657,
+            0.9998947381973267,
+            0.9997788071632385
+          ],
+          "recorded_selected_score": 0.20638316869735718
+        },
+        {
+          "time": 1794369543.1833892,
+          "map_stamp": 1794369542.9152029,
+          "x": 12.341573353,
+          "y": -0.842632127,
+          "yaw": 1.384071914,
+          "channel": 2,
+          "score": 0.197581872,
+          "best_direction_score": 0.99989593,
+          "consumer": "localPlanner",
+          "recorded_eight_scores": [
+            0.9997782111167908,
+            0.9982896447181702,
+            0.19758187234401703,
+            0.9857761263847351,
+            0.9996820688247681,
+            0.9997747540473938,
+            0.9998959302902222,
+            0.9997833371162415
+          ],
+          "recorded_selected_score": 0.19758187234401703
+        },
+        {
+          "time": 1794369543.401808,
+          "map_stamp": 1794369543.1203117,
+          "x": 12.446556366,
+          "y": -0.8439121,
+          "yaw": 1.384072516,
+          "channel": 2,
+          "score": 0.198967755,
+          "best_direction_score": 0.999896169,
+          "consumer": "localPlanner",
+          "recorded_eight_scores": [
+            0.9998364448547363,
+            0.998115062713623,
+            0.19896775484085083,
+            0.9868068099021912,
+            0.9997431635856628,
+            0.9997547268867493,
+            0.9998961687088013,
+            0.9997603297233582
+          ],
+          "recorded_selected_score": 0.19896775484085083
+        }
+      ],
+      "violations": [],
+      "passed": true,
+      "scope": "Exact recorded neural map at each command audit timestamp, recorded reaction plus bounded-braking body-yaw sweep (legacy records use their constant 1s sweep), 0.5 threshold, physical footprint, context and 1-second TTL. Confirms command gate; does not establish learned model ground-truth accuracy."
+    },
+    "published_match": {
+      "published_nonzero_commands": 14900,
+      "matched_to_accepted_audit": 14899,
+      "unmatched_count": 1,
+      "unmatched_examples": [
+        {
+          "received": 1794369815.6108806,
+          "odom_stamp": 1794369815.5859556,
+          "linear": 0.5000000596046448,
+          "angular": 0.34107619524002075
+        }
+      ],
+      "maximum_receive_time_delta_s": 0.008625984191894531,
+      "maximum_control_minus_odometry_stamp_s": 0.03350043296813965,
+      "outputs_with_odometry_header_lag_gt_150ms": 0,
+      "all_accepted_candidates_independently_passed": true,
+      "passed": false,
+      "scope": "Equal linear/angular values within 1e-7, nearby bag receipt within 100ms; odometry-header lag is recorded separately, not used to reject velocity associations. Every matched accepted candidate has been checked independently against its exact HT map by COMMAND_AUDIT.json. Receipt proximity does not uniquely identify a publish when identical velocities repeat."
+    }
+  },
+  "final": {
+    "result": {
+      "case": "cmu_recovery_300s_02",
+      "mode": "ht_only",
+      "scene": "indoor",
+      "requested_duration_s": 300.0,
+      "started_wall": 1794370091.1391244,
+      "project_commit": "5d91b4b1a13905db879ddd68bb13d230bb1c22c9",
+      "cmu_commit": "158e67b31b644ed1e8b06eb1d7f70e183cc62591",
+      "native_tare_commit": "b6760adb4280b379567c76f4e684ce628e28ef71",
+      "scene_manifest": {
+        "scene": "official CMU indoor"
+      },
+      "summary": {
+        "elapsed_s": 300.00279692800086,
+        "distance_m": 124.30164913184393,
+        "position": [
+          14.631115913391113,
+          48.77519989013672,
+          0.7035998702049255
+        ],
+        "sampled_free_volume_m3": 3041.875,
+        "surface_voxel_volume_m3": 1529.625,
+        "finish": false,
+        "counts": {
+          "/ht_minimal/pathFollower": 311,
+          "/ht_minimal/localPlanner": 311,
+          "/ht_runtime": 1,
+          "odom": 60491,
+          "paths": 1474,
+          "/ht_minimal/local_selection": 1474,
+          "commands": 15108,
+          "/ht_minimal/command_audit": 15266,
+          "scans": 668,
+          "/ht_performance": 261,
+          "ht_maps": 1207,
+          "local_path": 294,
+          "ray_frames": 227,
+          "waypoint": 292,
+          "/ht_minimal/recovery": 191,
+          "/ht_minimal/path_rejection": 549,
+          "/ht_minimal/command_projection": 5
+        },
+        "ht_source_age_s": {
+          "p50": 0.2492356300354004,
+          "p95": 0.3377748250961304,
+          "p99": 0.359472770690918
+        },
+        "free_volume_definition": "union of sampled sensor rays at 0.5m voxel resolution, 1Hz/1024 endpoints/12m range; observation proxy, not ground truth"
+      },
+      "collection_complete": true,
+      "phase_ended_wall": 1794370405.5496554,
+      "exit_codes": {
+        "bag": 0,
+        "model": 0,
+        "mapper": 0,
+        "simulation": 0,
+        "observer": 0
+      },
+      "ended_wall": 1794370414.976528,
+      "freeze_unchanged": true
+    },
+    "audit": {
+      "counts": {
+        "maps": 1213,
+        "command_audits": 15141,
+        "allowed": 13148,
+        "allowed_moving": 13107,
+        "direction_rejection_examples": 549,
+        "direction_distinct_rejections": 547,
+        "direction_examples_map_matched": 543,
+        "rejected_HT_OCCUPIED": 1992,
+        "rejected_HT_DIRECTION_LOW": 1,
+        "unresolved_commands": 0
+      },
+      "minimum_allowed_swept_score": 0.863856852054596,
+      "maximum_allowed_source_age_s": 0.7464509010314941,
+      "examples": [
+        {
+          "time": 1794370119.9494495,
+          "map_stamp": 1794370119.456907,
+          "x": 7.229152076,
+          "y": -0.845729389,
+          "yaw": 1.400772114,
+          "channel": 2,
+          "score": 0.200194076,
+          "best_direction_score": 0.999898672,
+          "consumer": "localPlanner",
+          "recorded_eight_scores": [
+            0.9998416900634766,
+            0.9981398582458496,
+            0.2001940757036209,
+            0.9871147871017456,
+            0.9997419714927673,
+            0.9997770190238953,
+            0.9998986721038818,
+            0.9997547268867493
+          ],
+          "recorded_selected_score": 0.2001940757036209
+        },
+        {
+          "time": 1794370120.3673294,
+          "map_stamp": 1794370119.9019876,
+          "x": 7.439166135,
+          "y": -0.846620318,
+          "yaw": 1.397755914,
+          "channel": 2,
+          "score": 0.191741243,
+          "best_direction_score": 0.999886751,
+          "consumer": "localPlanner",
+          "recorded_eight_scores": [
+            0.9997989535331726,
+            0.9983174800872803,
+            0.1917412430047989,
+            0.9872561693191528,
+            0.9997226595878601,
+            0.9997594952583313,
+            0.9998867511749268,
+            0.9997884631156921
+          ],
+          "recorded_selected_score": 0.1917412430047989
+        },
+        {
+          "time": 1794370120.748116,
+          "map_stamp": 1794370120.5081728,
+          "x": 7.619184932,
+          "y": -0.849129685,
+          "yaw": 1.394522791,
+          "channel": 2,
+          "score": 0.200627476,
+          "best_direction_score": 0.999894142,
+          "consumer": "localPlanner",
+          "recorded_eight_scores": [
+            0.9998581409454346,
+            0.9981853365898132,
+            0.20062747597694397,
+            0.9865849018096924,
+            0.9997803568840027,
+            0.999758780002594,
+            0.9998941421508789,
+            0.9997782111167908
+          ],
+          "recorded_selected_score": 0.20062747597694397
+        },
+        {
+          "time": 1794370120.959906,
+          "map_stamp": 1794370120.5081728,
+          "x": 7.724026837,
+          "y": -0.843446386,
+          "yaw": 1.394522485,
+          "channel": 2,
+          "score": 0.196954176,
+          "best_direction_score": 0.999899149,
+          "consumer": "localPlanner",
+          "recorded_eight_scores": [
+            0.9997944235801697,
+            0.9982783794403076,
+            0.1969541758298874,
+            0.989485502243042,
+            0.9996678829193115,
+            0.9997580647468567,
+            0.99989914894104,
+            0.9997591376304626
+          ],
+          "recorded_selected_score": 0.1969541758298874
+        },
+        {
+          "time": 1794370121.3683233,
+          "map_stamp": 1794370120.9181695,
+          "x": 7.813143305,
+          "y": -0.842751637,
+          "yaw": 1.269339935,
+          "channel": 2,
+          "score": 0.210697457,
+          "best_direction_score": 0.999893188,
+          "consumer": "localPlanner",
+          "recorded_eight_scores": [
+            0.99982750415802,
+            0.9982823133468628,
+            0.2106974571943283,
+            0.9929205775260925,
+            0.9997209906578064,
+            0.9997788071632385,
+            0.9998931884765625,
+            0.9997679591178894
+          ],
+          "recorded_selected_score": 0.2106974571943283
+        },
+        {
+          "time": 1794370121.7587707,
+          "map_stamp": 1794370121.51317,
+          "x": 8.00819852,
+          "y": -0.844153567,
+          "yaw": 1.268945963,
+          "channel": 2,
+          "score": 0.229538113,
+          "best_direction_score": 0.999881029,
+          "consumer": "localPlanner",
+          "recorded_eight_scores": [
+            0.9998335838317871,
+            0.9986581802368164,
+            0.22953811287879944,
+            0.9987916350364685,
+            0.9997684359550476,
+            0.9998264908790588,
+            0.9998810291290283,
+            0.9997785687446594
+          ],
+          "recorded_selected_score": 0.22953811287879944
+        },
+        {
+          "time": 1794370121.9779956,
+          "map_stamp": 1794370121.7181733,
+          "x": 8.124154427,
+          "y": -0.840168269,
+          "yaw": 1.272169338,
+          "channel": 2,
+          "score": 0.25276345,
+          "best_direction_score": 0.999881268,
+          "consumer": "localPlanner",
+          "recorded_eight_scores": [
+            0.9998010993003845,
+            0.9988552331924438,
+            0.25276345014572144,
+            0.9993587136268616,
+            0.9998325109481812,
+            0.9998475313186646,
+            0.9998812675476074,
+            0.9998014569282532
+          ],
+          "recorded_selected_score": 0.25276345014572144
+        },
+        {
+          "time": 1794370122.37708,
+          "map_stamp": 1794370121.92386,
+          "x": 8.327363768,
+          "y": -0.842418752,
+          "yaw": 1.275184275,
+          "channel": 2,
+          "score": 0.379650533,
+          "best_direction_score": 0.999892712,
+          "consumer": "localPlanner",
+          "recorded_eight_scores": [
+            0.9998346567153931,
+            0.9988811612129211,
+            0.3796505331993103,
+            0.999762237071991,
+            0.9998169541358948,
+            0.9998875856399536,
+            0.9998927116394043,
+            0.9998323917388916
+          ],
+          "recorded_selected_score": 0.3796505331993103
+        },
+        {
+          "time": 1794370122.74804,
+          "map_stamp": 1794370122.5182257,
+          "x": 8.493014763,
+          "y": -0.915646137,
+          "yaw": 1.259582558,
+          "channel": 2,
+          "score": 0.317160577,
+          "best_direction_score": 0.999901295,
+          "consumer": "localPlanner",
+          "recorded_eight_scores": [
+            0.9998080134391785,
+            0.9728301167488098,
+            0.31716057658195496,
+            0.9998300075531006,
+            0.9998050332069397,
+            0.9998453855514526,
+            0.999901294708252,
+            0.9998358488082886
+          ],
+          "recorded_selected_score": 0.31716057658195496
+        },
+        {
+          "time": 1794370122.9809113,
+          "map_stamp": 1794370122.7181902,
+          "x": 8.573819619,
+          "y": -1.031445638,
+          "yaw": 1.231542782,
+          "channel": 2,
+          "score": 0.222226799,
+          "best_direction_score": 0.999875069,
+          "consumer": "localPlanner",
+          "recorded_eight_scores": [
+            0.9995670914649963,
+            0.05336320772767067,
+            0.2222267985343933,
+            0.9997193217277527,
+            0.9997571110725403,
+            0.9997990727424622,
+            0.9998750686645508,
+            0.999828577041626
+          ],
+          "recorded_selected_score": 0.2222267985343933
+        },
+        {
+          "time": 1794370130.1201537,
+          "map_stamp": 1794370129.658204,
+          "x": 12.096609422,
+          "y": -0.844051781,
+          "yaw": 1.219425249,
+          "channel": 2,
+          "score": 0.238826841,
+          "best_direction_score": 0.999883294,
+          "consumer": "localPlanner",
+          "recorded_eight_scores": [
+            0.999830961227417,
+            0.9991233944892883,
+            0.23882684111595154,
+            0.9856614470481873,
+            0.9997307658195496,
+            0.9997724890708923,
+            0.9998832941055298,
+            0.9997926354408264
+          ],
+          "recorded_selected_score": 0.23882684111595154
+        },
+        {
+          "time": 1794370130.5389688,
+          "map_stamp": 1794370130.2581875,
+          "x": 12.298804075,
+          "y": -0.842526326,
+          "yaw": 1.213254366,
+          "channel": 2,
+          "score": 0.210166335,
+          "best_direction_score": 0.999893785,
+          "consumer": "localPlanner",
+          "recorded_eight_scores": [
+            0.999836802482605,
+            0.9984312653541565,
+            0.210166335105896,
+            0.9870184063911438,
+            0.9997760653495789,
+            0.9997696280479431,
+            0.9998937845230103,
+            0.9997716546058655
+          ],
+          "recorded_selected_score": 0.210166335105896
+        }
+      ],
+      "violations": [],
+      "passed": true,
+      "scope": "Exact recorded neural map at each command audit timestamp, recorded reaction plus bounded-braking body-yaw sweep (legacy records use their constant 1s sweep), 0.5 threshold, physical footprint, context and 1-second TTL. Confirms command gate; does not establish learned model ground-truth accuracy."
+    },
+    "published_match": {
+      "published_nonzero_commands": 13105,
+      "matched_to_accepted_audit": 13105,
+      "unmatched_count": 0,
+      "unmatched_examples": [],
+      "maximum_receive_time_delta_s": 0.020444154739379883,
+      "maximum_control_minus_odometry_stamp_s": 0.03394770622253418,
+      "outputs_with_odometry_header_lag_gt_150ms": 0,
+      "all_accepted_candidates_independently_passed": true,
+      "passed": true,
+      "scope": "Equal linear/angular values within 1e-7, nearby bag receipt within 100ms; odometry-header lag is recorded separately, not used to reject velocity associations. Every matched accepted candidate has been checked independently against its exact HT map by COMMAND_AUDIT.json. Receipt proximity does not uniquely identify a publish when identical velocities repeat."
+    }
+  },
+  "final_stop": {
+    "audit": {
+      "time": 1794370404.1580126,
+      "map_stamp": 1794370403.691309,
+      "x": 14.631115913,
+      "y": 48.77519989,
+      "yaw": 1.13879621,
+      "linear_candidate": 0.0,
+      "angular_candidate": 0.0,
+      "reaction_time": 0.1,
+      "linear_brake_accel": 2.5,
+      "angular_brake_accel": 3.0,
+      "horizon_s": 0.1,
+      "allowed": false,
+      "reason": "HT_OCCUPIED"
+    },
+    "selected_channel": 1,
+    "eight_scores": [
+      0.9995417594909668,
+      0.9975690245628357,
+      0.48931580781936646,
+      0.009583456441760063,
+      0.008158756420016289,
+      0.6393500566482544,
+      0.9960657954216003,
+      0.9972904920578003
+    ],
+    "inflated_occupied": true,
+    "missing": false,
+    "context": 1.0,
+    "raw_occupied_cells_influencing_pose": 1,
+    "source_map_exact_stamp_matched": true,
+    "source_cells": [
+      {
+        "xy": [
+          15.064327485380117,
+          48.63157894736842
+        ],
+        "height": 0.8414381742477417,
+        "variance_m2": 1.168270468711853,
+        "observation_age_s": 35.59996795654297,
+        "source_quality_rejected": true
+      }
+    ],
+    "source_cells_variance_gt_025": 1,
+    "source_cells_quality_rejected": 1,
+    "scope": "Exact final rejected command map and matching raw elevation source, NumPy reference quality filter. Explains map rejection evidence, not physical obstacle truth."
+  },
+  "preview_check": {
+    "query_xy": [
+      15.064327485380117,
+      48.63157894736842
+    ],
+    "preview_points_within_015m": 36,
+    "z_range": [
+      -0.04259499907493591,
+      1.0519189834594727
+    ],
+    "nearest_xy_distance_m": 0.0386106321302622,
+    "nearest_preview_points": [
+      [
+        15.03934097290039,
+        48.661014556884766,
+        1.0498980283737183
+      ],
+      [
+        15.046869277954102,
+        48.67264175415039,
+        0.48585501313209534
+      ],
+      [
+        15.019983291625977,
+        48.61573791503906,
+        0.8432170152664185
+      ],
+      [
+        15.019304275512695,
+        48.615901947021484,
+        0.15208800137043
+      ],
+      [
+        15.112017631530762,
+        48.63386535644531,
+        0.3988820016384125
+      ],
+      [
+        15.048355102539062,
+        48.678627014160156,
+        0.9311109781265259
+      ],
+      [
+        15.072883605957031,
+        48.58240509033203,
+        0.6540030241012573
+      ],
+      [
+        15.049235343933105,
+        48.682044982910156,
+        0.6340559720993042
+      ],
+      [
+        15.04932975769043,
+        48.68234634399414,
+        0.33606499433517456
+      ],
+      [
+        15.016550064086914,
+        48.60854721069336,
+        0.5738930106163025
+      ]
+    ],
+    "scope": "Read-only archived official scene preview point cloud, no vehicle contact dynamics and no guarantee that this is the exact sensor-hit surface."
+  },
+  "budget": {
+    "maximum_formal_launch_attempts": 2,
+    "duration_s": 300,
+    "planned_successful_runs": 1,
+    "retry_only_infrastructure_failure": false,
+    "attempts": [
+      {
+        "name": "cmu_recovery_300s_01",
+        "scene": "indoor",
+        "wall_time": 1794369491.6789148,
+        "collection_complete": true,
+        "freeze_unchanged": true,
+        "error": null
+      },
+      {
+        "name": "cmu_recovery_300s_02",
+        "scene": "indoor",
+        "wall_time": 1794370086.866561,
+        "collection_complete": true,
+        "freeze_unchanged": true,
+        "error": null
+      }
+    ],
+    "second_attempt_reason": "Necessary navigation retest: remove incorrect waypoint expiry, preserve compatible target updates and report recovery exits; total limit remains two.",
+    "status": "closed"
+  }
+}

@@ -1,0 +1,109 @@
+{
+  "cmu_recovery_300s_01": {
+    "state_counts": {
+      "START_INVALID:HT_MAP_STALE": 2,
+      "EXECUTING": 5
+    },
+    "episodes": [
+      {
+        "plan": 1,
+        "start_elapsed_s": 2.3936996459960938,
+        "start": {
+          "time": 1794369517.990687,
+          "map_stamp": 1794369517.2693782,
+          "state": "EXECUTING",
+          "active": true,
+          "plans": 1,
+          "completed": 0,
+          "invalidated": 0,
+          "search_failures": 0,
+          "search_ms": 1.053132,
+          "x": 0.424999684,
+          "y": -0.0,
+          "yaw": -0.0,
+          "goal_x": 12.0,
+          "goal_y": -0.0,
+          "segment": 1,
+          "segments": 2,
+          "progress_m": 0.0,
+          "linear": 0.0,
+          "angular": 0.0
+        },
+        "completed": false,
+        "end": null,
+        "limitation": "Candidate01 omitted an exit event; source and waypoint timestamps show the incorrect 3s goal-expiry path. Not counted as completed."
+      }
+    ],
+    "last_moving_command_elapsed_s": 300.00211099100034,
+    "scope": "progress_m is distance from the last recovery origin and can grow after handover. Episode movement uses only its EXECUTING start and its own first COMPLETED event, excluding later normal driving and invalid-start diagnostics."
+  },
+  "cmu_recovery_300s_02": {
+    "state_counts": {
+      "ODOMETRY_STALE": 1,
+      "EXECUTING": 53,
+      "COMPLETED": 1,
+      "START_INVALID:HT_OCCUPIED": 136
+    },
+    "episodes": [
+      {
+        "plan": 1,
+        "start_elapsed_s": 186.01606249809265,
+        "start": {
+          "time": 1794370290.1780405,
+          "map_stamp": 1794370289.7178335,
+          "state": "EXECUTING",
+          "active": true,
+          "plans": 1,
+          "completed": 0,
+          "invalidated": 0,
+          "search_failures": 0,
+          "goal_cancellations": 0,
+          "compatible_goal_updates": 0,
+          "goal_age_s": 0.150271177,
+          "search_ms": 14.974742,
+          "x": 22.168161392,
+          "y": 38.246807098,
+          "yaw": 1.879857898,
+          "goal_x": 19.466939209,
+          "goal_y": 40.464703296,
+          "segment": 1,
+          "segments": 5,
+          "progress_m": 0.0,
+          "linear": 0.0,
+          "angular": 0.0
+        },
+        "completed": true,
+        "end": {
+          "time": 1794370301.3578484,
+          "map_stamp": 1794370300.927784,
+          "state": "COMPLETED",
+          "active": false,
+          "plans": 1,
+          "completed": 1,
+          "invalidated": 0,
+          "search_failures": 0,
+          "goal_cancellations": 0,
+          "compatible_goal_updates": 6,
+          "goal_age_s": 0.340061426,
+          "search_ms": 14.974742,
+          "x": 21.677518845,
+          "y": 38.858417511,
+          "yaw": 2.355324984,
+          "goal_x": 14.111391497,
+          "goal_y": 41.404272112,
+          "segment": 5,
+          "segments": 5,
+          "progress_m": 0.784090177,
+          "linear": 0.0,
+          "angular": 0.0
+        },
+        "end_elapsed_s": 197.1958703994751,
+        "duration_s": 11.179807901382446,
+        "net_displacement_m": 0.7840901773499499,
+        "fixed_initial_goal_distance_reduction_m": 0.762543940028094
+      }
+    ],
+    "last_moving_command_elapsed_s": 264.2019640360004,
+    "scope": "progress_m is distance from the last recovery origin and can grow after handover. Episode movement uses only its EXECUTING start and its own first COMPLETED event, excluding later normal driving and invalid-start diagnostics."
+  }
+}
