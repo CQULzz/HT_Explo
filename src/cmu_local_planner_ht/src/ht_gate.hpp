@@ -226,7 +226,7 @@ class Gate {
     }
     linear=0;angular=0;return false;
   }
-  bool command(Pose start,double linear,double angular) {
+  bool command(Pose start,double linear,double angular,bool emit_audit=true) {
     bool ok=pose(start);Pose previous=start;
     // CMU applies Twist velocities directly. On rejection this adapter sends
     // zero immediately; this reaction+deceleration envelope is conservative
@@ -246,8 +246,8 @@ class Gate {
       ok=segment(previous,next);previous=next;
       t+=dt;
     }
-    count(ok);
-    if(command_audit_) {
+    if(emit_audit)count(ok);
+    if(emit_audit && command_audit_) {
       std::ostringstream out;out<<std::fixed<<std::setprecision(9)
         <<"{\"time\":"<<node_->now().seconds()<<",\"map_stamp\":"<<stamp_
         <<",\"x\":"<<start.x<<",\"y\":"<<start.y<<",\"yaw\":"<<start.yaw

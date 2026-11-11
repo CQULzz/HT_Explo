@@ -1,4 +1,5 @@
 #include "ht_gate.hpp"
+#include "ht_recovery.hpp"
 #include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -191,6 +192,7 @@ int main(int argc, char** argv)
   rclcpp::init(argc, argv);
   nh = rclcpp::Node::make_shared("pathFollower");
   htGate=std::make_unique<cmu_ht::Gate>(nh);
+  cmu_ht::Recovery recovery(nh,*htGate);
 
   nh->declare_parameter<double>("sensorOffsetX", sensorOffsetX);
   nh->declare_parameter<double>("sensorOffsetY", sensorOffsetY);
@@ -373,10 +375,16 @@ int main(int argc, char** argv)
         if (fabs(vehicleSpeed) <= maxAccel / 100.0) cmd_vel.twist.linear.x = 0;
         else cmd_vel.twist.linear.x = vehicleSpeed;
         cmd_vel.twist.angular.z = vehicleYawRate;
-        if(!htGate->chooseCommand({vehicleX,vehicleY,vehicleYaw},cmd_vel.twist.linear.x,cmd_vel.twist.angular.z)) {
-          vehicleSpeed=0;vehicleYawRate=0;cmd_vel.twist=geometry_msgs::msg::Twist();
-        }
-        else vehicleYawRate=cmd_vel.twist.angular.z;
+        const cmu_ht::Pose current{vehicleX,vehicleY,vehicleYaw};
+        bool allowed=false;
+        if(!recovery.active())allowed=htGate->chooseCommand(current,cmd_vel.twist.linear.x,cmd_vel.twist.angular.z);
+        else cmd_vel.twist=geometry_msgs::msg::Twist();
+        if(!allowed)cmd_vel.twist=geometry_msgs::msg::Twist();
+        const bool permitted=autonomyMode && joySpeed>0 && safetyStop==0 && !(stopInitTime>0 && odomTime<stopInitTime+stopTime);
+        recovery.select(current,nh->now().seconds(),odomTime,permitted,maxSpeed*joySpeed,
+                        allowed,cmd_vel.twist.linear.x,cmd_vel.twist.angular.z,
+                        cmd_vel.twist.linear.x,cmd_vel.twist.angular.z);
+        vehicleSpeed=cmd_vel.twist.linear.x;vehicleYawRate=cmd_vel.twist.angular.z;
         pubSpeed->publish(cmd_vel);
 
         pubSkipCount = pubSkipNum;
