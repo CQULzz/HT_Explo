@@ -50,7 +50,7 @@ from diagnostic_history import DiagnosticHistory
 from runtime_manifest import collect_runtime_manifest
 
 
-def decode_elevation_source(source):
+def decode_elevation_source(source, *, variance_layer='variance'):
     """Validate the model's metric input contract before mutating history."""
     info = source.info
     resolution = float(info.resolution)
@@ -69,7 +69,9 @@ def decode_elevation_source(source):
             or not 0 <= source.outer_start_index < 291 or not 0 <= source.inner_start_index < 291):
         raise ValueError('Invalid elevation layers/circular buffer indices')
     decoded = []
-    for name in ('elevation', 'variance', 'observation_age'):
+    if variance_layer not in ('variance', 'observation_variance'):
+        raise ValueError('Unsupported elevation quality layer')
+    for name in ('elevation', variance_layer, 'observation_age'):
         if name not in source.layers:
             raise ValueError(f'Missing required elevation layer: {name}')
         data = source.data[source.layers.index(name)]
@@ -88,6 +90,7 @@ class CupyToHt(Node):
     def __init__(self):
         super().__init__("cupy_to_ht_bridge")
         self.closing=False
+        self.require_observation_variance=self.declare_parameter('ht_require_observation_variance',False).value
         threads=self.declare_parameter('ht_torch_threads',4).value
         requested_device=self.declare_parameter('ht_device','cpu').value
         self.channels_last=self.declare_parameter('ht_channels_last',requested_device!='cuda').value
@@ -295,7 +298,8 @@ class CupyToHt(Node):
         if self.last_source_stamp is not None and stamp_key <= self.last_source_stamp:
             return
         try:
-            resolution, elevation, variance, age = decode_elevation_source(source)
+            resolution, elevation, variance, age = decode_elevation_source(
+                source, variance_layer='observation_variance' if self.require_observation_variance else 'variance')
         except (ValueError, TypeError, OverflowError) as error:
             self.get_logger().error(f'Invalid elevation input: {error}')
             return
