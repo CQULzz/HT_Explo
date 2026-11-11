@@ -3,6 +3,8 @@
 // collision scores, motion primitives and controller remain upstream code.
 #include <rclcpp/rclcpp.hpp>
 #include <grid_map_msgs/msg/grid_map.hpp>
+#include <geometry_msgs/msg/polygon_stamped.hpp>
+#include <sensor_msgs/msg/point_cloud2.hpp>
 #include <std_msgs/msg/string.hpp>
 #include <opencv2/imgproc.hpp>
 #include <array>
@@ -23,6 +25,12 @@ class Gate {
  public:
   explicit Gate(rclcpp::Node::SharedPtr node):node_(node) {
     enabled=node_->declare_parameter("ht_enabled",false);
+    mode=node_->declare_parameter<std::string>("traversability_mode","geometry_and_ht");
+    if(mode!="geometry_only" && mode!="geometry_and_ht" && mode!="ht_only")
+      throw std::invalid_argument("Invalid traversability_mode");
+    if(mode=="geometry_only")enabled=false;
+    if(mode=="ht_only" && !enabled)throw std::invalid_argument("ht_only requires ht_enabled");
+    require_boundary_=node_->declare_parameter("require_navigation_boundary",false);
     threshold_=node_->declare_parameter("ht_min_probability",.5);
     timeout_=node_->declare_parameter("ht_map_timeout",1.);
     radius_=node_->declare_parameter("ht_validity_radius",.6);
@@ -35,6 +43,10 @@ class Gate {
        !std::isfinite(brake_linear_) || brake_linear_<=0 ||
        !std::isfinite(brake_angular_) || brake_angular_<=0)
       throw std::invalid_argument("Invalid HT gate parameters");
+    boundary_sub_=node_->create_subscription<geometry_msgs::msg::PolygonStamped>("/navigation_boundary",5,
+      [this](geometry_msgs::msg::PolygonStamped::ConstSharedPtr m){receiveBoundary(*m);});
+    if(mode=="ht_only")external_sub_=node_->create_subscription<sensor_msgs::msg::PointCloud2>("/added_obstacles",5,
+      [this](sensor_msgs::msg::PointCloud2::ConstSharedPtr m){external_obstacles_=size_t(m->width)*m->height;});
     if(enabled) {
       sub_=node_->create_subscription<grid_map_msgs::msg::GridMap>(topic_,rclcpp::QoS(1).reliable(),
         [this](grid_map_msgs::msg::GridMap::ConstSharedPtr msg){receive(*msg);});
@@ -48,6 +60,36 @@ class Gate {
     }
   }
   bool enabled=false;
+  std::string mode;
+  bool usesGeometry() const {return mode!="ht_only";}
+  void receiveBoundary(const geometry_msgs::msg::PolygonStamped& msg) {
+    boundary_received_=true;boundary_.clear();boundary_valid_=msg.header.frame_id=="map" && msg.polygon.points.size()>=3;
+    for(const auto& p:msg.polygon.points) {
+      if(!std::isfinite(p.x)||!std::isfinite(p.y))boundary_valid_=false;
+      boundary_.push_back({p.x,p.y,0});
+    }
+    double area=0;
+    for(size_t i=0;i<boundary_.size();++i){const auto& a=boundary_[i];const auto& b=boundary_[(i+1)%boundary_.size()];area+=a.x*b.y-b.x*a.y;}
+    if(std::abs(area)<1e-8)boundary_valid_=false;
+  }
+  bool withinBoundary(Pose p) {
+    if(!boundary_received_) {
+      if(require_boundary_){last_reason="NAVIGATION_BOUNDARY_MISSING";return false;}
+      return true;
+    }
+    if(!boundary_valid_){last_reason="NAVIGATION_BOUNDARY_INVALID";return false;}
+    bool inside=false;
+    const double margin=radius_+std::sqrt(2.)*res_;
+    for(size_t i=0,j=boundary_.size()-1;i<boundary_.size();j=i++) {
+      const auto& a=boundary_[j];const auto& b=boundary_[i];
+      if((a.y>p.y)!=(b.y>p.y) && p.x<(b.x-a.x)*(p.y-a.y)/(b.y-a.y)+a.x)inside=!inside;
+      const double dx=b.x-a.x,dy=b.y-a.y,l2=dx*dx+dy*dy;
+      const double t=l2>0?std::max(0.,std::min(1.,((p.x-a.x)*dx+(p.y-a.y)*dy)/l2)):0;
+      if(std::hypot(p.x-a.x-t*dx,p.y-a.y-t*dy)<margin){last_reason="NAVIGATION_BOUNDARY_FOOTPRINT";return false;}
+    }
+    if(!inside)last_reason="NAVIGATION_BOUNDARY_OUTSIDE";
+    return inside;
+  }
   std::string last_reason="HT_MAP_MISSING";
   uint64_t allowed=0,rejected=0;
   double mapStamp() const {return stamp_;}
@@ -108,6 +150,9 @@ class Gate {
     }
   }
   bool pose(Pose p) {
+    if(!std::isfinite(p.x)||!std::isfinite(p.y)||!std::isfinite(p.yaw)){last_reason="INVALID_POSE";return false;}
+    if(!withinBoundary(p))return false;
+    if(external_obstacles_){last_reason="EXTERNAL_NO_GO_UNSUPPORTED";return false;}
     if(!enabled)return true;
     const double age=node_->now().seconds()-stamp_;
     if(!have_map_){last_reason="HT_MAP_MISSING_OR_INVALID";return false;}
@@ -148,7 +193,6 @@ class Gate {
     return true;
   }
   bool path(const std::vector<Pose>& poses) {
-    if(!enabled)return true;
     bool ok=!poses.empty();
     if(ok)ok=pose(poses.front());
     for(size_t i=1;ok&&i<poses.size();++i)ok=segment(poses[i-1],poses[i]);
@@ -183,7 +227,6 @@ class Gate {
     linear=0;angular=0;return false;
   }
   bool command(Pose start,double linear,double angular) {
-    if(!enabled)return true;
     bool ok=pose(start);Pose previous=start;
     // CMU applies Twist velocities directly. On rejection this adapter sends
     // zero immediately; this reaction+deceleration envelope is conservative
@@ -242,5 +285,10 @@ class Gate {
   std::map<std::string,uint64_t> reasons_;
   std::array<std::vector<float>,8> probabilities_;
   std::vector<float> valid_;cv::Mat occupied_,missing_;
+  bool require_boundary_=false,boundary_received_=false,boundary_valid_=false;
+  size_t external_obstacles_=0;
+  std::vector<Pose> boundary_;
+  rclcpp::Subscription<geometry_msgs::msg::PolygonStamped>::SharedPtr boundary_sub_;
+  rclcpp::Subscription<sensor_msgs::msg::PointCloud2>::SharedPtr external_sub_;
 };
 } // namespace cmu_ht

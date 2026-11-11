@@ -45,4 +45,19 @@ int main(int argc,char** argv){rclcpp::init(argc,argv);
  require(cmuGate.pose({0,0,0}),"CMU geometry accepts obstacle outside native .45m envelope plus grid margin");
  m.data[10].data[30+40*81]=1;cmuGate.receive(m);
  require(!cmuGate.pose({0,0,0}),"CMU geometry still blocks obstacle inside native body envelope");
+ auto only=std::make_shared<rclcpp::Node>("ht_only_boundary_test",rclcpp::NodeOptions().parameter_overrides({rclcpp::Parameter("ht_enabled",true),rclcpp::Parameter("traversability_mode","ht_only"),rclcpp::Parameter("require_navigation_boundary",true),rclcpp::Parameter("ht_validity_radius",.45)}));
+ cmu_ht::Gate onlyGate(only);m=map(only);onlyGate.receive(m);
+ require(!onlyGate.usesGeometry(),"HT-only mode disables CMU geometry");
+ require(!onlyGate.command({0,0,0},.2,0)&&onlyGate.last_reason=="NAVIGATION_BOUNDARY_MISSING","required task boundary missing rejects");
+ geometry_msgs::msg::PolygonStamped polygon;polygon.header.frame_id="map";
+ for(auto xy:std::vector<std::pair<float,float>>{{-1,-1},{1,-1},{1,1},{-1,1}}){geometry_msgs::msg::Point32 p;p.x=xy.first;p.y=xy.second;polygon.polygon.points.push_back(p);}
+ onlyGate.receiveBoundary(polygon);
+ require(onlyGate.command({0,0,0},.2,0),"HT-only command accepted inside task region");
+ require(!onlyGate.pose({.6,0,0})&&onlyGate.last_reason=="NAVIGATION_BOUNDARY_FOOTPRINT","task boundary checks whole footprint");
+ require(!onlyGate.pose({2,0,0}),"outside task region rejected without geometry voting");
+ polygon.header.frame_id="sensor";onlyGate.receiveBoundary(polygon);
+ require(!onlyGate.pose({0,0,0})&&onlyGate.last_reason=="NAVIGATION_BOUNDARY_INVALID","wrong-frame task boundary rejected");
+ bool badmode=false;
+ try{auto bad=std::make_shared<rclcpp::Node>("bad_mode",rclcpp::NodeOptions().parameter_overrides({rclcpp::Parameter("traversability_mode","ht_only")}));cmu_ht::Gate badGate(bad);}catch(const std::invalid_argument&){badmode=true;}
+ require(badmode,"HT-only cannot silently run with HT disabled");
  rclcpp::shutdown();return 0;}

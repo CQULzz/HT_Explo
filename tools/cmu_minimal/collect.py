@@ -35,7 +35,7 @@ class Collect(Node):
   self.create_subscription(GridMap,'/ht_traversability/global_local',self.ht,1)
   self.create_subscription(PointStamped,'/way_point',lambda m:self.event('waypoint',{'x':m.point.x,'y':m.point.y,'z':m.point.z}),10)
   self.create_subscription(RosPath,'/path',lambda m:self.path(m),10)
-  for topic in ['/ht_minimal/localPlanner','/ht_minimal/pathFollower','/ht_minimal/command_audit','/ht_minimal/path_rejection','/ht_minimal/command_projection','/ht_performance','/ht_runtime']:
+  for topic in ['/ht_minimal/local_selection','/ht_minimal/localPlanner','/ht_minimal/pathFollower','/ht_minimal/command_audit','/ht_minimal/path_rejection','/ht_minimal/command_projection','/ht_performance','/ht_runtime']:
    self.create_subscription(String,topic,lambda m,t=topic:self.event(t,json.loads(m.data)),100)
  def event(self,name,data):
   self.count[name]+=1;self.events.write(json.dumps({'time':self.get_clock().now().nanoseconds/1e9,'kind':name,'data':data},allow_nan=False)+'\n')

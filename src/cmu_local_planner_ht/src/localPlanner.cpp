@@ -500,7 +500,6 @@ void readCorrespondences()
 }
 
 bool htGroupAllowed(int group, float scale, float range, float goalDistance) {
-  if(!htGate->enabled)return true;
   const int rotation=group/groupNum;group%=groupNum;
   const double angle=(10.*rotation-180.)*cmu_ht::pi/180.;
   std::vector<cmu_ht::Pose> poses{{vehicleX,vehicleY,vehicleYaw}};
@@ -625,6 +624,7 @@ int main(int argc, char** argv)
 
   auto subCheckObstacle = nh->create_subscription<std_msgs::msg::Bool>("/check_obstacle", 5, checkObstacleHandler);
 
+  auto pubSelection=nh->create_publisher<std_msgs::msg::String>("/ht_minimal/local_selection",20);
   auto pubPath = nh->create_publisher<nav_msgs::msg::Path>("/path", 5);
   nav_msgs::msg::Path path;
 
@@ -767,6 +767,8 @@ int main(int argc, char** argv)
       }
 
       bool pathFound = false;
+      int checkedGroups=0,allowedGroups=0,selectedDiagnostic=-1;
+      std::map<std::string,int> rejectionReasons;
       float defPathScale = pathScale;
       if (pathScaleBySpeed) pathScale = defPathScale * joySpeed;
       if (pathScale < minPathScale) pathScale = minPathScale;
@@ -784,7 +786,7 @@ int main(int argc, char** argv)
         float minObsAngCCW = 180.0;
         float diameter = sqrt(vehicleLength / 2.0 * vehicleLength / 2.0 + vehicleWidth / 2.0 * vehicleWidth / 2.0);
         float angOffset = atan2(vehicleWidth, vehicleLength) * 180.0 / PI;
-        int plannerCloudCropSize = plannerCloudCrop->points.size();
+        int plannerCloudCropSize = htGate->usesGeometry()?plannerCloudCrop->points.size():0;
         for (int i = 0; i < plannerCloudCropSize; i++) {
           float x = plannerCloudCrop->points[i].x / pathScale;
           float y = plannerCloudCrop->points[i].y / pathScale;
@@ -884,8 +886,10 @@ int main(int argc, char** argv)
           float rotDeg = 10.0 * rotDir;
           if (rotDeg > 180.0) rotDeg -= 360.0;
           if (maxScore < clearPathPerGroupScore[i] && ((rotAng * 180.0 / PI > minObsAngCW && rotAng * 180.0 / PI < minObsAngCCW) || 
-              (rotDeg > minObsAngCW && rotDeg < minObsAngCCW && twoWayDrive) || !checkRotObstacle)) {
-            if(!htGroupAllowed(i,pathScale,pathRange,relativeGoalDis))continue;
+              (rotDeg > minObsAngCW && rotDeg < minObsAngCCW && twoWayDrive) || !checkRotObstacle || !htGate->usesGeometry())) {
+            ++checkedGroups;
+            if(!htGroupAllowed(i,pathScale,pathRange,relativeGoalDis)){++rejectionReasons[htGate->last_reason];continue;}
+            ++allowedGroups;selectedDiagnostic=i;
             maxScore = clearPathPerGroupScore[i];
             selectedGroupID = i;
           }
@@ -920,6 +924,9 @@ int main(int argc, char** argv)
 
           #if PLOTPATHSET == 1
           freePaths->clear();
+          if(!htGate->usesGeometry()) {
+            for(const auto& pose:path.poses){point.x=pose.pose.position.x;point.y=pose.pose.position.y;point.z=pose.pose.position.z;point.intensity=1;freePaths->push_back(point);}
+          } else {
           for (int i = 0; i < 36 * pathNum; i++) {
             int rotDir = int(i / pathNum);
             float rotAng = (10.0 * rotDir - 180.0) * PI / 180;
@@ -932,7 +939,7 @@ int main(int argc, char** argv)
             if ((angDiff > dirThre && !dirToVehicle) || (fabs(10.0 * rotDir - 180.0) > dirThre && fabs(joyDir) <= 90.0 && dirToVehicle) ||
                 ((10.0 * rotDir > dirThre && 360.0 - 10.0 * rotDir > dirThre) && fabs(joyDir) > 90.0 && dirToVehicle) || 
                 !((rotAng * 180.0 / PI > minObsAngCW && rotAng * 180.0 / PI < minObsAngCCW) || 
-                (rotDeg > minObsAngCW && rotDeg < minObsAngCCW && twoWayDrive) || !checkRotObstacle)) {
+                (rotDeg > minObsAngCW && rotDeg < minObsAngCCW && twoWayDrive) || !checkRotObstacle || !htGate->usesGeometry())) {
               continue;
             }
 
@@ -958,6 +965,7 @@ int main(int argc, char** argv)
             }
           }
 
+          }
           sensor_msgs::msg::PointCloud2 freePaths2;
           pcl::toROSMsg(*freePaths, freePaths2);
           freePaths2.header.stamp = rclcpp::Time(static_cast<uint64_t>(odomTime * 1e9));
@@ -1000,6 +1008,18 @@ int main(int argc, char** argv)
         #endif
       }
 
+      {
+        std::ostringstream out;out<<std::fixed<<std::setprecision(9)
+          <<"{\"time\":"<<nh->now().seconds()<<",\"map_stamp\":"<<htGate->mapStamp()
+          <<",\"mode\":\""<<htGate->mode<<"\",\"geometry_used\":"<<(htGate->usesGeometry()?"true":"false")
+          <<",\"x\":"<<vehicleX<<",\"y\":"<<vehicleY<<",\"yaw\":"<<vehicleYaw
+          <<",\"goal_x\":"<<goalX<<",\"goal_y\":"<<goalY
+          <<",\"ht_checked_groups\":"<<checkedGroups<<",\"ht_allowed_groups\":"<<allowedGroups
+          <<",\"selected_group\":"<<selectedDiagnostic<<",\"path_found\":"<<(pathFound?"true":"false")
+          <<",\"path_poses\":"<<path.poses.size()<<",\"rejections\":{";
+        bool first=true;for(const auto& item:rejectionReasons){if(!first)out<<",";first=false;out<<"\""<<item.first<<"\":"<<item.second;}
+        out<<"}}";std_msgs::msg::String msg;msg.data=out.str();pubSelection->publish(msg);
+      }
       /*sensor_msgs::msg::PointCloud2 plannerCloud2;
       pcl::toROSMsg(*plannerCloudCrop, plannerCloud2);
       plannerCloud2.header.stamp = rclcpp::Time(static_cast<uint64_t>(odomTime * 1e9));
