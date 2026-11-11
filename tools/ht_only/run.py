@@ -11,15 +11,17 @@ def freeze():
  files+=list((ROOT/'common_sensor').glob('*'))+[ROOT/'mapper_setup_4hz.yaml']
  for base in [ROOT/'install_native/tare_planner',ROOT/'install_gate/cmu_local_planner_ht']:
   files += [p for p in (base/'lib').rglob('*') if p.is_file() and os.access(p,os.X_OK)]
- files += [ROOT/'install_native/tare_planner/share/tare_planner/indoor.yaml']
+ files += [ROOT/'install_native/tare_planner/share/tare_planner/indoor.yaml',ROOT/'env.sh',ROOT/'mcap.yaml']
  return {str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in files if p.is_file()}
 
 def case(name,scene,duration):
+ subprocess.run([str(PY),'-c','import elevation_mapping_cupy,torch,cupy,grid_map_msgs.msg,rosbag2_py; assert torch.cuda.is_available(); print(\"Dependency preflight passed\")'],check=True)
  ledger=json.loads((ROOT/'BUDGET.json').read_text())
  if len(ledger['attempts'])>=ledger['maximum_formal_launch_attempts']:raise RuntimeError('Formal attempt budget exhausted')
  if __import__('shutil').disk_usage(ROOT).free<12*1024**3:raise RuntimeError('Insufficient disk before launch; no attempt consumed')
  ledger['attempts'].append({'name':name,'scene':scene,'wall_time':time.time()});(ROOT/'BUDGET.json').write_text(json.dumps(ledger,indent=2))
  out=ROOT/'runs'/name;out.mkdir(parents=True,exist_ok=False);children={};logs={};commands={};codes={};before=freeze()
+ (out/'ENVIRONMENT.json').write_text(json.dumps({key:os.environ.get(key) for key in ['ROS_DOMAIN_ID','ROS_LOCALHOST_ONLY','RMW_IMPLEMENTATION','AMENT_PREFIX_PATH','PYTHONPATH','LD_LIBRARY_PATH','OMP_NUM_THREADS','OPENBLAS_NUM_THREADS']},indent=2))
  (out/'FREEZE.json').write_text(json.dumps(before,indent=2));env=os.environ.copy();env.update(DISPLAY=':88',GAZEBO_MODEL_DATABASE_URI='',GAZEBO_MASTER_URI='http://127.0.0.1:'+str(11511),ROS_LOG_DIR=str(ROOT/'ros_logs'),CUPY_STATS_DUMP=str(out/'mapper_stats.json'),HT_DIAGNOSTICS_DUMP=str(out/'ht_diagnostics.json'),HT_HISTORY_DUMP=str(out/'ht_history.npz'))
  with tarfile.open(out/'frozen_runtime.tar.gz','w:gz') as archive:
   for path in before:archive.add(path,arcname=path.lstrip('/'),recursive=False)
@@ -57,7 +59,7 @@ def case(name,scene,duration):
    if not dumped and (out/'observations/START.json').exists():
     for node in ['/tare_planner_node','/localPlanner','/pathFollower','/cupy_to_ht_bridge']:
      with (out/(node[1:]+'.yaml')).open('w') as f:
-      subprocess.run(['ros2','param','dump',node],stdout=f,stderr=subprocess.STDOUT,env=env,timeout=20)
+      subprocess.run(['ros2','param','dump','--no-daemon','--spin-time','3',node],stdout=f,stderr=subprocess.STDOUT,env=env,timeout=20)
     dumped=True
    if time.monotonic()-started>duration+150:raise RuntimeError('Observer deadline exceeded')
    time.sleep(1)
