@@ -1,0 +1,36 @@
+{
+  "maximum_candidates": 2,
+  "maximum_formal_launch_attempts": 3,
+  "duration_s": 600,
+  "attempts": [
+    {
+      "name": "a_user_pcd_600s_01",
+      "scene": "user_pcd",
+      "wall_time": 1794363409.0787215,
+      "collection_complete": false,
+      "freeze_unchanged": true,
+      "error": "RuntimeError('mapper exited early 1')"
+    },
+    {
+      "name": "a_user_pcd_600s_02",
+      "scene": "user_pcd",
+      "wall_time": 1794363476.2548482,
+      "collection_complete": true,
+      "freeze_unchanged": true,
+      "error": null
+    },
+    {
+      "name": "a_indoor_600s_03",
+      "scene": "indoor",
+      "wall_time": 1794364216.3786623,
+      "collection_complete": true,
+      "freeze_unchanged": true,
+      "error": null
+    }
+  ],
+  "status": "closed",
+  "navigation_candidates_executed": [
+    "A: remove CMU geometry, preserve original HT gate"
+  ],
+  "recovery_candidate": "Not implemented/tested: PCD start pose is HT-invalid; indoor static prefix found, but all three formal launches already consumed including initial mapper import failure."
+}

@@ -1,0 +1,874 @@
+[
+  {
+    "case": {
+      "id": "flat",
+      "xy": [
+        0,
+        0
+      ],
+      "heading_deg": 0
+    },
+    "gear": 1,
+    "friction": "historical_like",
+    "flat_control": true,
+    "center_only": false,
+    "initial_xy": [
+      -0.8,
+      0.0
+    ],
+    "desired_center_crossing_length_m": 1.6,
+    "pybullet_version": "3.2.7",
+    "source_manifest_sha256": "13a5dc605681832a5eb97622375d8a2d69e5acf93d50125aae51b5d21e00f9a8",
+    "initial_geometry": {
+      "wheel_ground_z": [
+        -0.8,
+        -0.8,
+        -0.8,
+        -0.8
+      ],
+      "plane_residual_m": 0.0
+    },
+    "joint_names": [
+      "front_left_wheel_link_joint",
+      "front_right_wheel_link_joint",
+      "rear_left_wheel_link_joint",
+      "rear_right_wheel_link_joint"
+    ],
+    "center_crossing": {
+      "xy": [
+        0.0006465859180751021,
+        -3.8036992794343336e-06
+      ],
+      "lateral_m": -3.8036992794343336e-06,
+      "yaw_error_deg": -0.000182474141354657
+    },
+    "status": "CROSSED",
+    "passed": true,
+    "crossed": true,
+    "maximum_progress_m": 1.6403472886478365,
+    "actual_path_m": 1.6405433109329715,
+    "chassis_contact_s": 0.0,
+    "max_chassis_penetration_m": 0.0,
+    "max_tilt_deg": 0.00048248297104882566,
+    "settled_start": {
+      "position": [
+        -0.7999189190532613,
+        1.2632007852105553e-06,
+        -0.5642215562916947
+      ],
+      "rpy": [
+        -7.601895137016943e-06,
+        -1.3429963346514971e-08,
+        -6.466266537726843e-06
+      ],
+      "wheel_contact_count": 4
+    },
+    "final_pose": {
+      "time_s": 14.95,
+      "x": 0.8401546692393024,
+      "y": -3.904417449843308e-06,
+      "z": -0.5649193235158358,
+      "roll": -8.817659169753652e-07,
+      "pitch": 1.2601513901778444e-06,
+      "yaw": 5.568965718113858e-06,
+      "progress_m": 1.6401546692393025,
+      "lateral_m": -3.904417449843308e-06,
+      "chassis_contacts": 0,
+      "wheel_contact_count": 4,
+      "joint_0_angle": 9.922715229945059,
+      "joint_1_angle": 9.922746915011809,
+      "joint_2_angle": 9.92275688271467,
+      "joint_3_angle": 9.922793482034432
+    },
+    "clean_pass": true
+  },
+  {
+    "case": {
+      "id": "a_new_stop",
+      "xy": [
+        7.559900760650635,
+        5.437897682189941
+      ],
+      "heading_deg": 100.45132574599988,
+      "ht_score": null,
+      "classification": "All eight center neural scores >.96; inflated HT occupied veto."
+    },
+    "gear": 1,
+    "friction": "historical_like",
+    "flat_control": false,
+    "center_only": true,
+    "initial_xy": [
+      7.559900760650635,
+      5.437897682189941
+    ],
+    "desired_center_crossing_length_m": 0,
+    "pybullet_version": "3.2.7",
+    "source_manifest_sha256": "13a5dc605681832a5eb97622375d8a2d69e5acf93d50125aae51b5d21e00f9a8",
+    "initial_geometry": {
+      "wheel_ground_z": [
+        -0.8186922145769899,
+        -0.8203216561628857,
+        -0.8069790994441318,
+        -0.8256958801702482
+      ],
+      "plane": [
+        -0.016003830862149238,
+        -0.009423792676221204,
+        -0.6456892191290158
+      ],
+      "plane_residual_m": 0.004271834785055328
+    },
+    "joint_names": [
+      "front_left_wheel_link_joint",
+      "front_right_wheel_link_joint",
+      "rear_left_wheel_link_joint",
+      "rear_right_wheel_link_joint"
+    ],
+    "center_crossing": null,
+    "status": "CENTER_SETTLED",
+    "passed": true,
+    "crossed": false,
+    "maximum_progress_m": 4.945129108013829e-05,
+    "actual_path_m": 0.007512590403558778,
+    "chassis_contact_s": 0.0,
+    "max_chassis_penetration_m": 0.0,
+    "max_tilt_deg": 1.949792784334337,
+    "settled_start": {
+      "position": [
+        7.5645700038519434,
+        5.433453526221179,
+        -0.5734773063945895
+      ],
+      "rpy": [
+        0.034030303818261894,
+        -0.01533285799823207,
+        1.7526293614299753
+      ],
+      "wheel_contact_count": 3
+    },
+    "final_pose": {
+      "time_s": 1.95,
+      "x": 7.564570036607043,
+      "y": 5.4334555006706635,
+      "z": -0.5734771057924396,
+      "roll": 0.034030269450418635,
+      "pitch": -0.015333591817371046,
+      "yaw": 1.752629119899666,
+      "progress_m": -0.005215490315989687,
+      "lateral_m": -0.0037859972756365914,
+      "chassis_contacts": 0,
+      "wheel_contact_count": 3,
+      "joint_0_angle": -8.274318301344543e-06,
+      "joint_1_angle": -0.0005412757814019791,
+      "joint_2_angle": -0.0005460745484298769,
+      "joint_3_angle": -0.00040847100423529054
+    },
+    "clean_pass": true
+  },
+  {
+    "case": {
+      "id": "a_new_stop",
+      "xy": [
+        7.559900760650635,
+        5.437897682189941
+      ],
+      "heading_deg": 100.45132574599988,
+      "ht_score": null,
+      "classification": "All eight center neural scores >.96; inflated HT occupied veto."
+    },
+    "gear": 1,
+    "friction": "historical_like",
+    "flat_control": false,
+    "center_only": false,
+    "initial_xy": [
+      7.705020888035813,
+      4.651170188944847
+    ],
+    "desired_center_crossing_length_m": 1.6,
+    "pybullet_version": "3.2.7",
+    "source_manifest_sha256": "13a5dc605681832a5eb97622375d8a2d69e5acf93d50125aae51b5d21e00f9a8",
+    "initial_geometry": {
+      "wheel_ground_z": [
+        -0.8282013343688628,
+        -0.8162958159247652,
+        -0.7856421207890145,
+        -0.8139152577784708
+      ],
+      "plane": [
+        -0.005618277608627705,
+        -0.046917805299608484,
+        -0.549501988545761
+      ],
+      "plane_residual_m": 0.010044663858389202
+    },
+    "joint_names": [
+      "front_left_wheel_link_joint",
+      "front_right_wheel_link_joint",
+      "rear_left_wheel_link_joint",
+      "rear_right_wheel_link_joint"
+    ],
+    "center_crossing": {
+      "xy": [
+        7.577720397726538,
+        5.441810808023565
+      ],
+      "lateral_m": -0.01823383965839058,
+      "yaw_error_deg": -0.9174916903849228
+    },
+    "status": "CROSSED",
+    "passed": true,
+    "crossed": true,
+    "maximum_progress_m": 1.6667392039428441,
+    "actual_path_m": 1.7323905641686572,
+    "chassis_contact_s": 0.0,
+    "max_chassis_penetration_m": 0.0,
+    "max_tilt_deg": 8.503467344475053,
+    "settled_start": {
+      "position": [
+        7.698647188679067,
+        4.6557710854442504,
+        -0.5626542518489509
+      ],
+      "rpy": [
+        -0.00886245210687605,
+        0.06900009582393221,
+        1.7534691785530283
+      ],
+      "wheel_contact_count": 2
+    },
+    "final_pose": {
+      "time_s": 14.95,
+      "x": 7.421585163003561,
+      "y": 6.293742451370259,
+      "z": -0.5564774869755503,
+      "roll": 0.027239275648777112,
+      "pitch": -0.0674805833596682,
+      "yaw": 1.7531778502419195,
+      "progress_m": 1.666736233767573,
+      "lateral_m": -0.019229523139758706,
+      "chassis_contacts": 0,
+      "wheel_contact_count": 3,
+      "joint_0_angle": 10.626712688935191,
+      "joint_1_angle": 11.400152684899146,
+      "joint_2_angle": 10.631402536813315,
+      "joint_3_angle": 11.402110912368359
+    },
+    "clean_pass": true
+  },
+  {
+    "case": {
+      "id": "a_new_stop",
+      "xy": [
+        7.559900760650635,
+        5.437897682189941
+      ],
+      "heading_deg": 100.45132574599988,
+      "ht_score": null,
+      "classification": "All eight center neural scores >.96; inflated HT occupied veto."
+    },
+    "gear": -1,
+    "friction": "historical_like",
+    "flat_control": false,
+    "center_only": false,
+    "initial_xy": [
+      7.4147806332654564,
+      6.224625175435036
+    ],
+    "desired_center_crossing_length_m": 1.6,
+    "pybullet_version": "3.2.7",
+    "source_manifest_sha256": "13a5dc605681832a5eb97622375d8a2d69e5acf93d50125aae51b5d21e00f9a8",
+    "initial_geometry": {
+      "wheel_ground_z": [
+        -0.7614464321075124,
+        -0.8062835909218066,
+        -0.8140512730890516,
+        -0.8197379962904286
+      ],
+      "plane": [
+        -0.05463895522682738,
+        0.05736474683724985,
+        -0.7523180034100647
+      ],
+      "plane_residual_m": 0.009787608903229605
+    },
+    "joint_names": [
+      "front_left_wheel_link_joint",
+      "front_right_wheel_link_joint",
+      "rear_left_wheel_link_joint",
+      "rear_right_wheel_link_joint"
+    ],
+    "center_crossing": {
+      "xy": [
+        7.558142575586053,
+        5.437199844929697
+      ],
+      "lateral_m": 0.0018556034507754037,
+      "yaw_error_deg": -0.10805368883893951
+    },
+    "status": "CROSSED",
+    "passed": true,
+    "crossed": true,
+    "maximum_progress_m": 1.6526853148537333,
+    "actual_path_m": 1.7238284853251775,
+    "chassis_contact_s": 0.0,
+    "max_chassis_penetration_m": 0.0,
+    "max_tilt_deg": 6.827313230868101,
+    "settled_start": {
+      "position": [
+        7.424410466628525,
+        6.232940734834877,
+        -0.5464904887383835
+      ],
+      "rpy": [
+        0.06990979814570487,
+        -0.05192960123474643,
+        1.7364604112092834
+      ],
+      "wheel_contact_count": 3
+    },
+    "final_pose": {
+      "time_s": 14.95,
+      "x": 7.708158924317519,
+      "y": 4.60068302260013,
+      "z": -0.5621521280811403,
+      "roll": 0.01375117300794216,
+      "pitch": 0.02137757904326953,
+      "yaw": 1.7529316969915605,
+      "progress_m": 1.6502187925554606,
+      "lateral_m": 0.006072405742054604,
+      "chassis_contacts": 0,
+      "wheel_contact_count": 2,
+      "joint_0_angle": -9.717193265378407,
+      "joint_1_angle": -9.57977376327568,
+      "joint_2_angle": -9.718716030015468,
+      "joint_3_angle": -9.57348080482544
+    },
+    "clean_pass": true
+  },
+  {
+    "case": {
+      "id": "a_new_stop",
+      "xy": [
+        7.559900760650635,
+        5.437897682189941
+      ],
+      "heading_deg": 100.45132574599988,
+      "ht_score": null,
+      "classification": "All eight center neural scores >.96; inflated HT occupied veto."
+    },
+    "gear": 1,
+    "friction": "isotropic_0.4",
+    "flat_control": false,
+    "center_only": true,
+    "initial_xy": [
+      7.559900760650635,
+      5.437897682189941
+    ],
+    "desired_center_crossing_length_m": 0,
+    "pybullet_version": "3.2.7",
+    "source_manifest_sha256": "13a5dc605681832a5eb97622375d8a2d69e5acf93d50125aae51b5d21e00f9a8",
+    "initial_geometry": {
+      "wheel_ground_z": [
+        -0.8186922145769899,
+        -0.8203216561628857,
+        -0.8069790994441318,
+        -0.8256958801702482
+      ],
+      "plane": [
+        -0.016003830862149238,
+        -0.009423792676221204,
+        -0.6456892191290158
+      ],
+      "plane_residual_m": 0.004271834785055328
+    },
+    "joint_names": [
+      "front_left_wheel_link_joint",
+      "front_right_wheel_link_joint",
+      "rear_left_wheel_link_joint",
+      "rear_right_wheel_link_joint"
+    ],
+    "center_crossing": null,
+    "status": "CENTER_SETTLED",
+    "passed": true,
+    "crossed": false,
+    "maximum_progress_m": 1.5616081332195787e-05,
+    "actual_path_m": 0.007549126047444886,
+    "chassis_contact_s": 0.0,
+    "max_chassis_penetration_m": 0.0,
+    "max_tilt_deg": 1.9465558759725534,
+    "settled_start": {
+      "position": [
+        7.564872062948658,
+        5.432447087636423,
+        -0.5735927546989044
+      ],
+      "rpy": [
+        0.03387475591732431,
+        -0.01501818989261252,
+        1.7519003021837194
+      ],
+      "wheel_contact_count": 3
+    },
+    "final_pose": {
+      "time_s": 1.95,
+      "x": 7.564872109700475,
+      "y": 5.432449035931331,
+      "z": -0.5735925561599722,
+      "roll": 0.033874728178972864,
+      "pitch": -0.015018985897762707,
+      "yaw": 1.751900258592263,
+      "progress_m": -0.006260053275006101,
+      "lateral_m": -0.003900485921125817,
+      "chassis_contacts": 0,
+      "wheel_contact_count": 3,
+      "joint_0_angle": -6.591357613766539e-06,
+      "joint_1_angle": -0.0005414415808553401,
+      "joint_2_angle": -0.0005335524708676855,
+      "joint_3_angle": -0.0002950966206234869
+    },
+    "clean_pass": true
+  },
+  {
+    "case": {
+      "id": "a_new_stop",
+      "xy": [
+        7.559900760650635,
+        5.437897682189941
+      ],
+      "heading_deg": 100.45132574599988,
+      "ht_score": null,
+      "classification": "All eight center neural scores >.96; inflated HT occupied veto."
+    },
+    "gear": 1,
+    "friction": "isotropic_0.4",
+    "flat_control": false,
+    "center_only": false,
+    "initial_xy": [
+      7.705020888035813,
+      4.651170188944847
+    ],
+    "desired_center_crossing_length_m": 1.6,
+    "pybullet_version": "3.2.7",
+    "source_manifest_sha256": "13a5dc605681832a5eb97622375d8a2d69e5acf93d50125aae51b5d21e00f9a8",
+    "initial_geometry": {
+      "wheel_ground_z": [
+        -0.8282013343688628,
+        -0.8162958159247652,
+        -0.7856421207890145,
+        -0.8139152577784708
+      ],
+      "plane": [
+        -0.005618277608627705,
+        -0.046917805299608484,
+        -0.549501988545761
+      ],
+      "plane_residual_m": 0.010044663858389202
+    },
+    "joint_names": [
+      "front_left_wheel_link_joint",
+      "front_right_wheel_link_joint",
+      "rear_left_wheel_link_joint",
+      "rear_right_wheel_link_joint"
+    ],
+    "center_crossing": {
+      "xy": [
+        7.5635980401474905,
+        5.4392030771633495
+      ],
+      "lateral_m": -0.0038727381440209286,
+      "yaw_error_deg": 0.23133945368657163
+    },
+    "status": "CROSSED",
+    "passed": true,
+    "crossed": true,
+    "maximum_progress_m": 1.6150046907468183,
+    "actual_path_m": 1.7754052557125322,
+    "chassis_contact_s": 0.0,
+    "max_chassis_penetration_m": 0.0,
+    "max_tilt_deg": 4.565762070139255,
+    "settled_start": {
+      "position": [
+        7.698631671221239,
+        4.655604541208085,
+        -0.5626470100023514
+      ],
+      "rpy": [
+        -0.008850184686265796,
+        0.06893699928285073,
+        1.753503355029843
+      ],
+      "wheel_contact_count": 2
+    },
+    "final_pose": {
+      "time_s": 14.95,
+      "x": 7.161862504887357,
+      "y": 6.19321835972007,
+      "z": -0.5635410416651483,
+      "roll": 0.008887777529490017,
+      "pitch": -0.005039255044953079,
+      "yaw": 2.30542039804235,
+      "progress_m": 1.6149936320125065,
+      "lateral_m": 0.2544192577905772,
+      "chassis_contacts": 0,
+      "wheel_contact_count": 3,
+      "joint_0_angle": 16.738169842248613,
+      "joint_1_angle": 11.731685217821479,
+      "joint_2_angle": 16.734990888997274,
+      "joint_3_angle": 11.723938389087914
+    },
+    "clean_pass": true
+  },
+  {
+    "case": {
+      "id": "a_new_stop",
+      "xy": [
+        7.559900760650635,
+        5.437897682189941
+      ],
+      "heading_deg": 100.45132574599988,
+      "ht_score": null,
+      "classification": "All eight center neural scores >.96; inflated HT occupied veto."
+    },
+    "gear": -1,
+    "friction": "isotropic_0.4",
+    "flat_control": false,
+    "center_only": false,
+    "initial_xy": [
+      7.4147806332654564,
+      6.224625175435036
+    ],
+    "desired_center_crossing_length_m": 1.6,
+    "pybullet_version": "3.2.7",
+    "source_manifest_sha256": "13a5dc605681832a5eb97622375d8a2d69e5acf93d50125aae51b5d21e00f9a8",
+    "initial_geometry": {
+      "wheel_ground_z": [
+        -0.7614464321075124,
+        -0.8062835909218066,
+        -0.8140512730890516,
+        -0.8197379962904286
+      ],
+      "plane": [
+        -0.05463895522682738,
+        0.05736474683724985,
+        -0.7523180034100647
+      ],
+      "plane_residual_m": 0.009787608903229605
+    },
+    "joint_names": [
+      "front_left_wheel_link_joint",
+      "front_right_wheel_link_joint",
+      "rear_left_wheel_link_joint",
+      "rear_right_wheel_link_joint"
+    ],
+    "center_crossing": {
+      "xy": [
+        7.455849105084992,
+        5.417787235294362
+      ],
+      "lateral_m": 0.10597341095802423,
+      "yaw_error_deg": -6.609509039624356
+    },
+    "status": "MISSED_REQUESTED_CENTER_POSE",
+    "passed": false,
+    "crossed": true,
+    "maximum_progress_m": 1.652894764648131,
+    "actual_path_m": 1.8556503240570332,
+    "chassis_contact_s": 0.0,
+    "max_chassis_penetration_m": 0.0,
+    "max_tilt_deg": 5.922373213402178,
+    "settled_start": {
+      "position": [
+        7.453160190327845,
+        6.301201787721577,
+        -0.576199997720805
+      ],
+      "rpy": [
+        -0.004924962455295561,
+        -0.03205544018683402,
+        1.52527718423491
+      ],
+      "wheel_contact_count": 3
+    },
+    "final_pose": {
+      "time_s": 14.95,
+      "x": 7.645476997595505,
+      "y": 4.586401679661248,
+      "z": -0.565410504662676,
+      "roll": 0.012768633324696998,
+      "pitch": 0.009715621947926783,
+      "yaw": 1.7882407508110203,
+      "progress_m": 1.652892687480252,
+      "lateral_m": 0.0703050374774349,
+      "chassis_contacts": 0,
+      "wheel_contact_count": 3,
+      "joint_0_angle": -14.267664594446133,
+      "joint_1_angle": -8.020988134986812,
+      "joint_2_angle": -14.268501886917106,
+      "joint_3_angle": -8.019288177983798
+    },
+    "clean_pass": false
+  },
+  {
+    "case": {
+      "id": "a_new_stop",
+      "xy": [
+        7.559900760650635,
+        5.437897682189941
+      ],
+      "heading_deg": 100.45132574599988,
+      "ht_score": null,
+      "classification": "All eight center neural scores >.96; inflated HT occupied veto."
+    },
+    "gear": 1,
+    "friction": "isotropic_0.8",
+    "flat_control": false,
+    "center_only": true,
+    "initial_xy": [
+      7.559900760650635,
+      5.437897682189941
+    ],
+    "desired_center_crossing_length_m": 0,
+    "pybullet_version": "3.2.7",
+    "source_manifest_sha256": "13a5dc605681832a5eb97622375d8a2d69e5acf93d50125aae51b5d21e00f9a8",
+    "initial_geometry": {
+      "wheel_ground_z": [
+        -0.8186922145769899,
+        -0.8203216561628857,
+        -0.8069790994441318,
+        -0.8256958801702482
+      ],
+      "plane": [
+        -0.016003830862149238,
+        -0.009423792676221204,
+        -0.6456892191290158
+      ],
+      "plane_residual_m": 0.004271834785055328
+    },
+    "joint_names": [
+      "front_left_wheel_link_joint",
+      "front_right_wheel_link_joint",
+      "rear_left_wheel_link_joint",
+      "rear_right_wheel_link_joint"
+    ],
+    "center_crossing": null,
+    "status": "CENTER_SETTLED",
+    "passed": true,
+    "crossed": false,
+    "maximum_progress_m": 6.126160612072677e-05,
+    "actual_path_m": 0.007651453286130962,
+    "chassis_contact_s": 0.0,
+    "max_chassis_penetration_m": 0.0,
+    "max_tilt_deg": 1.9504670153508459,
+    "settled_start": {
+      "position": [
+        7.564519752268051,
+        5.433498981006109,
+        -0.5734704860092699
+      ],
+      "rpy": [
+        0.034042071369419044,
+        -0.015347113315317523,
+        1.7526635292263597
+      ],
+      "wheel_contact_count": 3
+    },
+    "final_pose": {
+      "time_s": 1.95,
+      "x": 7.564519778648342,
+      "y": 5.43350083484822,
+      "z": -0.5734703022121727,
+      "roll": 0.03404202708887775,
+      "pitch": -0.015347798953270231,
+      "yaw": 1.7526633339373232,
+      "progress_m": -0.005161791459444108,
+      "lateral_m": -0.0037447967553330707,
+      "chassis_contacts": 0,
+      "wheel_contact_count": 3,
+      "joint_0_angle": -6.447604885869345e-06,
+      "joint_1_angle": -0.0005540957003686282,
+      "joint_2_angle": -0.0005193892464005195,
+      "joint_3_angle": -0.00042367422486666974
+    },
+    "clean_pass": true
+  },
+  {
+    "case": {
+      "id": "a_new_stop",
+      "xy": [
+        7.559900760650635,
+        5.437897682189941
+      ],
+      "heading_deg": 100.45132574599988,
+      "ht_score": null,
+      "classification": "All eight center neural scores >.96; inflated HT occupied veto."
+    },
+    "gear": 1,
+    "friction": "isotropic_0.8",
+    "flat_control": false,
+    "center_only": false,
+    "initial_xy": [
+      7.705020888035813,
+      4.651170188944847
+    ],
+    "desired_center_crossing_length_m": 1.6,
+    "pybullet_version": "3.2.7",
+    "source_manifest_sha256": "13a5dc605681832a5eb97622375d8a2d69e5acf93d50125aae51b5d21e00f9a8",
+    "initial_geometry": {
+      "wheel_ground_z": [
+        -0.8282013343688628,
+        -0.8162958159247652,
+        -0.7856421207890145,
+        -0.8139152577784708
+      ],
+      "plane": [
+        -0.005618277608627705,
+        -0.046917805299608484,
+        -0.549501988545761
+      ],
+      "plane_residual_m": 0.010044663858389202
+    },
+    "joint_names": [
+      "front_left_wheel_link_joint",
+      "front_right_wheel_link_joint",
+      "rear_left_wheel_link_joint",
+      "rear_right_wheel_link_joint"
+    ],
+    "center_crossing": {
+      "xy": [
+        7.564376039281234,
+        5.439347653422334
+      ],
+      "lateral_m": -0.0046640559357174595,
+      "yaw_error_deg": 0.0009358511792499032
+    },
+    "status": "CROSSED",
+    "passed": true,
+    "crossed": true,
+    "maximum_progress_m": 1.6539922292382272,
+    "actual_path_m": 1.6981180777922087,
+    "chassis_contact_s": 0.0,
+    "max_chassis_penetration_m": 0.0,
+    "max_tilt_deg": 8.02496406979044,
+    "settled_start": {
+      "position": [
+        7.698644176253545,
+        4.655765767778916,
+        -0.5626536001638289
+      ],
+      "rpy": [
+        -0.008873217309443904,
+        0.06900863728616026,
+        1.7534641636033395
+      ],
+      "wheel_contact_count": 2
+    },
+    "final_pose": {
+      "time_s": 14.95,
+      "x": 7.408843801539503,
+      "y": 6.278431311425369,
+      "z": -0.5530590853015642,
+      "roll": 0.03826075462273854,
+      "pitch": -0.06809574710276907,
+      "yaw": 1.7515391182062388,
+      "progress_m": 1.6539904003315187,
+      "lateral_m": -0.003922105709305434,
+      "chassis_contacts": 0,
+      "wheel_contact_count": 3,
+      "joint_0_angle": 10.260934991014867,
+      "joint_1_angle": 10.232584944601832,
+      "joint_2_angle": 10.246754397316137,
+      "joint_3_angle": 10.217088973215784
+    },
+    "clean_pass": true
+  },
+  {
+    "case": {
+      "id": "a_new_stop",
+      "xy": [
+        7.559900760650635,
+        5.437897682189941
+      ],
+      "heading_deg": 100.45132574599988,
+      "ht_score": null,
+      "classification": "All eight center neural scores >.96; inflated HT occupied veto."
+    },
+    "gear": -1,
+    "friction": "isotropic_0.8",
+    "flat_control": false,
+    "center_only": false,
+    "initial_xy": [
+      7.4147806332654564,
+      6.224625175435036
+    ],
+    "desired_center_crossing_length_m": 1.6,
+    "pybullet_version": "3.2.7",
+    "source_manifest_sha256": "13a5dc605681832a5eb97622375d8a2d69e5acf93d50125aae51b5d21e00f9a8",
+    "initial_geometry": {
+      "wheel_ground_z": [
+        -0.7614464321075124,
+        -0.8062835909218066,
+        -0.8140512730890516,
+        -0.8197379962904286
+      ],
+      "plane": [
+        -0.05463895522682738,
+        0.05736474683724985,
+        -0.7523180034100647
+      ],
+      "plane_residual_m": 0.009787608903229605
+    },
+    "joint_names": [
+      "front_left_wheel_link_joint",
+      "front_right_wheel_link_joint",
+      "rear_left_wheel_link_joint",
+      "rear_right_wheel_link_joint"
+    ],
+    "center_crossing": {
+      "xy": [
+        7.550426643279326,
+        5.435701295087728
+      ],
+      "lateral_m": 0.009715360732875149,
+      "yaw_error_deg": -0.3347321938108408
+    },
+    "status": "CROSSED",
+    "passed": true,
+    "crossed": true,
+    "maximum_progress_m": 1.6466265295575895,
+    "actual_path_m": 1.704897942817594,
+    "chassis_contact_s": 0.0,
+    "max_chassis_penetration_m": 0.0,
+    "max_tilt_deg": 6.857170571353141,
+    "settled_start": {
+      "position": [
+        7.4240053226997444,
+        6.235990780766824,
+        -0.5475408504392792
+      ],
+      "rpy": [
+        0.06603866700390441,
+        -0.052664694152691656,
+        1.7300057484899947
+      ],
+      "wheel_contact_count": 3
+    },
+    "final_pose": {
+      "time_s": 14.95,
+      "x": 7.695623628730653,
+      "y": 4.603763509305268,
+      "z": -0.5619562551964269,
+      "roll": 0.013764387478393062,
+      "pitch": 0.022678349206733676,
+      "yaw": 1.7531619805249266,
+      "progress_m": 1.6449155084606042,
+      "lateral_m": 0.017840932055908695,
+      "chassis_contacts": 0,
+      "wheel_contact_count": 2,
+      "joint_0_angle": -10.500034185388024,
+      "joint_1_angle": -9.896223539433423,
+      "joint_2_angle": -10.495038972395752,
+      "joint_3_angle": -9.888081483646186
+    },
+    "clean_pass": true
+  }
+]
