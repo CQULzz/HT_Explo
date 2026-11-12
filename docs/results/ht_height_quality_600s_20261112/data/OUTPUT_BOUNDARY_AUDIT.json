@@ -1,0 +1,40 @@
+{
+  "original_report_preserved": "PUBLISHED_COMMAND_MATCH.json",
+  "original_unmatched_count": 1,
+  "boundary_results": [
+    {
+      "output": {
+        "received": 1794423815.622673,
+        "odom_stamp": 1794423815.5982847,
+        "linear": -0.5000000596046448,
+        "angular": 1.4610901644118712e-06
+      },
+      "matched": true,
+      "audit": {
+        "time": 1794423815.6224716,
+        "map_stamp": 1794423815.1430292,
+        "x": 42.925453186,
+        "y": -17.873765945,
+        "yaw": -1.703142643,
+        "linear_candidate": -0.50000006,
+        "angular_candidate": 1.461e-06,
+        "reaction_time": 0.1,
+        "linear_brake_accel": 2.5,
+        "angular_brake_accel": 3.0,
+        "horizon_s": 0.300000024,
+        "allowed": true,
+        "reason": "HT_ALLOWED"
+      },
+      "receive_delta_s": 1.239776611328125e-05,
+      "control_time_outside_original_window": true,
+      "control_time_after_end_s": 0.016726016998291016,
+      "independent_pass": true,
+      "independent_reason": "SCORE",
+      "minimum_swept_score": 0.9998784065246582
+    }
+  ],
+  "published_nonzero_commands": 29651,
+  "matched_and_independently_checked_total": 29651,
+  "passed": true,
+  "scope": "Keep original output-header and audit-control windows and receipts. Supplement only boundary associations with equal v/w within 1e-7 and receipt within 100ms, then independently check their exact original-map reaction/braking sweep at actual control time. No performance-window extension. Receipt association need not be unique for repeated equal velocities."
+}

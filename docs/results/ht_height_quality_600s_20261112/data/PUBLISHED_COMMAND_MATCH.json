@@ -1,0 +1,19 @@
+{
+  "published_nonzero_commands": 29651,
+  "matched_to_accepted_audit": 29650,
+  "unmatched_count": 1,
+  "unmatched_examples": [
+    {
+      "received": 1794423815.622673,
+      "odom_stamp": 1794423815.5982847,
+      "linear": -0.5000000596046448,
+      "angular": 1.4610901644118712e-06
+    }
+  ],
+  "maximum_receive_time_delta_s": 0.018993616104125977,
+  "maximum_control_minus_odometry_stamp_s": 0.06392765045166016,
+  "outputs_with_odometry_header_lag_gt_150ms": 0,
+  "all_accepted_candidates_independently_passed": true,
+  "passed": false,
+  "scope": "Equal linear/angular values within 1e-7, nearby bag receipt within 100ms; odometry-header lag is recorded separately, not used to reject velocity associations. Every matched accepted candidate has been checked independently against its exact HT map by COMMAND_AUDIT.json. Receipt proximity does not uniquely identify a publish when identical velocities repeat."
+}

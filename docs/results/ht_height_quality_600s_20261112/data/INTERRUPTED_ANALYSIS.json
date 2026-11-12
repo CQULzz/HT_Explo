@@ -1,0 +1,176 @@
+{
+  "interruption": {
+    "collection_complete": false,
+    "interrupted": true,
+    "status": "infrastructure_failure_host_reboot",
+    "written_by": "post-reboot recovery audit; original runner did not finish",
+    "last_valid_metrics_row": {
+      "elapsed_s": "339.25232475099983",
+      "time": "1794422941.273711",
+      "x": "14.928998947143555",
+      "y": "-0.6219469904899597",
+      "z": "0.7128639817237854",
+      "yaw": "-0.27340444922447205",
+      "distance_m": "15.719297836038528",
+      "sampled_free_volume_m3": "624.125",
+      "surface_voxel_volume_m3": "454.5",
+      "cmd_linear": "0.0",
+      "cmd_angular": "0.0",
+      "finish": "False",
+      "odom_age_s": "0.0019774436950683594",
+      "scan_age_s": "0.4352607727050781",
+      "ht_age_s": "8354.825402021408"
+    },
+    "valid_metric_rows": 648,
+    "unparseable_metric_rows": 0,
+    "nul_bytes_in_raw_metrics": 780,
+    "parsing": "NUL bytes removed in memory only; raw file preserved",
+    "summary_json_written": false,
+    "bag_metadata_present": false,
+    "new_boot_id": "6d492395-d67d-460f-a012-735b0423f4e5",
+    "evidence": [
+      "../../evidence/CLOCK_ANOMALY.json",
+      "../../evidence/previous_boot_kernel.log",
+      "../../evidence/previous_boot_sleep.log"
+    ],
+    "recorded_wall_time": 1794423185.0384612
+  },
+  "clock_jumps": [
+    {
+      "before_elapsed_s": 131.58319225800005,
+      "after_elapsed_s": 143.07722785899978,
+      "wall_vs_monotonic_jump_s": 8145.650180221221
+    }
+  ],
+  "before_clock_jump": {
+    "last_elapsed_s": 131.58319225800005,
+    "distance_m": 15.719297836038528,
+    "sampled_ht_age_p50_s": 1.0896294116973877,
+    "sampled_ht_age_p95_s": 3.4915472269058228,
+    "samples_gt_1s": 145,
+    "samples": 259
+  },
+  "recorded_command_rejections": {
+    "HT_MAP_MISSING_OR_INVALID": 1224,
+    "HT_MAP_STALE": 13425
+  },
+  "last_accepted_nonzero_audit": {
+    "time": 1794414538.5275679,
+    "map_stamp": 1794414537.5303314,
+    "x": 14.909779549,
+    "y": -0.616413057,
+    "yaw": -0.284879833,
+    "linear_candidate": 0.50000006,
+    "angular_candidate": 0.481645793,
+    "reaction_time": 0.1,
+    "linear_brake_accel": 2.5,
+    "angular_brake_accel": 3.0,
+    "horizon_s": 0.300000024,
+    "allowed": true,
+    "reason": "HT_ALLOWED"
+  },
+  "last_events": {
+    "/ht_minimal/pathFollower": {
+      "enabled": true,
+      "map_stamp": 1794414586.448309,
+      "map_age_s": 8354.615259171,
+      "accepted_maps": 267,
+      "invalid_maps": 0,
+      "allowed": 2944,
+      "rejected": 14639,
+      "last_reason": "HT_MAP_STALE",
+      "reasons": {
+        "HT_MAP_MISSING_OR_INVALID": 1224,
+        "HT_MAP_STALE": 13415
+      }
+    },
+    "/ht_minimal/localPlanner": {
+      "enabled": true,
+      "map_stamp": 1794414586.448309,
+      "map_age_s": 8354.519131899,
+      "accepted_maps": 267,
+      "invalid_maps": 0,
+      "allowed": 4686,
+      "rejected": 793061,
+      "last_reason": "HT_MAP_STALE",
+      "reasons": {
+        "HT_CONTEXT_INVALID": 90,
+        "HT_DIRECTION_LOW": 2275,
+        "HT_MAP_MISSING_OR_INVALID": 72114,
+        "HT_MAP_STALE": 717819,
+        "HT_OCCUPIED": 763
+      }
+    },
+    "/ht_minimal/local_selection": {
+      "time": 1794422941.2003942,
+      "map_stamp": 1794414586.448309,
+      "mode": "ht_only",
+      "geometry_used": false,
+      "x": 14.928998947,
+      "y": -0.62194699,
+      "yaw": -0.273404449,
+      "goal_x": 22.79439238,
+      "goal_y": 0.839417491,
+      "ht_checked_groups": 690,
+      "ht_allowed_groups": 0,
+      "selected_group": -1,
+      "path_found": false,
+      "path_poses": 1,
+      "rejections": {
+        "HT_MAP_STALE": 690
+      }
+    },
+    "/ht_minimal/command_audit": {
+      "time": 1794422941.2528212,
+      "map_stamp": 1794414586.448309,
+      "x": 14.928998947,
+      "y": -0.62194699,
+      "yaw": -0.273404449,
+      "linear_candidate": 0.0,
+      "angular_candidate": 0.0,
+      "reaction_time": 0.1,
+      "linear_brake_accel": 2.5,
+      "angular_brake_accel": 3.0,
+      "horizon_s": 0.1,
+      "allowed": false,
+      "reason": "HT_MAP_STALE"
+    },
+    "/ht_minimal/recovery": {
+      "time": 1794422941.2129903,
+      "map_stamp": 1794414586.448309,
+      "state": "START_INVALID:HT_MAP_STALE",
+      "active": false,
+      "plans": 10,
+      "completed": 0,
+      "invalidated": 10,
+      "search_failures": 1,
+      "goal_cancellations": 0,
+      "compatible_goal_updates": 7,
+      "goal_age_s": 0.630238056,
+      "search_ms": 5.031724,
+      "x": 14.928998947,
+      "y": -0.62194699,
+      "yaw": -0.273404449,
+      "goal_x": 22.79439238,
+      "goal_y": 0.839417491,
+      "segment": 2,
+      "segments": 3,
+      "progress_m": 0.428664421,
+      "linear": 0.0,
+      "angular": 0.0
+    },
+    "/ht_minimal/path_rejection": {
+      "time": 1794414522.9475887,
+      "map_stamp": 1794414521.9627542,
+      "x": 11.489640926,
+      "y": -1.052165268,
+      "yaw": 1.497023236,
+      "channel": 2,
+      "score": 0.326832533,
+      "best_direction_score": 0.999747694,
+      "consumer": "localPlanner"
+    }
+  },
+  "invalid_event_lines": 0,
+  "scope": "Interrupted trial only. Raw NULs removed in memory for diagnostic parsing. No bag recovery, completed-duration claim or performance acceptance. System suspend/clock jump, GPU kernel errors and host reboot evidence remain separate original logs."
+}

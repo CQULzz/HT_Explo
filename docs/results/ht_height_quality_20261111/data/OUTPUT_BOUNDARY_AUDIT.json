@@ -1,0 +1,40 @@
+{
+  "original_report_preserved": "PUBLISHED_COMMAND_MATCH.json",
+  "original_unmatched_count": 1,
+  "boundary_results": [
+    {
+      "output": {
+        "received": 1794410860.7356005,
+        "odom_stamp": 1794410860.7102985,
+        "linear": -0.5000000596046448,
+        "angular": -4.0069611713988706e-05
+      },
+      "matched": true,
+      "audit": {
+        "time": 1794410860.7352178,
+        "map_stamp": 1794410860.1753817,
+        "x": 34.287284851,
+        "y": -8.100599289,
+        "yaw": 3.067821503,
+        "linear_candidate": -0.50000006,
+        "angular_candidate": -4.007e-05,
+        "reaction_time": 0.1,
+        "linear_brake_accel": 2.5,
+        "angular_brake_accel": 3.0,
+        "horizon_s": 0.300000024,
+        "allowed": true,
+        "reason": "HT_ALLOWED"
+      },
+      "receive_delta_s": 2.4080276489257812e-05,
+      "control_time_after_window_s": 0.009511709213256836,
+      "odometry_header_before_window_end_s": 0.015407562255859375,
+      "independent_pass": true,
+      "independent_reason": "SCORE",
+      "minimum_swept_score": 0.9992509484291077
+    }
+  ],
+  "published_nonzero_commands": 14937,
+  "matched_and_independently_checked_total": 14937,
+  "passed": true,
+  "scope": "Supplement only: original matcher filters outputs by their odometry-header time and audits by control time. One final output straddles the window boundary. It is associated by equal v/w within 1e-7 and receipt within 100ms, then its complete reaction/braking sweep is independently checked against the exact recorded map at its actual control time. Performance window and original failed matcher receipt are unchanged. Receipt proximity does not prove unique identity for repeated equal velocities."
+}

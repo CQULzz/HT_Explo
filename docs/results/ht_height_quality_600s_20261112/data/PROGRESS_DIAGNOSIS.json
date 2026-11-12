@@ -1,0 +1,35 @@
+{
+  "stages": {
+    "0_300": {
+      "distance_increment_m": 139.80420720158358,
+      "observed_free_volume_increment_m3": 2746.625
+    },
+    "300_600": {
+      "distance_increment_m": 139.59173956166674,
+      "observed_free_volume_increment_m3": 809.961267474866
+    }
+  },
+  "ht_local_selection": {
+    "0_300": {
+      "selections": 1326,
+      "path_found": 1323,
+      "all_groups_rejected": 3,
+      "some_group_rejected": 983,
+      "rejected_HT_DIRECTION_LOW": 13148,
+      "rejected_HT_MAP_STALE": 1368,
+      "rejected_HT_CONTEXT_INVALID": 7845,
+      "rejected_HT_OCCUPIED": 4327,
+      "rejected_HT_MISSING_SUPPORT": 23
+    },
+    "300_600": {
+      "selections": 1354,
+      "path_found": 1354,
+      "all_groups_rejected": 0,
+      "some_group_rejected": 934,
+      "rejected_HT_DIRECTION_LOW": 10966,
+      "rejected_HT_CONTEXT_INVALID": 3908,
+      "rejected_HT_OCCUPIED": 2430
+    }
+  },
+  "scope": "Post-hoc stage diagnosis. Movement and observed-volume growth are separate proxies. Path_found means a local template was available under HT checks; it does not prove progress to a global exploration objective. Group rejection counts include evaluated alternatives and can exceed event counts; they are not counts of stops. Global-goal cause requires a separate investigation."
+}

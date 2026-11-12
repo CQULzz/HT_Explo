@@ -24,6 +24,7 @@ def matches(remote,local):
 
 def main():
     plan=json.loads((ROOT/'PLAN.json').read_text())
+    if not plan.get('upload_enabled',True):raise RuntimeError('Full raw/video upload superseded by the user; use the compact data plan')
     # Validate the actual identity/repository APIs. Old gh auth status demands
     # read:org even for personal-repository releases, which do not need it.
     if api('user').get('login')!='CQULzz':raise RuntimeError('Authenticated GitHub account mismatch')

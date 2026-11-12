@@ -1,0 +1,59 @@
+{
+  "case": "cmu_quality_300s_01",
+  "mode": "ht_only",
+  "scene": "indoor",
+  "requested_duration_s": 300.0,
+  "started_wall": 1794410546.6415641,
+  "project_commit": "4fbb65e42a77d86815826a9fbef9ad507c2408bc",
+  "cmu_commit": "158e67b31b644ed1e8b06eb1d7f70e183cc62591",
+  "native_tare_commit": "b6760adb4280b379567c76f4e684ce628e28ef71",
+  "scene_manifest": {
+    "scene": "official CMU indoor"
+  },
+  "summary": {
+    "elapsed_s": 300.00470578499994,
+    "distance_m": 141.87848944720136,
+    "position": [
+      34.292274475097656,
+      -8.100967407226562,
+      0.7036159634590149
+    ],
+    "sampled_free_volume_m3": 2836.25,
+    "surface_voxel_volume_m3": 1537.25,
+    "finish": false,
+    "counts": {
+      "/ht_minimal/pathFollower": 313,
+      "/ht_minimal/localPlanner": 312,
+      "/ht_runtime": 1,
+      "odom": 59720,
+      "paths": 1404,
+      "/ht_minimal/local_selection": 1404,
+      "commands": 15094,
+      "/ht_minimal/command_audit": 15110,
+      "scans": 658,
+      "local_path": 280,
+      "/ht_performance": 262,
+      "ht_maps": 1197,
+      "waypoint": 278,
+      "ray_frames": 211,
+      "/ht_minimal/path_rejection": 623
+    },
+    "ht_source_age_s": {
+      "p50": 0.26009106636047363,
+      "p95": 0.37264318466186525,
+      "p99": 0.41142047882080074
+    },
+    "free_volume_definition": "union of sampled sensor rays at 0.5m voxel resolution, 1Hz/1024 endpoints/12m range; observation proxy, not ground truth"
+  },
+  "collection_complete": true,
+  "phase_ended_wall": 1794410862.0143278,
+  "exit_codes": {
+    "bag": 0,
+    "model": 0,
+    "mapper": 0,
+    "simulation": 0,
+    "observer": 0
+  },
+  "ended_wall": 1794410870.8418832,
+  "freeze_unchanged": true
+}
