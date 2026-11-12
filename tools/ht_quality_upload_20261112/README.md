@@ -1,5 +1,12 @@
 # Publish the current quality-fix experiments
 
+**Current scope:** the user's latest instruction excludes new videos and the
+upload was narrowed to compact experiment evidence. The old full-MCAP plan is
+disabled. Use `prepare_compact.py` and `upload_compact.py`; the compact manifest
+contains CSV metrics, JSON audits, parameters, snapshots, logs and runtime
+evidence, with neither MCAPs nor videos. Original large recordings remain local.
+Do not restart the historical full-upload path without a new instruction.
+
 The user requested upload of the latest code and experiments to the matching
 branch on 2026-11-12. Code, reports, plots and small videos belong to
 `sim/ht-height-quality-20261111`. Full original data is prepared as experiment

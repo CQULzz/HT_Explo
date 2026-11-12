@@ -1,6 +1,7 @@
 """Check original-byte restore and strict server digest verification offline."""
 from pathlib import Path
 import hashlib,importlib.util,json,subprocess,sys,tarfile,tempfile,unittest
+from unittest.mock import patch
 
 HERE=Path(__file__).resolve().parent
 spec=importlib.util.spec_from_file_location('upload',HERE/'upload.py');upload=importlib.util.module_from_spec(spec);spec.loader.exec_module(upload)
@@ -8,6 +9,12 @@ spec=importlib.util.spec_from_file_location('receipts',HERE/'publish_receipts.py
 def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
 
 class PublicationTests(unittest.TestCase):
+    def test_superseded_full_upload_never_calls_github(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp);(root/'PLAN.json').write_text(json.dumps({'upload_enabled':False}))
+            with patch.object(upload,'ROOT',root),patch.object(upload,'api',side_effect=AssertionError('API must not be called')):
+                with self.assertRaisesRegex(RuntimeError,'superseded'):upload.main()
+
     def test_incomplete_remote_backup_cannot_be_marked_complete(self):
         with self.assertRaises(RuntimeError):receipts.validate({'status':'uploading','releases':[]})
         asset={'name':'part.mcap','sha256':'a'*64,'remote_digest':'sha256:'+'a'*64,'size_and_sha256_verified':True}
