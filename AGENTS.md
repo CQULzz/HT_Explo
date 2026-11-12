@@ -163,3 +163,6 @@ p01完整120.3秒保留，发现TARE仿真命令桥硬编码1秒期限与HT几�
 用户最新表示“视频就不传了，最多传个实验数据就好”。已明确按精简实验数据执行：CSV指标、JSON审计、实际参数、地图快照、必要日志/冻结；不新增视频，不继续28GB原始MCAP长传。原始全部数据留本地，已上传历史视频不改写Git历史。旧全量上传进程已不存在，旧PLAN.json的upload_enabled=False，不能无新明确指令恢复。新目录/home/lzz/ht_quality_compact_20261112，两个无MCAP/无视频包共43493126字节、包含802个常规证据文件；标签ht-quality-data-20261112绑定同分支精简数据提交，逐附件远端大小/SHA通过后才发布和报告完成。可读实验数据已加入两个结果目录data/；不把精简数据发布称原始录包的完整远端备份。不启动仿真或部署硬件。
 
 精简实验数据上传已完成：Release https://github.com/CQULzz/HT_Explo/releases/tag/ht-quality-data-20261112，绑定同分支9f683e1be84633fdc9c9da7fc9ffc11aef18463a。两个数据包合计43493126字节、802个常规证据文件，另有DATA_MANIFEST，3个远端附件大小及SHA256全部验证通过。完整回执/home/lzz/ht_quality_compact_20261112/REMOTE_RECEIPT.json及docs/results/ht_quality_data_20261112/REMOTE_RECEIPT.json。只完成精简证据备份，不含新视频或原始MCAP；原始28GB保留本地，旧全量计划禁用、旧收据标记cancelled_scope_changed，不再恢复。两组可读CSV数据的Git字节与原始CSV一致，data目录.gitattributes禁止行尾归一化和原字节空白检查。5项上传辅助回归通过。所有上传进程已结束，临时inhibitor释放；不启动新实验或部署/清理。
+
+
+用户要求在GitHub附带“做了什么、有什么不足”的说明文档，已新增docs/results/ht_quality_data_20261112/HANDOFF.md（源码提交167c3ed），并附到已发布的精简实验数据Release。附件HT_QUALITY_HANDOFF_20261112.md为8923字节，SHA256=1eeef8ddabf165fe61361f73d0d188d2801b2768d1cfb2ee53931c77bc5ebcbc，远端大小/SHA和仓库内容一致；回执DOCUMENT_UPLOAD_RECEIPT.json。文档涵盖TARE/HT边界、mapper质量三项修复、测试版本与结果、效率/恢复/推理进度/退出/模型真值不足、后续诊断、精简数据范围与复现依赖。数据Release原标签及3个原实验附件保持不变；无新视频/MCAP上传、无导航更改或新实验。
