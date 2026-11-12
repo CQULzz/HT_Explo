@@ -1,5 +1,7 @@
 **精简实验数据已上传并校验｜2026-11-12**
 
+首次查看建议先读[交接说明：做了什么、验证结果与不足](HANDOFF.md)。
+
 按用户最新要求，本轮不再上传视频，原始大MCAP录包留本机。上传内容为CSV指标、JSON审计、实际参数、地图快照、必要日志和运行冻结证据。两包合计43,493,126字节（约43.5MB），包含802个常规证据文件；**不含原始MCAP或视频，不构成原始录包的完整远端备份**。
 
 [GitHub数据附件](https://github.com/CQULzz/HT_Explo/releases/tag/ht-quality-data-20261112)绑定对应分支提交`9f683e1be84633fdc9c9da7fc9ffc11aef18463a`。3个附件的远端大小及SHA256均已逐一验证，回执见[REMOTE_RECEIPT.json](REMOTE_RECEIPT.json)，文件范围及包内SHA见[DATA_MANIFEST.json](DATA_MANIFEST.json)。
