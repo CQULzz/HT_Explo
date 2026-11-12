@@ -4,9 +4,20 @@ import hashlib,importlib.util,json,subprocess,sys,tarfile,tempfile,unittest
 
 HERE=Path(__file__).resolve().parent
 spec=importlib.util.spec_from_file_location('upload',HERE/'upload.py');upload=importlib.util.module_from_spec(spec);spec.loader.exec_module(upload)
+spec=importlib.util.spec_from_file_location('receipts',HERE/'publish_receipts.py');receipts=importlib.util.module_from_spec(spec);spec.loader.exec_module(receipts)
 def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
 
 class PublicationTests(unittest.TestCase):
+    def test_incomplete_remote_backup_cannot_be_marked_complete(self):
+        with self.assertRaises(RuntimeError):receipts.validate({'status':'uploading','releases':[]})
+        asset={'name':'part.mcap','sha256':'a'*64,'remote_digest':'sha256:'+'a'*64,'size_and_sha256_verified':True}
+        release={'tag':'ht-quality-300s-20261111','status':'complete_verified','verified_assets':[asset],'expected_assets':1}
+        second=dict(release,tag='ht-quality-600s-20261112')
+        receipts.validate({'status':'complete_verified','releases':[release,second]})
+        incomplete=dict(second,expected_assets=2)
+        with self.assertRaises(RuntimeError):receipts.validate({'status':'complete_verified','releases':[release,incomplete]})
+        with self.assertRaises(RuntimeError):receipts.validate({'status':'complete_verified','releases':[release,release]})
+
     def test_same_size_is_not_integrity_and_starter_is_not_complete(self):
         expected={'bytes':4,'sha256':'a'*64};remote={'state':'uploaded','size':4,'digest':'sha256:'+'a'*64}
         self.assertTrue(upload.matches(remote,expected))

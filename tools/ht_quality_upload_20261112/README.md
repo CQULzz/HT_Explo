@@ -17,13 +17,26 @@ recorded rather than followed. `SOURCE_REFERENCE.json` links to the exact full
 source commit/archive in GitHub; tested runtime snapshots remain in each
 evidence archive. No large MCAP is added to Git history.
 
-`upload.py` uses the user's normal `gh auth login` session, checks repository
+`upload.py` uses the user's existing GitHub credential, checks identity and repository
 write access, creates exact-commit tags, uploads into draft experiment releases,
 and verifies each remote asset's size and GitHub SHA256 digest. A release is
 published only after all its assets verify. Valid existing assets are never
 overwritten. Partial uploads owned by this run are preserved under distinct
 incomplete names if a retry is necessary. The complete local source data is
-retained regardless of upload status.
+retained regardless of upload status. The successful latest run is prioritized;
+small evidence is uploaded first, then original recordings. Two upload streams
+and a four-hour per-file timeout accommodate the measured slow uplink.
+
+This host has an unlocked account-specific GitHub credential in the system
+keyring. Use `/usr/bin/python3 tools/ht_quality_upload_20261112/with_keyring.py --upload`
+to load it into child-process memory and start upload under a temporary sleep
+inhibitor. No credential value is printed or written to disk. The actual user
+and repository APIs are checked; the obsolete CLI's unnecessary `read:org`
+requirement from `gh auth status` is not used as a personal-repository gate.
+
+After all remote assets verify, `publish_receipts.py` automatically commits and
+pushes only the publication receipts/status pages to the matching branch. It
+stops rather than overwrite existing staged work or publication-page edits.
 
 Prepared assets and upload receipts:
 `/home/lzz/ht_quality_github_20261112`. Files named `REMOTE_RECEIPT` are only
@@ -39,6 +52,8 @@ python3 tools/ht_quality_upload_20261112/restore.py \
   --assets-dir DOWNLOAD_DIR --output NEW_EMPTY_OUTPUT_PATH
 ```
 
+Ignore any assets beginning with `incomplete`; they preserve abandoned upload
+attempts and are not included in the required publication manifest.
 The restored complete bag retains its original filenames and metadata. The
 interrupted trial remains incomplete, including its original NUL bytes and
 missing metadata. External ROS/CMU/Python installations must be supplied

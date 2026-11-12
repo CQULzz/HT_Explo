@@ -1,9 +1,7 @@
 **GitHub上传状态｜2026-11-12**
 
-代码、报告、图表和[轨迹视频](quality_600s_10x.mp4)保存在分支 `sim/ht-height-quality-20261111`，实验代码/报告提交为 `03521b858e9b7e48ee5ce3111fe640ce6c627dd5`。
+代码、报告、图表和[轨迹视频](quality_600s_10x.mp4)已保存在分支 `sim/ht-height-quality-20261111`。完整原始实验数据已核对本地SHA256并准备对应附件，[附件清单](publication/MANIFEST.json)和[原始文件校验](publication/FILES_SHA256.json)可查。
 
-完整实验数据已完成本地逐文件SHA256复核和证据归档验证：42个原始MCAP、48个待上传附件。[附件与还原路径清单](publication/MANIFEST.json)、[所有原始常规文件SHA256](publication/FILES_SHA256.json)和[共享依赖说明](publication/DEPENDENCY_LINKS.json)均已保存在本分支。
+已找到系统凭据库中现有的GitHub认证，并验证CQULzz账号及仓库写权限，**无需重新登录，完整原始录包正在上传；尚未构成远端完整备份**。录包目标实验标签 `ht-quality-600s-20261112` 绑定本分支对应实验提交。当前网络总上行约0.4–0.6 MB/s，全部约28GB数据预计需十几小时；数据上传进程提供临时防休眠保护。
 
-**完整原始录包尚未上传，不构成远端完整备份**：本机GitHub CLI尚未登录。请通过 `gh auth login --hostname github.com --web` 完成标准认证后，执行已准备的上传程序。计划数据标签 `ht-quality-600s-20261112` 绑定上述同分支提交；上传后必须核对每个远端附件的大小与SHA256。
-
-本页更新晚于原始实验报告，作为当前上传状态；原始报告保留测量时状态。原始MCAP、NUL字节和中断记录保持原样，不清理本机数据。恢复方式见仓库 `tools/ht_quality_upload_20261112/README.md`。
+每个附件远端大小及SHA256均通过后，上传程序才发布完整实验归档；全部完成后自动把远端回执和完成状态推送回此分支。以最后的UPLOAD_STATUS和REMOTE_RECEIPT为准，不能把已创建标签或部分附件当作完整备份。原始字节、中断记录和本机数据全部保留，不清理。
