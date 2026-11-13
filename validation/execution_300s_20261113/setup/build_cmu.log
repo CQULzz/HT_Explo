@@ -1,0 +1,22 @@
+Starting >>> local_planner
+Finished <<< local_planner [1min 1s]
+Starting >>> sensor_scan_generation
+Finished <<< sensor_scan_generation [43.7s]
+Starting >>> terrain_analysis
+--- stderr: terrain_analysis
+/home/lzz/cmu_sim_20261110/src/terrain_analysis/src/terrainAnalysis.cpp: In function ‘int main(int, char**)’:
+/home/lzz/cmu_sim_20261110/src/terrain_analysis/src/terrainAnalysis.cpp:485:43: warning: suggest parentheses around ‘&&’ within ‘||’ [-Wparentheses]
+  485 |                 if (angle4 > minDyObsVFOV && angle4 < maxDyObsVFOV || fabs(pointZ4) < absDyObsRelZThre) {
+      |                     ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+---
+Finished <<< terrain_analysis [45.6s]
+Starting >>> terrain_analysis_ext
+Finished <<< terrain_analysis_ext [47.0s]
+Starting >>> vehicle_simulator
+--- stderr: vehicle_simulator
+** WARNING ** io features related to pcap will be disabled
+---
+Finished <<< vehicle_simulator [1min 38s]
+
+Summary: 5 packages finished [4min 56s]
+  2 packages had stderr output: terrain_analysis vehicle_simulator

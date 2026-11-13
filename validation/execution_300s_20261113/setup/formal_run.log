@@ -1,0 +1,31 @@
+Isolated mapper preflight passed
+{
+  "case": "execution_300s_01",
+  "mode": "ht_only",
+  "scene": "indoor",
+  "requested_duration_s": 300.0,
+  "started_wall": 1794593316.5278838,
+  "project_commit": "7957e72f8e8b921912d6064cfb02eac22c1d9ec3",
+  "cmu_commit": "158e67b31b644ed1e8b06eb1d7f70e183cc62591",
+  "native_tare_commit": "b6760adb4280b379567c76f4e684ce628e28ef71",
+  "scene_manifest": {
+    "scene": "official CMU indoor"
+  },
+  "error": "RuntimeError('Simulation child exited before collection finished')",
+  "collection_complete": false,
+  "exit_codes": {
+    "observer": -2,
+    "bag": 0,
+    "model": 0,
+    "mapper": 0,
+    "simulation": 0
+  },
+  "ended_wall": 1794593324.9708936,
+  "freeze_unchanged": true
+}
+Traceback (most recent call last):
+  File "/home/lzz/ht_execution_300s_20261113/run.py", line 87, in <module>
+    case(a.name,a.scene,a.duration)
+  File "/home/lzz/ht_execution_300s_20261113/run.py", line 82, in case
+    if not result.get('collection_complete') or not result['freeze_unchanged']:raise RuntimeError(name+' failed; evidence retained')
+RuntimeError: execution_300s_01 failed; evidence retained

@@ -1,0 +1,198 @@
+[INFO] [launch]: All log files can be found below /home/lzz/ht_execution_300s_20261113/ros_logs/2026-11-14-02-08-36-722814-lzz-5621
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [gzserver-1]: process started with pid [5664]
+[INFO] [robot_state_publisher-2]: process started with pid [5666]
+[INFO] [spawn_entity.py-3]: process started with pid [5668]
+[INFO] [spawn_entity.py-4]: process started with pid [5670]
+[INFO] [spawn_entity.py-5]: process started with pid [5672]
+[INFO] [terrainAnalysis-6]: process started with pid [5674]
+[INFO] [terrainAnalysisExt-7]: process started with pid [5676]
+[INFO] [sensorScanGeneration-8]: process started with pid [5678]
+[INFO] [localPlanner-9]: process started with pid [5680]
+[INFO] [pathFollower-10]: process started with pid [5682]
+[INFO] [static_transform_publisher-11]: process started with pid [5684]
+[INFO] [static_transform_publisher-12]: process started with pid [5686]
+[INFO] [tare_planner_node-13]: process started with pid [5690]
+[ERROR] [tare_planner_node-13]: process has died [pid 5690, exit code 127, cmd '/home/lzz/ht_execution_300s_20261113/install_native/tare_planner/lib/tare_planner/tare_planner_node --ros-args -r __node:=tare_planner_node --params-file /home/lzz/ht_execution_300s_20261113/install_native/tare_planner/share/tare_planner/indoor.yaml --params-file /tmp/launch_params_aa8f36co'].
+[tare_planner_node-13] /home/lzz/ht_execution_300s_20261113/install_native/tare_planner/lib/tare_planner/tare_planner_node: error while loading shared libraries: libortools.so.9: cannot open shared object file: No such file or directory
+[static_transform_publisher-11] [WARN] [1794593317.066836830] []: Old-style arguments are deprecated; see --help for new-style arguments
+[static_transform_publisher-12] [WARN] [1794593317.066840801] []: Old-style arguments are deprecated; see --help for new-style arguments
+[static_transform_publisher-12] [INFO] [1794593317.092684130] [sensorTransPublisher]: Spinning until stopped - publishing transform
+[static_transform_publisher-12] translation: ('0.000000', '0.000000', '0.000000')
+[static_transform_publisher-12] rotation: ('-0.500000', '0.500000', '-0.500000', '0.500000')
+[static_transform_publisher-12] from '/sensor' to '/camera'
+[static_transform_publisher-11] [INFO] [1794593317.094881150] [vehicleTransPublisher]: Spinning until stopped - publishing transform
+[static_transform_publisher-11] translation: ('-0.000000', '-0.000000', '0.000000')
+[static_transform_publisher-11] rotation: ('0.000000', '0.000000', '0.000000', '1.000000')
+[static_transform_publisher-11] from '/sensor' to '/vehicle'
+[robot_state_publisher-2] [INFO] [1794593317.100245309] [robot_state_publisher]: got segment lidar
+[robot_state_publisher-2] [INFO] [1794593317.100368988] [robot_state_publisher]: got segment velodyne
+[robot_state_publisher-2] [INFO] [1794593317.100380070] [robot_state_publisher]: got segment velodyne_base_link
+[localPlanner-9] [INFO] [1794593317.120794274] [localPlanner]: Reading path files.
+[spawn_entity.py-4] [INFO] [1794593317.356476235] [spawn_entity]: Spawn Entity started
+[spawn_entity.py-4] [INFO] [1794593317.356823605] [spawn_entity]: Loading entity XML from file /home/lzz/cmu_test_20261110/common_sensor/robot.sdf
+[spawn_entity.py-4] [INFO] [1794593317.357256333] [spawn_entity]: Waiting for service /spawn_entity, timeout = 30
+[spawn_entity.py-4] [INFO] [1794593317.357461884] [spawn_entity]: Waiting for service /spawn_entity
+[spawn_entity.py-5] [INFO] [1794593317.359446994] [spawn_entity]: Spawn Entity started
+[spawn_entity.py-5] [INFO] [1794593317.359753827] [spawn_entity]: Loading entity XML from file /home/lzz/ht_execution_300s_20261113/install_cmu/vehicle_simulator/share/vehicle_simulator/urdf/camera.urdf.xacro
+[spawn_entity.py-5] [INFO] [1794593317.360502080] [spawn_entity]: Waiting for service /spawn_entity, timeout = 30
+[spawn_entity.py-5] [INFO] [1794593317.360779318] [spawn_entity]: Waiting for service /spawn_entity
+[spawn_entity.py-3] [INFO] [1794593317.363115374] [spawn_entity]: Spawn Entity started
+[spawn_entity.py-3] [INFO] [1794593317.363463605] [spawn_entity]: Loading entity published on topic robot_description
+[spawn_entity.py-3] [INFO] [1794593317.365668677] [spawn_entity]: Waiting for entity xml on robot_description
+[spawn_entity.py-3] [INFO] [1794593317.376806885] [spawn_entity]: Waiting for service /spawn_entity, timeout = 30
+[spawn_entity.py-3] [INFO] [1794593317.377052518] [spawn_entity]: Waiting for service /spawn_entity
+[localPlanner-9] [INFO] [1794593317.525197055] [localPlanner]: Initialization complete.
+[gzserver-1] Gazebo multi-robot simulator, version 11.10.2
+[gzserver-1] Copyright (C) 2012 Open Source Robotics Foundation.
+[gzserver-1] Released under the Apache 2 License.
+[gzserver-1] http://gazebosim.org
+[gzserver-1] 
+[gzserver-1] [1;33m[Wrn] [gazebo_ros_init.cpp:178] [0m[1;33m
+[gzserver-1] #     # ####### ####### ###  #####  #######
+[gzserver-1] ##    # #     #    #     #  #     # #
+[gzserver-1] # #   # #     #    #     #  #       #
+[gzserver-1] #  #  # #     #    #     #  #       #####
+[gzserver-1] #   # # #     #    #     #  #       #
+[gzserver-1] #    ## #     #    #     #  #     # #
+[gzserver-1] #     # #######    #    ###  #####  #######
+[gzserver-1] 
+[gzserver-1] This version of Gazebo, now called Gazebo classic, reaches end-of-life
+[gzserver-1] in January 2025. Users are highly encouraged to migrate to the new Gazebo
+[gzserver-1] using our migration guides (https://gazebosim.org/docs/latest/gazebo_classic_migration?utm_source=gazebo_ros_pkgs&utm_medium=cli)
+[gzserver-1] 
+[gzserver-1] [0m[1;33m
+[gzserver-1] [1;32m[Msg] [0m[1;32mWaiting for master.[0m[1;32m
+[gzserver-1] [0m[1;32m[0m[1;32m[0m[1;32m[Msg] [0m[1;32mConnected to gazebo master @ [0m[1;32mhttp://127.0.0.1:11516[0m[1;32m
+[gzserver-1] [0m[1;32m[0m[1;32m[0m[1;32m[Msg] [0m[1;32mPublicized address: [0m[1;32m10.255.255.254[0m[1;32m
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;33m[Wrn] [ModelDatabase.cc:340] [0m[1;33mGetting models from[[0m[1;33m/[0m[1;33m]. This may take a few seconds.
+[gzserver-1] [0m[1;33m[Wrn] [ModelDatabase.cc:212] [0m[1;33mUnable to connect to model database using [[0m[1;33m//database.config[0m[1;33m]. Only locally installed models will be available.
+[gzserver-1] [0m[1;33m[Wrn] [FuelModelDatabase.cc:313] [0m[1;33mURI not supported by Fuel [[0m[1;33mmodel://sun[0m[1;33m][0m[1;33m
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;33m[Wrn] [SystemPaths.cc:459] [0m[1;33mFile or path does not exist [[0m[1;33m""[0m[1;33m] [[0m[1;33mmodel://sun[0m[1;33m][0m[1;33m
+[gzserver-1] [0m[1;33m[0m[1;33m[0mError Code 12 Msg: Unable to find uri[model://sun]
+[spawn_entity.py-4] [INFO] [1794593319.118753809] [spawn_entity]: Calling service /spawn_entity
+[spawn_entity.py-5] [INFO] [1794593319.118880157] [spawn_entity]: Calling service /spawn_entity
+[spawn_entity.py-3] [INFO] [1794593319.132629552] [spawn_entity]: Calling service /spawn_entity
+[gzserver-1] [0m[1;32m[0m[1;32m[0m[1;32m[Msg] [0m[1;32mLoading world file [[0m[1;32m/home/lzz/cmu_test_20261110/common_sensor/indoor.world[0m[1;32m][0m[1;32m
+[gzserver-1] [1;31m[Err] [PhysicsEngine.cc:255] [0m[1;31mSetParam([0m[1;31mgravity[0m[1;31m) std::any_cast error: [0m[1;31mbad any_cast[0m[1;31m
+[gzserver-1] [0m[1;31m[0m[1;31m[0m[1;33m[Wrn] [PresetManager.cc:82] [0m[1;33mCouldn't set parameter [[0m[1;33mgravity[0m[1;33m] in physics engine[0m[1;33m
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[INFO] [1794593320.189233968] [gazebo_ros_state]: Publishing states of gazebo models at [/model_states]
+[gzserver-1] [INFO] [1794593320.190339579] [gazebo_ros_state]: Publishing states of gazebo links at [/link_states]
+[spawn_entity.py-4] [INFO] [1794593320.208986202] [spawn_entity]: Spawn status: SpawnEntity: Successfully spawned entity [robot]
+[INFO] [spawn_entity.py-4]: process has finished cleanly [pid 5670]
+[spawn_entity.py-5] [INFO] [1794593320.424872947] [spawn_entity]: Spawn status: SpawnEntity: Successfully spawned entity [camera]
+[INFO] [spawn_entity.py-5]: process has finished cleanly [pid 5672]
+[gzserver-1] [1;33m[Wrn] [Event.cc:61] [0m[1;33mWarning: Deleting a connection right after creation. [0m[1;33mMake sure to save the ConnectionPtr from a Connect call
+[gzserver-1] [0m[INFO] [1794593320.816770615] [camera_controller]: Publishing camera info to [/camera/camera_info]
+[gzserver-1] [1;33m[Wrn] [ModelDatabase.cc:340] [0m[1;33mGetting models from[[0m[1;33m/[0m[1;33m]. This may take a few seconds.
+[gzserver-1] [0m[1;33m[Wrn] [ModelDatabase.cc:212] [0m[1;33mUnable to connect to model database using [[0m[1;33m//database.config[0m[1;33m]. Only locally installed models will be available.
+[gzserver-1] [0m[1;33m[Wrn] [FuelModelDatabase.cc:313] [0m[1;33mURI not supported by Fuel [[0m[1;33mmodel://velodyne_description/meshes/VLP16_scan.dae[0m[1;33m][0m[1;33m
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;33m[Wrn] [SystemPaths.cc:459] [0m[1;33mFile or path does not exist [[0m[1;33m""[0m[1;33m] [[0m[1;33mmodel://velodyne_description/meshes/VLP16_scan.dae[0m[1;33m][0m[1;33m
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;31m[Err] [Visual.cc:2956] [0m[1;31mNo mesh specified
+[gzserver-1] [0m[1;33m[Wrn] [ModelDatabase.cc:340] [0m[1;33mGetting models from[[0m[1;33m/[0m[1;33m]. This may take a few seconds.
+[gzserver-1] [0m[1;33m[Wrn] [ModelDatabase.cc:212] [0m[1;33mUnable to connect to model database using [[0m[1;33m//database.config[0m[1;33m]. Only locally installed models will be available.
+[gzserver-1] [0m[1;33m[Wrn] [FuelModelDatabase.cc:313] [0m[1;33mURI not supported by Fuel [[0m[1;33mmodel://velodyne_description/meshes/VLP16_scan.dae[0m[1;33m][0m[1;33m
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;33m[Wrn] [SystemPaths.cc:459] [0m[1;33mFile or path does not exist [[0m[1;33m""[0m[1;33m] [[0m[1;33mmodel://velodyne_description/meshes/VLP16_scan.dae[0m[1;33m][0m[1;33m
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;31m[Err] [Visual.cc:2956] [0m[1;31mNo mesh specified
+[gzserver-1] [0m[1;33m[Wrn] [ModelDatabase.cc:340] [0m[1;33mGetting models from[[0m[1;33m/[0m[1;33m]. This may take a few seconds.
+[gzserver-1] [0m[1;33m[Wrn] [ModelDatabase.cc:212] [0m[1;33mUnable to connect to model database using [[0m[1;33m//database.config[0m[1;33m]. Only locally installed models will be available.
+[gzserver-1] [0m[1;33m[Wrn] [FuelModelDatabase.cc:313] [0m[1;33mURI not supported by Fuel [[0m[1;33mmodel://velodyne_description/meshes/VLP16_scan.dae[0m[1;33m][0m[1;33m
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;33m[Wrn] [SystemPaths.cc:459] [0m[1;33mFile or path does not exist [[0m[1;33m""[0m[1;33m] [[0m[1;33mmodel://velodyne_description/meshes/VLP16_scan.dae[0m[1;33m][0m[1;33m
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;33m[Wrn] [ModelDatabase.cc:340] [0m[1;33mGetting models from[[0m[1;33m/[0m[1;33m]. This may take a few seconds.
+[gzserver-1] [0m[1;33m[Wrn] [ModelDatabase.cc:212] [0m[1;33mUnable to connect to model database using [[0m[1;33m//database.config[0m[1;33m]. Only locally installed models will be available.
+[gzserver-1] [0m[1;33m[Wrn] [FuelModelDatabase.cc:313] [0m[1;33mURI not supported by Fuel [[0m[1;33mmodel://velodyne_description/meshes/VLP16_base_1.dae[0m[1;33m][0m[1;33m
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;33m[Wrn] [SystemPaths.cc:459] [0m[1;33mFile or path does not exist [[0m[1;33m""[0m[1;33m] [[0m[1;33mmodel://velodyne_description/meshes/VLP16_base_1.dae[0m[1;33m][0m[1;33m
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;31m[Err] [Visual.cc:2956] [0m[1;31mNo mesh specified
+[gzserver-1] [0m[1;33m[Wrn] [ModelDatabase.cc:340] [0m[1;33mGetting models from[[0m[1;33m/[0m[1;33m]. This may take a few seconds.
+[gzserver-1] [0m[1;33m[Wrn] [ModelDatabase.cc:212] [0m[1;33mUnable to connect to model database using [[0m[1;33m//database.config[0m[1;33m]. Only locally installed models will be available.
+[gzserver-1] [0m[1;33m[Wrn] [FuelModelDatabase.cc:313] [0m[1;33mURI not supported by Fuel [[0m[1;33mmodel://velodyne_description/meshes/VLP16_base_1.dae[0m[1;33m][0m[1;33m
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;33m[Wrn] [SystemPaths.cc:459] [0m[1;33mFile or path does not exist [[0m[1;33m""[0m[1;33m] [[0m[1;33mmodel://velodyne_description/meshes/VLP16_base_1.dae[0m[1;33m][0m[1;33m
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;31m[Err] [Visual.cc:2956] [0m[1;31mNo mesh specified
+[gzserver-1] [0m[1;33m[Wrn] [ModelDatabase.cc:340] [0m[1;33mGetting models from[[0m[1;33m/[0m[1;33m]. This may take a few seconds.
+[gzserver-1] [0m[1;33m[Wrn] [ModelDatabase.cc:212] [0m[1;33mUnable to connect to model database using [[0m[1;33m//database.config[0m[1;33m]. Only locally installed models will be available.
+[gzserver-1] [0m[1;33m[Wrn] [FuelModelDatabase.cc:313] [0m[1;33mURI not supported by Fuel [[0m[1;33mmodel://velodyne_description/meshes/VLP16_base_1.dae[0m[1;33m][0m[1;33m
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;33m[Wrn] [SystemPaths.cc:459] [0m[1;33mFile or path does not exist [[0m[1;33m""[0m[1;33m] [[0m[1;33mmodel://velodyne_description/meshes/VLP16_base_1.dae[0m[1;33m][0m[1;33m
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;33m[Wrn] [ModelDatabase.cc:340] [0m[1;33mGetting models from[[0m[1;33m/[0m[1;33m]. This may take a few seconds.
+[gzserver-1] [0m[1;33m[Wrn] [ModelDatabase.cc:212] [0m[1;33mUnable to connect to model database using [[0m[1;33m//database.config[0m[1;33m]. Only locally installed models will be available.
+[gzserver-1] [0m[1;33m[Wrn] [FuelModelDatabase.cc:313] [0m[1;33mURI not supported by Fuel [[0m[1;33mmodel://velodyne_description/meshes/VLP16_base_2.dae[0m[1;33m][0m[1;33m
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;33m[Wrn] [SystemPaths.cc:459] [0m[1;33mFile or path does not exist [[0m[1;33m""[0m[1;33m] [[0m[1;33mmodel://velodyne_description/meshes/VLP16_base_2.dae[0m[1;33m][0m[1;33m
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;31m[Err] [Visual.cc:2956] [0m[1;31mNo mesh specified
+[gzserver-1] [0m[1;33m[Wrn] [ModelDatabase.cc:340] [0m[1;33mGetting models from[[0m[1;33m/[0m[1;33m]. This may take a few seconds.
+[gzserver-1] [0m[1;33m[Wrn] [ModelDatabase.cc:212] [0m[1;33mUnable to connect to model database using [[0m[1;33m//database.config[0m[1;33m]. Only locally installed models will be available.
+[gzserver-1] [0m[1;33m[Wrn] [FuelModelDatabase.cc:313] [0m[1;33mURI not supported by Fuel [[0m[1;33mmodel://velodyne_description/meshes/VLP16_base_2.dae[0m[1;33m][0m[1;33m
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;33m[Wrn] [SystemPaths.cc:459] [0m[1;33mFile or path does not exist [[0m[1;33m""[0m[1;33m] [[0m[1;33mmodel://velodyne_description/meshes/VLP16_base_2.dae[0m[1;33m][0m[1;33m
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;31m[Err] [Visual.cc:2956] [0m[1;31mNo mesh specified
+[gzserver-1] [0m[1;33m[Wrn] [ModelDatabase.cc:340] [0m[1;33mGetting models from[[0m[1;33m/[0m[1;33m]. This may take a few seconds.
+[gzserver-1] [0m[1;33m[Wrn] [ModelDatabase.cc:212] [0m[1;33mUnable to connect to model database using [[0m[1;33m//database.config[0m[1;33m]. Only locally installed models will be available.
+[gzserver-1] [0m[1;33m[Wrn] [FuelModelDatabase.cc:313] [0m[1;33mURI not supported by Fuel [[0m[1;33mmodel://velodyne_description/meshes/VLP16_base_2.dae[0m[1;33m][0m[1;33m
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;33m[Wrn] [SystemPaths.cc:459] [0m[1;33mFile or path does not exist [[0m[1;33m""[0m[1;33m] [[0m[1;33mmodel://velodyne_description/meshes/VLP16_base_2.dae[0m[1;33m][0m[1;33m
+[WARNING] [launch]: user interrupted with ctrl-c (SIGINT)
+[pathFollower-10] [INFO] [1794593321.997978849] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[pathFollower-10] terminate called after throwing an instance of 'rclcpp::exceptions::RCLError'
+[pathFollower-10]   what():  failed to create guard condition: the given context is not valid, either rcl_init() was not called or rcl_shutdown() was called., at ./src/rcl/guard_condition.c:67
+[terrainAnalysisExt-7] [INFO] [1794593321.998002094] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[terrainAnalysisExt-7] terminate called after throwing an instance of 'rclcpp::exceptions::RCLError'
+[terrainAnalysisExt-7]   what():  failed to create guard condition: the given context is not valid, either rcl_init() was not called or rcl_shutdown() was called., at ./src/rcl/guard_condition.c:67
+[terrainAnalysis-6] [INFO] [1794593321.997993556] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[terrainAnalysis-6] terminate called after throwing an instance of 'rclcpp::exceptions::RCLError'
+[terrainAnalysis-6]   what():  failed to create guard condition: the given context is not valid, either rcl_init() was not called or rcl_shutdown() was called., at ./src/rcl/guard_condition.c:67
+[static_transform_publisher-12] [INFO] [1794593321.997952694] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[localPlanner-9] [INFO] [1794593321.998051205] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[localPlanner-9] terminate called after throwing an instance of 'rclcpp::exceptions::RCLError'
+[localPlanner-9]   what():  failed to create guard condition: the given context is not valid, either rcl_init() was not called or rcl_shutdown() was called., at ./src/rcl/guard_condition.c:67
+[static_transform_publisher-11] [INFO] [1794593321.998066519] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[sensorScanGeneration-8] [INFO] [1794593321.998066418] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[robot_state_publisher-2] [INFO] [1794593321.998205328] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[spawn_entity.py-3] Traceback (most recent call last):
+[spawn_entity.py-3]   File "/opt/ros/humble/lib/gazebo_ros/spawn_entity.py", line 372, in <module>
+[spawn_entity.py-3]     main()
+[spawn_entity.py-3]   File "/opt/ros/humble/lib/gazebo_ros/spawn_entity.py", line 367, in main
+[spawn_entity.py-3]     exit_code = spawn_entity_node.run()
+[spawn_entity.py-3]   File "/opt/ros/humble/lib/gazebo_ros/spawn_entity.py", line 228, in run
+[spawn_entity.py-3]     success = self._spawn_entity(entity_xml, initial_pose, spawn_service_timeout)
+[spawn_entity.py-3]   File "/opt/ros/humble/lib/gazebo_ros/spawn_entity.py", line 290, in _spawn_entity
+[spawn_entity.py-3]     rclpy.spin_once(self)
+[spawn_entity.py-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py", line 208, in spin_once
+[spawn_entity.py-3]     executor.spin_once(timeout_sec=timeout_sec)
+[spawn_entity.py-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 812, in spin_once
+[spawn_entity.py-3]     self._spin_once_impl(timeout_sec)
+[spawn_entity.py-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 801, in _spin_once_impl
+[spawn_entity.py-3]     handler, entity, node = self.wait_for_ready_callbacks(timeout_sec=timeout_sec)
+[spawn_entity.py-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 784, in wait_for_ready_callbacks
+[spawn_entity.py-3]     return next(self._cb_iter)
+[spawn_entity.py-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 681, in _wait_for_ready_callbacks
+[INFO] [static_transform_publisher-12]: sending signal 'SIGINT' to process[static_transform_publisher-12]
+[INFO] [static_transform_publisher-11]: sending signal 'SIGINT' to process[static_transform_publisher-11]
+[INFO] [pathFollower-10]: sending signal 'SIGINT' to process[pathFollower-10]
+[INFO] [localPlanner-9]: sending signal 'SIGINT' to process[localPlanner-9]
+[INFO] [sensorScanGeneration-8]: sending signal 'SIGINT' to process[sensorScanGeneration-8]
+[INFO] [terrainAnalysisExt-7]: sending signal 'SIGINT' to process[terrainAnalysisExt-7]
+[INFO] [terrainAnalysis-6]: sending signal 'SIGINT' to process[terrainAnalysis-6]
+[INFO] [spawn_entity.py-3]: sending signal 'SIGINT' to process[spawn_entity.py-3]
+[INFO] [robot_state_publisher-2]: sending signal 'SIGINT' to process[robot_state_publisher-2]
+[INFO] [gzserver-1]: sending signal 'SIGINT' to process[gzserver-1]
+[spawn_entity.py-3]     wait_set.wait(timeout_nsec)
+[spawn_entity.py-3] KeyboardInterrupt
+[robot_state_publisher-2] [INFO] [1794593322.018224382] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[ERROR] [spawn_entity.py-3]: process has died [pid 5668, exit code -2, cmd '/opt/ros/humble/lib/gazebo_ros/spawn_entity.py -entity lidar -topic robot_description --ros-args'].
+[ERROR] [localPlanner-9]: process has died [pid 5680, exit code -6, cmd '/home/lzz/ht_execution_300s_20261113/install_gate/cmu_local_planner_ht/lib/cmu_local_planner_ht/localPlanner --ros-args -r __node:=localPlanner --params-file /tmp/launch_params_8z_hjg4j --params-file /tmp/launch_params_2n9031r3 --params-file /tmp/launch_params_uvuy9qsq --params-file /tmp/launch_params_nf_0toeh --params-file /tmp/launch_params_qju3k9xj --params-file /tmp/launch_params_rnsbbv1q --params-file /tmp/launch_params_4vc4obro --params-file /tmp/launch_params_r4tftlx2 --params-file /tmp/launch_params_mymql7k5 --params-file /tmp/launch_params_4gp_av_h --params-file /tmp/launch_params_kazdthwq --params-file /tmp/launch_params_br_t10nl --params-file /tmp/launch_params_8qosypav --params-file /tmp/launch_params_9a8xnk85 --params-file /tmp/launch_params_ewof4x22 --params-file /tmp/launch_params_7ii4zgwk --params-file /tmp/launch_params_0yhwb4zo --params-file /tmp/launch_params_4epyi7b8 --params-file /tmp/launch_params_fc9qsqwh --params-file /tmp/launch_params_cph27uyz --params-file /tmp/launch_params_l65apcan --params-file /tmp/launch_params_ksd0q3vt --params-file /tmp/launch_params_akmtxs3z --params-file /tmp/launch_params_cwfj5ei5 --params-file /tmp/launch_params_ttd2uufi --params-file /tmp/launch_params_zeiv7yx7 --params-file /tmp/launch_params_rgf377di --params-file /tmp/launch_params_p8oef1h4 --params-file /tmp/launch_params_wxjdmkwa --params-file /tmp/launch_params_8f4zo8_7 --params-file /tmp/launch_params_gdamxo9l --params-file /tmp/launch_params_frpqvr7o --params-file /tmp/launch_params_57pqjlt0 --params-file /tmp/launch_params_6npa3e1g --params-file /tmp/launch_params_933pq1w4 --params-file /tmp/launch_params_xf637vfi --params-file /tmp/launch_params_491i6q3s --params-file /tmp/launch_params_192src3t --params-file /tmp/launch_params_z19341qy --params-file /tmp/launch_params_11ruktao --params-file /tmp/launch_params_sr724jl3 --params-file /tmp/launch_params_qy3dpfd_ --params-file /tmp/launch_params_316g90sz'].
+[ERROR] [terrainAnalysis-6]: process has died [pid 5674, exit code -6, cmd '/home/lzz/ht_execution_300s_20261113/install_cmu/terrain_analysis/lib/terrain_analysis/terrainAnalysis --ros-args -r __node:=terrainAnalysis --params-file /tmp/launch_params_v6ynkeis --params-file /tmp/launch_params_6njcl93t --params-file /tmp/launch_params_36bc4oey --params-file /tmp/launch_params_0shah4ex --params-file /tmp/launch_params_iynz7m5o --params-file /tmp/launch_params_blbcxgmw --params-file /tmp/launch_params_o2igirtq --params-file /tmp/launch_params_3761pdsr --params-file /tmp/launch_params_nqq5mdho --params-file /tmp/launch_params_45s25spq --params-file /tmp/launch_params_cedl9nd1 --params-file /tmp/launch_params_3lh74bwt --params-file /tmp/launch_params_tele96lq --params-file /tmp/launch_params_w0vr8q0u --params-file /tmp/launch_params__ei4quyl --params-file /tmp/launch_params_ni75yc_f --params-file /tmp/launch_params_hnn06g46 --params-file /tmp/launch_params_6ph2am8y --params-file /tmp/launch_params_ej6nqaxs --params-file /tmp/launch_params_gpan6k0v --params-file /tmp/launch_params_p1t89t5s --params-file /tmp/launch_params_ollmuhrr --params-file /tmp/launch_params_uqflojab --params-file /tmp/launch_params_axknn0v8 --params-file /tmp/launch_params_8boc3g5y --params-file /tmp/launch_params_kyzhhg2i'].
+[ERROR] [pathFollower-10]: process has died [pid 5682, exit code -6, cmd '/home/lzz/ht_execution_300s_20261113/install_gate/cmu_local_planner_ht/lib/cmu_local_planner_ht/pathFollower --ros-args -r __node:=pathFollower --params-file /tmp/launch_params_zq7udbv4 --params-file /tmp/launch_params_tk82wau8 --params-file /tmp/launch_params_0v4e8nlg --params-file /tmp/launch_params_mnk837nc --params-file /tmp/launch_params_mbck37wb --params-file /tmp/launch_params_nvc8311z --params-file /tmp/launch_params_0mnef56a --params-file /tmp/launch_params_noru9sna --params-file /tmp/launch_params_6hz5fkmj --params-file /tmp/launch_params_ewpqv1dc --params-file /tmp/launch_params_phhsq2lt --params-file /tmp/launch_params_n0pddp5t --params-file /tmp/launch_params_jrls96q7 --params-file /tmp/launch_params_m1nla8x1 --params-file /tmp/launch_params_4b1datwd --params-file /tmp/launch_params_uqpt_l6z --params-file /tmp/launch_params_8g1fivjr --params-file /tmp/launch_params_g7_9j7wy --params-file /tmp/launch_params_3y156spa --params-file /tmp/launch_params_pe0uac0o --params-file /tmp/launch_params_muevvntg --params-file /tmp/launch_params_qjdt31br --params-file /tmp/launch_params_k63su200 --params-file /tmp/launch_params_alfvf0y2 --params-file /tmp/launch_params_qaq75983 --params-file /tmp/launch_params_m2wd9fe6 --params-file /tmp/launch_params_mv_l5jwd --params-file /tmp/launch_params_e5wu_mtx --params-file /tmp/launch_params_lguh6zf7 --params-file /tmp/launch_params_dx82ol4t --params-file /tmp/launch_params_2ga4iic0 --params-file /tmp/launch_params_0qqa_j9o --params-file /tmp/launch_params_0x5c4zpl'].
+[ERROR] [terrainAnalysisExt-7]: process has died [pid 5676, exit code -6, cmd '/home/lzz/ht_execution_300s_20261113/install_cmu/terrain_analysis_ext/lib/terrain_analysis_ext/terrainAnalysisExt --ros-args -r __node:=terrainAnalysisExt --params-file /tmp/launch_params_h8t7x__7 --params-file /tmp/launch_params_yrcbqmf3 --params-file /tmp/launch_params_8paat4xw --params-file /tmp/launch_params_241hklk7 --params-file /tmp/launch_params_5ve77naj --params-file /tmp/launch_params_61sb_zkc --params-file /tmp/launch_params_o6zpmg3a --params-file /tmp/launch_params_6b4_43pn --params-file /tmp/launch_params_hyc_0ezv --params-file /tmp/launch_params_fg_l7779 --params-file /tmp/launch_params_9878lzxd --params-file /tmp/launch_params_4xvpit9l --params-file /tmp/launch_params_m_1x2o6n --params-file /tmp/launch_params_2c8lhmkm --params-file /tmp/launch_params_4ix0norw --params-file /tmp/launch_params_79_1hpqq --params-file /tmp/launch_params__xx3nenq'].
+[static_transform_publisher-12] [INFO] [1794593323.000175574] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[static_transform_publisher-11] [INFO] [1794593323.000248744] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[sensorScanGeneration-8] [INFO] [1794593323.000567032] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[sensorScanGeneration-8] Failed to delete datawriter, at ./src/publisher.cpp:48 during '__function__'
+[sensorScanGeneration-8] [ERROR] [1794593323.108180864] [sensorScanGeneration.rclcpp]: Error in destruction of rcl publisher handle: cannot publish data, at ./src/rmw_publish.cpp:62, at ./src/rcl/publisher.c:187
+[sensorScanGeneration-8] Failed to delete datawriter, at ./src/publisher.cpp:48 during '__function__'
+[sensorScanGeneration-8] [ERROR] [1794593323.108198682] [sensorScanGeneration.rclcpp]: Error in destruction of rcl publisher handle: cannot publish data, at ./src/rmw_publish.cpp:62, at ./src/rcl/publisher.c:187
+[sensorScanGeneration-8] Failed to delete datawriter, at ./src/publisher.cpp:48 during '__function__'
+[sensorScanGeneration-8] [ERROR] [1794593323.108205259] [sensorScanGeneration.rclcpp]: Error in destruction of rcl publisher handle: cannot publish data, at ./src/rmw_publish.cpp:62, at ./src/rcl/publisher.c:187
+[INFO] [static_transform_publisher-12]: process has finished cleanly [pid 5686]
+[INFO] [static_transform_publisher-11]: process has finished cleanly [pid 5684]
+[ERROR] [sensorScanGeneration-8]: process has died [pid 5678, exit code -11, cmd '/home/lzz/ht_execution_300s_20261113/install_cmu/sensor_scan_generation/lib/sensor_scan_generation/sensorScanGeneration --ros-args -r __node:=sensorScanGeneration'].
+[INFO] [robot_state_publisher-2]: process has finished cleanly [pid 5666]
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;31m[Err] [SensorManager.cc:612] [0m[1;31mUnable to remove sensor[[0m[1;31mdefault::lidar::lidar::velodyne-VLP16[0m[1;31m] because it [0m[1;31mdoes not exist.
+[INFO] [gzserver-1]: process has finished cleanly [pid 5664]
+[gzserver-1] [0m[1;32m[0m[1;32m[0m[1;36m[0m[1;32m[0m
+[gzserver-1] [0m[1;33m[0m[1;31m[0m
