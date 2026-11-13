@@ -1,0 +1,78 @@
+Internal ctest changing into directory: /home/lzz/ht_exec_fix_build
+UpdateCTestConfiguration  from :/home/lzz/ht_exec_fix_build/CTestConfiguration.ini
+Parse Config file:/home/lzz/ht_exec_fix_build/CTestConfiguration.ini
+ Add coverage exclude regular expressions.
+UpdateCTestConfiguration  from :/home/lzz/ht_exec_fix_build/CTestConfiguration.ini
+Parse Config file:/home/lzz/ht_exec_fix_build/CTestConfiguration.ini
+Test project /home/lzz/ht_exec_fix_build
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 1
+    Start 1: ht_gate
+
+1: Test command: /home/lzz/ht_exec_fix_build/ht_gate_test
+1: Working Directory: /home/lzz/ht_exec_fix_build
+1: Test timeout computed to be: 10000000
+1: [WARN] [1794564470.294334348] [rcl]: ROS_LOCALHOST_ONLY is deprecated but still honored if it is enabled. Use ROS_AUTOMATIC_DISCOVERY_RANGE and ROS_STATIC_PEERS instead.
+1: [WARN] [1794564470.294366488] [rcl]: 'localhost_only' is enabled, 'automatic_discovery_range' and 'static_peers' will be ignored.
+1: PASS all-high forward accepted
+1: PASS all-high reverse accepted
+1: PASS same XY different body yaw selects different channel
+1: PASS reverse keeps actual low body yaw
+1: PASS reverse does not demand opposite travel channel
+1: PASS recorded turn avoids false constant-1s overshoot rejection
+1: PASS braking turn still rejects genuinely crossed low direction
+1: PASS recorded reverse startup native command rejected
+1: PASS reverse startup projects steering through the same hard gate
+1: PASS turn checks intermediate direction
+1: PASS unknown footprint rejected
+1: PASS command projection cannot bypass unknown support
+1: PASS measured obstacle footprint rejected
+1: PASS stale map rejected
+1: [WARN] [1794564470.314091485] [ht_gate_test]: HT map rejected: layout ht_dir_0
+1: PASS malformed map rejected
+1: PASS CMU geometry accepts obstacle outside native .45m envelope plus grid margin
+1: PASS CMU geometry still blocks obstacle inside native body envelope
+1: PASS HT-only mode disables CMU geometry
+1: PASS required task boundary missing rejects
+1: PASS HT-only command accepted inside task region
+1: PASS task boundary checks whole footprint
+1: PASS outside task region rejected without geometry voting
+1: PASS wrong-frame task boundary rejected
+1: PASS HT-only cannot silently run with HT disabled
+1/2 Test #1: ht_gate ..........................   Passed    0.16 sec
+test 2
+    Start 2: ht_execution
+
+2: Test command: /home/lzz/ht_exec_fix_build/ht_execution_test
+2: Working Directory: /home/lzz/ht_exec_fix_build
+2: Test timeout computed to be: 10000000
+2: [WARN] [1794564470.490248911] [rcl]: ROS_LOCALHOST_ONLY is deprecated but still honored if it is enabled. Use ROS_AUTOMATIC_DISCOVERY_RANGE and ROS_STATIC_PEERS instead.
+2: [WARN] [1794564470.490281419] [rcl]: 'localhost_only' is enabled, 'automatic_discovery_range' and 'static_peers' will be ignored.
+2: PASS baseline circle rejects wall beside body
+2: PASS body envelope permits forward and reverse along wall
+2: PASS clear turn endpoints cannot hide intermediate corner collision
+2: PASS braking sweep rejects corner hitting wall
+2: PASS real body obstacle is rejected
+2: PASS unknown support still rejected
+2: PASS low HT score still rejected
+2: PASS arrival cannot erase new obstacle inside body
+2: PASS oversized body rejected
+2: route time=6.14 endpoint=0.813,-0.000144155
+2: route time=8.52 endpoint=0.812823,-0.0379332
+2: PASS braking controller shortens both recorded-shape routes
+2: PASS 4mm overshoot completes without deadlock
+2: PASS lateral miss is not accepted
+2: PASS active recovery follows new speed limit after braking
+2: PASS zero limit stops recovery
+2: PASS stuck pose releases recovery ownership
+2: PASS graph search and execution finish reverse recovery
+2/2 Test #2: ht_execution .....................   Passed    0.18 sec
+
+100% tests passed, 0 tests failed out of 2
+
+Total Test time (real) =   0.35 sec

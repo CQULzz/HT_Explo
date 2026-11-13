@@ -166,3 +166,7 @@ p01完整120.3秒保留，发现TARE仿真命令桥硬编码1秒期限与HT几�
 
 
 用户要求在GitHub附带“做了什么、有什么不足”的说明文档，已新增docs/results/ht_quality_data_20261112/HANDOFF.md（源码提交167c3ed），并附到已发布的精简实验数据Release。附件HT_QUALITY_HANDOFF_20261112.md为8923字节，SHA256=1eeef8ddabf165fe61361f73d0d188d2801b2768d1cfb2ee53931c77bc5ebcbc，远端大小/SHA和仓库内容一致；回执DOCUMENT_UPLOAD_RECEIPT.json。文档涵盖TARE/HT边界、mapper质量三项修复、测试版本与结果、效率/恢复/推理进度/退出/模型真值不足、后续诊断、精简数据范围与复现依赖。数据Release原标签及3个原实验附件保持不变；无新视频/MCAP上传、无导航更改或新实验。
+
+## 2026-11-13：膨胀误拒与恢复控制修复
+
+用户要求本地修改后上传 GitHub。本轮从 5e5eef 建立独立 fix/ht-execution-20261113：当前 CMU HT-only 适配器以既有 0.6×0.6m 配置包络按车体朝向检查原始障碍；保留 HT、支撑、边界、时效约束。恢复采用制动距离减速、合理段尾误差与无进展退出，跟随运行中的速度限制。代码、离线回归和说明一起推送。当前 WSL 缺少旧现场录包夹具与原完整实验运行时；未开启新仿真、录包回放或实车运动，不把离线结果称为600秒或实车验收。详见 validation/execution_20261113/README.md。

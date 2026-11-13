@@ -62,6 +62,35 @@ class Gate {
   bool enabled=false;
   std::string mode;
   bool usesGeometry() const {return mode!="ht_only";}
+  // CMU supplies its configured full body envelope in the vehicle frame.
+  // Keep support, HT scores, boundary and TTL independent of this refinement.
+  void setBodyEnvelope(double length,double width) {
+    if(!std::isfinite(length)||!std::isfinite(width)||length<=0||width<=0||length>6||width>6)
+      throw std::invalid_argument("Invalid HT body envelope");
+    if(std::hypot(length/2,width/2)>radius_+1e-9)
+      throw std::invalid_argument("Body envelope exceeds HT support/boundary radius");
+    body_half_length_=length/2;body_half_width_=width/2;
+  }
+  bool bodyOccupied(Pose p) const {
+    if(body_half_length_<=0 || body_half_width_<=0)return true;
+    // Cell extent plus the maximum translation/rotation between sweep samples.
+    const double reach=std::hypot(body_half_length_,body_half_width_);
+    const double margin=res_/std::sqrt(2.)+.01+reach*pi/128;
+    const int n=std::ceil((reach+margin)/res_)+1;
+    const int rr=std::floor(rows_*.5-(p.x-cx_)/res_),cc=std::floor(cols_*.5-(p.y-cy_)/res_);
+    if(rr-n>=0&&cc-n>=0&&rr+n<rows_&&cc+n<cols_) {
+      const int a=rr-n,b=cc-n,z=rr+n+1,w=cc+n+1;
+      if(occupied_sum_.at<int>(z,w)-occupied_sum_.at<int>(a,w)-occupied_sum_.at<int>(z,b)+occupied_sum_.at<int>(a,b)==0)return false;
+    }
+    const double cosine=std::cos(p.yaw),sine=std::sin(p.yaw);
+    for(int r=rr-n;r<=rr+n;++r)for(int c=cc-n;c<=cc+n;++c) {
+      const double dx=cx_+(rows_*.5-r-.5)*res_-p.x,dy=cy_+(cols_*.5-c-.5)*res_-p.y;
+      const double x=cosine*dx+sine*dy,y=-sine*dx+cosine*dy;
+      if(std::abs(x)>body_half_length_+margin||std::abs(y)>body_half_width_+margin)continue;
+      if(r<0||c<0||r>=rows_||c>=cols_||raw_occupied_.at<unsigned char>(r,c))return true;
+    }
+    return false;
+  }
   void receiveBoundary(const geometry_msgs::msg::PolygonStamped& msg) {
     boundary_received_=true;boundary_.clear();boundary_valid_=msg.header.frame_id=="map" && msg.polygon.points.size()>=3;
     for(const auto& p:msg.polygon.points) {
@@ -140,6 +169,7 @@ class Gate {
       cv::dilate(unknown,missing,kernel,cv::Point(-1,-1),1,cv::BORDER_CONSTANT,cv::Scalar(1));
       cv::dilate(occupied,unsafe,kernel,cv::Point(-1,-1),1,cv::BORDER_CONSTANT,cv::Scalar(0));
       probabilities_=std::move(scores);valid_=std::move(valid);
+      raw_occupied_=occupied;cv::integral(occupied,occupied_sum_,CV_32S);
       missing_=missing;occupied_=unsafe;rows_=rows;cols_=cols;res_=resolution;
       cx_=msg.info.pose.position.x;cy_=msg.info.pose.position.y;
       stamp_=msg.header.stamp.sec+msg.header.stamp.nanosec*1e-9;
@@ -162,7 +192,7 @@ class Gate {
     if(r<0||c<0||r>=rows_||c>=cols_){last_reason="HT_OUTSIDE_MAP";return false;}
     const int index=r*cols_+c;
     const int channel=int(std::floor((wrap(p.yaw)+2*pi)/(pi/4)+.5))%8;
-    if(occupied_.data[index]){last_reason="HT_OCCUPIED";return false;}
+    if((body_half_length_>0 ? bodyOccupied(p) : occupied_.data[index]!=0)){last_reason="HT_OCCUPIED";return false;}
     if(missing_.data[index]){last_reason="HT_MISSING_SUPPORT";return false;}
     if(!std::isfinite(valid_[index])||valid_[index]<.5){last_reason="HT_CONTEXT_INVALID";return false;}
     const float score=probabilities_[channel][index];
@@ -253,6 +283,9 @@ class Gate {
         <<",\"x\":"<<start.x<<",\"y\":"<<start.y<<",\"yaw\":"<<start.yaw
         <<",\"linear_candidate\":"<<linear<<",\"angular_candidate\":"<<angular
         <<",\"reaction_time\":"<<reaction_<<",\"linear_brake_accel\":"<<brake_linear_
+        <<",\"obstacle_footprint\":\""<<(body_half_length_>0?"oriented_box_v1":"circle_v1")<<"\""
+        <<",\"body_length\":"<<2*body_half_length_<<",\"body_width\":"<<2*body_half_width_
+        <<",\"support_radius\":"<<radius_
         <<",\"angular_brake_accel\":"<<brake_angular_<<",\"horizon_s\":"<<horizon
         <<",\"allowed\":"<<(ok?"true":"false")<<",\"reason\":\""<<last_reason<<"\"}";
       std_msgs::msg::String msg;msg.data=out.str();command_audit_->publish(msg);
@@ -284,7 +317,8 @@ class Gate {
   uint64_t maps_=0,invalid_maps_=0;
   std::map<std::string,uint64_t> reasons_;
   std::array<std::vector<float>,8> probabilities_;
-  std::vector<float> valid_;cv::Mat occupied_,missing_;
+  std::vector<float> valid_;cv::Mat occupied_,missing_,raw_occupied_,occupied_sum_;
+  double body_half_length_=0,body_half_width_=0;
   bool require_boundary_=false,boundary_received_=false,boundary_valid_=false;
   size_t external_obstacles_=0;
   std::vector<Pose> boundary_;

@@ -193,6 +193,9 @@ int main(int argc, char** argv)
   nh = rclcpp::Node::make_shared("pathFollower");
   htGate=std::make_unique<cmu_ht::Gate>(nh);
   cmu_ht::Recovery recovery(nh,*htGate);
+  const double bodyLength=nh->declare_parameter("vehicleLength",.6);
+  const double bodyWidth=nh->declare_parameter("vehicleWidth",.6);
+  if(htGate->mode=="ht_only")htGate->setBodyEnvelope(bodyLength,bodyWidth);
 
   nh->declare_parameter<double>("sensorOffsetX", sensorOffsetX);
   nh->declare_parameter<double>("sensorOffsetY", sensorOffsetY);
@@ -381,7 +384,10 @@ int main(int argc, char** argv)
         else cmd_vel.twist=geometry_msgs::msg::Twist();
         if(!allowed)cmd_vel.twist=geometry_msgs::msg::Twist();
         const bool permitted=autonomyMode && joySpeed>0 && safetyStop==0 && !(stopInitTime>0 && odomTime<stopInitTime+stopTime);
-        recovery.select(current,nh->now().seconds(),odomTime,permitted,maxSpeed*joySpeed,
+        double recoveryLimit=maxSpeed*joySpeed;
+        if(odomTime<slowInitTime+slowTime1 && slowInitTime>0)recoveryLimit*=slowRate1;
+        else if(odomTime<slowInitTime+slowTime1+slowTime2 && slowInitTime>0)recoveryLimit*=slowRate2;
+        recovery.select(current,nh->now().seconds(),odomTime,permitted,recoveryLimit,
                         allowed,cmd_vel.twist.linear.x,cmd_vel.twist.angular.z,
                         cmd_vel.twist.linear.x,cmd_vel.twist.angular.z);
         vehicleSpeed=cmd_vel.twist.linear.x;vehicleYawRate=cmd_vel.twist.angular.z;

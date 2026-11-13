@@ -569,6 +569,7 @@ int main(int argc, char** argv)
   nh->get_parameter("pathFolder", pathFolder);
   nh->get_parameter("vehicleLength", vehicleLength);
   nh->get_parameter("vehicleWidth", vehicleWidth);
+  if(htGate->mode=="ht_only")htGate->setBodyEnvelope(vehicleLength,vehicleWidth);
   nh->get_parameter("sensorOffsetX", sensorOffsetX);
   nh->get_parameter("sensorOffsetY", sensorOffsetY);
   nh->get_parameter("twoWayDrive", twoWayDrive);

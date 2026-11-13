@@ -63,6 +63,10 @@ class Recovery {
       }
       planned_goal_=goal_;++compatible_goal_updates;
     }
+    if(!std::isfinite(speed_limit)||speed_limit<=0) {
+      reset("SPEED_LIMIT");v=w=0;report(now,pose,v,w);return true;
+    }
+    execution_speed_=std::min(speed_,speed_limit);
     if(active_)return execute(pose,now,v,w);
     const bool moving=native_allowed&&(std::abs(native_v)+std::abs(native_w)>1e-8);
     if(!moving){if(blocked_at_<0)blocked_at_=now;}else blocked_at_=-1;
@@ -75,7 +79,7 @@ class Recovery {
     execution_speed_=std::min(speed_,std::max(0.,speed_limit));
     if(execution_speed_<.01)return false;
     if(!plan(pose,goal_)){++search_failures;state="SEARCH_FAILED";report(now,pose,0,0);return false;}
-    origin_=pose;planned_goal_=goal_;index_=1;active_=true;previous_v_=previous_w_=0;last_tick_=now;
+    origin_=pose;planned_goal_=goal_;index_=1;progress_index_=0;progress_at_=now;best_error_=std::numeric_limits<double>::infinity();active_=true;previous_v_=previous_w_=0;last_tick_=now;
     state="EXECUTING";publishPath();report(now,pose,0,0);return execute(pose,now,v,w);
   }
 
@@ -149,17 +153,18 @@ class Recovery {
     const double angle=wrap(target.yaw-current.yaw);double desired_v=0,desired_w=0;
     bool reached=false;
     if(turn) {
-      reached=std::abs(angle)<.012;
-      if(!reached)desired_w=std::copysign(std::min(angular_,3.*std::abs(angle)),angle);
+      reached=std::abs(angle)<.02;
+      if(!reached)desired_w=std::copysign(std::min(angular_,std::sqrt(2.*angular_accel_*std::max(0.,std::abs(angle)-.01))),angle);
     } else {
-      reached=distance(current,target)<.0025;
+      // Completion uses along/cross errors; a small overshoot must not deadlock.
       const double ux=std::cos(target.yaw),uy=std::sin(target.yaw);
       const double gear=((target.x-from.x)*ux+(target.y-from.y)*uy)>=0?1.:-1.;
       const double along=gear*((target.x-current.x)*ux+(target.y-current.y)*uy);
       const double cross=ux*(target.y-current.y)-uy*(target.x-current.x);
+      reached=along<=.01 && along>=-.02 && std::abs(cross)<=.015 && std::abs(angle)<.04;
       if(!reached) {
         desired_w=std::max(-angular_,std::min(angular_,3.*angle+2.*gear*cross));
-        if(std::abs(angle)<.1)desired_v=gear*std::min(execution_speed_,std::max(0.,2.*along));
+        if(std::abs(angle)<.1)desired_v=gear*std::min(execution_speed_,std::sqrt(2.*accel_*std::max(0.,along-.005)));
       }
     }
     v=approach(pv,desired_v,accel_*dt);w=approach(pw,desired_w,angular_accel_*dt);pv=v;pw=w;
@@ -179,6 +184,17 @@ class Recovery {
   }
   bool execute(Pose pose,double now,double& v,double& w) {
     if(!gate_.pose(pose)){++invalidated;reset("START_INVALID:"+gate_.last_reason);v=w=0;next_plan_=now+.25;report(now,pose,v,w);return true;}
+    // Bounded no-progress recovery: a lateral miss or estimator jump cannot
+    // retain ownership forever, even when all map checks still pass.
+    if(index_<route_.size()) {
+      const Pose target=route_[index_];
+      const double error=distance(pose,target)+.25*std::abs(wrap(target.yaw-pose.yaw));
+      if(progress_index_!=index_ || error<best_error_-.001) {
+        progress_index_=index_;best_error_=error;progress_at_=now;
+      } else if(now-progress_at_>2.) {
+        reset("NO_PROGRESS");v=w=0;next_plan_=now+.5;report(now,pose,v,w);return true;
+      }
+    }
     const double dt=std::max(0.,std::min(.05,now-last_tick_));last_tick_=now;
     follow(route_,index_,pose,dt,previous_v_,previous_w_,v,w);
     if(!gate_.command(pose,v,w)){++invalidated;reset("COMMAND_REJECTED:"+gate_.last_reason);v=w=0;next_plan_=now+.25;report(now,pose,v,w);return true;}
@@ -209,6 +225,7 @@ class Recovery {
   bool have_goal_=false,finished_=false,active_=false;
   Pose goal_,planned_goal_,origin_;
   double goal_at_=0,blocked_at_=-1,next_plan_=0,last_tick_=0,previous_v_=0,previous_w_=0,last_report_at_=-1;
+  size_t progress_index_=0;double best_error_=std::numeric_limits<double>::infinity(),progress_at_=0;
   size_t index_=0;std::vector<Pose> route_;std::string last_report_state_;
   rclcpp::Subscription<geometry_msgs::msg::PointStamped>::SharedPtr goal_sub_;
   rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr finish_sub_;

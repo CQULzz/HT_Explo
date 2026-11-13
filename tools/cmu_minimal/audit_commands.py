@@ -20,7 +20,7 @@ def decode(m):
  physical=layers['ht_observation_valid'];obstacle=layers['ht_obstacle']
  missing=cv2.dilate((~np.isfinite(physical)|(physical<.5)).astype('uint8'),kernel,borderType=cv2.BORDER_CONSTANT,borderValue=1)
  occupied=cv2.dilate((np.isfinite(obstacle)&(obstacle>=.5)).astype('uint8'),kernel,borderType=cv2.BORDER_CONSTANT,borderValue=0)
- return dict(rows=rows,cols=cols,res=res,cx=m.info.pose.position.x,cy=m.info.pose.position.y,scores=np.stack([layers['ht_dir_'+str(i)] for i in range(8)]),valid=layers['ht_valid'],missing=missing,occupied=occupied)
+ return dict(rows=rows,cols=cols,res=res,cx=m.info.pose.position.x,cy=m.info.pose.position.y,scores=np.stack([layers['ht_dir_'+str(i)] for i in range(8)]),valid=layers['ht_valid'],missing=missing,occupied=occupied,raw_occupied=np.isfinite(obstacle)&(obstacle>=.5))
 
 def check(m,d):
  v=d['linear_candidate'];w=d['angular_candidate']
@@ -41,7 +41,22 @@ def check(m,d):
  # Therefore these analytic endpoints cover every production sweep sample.
  channel=np.floor((np.arctan2(np.sin(yaw),np.cos(yaw))+2*np.pi)/(np.pi/4)+.5).astype(int)%8
  scores=m['scores'][channel,r,c]
- if m['occupied'][r,c].any():return False,'OCCUPIED',float(np.nanmin(scores))
+ footprint=d.get('obstacle_footprint','circle_v1')
+ if footprint=='oriented_box_v1':
+  length=float(d['body_length']);width=float(d['body_width']);support=float(d['support_radius'])
+  if not all(math.isfinite(a) and a>0 for a in (length,width,support)) or math.hypot(length/2,width/2)>support+1e-9:
+   return False,'BODY_CONFIG',None
+  if abs(support-RADIUS)>1e-9:raise ValueError('Audit --radius differs from recorded support radius')
+  margin=m['res']/math.sqrt(2)+.01+math.hypot(length/2,width/2)*math.pi/128
+  rr,cc=np.indices((m['rows'],m['cols']))
+  gx=m['cx']+(m['rows']*.5-rr-.5)*m['res'];gy=m['cy']+(m['cols']*.5-cc-.5)*m['res']
+  for px,py,angle in zip(x,y,yaw):
+   dx=gx-px;dy=gy-py;cs=math.cos(angle);sn=math.sin(angle)
+   mask=(np.abs(cs*dx+sn*dy)<=length/2+margin)&(np.abs(-sn*dx+cs*dy)<=width/2+margin)
+   if np.any(mask&m['raw_occupied']):return False,'OCCUPIED',float(np.nanmin(scores))
+ elif footprint=='circle_v1':
+  if m['occupied'][r,c].any():return False,'OCCUPIED',float(np.nanmin(scores))
+ else:raise ValueError('Unknown obstacle footprint contract: '+footprint)
  if m['missing'][r,c].any():return False,'MISSING',float(np.nanmin(scores))
  if (~np.isfinite(m['valid'][r,c])|(m['valid'][r,c]<.5)).any():return False,'CONTEXT',float(np.nanmin(scores))
  if (~np.isfinite(scores)|(scores<0)|(scores>1)).any():return False,'INVALID_SCORE',None
