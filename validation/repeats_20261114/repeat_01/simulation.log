@@ -1,0 +1,1164 @@
+[INFO] [launch]: All log files can be found below /home/lzz/ht_repeat_20261114/ros_logs/2026-11-14-02-57-41-685405-lzz-1671
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [gzserver-1]: process started with pid [1703]
+[INFO] [robot_state_publisher-2]: process started with pid [1705]
+[INFO] [spawn_entity.py-3]: process started with pid [1707]
+[INFO] [spawn_entity.py-4]: process started with pid [1709]
+[INFO] [spawn_entity.py-5]: process started with pid [1711]
+[INFO] [terrainAnalysis-6]: process started with pid [1713]
+[INFO] [terrainAnalysisExt-7]: process started with pid [1715]
+[INFO] [sensorScanGeneration-8]: process started with pid [1717]
+[INFO] [localPlanner-9]: process started with pid [1719]
+[INFO] [pathFollower-10]: process started with pid [1721]
+[INFO] [static_transform_publisher-11]: process started with pid [1725]
+[INFO] [static_transform_publisher-12]: process started with pid [1727]
+[INFO] [tare_planner_node-13]: process started with pid [1729]
+[static_transform_publisher-12] [WARN] [1794596262.072011763] []: Old-style arguments are deprecated; see --help for new-style arguments
+[static_transform_publisher-11] [WARN] [1794596262.072954306] []: Old-style arguments are deprecated; see --help for new-style arguments
+[static_transform_publisher-12] [INFO] [1794596262.100164411] [sensorTransPublisher]: Spinning until stopped - publishing transform
+[static_transform_publisher-12] translation: ('0.000000', '0.000000', '0.000000')
+[static_transform_publisher-12] rotation: ('-0.500000', '0.500000', '-0.500000', '0.500000')
+[static_transform_publisher-12] from '/sensor' to '/camera'
+[static_transform_publisher-11] [INFO] [1794596262.102346460] [vehicleTransPublisher]: Spinning until stopped - publishing transform
+[static_transform_publisher-11] translation: ('-0.000000', '-0.000000', '0.000000')
+[static_transform_publisher-11] rotation: ('0.000000', '0.000000', '0.000000', '1.000000')
+[static_transform_publisher-11] from '/sensor' to '/vehicle'
+[robot_state_publisher-2] [INFO] [1794596262.108726720] [robot_state_publisher]: got segment lidar
+[robot_state_publisher-2] [INFO] [1794596262.108837698] [robot_state_publisher]: got segment velodyne
+[robot_state_publisher-2] [INFO] [1794596262.108847167] [robot_state_publisher]: got segment velodyne_base_link
+[localPlanner-9] [INFO] [1794596262.169246342] [localPlanner]: Reading path files.
+[tare_planner_node-13] finished constructor
+[tare_planner_node-13] parameter kAutoStart: 0
+[spawn_entity.py-3] [INFO] [1794596262.393866314] [spawn_entity]: Spawn Entity started
+[spawn_entity.py-3] [INFO] [1794596262.394238709] [spawn_entity]: Loading entity published on topic robot_description
+[spawn_entity.py-3] [INFO] [1794596262.396520899] [spawn_entity]: Waiting for entity xml on robot_description
+[spawn_entity.py-5] [INFO] [1794596262.397732078] [spawn_entity]: Spawn Entity started
+[spawn_entity.py-5] [INFO] [1794596262.398086067] [spawn_entity]: Loading entity XML from file /home/lzz/ht_execution_300s_20261113/install_cmu/vehicle_simulator/share/vehicle_simulator/urdf/camera.urdf.xacro
+[spawn_entity.py-5] [INFO] [1794596262.399259701] [spawn_entity]: Waiting for service /spawn_entity, timeout = 30
+[spawn_entity.py-5] [INFO] [1794596262.399998571] [spawn_entity]: Waiting for service /spawn_entity
+[spawn_entity.py-4] [INFO] [1794596262.400414672] [spawn_entity]: Spawn Entity started
+[spawn_entity.py-4] [INFO] [1794596262.400758581] [spawn_entity]: Loading entity XML from file /home/lzz/cmu_test_20261110/common_sensor/robot.sdf
+[spawn_entity.py-4] [INFO] [1794596262.401368550] [spawn_entity]: Waiting for service /spawn_entity, timeout = 30
+[spawn_entity.py-4] [INFO] [1794596262.401660036] [spawn_entity]: Waiting for service /spawn_entity
+[spawn_entity.py-3] [INFO] [1794596262.408342728] [spawn_entity]: Waiting for service /spawn_entity, timeout = 30
+[spawn_entity.py-3] [INFO] [1794596262.408963429] [spawn_entity]: Waiting for service /spawn_entity
+[localPlanner-9] [INFO] [1794596262.706657236] [localPlanner]: Initialization complete.
+[gzserver-1] Gazebo multi-robot simulator, version 11.10.2
+[gzserver-1] Copyright (C) 2012 Open Source Robotics Foundation.
+[gzserver-1] Released under the Apache 2 License.
+[gzserver-1] http://gazebosim.org
+[gzserver-1] 
+[tare_planner_node-13] 
+[tare_planner_node-13] [1;32mExploration Started[0m
+[gzserver-1] [1;33m[Wrn] [gazebo_ros_init.cpp:178] [0m[1;33m
+[gzserver-1] #     # ####### ####### ###  #####  #######
+[gzserver-1] ##    # #     #    #     #  #     # #
+[gzserver-1] # #   # #     #    #     #  #       #
+[gzserver-1] #  #  # #     #    #     #  #       #####
+[gzserver-1] #   # # #     #    #     #  #       #
+[gzserver-1] #    ## #     #    #     #  #     # #
+[gzserver-1] #     # #######    #    ###  #####  #######
+[gzserver-1] 
+[gzserver-1] This version of Gazebo, now called Gazebo classic, reaches end-of-life
+[gzserver-1] in January 2025. Users are highly encouraged to migrate to the new Gazebo
+[gzserver-1] using our migration guides (https://gazebosim.org/docs/latest/gazebo_classic_migration?utm_source=gazebo_ros_pkgs&utm_medium=cli)
+[gzserver-1] 
+[gzserver-1] [0m[1;33m
+[tare_planner_node-13] [INFO] [1794596264.194832601] [tare_planner_node]: Waiting for start signal
+[spawn_entity.py-4] [INFO] [1794596264.922257287] [spawn_entity]: Calling service /spawn_entity
+[spawn_entity.py-5] [INFO] [1794596264.922486053] [spawn_entity]: Calling service /spawn_entity
+[spawn_entity.py-3] [INFO] [1794596264.922968119] [spawn_entity]: Calling service /spawn_entity
+[tare_planner_node-13] [INFO] [1794596265.186627322] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-13] [INFO] [1794596266.177588130] [tare_planner_node]: Waiting for start signal
+[gzserver-1] [1;32m[Msg] [0m[1;32mWaiting for master.[0m[1;32m
+[gzserver-1] [0m[1;32m[0m[1;32m[0m[1;32m[Msg] [0m[1;32mConnected to gazebo master @ [0m[1;32mhttp://127.0.0.1:11516[0m[1;32m
+[gzserver-1] [0m[1;32m[0m[1;32m[0m[1;32m[Msg] [0m[1;32mPublicized address: [0m[1;32m10.255.255.254[0m[1;32m
+[gzserver-1] [0m[1;32m[0m[1;32m[0m[1;32m[Msg] [0m[1;32mLoading world file [[0m[1;32m/home/lzz/cmu_test_20261110/common_sensor/indoor.world[0m[1;32m][0m[1;32m
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;31m[Err] [PhysicsEngine.cc:255] [0m[1;31mSetParam([0m[1;31mgravity[0m[1;31m) std::any_cast error: [0m[1;31mbad any_cast[0m[1;31m
+[gzserver-1] [0m[1;31m[0m[1;31m[0m[1;33m[Wrn] [PresetManager.cc:82] [0m[1;33mCouldn't set parameter [[0m[1;33mgravity[0m[1;33m] in physics engine[0m[1;33m
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[INFO] [1794596266.233958431] [gazebo_ros_state]: Publishing states of gazebo models at [/model_states]
+[gzserver-1] [INFO] [1794596266.235061201] [gazebo_ros_state]: Publishing states of gazebo links at [/link_states]
+[spawn_entity.py-4] [INFO] [1794596266.254416229] [spawn_entity]: Spawn status: SpawnEntity: Successfully spawned entity [robot]
+[INFO] [spawn_entity.py-4]: process has finished cleanly [pid 1709]
+[spawn_entity.py-5] [INFO] [1794596266.997525200] [spawn_entity]: Spawn status: SpawnEntity: Successfully spawned entity [camera]
+[INFO] [spawn_entity.py-5]: process has finished cleanly [pid 1711]
+[gzserver-1] [1;33m[Wrn] [Event.cc:61] [0m[1;33mWarning: Deleting a connection right after creation. [0m[1;33mMake sure to save the ConnectionPtr from a Connect call
+[gzserver-1] [0m[INFO] [1794596267.414253927] [camera_controller]: Publishing camera info to [/camera/camera_info]
+[gzserver-1] [1;33m[Wrn] [ModelDatabase.cc:340] [0m[1;33mGetting models from[[0m[1;33m/[0m[1;33m]. This may take a few seconds.
+[gzserver-1] [0m[1;33m[Wrn] [ModelDatabase.cc:212] [0m[1;33mUnable to connect to model database using [[0m[1;33m//database.config[0m[1;33m]. Only locally installed models will be available.
+[gzserver-1] [0m[1;33m[Wrn] [FuelModelDatabase.cc:313] [0m[1;33mURI not supported by Fuel [[0m[1;33mmodel://velodyne_description/meshes/VLP16_scan.dae[0m[1;33m][0m[1;33m
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;33m[Wrn] [SystemPaths.cc:459] [0m[1;33mFile or path does not exist [[0m[1;33m""[0m[1;33m] [[0m[1;33mmodel://velodyne_description/meshes/VLP16_scan.dae[0m[1;33m][0m[1;33m
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;31m[Err] [Visual.cc:2956] [0m[1;31mNo mesh specified
+[gzserver-1] [0m[1;33m[Wrn] [ModelDatabase.cc:340] [0m[1;33mGetting models from[[0m[1;33m/[0m[1;33m]. This may take a few seconds.
+[gzserver-1] [0m[1;33m[Wrn] [ModelDatabase.cc:212] [0m[1;33mUnable to connect to model database using [[0m[1;33m//database.config[0m[1;33m]. Only locally installed models will be available.
+[gzserver-1] [0m[1;33m[Wrn] [FuelModelDatabase.cc:313] [0m[1;33mURI not supported by Fuel [[0m[1;33mmodel://velodyne_description/meshes/VLP16_scan.dae[0m[1;33m][0m[1;33m
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;33m[Wrn] [SystemPaths.cc:459] [0m[1;33mFile or path does not exist [[0m[1;33m""[0m[1;33m] [[0m[1;33mmodel://velodyne_description/meshes/VLP16_scan.dae[0m[1;33m][0m[1;33m
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;31m[Err] [Visual.cc:2956] [0m[1;31mNo mesh specified
+[gzserver-1] [0m[1;33m[Wrn] [ModelDatabase.cc:340] [0m[1;33mGetting models from[[0m[1;33m/[0m[1;33m]. This may take a few seconds.
+[gzserver-1] [0m[1;33m[Wrn] [ModelDatabase.cc:212] [0m[1;33mUnable to connect to model database using [[0m[1;33m//database.config[0m[1;33m]. Only locally installed models will be available.
+[gzserver-1] [0m[1;33m[Wrn] [FuelModelDatabase.cc:313] [0m[1;33mURI not supported by Fuel [[0m[1;33mmodel://velodyne_description/meshes/VLP16_scan.dae[0m[1;33m][0m[1;33m
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;33m[Wrn] [SystemPaths.cc:459] [0m[1;33mFile or path does not exist [[0m[1;33m""[0m[1;33m] [[0m[1;33mmodel://velodyne_description/meshes/VLP16_scan.dae[0m[1;33m][0m[1;33m
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;33m[Wrn] [ModelDatabase.cc:340] [0m[1;33mGetting models from[[0m[1;33m/[0m[1;33m]. This may take a few seconds.
+[gzserver-1] [0m[1;33m[Wrn] [ModelDatabase.cc:212] [0m[1;33mUnable to connect to model database using [[0m[1;33m//database.config[0m[1;33m]. Only locally installed models will be available.
+[gzserver-1] [0m[1;33m[Wrn] [FuelModelDatabase.cc:313] [0m[1;33mURI not supported by Fuel [[0m[1;33mmodel://velodyne_description/meshes/VLP16_base_1.dae[0m[1;33m][0m[1;33m
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;33m[Wrn] [SystemPaths.cc:459] [0m[1;33mFile or path does not exist [[0m[1;33m""[0m[1;33m] [[0m[1;33mmodel://velodyne_description/meshes/VLP16_base_1.dae[0m[1;33m][0m[1;33m
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;31m[Err] [Visual.cc:2956] [0m[1;31mNo mesh specified
+[gzserver-1] [0m[1;33m[Wrn] [ModelDatabase.cc:340] [0m[1;33mGetting models from[[0m[1;33m/[0m[1;33m]. This may take a few seconds.
+[gzserver-1] [0m[1;33m[Wrn] [ModelDatabase.cc:212] [0m[1;33mUnable to connect to model database using [[0m[1;33m//database.config[0m[1;33m]. Only locally installed models will be available.
+[gzserver-1] [0m[1;33m[Wrn] [FuelModelDatabase.cc:313] [0m[1;33mURI not supported by Fuel [[0m[1;33mmodel://velodyne_description/meshes/VLP16_base_1.dae[0m[1;33m][0m[1;33m
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;33m[Wrn] [SystemPaths.cc:459] [0m[1;33mFile or path does not exist [[0m[1;33m""[0m[1;33m] [[0m[1;33mmodel://velodyne_description/meshes/VLP16_base_1.dae[0m[1;33m][0m[1;33m
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;31m[Err] [Visual.cc:2956] [0m[1;31mNo mesh specified
+[gzserver-1] [0m[1;33m[Wrn] [ModelDatabase.cc:340] [0m[1;33mGetting models from[[0m[1;33m/[0m[1;33m]. This may take a few seconds.
+[gzserver-1] [0m[1;33m[Wrn] [ModelDatabase.cc:212] [0m[1;33mUnable to connect to model database using [[0m[1;33m//database.config[0m[1;33m]. Only locally installed models will be available.
+[gzserver-1] [0m[1;33m[Wrn] [FuelModelDatabase.cc:313] [0m[1;33mURI not supported by Fuel [[0m[1;33mmodel://velodyne_description/meshes/VLP16_base_1.dae[0m[1;33m][0m[1;33m
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;33m[Wrn] [SystemPaths.cc:459] [0m[1;33mFile or path does not exist [[0m[1;33m""[0m[1;33m] [[0m[1;33mmodel://velodyne_description/meshes/VLP16_base_1.dae[0m[1;33m][0m[1;33m
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;33m[Wrn] [ModelDatabase.cc:340] [0m[1;33mGetting models from[[0m[1;33m/[0m[1;33m]. This may take a few seconds.
+[gzserver-1] [0m[1;33m[Wrn] [ModelDatabase.cc:212] [0m[1;33mUnable to connect to model database using [[0m[1;33m//database.config[0m[1;33m]. Only locally installed models will be available.
+[gzserver-1] [0m[1;33m[Wrn] [FuelModelDatabase.cc:313] [0m[1;33mURI not supported by Fuel [[0m[1;33mmodel://velodyne_description/meshes/VLP16_base_2.dae[0m[1;33m][0m[1;33m
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;33m[Wrn] [SystemPaths.cc:459] [0m[1;33mFile or path does not exist [[0m[1;33m""[0m[1;33m] [[0m[1;33mmodel://velodyne_description/meshes/VLP16_base_2.dae[0m[1;33m][0m[1;33m
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;31m[Err] [Visual.cc:2956] [0m[1;31mNo mesh specified
+[gzserver-1] [0m[1;33m[Wrn] [ModelDatabase.cc:340] [0m[1;33mGetting models from[[0m[1;33m/[0m[1;33m]. This may take a few seconds.
+[gzserver-1] [0m[1;33m[Wrn] [ModelDatabase.cc:212] [0m[1;33mUnable to connect to model database using [[0m[1;33m//database.config[0m[1;33m]. Only locally installed models will be available.
+[gzserver-1] [0m[1;33m[Wrn] [FuelModelDatabase.cc:313] [0m[1;33mURI not supported by Fuel [[0m[1;33mmodel://velodyne_description/meshes/VLP16_base_2.dae[0m[1;33m][0m[1;33m
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;33m[Wrn] [SystemPaths.cc:459] [0m[1;33mFile or path does not exist [[0m[1;33m""[0m[1;33m] [[0m[1;33mmodel://velodyne_description/meshes/VLP16_base_2.dae[0m[1;33m][0m[1;33m
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;31m[Err] [Visual.cc:2956] [0m[1;31mNo mesh specified
+[gzserver-1] [0m[1;33m[Wrn] [ModelDatabase.cc:340] [0m[1;33mGetting models from[[0m[1;33m/[0m[1;33m]. This may take a few seconds.
+[gzserver-1] [0m[1;33m[Wrn] [ModelDatabase.cc:212] [0m[1;33mUnable to connect to model database using [[0m[1;33m//database.config[0m[1;33m]. Only locally installed models will be available.
+[gzserver-1] [0m[1;33m[Wrn] [FuelModelDatabase.cc:313] [0m[1;33mURI not supported by Fuel [[0m[1;33mmodel://velodyne_description/meshes/VLP16_base_2.dae[0m[1;33m][0m[1;33m
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;33m[Wrn] [SystemPaths.cc:459] [0m[1;33mFile or path does not exist [[0m[1;33m""[0m[1;33m] [[0m[1;33mmodel://velodyne_description/meshes/VLP16_base_2.dae[0m[1;33m][0m[1;33m
+[INFO] [vehicleSimulator-14]: process started with pid [2087]
+[vehicleSimulator-14] [INFO] [1794596267.647501269] [vehicleSimulator]: Simulation started.
+[tare_planner_node-13] [INFO] [1794596267.694767360] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-13] [INFO] [1794596268.690894975] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-13] [INFO] [1794596269.677261354] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-13] [INFO] [1794596270.663780078] [tare_planner_node]: Waiting for start signal
+[spawn_entity.py-3] [INFO] [1794596271.330562777] [spawn_entity]: Spawn status: SpawnEntity: Successfully spawned entity [lidar]
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[INFO] [1794596271.354363536] [velodyne.gazebo_ros_laser_controller]: Velodyne laser plugin missing <min_intensity>, defaults to no clipping
+[gzserver-1] [INFO] [1794596271.357091272] [velodyne.gazebo_ros_laser_controller]: Velodyne laser plugin ready
+[gzserver-1] [0m[1;32m[0m[1;32m[0m[1;36m[Dbg] [GazeboRosVelodyneLaser.cpp:65] [0m[1;36mLoading GazeboRosVelodyneLaser
+[gzserver-1] [0m[1;36m[Dbg] [GazeboRosVelodyneLaser.cpp:125] [0m[1;36mGazeboRosVelodyneLaser LOADED
+[gzserver-1] [1;33m[Wrn] [ModelDatabase.cc:340] [0m[1;33mGetting models from[[0m[1;33m/[0m[1;33m]. This may take a few seconds.
+[gzserver-1] [0m[1;33m[Wrn] [ModelDatabase.cc:212] [0m[1;33mUnable to connect to model database using [[0m[1;33m//database.config[0m[1;33m]. Only locally installed models will be available.
+[gzserver-1] [0m[1;33m[Wrn] [FuelModelDatabase.cc:313] [0m[1;33mURI not supported by Fuel [[0m[1;33mmodel://velodyne_description/meshes/VLP16_scan.dae[0m[1;33m][0m[1;33m
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;33m[Wrn] [SystemPaths.cc:459] [0m[1;33mFile or path does not exist [[0m[1;33m""[0m[1;33m] [[0m[1;33mmodel://velodyne_description/meshes/VLP16_scan.dae[0m[1;33m][0m[1;33m
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;31m[Err] [Visual.cc:2956] [0m[1;31mNo mesh specified
+[gzserver-1] [0m[1;33m[Wrn] [ModelDatabase.cc:340] [0m[1;33mGetting models from[[0m[1;33m/[0m[1;33m]. This may take a few seconds.
+[gzserver-1] [0m[1;33m[Wrn] [ModelDatabase.cc:212] [0m[1;33mUnable to connect to model database using [[0m[1;33m//database.config[0m[1;33m]. Only locally installed models will be available.
+[gzserver-1] [0m[1;33m[Wrn] [FuelModelDatabase.cc:313] [0m[1;33mURI not supported by Fuel [[0m[1;33mmodel://velodyne_description/meshes/VLP16_scan.dae[0m[1;33m][0m[1;33m
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;33m[Wrn] [SystemPaths.cc:459] [0m[1;33mFile or path does not exist [[0m[1;33m""[0m[1;33m] [[0m[1;33mmodel://velodyne_description/meshes/VLP16_scan.dae[0m[1;33m][0m[1;33m
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;33m[Wrn] [ModelDatabase.cc:340] [0m[1;33mGetting models from[[0m[1;33m/[0m[1;33m]. This may take a few seconds.
+[gzserver-1] [0m[1;33m[Wrn] [ModelDatabase.cc:212] [0m[1;33mUnable to connect to model database using [[0m[1;33m//database.config[0m[1;33m]. Only locally installed models will be available.
+[gzserver-1] [0m[1;33m[Wrn] [FuelModelDatabase.cc:313] [0m[1;33mURI not supported by Fuel [[0m[1;33mmodel://velodyne_description/meshes/VLP16_base_1.dae[0m[1;33m][0m[1;33m
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;33m[Wrn] [SystemPaths.cc:459] [0m[1;33mFile or path does not exist [[0m[1;33m""[0m[1;33m] [[0m[1;33mmodel://velodyne_description/meshes/VLP16_base_1.dae[0m[1;33m][0m[1;33m
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;31m[Err] [Visual.cc:2956] [0m[1;31mNo mesh specified
+[gzserver-1] [0m[1;33m[Wrn] [ModelDatabase.cc:340] [0m[1;33mGetting models from[[0m[1;33m/[0m[1;33m]. This may take a few seconds.
+[gzserver-1] [0m[1;33m[Wrn] [ModelDatabase.cc:212] [0m[1;33mUnable to connect to model database using [[0m[1;33m//database.config[0m[1;33m]. Only locally installed models will be available.
+[gzserver-1] [0m[1;33m[Wrn] [FuelModelDatabase.cc:313] [0m[1;33mURI not supported by Fuel [[0m[1;33mmodel://velodyne_description/meshes/VLP16_base_1.dae[0m[1;33m][0m[1;33m
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;33m[Wrn] [SystemPaths.cc:459] [0m[1;33mFile or path does not exist [[0m[1;33m""[0m[1;33m] [[0m[1;33mmodel://velodyne_description/meshes/VLP16_base_1.dae[0m[1;33m][0m[1;33m
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;33m[Wrn] [ModelDatabase.cc:340] [0m[1;33mGetting models from[[0m[1;33m/[0m[1;33m]. This may take a few seconds.
+[gzserver-1] [0m[1;33m[Wrn] [ModelDatabase.cc:212] [0m[1;33mUnable to connect to model database using [[0m[1;33m//database.config[0m[1;33m]. Only locally installed models will be available.
+[gzserver-1] [0m[1;33m[Wrn] [FuelModelDatabase.cc:313] [0m[1;33mURI not supported by Fuel [[0m[1;33mmodel://velodyne_description/meshes/VLP16_base_2.dae[0m[1;33m][0m[1;33m
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;33m[Wrn] [SystemPaths.cc:459] [0m[1;33mFile or path does not exist [[0m[1;33m""[0m[1;33m] [[0m[1;33mmodel://velodyne_description/meshes/VLP16_base_2.dae[0m[1;33m][0m[1;33m
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;31m[Err] [Visual.cc:2956] [0m[1;31mNo mesh specified
+[gzserver-1] [0m[1;33m[Wrn] [ModelDatabase.cc:340] [0m[1;33mGetting models from[[0m[1;33m/[0m[1;33m]. This may take a few seconds.
+[gzserver-1] [0m[1;33m[Wrn] [ModelDatabase.cc:212] [0m[1;33mUnable to connect to model database using [[0m[1;33m//database.config[0m[1;33m]. Only locally installed models will be available.
+[gzserver-1] [0m[1;33m[Wrn] [FuelModelDatabase.cc:313] [0m[1;33mURI not supported by Fuel [[0m[1;33mmodel://velodyne_description/meshes/VLP16_base_2.dae[0m[1;33m][0m[1;33m
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;33m[Wrn] [SystemPaths.cc:459] [0m[1;33mFile or path does not exist [[0m[1;33m""[0m[1;33m] [[0m[1;33mmodel://velodyne_description/meshes/VLP16_base_2.dae[0m[1;33m][0m[1;33m
+[INFO] [spawn_entity.py-3]: process has finished cleanly [pid 1707]
+[tare_planner_node-13] [INFO] [1794596271.640759183] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-13] [INFO] [1794596272.636852857] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-13] [INFO] [1794596273.596989376] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-13] [INFO] [1794596274.572225250] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-13] [INFO] [1794596275.547419715] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-13] [INFO] [1794596276.517947453] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-13] [INFO] [1794596277.492903733] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-13] [INFO] [1794596279.690035474] [grid_diag]: GLOBAL_DIAG exploring=0 routable=0
+[tare_planner_node-13] [INFO] [1794596279.690175689] [local_diag]: LOCAL_DIAG uncovered=117 frontier=634 queue=105 best_surface=90 frontier_queue=37 best_frontier=151 reused=0
+[tare_planner_node-13] [INFO] [1794596279.697327115] [tare_planner_node]: EXPLORATION_DIAG candidates=179 uncovered=117 frontier=634 global_return=1 local_complete=0 global_nodes=0 local_nodes=31 x=0.297 y=-0.000
+[tare_planner_node-13] [INFO] [1794596280.548726363] [grid_diag]: GLOBAL_DIAG exploring=2 routable=0
+[tare_planner_node-13] [INFO] [1794596280.548856760] [local_diag]: LOCAL_DIAG uncovered=129 frontier=633 queue=0 best_surface=0 frontier_queue=57 best_frontier=308 reused=2
+[tare_planner_node-13] [INFO] [1794596280.549959947] [tare_planner_node]: EXPLORATION_DIAG candidates=183 uncovered=129 frontier=633 global_return=1 local_complete=0 global_nodes=0 local_nodes=53 x=0.335 y=-0.000
+[tare_planner_node-13] [INFO] [1794596281.545453154] [grid_diag]: GLOBAL_DIAG exploring=2 routable=0
+[tare_planner_node-13] [INFO] [1794596281.545586489] [local_diag]: LOCAL_DIAG uncovered=154 frontier=547 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=5
+[tare_planner_node-13] [INFO] [1794596281.546584795] [tare_planner_node]: EXPLORATION_DIAG candidates=187 uncovered=154 frontier=547 global_return=1 local_complete=0 global_nodes=0 local_nodes=53 x=0.785 y=-0.000
+[tare_planner_node-13] [INFO] [1794596282.546412875] [grid_diag]: GLOBAL_DIAG exploring=2 routable=0
+[tare_planner_node-13] [INFO] [1794596282.546555926] [local_diag]: LOCAL_DIAG uncovered=267 frontier=500 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=5
+[tare_planner_node-13] [INFO] [1794596282.547477802] [tare_planner_node]: EXPLORATION_DIAG candidates=213 uncovered=267 frontier=500 global_return=1 local_complete=0 global_nodes=0 local_nodes=51 x=1.250 y=-0.000
+[tare_planner_node-13] [INFO] [1794596283.533432945] [grid_diag]: GLOBAL_DIAG exploring=2 routable=0
+[tare_planner_node-13] [INFO] [1794596283.533613918] [local_diag]: LOCAL_DIAG uncovered=427 frontier=694 queue=55 best_surface=110 frontier_queue=44 best_frontier=252 reused=4
+[tare_planner_node-13] [INFO] [1794596283.543420324] [tare_planner_node]: EXPLORATION_DIAG candidates=248 uncovered=427 frontier=694 global_return=1 local_complete=0 global_nodes=3 local_nodes=78 x=1.723 y=-0.000
+[tare_planner_node-13] [INFO] [1794596284.518525047] [grid_diag]: GLOBAL_DIAG exploring=4 routable=0
+[tare_planner_node-13] [INFO] [1794596284.518709219] [local_diag]: LOCAL_DIAG uncovered=531 frontier=548 queue=0 best_surface=0 frontier_queue=44 best_frontier=40 reused=6
+[tare_planner_node-13] [INFO] [1794596284.521534106] [tare_planner_node]: EXPLORATION_DIAG candidates=238 uncovered=531 frontier=548 global_return=1 local_complete=0 global_nodes=3 local_nodes=88 x=2.193 y=-0.000
+[tare_planner_node-13] [INFO] [1794596285.497152058] [grid_diag]: GLOBAL_DIAG exploring=5 routable=0
+[tare_planner_node-13] [INFO] [1794596285.497311792] [local_diag]: LOCAL_DIAG uncovered=506 frontier=388 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=6
+[tare_planner_node-13] [INFO] [1794596285.498444852] [tare_planner_node]: EXPLORATION_DIAG candidates=235 uncovered=506 frontier=388 global_return=1 local_complete=0 global_nodes=3 local_nodes=88 x=2.765 y=0.000
+[tare_planner_node-13] [INFO] [1794596286.477867533] [grid_diag]: GLOBAL_DIAG exploring=5 routable=0
+[tare_planner_node-13] [INFO] [1794596286.478024312] [local_diag]: LOCAL_DIAG uncovered=571 frontier=351 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=6
+[tare_planner_node-13] [INFO] [1794596286.479039068] [tare_planner_node]: EXPLORATION_DIAG candidates=235 uncovered=571 frontier=351 global_return=1 local_complete=0 global_nodes=3 local_nodes=86 x=3.235 y=0.000
+[tare_planner_node-13] [INFO] [1794596287.527177333] [grid_diag]: GLOBAL_DIAG exploring=5 routable=0
+[tare_planner_node-13] [INFO] [1794596287.527372078] [local_diag]: LOCAL_DIAG uncovered=684 frontier=696 queue=29 best_surface=73 frontier_queue=16 best_frontier=133 reused=6
+[tare_planner_node-13] [INFO] [1794596287.540879819] [tare_planner_node]: EXPLORATION_DIAG candidates=286 uncovered=684 frontier=696 global_return=1 local_complete=0 global_nodes=3 local_nodes=101 x=3.705 y=-0.000
+[tare_planner_node-13] [INFO] [1794596288.515674551] [grid_diag]: GLOBAL_DIAG exploring=6 routable=0
+[tare_planner_node-13] [INFO] [1794596288.516003452] [local_diag]: LOCAL_DIAG uncovered=695 frontier=635 queue=0 best_surface=0 frontier_queue=7 best_frontier=51 reused=8
+[tare_planner_node-13] [INFO] [1794596288.517873151] [tare_planner_node]: EXPLORATION_DIAG candidates=294 uncovered=695 frontier=635 global_return=1 local_complete=0 global_nodes=5 local_nodes=107 x=4.188 y=-0.000
+[tare_planner_node-13] [INFO] [1794596289.474243002] [grid_diag]: GLOBAL_DIAG exploring=6 routable=0
+[tare_planner_node-13] [INFO] [1794596289.474451983] [local_diag]: LOCAL_DIAG uncovered=749 frontier=578 queue=0 best_surface=0 frontier_queue=14 best_frontier=25 reused=9
+[tare_planner_node-13] [INFO] [1794596289.476693466] [tare_planner_node]: EXPLORATION_DIAG candidates=294 uncovered=749 frontier=578 global_return=1 local_complete=0 global_nodes=5 local_nodes=107 x=4.676 y=-0.000
+[tare_planner_node-13] [INFO] [1794596290.472829057] [grid_diag]: GLOBAL_DIAG exploring=6 routable=0
+[tare_planner_node-13] [INFO] [1794596290.473056297] [local_diag]: LOCAL_DIAG uncovered=780 frontier=562 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=10
+[tare_planner_node-13] [INFO] [1794596290.475074110] [tare_planner_node]: EXPLORATION_DIAG candidates=309 uncovered=780 frontier=562 global_return=1 local_complete=0 global_nodes=5 local_nodes=107 x=5.156 y=-0.000
+[tare_planner_node-13] [INFO] [1794596291.433754285] [grid_diag]: GLOBAL_DIAG exploring=6 routable=0
+[tare_planner_node-13] [INFO] [1794596291.433977953] [local_diag]: LOCAL_DIAG uncovered=692 frontier=563 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=10
+[tare_planner_node-13] [INFO] [1794596291.435752331] [tare_planner_node]: EXPLORATION_DIAG candidates=314 uncovered=692 frontier=563 global_return=1 local_complete=0 global_nodes=7 local_nodes=107 x=5.639 y=-0.000
+[tare_planner_node-13] [INFO] [1794596292.394658449] [grid_diag]: GLOBAL_DIAG exploring=6 routable=0
+[tare_planner_node-13] [INFO] [1794596292.394858102] [local_diag]: LOCAL_DIAG uncovered=714 frontier=551 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=10
+[tare_planner_node-13] [INFO] [1794596292.396634391] [tare_planner_node]: EXPLORATION_DIAG candidates=323 uncovered=714 frontier=551 global_return=1 local_complete=0 global_nodes=7 local_nodes=107 x=6.121 y=-0.000
+[tare_planner_node-13] [INFO] [1794596293.374787802] [grid_diag]: GLOBAL_DIAG exploring=6 routable=0
+[tare_planner_node-13] [INFO] [1794596293.374986233] [local_diag]: LOCAL_DIAG uncovered=725 frontier=493 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=10
+[tare_planner_node-13] [INFO] [1794596293.377021561] [tare_planner_node]: EXPLORATION_DIAG candidates=335 uncovered=725 frontier=493 global_return=1 local_complete=0 global_nodes=7 local_nodes=107 x=6.596 y=0.014
+[tare_planner_node-13] [INFO] [1794596294.350246200] [grid_diag]: GLOBAL_DIAG exploring=6 routable=0
+[tare_planner_node-13] [INFO] [1794596294.350436669] [local_diag]: LOCAL_DIAG uncovered=626 frontier=495 queue=0 best_surface=0 frontier_queue=80 best_frontier=58 reused=8
+[tare_planner_node-13] [INFO] [1794596294.352124356] [tare_planner_node]: EXPLORATION_DIAG candidates=357 uncovered=626 frontier=495 global_return=1 local_complete=0 global_nodes=7 local_nodes=106 x=7.073 y=0.041
+[tare_planner_node-13] [INFO] [1794596295.346447666] [grid_diag]: GLOBAL_DIAG exploring=6 routable=0
+[tare_planner_node-13] [INFO] [1794596295.346689750] [local_diag]: LOCAL_DIAG uncovered=702 frontier=535 queue=22 best_surface=61 frontier_queue=45 best_frontier=32 reused=9
+[tare_planner_node-13] [INFO] [1794596295.364077749] [tare_planner_node]: EXPLORATION_DIAG candidates=385 uncovered=702 frontier=535 global_return=1 local_complete=0 global_nodes=9 local_nodes=123 x=7.545 y=0.053
+[tare_planner_node-13] [INFO] [1794596296.397891125] [grid_diag]: GLOBAL_DIAG exploring=7 routable=0
+[tare_planner_node-13] [INFO] [1794596296.398163676] [local_diag]: LOCAL_DIAG uncovered=851 frontier=632 queue=16 best_surface=74 frontier_queue=10 best_frontier=21 reused=10
+[tare_planner_node-13] [INFO] [1794596296.418855819] [tare_planner_node]: EXPLORATION_DIAG candidates=390 uncovered=851 frontier=632 global_return=1 local_complete=0 global_nodes=9 local_nodes=137 x=8.036 y=0.023
+[tare_planner_node-13] [INFO] [1794596297.349646887] [grid_diag]: GLOBAL_DIAG exploring=7 routable=0
+[tare_planner_node-13] [INFO] [1794596297.350054025] [local_diag]: LOCAL_DIAG uncovered=835 frontier=710 queue=4 best_surface=56 frontier_queue=8 best_frontier=83 reused=10
+[tare_planner_node-13] [INFO] [1794596297.370171363] [tare_planner_node]: EXPLORATION_DIAG candidates=397 uncovered=835 frontier=710 global_return=1 local_complete=0 global_nodes=9 local_nodes=141 x=8.520 y=-0.007
+[tare_planner_node-13] [INFO] [1794596298.337474501] [grid_diag]: GLOBAL_DIAG exploring=7 routable=0
+[tare_planner_node-13] [INFO] [1794596298.337707854] [local_diag]: LOCAL_DIAG uncovered=896 frontier=596 queue=19 best_surface=65 frontier_queue=0 best_frontier=0 reused=11
+[tare_planner_node-13] [INFO] [1794596298.361282201] [tare_planner_node]: EXPLORATION_DIAG candidates=452 uncovered=896 frontier=596 global_return=1 local_complete=0 global_nodes=9 local_nodes=146 x=9.000 y=-0.036
+[tare_planner_node-13] [INFO] [1794596299.979402700] [grid_diag]: GLOBAL_DIAG exploring=8 routable=0
+[tare_planner_node-13] [INFO] [1794596299.979691671] [local_diag]: LOCAL_DIAG uncovered=1026 frontier=632 queue=49 best_surface=186 frontier_queue=11 best_frontier=32 reused=12
+[tare_planner_node-13] [INFO] [1794596300.004100278] [tare_planner_node]: EXPLORATION_DIAG candidates=526 uncovered=1026 frontier=632 global_return=1 local_complete=0 global_nodes=9 local_nodes=160 x=9.569 y=-0.071
+[tare_planner_node-13] [INFO] [1794596300.941437421] [grid_diag]: GLOBAL_DIAG exploring=9 routable=0
+[tare_planner_node-13] [INFO] [1794596300.941741456] [local_diag]: LOCAL_DIAG uncovered=1047 frontier=615 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=13
+[tare_planner_node-13] [INFO] [1794596300.944567845] [tare_planner_node]: EXPLORATION_DIAG candidates=529 uncovered=1047 frontier=615 global_return=1 local_complete=0 global_nodes=9 local_nodes=160 x=9.818 y=-0.086
+[tare_planner_node-13] [INFO] [1794596301.935281384] [grid_diag]: GLOBAL_DIAG exploring=9 routable=0
+[tare_planner_node-13] [INFO] [1794596301.935585311] [local_diag]: LOCAL_DIAG uncovered=1111 frontier=624 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=13
+[tare_planner_node-13] [INFO] [1794596301.938227103] [tare_planner_node]: EXPLORATION_DIAG candidates=569 uncovered=1111 frontier=624 global_return=1 local_complete=0 global_nodes=9 local_nodes=160 x=10.274 y=-0.121
+[tare_planner_node-13] [INFO] [1794596302.957315351] [grid_diag]: GLOBAL_DIAG exploring=9 routable=0
+[tare_planner_node-13] [INFO] [1794596302.957677364] [local_diag]: LOCAL_DIAG uncovered=1162 frontier=897 queue=48 best_surface=86 frontier_queue=96 best_frontier=210 reused=13
+[tare_planner_node-13] [INFO] [1794596302.990716650] [tare_planner_node]: EXPLORATION_DIAG candidates=613 uncovered=1162 frontier=897 global_return=1 local_complete=0 global_nodes=11 local_nodes=189 x=10.730 y=-0.175
+[tare_planner_node-13] [INFO] [1794596303.940510976] [grid_diag]: GLOBAL_DIAG exploring=11 routable=0
+[tare_planner_node-13] [INFO] [1794596303.940905460] [local_diag]: LOCAL_DIAG uncovered=1253 frontier=964 queue=0 best_surface=0 frontier_queue=32 best_frontier=39 reused=15
+[tare_planner_node-13] [INFO] [1794596303.945649324] [tare_planner_node]: EXPLORATION_DIAG candidates=634 uncovered=1253 frontier=964 global_return=1 local_complete=0 global_nodes=11 local_nodes=200 x=11.182 y=-0.229
+[tare_planner_node-13] [INFO] [1794596304.937077827] [grid_diag]: GLOBAL_DIAG exploring=12 routable=0
+[tare_planner_node-13] [INFO] [1794596304.937514175] [local_diag]: LOCAL_DIAG uncovered=1300 frontier=910 queue=0 best_surface=0 frontier_queue=1 best_frontier=21 reused=16
+[tare_planner_node-13] [INFO] [1794596304.941556946] [tare_planner_node]: EXPLORATION_DIAG candidates=624 uncovered=1300 frontier=910 global_return=1 local_complete=0 global_nodes=11 local_nodes=203 x=11.640 y=-0.284
+[tare_planner_node-13] [INFO] [1794596305.909350934] [grid_diag]: GLOBAL_DIAG exploring=13 routable=0
+[tare_planner_node-13] [INFO] [1794596305.909817484] [local_diag]: LOCAL_DIAG uncovered=1276 frontier=856 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=15
+[tare_planner_node-13] [INFO] [1794596305.913346339] [tare_planner_node]: EXPLORATION_DIAG candidates=623 uncovered=1276 frontier=856 global_return=1 local_complete=0 global_nodes=9 local_nodes=201 x=12.095 y=-0.338
+[tare_planner_node-13] [INFO] [1794596306.876504933] [grid_diag]: GLOBAL_DIAG exploring=12 routable=0
+[tare_planner_node-13] [INFO] [1794596306.876819147] [local_diag]: LOCAL_DIAG uncovered=1314 frontier=829 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=15
+[tare_planner_node-13] [INFO] [1794596306.880344717] [tare_planner_node]: EXPLORATION_DIAG candidates=625 uncovered=1314 frontier=829 global_return=1 local_complete=0 global_nodes=11 local_nodes=201 x=12.546 y=-0.392
+[tare_planner_node-13] [INFO] [1794596307.856173436] [grid_diag]: GLOBAL_DIAG exploring=12 routable=0
+[tare_planner_node-13] [INFO] [1794596307.856481771] [local_diag]: LOCAL_DIAG uncovered=1354 frontier=857 queue=0 best_surface=0 frontier_queue=1 best_frontier=20 reused=15
+[tare_planner_node-13] [INFO] [1794596307.860097355] [tare_planner_node]: EXPLORATION_DIAG candidates=628 uncovered=1354 frontier=857 global_return=1 local_complete=0 global_nodes=11 local_nodes=201 x=12.994 y=-0.445
+[tare_planner_node-13] [INFO] [1794596308.837436864] [grid_diag]: GLOBAL_DIAG exploring=12 routable=0
+[tare_planner_node-13] [INFO] [1794596308.837785463] [local_diag]: LOCAL_DIAG uncovered=1369 frontier=850 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=15
+[tare_planner_node-13] [INFO] [1794596308.841675127] [tare_planner_node]: EXPLORATION_DIAG candidates=632 uncovered=1369 frontier=850 global_return=1 local_complete=0 global_nodes=11 local_nodes=201 x=13.540 y=-0.489
+[tare_planner_node-13] [INFO] [1794596309.819881844] [grid_diag]: GLOBAL_DIAG exploring=12 routable=0
+[tare_planner_node-13] [INFO] [1794596309.820197226] [local_diag]: LOCAL_DIAG uncovered=1378 frontier=848 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=15
+[tare_planner_node-13] [INFO] [1794596309.824594607] [tare_planner_node]: EXPLORATION_DIAG candidates=631 uncovered=1378 frontier=848 global_return=1 local_complete=0 global_nodes=13 local_nodes=201 x=13.991 y=-0.488
+[tare_planner_node-13] [INFO] [1794596310.797431420] [grid_diag]: GLOBAL_DIAG exploring=12 routable=0
+[tare_planner_node-13] [INFO] [1794596310.797818535] [local_diag]: LOCAL_DIAG uncovered=1398 frontier=844 queue=2 best_surface=43 frontier_queue=0 best_frontier=0 reused=15
+[tare_planner_node-13] [INFO] [1794596310.839490548] [tare_planner_node]: EXPLORATION_DIAG candidates=637 uncovered=1398 frontier=844 global_return=1 local_complete=0 global_nodes=13 local_nodes=205 x=14.447 y=-0.487
+[tare_planner_node-13] [INFO] [1794596311.765108919] [grid_diag]: GLOBAL_DIAG exploring=12 routable=0
+[tare_planner_node-13] [INFO] [1794596311.765578760] [local_diag]: LOCAL_DIAG uncovered=1315 frontier=842 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=15
+[tare_planner_node-13] [INFO] [1794596311.769177117] [tare_planner_node]: EXPLORATION_DIAG candidates=643 uncovered=1315 frontier=842 global_return=1 local_complete=0 global_nodes=13 local_nodes=204 x=14.903 y=-0.486
+[tare_planner_node-13] [INFO] [1794596312.726498449] [grid_diag]: GLOBAL_DIAG exploring=11 routable=1
+[tare_planner_node-13] [INFO] [1794596312.727709182] [local_diag]: LOCAL_DIAG uncovered=1357 frontier=842 queue=5 best_surface=46 frontier_queue=25 best_frontier=38 reused=14
+[tare_planner_node-13] [INFO] [1794596312.768425114] [tare_planner_node]: EXPLORATION_DIAG candidates=628 uncovered=1357 frontier=842 global_return=0 local_complete=0 global_nodes=17 local_nodes=218 x=15.356 y=-0.484
+[tare_planner_node-13] [INFO] [1794596313.710008835] [grid_diag]: GLOBAL_DIAG exploring=12 routable=1
+[tare_planner_node-13] [INFO] [1794596313.710981545] [local_diag]: LOCAL_DIAG uncovered=1374 frontier=840 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=16
+[tare_planner_node-13] [INFO] [1794596313.715818774] [tare_planner_node]: EXPLORATION_DIAG candidates=624 uncovered=1374 frontier=840 global_return=0 local_complete=0 global_nodes=17 local_nodes=219 x=15.810 y=-0.483
+[tare_planner_node-13] [INFO] [1794596314.680392120] [grid_diag]: GLOBAL_DIAG exploring=12 routable=1
+[tare_planner_node-13] [INFO] [1794596314.681564057] [local_diag]: LOCAL_DIAG uncovered=1334 frontier=842 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=16
+[tare_planner_node-13] [INFO] [1794596314.685863390] [tare_planner_node]: EXPLORATION_DIAG candidates=624 uncovered=1334 frontier=842 global_return=0 local_complete=0 global_nodes=17 local_nodes=219 x=16.268 y=-0.482
+[tare_planner_node-13] [INFO] [1794596315.648986034] [grid_diag]: GLOBAL_DIAG exploring=12 routable=1
+[tare_planner_node-13] [INFO] [1794596315.650300283] [local_diag]: LOCAL_DIAG uncovered=1346 frontier=844 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=16
+[tare_planner_node-13] [INFO] [1794596315.654646054] [tare_planner_node]: EXPLORATION_DIAG candidates=626 uncovered=1346 frontier=844 global_return=0 local_complete=0 global_nodes=19 local_nodes=219 x=16.726 y=-0.506
+[tare_planner_node-13] [INFO] [1794596316.622210557] [grid_diag]: GLOBAL_DIAG exploring=12 routable=1
+[tare_planner_node-13] [INFO] [1794596316.623195465] [local_diag]: LOCAL_DIAG uncovered=1350 frontier=843 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=16
+[tare_planner_node-13] [INFO] [1794596316.627650247] [tare_planner_node]: EXPLORATION_DIAG candidates=627 uncovered=1350 frontier=843 global_return=0 local_complete=0 global_nodes=19 local_nodes=219 x=17.184 y=-0.533
+[tare_planner_node-13] [INFO] [1794596317.590156861] [grid_diag]: GLOBAL_DIAG exploring=12 routable=1
+[tare_planner_node-13] [INFO] [1794596317.591144602] [local_diag]: LOCAL_DIAG uncovered=1278 frontier=844 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=16
+[tare_planner_node-13] [INFO] [1794596317.595104899] [tare_planner_node]: EXPLORATION_DIAG candidates=629 uncovered=1278 frontier=844 global_return=0 local_complete=0 global_nodes=17 local_nodes=219 x=17.636 y=-0.560
+[tare_planner_node-13] [INFO] [1794596318.570016284] [grid_diag]: GLOBAL_DIAG exploring=12 routable=1
+[tare_planner_node-13] [INFO] [1794596318.571125209] [local_diag]: LOCAL_DIAG uncovered=1280 frontier=843 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=16
+[tare_planner_node-13] [INFO] [1794596318.574975444] [tare_planner_node]: EXPLORATION_DIAG candidates=630 uncovered=1280 frontier=843 global_return=0 local_complete=0 global_nodes=19 local_nodes=219 x=18.096 y=-0.587
+[tare_planner_node-13] [INFO] [1794596319.551213754] [grid_diag]: GLOBAL_DIAG exploring=12 routable=1
+[tare_planner_node-13] [INFO] [1794596319.552252670] [local_diag]: LOCAL_DIAG uncovered=1290 frontier=843 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=16
+[tare_planner_node-13] [INFO] [1794596319.555984518] [tare_planner_node]: EXPLORATION_DIAG candidates=637 uncovered=1290 frontier=843 global_return=0 local_complete=0 global_nodes=19 local_nodes=219 x=18.549 y=-0.614
+[tare_planner_node-13] [INFO] [1794596320.520369368] [grid_diag]: GLOBAL_DIAG exploring=12 routable=1
+[tare_planner_node-13] [INFO] [1794596320.521325159] [local_diag]: LOCAL_DIAG uncovered=1186 frontier=845 queue=0 best_surface=0 frontier_queue=73 best_frontier=40 reused=14
+[tare_planner_node-13] [INFO] [1794596320.525306590] [tare_planner_node]: EXPLORATION_DIAG candidates=642 uncovered=1186 frontier=845 global_return=0 local_complete=0 global_nodes=19 local_nodes=218 x=19.098 y=-0.659
+[tare_planner_node-13] [INFO] [1794596321.525165343] [grid_diag]: GLOBAL_DIAG exploring=12 routable=1
+[tare_planner_node-13] [INFO] [1794596321.526216930] [local_diag]: LOCAL_DIAG uncovered=1198 frontier=845 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=15
+[tare_planner_node-13] [INFO] [1794596321.530119654] [tare_planner_node]: EXPLORATION_DIAG candidates=648 uncovered=1198 frontier=845 global_return=0 local_complete=0 global_nodes=21 local_nodes=219 x=19.548 y=-0.713
+[tare_planner_node-13] [INFO] [1794596322.526154060] [grid_diag]: GLOBAL_DIAG exploring=12 routable=1
+[tare_planner_node-13] [INFO] [1794596322.527486211] [local_diag]: LOCAL_DIAG uncovered=1214 frontier=856 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=16
+[tare_planner_node-13] [INFO] [1794596322.531479718] [tare_planner_node]: EXPLORATION_DIAG candidates=658 uncovered=1214 frontier=856 global_return=0 local_complete=0 global_nodes=21 local_nodes=219 x=20.009 y=-0.760
+[tare_planner_node-13] [INFO] [1794596323.506556621] [grid_diag]: GLOBAL_DIAG exploring=12 routable=1
+[tare_planner_node-13] [INFO] [1794596323.507542514] [local_diag]: LOCAL_DIAG uncovered=1142 frontier=865 queue=0 best_surface=0 frontier_queue=84 best_frontier=62 reused=15
+[tare_planner_node-13] [INFO] [1794596323.511984066] [tare_planner_node]: EXPLORATION_DIAG candidates=667 uncovered=1142 frontier=865 global_return=0 local_complete=0 global_nodes=21 local_nodes=219 x=20.473 y=-0.789
+[tare_planner_node-13] [INFO] [1794596324.496185551] [grid_diag]: GLOBAL_DIAG exploring=12 routable=1
+[tare_planner_node-13] [INFO] [1794596324.497209464] [local_diag]: LOCAL_DIAG uncovered=1143 frontier=904 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=16
+[tare_planner_node-13] [INFO] [1794596324.501077940] [tare_planner_node]: EXPLORATION_DIAG candidates=718 uncovered=1143 frontier=904 global_return=0 local_complete=0 global_nodes=21 local_nodes=219 x=20.941 y=-0.817
+[tare_planner_node-13] [INFO] [1794596325.470333522] [grid_diag]: GLOBAL_DIAG exploring=12 routable=3
+[tare_planner_node-13] [INFO] [1794596325.471450110] [local_diag]: LOCAL_DIAG uncovered=1037 frontier=1008 queue=50 best_surface=100 frontier_queue=110 best_frontier=60 reused=13
+[tare_planner_node-13] [INFO] [1794596325.513291741] [tare_planner_node]: EXPLORATION_DIAG candidates=590 uncovered=1037 frontier=1008 global_return=0 local_complete=0 global_nodes=38 local_nodes=170 x=21.403 y=-0.846
+[tare_planner_node-13] [INFO] [1794596326.465290751] [grid_diag]: GLOBAL_DIAG exploring=13 routable=3
+[tare_planner_node-13] [INFO] [1794596326.466543014] [local_diag]: LOCAL_DIAG uncovered=1078 frontier=1229 queue=0 best_surface=0 frontier_queue=88 best_frontier=122 reused=14
+[tare_planner_node-13] [INFO] [1794596326.471688584] [tare_planner_node]: EXPLORATION_DIAG candidates=594 uncovered=1078 frontier=1229 global_return=0 local_complete=0 global_nodes=38 local_nodes=230 x=21.860 y=-0.874
+[tare_planner_node-13] [INFO] [1794596327.480616431] [grid_diag]: GLOBAL_DIAG exploring=15 routable=3
+[tare_planner_node-13] [INFO] [1794596327.481800085] [local_diag]: LOCAL_DIAG uncovered=1134 frontier=1394 queue=14 best_surface=81 frontier_queue=5 best_frontier=64 reused=16
+[tare_planner_node-13] [INFO] [1794596327.536370276] [tare_planner_node]: EXPLORATION_DIAG candidates=631 uncovered=1134 frontier=1394 global_return=0 local_complete=0 global_nodes=40 local_nodes=230 x=22.325 y=-0.902
+[tare_planner_node-13] [INFO] [1794596328.462780014] [grid_diag]: GLOBAL_DIAG exploring=15 routable=3
+[tare_planner_node-13] [INFO] [1794596328.464352651] [local_diag]: LOCAL_DIAG uncovered=1200 frontier=1245 queue=31 best_surface=108 frontier_queue=1 best_frontier=46 reused=16
+[tare_planner_node-13] [INFO] [1794596328.519255688] [tare_planner_node]: EXPLORATION_DIAG candidates=627 uncovered=1200 frontier=1245 global_return=0 local_complete=0 global_nodes=40 local_nodes=228 x=22.795 y=-0.931
+[tare_planner_node-13] [INFO] [1794596329.437804238] [grid_diag]: GLOBAL_DIAG exploring=15 routable=3
+[tare_planner_node-13] [INFO] [1794596329.438966931] [local_diag]: LOCAL_DIAG uncovered=1093 frontier=1093 queue=0 best_surface=0 frontier_queue=12 best_frontier=24 reused=17
+[tare_planner_node-13] [INFO] [1794596329.446680157] [tare_planner_node]: EXPLORATION_DIAG candidates=631 uncovered=1093 frontier=1093 global_return=0 local_complete=0 global_nodes=40 local_nodes=235 x=23.254 y=-0.959
+[tare_planner_node-13] [INFO] [1794596330.459516221] [grid_diag]: GLOBAL_DIAG exploring=16 routable=3
+[tare_planner_node-13] [INFO] [1794596330.461267468] [local_diag]: LOCAL_DIAG uncovered=1169 frontier=1099 queue=0 best_surface=0 frontier_queue=3 best_frontier=34 reused=18
+[tare_planner_node-13] [INFO] [1794596330.467471525] [tare_planner_node]: EXPLORATION_DIAG candidates=671 uncovered=1169 frontier=1099 global_return=0 local_complete=0 global_nodes=42 local_nodes=237 x=23.719 y=-0.987
+[tare_planner_node-13] [INFO] [1794596331.464728341] [grid_diag]: GLOBAL_DIAG exploring=16 routable=3
+[tare_planner_node-13] [INFO] [1794596331.466111356] [local_diag]: LOCAL_DIAG uncovered=1246 frontier=1063 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=18
+[tare_planner_node-13] [INFO] [1794596331.471367211] [tare_planner_node]: EXPLORATION_DIAG candidates=703 uncovered=1246 frontier=1063 global_return=0 local_complete=0 global_nodes=42 local_nodes=242 x=24.181 y=-1.015
+[tare_planner_node-13] [INFO] [1794596333.038290492] [grid_diag]: GLOBAL_DIAG exploring=16 routable=3
+[tare_planner_node-13] [INFO] [1794596333.039712019] [local_diag]: LOCAL_DIAG uncovered=1287 frontier=1010 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=16
+[tare_planner_node-13] [INFO] [1794596333.046249707] [tare_planner_node]: EXPLORATION_DIAG candidates=744 uncovered=1287 frontier=1010 global_return=0 local_complete=0 global_nodes=42 local_nodes=248 x=24.646 y=-1.035
+[tare_planner_node-13] [INFO] [1794596334.012642048] [grid_diag]: GLOBAL_DIAG exploring=16 routable=3
+[tare_planner_node-13] [INFO] [1794596334.013840174] [local_diag]: LOCAL_DIAG uncovered=1360 frontier=1094 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=16
+[tare_planner_node-13] [INFO] [1794596334.019286164] [tare_planner_node]: EXPLORATION_DIAG candidates=723 uncovered=1360 frontier=1094 global_return=0 local_complete=0 global_nodes=42 local_nodes=252 x=25.073 y=-1.036
+[tare_planner_node-13] [INFO] [1794596335.014557163] [grid_diag]: GLOBAL_DIAG exploring=16 routable=3
+[tare_planner_node-13] [INFO] [1794596335.015911884] [local_diag]: LOCAL_DIAG uncovered=1402 frontier=1207 queue=0 best_surface=0 frontier_queue=56 best_frontier=49 reused=17
+[tare_planner_node-13] [INFO] [1794596335.021317346] [tare_planner_node]: EXPLORATION_DIAG candidates=735 uncovered=1402 frontier=1207 global_return=0 local_complete=0 global_nodes=42 local_nodes=255 x=25.556 y=-1.036
+[tare_planner_node-13] [INFO] [1794596336.009326632] [grid_diag]: GLOBAL_DIAG exploring=16 routable=3
+[tare_planner_node-13] [INFO] [1794596336.010567248] [local_diag]: LOCAL_DIAG uncovered=1437 frontier=1206 queue=0 best_surface=0 frontier_queue=4 best_frontier=20 reused=18
+[tare_planner_node-13] [INFO] [1794596336.016239285] [tare_planner_node]: EXPLORATION_DIAG candidates=737 uncovered=1437 frontier=1206 global_return=0 local_complete=0 global_nodes=42 local_nodes=256 x=26.038 y=-1.036
+[tare_planner_node-13] [INFO] [1794596336.982193971] [grid_diag]: GLOBAL_DIAG exploring=16 routable=3
+[tare_planner_node-13] [INFO] [1794596336.983776340] [local_diag]: LOCAL_DIAG uncovered=1459 frontier=1191 queue=0 best_surface=0 frontier_queue=4 best_frontier=20 reused=18
+[tare_planner_node-13] [INFO] [1794596336.990232563] [tare_planner_node]: EXPLORATION_DIAG candidates=736 uncovered=1459 frontier=1191 global_return=0 local_complete=0 global_nodes=44 local_nodes=256 x=26.528 y=-1.057
+[tare_planner_node-13] [INFO] [1794596337.968372197] [grid_diag]: GLOBAL_DIAG exploring=16 routable=3
+[tare_planner_node-13] [INFO] [1794596337.969501983] [local_diag]: LOCAL_DIAG uncovered=1481 frontier=1162 queue=1 best_surface=40 frontier_queue=144 best_frontier=79 reused=17
+[tare_planner_node-13] [INFO] [1794596337.975310468] [tare_planner_node]: EXPLORATION_DIAG candidates=746 uncovered=1481 frontier=1162 global_return=0 local_complete=0 global_nodes=44 local_nodes=258 x=27.017 y=-1.088
+[tare_planner_node-13] [INFO] [1794596338.817527037] [grid_diag]: GLOBAL_DIAG exploring=15 routable=7
+[tare_planner_node-13] [INFO] [1794596338.819120784] [local_diag]: LOCAL_DIAG uncovered=775 frontier=659 queue=18 best_surface=74 frontier_queue=21 best_frontier=60 reused=9
+[tare_planner_node-13] [INFO] [1794596338.838678825] [tare_planner_node]: EXPLORATION_DIAG candidates=361 uncovered=775 frontier=659 global_return=0 local_complete=0 global_nodes=65 local_nodes=122 x=27.496 y=-1.118
+[tare_planner_node-13] [INFO] [1794596339.793367482] [grid_diag]: GLOBAL_DIAG exploring=15 routable=7
+[tare_planner_node-13] [INFO] [1794596339.794613962] [local_diag]: LOCAL_DIAG uncovered=818 frontier=657 queue=0 best_surface=0 frontier_queue=6 best_frontier=34 reused=12
+[tare_planner_node-13] [INFO] [1794596339.796827560] [tare_planner_node]: EXPLORATION_DIAG candidates=362 uncovered=818 frontier=657 global_return=0 local_complete=0 global_nodes=65 local_nodes=122 x=28.072 y=-1.155
+[tare_planner_node-13] [INFO] [1794596340.771061487] [grid_diag]: GLOBAL_DIAG exploring=15 routable=7
+[tare_planner_node-13] [INFO] [1794596340.772320101] [local_diag]: LOCAL_DIAG uncovered=694 frontier=701 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=11
+[tare_planner_node-13] [INFO] [1794596340.774306215] [tare_planner_node]: EXPLORATION_DIAG candidates=367 uncovered=694 frontier=701 global_return=0 local_complete=0 global_nodes=65 local_nodes=108 x=28.554 y=-1.185
+[tare_planner_node-13] [INFO] [1794596341.748328812] [grid_diag]: GLOBAL_DIAG exploring=15 routable=7
+[tare_planner_node-13] [INFO] [1794596341.750023100] [local_diag]: LOCAL_DIAG uncovered=696 frontier=680 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=11
+[tare_planner_node-13] [INFO] [1794596341.751645677] [tare_planner_node]: EXPLORATION_DIAG candidates=370 uncovered=696 frontier=680 global_return=0 local_complete=0 global_nodes=67 local_nodes=108 x=29.033 y=-1.190
+[tare_planner_node-13] [INFO] [1794596342.755673329] [grid_diag]: GLOBAL_DIAG exploring=15 routable=7
+[tare_planner_node-13] [INFO] [1794596342.756981789] [local_diag]: LOCAL_DIAG uncovered=706 frontier=676 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=11
+[tare_planner_node-13] [INFO] [1794596342.758607697] [tare_planner_node]: EXPLORATION_DIAG candidates=393 uncovered=706 frontier=676 global_return=0 local_complete=0 global_nodes=67 local_nodes=108 x=29.515 y=-1.073
+[tare_planner_node-13] [INFO] [1794596343.710062331] [grid_diag]: GLOBAL_DIAG exploring=15 routable=7
+[tare_planner_node-13] [INFO] [1794596343.711539762] [local_diag]: LOCAL_DIAG uncovered=692 frontier=827 queue=0 best_surface=0 frontier_queue=54 best_frontier=40 reused=10
+[tare_planner_node-13] [INFO] [1794596343.713577620] [tare_planner_node]: EXPLORATION_DIAG candidates=393 uncovered=692 frontier=827 global_return=0 local_complete=0 global_nodes=65 local_nodes=111 x=29.975 y=-0.911
+[tare_planner_node-13] [INFO] [1794596344.684600469] [grid_diag]: GLOBAL_DIAG exploring=15 routable=7
+[tare_planner_node-13] [INFO] [1794596344.686199817] [local_diag]: LOCAL_DIAG uncovered=692 frontier=768 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=11
+[tare_planner_node-13] [INFO] [1794596344.688237991] [tare_planner_node]: EXPLORATION_DIAG candidates=393 uncovered=692 frontier=768 global_return=0 local_complete=0 global_nodes=67 local_nodes=105 x=30.283 y=-0.795
+[tare_planner_node-13] [INFO] [1794596345.672509613] [grid_diag]: GLOBAL_DIAG exploring=15 routable=7
+[tare_planner_node-13] [INFO] [1794596345.673833653] [local_diag]: LOCAL_DIAG uncovered=692 frontier=689 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=11
+[tare_planner_node-13] [INFO] [1794596345.675841508] [tare_planner_node]: EXPLORATION_DIAG candidates=395 uncovered=692 frontier=689 global_return=0 local_complete=0 global_nodes=65 local_nodes=106 x=30.576 y=-0.928
+[tare_planner_node-13] [INFO] [1794596346.652117080] [grid_diag]: GLOBAL_DIAG exploring=15 routable=7
+[tare_planner_node-13] [INFO] [1794596346.653504849] [local_diag]: LOCAL_DIAG uncovered=692 frontier=668 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=11
+[tare_planner_node-13] [INFO] [1794596346.655323865] [tare_planner_node]: EXPLORATION_DIAG candidates=395 uncovered=692 frontier=668 global_return=0 local_complete=0 global_nodes=65 local_nodes=106 x=30.815 y=-1.243
+[tare_planner_node-13] [INFO] [1794596347.624994273] [grid_diag]: GLOBAL_DIAG exploring=14 routable=7
+[tare_planner_node-13] [INFO] [1794596347.626533899] [local_diag]: LOCAL_DIAG uncovered=691 frontier=624 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=11
+[tare_planner_node-13] [INFO] [1794596347.628389906] [tare_planner_node]: EXPLORATION_DIAG candidates=395 uncovered=691 frontier=624 global_return=0 local_complete=0 global_nodes=65 local_nodes=106 x=30.896 y=-1.714
+[tare_planner_node-13] [INFO] [1794596348.604775834] [grid_diag]: GLOBAL_DIAG exploring=14 routable=7
+[tare_planner_node-13] [INFO] [1794596348.606038651] [local_diag]: LOCAL_DIAG uncovered=693 frontier=624 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=11
+[tare_planner_node-13] [INFO] [1794596348.608283116] [tare_planner_node]: EXPLORATION_DIAG candidates=395 uncovered=693 frontier=624 global_return=0 local_complete=0 global_nodes=65 local_nodes=106 x=30.856 y=-2.190
+[tare_planner_node-13] [INFO] [1794596349.581051124] [grid_diag]: GLOBAL_DIAG exploring=14 routable=7
+[tare_planner_node-13] [INFO] [1794596349.582471986] [local_diag]: LOCAL_DIAG uncovered=695 frontier=625 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=11
+[tare_planner_node-13] [INFO] [1794596349.584142069] [tare_planner_node]: EXPLORATION_DIAG candidates=396 uncovered=695 frontier=625 global_return=0 local_complete=0 global_nodes=65 local_nodes=106 x=30.804 y=-2.672
+[tare_planner_node-13] [INFO] [1794596350.561528265] [grid_diag]: GLOBAL_DIAG exploring=14 routable=9
+[tare_planner_node-13] [INFO] [1794596350.564404821] [local_diag]: LOCAL_DIAG uncovered=392 frontier=463 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=7
+[tare_planner_node-13] [INFO] [1794596350.565533303] [tare_planner_node]: EXPLORATION_DIAG candidates=359 uncovered=392 frontier=463 global_return=0 local_complete=0 global_nodes=71 local_nodes=76 x=30.752 y=-3.147
+[tare_planner_node-13] [INFO] [1794596351.548128693] [grid_diag]: GLOBAL_DIAG exploring=14 routable=9
+[tare_planner_node-13] [INFO] [1794596351.549649787] [local_diag]: LOCAL_DIAG uncovered=392 frontier=468 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=7
+[tare_planner_node-13] [INFO] [1794596351.550849278] [tare_planner_node]: EXPLORATION_DIAG candidates=365 uncovered=392 frontier=468 global_return=0 local_complete=0 global_nodes=71 local_nodes=76 x=30.700 y=-3.621
+[tare_planner_node-13] [INFO] [1794596352.543423156] [grid_diag]: GLOBAL_DIAG exploring=14 routable=9
+[tare_planner_node-13] [INFO] [1794596352.544765897] [local_diag]: LOCAL_DIAG uncovered=440 frontier=482 queue=4 best_surface=45 frontier_queue=0 best_frontier=0 reused=7
+[tare_planner_node-13] [INFO] [1794596352.555775158] [tare_planner_node]: EXPLORATION_DIAG candidates=400 uncovered=440 frontier=482 global_return=0 local_complete=0 global_nodes=73 local_nodes=95 x=30.640 y=-4.191
+[tare_planner_node-13] [INFO] [1794596353.537203086] [grid_diag]: GLOBAL_DIAG exploring=15 routable=9
+[tare_planner_node-13] [INFO] [1794596353.538528212] [local_diag]: LOCAL_DIAG uncovered=514 frontier=524 queue=16 best_surface=55 frontier_queue=0 best_frontier=0 reused=8
+[tare_planner_node-13] [INFO] [1794596353.552497588] [tare_planner_node]: EXPLORATION_DIAG candidates=415 uncovered=514 frontier=524 global_return=0 local_complete=0 global_nodes=71 local_nodes=106 x=30.618 y=-4.673
+[tare_planner_node-13] [INFO] [1794596354.553318701] [grid_diag]: GLOBAL_DIAG exploring=16 routable=9
+[tare_planner_node-13] [INFO] [1794596354.555519656] [local_diag]: LOCAL_DIAG uncovered=695 frontier=622 queue=1 best_surface=40 frontier_queue=0 best_frontier=0 reused=9
+[tare_planner_node-13] [INFO] [1794596354.557381853] [tare_planner_node]: EXPLORATION_DIAG candidates=445 uncovered=695 frontier=622 global_return=0 local_complete=0 global_nodes=73 local_nodes=105 x=30.622 y=-5.145
+[tare_planner_node-13] [INFO] [1794596355.552019894] [grid_diag]: GLOBAL_DIAG exploring=16 routable=9
+[tare_planner_node-13] [INFO] [1794596355.553747353] [local_diag]: LOCAL_DIAG uncovered=585 frontier=845 queue=26 best_surface=79 frontier_queue=45 best_frontier=152 reused=7
+[tare_planner_node-13] [INFO] [1794596355.569661921] [tare_planner_node]: EXPLORATION_DIAG candidates=496 uncovered=585 frontier=845 global_return=0 local_complete=0 global_nodes=73 local_nodes=117 x=30.590 y=-5.624
+[tare_planner_node-13] [INFO] [1794596356.518667475] [grid_diag]: GLOBAL_DIAG exploring=16 routable=9
+[tare_planner_node-13] [INFO] [1794596356.520305198] [local_diag]: LOCAL_DIAG uncovered=705 frontier=809 queue=0 best_surface=0 frontier_queue=19 best_frontier=62 reused=8
+[tare_planner_node-13] [INFO] [1794596356.522145892] [tare_planner_node]: EXPLORATION_DIAG candidates=467 uncovered=705 frontier=809 global_return=0 local_complete=0 global_nodes=73 local_nodes=118 x=30.509 y=-6.000
+[tare_planner_node-13] [INFO] [1794596357.520675188] [grid_diag]: GLOBAL_DIAG exploring=15 routable=9
+[tare_planner_node-13] [INFO] [1794596357.522159370] [local_diag]: LOCAL_DIAG uncovered=821 frontier=673 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=9
+[tare_planner_node-13] [INFO] [1794596357.523735672] [tare_planner_node]: EXPLORATION_DIAG candidates=466 uncovered=821 frontier=673 global_return=0 local_complete=0 global_nodes=73 local_nodes=118 x=30.205 y=-6.258
+[tare_planner_node-13] [INFO] [1794596358.508326865] [grid_diag]: GLOBAL_DIAG exploring=15 routable=9
+[tare_planner_node-13] [INFO] [1794596358.509817792] [local_diag]: LOCAL_DIAG uncovered=923 frontier=538 queue=1 best_surface=42 frontier_queue=0 best_frontier=0 reused=9
+[tare_planner_node-13] [INFO] [1794596358.528182001] [tare_planner_node]: EXPLORATION_DIAG candidates=464 uncovered=923 frontier=538 global_return=0 local_complete=0 global_nodes=76 local_nodes=119 x=29.773 y=-6.455
+[tare_planner_node-13] [INFO] [1794596359.460831178] [grid_diag]: GLOBAL_DIAG exploring=15 routable=9
+[tare_planner_node-13] [INFO] [1794596359.462613420] [local_diag]: LOCAL_DIAG uncovered=1015 frontier=533 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=10
+[tare_planner_node-13] [INFO] [1794596359.464564603] [tare_planner_node]: EXPLORATION_DIAG candidates=465 uncovered=1015 frontier=533 global_return=0 local_complete=0 global_nodes=73 local_nodes=119 x=29.216 y=-6.605
+[tare_planner_node-13] [INFO] [1794596360.428862856] [grid_diag]: GLOBAL_DIAG exploring=15 routable=9
+[tare_planner_node-13] [INFO] [1794596360.430225775] [local_diag]: LOCAL_DIAG uncovered=995 frontier=482 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=10
+[tare_planner_node-13] [INFO] [1794596360.432029044] [tare_planner_node]: EXPLORATION_DIAG candidates=467 uncovered=995 frontier=482 global_return=0 local_complete=0 global_nodes=77 local_nodes=119 x=28.755 y=-6.705
+[tare_planner_node-13] [INFO] [1794596361.424406819] [grid_diag]: GLOBAL_DIAG exploring=15 routable=9
+[tare_planner_node-13] [INFO] [1794596361.426138707] [local_diag]: LOCAL_DIAG uncovered=1034 frontier=471 queue=1 best_surface=40 frontier_queue=0 best_frontier=0 reused=10
+[tare_planner_node-13] [INFO] [1794596361.429117260] [tare_planner_node]: EXPLORATION_DIAG candidates=467 uncovered=1034 frontier=471 global_return=0 local_complete=0 global_nodes=77 local_nodes=119 x=28.286 y=-6.806
+[tare_planner_node-13] [INFO] [1794596362.418733130] [grid_diag]: GLOBAL_DIAG exploring=15 routable=9
+[tare_planner_node-13] [INFO] [1794596362.420309147] [local_diag]: LOCAL_DIAG uncovered=1061 frontier=458 queue=3 best_surface=43 frontier_queue=0 best_frontier=0 reused=10
+[tare_planner_node-13] [INFO] [1794596362.444673134] [tare_planner_node]: EXPLORATION_DIAG candidates=467 uncovered=1061 frontier=458 global_return=0 local_complete=0 global_nodes=71 local_nodes=122 x=27.821 y=-6.907
+[tare_planner_node-13] [INFO] [1794596363.405219566] [grid_diag]: GLOBAL_DIAG exploring=15 routable=9
+[tare_planner_node-13] [INFO] [1794596363.407645496] [local_diag]: LOCAL_DIAG uncovered=1035 frontier=437 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=10
+[tare_planner_node-13] [INFO] [1794596363.409892939] [tare_planner_node]: EXPLORATION_DIAG candidates=467 uncovered=1035 frontier=437 global_return=0 local_complete=0 global_nodes=71 local_nodes=121 x=27.357 y=-7.007
+[tare_planner_node-13] [INFO] [1794596364.356052982] [grid_diag]: GLOBAL_DIAG exploring=15 routable=10
+[tare_planner_node-13] [INFO] [1794596364.357716487] [local_diag]: LOCAL_DIAG uncovered=881 frontier=212 queue=25 best_surface=198 frontier_queue=0 best_frontier=0 reused=6
+[tare_planner_node-13] [INFO] [1794596364.374189217] [tare_planner_node]: EXPLORATION_DIAG candidates=399 uncovered=881 frontier=212 global_return=0 local_complete=0 global_nodes=81 local_nodes=88 x=26.894 y=-7.097
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;33m[Wrn] [Publisher.cc:135] [0m[1;33mQueue limit reached for topic [0m[1;33m/gazebo/default/pose/local/info[0m[1;33m, deleting message. [0m[1;33mThis warning is printed only once.[0m[1;33m
+[tare_planner_node-13] [INFO] [1794596365.975502284] [grid_diag]: GLOBAL_DIAG exploring=14 routable=10
+[tare_planner_node-13] [INFO] [1794596365.977089043] [local_diag]: LOCAL_DIAG uncovered=817 frontier=210 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=7
+[tare_planner_node-13] [INFO] [1794596365.978768098] [tare_planner_node]: EXPLORATION_DIAG candidates=399 uncovered=817 frontier=210 global_return=0 local_complete=0 global_nodes=81 local_nodes=87 x=26.363 y=-7.149
+[tare_planner_node-13] [INFO] [1794596366.968025992] [grid_diag]: GLOBAL_DIAG exploring=14 routable=10
+[tare_planner_node-13] [INFO] [1794596366.969582503] [local_diag]: LOCAL_DIAG uncovered=811 frontier=210 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=7
+[tare_planner_node-13] [INFO] [1794596366.972070426] [tare_planner_node]: EXPLORATION_DIAG candidates=399 uncovered=811 frontier=210 global_return=0 local_complete=0 global_nodes=80 local_nodes=87 x=26.131 y=-7.171
+[tare_planner_node-13] [INFO] [1794596367.982433294] [grid_diag]: GLOBAL_DIAG exploring=14 routable=10
+[tare_planner_node-13] [INFO] [1794596367.984118786] [local_diag]: LOCAL_DIAG uncovered=810 frontier=210 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=8
+[tare_planner_node-13] [INFO] [1794596367.985854413] [tare_planner_node]: EXPLORATION_DIAG candidates=399 uncovered=810 frontier=210 global_return=0 local_complete=0 global_nodes=81 local_nodes=88 x=25.677 y=-7.215
+[tare_planner_node-13] [INFO] [1794596368.910207562] [grid_diag]: GLOBAL_DIAG exploring=13 routable=10
+[tare_planner_node-13] [INFO] [1794596368.911721117] [local_diag]: LOCAL_DIAG uncovered=749 frontier=210 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=7
+[tare_planner_node-13] [INFO] [1794596368.913300077] [tare_planner_node]: EXPLORATION_DIAG candidates=399 uncovered=749 frontier=210 global_return=0 local_complete=0 global_nodes=81 local_nodes=87 x=25.224 y=-7.215
+[tare_planner_node-13] [INFO] [1794596369.918809822] [grid_diag]: GLOBAL_DIAG exploring=13 routable=10
+[tare_planner_node-13] [INFO] [1794596369.920275030] [local_diag]: LOCAL_DIAG uncovered=753 frontier=202 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=7
+[tare_planner_node-13] [INFO] [1794596369.921822861] [tare_planner_node]: EXPLORATION_DIAG candidates=399 uncovered=753 frontier=202 global_return=0 local_complete=0 global_nodes=81 local_nodes=87 x=24.775 y=-7.202
+[tare_planner_node-13] [INFO] [1794596370.946778120] [grid_diag]: GLOBAL_DIAG exploring=13 routable=10
+[tare_planner_node-13] [INFO] [1794596370.949202172] [local_diag]: LOCAL_DIAG uncovered=762 frontier=201 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=7
+[tare_planner_node-13] [INFO] [1794596370.951225903] [tare_planner_node]: EXPLORATION_DIAG candidates=399 uncovered=762 frontier=201 global_return=0 local_complete=0 global_nodes=81 local_nodes=81 x=24.387 y=-7.174
+[tare_planner_node-13] [INFO] [1794596371.858905329] [grid_diag]: GLOBAL_DIAG exploring=13 routable=10
+[tare_planner_node-13] [INFO] [1794596371.860556848] [local_diag]: LOCAL_DIAG uncovered=770 frontier=201 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=7
+[tare_planner_node-13] [INFO] [1794596371.862273731] [tare_planner_node]: EXPLORATION_DIAG candidates=399 uncovered=770 frontier=201 global_return=0 local_complete=0 global_nodes=81 local_nodes=82 x=24.013 y=-6.852
+[tare_planner_node-13] [INFO] [1794596372.856462493] [grid_diag]: GLOBAL_DIAG exploring=13 routable=10
+[tare_planner_node-13] [INFO] [1794596372.858194746] [local_diag]: LOCAL_DIAG uncovered=775 frontier=199 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=7
+[tare_planner_node-13] [INFO] [1794596372.859843465] [tare_planner_node]: EXPLORATION_DIAG candidates=399 uncovered=775 frontier=199 global_return=0 local_complete=0 global_nodes=81 local_nodes=81 x=23.789 y=-6.462
+[tare_planner_node-13] [INFO] [1794596373.813177708] [grid_diag]: GLOBAL_DIAG exploring=13 routable=10
+[tare_planner_node-13] [INFO] [1794596373.815148808] [local_diag]: LOCAL_DIAG uncovered=769 frontier=198 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=7
+[tare_planner_node-13] [INFO] [1794596373.817166008] [tare_planner_node]: EXPLORATION_DIAG candidates=399 uncovered=769 frontier=198 global_return=0 local_complete=0 global_nodes=80 local_nodes=82 x=23.586 y=-6.059
+[tare_planner_node-13] [INFO] [1794596374.791753896] [grid_diag]: GLOBAL_DIAG exploring=13 routable=10
+[tare_planner_node-13] [INFO] [1794596374.793192194] [local_diag]: LOCAL_DIAG uncovered=767 frontier=197 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=7
+[tare_planner_node-13] [INFO] [1794596374.795012826] [tare_planner_node]: EXPLORATION_DIAG candidates=399 uncovered=767 frontier=197 global_return=0 local_complete=0 global_nodes=81 local_nodes=81 x=23.430 y=-5.660
+[tare_planner_node-13] [INFO] [1794596375.783869191] [grid_diag]: GLOBAL_DIAG exploring=13 routable=10
+[tare_planner_node-13] [INFO] [1794596375.785287287] [local_diag]: LOCAL_DIAG uncovered=769 frontier=196 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=7
+[tare_planner_node-13] [INFO] [1794596375.786935609] [tare_planner_node]: EXPLORATION_DIAG candidates=399 uncovered=769 frontier=196 global_return=0 local_complete=0 global_nodes=81 local_nodes=80 x=23.377 y=-5.210
+[tare_planner_node-13] [INFO] [1794596376.761581886] [grid_diag]: GLOBAL_DIAG exploring=13 routable=10
+[tare_planner_node-13] [INFO] [1794596376.763172340] [local_diag]: LOCAL_DIAG uncovered=772 frontier=196 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=7
+[tare_planner_node-13] [INFO] [1794596376.764906903] [tare_planner_node]: EXPLORATION_DIAG candidates=399 uncovered=772 frontier=196 global_return=0 local_complete=0 global_nodes=81 local_nodes=79 x=23.338 y=-4.756
+[tare_planner_node-13] [INFO] [1794596377.732937663] [grid_diag]: GLOBAL_DIAG exploring=13 routable=10
+[tare_planner_node-13] [INFO] [1794596377.734580531] [local_diag]: LOCAL_DIAG uncovered=773 frontier=196 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=7
+[tare_planner_node-13] [INFO] [1794596377.736079899] [tare_planner_node]: EXPLORATION_DIAG candidates=399 uncovered=773 frontier=196 global_return=0 local_complete=0 global_nodes=81 local_nodes=79 x=23.374 y=-4.218
+[tare_planner_node-13] [INFO] [1794596378.704862281] [grid_diag]: GLOBAL_DIAG exploring=13 routable=10
+[tare_planner_node-13] [INFO] [1794596378.706273875] [local_diag]: LOCAL_DIAG uncovered=772 frontier=196 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=7
+[tare_planner_node-13] [INFO] [1794596378.707654325] [tare_planner_node]: EXPLORATION_DIAG candidates=399 uncovered=772 frontier=196 global_return=0 local_complete=0 global_nodes=81 local_nodes=79 x=23.407 y=-3.766
+[tare_planner_node-13] [INFO] [1794596379.664235678] [grid_diag]: GLOBAL_DIAG exploring=13 routable=10
+[tare_planner_node-13] [INFO] [1794596379.665690306] [local_diag]: LOCAL_DIAG uncovered=774 frontier=196 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=7
+[tare_planner_node-13] [INFO] [1794596379.667150977] [tare_planner_node]: EXPLORATION_DIAG candidates=399 uncovered=774 frontier=196 global_return=0 local_complete=0 global_nodes=80 local_nodes=79 x=23.441 y=-3.320
+[tare_planner_node-13] [INFO] [1794596380.650376933] [grid_diag]: GLOBAL_DIAG exploring=13 routable=8
+[tare_planner_node-13] [INFO] [1794596380.651991246] [local_diag]: LOCAL_DIAG uncovered=1164 frontier=403 queue=41 best_surface=234 frontier_queue=6 best_frontier=91 reused=7
+[tare_planner_node-13] [INFO] [1794596380.679072987] [tare_planner_node]: EXPLORATION_DIAG candidates=457 uncovered=1164 frontier=403 global_return=0 local_complete=0 global_nodes=81 local_nodes=115 x=23.474 y=-2.866
+[tare_planner_node-13] [INFO] [1794596381.609868323] [grid_diag]: GLOBAL_DIAG exploring=13 routable=8
+[tare_planner_node-13] [INFO] [1794596381.611156760] [local_diag]: LOCAL_DIAG uncovered=1161 frontier=402 queue=1 best_surface=41 frontier_queue=6 best_frontier=26 reused=10
+[tare_planner_node-13] [INFO] [1794596381.640562522] [tare_planner_node]: EXPLORATION_DIAG candidates=477 uncovered=1161 frontier=402 global_return=0 local_complete=0 global_nodes=81 local_nodes=115 x=23.508 y=-2.416
+[tare_planner_node-13] [INFO] [1794596382.607833178] [grid_diag]: GLOBAL_DIAG exploring=15 routable=7
+[tare_planner_node-13] [INFO] [1794596382.609078090] [local_diag]: LOCAL_DIAG uncovered=1381 frontier=597 queue=20 best_surface=210 frontier_queue=75 best_frontier=54 reused=12
+[tare_planner_node-13] [INFO] [1794596382.643550701] [tare_planner_node]: EXPLORATION_DIAG candidates=593 uncovered=1381 frontier=597 global_return=0 local_complete=0 global_nodes=75 local_nodes=147 x=23.542 y=-1.963
+[tare_planner_node-13] [INFO] [1794596383.622862912] [grid_diag]: GLOBAL_DIAG exploring=15 routable=7
+[tare_planner_node-13] [INFO] [1794596383.624378054] [local_diag]: LOCAL_DIAG uncovered=1404 frontier=591 queue=1 best_surface=43 frontier_queue=4 best_frontier=27 reused=13
+[tare_planner_node-13] [INFO] [1794596383.671920284] [tare_planner_node]: EXPLORATION_DIAG candidates=635 uncovered=1404 frontier=591 global_return=0 local_complete=0 global_nodes=75 local_nodes=155 x=23.575 y=-1.511
+[tare_planner_node-13] [INFO] [1794596384.608682378] [grid_diag]: GLOBAL_DIAG exploring=15 routable=7
+[tare_planner_node-13] [INFO] [1794596384.610314707] [local_diag]: LOCAL_DIAG uncovered=1385 frontier=576 queue=0 best_surface=0 frontier_queue=14 best_frontier=49 reused=14
+[tare_planner_node-13] [INFO] [1794596384.615107108] [tare_planner_node]: EXPLORATION_DIAG candidates=630 uncovered=1385 frontier=576 global_return=0 local_complete=0 global_nodes=76 local_nodes=148 x=23.610 y=-1.049
+[tare_planner_node-13] [INFO] [1794596385.614334279] [grid_diag]: GLOBAL_DIAG exploring=15 routable=7
+[tare_planner_node-13] [INFO] [1794596385.615623689] [local_diag]: LOCAL_DIAG uncovered=1386 frontier=567 queue=0 best_surface=0 frontier_queue=6 best_frontier=40 reused=16
+[tare_planner_node-13] [INFO] [1794596385.620518137] [tare_planner_node]: EXPLORATION_DIAG candidates=632 uncovered=1386 frontier=567 global_return=0 local_complete=0 global_nodes=76 local_nodes=147 x=23.644 y=-0.589
+[tare_planner_node-13] [INFO] [1794596386.599821829] [grid_diag]: GLOBAL_DIAG exploring=15 routable=7
+[tare_planner_node-13] [INFO] [1794596386.601300156] [local_diag]: LOCAL_DIAG uncovered=1376 frontier=554 queue=0 best_surface=0 frontier_queue=6 best_frontier=35 reused=16
+[tare_planner_node-13] [INFO] [1794596386.605471105] [tare_planner_node]: EXPLORATION_DIAG candidates=634 uncovered=1376 frontier=554 global_return=0 local_complete=0 global_nodes=75 local_nodes=151 x=23.678 y=-0.139
+[tare_planner_node-13] [INFO] [1794596387.568743717] [grid_diag]: GLOBAL_DIAG exploring=14 routable=7
+[tare_planner_node-13] [INFO] [1794596387.570148355] [local_diag]: LOCAL_DIAG uncovered=1301 frontier=524 queue=0 best_surface=0 frontier_queue=1 best_frontier=24 reused=15
+[tare_planner_node-13] [INFO] [1794596387.574551596] [tare_planner_node]: EXPLORATION_DIAG candidates=632 uncovered=1301 frontier=524 global_return=0 local_complete=0 global_nodes=79 local_nodes=143 x=23.711 y=0.313
+[tare_planner_node-13] [INFO] [1794596388.583100596] [grid_diag]: GLOBAL_DIAG exploring=14 routable=7
+[tare_planner_node-13] [INFO] [1794596388.584472458] [local_diag]: LOCAL_DIAG uncovered=1301 frontier=523 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=16
+[tare_planner_node-13] [INFO] [1794596388.588622486] [tare_planner_node]: EXPLORATION_DIAG candidates=633 uncovered=1301 frontier=523 global_return=0 local_complete=0 global_nodes=75 local_nodes=143 x=23.739 y=0.858
+[tare_planner_node-13] [INFO] [1794596389.576255002] [grid_diag]: GLOBAL_DIAG exploring=14 routable=7
+[tare_planner_node-13] [INFO] [1794596389.578016741] [local_diag]: LOCAL_DIAG uncovered=1235 frontier=523 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=16
+[tare_planner_node-13] [INFO] [1794596389.583184669] [tare_planner_node]: EXPLORATION_DIAG candidates=634 uncovered=1235 frontier=523 global_return=0 local_complete=0 global_nodes=75 local_nodes=142 x=23.746 y=1.319
+[tare_planner_node-13] [INFO] [1794596390.494993051] [grid_diag]: GLOBAL_DIAG exploring=14 routable=7
+[tare_planner_node-13] [INFO] [1794596390.496208706] [local_diag]: LOCAL_DIAG uncovered=1237 frontier=524 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=16
+[tare_planner_node-13] [INFO] [1794596390.499848957] [tare_planner_node]: EXPLORATION_DIAG candidates=634 uncovered=1237 frontier=524 global_return=0 local_complete=0 global_nodes=73 local_nodes=142 x=23.754 y=1.784
+[tare_planner_node-13] [INFO] [1794596391.483473719] [grid_diag]: GLOBAL_DIAG exploring=15 routable=7
+[tare_planner_node-13] [INFO] [1794596391.484692861] [local_diag]: LOCAL_DIAG uncovered=1240 frontier=532 queue=0 best_surface=0 frontier_queue=3 best_frontier=43 reused=16
+[tare_planner_node-13] [INFO] [1794596391.488743674] [tare_planner_node]: EXPLORATION_DIAG candidates=639 uncovered=1240 frontier=532 global_return=0 local_complete=0 global_nodes=73 local_nodes=142 x=23.761 y=2.240
+[tare_planner_node-13] [INFO] [1794596392.479449019] [grid_diag]: GLOBAL_DIAG exploring=15 routable=7
+[tare_planner_node-13] [INFO] [1794596392.481287939] [local_diag]: LOCAL_DIAG uncovered=1190 frontier=538 queue=0 best_surface=0 frontier_queue=1 best_frontier=26 reused=16
+[tare_planner_node-13] [INFO] [1794596392.485658821] [tare_planner_node]: EXPLORATION_DIAG candidates=642 uncovered=1190 frontier=538 global_return=0 local_complete=0 global_nodes=78 local_nodes=141 x=23.768 y=2.696
+[tare_planner_node-13] [INFO] [1794596393.468769972] [grid_diag]: GLOBAL_DIAG exploring=15 routable=7
+[tare_planner_node-13] [INFO] [1794596393.470316433] [local_diag]: LOCAL_DIAG uncovered=1477 frontier=848 queue=51 best_surface=181 frontier_queue=16 best_frontier=44 reused=17
+[tare_planner_node-13] [INFO] [1794596393.534476697] [tare_planner_node]: EXPLORATION_DIAG candidates=734 uncovered=1477 frontier=848 global_return=0 local_complete=0 global_nodes=78 local_nodes=174 x=23.775 y=3.157
+[tare_planner_node-13] [INFO] [1794596394.457126477] [grid_diag]: GLOBAL_DIAG exploring=17 routable=7
+[tare_planner_node-13] [INFO] [1794596394.458535404] [local_diag]: LOCAL_DIAG uncovered=1486 frontier=836 queue=0 best_surface=0 frontier_queue=97 best_frontier=74 reused=19
+[tare_planner_node-13] [INFO] [1794596394.465728025] [tare_planner_node]: EXPLORATION_DIAG candidates=731 uncovered=1486 frontier=836 global_return=0 local_complete=0 global_nodes=78 local_nodes=180 x=23.759 y=3.613
+[tare_planner_node-13] [INFO] [1794596395.388116301] [grid_diag]: GLOBAL_DIAG exploring=13 routable=8
+[tare_planner_node-13] [INFO] [1794596395.389525592] [local_diag]: LOCAL_DIAG uncovered=1102 frontier=430 queue=8 best_surface=56 frontier_queue=4 best_frontier=39 reused=11
+[tare_planner_node-13] [INFO] [1794596395.419107536] [tare_planner_node]: EXPLORATION_DIAG candidates=557 uncovered=1102 frontier=430 global_return=0 local_complete=0 global_nodes=78 local_nodes=118 x=23.740 y=4.068
+[tare_planner_node-13] [INFO] [1794596396.369998496] [grid_diag]: GLOBAL_DIAG exploring=13 routable=8
+[tare_planner_node-13] [INFO] [1794596396.371573298] [local_diag]: LOCAL_DIAG uncovered=1114 frontier=412 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=13
+[tare_planner_node-13] [INFO] [1794596396.374581359] [tare_planner_node]: EXPLORATION_DIAG candidates=555 uncovered=1114 frontier=412 global_return=0 local_complete=0 global_nodes=79 local_nodes=118 x=23.721 y=4.519
+[tare_planner_node-13] [INFO] [1794596397.352339987] [grid_diag]: GLOBAL_DIAG exploring=13 routable=8
+[tare_planner_node-13] [INFO] [1794596397.353742277] [local_diag]: LOCAL_DIAG uncovered=1135 frontier=492 queue=0 best_surface=0 frontier_queue=9 best_frontier=38 reused=13
+[tare_planner_node-13] [INFO] [1794596397.356431204] [tare_planner_node]: EXPLORATION_DIAG candidates=554 uncovered=1135 frontier=492 global_return=0 local_complete=0 global_nodes=79 local_nodes=118 x=23.702 y=4.970
+[tare_planner_node-13] [INFO] [1794596398.978041203] [grid_diag]: GLOBAL_DIAG exploring=13 routable=8
+[tare_planner_node-13] [INFO] [1794596398.979355288] [local_diag]: LOCAL_DIAG uncovered=1046 frontier=452 queue=0 best_surface=0 frontier_queue=1 best_frontier=28 reused=13
+[tare_planner_node-13] [INFO] [1794596398.982479665] [tare_planner_node]: EXPLORATION_DIAG candidates=553 uncovered=1046 frontier=452 global_return=0 local_complete=0 global_nodes=79 local_nodes=117 x=23.681 y=5.462
+[tare_planner_node-13] [INFO] [1794596399.931524665] [grid_diag]: GLOBAL_DIAG exploring=13 routable=8
+[tare_planner_node-13] [INFO] [1794596399.932829108] [local_diag]: LOCAL_DIAG uncovered=1051 frontier=428 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=14
+[tare_planner_node-13] [INFO] [1794596399.936939426] [tare_planner_node]: EXPLORATION_DIAG candidates=553 uncovered=1051 frontier=428 global_return=0 local_complete=0 global_nodes=80 local_nodes=118 x=23.670 y=5.744
+[tare_planner_node-13] [INFO] [1794596400.958735820] [grid_diag]: GLOBAL_DIAG exploring=13 routable=8
+[tare_planner_node-13] [INFO] [1794596400.960097920] [local_diag]: LOCAL_DIAG uncovered=1061 frontier=398 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=14
+[tare_planner_node-13] [INFO] [1794596400.963648284] [tare_planner_node]: EXPLORATION_DIAG candidates=553 uncovered=1061 frontier=398 global_return=0 local_complete=0 global_nodes=80 local_nodes=118 x=23.661 y=6.197
+[tare_planner_node-13] [INFO] [1794596401.945032739] [grid_diag]: GLOBAL_DIAG exploring=12 routable=8
+[tare_planner_node-13] [INFO] [1794596401.946562974] [local_diag]: LOCAL_DIAG uncovered=1015 frontier=358 queue=0 best_surface=0 frontier_queue=1 best_frontier=20 reused=13
+[tare_planner_node-13] [INFO] [1794596401.950087589] [tare_planner_node]: EXPLORATION_DIAG candidates=553 uncovered=1015 frontier=358 global_return=0 local_complete=0 global_nodes=80 local_nodes=117 x=23.698 y=6.649
+[tare_planner_node-13] [INFO] [1794596402.918062125] [grid_diag]: GLOBAL_DIAG exploring=12 routable=8
+[tare_planner_node-13] [INFO] [1794596402.919626117] [local_diag]: LOCAL_DIAG uncovered=1004 frontier=338 queue=0 best_surface=0 frontier_queue=1 best_frontier=21 reused=13
+[tare_planner_node-13] [INFO] [1794596402.922673912] [tare_planner_node]: EXPLORATION_DIAG candidates=553 uncovered=1004 frontier=338 global_return=0 local_complete=0 global_nodes=81 local_nodes=118 x=23.734 y=7.104
+[tare_planner_node-13] [INFO] [1794596403.895291540] [grid_diag]: GLOBAL_DIAG exploring=12 routable=8
+[tare_planner_node-13] [INFO] [1794596403.896747053] [local_diag]: LOCAL_DIAG uncovered=1020 frontier=328 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=14
+[tare_planner_node-13] [INFO] [1794596403.899782725] [tare_planner_node]: EXPLORATION_DIAG candidates=553 uncovered=1020 frontier=328 global_return=0 local_complete=0 global_nodes=81 local_nodes=118 x=23.757 y=7.646
+[tare_planner_node-13] [INFO] [1794596404.878331466] [grid_diag]: GLOBAL_DIAG exploring=12 routable=8
+[tare_planner_node-13] [INFO] [1794596404.879771985] [local_diag]: LOCAL_DIAG uncovered=896 frontier=284 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=12
+[tare_planner_node-13] [INFO] [1794596404.882490153] [tare_planner_node]: EXPLORATION_DIAG candidates=553 uncovered=896 frontier=284 global_return=0 local_complete=0 global_nodes=83 local_nodes=118 x=23.738 y=8.097
+[tare_planner_node-13] [INFO] [1794596405.850360049] [grid_diag]: GLOBAL_DIAG exploring=12 routable=8
+[tare_planner_node-13] [INFO] [1794596405.852229622] [local_diag]: LOCAL_DIAG uncovered=902 frontier=281 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=12
+[tare_planner_node-13] [INFO] [1794596405.855162163] [tare_planner_node]: EXPLORATION_DIAG candidates=553 uncovered=902 frontier=281 global_return=0 local_complete=0 global_nodes=83 local_nodes=118 x=23.720 y=8.546
+[tare_planner_node-13] [INFO] [1794596406.769328972] [grid_diag]: GLOBAL_DIAG exploring=12 routable=9
+[tare_planner_node-13] [INFO] [1794596406.770871641] [local_diag]: LOCAL_DIAG uncovered=901 frontier=381 queue=45 best_surface=205 frontier_queue=1 best_frontier=25 reused=7
+[tare_planner_node-13] [INFO] [1794596406.787855585] [tare_planner_node]: EXPLORATION_DIAG candidates=392 uncovered=901 frontier=381 global_return=0 local_complete=0 global_nodes=86 local_nodes=116 x=23.701 y=9.001
+[tare_planner_node-13] [INFO] [1794596407.735450449] [grid_diag]: GLOBAL_DIAG exploring=12 routable=8
+[tare_planner_node-13] [INFO] [1794596407.737035653] [local_diag]: LOCAL_DIAG uncovered=837 frontier=435 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=10
+[tare_planner_node-13] [INFO] [1794596407.739070684] [tare_planner_node]: EXPLORATION_DIAG candidates=392 uncovered=837 frontier=435 global_return=0 local_complete=0 global_nodes=83 local_nodes=114 x=23.683 y=9.450
+[tare_planner_node-13] [INFO] [1794596408.685499424] [grid_diag]: GLOBAL_DIAG exploring=12 routable=8
+[tare_planner_node-13] [INFO] [1794596408.687028004] [local_diag]: LOCAL_DIAG uncovered=812 frontier=408 queue=0 best_surface=0 frontier_queue=8 best_frontier=34 reused=10
+[tare_planner_node-13] [INFO] [1794596408.688743353] [tare_planner_node]: EXPLORATION_DIAG candidates=392 uncovered=812 frontier=408 global_return=0 local_complete=0 global_nodes=83 local_nodes=115 x=23.664 y=9.903
+[tare_planner_node-13] [INFO] [1794596409.687030981] [grid_diag]: GLOBAL_DIAG exploring=12 routable=8
+[tare_planner_node-13] [INFO] [1794596409.688586629] [local_diag]: LOCAL_DIAG uncovered=811 frontier=402 queue=0 best_surface=0 frontier_queue=1 best_frontier=21 reused=11
+[tare_planner_node-13] [INFO] [1794596409.690806752] [tare_planner_node]: EXPLORATION_DIAG candidates=392 uncovered=811 frontier=402 global_return=0 local_complete=0 global_nodes=83 local_nodes=115 x=23.646 y=10.349
+[tare_planner_node-13] [INFO] [1794596410.695027385] [grid_diag]: GLOBAL_DIAG exploring=12 routable=8
+[tare_planner_node-13] [INFO] [1794596410.696392664] [local_diag]: LOCAL_DIAG uncovered=714 frontier=350 queue=0 best_surface=0 frontier_queue=2 best_frontier=21 reused=9
+[tare_planner_node-13] [INFO] [1794596410.698142369] [tare_planner_node]: EXPLORATION_DIAG candidates=392 uncovered=714 frontier=350 global_return=0 local_complete=0 global_nodes=85 local_nodes=114 x=23.627 y=10.802
+[tare_planner_node-13] [INFO] [1794596411.683254503] [grid_diag]: GLOBAL_DIAG exploring=12 routable=8
+[tare_planner_node-13] [INFO] [1794596411.684647850] [local_diag]: LOCAL_DIAG uncovered=711 frontier=332 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=10
+[tare_planner_node-13] [INFO] [1794596411.686460607] [tare_planner_node]: EXPLORATION_DIAG candidates=392 uncovered=711 frontier=332 global_return=0 local_complete=0 global_nodes=79 local_nodes=115 x=23.605 y=11.343
+[tare_planner_node-13] [INFO] [1794596412.645474359] [grid_diag]: GLOBAL_DIAG exploring=12 routable=8
+[tare_planner_node-13] [INFO] [1794596412.646870180] [local_diag]: LOCAL_DIAG uncovered=724 frontier=322 queue=0 best_surface=0 frontier_queue=1 best_frontier=23 reused=10
+[tare_planner_node-13] [INFO] [1794596412.648795523] [tare_planner_node]: EXPLORATION_DIAG candidates=392 uncovered=724 frontier=322 global_return=0 local_complete=0 global_nodes=79 local_nodes=115 x=23.587 y=11.794
+[tare_planner_node-13] [INFO] [1794596413.617670141] [grid_diag]: GLOBAL_DIAG exploring=12 routable=8
+[tare_planner_node-13] [INFO] [1794596413.619087644] [local_diag]: LOCAL_DIAG uncovered=614 frontier=308 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=10
+[tare_planner_node-13] [INFO] [1794596413.620814338] [tare_planner_node]: EXPLORATION_DIAG candidates=398 uncovered=614 frontier=308 global_return=0 local_complete=0 global_nodes=85 local_nodes=115 x=23.568 y=12.245
+[tare_planner_node-13] [INFO] [1794596414.597517814] [grid_diag]: GLOBAL_DIAG exploring=11 routable=8
+[tare_planner_node-13] [INFO] [1794596414.599141361] [local_diag]: LOCAL_DIAG uncovered=628 frontier=298 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=10
+[tare_planner_node-13] [INFO] [1794596414.600796954] [tare_planner_node]: EXPLORATION_DIAG candidates=398 uncovered=628 frontier=298 global_return=0 local_complete=0 global_nodes=85 local_nodes=115 x=23.531 y=12.702
+[tare_planner_node-13] [INFO] [1794596415.564350648] [grid_diag]: GLOBAL_DIAG exploring=11 routable=8
+[tare_planner_node-13] [INFO] [1794596415.565733230] [local_diag]: LOCAL_DIAG uncovered=628 frontier=282 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=10
+[tare_planner_node-13] [INFO] [1794596415.567380782] [tare_planner_node]: EXPLORATION_DIAG candidates=398 uncovered=628 frontier=282 global_return=0 local_complete=0 global_nodes=85 local_nodes=115 x=23.485 y=13.155
+[tare_planner_node-13] [INFO] [1794596416.520443227] [grid_diag]: GLOBAL_DIAG exploring=11 routable=8
+[tare_planner_node-13] [INFO] [1794596416.522132784] [local_diag]: LOCAL_DIAG uncovered=600 frontier=352 queue=0 best_surface=0 frontier_queue=6 best_frontier=33 reused=9
+[tare_planner_node-13] [INFO] [1794596416.524181093] [tare_planner_node]: EXPLORATION_DIAG candidates=398 uncovered=600 frontier=352 global_return=0 local_complete=0 global_nodes=87 local_nodes=115 x=23.439 y=13.609
+[tare_planner_node-13] [INFO] [1794596417.515955345] [grid_diag]: GLOBAL_DIAG exploring=11 routable=8
+[tare_planner_node-13] [INFO] [1794596417.517352956] [local_diag]: LOCAL_DIAG uncovered=602 frontier=341 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=10
+[tare_planner_node-13] [INFO] [1794596417.519169706] [tare_planner_node]: EXPLORATION_DIAG candidates=398 uncovered=602 frontier=341 global_return=0 local_complete=0 global_nodes=87 local_nodes=115 x=23.393 y=14.072
+[tare_planner_node-13] [INFO] [1794596418.516643125] [grid_diag]: GLOBAL_DIAG exploring=11 routable=8
+[tare_planner_node-13] [INFO] [1794596418.517931356] [local_diag]: LOCAL_DIAG uncovered=604 frontier=343 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=10
+[tare_planner_node-13] [INFO] [1794596418.519980662] [tare_planner_node]: EXPLORATION_DIAG candidates=398 uncovered=604 frontier=343 global_return=0 local_complete=0 global_nodes=87 local_nodes=115 x=23.347 y=14.528
+[tare_planner_node-13] [INFO] [1794596419.525576024] [grid_diag]: GLOBAL_DIAG exploring=11 routable=8
+[tare_planner_node-13] [INFO] [1794596419.527097216] [local_diag]: LOCAL_DIAG uncovered=589 frontier=322 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=9
+[tare_planner_node-13] [INFO] [1794596419.528560018] [tare_planner_node]: EXPLORATION_DIAG candidates=398 uncovered=589 frontier=322 global_return=0 local_complete=0 global_nodes=89 local_nodes=115 x=23.301 y=14.982
+[tare_planner_node-13] [INFO] [1794596420.463729391] [grid_diag]: GLOBAL_DIAG exploring=11 routable=9
+[tare_planner_node-13] [INFO] [1794596420.465083254] [local_diag]: LOCAL_DIAG uncovered=926 frontier=444 queue=42 best_surface=281 frontier_queue=1 best_frontier=25 reused=8
+[tare_planner_node-13] [INFO] [1794596420.477490511] [tare_planner_node]: EXPLORATION_DIAG candidates=214 uncovered=926 frontier=444 global_return=0 local_complete=0 global_nodes=89 local_nodes=96 x=23.255 y=15.443
+[tare_planner_node-13] [INFO] [1794596421.418978480] [grid_diag]: GLOBAL_DIAG exploring=12 routable=9
+[tare_planner_node-13] [INFO] [1794596421.420535421] [local_diag]: LOCAL_DIAG uncovered=857 frontier=410 queue=0 best_surface=0 frontier_queue=8 best_frontier=31 reused=10
+[tare_planner_node-13] [INFO] [1794596421.421866520] [tare_planner_node]: EXPLORATION_DIAG candidates=214 uncovered=857 frontier=410 global_return=0 local_complete=0 global_nodes=89 local_nodes=95 x=23.187 y=15.985
+[tare_planner_node-13] [INFO] [1794596422.400679466] [grid_diag]: GLOBAL_DIAG exploring=12 routable=9
+[tare_planner_node-13] [INFO] [1794596422.402046960] [local_diag]: LOCAL_DIAG uncovered=876 frontier=397 queue=0 best_surface=0 frontier_queue=3 best_frontier=31 reused=11
+[tare_planner_node-13] [INFO] [1794596422.403615873] [tare_planner_node]: EXPLORATION_DIAG candidates=219 uncovered=876 frontier=397 global_return=0 local_complete=0 global_nodes=89 local_nodes=99 x=23.128 y=16.434
+[tare_planner_node-13] [INFO] [1794596423.386569097] [grid_diag]: GLOBAL_DIAG exploring=12 routable=9
+[tare_planner_node-13] [INFO] [1794596423.388320014] [local_diag]: LOCAL_DIAG uncovered=887 frontier=374 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=13
+[tare_planner_node-13] [INFO] [1794596423.390549584] [tare_planner_node]: EXPLORATION_DIAG candidates=219 uncovered=887 frontier=374 global_return=0 local_complete=0 global_nodes=89 local_nodes=99 x=23.083 y=16.888
+[tare_planner_node-13] [INFO] [1794596424.370457744] [grid_diag]: GLOBAL_DIAG exploring=12 routable=9
+[tare_planner_node-13] [INFO] [1794596424.372059659] [local_diag]: LOCAL_DIAG uncovered=860 frontier=340 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=12
+[tare_planner_node-13] [INFO] [1794596424.373802689] [tare_planner_node]: EXPLORATION_DIAG candidates=219 uncovered=860 frontier=340 global_return=0 local_complete=0 global_nodes=84 local_nodes=101 x=23.037 y=17.344
+[tare_planner_node-13] [INFO] [1794596425.333024831] [grid_diag]: GLOBAL_DIAG exploring=12 routable=9
+[tare_planner_node-13] [INFO] [1794596425.334768292] [local_diag]: LOCAL_DIAG uncovered=887 frontier=332 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=12
+[tare_planner_node-13] [INFO] [1794596425.336331532] [tare_planner_node]: EXPLORATION_DIAG candidates=222 uncovered=887 frontier=332 global_return=0 local_complete=0 global_nodes=91 local_nodes=99 x=22.991 y=17.803
+[tare_planner_node-13] [INFO] [1794596426.360516888] [grid_diag]: GLOBAL_DIAG exploring=12 routable=9
+[tare_planner_node-13] [INFO] [1794596426.362434917] [local_diag]: LOCAL_DIAG uncovered=929 frontier=394 queue=1 best_surface=44 frontier_queue=3 best_frontier=24 reused=12
+[tare_planner_node-13] [INFO] [1794596426.380847126] [tare_planner_node]: EXPLORATION_DIAG candidates=223 uncovered=929 frontier=394 global_return=0 local_complete=0 global_nodes=91 local_nodes=99 x=22.945 y=18.254
+[tare_planner_node-13] [INFO] [1794596427.346467685] [grid_diag]: GLOBAL_DIAG exploring=12 routable=9
+[tare_planner_node-13] [INFO] [1794596427.348154274] [local_diag]: LOCAL_DIAG uncovered=777 frontier=363 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=13
+[tare_planner_node-13] [INFO] [1794596427.349724061] [tare_planner_node]: EXPLORATION_DIAG candidates=223 uncovered=777 frontier=363 global_return=0 local_complete=0 global_nodes=91 local_nodes=99 x=22.899 y=18.713
+[tare_planner_node-13] [INFO] [1794596428.319021516] [grid_diag]: GLOBAL_DIAG exploring=11 routable=9
+[tare_planner_node-13] [INFO] [1794596428.320694536] [local_diag]: LOCAL_DIAG uncovered=784 frontier=357 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=13
+[tare_planner_node-13] [INFO] [1794596428.322422758] [tare_planner_node]: EXPLORATION_DIAG candidates=226 uncovered=784 frontier=357 global_return=0 local_complete=0 global_nodes=91 local_nodes=99 x=22.854 y=19.169
+[tare_planner_node-13] [INFO] [1794596429.308072448] [grid_diag]: GLOBAL_DIAG exploring=11 routable=9
+[tare_planner_node-13] [INFO] [1794596429.309431643] [local_diag]: LOCAL_DIAG uncovered=780 frontier=348 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=12
+[tare_planner_node-13] [INFO] [1794596429.310832210] [tare_planner_node]: EXPLORATION_DIAG candidates=230 uncovered=780 frontier=348 global_return=0 local_complete=0 global_nodes=91 local_nodes=99 x=22.808 y=19.625
+[tare_planner_node-13] [INFO] [1794596430.285261100] [grid_diag]: GLOBAL_DIAG exploring=11 routable=9
+[tare_planner_node-13] [INFO] [1794596430.286856547] [local_diag]: LOCAL_DIAG uncovered=685 frontier=325 queue=1 best_surface=52 frontier_queue=0 best_frontier=0 reused=11
+[tare_planner_node-13] [INFO] [1794596430.298776283] [tare_planner_node]: EXPLORATION_DIAG candidates=235 uncovered=685 frontier=325 global_return=0 local_complete=0 global_nodes=91 local_nodes=99 x=22.766 y=20.169
+[tare_planner_node-13] [INFO] [1794596431.933183866] [grid_diag]: GLOBAL_DIAG exploring=11 routable=9
+[tare_planner_node-13] [INFO] [1794596431.935346281] [local_diag]: LOCAL_DIAG uncovered=681 frontier=311 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=12
+[tare_planner_node-13] [INFO] [1794596431.937243484] [tare_planner_node]: EXPLORATION_DIAG candidates=241 uncovered=681 frontier=311 global_return=0 local_complete=0 global_nodes=93 local_nodes=99 x=22.752 y=20.520
+[tare_planner_node-13] [INFO] [1794596432.930221602] [grid_diag]: GLOBAL_DIAG exploring=11 routable=9
+[tare_planner_node-13] [INFO] [1794596432.932915697] [local_diag]: LOCAL_DIAG uncovered=660 frontier=301 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=11
+[tare_planner_node-13] [INFO] [1794596432.935378476] [tare_planner_node]: EXPLORATION_DIAG candidates=260 uncovered=660 frontier=301 global_return=0 local_complete=0 global_nodes=93 local_nodes=99 x=22.734 y=20.962
+[tare_planner_node-13] [INFO] [1794596433.985983520] [grid_diag]: GLOBAL_DIAG exploring=13 routable=9
+[tare_planner_node-13] [INFO] [1794596433.987612399] [local_diag]: LOCAL_DIAG uncovered=724 frontier=859 queue=48 best_surface=115 frontier_queue=156 best_frontier=98 reused=10
+[tare_planner_node-13] [INFO] [1794596434.017814643] [tare_planner_node]: EXPLORATION_DIAG candidates=511 uncovered=724 frontier=859 global_return=0 local_complete=0 global_nodes=93 local_nodes=161 x=22.711 y=21.544
+[tare_planner_node-13] [INFO] [1794596434.966924145] [grid_diag]: GLOBAL_DIAG exploring=15 routable=9
+[tare_planner_node-13] [INFO] [1794596434.968533889] [local_diag]: LOCAL_DIAG uncovered=748 frontier=799 queue=0 best_surface=0 frontier_queue=34 best_frontier=37 reused=14
+[tare_planner_node-13] [INFO] [1794596434.971748355] [tare_planner_node]: EXPLORATION_DIAG candidates=518 uncovered=748 frontier=799 global_return=0 local_complete=0 global_nodes=93 local_nodes=178 x=22.691 y=22.026
+[tare_planner_node-13] [INFO] [1794596435.956151703] [grid_diag]: GLOBAL_DIAG exploring=15 routable=9
+[tare_planner_node-13] [INFO] [1794596435.957674566] [local_diag]: LOCAL_DIAG uncovered=798 frontier=742 queue=1 best_surface=44 frontier_queue=14 best_frontier=33 reused=14
+[tare_planner_node-13] [INFO] [1794596435.995708898] [tare_planner_node]: EXPLORATION_DIAG candidates=500 uncovered=798 frontier=742 global_return=0 local_complete=0 global_nodes=93 local_nodes=181 x=22.658 y=22.500
+[tare_planner_node-13] [INFO] [1794596436.941608763] [grid_diag]: GLOBAL_DIAG exploring=16 routable=9
+[tare_planner_node-13] [INFO] [1794596436.943628989] [local_diag]: LOCAL_DIAG uncovered=670 frontier=893 queue=0 best_surface=0 frontier_queue=38 best_frontier=58 reused=13
+[tare_planner_node-13] [INFO] [1794596436.946614034] [tare_planner_node]: EXPLORATION_DIAG candidates=496 uncovered=670 frontier=893 global_return=0 local_complete=0 global_nodes=93 local_nodes=182 x=22.611 y=22.967
+[tare_planner_node-13] [INFO] [1794596437.901289172] [grid_diag]: GLOBAL_DIAG exploring=16 routable=9
+[tare_planner_node-13] [INFO] [1794596437.903062055] [local_diag]: LOCAL_DIAG uncovered=687 frontier=875 queue=0 best_surface=0 frontier_queue=9 best_frontier=29 reused=14
+[tare_planner_node-13] [INFO] [1794596437.906375482] [tare_planner_node]: EXPLORATION_DIAG candidates=496 uncovered=687 frontier=875 global_return=0 local_complete=0 global_nodes=95 local_nodes=182 x=22.564 y=23.438
+[tare_planner_node-13] [INFO] [1794596438.820228810] [grid_diag]: GLOBAL_DIAG exploring=16 routable=9
+[tare_planner_node-13] [INFO] [1794596438.822091920] [local_diag]: LOCAL_DIAG uncovered=691 frontier=873 queue=0 best_surface=0 frontier_queue=7 best_frontier=29 reused=15
+[tare_planner_node-13] [INFO] [1794596438.826266207] [tare_planner_node]: EXPLORATION_DIAG candidates=493 uncovered=691 frontier=873 global_return=0 local_complete=0 global_nodes=95 local_nodes=182 x=22.517 y=23.910
+[tare_planner_node-13] [INFO] [1794596439.767790954] [grid_diag]: GLOBAL_DIAG exploring=16 routable=9
+[tare_planner_node-13] [INFO] [1794596439.769236078] [local_diag]: LOCAL_DIAG uncovered=579 frontier=830 queue=0 best_surface=0 frontier_queue=13 best_frontier=34 reused=12
+[tare_planner_node-13] [INFO] [1794596439.771820480] [tare_planner_node]: EXPLORATION_DIAG candidates=493 uncovered=579 frontier=830 global_return=0 local_complete=0 global_nodes=95 local_nodes=181 x=22.471 y=24.375
+[tare_planner_node-13] [INFO] [1794596440.747653279] [grid_diag]: GLOBAL_DIAG exploring=16 routable=9
+[tare_planner_node-13] [INFO] [1794596440.749185503] [local_diag]: LOCAL_DIAG uncovered=599 frontier=813 queue=0 best_surface=0 frontier_queue=2 best_frontier=25 reused=13
+[tare_planner_node-13] [INFO] [1794596440.752031287] [tare_planner_node]: EXPLORATION_DIAG candidates=492 uncovered=599 frontier=813 global_return=0 local_complete=0 global_nodes=95 local_nodes=181 x=22.424 y=24.840
+[tare_planner_node-13] [INFO] [1794596441.767053071] [grid_diag]: GLOBAL_DIAG exploring=16 routable=9
+[tare_planner_node-13] [INFO] [1794596441.768655521] [local_diag]: LOCAL_DIAG uncovered=490 frontier=792 queue=31 best_surface=111 frontier_queue=14 best_frontier=68 reused=12
+[tare_planner_node-13] [INFO] [1794596441.794545283] [tare_planner_node]: EXPLORATION_DIAG candidates=491 uncovered=490 frontier=792 global_return=0 local_complete=0 global_nodes=95 local_nodes=187 x=22.366 y=25.417
+[tare_planner_node-13] [INFO] [1794596442.753792786] [grid_diag]: GLOBAL_DIAG exploring=16 routable=9
+[tare_planner_node-13] [INFO] [1794596442.755475728] [local_diag]: LOCAL_DIAG uncovered=499 frontier=779 queue=8 best_surface=50 frontier_queue=1 best_frontier=24 reused=13
+[tare_planner_node-13] [INFO] [1794596442.783799623] [tare_planner_node]: EXPLORATION_DIAG candidates=491 uncovered=499 frontier=779 global_return=0 local_complete=0 global_nodes=97 local_nodes=194 x=22.322 y=25.890
+[tare_planner_node-13] [INFO] [1794596443.736249932] [grid_diag]: GLOBAL_DIAG exploring=16 routable=9
+[tare_planner_node-13] [INFO] [1794596443.738074225] [local_diag]: LOCAL_DIAG uncovered=511 frontier=775 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=15
+[tare_planner_node-13] [INFO] [1794596443.741071795] [tare_planner_node]: EXPLORATION_DIAG candidates=491 uncovered=511 frontier=775 global_return=0 local_complete=0 global_nodes=97 local_nodes=194 x=22.305 y=26.370
+[tare_planner_node-13] [INFO] [1794596444.652936710] [grid_diag]: GLOBAL_DIAG exploring=14 routable=10
+[tare_planner_node-13] [INFO] [1794596444.654307155] [local_diag]: LOCAL_DIAG uncovered=375 frontier=328 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=5
+[tare_planner_node-13] [INFO] [1794596444.655129796] [tare_planner_node]: EXPLORATION_DIAG candidates=250 uncovered=375 frontier=328 global_return=0 local_complete=0 global_nodes=97 local_nodes=102 x=22.288 y=26.840
+[tare_planner_node-13] [INFO] [1794596445.613326475] [grid_diag]: GLOBAL_DIAG exploring=13 routable=10
+[tare_planner_node-13] [INFO] [1794596445.614844744] [local_diag]: LOCAL_DIAG uncovered=460 frontier=598 queue=5 best_surface=64 frontier_queue=19 best_frontier=103 reused=6
+[tare_planner_node-13] [INFO] [1794596445.627201336] [tare_planner_node]: EXPLORATION_DIAG candidates=258 uncovered=460 frontier=598 global_return=0 local_complete=0 global_nodes=97 local_nodes=91 x=22.271 y=27.322
+[tare_planner_node-13] [INFO] [1794596446.566524889] [grid_diag]: GLOBAL_DIAG exploring=15 routable=10
+[tare_planner_node-13] [INFO] [1794596446.568190470] [local_diag]: LOCAL_DIAG uncovered=439 frontier=484 queue=1 best_surface=41 frontier_queue=7 best_frontier=33 reused=9
+[tare_planner_node-13] [INFO] [1794596446.580105927] [tare_planner_node]: EXPLORATION_DIAG candidates=258 uncovered=439 frontier=484 global_return=0 local_complete=0 global_nodes=97 local_nodes=96 x=22.254 y=27.797
+[tare_planner_node-13] [INFO] [1794596447.521320360] [grid_diag]: GLOBAL_DIAG exploring=15 routable=10
+[tare_planner_node-13] [INFO] [1794596447.523419354] [local_diag]: LOCAL_DIAG uncovered=325 frontier=436 queue=0 best_surface=0 frontier_queue=1 best_frontier=20 reused=10
+[tare_planner_node-13] [INFO] [1794596447.524926566] [tare_planner_node]: EXPLORATION_DIAG candidates=258 uncovered=325 frontier=436 global_return=0 local_complete=0 global_nodes=97 local_nodes=95 x=22.258 y=28.274
+[tare_planner_node-13] [INFO] [1794596448.479573608] [grid_diag]: GLOBAL_DIAG exploring=15 routable=10
+[tare_planner_node-13] [INFO] [1794596448.481070010] [local_diag]: LOCAL_DIAG uncovered=329 frontier=433 queue=0 best_surface=0 frontier_queue=1 best_frontier=20 reused=10
+[tare_planner_node-13] [INFO] [1794596448.482375390] [tare_planner_node]: EXPLORATION_DIAG candidates=258 uncovered=329 frontier=433 global_return=0 local_complete=0 global_nodes=99 local_nodes=95 x=22.270 y=28.744
+[tare_planner_node-13] [INFO] [1794596449.494689352] [grid_diag]: GLOBAL_DIAG exploring=15 routable=10
+[tare_planner_node-13] [INFO] [1794596449.496325217] [local_diag]: LOCAL_DIAG uncovered=332 frontier=421 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=10
+[tare_planner_node-13] [INFO] [1794596449.497769946] [tare_planner_node]: EXPLORATION_DIAG candidates=258 uncovered=332 frontier=421 global_return=0 local_complete=0 global_nodes=99 local_nodes=96 x=22.285 y=29.321
+[tare_planner_node-13] [INFO] [1794596450.484548684] [grid_diag]: GLOBAL_DIAG exploring=15 routable=10
+[tare_planner_node-13] [INFO] [1794596450.486129084] [local_diag]: LOCAL_DIAG uncovered=341 frontier=433 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=10
+[tare_planner_node-13] [INFO] [1794596450.487641681] [tare_planner_node]: EXPLORATION_DIAG candidates=258 uncovered=341 frontier=433 global_return=0 local_complete=0 global_nodes=99 local_nodes=96 x=22.297 y=29.798
+[tare_planner_node-13] [INFO] [1794596451.478567729] [grid_diag]: GLOBAL_DIAG exploring=15 routable=10
+[tare_planner_node-13] [INFO] [1794596451.480153221] [local_diag]: LOCAL_DIAG uncovered=346 frontier=420 queue=0 best_surface=0 frontier_queue=2 best_frontier=23 reused=9
+[tare_planner_node-13] [INFO] [1794596451.481413160] [tare_planner_node]: EXPLORATION_DIAG candidates=256 uncovered=346 frontier=420 global_return=0 local_complete=0 global_nodes=99 local_nodes=96 x=22.310 y=30.278
+[tare_planner_node-13] [INFO] [1794596452.459056811] [grid_diag]: GLOBAL_DIAG exploring=15 routable=10
+[tare_planner_node-13] [INFO] [1794596452.460501513] [local_diag]: LOCAL_DIAG uncovered=355 frontier=397 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=9
+[tare_planner_node-13] [INFO] [1794596452.461529896] [tare_planner_node]: EXPLORATION_DIAG candidates=256 uncovered=355 frontier=397 global_return=0 local_complete=0 global_nodes=99 local_nodes=96 x=22.322 y=30.750
+[tare_planner_node-13] [INFO] [1794596453.452718654] [grid_diag]: GLOBAL_DIAG exploring=14 routable=10
+[tare_planner_node-13] [INFO] [1794596453.454530204] [local_diag]: LOCAL_DIAG uncovered=359 frontier=565 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=9
+[tare_planner_node-13] [INFO] [1794596453.455988542] [tare_planner_node]: EXPLORATION_DIAG candidates=257 uncovered=359 frontier=565 global_return=0 local_complete=0 global_nodes=99 local_nodes=96 x=22.334 y=31.225
+[tare_planner_node-13] [INFO] [1794596454.371940136] [grid_diag]: GLOBAL_DIAG exploring=14 routable=10
+[tare_planner_node-13] [INFO] [1794596454.373647653] [local_diag]: LOCAL_DIAG uncovered=367 frontier=550 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=9
+[tare_planner_node-13] [INFO] [1794596454.374980602] [tare_planner_node]: EXPLORATION_DIAG candidates=257 uncovered=367 frontier=550 global_return=0 local_complete=0 global_nodes=101 local_nodes=96 x=22.347 y=31.712
+[tare_planner_node-13] [INFO] [1794596455.320792253] [grid_diag]: GLOBAL_DIAG exploring=14 routable=10
+[tare_planner_node-13] [INFO] [1794596455.322323811] [local_diag]: LOCAL_DIAG uncovered=321 frontier=528 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=8
+[tare_planner_node-13] [INFO] [1794596455.323480501] [tare_planner_node]: EXPLORATION_DIAG candidates=258 uncovered=321 frontier=528 global_return=0 local_complete=0 global_nodes=101 local_nodes=96 x=22.359 y=32.182
+[tare_planner_node-13] [INFO] [1794596456.264622510] [grid_diag]: GLOBAL_DIAG exploring=14 routable=10
+[tare_planner_node-13] [INFO] [1794596456.266070336] [local_diag]: LOCAL_DIAG uncovered=323 frontier=533 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=8
+[tare_planner_node-13] [INFO] [1794596456.267047358] [tare_planner_node]: EXPLORATION_DIAG candidates=258 uncovered=323 frontier=533 global_return=0 local_complete=0 global_nodes=101 local_nodes=96 x=22.372 y=32.656
+[tare_planner_node-13] [INFO] [1794596457.227761581] [grid_diag]: GLOBAL_DIAG exploring=14 routable=10
+[tare_planner_node-13] [INFO] [1794596457.229323535] [local_diag]: LOCAL_DIAG uncovered=338 frontier=509 queue=0 best_surface=0 frontier_queue=5 best_frontier=33 reused=8
+[tare_planner_node-13] [INFO] [1794596457.230673957] [tare_planner_node]: EXPLORATION_DIAG candidates=222 uncovered=338 frontier=509 global_return=0 local_complete=0 global_nodes=101 local_nodes=78 x=22.384 y=33.131
+[tare_planner_node-13] [INFO] [1794596458.213675381] [grid_diag]: GLOBAL_DIAG exploring=14 routable=10
+[tare_planner_node-13] [INFO] [1794596458.215131817] [local_diag]: LOCAL_DIAG uncovered=170 frontier=492 queue=0 best_surface=0 frontier_queue=1 best_frontier=23 reused=8
+[tare_planner_node-13] [INFO] [1794596458.216366488] [tare_planner_node]: EXPLORATION_DIAG candidates=222 uncovered=170 frontier=492 global_return=0 local_complete=0 global_nodes=101 local_nodes=80 x=22.397 y=33.613
+[tare_planner_node-13] [INFO] [1794596459.198314298] [grid_diag]: GLOBAL_DIAG exploring=14 routable=10
+[tare_planner_node-13] [INFO] [1794596459.200156708] [local_diag]: LOCAL_DIAG uncovered=178 frontier=496 queue=0 best_surface=0 frontier_queue=4 best_frontier=53 reused=9
+[tare_planner_node-13] [INFO] [1794596459.201603406] [tare_planner_node]: EXPLORATION_DIAG candidates=225 uncovered=178 frontier=496 global_return=0 local_complete=0 global_nodes=101 local_nodes=83 x=22.410 y=34.088
+[tare_planner_node-13] [INFO] [1794596460.165032053] [grid_diag]: GLOBAL_DIAG exploring=14 routable=10
+[tare_planner_node-13] [INFO] [1794596460.166630257] [local_diag]: LOCAL_DIAG uncovered=141 frontier=415 queue=0 best_surface=0 frontier_queue=3 best_frontier=27 reused=9
+[tare_planner_node-13] [INFO] [1794596460.168132522] [tare_planner_node]: EXPLORATION_DIAG candidates=226 uncovered=141 frontier=415 global_return=0 local_complete=0 global_nodes=103 local_nodes=82 x=22.425 y=34.665
+[tare_planner_node-13] [INFO] [1794596461.150793808] [grid_diag]: GLOBAL_DIAG exploring=14 routable=10
+[tare_planner_node-13] [INFO] [1794596461.152546741] [local_diag]: LOCAL_DIAG uncovered=163 frontier=415 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=10
+[tare_planner_node-13] [INFO] [1794596461.154392300] [tare_planner_node]: EXPLORATION_DIAG candidates=230 uncovered=163 frontier=415 global_return=0 local_complete=0 global_nodes=103 local_nodes=82 x=22.424 y=35.140
+[tare_planner_node-13] [INFO] [1794596462.146398074] [grid_diag]: GLOBAL_DIAG exploring=14 routable=10
+[tare_planner_node-13] [INFO] [1794596462.148620897] [local_diag]: LOCAL_DIAG uncovered=159 frontier=417 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=10
+[tare_planner_node-13] [INFO] [1794596462.150461906] [tare_planner_node]: EXPLORATION_DIAG candidates=234 uncovered=159 frontier=417 global_return=0 local_complete=0 global_nodes=103 local_nodes=82 x=22.408 y=35.620
+[tare_planner_node-13] [INFO] [1794596463.107823871] [grid_diag]: GLOBAL_DIAG exploring=13 routable=10
+[tare_planner_node-13] [INFO] [1794596463.109754457] [local_diag]: LOCAL_DIAG uncovered=113 frontier=450 queue=0 best_surface=0 frontier_queue=2 best_frontier=36 reused=9
+[tare_planner_node-13] [INFO] [1794596463.111508401] [tare_planner_node]: EXPLORATION_DIAG candidates=245 uncovered=113 frontier=450 global_return=0 local_complete=0 global_nodes=103 local_nodes=81 x=22.393 y=36.095
+[tare_planner_node-13] [INFO] [1794596464.901872698] [grid_diag]: GLOBAL_DIAG exploring=13 routable=10
+[tare_planner_node-13] [INFO] [1794596464.903342588] [local_diag]: LOCAL_DIAG uncovered=178 frontier=621 queue=3 best_surface=44 frontier_queue=6 best_frontier=84 reused=10
+[tare_planner_node-13] [INFO] [1794596464.921057289] [tare_planner_node]: EXPLORATION_DIAG candidates=266 uncovered=178 frontier=621 global_return=0 local_complete=0 global_nodes=105 local_nodes=103 x=22.369 y=36.514
+[tare_planner_node-13] [INFO] [1794596465.890525129] [grid_diag]: GLOBAL_DIAG exploring=14 routable=10
+[tare_planner_node-13] [INFO] [1794596465.892007626] [local_diag]: LOCAL_DIAG uncovered=232 frontier=598 queue=0 best_surface=0 frontier_queue=2 best_frontier=40 reused=12
+[tare_planner_node-13] [INFO] [1794596465.893838092] [tare_planner_node]: EXPLORATION_DIAG candidates=282 uncovered=232 frontier=598 global_return=0 local_complete=0 global_nodes=105 local_nodes=103 x=22.325 y=36.828
+[tare_planner_node-13] [INFO] [1794596466.889270529] [grid_diag]: GLOBAL_DIAG exploring=14 routable=10
+[tare_planner_node-13] [INFO] [1794596466.890902440] [local_diag]: LOCAL_DIAG uncovered=252 frontier=663 queue=0 best_surface=0 frontier_queue=6 best_frontier=35 reused=10
+[tare_planner_node-13] [INFO] [1794596466.892301311] [tare_planner_node]: EXPLORATION_DIAG candidates=299 uncovered=252 frontier=663 global_return=0 local_complete=0 global_nodes=105 local_nodes=104 x=22.252 y=37.305
+[tare_planner_node-13] [INFO] [1794596467.946744377] [grid_diag]: GLOBAL_DIAG exploring=17 routable=10
+[tare_planner_node-13] [INFO] [1794596467.948675624] [local_diag]: LOCAL_DIAG uncovered=570 frontier=1468 queue=132 best_surface=96 frontier_queue=52 best_frontier=364 reused=11
+[tare_planner_node-13] [INFO] [1794596467.974397990] [tare_planner_node]: EXPLORATION_DIAG candidates=497 uncovered=570 frontier=1468 global_return=0 local_complete=0 global_nodes=105 local_nodes=172 x=22.204 y=37.800
+[tare_planner_node-13] [INFO] [1794596468.944522220] [grid_diag]: GLOBAL_DIAG exploring=18 routable=10
+[tare_planner_node-13] [INFO] [1794596468.946472776] [local_diag]: LOCAL_DIAG uncovered=719 frontier=1478 queue=2 best_surface=50 frontier_queue=71 best_frontier=87 reused=15
+[tare_planner_node-13] [INFO] [1794596468.974492667] [tare_planner_node]: EXPLORATION_DIAG candidates=522 uncovered=719 frontier=1478 global_return=0 local_complete=0 global_nodes=107 local_nodes=176 x=22.159 y=38.291
+[tare_planner_node-13] [INFO] [1794596469.952092685] [grid_diag]: GLOBAL_DIAG exploring=18 routable=10
+[tare_planner_node-13] [INFO] [1794596469.953944773] [local_diag]: LOCAL_DIAG uncovered=797 frontier=1400 queue=29 best_surface=64 frontier_queue=83 best_frontier=97 reused=15
+[tare_planner_node-13] [INFO] [1794596469.985887697] [tare_planner_node]: EXPLORATION_DIAG candidates=571 uncovered=797 frontier=1400 global_return=0 local_complete=0 global_nodes=89 local_nodes=183 x=22.114 y=38.777
+[tare_planner_node-13] [INFO] [1794596470.871263477] [grid_diag]: GLOBAL_DIAG exploring=18 routable=11
+[tare_planner_node-13] [INFO] [1794596470.873099128] [local_diag]: LOCAL_DIAG uncovered=791 frontier=1333 queue=0 best_surface=0 frontier_queue=40 best_frontier=43 reused=16
+[tare_planner_node-13] [INFO] [1794596470.876257659] [tare_planner_node]: EXPLORATION_DIAG candidates=445 uncovered=791 frontier=1333 global_return=0 local_complete=0 global_nodes=99 local_nodes=118 x=22.026 y=39.257
+[tare_planner_node-13] [INFO] [1794596471.843234647] [grid_diag]: GLOBAL_DIAG exploring=18 routable=11
+[tare_planner_node-13] [INFO] [1794596471.845117097] [local_diag]: LOCAL_DIAG uncovered=830 frontier=1282 queue=0 best_surface=0 frontier_queue=28 best_frontier=38 reused=18
+[tare_planner_node-13] [INFO] [1794596471.850211232] [tare_planner_node]: EXPLORATION_DIAG candidates=449 uncovered=830 frontier=1282 global_return=0 local_complete=0 global_nodes=108 local_nodes=122 x=21.866 y=39.723
+[tare_planner_node-13] [INFO] [1794596472.822123096] [grid_diag]: GLOBAL_DIAG exploring=18 routable=11
+[tare_planner_node-13] [INFO] [1794596472.824036176] [local_diag]: LOCAL_DIAG uncovered=869 frontier=1176 queue=1 best_surface=44 frontier_queue=3 best_frontier=21 reused=17
+[tare_planner_node-13] [INFO] [1794596472.862789522] [tare_planner_node]: EXPLORATION_DIAG candidates=447 uncovered=869 frontier=1176 global_return=0 local_complete=0 global_nodes=108 local_nodes=128 x=21.706 y=40.192
+[tare_planner_node-13] [INFO] [1794596473.789300913] [grid_diag]: GLOBAL_DIAG exploring=18 routable=11
+[tare_planner_node-13] [INFO] [1794596473.791306888] [local_diag]: LOCAL_DIAG uncovered=907 frontier=1060 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=18
+[tare_planner_node-13] [INFO] [1794596473.794785744] [tare_planner_node]: EXPLORATION_DIAG candidates=448 uncovered=907 frontier=1060 global_return=0 local_complete=0 global_nodes=110 local_nodes=127 x=21.540 y=40.622
+[tare_planner_node-13] [INFO] [1794596474.821944572] [grid_diag]: GLOBAL_DIAG exploring=18 routable=11
+[tare_planner_node-13] [INFO] [1794596474.824486424] [local_diag]: LOCAL_DIAG uncovered=1170 frontier=1104 queue=55 best_surface=220 frontier_queue=4 best_frontier=41 reused=17
+[tare_planner_node-13] [INFO] [1794596474.861209146] [tare_planner_node]: EXPLORATION_DIAG candidates=533 uncovered=1170 frontier=1104 global_return=0 local_complete=0 global_nodes=109 local_nodes=139 x=21.207 y=40.961
+[tare_planner_node-13] [INFO] [1794596475.804763742] [grid_diag]: GLOBAL_DIAG exploring=19 routable=11
+[tare_planner_node-13] [INFO] [1794596475.806644271] [local_diag]: LOCAL_DIAG uncovered=1198 frontier=1038 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=17
+[tare_planner_node-13] [INFO] [1794596475.810036431] [tare_planner_node]: EXPLORATION_DIAG candidates=533 uncovered=1198 frontier=1038 global_return=0 local_complete=0 global_nodes=110 local_nodes=139 x=20.783 y=41.176
+[tare_planner_node-13] [INFO] [1794596476.786018418] [grid_diag]: GLOBAL_DIAG exploring=19 routable=11
+[tare_planner_node-13] [INFO] [1794596476.787778852] [local_diag]: LOCAL_DIAG uncovered=1259 frontier=1039 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=17
+[tare_planner_node-13] [INFO] [1794596476.791745472] [tare_planner_node]: EXPLORATION_DIAG candidates=538 uncovered=1259 frontier=1039 global_return=0 local_complete=0 global_nodes=110 local_nodes=140 x=20.298 y=41.244
+[tare_planner_node-13] [INFO] [1794596477.748511330] [grid_diag]: GLOBAL_DIAG exploring=19 routable=11
+[tare_planner_node-13] [INFO] [1794596477.750606088] [local_diag]: LOCAL_DIAG uncovered=1305 frontier=1030 queue=0 best_surface=0 frontier_queue=1 best_frontier=21 reused=18
+[tare_planner_node-13] [INFO] [1794596477.754142629] [tare_planner_node]: EXPLORATION_DIAG candidates=538 uncovered=1305 frontier=1030 global_return=0 local_complete=0 global_nodes=110 local_nodes=144 x=19.816 y=41.311
+[tare_planner_node-13] [INFO] [1794596478.710359180] [grid_diag]: GLOBAL_DIAG exploring=19 routable=11
+[tare_planner_node-13] [INFO] [1794596478.712450193] [local_diag]: LOCAL_DIAG uncovered=1237 frontier=1007 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=19
+[tare_planner_node-13] [INFO] [1794596478.716672015] [tare_planner_node]: EXPLORATION_DIAG candidates=544 uncovered=1237 frontier=1007 global_return=0 local_complete=0 global_nodes=110 local_nodes=144 x=19.328 y=41.378
+[tare_planner_node-13] [INFO] [1794596479.684228691] [grid_diag]: GLOBAL_DIAG exploring=19 routable=11
+[tare_planner_node-13] [INFO] [1794596479.686420445] [local_diag]: LOCAL_DIAG uncovered=1284 frontier=992 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=19
+[tare_planner_node-13] [INFO] [1794596479.690462536] [tare_planner_node]: EXPLORATION_DIAG candidates=544 uncovered=1284 frontier=992 global_return=0 local_complete=0 global_nodes=109 local_nodes=144 x=18.838 y=41.446
+[tare_planner_node-13] [INFO] [1794596480.640777078] [grid_diag]: GLOBAL_DIAG exploring=19 routable=11
+[tare_planner_node-13] [INFO] [1794596480.643379168] [local_diag]: LOCAL_DIAG uncovered=1346 frontier=940 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=19
+[tare_planner_node-13] [INFO] [1794596480.648240171] [tare_planner_node]: EXPLORATION_DIAG candidates=544 uncovered=1346 frontier=940 global_return=0 local_complete=0 global_nodes=109 local_nodes=144 x=18.347 y=41.514
+[tare_planner_node-13] [INFO] [1794596481.601724397] [grid_diag]: GLOBAL_DIAG exploring=19 routable=11
+[tare_planner_node-13] [INFO] [1794596481.603558732] [local_diag]: LOCAL_DIAG uncovered=1188 frontier=722 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=19
+[tare_planner_node-13] [INFO] [1794596481.607173624] [tare_planner_node]: EXPLORATION_DIAG candidates=544 uncovered=1188 frontier=722 global_return=0 local_complete=0 global_nodes=109 local_nodes=144 x=17.862 y=41.582
+[tare_planner_node-13] [INFO] [1794596482.553244057] [grid_diag]: GLOBAL_DIAG exploring=19 routable=11
+[tare_planner_node-13] [INFO] [1794596482.555345068] [local_diag]: LOCAL_DIAG uncovered=1213 frontier=547 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=19
+[tare_planner_node-13] [INFO] [1794596482.558715968] [tare_planner_node]: EXPLORATION_DIAG candidates=545 uncovered=1213 frontier=547 global_return=0 local_complete=0 global_nodes=109 local_nodes=144 x=17.378 y=41.636
+[tare_planner_node-13] [INFO] [1794596483.532988232] [grid_diag]: GLOBAL_DIAG exploring=19 routable=11
+[tare_planner_node-13] [INFO] [1794596483.534789886] [local_diag]: LOCAL_DIAG uncovered=1243 frontier=461 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=19
+[tare_planner_node-13] [INFO] [1794596483.538119644] [tare_planner_node]: EXPLORATION_DIAG candidates=542 uncovered=1243 frontier=461 global_return=0 local_complete=0 global_nodes=109 local_nodes=144 x=16.892 y=41.675
+[tare_planner_node-13] [INFO] [1794596484.531597540] [grid_diag]: GLOBAL_DIAG exploring=19 routable=11
+[tare_planner_node-13] [INFO] [1794596484.534250627] [local_diag]: LOCAL_DIAG uncovered=1154 frontier=432 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=17
+[tare_planner_node-13] [INFO] [1794596484.537997499] [tare_planner_node]: EXPLORATION_DIAG candidates=551 uncovered=1154 frontier=432 global_return=0 local_complete=0 global_nodes=109 local_nodes=141 x=16.401 y=41.715
+[tare_planner_node-13] [INFO] [1794596485.504209688] [grid_diag]: GLOBAL_DIAG exploring=19 routable=11
+[tare_planner_node-13] [INFO] [1794596485.506059034] [local_diag]: LOCAL_DIAG uncovered=1202 frontier=400 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=17
+[tare_planner_node-13] [INFO] [1794596485.509520738] [tare_planner_node]: EXPLORATION_DIAG candidates=551 uncovered=1202 frontier=400 global_return=0 local_complete=0 global_nodes=111 local_nodes=141 x=15.904 y=41.733
+[tare_planner_node-13] [INFO] [1794596486.484872254] [grid_diag]: GLOBAL_DIAG exploring=19 routable=11
+[tare_planner_node-13] [INFO] [1794596486.487155236] [local_diag]: LOCAL_DIAG uncovered=1263 frontier=406 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=17
+[tare_planner_node-13] [INFO] [1794596486.490728808] [tare_planner_node]: EXPLORATION_DIAG candidates=556 uncovered=1263 frontier=406 global_return=0 local_complete=0 global_nodes=111 local_nodes=141 x=15.419 y=41.741
+[tare_planner_node-13] [INFO] [1794596487.481293671] [grid_diag]: GLOBAL_DIAG exploring=19 routable=12
+[tare_planner_node-13] [INFO] [1794596487.483958040] [local_diag]: LOCAL_DIAG uncovered=1141 frontier=342 queue=25 best_surface=81 frontier_queue=3 best_frontier=28 reused=16
+[tare_planner_node-13] [INFO] [1794596487.524183349] [tare_planner_node]: EXPLORATION_DIAG candidates=589 uncovered=1141 frontier=342 global_return=0 local_complete=0 global_nodes=117 local_nodes=116 x=14.939 y=41.750
+[tare_planner_node-13] [INFO] [1794596488.473921925] [grid_diag]: GLOBAL_DIAG exploring=21 routable=12
+[tare_planner_node-13] [INFO] [1794596488.476210693] [local_diag]: LOCAL_DIAG uncovered=1232 frontier=355 queue=6 best_surface=68 frontier_queue=7 best_frontier=30 reused=17
+[tare_planner_node-13] [INFO] [1794596488.512073579] [tare_planner_node]: EXPLORATION_DIAG candidates=601 uncovered=1232 frontier=355 global_return=0 local_complete=0 global_nodes=118 local_nodes=119 x=14.459 y=41.763
+[tare_planner_node-13] [INFO] [1794596489.423270501] [grid_diag]: GLOBAL_DIAG exploring=22 routable=12
+[tare_planner_node-13] [INFO] [1794596489.425468669] [local_diag]: LOCAL_DIAG uncovered=1263 frontier=340 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=18
+[tare_planner_node-13] [INFO] [1794596489.428967416] [tare_planner_node]: EXPLORATION_DIAG candidates=596 uncovered=1263 frontier=340 global_return=0 local_complete=0 global_nodes=118 local_nodes=120 x=14.449 y=41.767
+[tare_planner_node-13] [INFO] [1794596490.385164278] [grid_diag]: GLOBAL_DIAG exploring=22 routable=12
+[tare_planner_node-13] [INFO] [1794596490.387401412] [local_diag]: LOCAL_DIAG uncovered=1261 frontier=339 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=18
+[tare_planner_node-13] [INFO] [1794596490.390597370] [tare_planner_node]: EXPLORATION_DIAG candidates=594 uncovered=1261 frontier=339 global_return=0 local_complete=0 global_nodes=118 local_nodes=120 x=14.509 y=41.767
+[tare_planner_node-13] [INFO] [1794596491.369439235] [grid_diag]: GLOBAL_DIAG exploring=22 routable=12
+[tare_planner_node-13] [INFO] [1794596491.371798267] [local_diag]: LOCAL_DIAG uncovered=1260 frontier=338 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=18
+[tare_planner_node-13] [INFO] [1794596491.375018019] [tare_planner_node]: EXPLORATION_DIAG candidates=594 uncovered=1260 frontier=338 global_return=0 local_complete=0 global_nodes=118 local_nodes=120 x=14.509 y=41.767
+[tare_planner_node-13] [INFO] [1794596492.325051682] [grid_diag]: GLOBAL_DIAG exploring=22 routable=12
+[tare_planner_node-13] [INFO] [1794596492.327559121] [local_diag]: LOCAL_DIAG uncovered=1262 frontier=338 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=18
+[tare_planner_node-13] [INFO] [1794596492.330898364] [tare_planner_node]: EXPLORATION_DIAG candidates=594 uncovered=1262 frontier=338 global_return=0 local_complete=0 global_nodes=118 local_nodes=120 x=14.509 y=41.767
+[tare_planner_node-13] [INFO] [1794596493.296599123] [grid_diag]: GLOBAL_DIAG exploring=22 routable=12
+[tare_planner_node-13] [INFO] [1794596493.298701724] [local_diag]: LOCAL_DIAG uncovered=1261 frontier=338 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=18
+[tare_planner_node-13] [INFO] [1794596493.302027789] [tare_planner_node]: EXPLORATION_DIAG candidates=594 uncovered=1261 frontier=338 global_return=0 local_complete=0 global_nodes=118 local_nodes=120 x=14.509 y=41.767
+[tare_planner_node-13] [INFO] [1794596494.280089375] [grid_diag]: GLOBAL_DIAG exploring=22 routable=12
+[tare_planner_node-13] [INFO] [1794596494.282411441] [local_diag]: LOCAL_DIAG uncovered=1261 frontier=338 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=18
+[tare_planner_node-13] [INFO] [1794596494.285784150] [tare_planner_node]: EXPLORATION_DIAG candidates=592 uncovered=1261 frontier=338 global_return=0 local_complete=0 global_nodes=118 local_nodes=120 x=14.509 y=41.877
+[tare_planner_node-13] [INFO] [1794596495.277796647] [grid_diag]: GLOBAL_DIAG exploring=22 routable=12
+[tare_planner_node-13] [INFO] [1794596495.279924963] [local_diag]: LOCAL_DIAG uncovered=1266 frontier=337 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=18
+[tare_planner_node-13] [INFO] [1794596495.283291824] [tare_planner_node]: EXPLORATION_DIAG candidates=591 uncovered=1266 frontier=337 global_return=0 local_complete=0 global_nodes=118 local_nodes=119 x=14.509 y=42.021
+[tare_planner_node-13] [INFO] [1794596496.295350409] [grid_diag]: GLOBAL_DIAG exploring=22 routable=12
+[tare_planner_node-13] [INFO] [1794596496.298072017] [local_diag]: LOCAL_DIAG uncovered=1276 frontier=334 queue=1 best_surface=40 frontier_queue=0 best_frontier=0 reused=18
+[tare_planner_node-13] [INFO] [1794596496.303213728] [tare_planner_node]: EXPLORATION_DIAG candidates=591 uncovered=1276 frontier=334 global_return=0 local_complete=0 global_nodes=118 local_nodes=119 x=14.509 y=42.164
+[tare_planner_node-13] [INFO] [1794596498.054059222] [grid_diag]: GLOBAL_DIAG exploring=22 routable=12
+[tare_planner_node-13] [INFO] [1794596498.056449118] [local_diag]: LOCAL_DIAG uncovered=1285 frontier=327 queue=20 best_surface=56 frontier_queue=0 best_frontier=0 reused=18
+[tare_planner_node-13] [INFO] [1794596498.098999030] [tare_planner_node]: EXPLORATION_DIAG candidates=590 uncovered=1285 frontier=327 global_return=0 local_complete=0 global_nodes=118 local_nodes=129 x=14.509 y=42.296
+[tare_planner_node-13] [INFO] [1794596498.981900256] [grid_diag]: GLOBAL_DIAG exploring=22 routable=12
+[tare_planner_node-13] [INFO] [1794596498.985718325] [local_diag]: LOCAL_DIAG uncovered=1286 frontier=327 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=19
+[tare_planner_node-13] [INFO] [1794596498.991199277] [tare_planner_node]: EXPLORATION_DIAG candidates=590 uncovered=1286 frontier=327 global_return=0 local_complete=0 global_nodes=118 local_nodes=129 x=14.509 y=42.296
+[tare_planner_node-13] [INFO] [1794596499.981897219] [grid_diag]: GLOBAL_DIAG exploring=22 routable=12
+[tare_planner_node-13] [INFO] [1794596499.984290941] [local_diag]: LOCAL_DIAG uncovered=1291 frontier=339 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=19
+[tare_planner_node-13] [INFO] [1794596499.988184259] [tare_planner_node]: EXPLORATION_DIAG candidates=590 uncovered=1291 frontier=339 global_return=0 local_complete=0 global_nodes=118 local_nodes=129 x=14.523 y=42.500
+[tare_planner_node-13] [INFO] [1794596500.956114455] [grid_diag]: GLOBAL_DIAG exploring=21 routable=12
+[tare_planner_node-13] [INFO] [1794596500.958621300] [local_diag]: LOCAL_DIAG uncovered=1217 frontier=331 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=18
+[tare_planner_node-13] [INFO] [1794596500.962880502] [tare_planner_node]: EXPLORATION_DIAG candidates=596 uncovered=1217 frontier=331 global_return=0 local_complete=0 global_nodes=119 local_nodes=128 x=14.524 y=42.987
+[tare_planner_node-13] [INFO] [1794596501.983399687] [grid_diag]: GLOBAL_DIAG exploring=22 routable=12
+[tare_planner_node-13] [INFO] [1794596501.986188895] [local_diag]: LOCAL_DIAG uncovered=1387 frontier=352 queue=12 best_surface=86 frontier_queue=6 best_frontier=27 reused=18
+[tare_planner_node-13] [INFO] [1794596502.032118803] [tare_planner_node]: EXPLORATION_DIAG candidates=642 uncovered=1387 frontier=352 global_return=0 local_complete=0 global_nodes=119 local_nodes=159 x=14.524 y=43.475
+[tare_planner_node-13] [INFO] [1794596502.994676849] [grid_diag]: GLOBAL_DIAG exploring=23 routable=12
+[tare_planner_node-13] [INFO] [1794596502.997841601] [local_diag]: LOCAL_DIAG uncovered=1561 frontier=346 queue=28 best_surface=136 frontier_queue=11 best_frontier=50 reused=18
+[tare_planner_node-13] [INFO] [1794596503.056831907] [tare_planner_node]: EXPLORATION_DIAG candidates=683 uncovered=1561 frontier=346 global_return=0 local_complete=0 global_nodes=119 local_nodes=164 x=14.533 y=43.964
+[tare_planner_node-13] [INFO] [1794596503.901456235] [grid_diag]: GLOBAL_DIAG exploring=23 routable=12
+[tare_planner_node-13] [INFO] [1794596503.903770991] [local_diag]: LOCAL_DIAG uncovered=1519 frontier=287 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=20
+[tare_planner_node-13] [INFO] [1794596503.908581617] [tare_planner_node]: EXPLORATION_DIAG candidates=684 uncovered=1519 frontier=287 global_return=0 local_complete=0 global_nodes=121 local_nodes=165 x=14.592 y=44.427
+[tare_planner_node-13] [INFO] [1794596504.860638153] [grid_diag]: GLOBAL_DIAG exploring=22 routable=12
+[tare_planner_node-13] [INFO] [1794596504.862929789] [local_diag]: LOCAL_DIAG uncovered=1525 frontier=270 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=21
+[tare_planner_node-13] [INFO] [1794596504.868564158] [tare_planner_node]: EXPLORATION_DIAG candidates=684 uncovered=1525 frontier=270 global_return=0 local_complete=0 global_nodes=121 local_nodes=165 x=14.690 y=44.538
+[tare_planner_node-13] [INFO] [1794596505.885676406] [grid_diag]: GLOBAL_DIAG exploring=22 routable=12
+[tare_planner_node-13] [INFO] [1794596505.888438915] [local_diag]: LOCAL_DIAG uncovered=1551 frontier=246 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=21
+[tare_planner_node-13] [INFO] [1794596505.893431392] [tare_planner_node]: EXPLORATION_DIAG candidates=684 uncovered=1551 frontier=246 global_return=0 local_complete=0 global_nodes=121 local_nodes=164 x=15.076 y=44.769
+[tare_planner_node-13] [INFO] [1794596506.882019180] [grid_diag]: GLOBAL_DIAG exploring=22 routable=12
+[tare_planner_node-13] [INFO] [1794596506.884417601] [local_diag]: LOCAL_DIAG uncovered=1557 frontier=266 queue=3 best_surface=43 frontier_queue=0 best_frontier=0 reused=21
+[tare_planner_node-13] [INFO] [1794596506.954084910] [tare_planner_node]: EXPLORATION_DIAG candidates=733 uncovered=1557 frontier=266 global_return=0 local_complete=0 global_nodes=122 local_nodes=196 x=15.514 y=44.919
+[tare_planner_node-13] [INFO] [1794596507.814523897] [grid_diag]: GLOBAL_DIAG exploring=22 routable=13
+[tare_planner_node-13] [INFO] [1794596507.817032479] [local_diag]: LOCAL_DIAG uncovered=1482 frontier=249 queue=13 best_surface=84 frontier_queue=0 best_frontier=0 reused=19
+[tare_planner_node-13] [INFO] [1794596507.872602755] [tare_planner_node]: EXPLORATION_DIAG candidates=663 uncovered=1482 frontier=249 global_return=0 local_complete=0 global_nodes=122 local_nodes=166 x=15.962 y=45.069
+[tare_planner_node-13] [INFO] [1794596508.775235315] [grid_diag]: GLOBAL_DIAG exploring=22 routable=13
+[tare_planner_node-13] [INFO] [1794596508.779636695] [local_diag]: LOCAL_DIAG uncovered=1498 frontier=247 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=20
+[tare_planner_node-13] [INFO] [1794596508.786134788] [tare_planner_node]: EXPLORATION_DIAG candidates=663 uncovered=1498 frontier=247 global_return=0 local_complete=0 global_nodes=122 local_nodes=166 x=16.406 y=45.217
+[tare_planner_node-13] [INFO] [1794596509.752990463] [grid_diag]: GLOBAL_DIAG exploring=22 routable=13
+[tare_planner_node-13] [INFO] [1794596509.756420044] [local_diag]: LOCAL_DIAG uncovered=1490 frontier=256 queue=1 best_surface=40 frontier_queue=0 best_frontier=0 reused=20
+[tare_planner_node-13] [INFO] [1794596509.762539092] [tare_planner_node]: EXPLORATION_DIAG candidates=665 uncovered=1490 frontier=256 global_return=0 local_complete=0 global_nodes=122 local_nodes=166 x=16.845 y=45.364
+[tare_planner_node-13] [INFO] [1794596510.767500522] [grid_diag]: GLOBAL_DIAG exploring=22 routable=13
+[tare_planner_node-13] [INFO] [1794596510.770505960] [local_diag]: LOCAL_DIAG uncovered=1491 frontier=245 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=19
+[tare_planner_node-13] [INFO] [1794596510.775438937] [tare_planner_node]: EXPLORATION_DIAG candidates=670 uncovered=1491 frontier=245 global_return=0 local_complete=0 global_nodes=122 local_nodes=165 x=17.282 y=45.510
+[tare_planner_node-13] [INFO] [1794596511.699136390] [grid_diag]: GLOBAL_DIAG exploring=22 routable=13
+[tare_planner_node-13] [INFO] [1794596511.701616397] [local_diag]: LOCAL_DIAG uncovered=1481 frontier=235 queue=4 best_surface=48 frontier_queue=0 best_frontier=0 reused=19
+[tare_planner_node-13] [INFO] [1794596511.763273631] [tare_planner_node]: EXPLORATION_DIAG candidates=673 uncovered=1481 frontier=235 global_return=0 local_complete=0 global_nodes=122 local_nodes=170 x=17.735 y=45.653
+[tare_planner_node-13] [INFO] [1794596512.657231238] [grid_diag]: GLOBAL_DIAG exploring=23 routable=13
+[tare_planner_node-13] [INFO] [1794596512.659645760] [local_diag]: LOCAL_DIAG uncovered=1398 frontier=229 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=17
+[tare_planner_node-13] [INFO] [1794596512.663717271] [tare_planner_node]: EXPLORATION_DIAG candidates=675 uncovered=1398 frontier=229 global_return=0 local_complete=0 global_nodes=122 local_nodes=167 x=18.187 y=45.775
+[tare_planner_node-13] [INFO] [1794596513.615178532] [grid_diag]: GLOBAL_DIAG exploring=23 routable=13
+[tare_planner_node-13] [INFO] [1794596513.618233257] [local_diag]: LOCAL_DIAG uncovered=1395 frontier=226 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=17
+[tare_planner_node-13] [INFO] [1794596513.622935369] [tare_planner_node]: EXPLORATION_DIAG candidates=677 uncovered=1395 frontier=226 global_return=0 local_complete=0 global_nodes=124 local_nodes=167 x=18.641 y=45.898
+[tare_planner_node-13] [INFO] [1794596514.598706091] [grid_diag]: GLOBAL_DIAG exploring=23 routable=13
+[tare_planner_node-13] [INFO] [1794596514.601035170] [local_diag]: LOCAL_DIAG uncovered=1439 frontier=219 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=17
+[tare_planner_node-13] [INFO] [1794596514.605550991] [tare_planner_node]: EXPLORATION_DIAG candidates=679 uncovered=1439 frontier=219 global_return=0 local_complete=0 global_nodes=124 local_nodes=168 x=19.100 y=46.006
+[tare_planner_node-13] [INFO] [1794596515.560368468] [grid_diag]: GLOBAL_DIAG exploring=23 routable=13
+[tare_planner_node-13] [INFO] [1794596515.562829594] [local_diag]: LOCAL_DIAG uncovered=1343 frontier=228 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=18
+[tare_planner_node-13] [INFO] [1794596515.567309169] [tare_planner_node]: EXPLORATION_DIAG candidates=679 uncovered=1343 frontier=228 global_return=0 local_complete=0 global_nodes=124 local_nodes=168 x=19.570 y=46.102
+[tare_planner_node-13] [INFO] [1794596516.542829869] [grid_diag]: GLOBAL_DIAG exploring=23 routable=13
+[tare_planner_node-13] [INFO] [1794596516.545846193] [local_diag]: LOCAL_DIAG uncovered=1363 frontier=218 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=18
+[tare_planner_node-13] [INFO] [1794596516.550383583] [tare_planner_node]: EXPLORATION_DIAG candidates=679 uncovered=1363 frontier=218 global_return=0 local_complete=0 global_nodes=124 local_nodes=168 x=19.945 y=46.178
+[tare_planner_node-13] [INFO] [1794596518.478881318] [grid_diag]: GLOBAL_DIAG exploring=23 routable=13
+[tare_planner_node-13] [INFO] [1794596518.481227465] [local_diag]: LOCAL_DIAG uncovered=1339 frontier=210 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=18
+[tare_planner_node-13] [INFO] [1794596518.485940317] [tare_planner_node]: EXPLORATION_DIAG candidates=681 uncovered=1339 frontier=210 global_return=0 local_complete=0 global_nodes=124 local_nodes=168 x=20.873 y=46.366
+[tare_planner_node-13] [INFO] [1794596519.465470706] [grid_diag]: GLOBAL_DIAG exploring=23 routable=14
+[tare_planner_node-13] [INFO] [1794596519.467974459] [local_diag]: LOCAL_DIAG uncovered=839 frontier=191 queue=5 best_surface=56 frontier_queue=1 best_frontier=21 reused=14
+[tare_planner_node-13] [INFO] [1794596519.505722112] [tare_planner_node]: EXPLORATION_DIAG candidates=566 uncovered=839 frontier=191 global_return=0 local_complete=0 global_nodes=124 local_nodes=157 x=21.339 y=46.460
+[tare_planner_node-13] [INFO] [1794596520.473793593] [grid_diag]: GLOBAL_DIAG exploring=23 routable=14
+[tare_planner_node-13] [INFO] [1794596520.476563374] [local_diag]: LOCAL_DIAG uncovered=849 frontier=187 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=15
+[tare_planner_node-13] [INFO] [1794596520.481130566] [tare_planner_node]: EXPLORATION_DIAG candidates=566 uncovered=849 frontier=187 global_return=0 local_complete=0 global_nodes=126 local_nodes=157 x=21.812 y=46.536
+[tare_planner_node-13] [INFO] [1794596521.422444388] [grid_diag]: GLOBAL_DIAG exploring=23 routable=14
+[tare_planner_node-13] [INFO] [1794596521.424840312] [local_diag]: LOCAL_DIAG uncovered=845 frontier=187 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=15
+[tare_planner_node-13] [INFO] [1794596521.428697733] [tare_planner_node]: EXPLORATION_DIAG candidates=566 uncovered=845 frontier=187 global_return=0 local_complete=0 global_nodes=126 local_nodes=157 x=22.297 y=46.603
+[tare_planner_node-13] [INFO] [1794596522.392150896] [grid_diag]: GLOBAL_DIAG exploring=23 routable=14
+[tare_planner_node-13] [INFO] [1794596522.394657770] [local_diag]: LOCAL_DIAG uncovered=856 frontier=187 queue=14 best_surface=61 frontier_queue=0 best_frontier=0 reused=14
+[tare_planner_node-13] [INFO] [1794596522.424694880] [tare_planner_node]: EXPLORATION_DIAG candidates=567 uncovered=856 frontier=187 global_return=0 local_complete=0 global_nodes=128 local_nodes=124 x=22.765 y=46.645
+[tare_planner_node-13] [INFO] [1794596523.391509871] [grid_diag]: GLOBAL_DIAG exploring=24 routable=14
+[tare_planner_node-13] [INFO] [1794596523.394241321] [local_diag]: LOCAL_DIAG uncovered=874 frontier=184 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=15
+[tare_planner_node-13] [INFO] [1794596523.397705499] [tare_planner_node]: EXPLORATION_DIAG candidates=567 uncovered=874 frontier=184 global_return=0 local_complete=0 global_nodes=128 local_nodes=124 x=23.240 y=46.651
+[tare_planner_node-13] [INFO] [1794596524.364515493] [grid_diag]: GLOBAL_DIAG exploring=24 routable=14
+[tare_planner_node-13] [INFO] [1794596524.367159431] [local_diag]: LOCAL_DIAG uncovered=659 frontier=185 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=13
+[tare_planner_node-13] [INFO] [1794596524.369957608] [tare_planner_node]: EXPLORATION_DIAG candidates=564 uncovered=659 frontier=185 global_return=0 local_complete=0 global_nodes=128 local_nodes=121 x=23.715 y=46.656
+[tare_planner_node-13] [INFO] [1794596525.330657439] [grid_diag]: GLOBAL_DIAG exploring=24 routable=14
+[tare_planner_node-13] [INFO] [1794596525.333994002] [local_diag]: LOCAL_DIAG uncovered=663 frontier=183 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=13
+[tare_planner_node-13] [INFO] [1794596525.336484483] [tare_planner_node]: EXPLORATION_DIAG candidates=564 uncovered=663 frontier=183 global_return=0 local_complete=0 global_nodes=126 local_nodes=122 x=24.095 y=46.661
+[tare_planner_node-13] [INFO] [1794596526.321415046] [grid_diag]: GLOBAL_DIAG exploring=24 routable=14
+[tare_planner_node-13] [INFO] [1794596526.324089392] [local_diag]: LOCAL_DIAG uncovered=667 frontier=178 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=13
+[tare_planner_node-13] [INFO] [1794596526.326686313] [tare_planner_node]: EXPLORATION_DIAG candidates=564 uncovered=667 frontier=178 global_return=0 local_complete=0 global_nodes=128 local_nodes=122 x=24.567 y=46.667
+[tare_planner_node-13] [INFO] [1794596527.283757661] [grid_diag]: GLOBAL_DIAG exploring=23 routable=14
+[tare_planner_node-13] [INFO] [1794596527.286618854] [local_diag]: LOCAL_DIAG uncovered=596 frontier=178 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=13
+[tare_planner_node-13] [INFO] [1794596527.289123097] [tare_planner_node]: EXPLORATION_DIAG candidates=564 uncovered=596 frontier=178 global_return=0 local_complete=0 global_nodes=128 local_nodes=122 x=25.042 y=46.672
+[tare_planner_node-13] [INFO] [1794596528.268450149] [grid_diag]: GLOBAL_DIAG exploring=23 routable=14
+[tare_planner_node-13] [INFO] [1794596528.271143647] [local_diag]: LOCAL_DIAG uncovered=601 frontier=175 queue=1 best_surface=40 frontier_queue=0 best_frontier=0 reused=13
+[tare_planner_node-13] [INFO] [1794596528.274472297] [tare_planner_node]: EXPLORATION_DIAG candidates=564 uncovered=601 frontier=175 global_return=0 local_complete=0 global_nodes=128 local_nodes=122 x=25.515 y=46.678
+[tare_planner_node-13] [INFO] [1794596529.258805676] [grid_diag]: GLOBAL_DIAG exploring=23 routable=14
+[tare_planner_node-13] [INFO] [1794596529.261227264] [local_diag]: LOCAL_DIAG uncovered=595 frontier=159 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=13
+[tare_planner_node-13] [INFO] [1794596529.263710831] [tare_planner_node]: EXPLORATION_DIAG candidates=562 uncovered=595 frontier=159 global_return=0 local_complete=0 global_nodes=130 local_nodes=122 x=25.994 y=46.684
+[tare_planner_node-13] [INFO] [1794596530.215376544] [grid_diag]: GLOBAL_DIAG exploring=22 routable=14
+[tare_planner_node-13] [INFO] [1794596530.218222312] [local_diag]: LOCAL_DIAG uncovered=511 frontier=155 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=6
+[tare_planner_node-13] [INFO] [1794596530.219777980] [tare_planner_node]: EXPLORATION_DIAG candidates=560 uncovered=511 frontier=155 global_return=0 local_complete=0 global_nodes=131 local_nodes=112 x=26.469 y=46.690
+[tare_planner_node-13] [INFO] [1794596531.188271037] [grid_diag]: GLOBAL_DIAG exploring=21 routable=14
+[tare_planner_node-13] [INFO] [1794596531.190837512] [local_diag]: LOCAL_DIAG uncovered=513 frontier=142 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=6
+[tare_planner_node-13] [INFO] [1794596531.192212546] [tare_planner_node]: EXPLORATION_DIAG candidates=558 uncovered=513 frontier=142 global_return=0 local_complete=0 global_nodes=131 local_nodes=111 x=26.943 y=46.670
+[tare_planner_node-13] [INFO] [1794596532.142676712] [grid_diag]: GLOBAL_DIAG exploring=19 routable=16
+[tare_planner_node-13] [INFO] [1794596532.146255528] [local_diag]: LOCAL_DIAG uncovered=220 frontier=77 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=2
+[tare_planner_node-13] [INFO] [1794596532.147201608] [tare_planner_node]: EXPLORATION_DIAG candidates=400 uncovered=220 frontier=77 global_return=0 local_complete=0 global_nodes=132 local_nodes=81 x=27.400 y=46.549
+[tare_planner_node-13] [INFO] [1794596533.126702099] [grid_diag]: GLOBAL_DIAG exploring=19 routable=16
+[tare_planner_node-13] [INFO] [1794596533.130797959] [local_diag]: LOCAL_DIAG uncovered=200 frontier=73 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=2
+[tare_planner_node-13] [INFO] [1794596533.131822952] [tare_planner_node]: EXPLORATION_DIAG candidates=400 uncovered=200 frontier=73 global_return=0 local_complete=0 global_nodes=132 local_nodes=81 x=27.837 y=46.372
+[tare_planner_node-13] [INFO] [1794596534.104388454] [grid_diag]: GLOBAL_DIAG exploring=18 routable=16
+[tare_planner_node-13] [INFO] [1794596534.107714060] [local_diag]: LOCAL_DIAG uncovered=212 frontier=62 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=1
+[tare_planner_node-13] [INFO] [1794596534.108740757] [tare_planner_node]: EXPLORATION_DIAG candidates=401 uncovered=212 frontier=62 global_return=0 local_complete=0 global_nodes=132 local_nodes=80 x=28.224 y=46.106
+[tare_planner_node-13] [INFO] [1794596535.086239553] [grid_diag]: GLOBAL_DIAG exploring=18 routable=16
+[tare_planner_node-13] [INFO] [1794596535.089404120] [local_diag]: LOCAL_DIAG uncovered=255 frontier=48 queue=2 best_surface=61 frontier_queue=0 best_frontier=0 reused=1
+[tare_planner_node-13] [INFO] [1794596535.098696814] [tare_planner_node]: EXPLORATION_DIAG candidates=405 uncovered=255 frontier=48 global_return=0 local_complete=0 global_nodes=132 local_nodes=91 x=28.598 y=45.821
+[tare_planner_node-13] [INFO] [1794596536.071490938] [grid_diag]: GLOBAL_DIAG exploring=18 routable=16
+[tare_planner_node-13] [INFO] [1794596536.074537191] [local_diag]: LOCAL_DIAG uncovered=226 frontier=54 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=2
+[tare_planner_node-13] [INFO] [1794596536.075964947] [tare_planner_node]: EXPLORATION_DIAG candidates=408 uncovered=226 frontier=54 global_return=0 local_complete=0 global_nodes=132 local_nodes=90 x=28.906 y=45.467
+[tare_planner_node-13] [INFO] [1794596537.057535383] [grid_diag]: GLOBAL_DIAG exploring=18 routable=16
+[tare_planner_node-13] [INFO] [1794596537.060953543] [local_diag]: LOCAL_DIAG uncovered=262 frontier=72 queue=7 best_surface=65 frontier_queue=0 best_frontier=0 reused=3
+[tare_planner_node-13] [INFO] [1794596537.073133386] [tare_planner_node]: EXPLORATION_DIAG candidates=416 uncovered=262 frontier=72 global_return=0 local_complete=0 global_nodes=132 local_nodes=99 x=29.186 y=45.086
+[tare_planner_node-13] [INFO] [1794596538.055342575] [grid_diag]: GLOBAL_DIAG exploring=18 routable=16
+[tare_planner_node-13] [INFO] [1794596538.058419084] [local_diag]: LOCAL_DIAG uncovered=283 frontier=79 queue=1 best_surface=45 frontier_queue=0 best_frontier=0 reused=3
+[tare_planner_node-13] [INFO] [1794596538.070314927] [tare_planner_node]: EXPLORATION_DIAG candidates=418 uncovered=283 frontier=79 global_return=0 local_complete=0 global_nodes=130 local_nodes=99 x=29.414 y=44.779
+[tare_planner_node-13] [INFO] [1794596539.029369305] [grid_diag]: GLOBAL_DIAG exploring=18 routable=16
+[tare_planner_node-13] [INFO] [1794596539.032265212] [local_diag]: LOCAL_DIAG uncovered=296 frontier=82 queue=1 best_surface=44 frontier_queue=0 best_frontier=0 reused=3
+[tare_planner_node-13] [INFO] [1794596539.044531992] [tare_planner_node]: EXPLORATION_DIAG candidates=440 uncovered=296 frontier=82 global_return=0 local_complete=0 global_nodes=130 local_nodes=105 x=29.763 y=44.454
+[tare_planner_node-13] [INFO] [1794596540.012108543] [grid_diag]: GLOBAL_DIAG exploring=18 routable=16
+[tare_planner_node-13] [INFO] [1794596540.015813005] [local_diag]: LOCAL_DIAG uncovered=300 frontier=82 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=4
+[tare_planner_node-13] [INFO] [1794596540.017039003] [tare_planner_node]: EXPLORATION_DIAG candidates=434 uncovered=300 frontier=82 global_return=0 local_complete=0 global_nodes=131 local_nodes=104 x=30.129 y=44.151
+[tare_planner_node-13] [INFO] [1794596540.997757073] [grid_diag]: GLOBAL_DIAG exploring=18 routable=16
+[tare_planner_node-13] [INFO] [1794596541.000798988] [local_diag]: LOCAL_DIAG uncovered=302 frontier=61 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=4
+[tare_planner_node-13] [INFO] [1794596541.002025254] [tare_planner_node]: EXPLORATION_DIAG candidates=434 uncovered=302 frontier=61 global_return=0 local_complete=0 global_nodes=130 local_nodes=105 x=30.493 y=43.847
+[tare_planner_node-13] [INFO] [1794596541.982817078] [grid_diag]: GLOBAL_DIAG exploring=18 routable=16
+[tare_planner_node-13] [INFO] [1794596541.986044186] [local_diag]: LOCAL_DIAG uncovered=284 frontier=60 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=4
+[tare_planner_node-13] [INFO] [1794596541.987371179] [tare_planner_node]: EXPLORATION_DIAG candidates=434 uncovered=284 frontier=60 global_return=0 local_complete=0 global_nodes=130 local_nodes=105 x=30.835 y=43.511
+[tare_planner_node-13] [INFO] [1794596542.963765688] [grid_diag]: GLOBAL_DIAG exploring=18 routable=16
+[tare_planner_node-13] [INFO] [1794596542.966890721] [local_diag]: LOCAL_DIAG uncovered=281 frontier=58 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=4
+[tare_planner_node-13] [INFO] [1794596542.968167244] [tare_planner_node]: EXPLORATION_DIAG candidates=434 uncovered=281 frontier=58 global_return=0 local_complete=0 global_nodes=130 local_nodes=105 x=30.990 y=43.205
+[tare_planner_node-13] [INFO] [1794596543.963472764] [grid_diag]: GLOBAL_DIAG exploring=18 routable=16
+[tare_planner_node-13] [INFO] [1794596543.966290478] [local_diag]: LOCAL_DIAG uncovered=277 frontier=56 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=4
+[tare_planner_node-13] [INFO] [1794596543.967570229] [tare_planner_node]: EXPLORATION_DIAG candidates=434 uncovered=277 frontier=56 global_return=0 local_complete=0 global_nodes=131 local_nodes=105 x=30.913 y=42.767
+[tare_planner_node-13] [INFO] [1794596544.964466181] [grid_diag]: GLOBAL_DIAG exploring=18 routable=16
+[tare_planner_node-13] [INFO] [1794596544.967536377] [local_diag]: LOCAL_DIAG uncovered=268 frontier=56 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=4
+[tare_planner_node-13] [INFO] [1794596544.968732307] [tare_planner_node]: EXPLORATION_DIAG candidates=434 uncovered=268 frontier=56 global_return=0 local_complete=0 global_nodes=130 local_nodes=105 x=30.716 y=42.330
+[tare_planner_node-13] [INFO] [1794596546.928051192] [grid_diag]: GLOBAL_DIAG exploring=18 routable=16
+[tare_planner_node-13] [INFO] [1794596546.931520154] [local_diag]: LOCAL_DIAG uncovered=269 frontier=56 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=4
+[tare_planner_node-13] [INFO] [1794596546.932946636] [tare_planner_node]: EXPLORATION_DIAG candidates=433 uncovered=269 frontier=56 global_return=0 local_complete=0 global_nodes=128 local_nodes=98 x=30.608 y=42.165
+[tare_planner_node-13] [INFO] [1794596547.909960455] [grid_diag]: GLOBAL_DIAG exploring=18 routable=16
+[tare_planner_node-13] [INFO] [1794596547.913222179] [local_diag]: LOCAL_DIAG uncovered=271 frontier=56 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=4
+[tare_planner_node-13] [INFO] [1794596547.914470640] [tare_planner_node]: EXPLORATION_DIAG candidates=429 uncovered=271 frontier=56 global_return=0 local_complete=0 global_nodes=136 local_nodes=106 x=30.257 y=41.725
+[tare_planner_node-13] [INFO] [1794596548.897209922] [grid_diag]: GLOBAL_DIAG exploring=18 routable=16
+[tare_planner_node-13] [INFO] [1794596548.900450657] [local_diag]: LOCAL_DIAG uncovered=271 frontier=56 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=4
+[tare_planner_node-13] [INFO] [1794596548.901784628] [tare_planner_node]: EXPLORATION_DIAG candidates=429 uncovered=271 frontier=56 global_return=0 local_complete=0 global_nodes=130 local_nodes=100 x=29.939 y=41.397
+[tare_planner_node-13] [INFO] [1794596549.879228593] [grid_diag]: GLOBAL_DIAG exploring=18 routable=16
+[tare_planner_node-13] [INFO] [1794596549.882600280] [local_diag]: LOCAL_DIAG uncovered=271 frontier=56 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=4
+[tare_planner_node-13] [INFO] [1794596549.883955236] [tare_planner_node]: EXPLORATION_DIAG candidates=429 uncovered=271 frontier=56 global_return=0 local_complete=0 global_nodes=130 local_nodes=100 x=29.559 y=41.125
+[tare_planner_node-13] [INFO] [1794596550.862311216] [grid_diag]: GLOBAL_DIAG exploring=18 routable=16
+[tare_planner_node-13] [INFO] [1794596550.865837403] [local_diag]: LOCAL_DIAG uncovered=271 frontier=56 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=4
+[tare_planner_node-13] [INFO] [1794596550.867177420] [tare_planner_node]: EXPLORATION_DIAG candidates=429 uncovered=271 frontier=56 global_return=0 local_complete=0 global_nodes=118 local_nodes=97 x=29.163 y=40.867
+[tare_planner_node-13] [INFO] [1794596551.834758243] [grid_diag]: GLOBAL_DIAG exploring=18 routable=16
+[tare_planner_node-13] [INFO] [1794596551.837819369] [local_diag]: LOCAL_DIAG uncovered=271 frontier=56 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=4
+[tare_planner_node-13] [INFO] [1794596551.839117993] [tare_planner_node]: EXPLORATION_DIAG candidates=429 uncovered=271 frontier=56 global_return=0 local_complete=0 global_nodes=119 local_nodes=97 x=28.750 y=40.645
+[tare_planner_node-13] [INFO] [1794596552.819652612] [grid_diag]: GLOBAL_DIAG exploring=18 routable=16
+[tare_planner_node-13] [INFO] [1794596552.822880777] [local_diag]: LOCAL_DIAG uncovered=271 frontier=56 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=4
+[tare_planner_node-13] [INFO] [1794596552.824347714] [tare_planner_node]: EXPLORATION_DIAG candidates=429 uncovered=271 frontier=56 global_return=0 local_complete=0 global_nodes=119 local_nodes=97 x=28.315 y=40.465
+[tare_planner_node-13] [INFO] [1794596553.784404215] [grid_diag]: GLOBAL_DIAG exploring=18 routable=16
+[tare_planner_node-13] [INFO] [1794596553.787407823] [local_diag]: LOCAL_DIAG uncovered=271 frontier=56 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=4
+[tare_planner_node-13] [INFO] [1794596553.788763251] [tare_planner_node]: EXPLORATION_DIAG candidates=429 uncovered=271 frontier=56 global_return=0 local_complete=0 global_nodes=118 local_nodes=97 x=27.879 y=40.283
+[tare_planner_node-13] [INFO] [1794596554.758118040] [grid_diag]: GLOBAL_DIAG exploring=18 routable=16
+[tare_planner_node-13] [INFO] [1794596554.761626983] [local_diag]: LOCAL_DIAG uncovered=271 frontier=56 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=4
+[tare_planner_node-13] [INFO] [1794596554.762982988] [tare_planner_node]: EXPLORATION_DIAG candidates=429 uncovered=271 frontier=56 global_return=0 local_complete=0 global_nodes=118 local_nodes=97 x=27.526 y=40.136
+[tare_planner_node-13] [INFO] [1794596555.764650709] [grid_diag]: GLOBAL_DIAG exploring=18 routable=15
+[tare_planner_node-13] [INFO] [1794596555.768967268] [local_diag]: LOCAL_DIAG uncovered=384 frontier=94 queue=6 best_surface=88 frontier_queue=4 best_frontier=31 reused=4
+[tare_planner_node-13] [INFO] [1794596555.783236992] [tare_planner_node]: EXPLORATION_DIAG candidates=489 uncovered=384 frontier=94 global_return=0 local_complete=0 global_nodes=118 local_nodes=108 x=27.090 y=39.955
+[tare_planner_node-13] [INFO] [1794596556.730853486] [grid_diag]: GLOBAL_DIAG exploring=18 routable=15
+[tare_planner_node-13] [INFO] [1794596556.733603011] [local_diag]: LOCAL_DIAG uncovered=380 frontier=94 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=5
+[tare_planner_node-13] [INFO] [1794596556.735028202] [tare_planner_node]: EXPLORATION_DIAG candidates=489 uncovered=380 frontier=94 global_return=0 local_complete=0 global_nodes=118 local_nodes=108 x=26.651 y=39.795
+[tare_planner_node-13] [INFO] [1794596557.701554827] [grid_diag]: GLOBAL_DIAG exploring=18 routable=15
+[tare_planner_node-13] [INFO] [1794596557.704434325] [local_diag]: LOCAL_DIAG uncovered=378 frontier=94 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=5
+[tare_planner_node-13] [INFO] [1794596557.705797223] [tare_planner_node]: EXPLORATION_DIAG candidates=489 uncovered=378 frontier=94 global_return=0 local_complete=0 global_nodes=118 local_nodes=108 x=26.202 y=39.670
+[tare_planner_node-13] [INFO] [1794596558.697870545] [grid_diag]: GLOBAL_DIAG exploring=18 routable=14
+[tare_planner_node-13] [INFO] [1794596558.700469470] [local_diag]: LOCAL_DIAG uncovered=387 frontier=138 queue=30 best_surface=121 frontier_queue=16 best_frontier=43 reused=4
+[tare_planner_node-13] [INFO] [1794596558.724800617] [tare_planner_node]: EXPLORATION_DIAG candidates=557 uncovered=387 frontier=138 global_return=0 local_complete=0 global_nodes=118 local_nodes=121 x=25.759 y=39.545
+[tare_planner_node-13] [INFO] [1794596559.647932699] [grid_diag]: GLOBAL_DIAG exploring=18 routable=14
+[tare_planner_node-13] [INFO] [1794596559.650678964] [local_diag]: LOCAL_DIAG uncovered=387 frontier=140 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=6
+[tare_planner_node-13] [INFO] [1794596559.652770266] [tare_planner_node]: EXPLORATION_DIAG candidates=557 uncovered=387 frontier=140 global_return=0 local_complete=0 global_nodes=116 local_nodes=121 x=25.313 y=39.420
+[tare_planner_node-13] [INFO] [1794596560.600897572] [grid_diag]: GLOBAL_DIAG exploring=18 routable=14
+[tare_planner_node-13] [INFO] [1794596560.603269226] [local_diag]: LOCAL_DIAG uncovered=325 frontier=142 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=6
+[tare_planner_node-13] [INFO] [1794596560.605028884] [tare_planner_node]: EXPLORATION_DIAG candidates=571 uncovered=325 frontier=142 global_return=0 local_complete=0 global_nodes=117 local_nodes=121 x=24.857 y=39.316
+[tare_planner_node-13] [INFO] [1794596561.572572059] [grid_diag]: GLOBAL_DIAG exploring=18 routable=14
+[tare_planner_node-13] [INFO] [1794596561.575118109] [local_diag]: LOCAL_DIAG uncovered=304 frontier=141 queue=0 best_surface=0 frontier_queue=9 best_frontier=25 reused=6
+[tare_planner_node-13] [INFO] [1794596561.577297133] [tare_planner_node]: EXPLORATION_DIAG candidates=588 uncovered=304 frontier=141 global_return=0 local_complete=0 global_nodes=117 local_nodes=121 x=24.393 y=39.245
+[tare_planner_node-13] [INFO] [1794596562.542164263] [grid_diag]: GLOBAL_DIAG exploring=18 routable=14
+[tare_planner_node-13] [INFO] [1794596562.545349694] [local_diag]: LOCAL_DIAG uncovered=304 frontier=140 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=7
+[tare_planner_node-13] [INFO] [1794596562.547342835] [tare_planner_node]: EXPLORATION_DIAG candidates=617 uncovered=304 frontier=140 global_return=0 local_complete=0 global_nodes=118 local_nodes=132 x=23.939 y=39.175
+[tare_planner_node-13] [INFO] [1794596563.501120889] [grid_diag]: GLOBAL_DIAG exploring=17 routable=14
+[tare_planner_node-13] [INFO] [1794596563.503689740] [local_diag]: LOCAL_DIAG uncovered=304 frontier=138 queue=0 best_surface=0 frontier_queue=3 best_frontier=23 reused=7
+[tare_planner_node-13] [INFO] [1794596563.506059374] [tare_planner_node]: EXPLORATION_DIAG candidates=563 uncovered=304 frontier=138 global_return=0 local_complete=0 global_nodes=118 local_nodes=140 x=23.479 y=39.105
+[tare_planner_node-13] [INFO] [1794596564.468981381] [grid_diag]: GLOBAL_DIAG exploring=17 routable=14
+[tare_planner_node-13] [INFO] [1794596564.471443875] [local_diag]: LOCAL_DIAG uncovered=301 frontier=136 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=6
+[tare_planner_node-13] [INFO] [1794596564.473177523] [tare_planner_node]: EXPLORATION_DIAG candidates=565 uncovered=301 frontier=136 global_return=0 local_complete=0 global_nodes=123 local_nodes=144 x=23.021 y=39.035
+[tare_planner_node-13] [INFO] [1794596565.472166027] [grid_diag]: GLOBAL_DIAG exploring=18 routable=13
+[tare_planner_node-13] [INFO] [1794596565.474758775] [local_diag]: LOCAL_DIAG uncovered=285 frontier=166 queue=0 best_surface=0 frontier_queue=57 best_frontier=65 reused=5
+[tare_planner_node-13] [INFO] [1794596565.476714866] [tare_planner_node]: EXPLORATION_DIAG candidates=745 uncovered=285 frontier=166 global_return=0 local_complete=0 global_nodes=125 local_nodes=160 x=22.561 y=38.964
+[tare_planner_node-13] [INFO] [1794596566.461287057] [grid_diag]: GLOBAL_DIAG exploring=18 routable=13
+[tare_planner_node-13] [INFO] [1794596566.463673494] [local_diag]: LOCAL_DIAG uncovered=283 frontier=169 queue=0 best_surface=0 frontier_queue=8 best_frontier=30 reused=6
+[tare_planner_node-13] [INFO] [1794596566.465853214] [tare_planner_node]: EXPLORATION_DIAG candidates=748 uncovered=283 frontier=169 global_return=0 local_complete=0 global_nodes=131 local_nodes=174 x=22.195 y=38.908
+[tare_planner_node-13] [INFO] [1794596567.439077803] [grid_diag]: GLOBAL_DIAG exploring=18 routable=13
+[tare_planner_node-13] [INFO] [1794596567.442283411] [local_diag]: LOCAL_DIAG uncovered=282 frontier=169 queue=0 best_surface=0 frontier_queue=1 best_frontier=21 reused=6
+[tare_planner_node-13] [INFO] [1794596567.444600373] [tare_planner_node]: EXPLORATION_DIAG candidates=757 uncovered=282 frontier=169 global_return=0 local_complete=0 global_nodes=141 local_nodes=156 x=21.643 y=38.823
+[tare_planner_node-13] [INFO] [1794596568.436739092] [grid_diag]: GLOBAL_DIAG exploring=17 routable=11
+[tare_planner_node-13] [INFO] [1794596568.439949426] [local_diag]: LOCAL_DIAG uncovered=870 frontier=174 queue=117 best_surface=507 frontier_queue=0 best_frontier=0 reused=7
+[tare_planner_node-13] [INFO] [1794596568.466846871] [tare_planner_node]: EXPLORATION_DIAG candidates=908 uncovered=870 frontier=174 global_return=0 local_complete=0 global_nodes=130 local_nodes=173 x=21.185 y=38.755
+[tare_planner_node-13] [INFO] [1794596569.404180435] [grid_diag]: GLOBAL_DIAG exploring=17 routable=11
+[tare_planner_node-13] [INFO] [1794596569.406374555] [local_diag]: LOCAL_DIAG uncovered=876 frontier=176 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=9
+[tare_planner_node-13] [INFO] [1794596569.408840673] [tare_planner_node]: EXPLORATION_DIAG candidates=910 uncovered=876 frontier=176 global_return=0 local_complete=0 global_nodes=131 local_nodes=173 x=20.718 y=38.734
+[tare_planner_node-13] [INFO] [1794596570.380753886] [grid_diag]: GLOBAL_DIAG exploring=17 routable=11
+[tare_planner_node-13] [INFO] [1794596570.382960021] [local_diag]: LOCAL_DIAG uncovered=882 frontier=176 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=9
+[tare_planner_node-13] [INFO] [1794596570.385534273] [tare_planner_node]: EXPLORATION_DIAG candidates=910 uncovered=882 frontier=176 global_return=0 local_complete=0 global_nodes=131 local_nodes=174 x=20.255 y=38.747
+[tare_planner_node-13] [INFO] [1794596571.371436164] [grid_diag]: GLOBAL_DIAG exploring=17 routable=11
+[tare_planner_node-13] [INFO] [1794596571.373763732] [local_diag]: LOCAL_DIAG uncovered=899 frontier=180 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=9
+[tare_planner_node-13] [INFO] [1794596571.377030213] [tare_planner_node]: EXPLORATION_DIAG candidates=914 uncovered=899 frontier=180 global_return=0 local_complete=0 global_nodes=131 local_nodes=174 x=19.792 y=38.761
+[tare_planner_node-13] [INFO] [1794596572.352067911] [grid_diag]: GLOBAL_DIAG exploring=17 routable=11
+[tare_planner_node-13] [INFO] [1794596572.354702153] [local_diag]: LOCAL_DIAG uncovered=909 frontier=175 queue=1 best_surface=42 frontier_queue=0 best_frontier=0 reused=9
+[tare_planner_node-13] [INFO] [1794596572.385819782] [tare_planner_node]: EXPLORATION_DIAG candidates=918 uncovered=909 frontier=175 global_return=0 local_complete=0 global_nodes=130 local_nodes=178 x=19.329 y=38.774
+[tare_planner_node-13] [INFO] [1794596573.327158945] [grid_diag]: GLOBAL_DIAG exploring=18 routable=11
+[tare_planner_node-13] [INFO] [1794596573.329583300] [local_diag]: LOCAL_DIAG uncovered=915 frontier=175 queue=3 best_surface=43 frontier_queue=0 best_frontier=0 reused=10
+[tare_planner_node-13] [INFO] [1794596573.361083715] [tare_planner_node]: EXPLORATION_DIAG candidates=919 uncovered=915 frontier=175 global_return=0 local_complete=0 global_nodes=130 local_nodes=184 x=18.864 y=38.788
+[tare_planner_node-13] [INFO] [1794596574.301148827] [grid_diag]: GLOBAL_DIAG exploring=18 routable=11
+[tare_planner_node-13] [INFO] [1794596574.303432290] [local_diag]: LOCAL_DIAG uncovered=899 frontier=173 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=11
+[tare_planner_node-13] [INFO] [1794596574.306850784] [tare_planner_node]: EXPLORATION_DIAG candidates=923 uncovered=899 frontier=173 global_return=0 local_complete=0 global_nodes=121 local_nodes=180 x=18.398 y=38.802
+[tare_planner_node-13] [INFO] [1794596575.339619047] [grid_diag]: GLOBAL_DIAG exploring=18 routable=11
+[tare_planner_node-13] [INFO] [1794596575.342119979] [local_diag]: LOCAL_DIAG uncovered=901 frontier=173 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=11
+[tare_planner_node-13] [INFO] [1794596575.345533795] [tare_planner_node]: EXPLORATION_DIAG candidates=926 uncovered=901 frontier=173 global_return=0 local_complete=0 global_nodes=121 local_nodes=180 x=17.940 y=38.816
+[tare_planner_node-13] [INFO] [1794596576.294623704] [grid_diag]: GLOBAL_DIAG exploring=17 routable=11
+[tare_planner_node-13] [INFO] [1794596576.297257748] [local_diag]: LOCAL_DIAG uncovered=911 frontier=170 queue=0 best_surface=0 frontier_queue=6 best_frontier=32 reused=9
+[tare_planner_node-13] [INFO] [1794596576.300445014] [tare_planner_node]: EXPLORATION_DIAG candidates=818 uncovered=911 frontier=170 global_return=0 local_complete=0 global_nodes=111 local_nodes=168 x=17.482 y=38.829
+[tare_planner_node-13] [INFO] [1794596577.266094481] [grid_diag]: GLOBAL_DIAG exploring=17 routable=11
+[tare_planner_node-13] [INFO] [1794596577.268357042] [local_diag]: LOCAL_DIAG uncovered=903 frontier=159 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=11
+[tare_planner_node-13] [INFO] [1794596577.271579332] [tare_planner_node]: EXPLORATION_DIAG candidates=819 uncovered=903 frontier=159 global_return=0 local_complete=0 global_nodes=113 local_nodes=167 x=17.019 y=38.843
+[tare_planner_node-13] [INFO] [1794596578.261727959] [grid_diag]: GLOBAL_DIAG exploring=17 routable=11
+[tare_planner_node-13] [INFO] [1794596578.264171651] [local_diag]: LOCAL_DIAG uncovered=891 frontier=147 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=11
+[tare_planner_node-13] [INFO] [1794596578.266977724] [tare_planner_node]: EXPLORATION_DIAG candidates=824 uncovered=891 frontier=147 global_return=0 local_complete=0 global_nodes=111 local_nodes=168 x=16.561 y=38.867
+[tare_planner_node-13] [INFO] [1794596580.000861658] [grid_diag]: GLOBAL_DIAG exploring=17 routable=11
+[tare_planner_node-13] [INFO] [1794596580.003099058] [local_diag]: LOCAL_DIAG uncovered=892 frontier=163 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=11
+[tare_planner_node-13] [INFO] [1794596580.005869546] [tare_planner_node]: EXPLORATION_DIAG candidates=829 uncovered=892 frontier=163 global_return=0 local_complete=0 global_nodes=111 local_nodes=167 x=16.287 y=38.935
+[tare_planner_node-13] [INFO] [1794596580.938916174] [grid_diag]: GLOBAL_DIAG exploring=16 routable=11
+[tare_planner_node-13] [INFO] [1794596580.941259654] [local_diag]: LOCAL_DIAG uncovered=852 frontier=132 queue=0 best_surface=0 frontier_queue=1 best_frontier=21 reused=11
+[tare_planner_node-13] [INFO] [1794596580.944549377] [tare_planner_node]: EXPLORATION_DIAG candidates=743 uncovered=852 frontier=132 global_return=0 local_complete=0 global_nodes=111 local_nodes=186 x=15.805 y=39.101
+[tare_planner_node-13] [INFO] [1794596581.961785603] [grid_diag]: GLOBAL_DIAG exploring=18 routable=11
+[tare_planner_node-13] [INFO] [1794596581.964026140] [local_diag]: LOCAL_DIAG uncovered=857 frontier=134 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=12
+[tare_planner_node-13] [INFO] [1794596581.966892352] [tare_planner_node]: EXPLORATION_DIAG candidates=763 uncovered=857 frontier=134 global_return=0 local_complete=0 global_nodes=111 local_nodes=181 x=15.342 y=39.261
+[tare_planner_node-13] [INFO] [1794596582.930772453] [grid_diag]: GLOBAL_DIAG exploring=19 routable=11
+[tare_planner_node-13] [INFO] [1794596582.932811312] [local_diag]: LOCAL_DIAG uncovered=845 frontier=102 queue=54 best_surface=105 frontier_queue=30 best_frontier=21 reused=8
+[tare_planner_node-13] [INFO] [1794596582.955098104] [tare_planner_node]: EXPLORATION_DIAG candidates=705 uncovered=845 frontier=102 global_return=0 local_complete=0 global_nodes=116 local_nodes=135 x=14.897 y=39.414
+[tare_planner_node-13] [INFO] [1794596583.898990121] [grid_diag]: GLOBAL_DIAG exploring=19 routable=11
+[tare_planner_node-13] [INFO] [1794596583.900889926] [local_diag]: LOCAL_DIAG uncovered=850 frontier=98 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=9
+[tare_planner_node-13] [INFO] [1794596583.902674743] [tare_planner_node]: EXPLORATION_DIAG candidates=690 uncovered=850 frontier=98 global_return=0 local_complete=0 global_nodes=116 local_nodes=129 x=14.446 y=39.570
+[tare_planner_node-13] [INFO] [1794596584.877790057] [grid_diag]: GLOBAL_DIAG exploring=18 routable=11
+[tare_planner_node-13] [INFO] [1794596584.879956913] [local_diag]: LOCAL_DIAG uncovered=782 frontier=98 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=9
+[tare_planner_node-13] [INFO] [1794596584.881770593] [tare_planner_node]: EXPLORATION_DIAG candidates=689 uncovered=782 frontier=98 global_return=0 local_complete=0 global_nodes=126 local_nodes=127 x=13.995 y=39.725
+[tare_planner_node-13] [INFO] [1794596585.860131240] [grid_diag]: GLOBAL_DIAG exploring=18 routable=11
+[tare_planner_node-13] [INFO] [1794596585.862287127] [local_diag]: LOCAL_DIAG uncovered=786 frontier=103 queue=4 best_surface=48 frontier_queue=0 best_frontier=0 reused=8
+[tare_planner_node-13] [INFO] [1794596585.879980468] [tare_planner_node]: EXPLORATION_DIAG candidates=688 uncovered=786 frontier=103 global_return=0 local_complete=0 global_nodes=126 local_nodes=106 x=13.546 y=39.880
+[tare_planner_node-13] [INFO] [1794596586.815834052] [grid_diag]: GLOBAL_DIAG exploring=16 routable=11
+[tare_planner_node-13] [INFO] [1794596586.817937341] [local_diag]: LOCAL_DIAG uncovered=788 frontier=89 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=8
+[tare_planner_node-13] [INFO] [1794596586.819562314] [tare_planner_node]: EXPLORATION_DIAG candidates=687 uncovered=788 frontier=89 global_return=0 local_complete=0 global_nodes=114 local_nodes=97 x=13.166 y=40.021
+[tare_planner_node-13] [INFO] [1794596587.765326389] [grid_diag]: GLOBAL_DIAG exploring=15 routable=11
+[tare_planner_node-13] [INFO] [1794596587.767336156] [local_diag]: LOCAL_DIAG uncovered=788 frontier=89 queue=0 best_surface=0 frontier_queue=0 best_frontier=0 reused=8
+[tare_planner_node-13] [INFO] [1794596587.768843768] [tare_planner_node]: EXPLORATION_DIAG candidates=687 uncovered=788 frontier=89 global_return=0 local_complete=0 global_nodes=125 local_nodes=96 x=13.166 y=40.021
+[WARNING] [launch]: user interrupted with ctrl-c (SIGINT)
+[vehicleSimulator-14] [INFO] [1794596587.823130245] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[tare_planner_node-13] [INFO] [1794596587.823141207] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[static_transform_publisher-12] [INFO] [1794596587.823174419] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[pathFollower-10] [INFO] [1794596587.823220798] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[static_transform_publisher-11] [INFO] [1794596587.823255450] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[INFO] [vehicleSimulator-14]: sending signal 'SIGINT' to process[vehicleSimulator-14]
+[INFO] [tare_planner_node-13]: sending signal 'SIGINT' to process[tare_planner_node-13]
+[INFO] [static_transform_publisher-12]: sending signal 'SIGINT' to process[static_transform_publisher-12]
+[INFO] [static_transform_publisher-11]: sending signal 'SIGINT' to process[static_transform_publisher-11]
+[ERROR] [static_transform_publisher-12]: process has died [pid 1727, exit code -2, cmd '/opt/ros/humble/lib/tf2_ros/static_transform_publisher 0 0 0.0 -1.5707963 0 -1.5707963 /sensor /camera --ros-args -r __node:=sensorTransPublisher'].
+[INFO] [pathFollower-10]: sending signal 'SIGINT' to process[pathFollower-10]
+[INFO] [localPlanner-9]: sending signal 'SIGINT' to process[localPlanner-9]
+[INFO] [sensorScanGeneration-8]: sending signal 'SIGINT' to process[sensorScanGeneration-8]
+[ERROR] [static_transform_publisher-11]: process has died [pid 1725, exit code -2, cmd '/opt/ros/humble/lib/tf2_ros/static_transform_publisher -0.0 -0.0 0 0 0 0 /sensor /vehicle --ros-args -r __node:=vehicleTransPublisher'].
+[INFO] [terrainAnalysisExt-7]: sending signal 'SIGINT' to process[terrainAnalysisExt-7]
+[INFO] [terrainAnalysis-6]: sending signal 'SIGINT' to process[terrainAnalysis-6]
+[INFO] [robot_state_publisher-2]: sending signal 'SIGINT' to process[robot_state_publisher-2]
+[INFO] [gzserver-1]: sending signal 'SIGINT' to process[gzserver-1]
+[localPlanner-9] [INFO] [1794596587.823319330] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[terrainAnalysis-6] [INFO] [1794596587.823337005] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[ERROR] [robot_state_publisher-2]: process has died [pid 1705, exit code -2, cmd '/opt/ros/humble/lib/robot_state_publisher/robot_state_publisher --ros-args -r __node:=robot_state_publisher --params-file /tmp/launch_params_yhapb8f9'].
+[terrainAnalysisExt-7] [INFO] [1794596587.823338378] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[robot_state_publisher-2] [INFO] [1794596587.823379161] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[sensorScanGeneration-8] [INFO] [1794596587.823394830] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[pathFollower-10] terminate called after throwing an instance of 'rclcpp::exceptions::RCLError'
+[pathFollower-10]   what():  failed to create guard condition: the given context is not valid, either rcl_init() was not called or rcl_shutdown() was called., at ./src/rcl/guard_condition.c:67
+[localPlanner-9] terminate called after throwing an instance of 'rclcpp::exceptions::RCLError'
+[localPlanner-9]   what():  failed to create guard condition: the given context is not valid, either rcl_init() was not called or rcl_shutdown() was called., at ./src/rcl/guard_condition.c:67
+[terrainAnalysis-6] terminate called after throwing an instance of 'rclcpp::exceptions::RCLError'
+[terrainAnalysis-6]   what():  failed to create guard condition: the given context is not valid, either rcl_init() was not called or rcl_shutdown() was called., at ./src/rcl/guard_condition.c:67
+[vehicleSimulator-14] terminate called after throwing an instance of 'rclcpp::exceptions::RCLError'
+[vehicleSimulator-14]   what():  failed to create guard condition: the given context is not valid, either rcl_init() was not called or rcl_shutdown() was called., at ./src/rcl/guard_condition.c:67
+[terrainAnalysisExt-7] terminate called after throwing an instance of 'rclcpp::exceptions::RCLError'
+[terrainAnalysisExt-7]   what():  failed to create guard condition: the given context is not valid, either rcl_init() was not called or rcl_shutdown() was called., at ./src/rcl/guard_condition.c:67
+[sensorScanGeneration-8] [INFO] [1794596587.840456603] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[ERROR] [tare_planner_node-13]: process has died [pid 1729, exit code -2, cmd '/home/lzz/ht_repeat_20261114/install_native/tare_planner/lib/tare_planner/tare_planner_node --ros-args -r __node:=tare_planner_node --params-file /home/lzz/ht_repeat_20261114/install_native/tare_planner/share/tare_planner/indoor.yaml --params-file /tmp/launch_params_d8_veq9s'].
+[sensorScanGeneration-8] Failed to delete datawriter, at ./src/publisher.cpp:48 during '__function__'
+[sensorScanGeneration-8] [ERROR] [1794596587.935873074] [sensorScanGeneration.rclcpp]: Error in destruction of rcl publisher handle: cannot publish data, at ./src/rmw_publish.cpp:62, at ./src/rcl/publisher.c:187
+[sensorScanGeneration-8] Failed to delete datawriter, at ./src/publisher.cpp:48 during '__function__'
+[sensorScanGeneration-8] [ERROR] [1794596587.935890088] [sensorScanGeneration.rclcpp]: Error in destruction of rcl publisher handle: cannot publish data, at ./src/rmw_publish.cpp:62, at ./src/rcl/publisher.c:187
+[sensorScanGeneration-8] Failed to delete datawriter, at ./src/publisher.cpp:48 during '__function__'
+[sensorScanGeneration-8] [ERROR] [1794596587.935896426] [sensorScanGeneration.rclcpp]: Error in destruction of rcl publisher handle: cannot publish data, at ./src/rmw_publish.cpp:62, at ./src/rcl/publisher.c:187
+[sensorScanGeneration-8] 
+[sensorScanGeneration-8] >>> [rcutils|error_handling.c:108] rcutils_set_error_state()
+[sensorScanGeneration-8] This error state is being overwritten:
+[sensorScanGeneration-8] 
+[sensorScanGeneration-8]   'cannot publish data, at ./src/rmw_publish.cpp:62'
+[sensorScanGeneration-8] 
+[sensorScanGeneration-8] with this new error message:
+[sensorScanGeneration-8] 
+[sensorScanGeneration-8]   'Failed to delete datareader, at ./src/subscription.cpp:52'
+[sensorScanGeneration-8] 
+[sensorScanGeneration-8] rcutils_reset_error() should be called after error handling to avoid this.
+[sensorScanGeneration-8] <<<
+[sensorScanGeneration-8] __function__:80: 'destroy_subscription' failed
+[INFO] [gzserver-1]: process has finished cleanly [pid 1703]
+[gzserver-1] [0m[1;36m[0m[1;32m[0m
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;33m[0m[1;31m[0m
+[ERROR] [terrainAnalysis-6]: process has died [pid 1713, exit code -6, cmd '/home/lzz/ht_execution_300s_20261113/install_cmu/terrain_analysis/lib/terrain_analysis/terrainAnalysis --ros-args -r __node:=terrainAnalysis --params-file /tmp/launch_params_1hja_160 --params-file /tmp/launch_params_osuc94i_ --params-file /tmp/launch_params_2gr4pkc8 --params-file /tmp/launch_params_j99b4llw --params-file /tmp/launch_params_6lsr2ecx --params-file /tmp/launch_params_0h2rfrs7 --params-file /tmp/launch_params_oe5fzb_w --params-file /tmp/launch_params_h72m6_jd --params-file /tmp/launch_params_mh4mmdam --params-file /tmp/launch_params_w5wa5osn --params-file /tmp/launch_params_jcpl3vj1 --params-file /tmp/launch_params_jlqvogq1 --params-file /tmp/launch_params_dv7n91ww --params-file /tmp/launch_params_m_7pm_ms --params-file /tmp/launch_params_aol_a0k9 --params-file /tmp/launch_params_29rkict8 --params-file /tmp/launch_params_qwnac0f_ --params-file /tmp/launch_params_l2qh5d4b --params-file /tmp/launch_params_c7ox7z4k --params-file /tmp/launch_params_ce_n3vpa --params-file /tmp/launch_params_b95mf_60 --params-file /tmp/launch_params_l7mzycct --params-file /tmp/launch_params_y5qr08my --params-file /tmp/launch_params_f_od24i4 --params-file /tmp/launch_params_2iv08qza --params-file /tmp/launch_params_g35wxnat'].
+[ERROR] [pathFollower-10]: process has died [pid 1721, exit code -6, cmd '/home/lzz/ht_execution_300s_20261113/install_gate/cmu_local_planner_ht/lib/cmu_local_planner_ht/pathFollower --ros-args -r __node:=pathFollower --params-file /tmp/launch_params_2971375r --params-file /tmp/launch_params_zqkuyyat --params-file /tmp/launch_params_lx15vqid --params-file /tmp/launch_params_5aivtrsk --params-file /tmp/launch_params_e9z2lm5e --params-file /tmp/launch_params_n0z6biyz --params-file /tmp/launch_params_a8w3p4h2 --params-file /tmp/launch_params_k2ceudme --params-file /tmp/launch_params_x7exf96u --params-file /tmp/launch_params_bxdrmimq --params-file /tmp/launch_params_hf_w7dcs --params-file /tmp/launch_params_1aovvu_5 --params-file /tmp/launch_params_5173tbev --params-file /tmp/launch_params_l9wdohen --params-file /tmp/launch_params_dakjc5aj --params-file /tmp/launch_params_8rfx8hhm --params-file /tmp/launch_params_48m9r4vt --params-file /tmp/launch_params_9ao3s5e3 --params-file /tmp/launch_params_h2ic0ouk --params-file /tmp/launch_params_vmp2808v --params-file /tmp/launch_params_itf71k1b --params-file /tmp/launch_params_zdbk3dee --params-file /tmp/launch_params_al6quv_4 --params-file /tmp/launch_params_l8mc40tw --params-file /tmp/launch_params__b4avlz3 --params-file /tmp/launch_params_j9bf3zai --params-file /tmp/launch_params_y0d9th2l --params-file /tmp/launch_params_ybq9uyhk --params-file /tmp/launch_params_508avult --params-file /tmp/launch_params_x6q4sbhd --params-file /tmp/launch_params_78cz284b --params-file /tmp/launch_params_1xcxo4v1 --params-file /tmp/launch_params_axt_5923'].
+[ERROR] [terrainAnalysisExt-7]: process has died [pid 1715, exit code -6, cmd '/home/lzz/ht_execution_300s_20261113/install_cmu/terrain_analysis_ext/lib/terrain_analysis_ext/terrainAnalysisExt --ros-args -r __node:=terrainAnalysisExt --params-file /tmp/launch_params_52t61w2c --params-file /tmp/launch_params_1p2humqf --params-file /tmp/launch_params_ztcf3uns --params-file /tmp/launch_params_yncnsckq --params-file /tmp/launch_params_s433itaz --params-file /tmp/launch_params_epbt4wru --params-file /tmp/launch_params_bcxgvwog --params-file /tmp/launch_params_t_4gmjnw --params-file /tmp/launch_params_6z85qi29 --params-file /tmp/launch_params_9h8llh7h --params-file /tmp/launch_params_nfbcbxbj --params-file /tmp/launch_params_39vdi3ho --params-file /tmp/launch_params_xvg7f216 --params-file /tmp/launch_params_1cary0m7 --params-file /tmp/launch_params_qpltibgu --params-file /tmp/launch_params_ly72yyxt --params-file /tmp/launch_params_z9nyvh95'].
+[ERROR] [localPlanner-9]: process has died [pid 1719, exit code -6, cmd '/home/lzz/ht_execution_300s_20261113/install_gate/cmu_local_planner_ht/lib/cmu_local_planner_ht/localPlanner --ros-args -r __node:=localPlanner --params-file /tmp/launch_params_mzte8ume --params-file /tmp/launch_params_syyi2ae2 --params-file /tmp/launch_params_z0qz38x5 --params-file /tmp/launch_params_x_m_y95k --params-file /tmp/launch_params_wy533bcw --params-file /tmp/launch_params_v3rkxb2p --params-file /tmp/launch_params_t0awb5wn --params-file /tmp/launch_params_xb3m3122 --params-file /tmp/launch_params_mi9sutry --params-file /tmp/launch_params_aza6i6mm --params-file /tmp/launch_params_upu35zdn --params-file /tmp/launch_params_5cgc2dd5 --params-file /tmp/launch_params_y7mot0pd --params-file /tmp/launch_params_pzd7uyu5 --params-file /tmp/launch_params_8e8fqpjz --params-file /tmp/launch_params_b309o9cy --params-file /tmp/launch_params_8q0_lmvz --params-file /tmp/launch_params_jy4ci1kg --params-file /tmp/launch_params_792s2976 --params-file /tmp/launch_params_90etxxip --params-file /tmp/launch_params_empondbg --params-file /tmp/launch_params__97c0b5d --params-file /tmp/launch_params_bz8p7zd5 --params-file /tmp/launch_params_pw2ii6dy --params-file /tmp/launch_params_gzyf5jm1 --params-file /tmp/launch_params_k22k2sw1 --params-file /tmp/launch_params_luvve2r4 --params-file /tmp/launch_params_48mryty6 --params-file /tmp/launch_params_heelxzdn --params-file /tmp/launch_params_l8sg6dsu --params-file /tmp/launch_params_60hpx1wc --params-file /tmp/launch_params_0o4ljcye --params-file /tmp/launch_params_7f7ymqxz --params-file /tmp/launch_params_3mx0dmc6 --params-file /tmp/launch_params_mj74dri1 --params-file /tmp/launch_params_k0azzaxj --params-file /tmp/launch_params_udm36rvx --params-file /tmp/launch_params_60746vbn --params-file /tmp/launch_params_t_1u5iww --params-file /tmp/launch_params_p_ot0x2j --params-file /tmp/launch_params_m441hznh --params-file /tmp/launch_params_58nwtni5 --params-file /tmp/launch_params_bbdr721c'].
+[ERROR] [vehicleSimulator-14]: process has died [pid 2087, exit code -6, cmd '/home/lzz/ht_execution_300s_20261113/install_cmu/vehicle_simulator/lib/vehicle_simulator/vehicleSimulator --ros-args --params-file /tmp/launch_params_btjgqf2y'].
+[ERROR] [sensorScanGeneration-8]: process has died [pid 1717, exit code -11, cmd '/home/lzz/ht_execution_300s_20261113/install_cmu/sensor_scan_generation/lib/sensor_scan_generation/sensorScanGeneration --ros-args -r __node:=sensorScanGeneration'].

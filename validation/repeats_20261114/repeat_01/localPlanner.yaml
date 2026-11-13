@@ -1,0 +1,60 @@
+/localPlanner:
+  ros__parameters:
+    adjacentRange: 4.25
+    autonomyMode: true
+    autonomySpeed: 0.5
+    checkObstacle: true
+    checkRotObstacle: false
+    costHeightThre: 0.1
+    costScore: 0.02
+    dirThre: 90.0
+    dirToVehicle: false
+    dirWeight: 0.02
+    goalClearRange: 0.5
+    goalX: 0.0
+    goalY: 0.0
+    groundHeightThre: 0.1
+    ht_angular_brake_accel: 3.0
+    ht_enabled: true
+    ht_linear_brake_accel: 2.5
+    ht_map_timeout: 1.0
+    ht_min_probability: 0.5
+    ht_reaction_time: 0.1
+    ht_topic: /ht_traversability/global_local
+    ht_validity_radius: 0.45
+    joyToCheckObstacleDelay: 5.0
+    joyToSpeedDelay: 2.0
+    laserVoxelSize: 0.05
+    maxRelZ: 0.25
+    maxSpeed: 0.5
+    minPathRange: 1.0
+    minPathScale: 0.75
+    minRelZ: -0.5
+    obstacleHeightThre: 0.15
+    pathCropByGoal: true
+    pathFolder: /home/lzz/ht_execution_300s_20261113/install_cmu/local_planner/share/local_planner/paths
+    pathRangeBySpeed: true
+    pathRangeStep: 0.5
+    pathScale: 1.25
+    pathScaleBySpeed: true
+    pathScaleStep: 0.25
+    pointPerPathThre: 2
+    qos_overrides:
+      /parameter_events:
+        publisher:
+          depth: 1000
+          durability: volatile
+          history: keep_last
+          reliability: reliable
+    require_navigation_boundary: false
+    sensorOffsetX: 0.0
+    sensorOffsetY: 0.0
+    terrainVoxelSize: 0.2
+    traversability_mode: ht_only
+    twoWayDrive: true
+    useCost: false
+    useTerrainAnalysis: true
+    use_sim_time: false
+    vehicleLength: 0.6
+    vehicleWidth: 0.6
+

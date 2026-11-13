@@ -1,0 +1,62 @@
+--- a/src/tare_planner/src/grid_world/grid_world.cpp
++++ b/src/tare_planner/src/grid_world/grid_world.cpp
+@@ -236,6 +236,7 @@
+ {
+   std::vector<int> keypose_graph_connected_node_indices = keypose_graph->GetConnectedGraphNodeIndices();
+ 
++  int diag_exploring=0;
+   for (int i = 0; i < subspaces_->GetCellNumber(); i++)
+   {
+     if (subspaces_->GetCell(i).GetStatus() == CellStatus::EXPLORING)
+@@ -455,6 +456,7 @@
+ void GridWorld::GetExploringCellIndices(std::vector<int>& exploring_cell_indices)
+ {
+   exploring_cell_indices.clear();
++  int diag_exploring=0;
+   for (int i = 0; i < subspaces_->GetCellNumber(); i++)
+   {
+     if (subspaces_->GetCell(i).GetStatus() == CellStatus::EXPLORING)
+@@ -740,10 +742,12 @@
+   exploration_path_ns::ExplorationPath global_path;
+   std::vector<geometry_msgs::msg::Point> exploring_cell_positions;
+   std::vector<int> exploring_cell_indices;
++  int diag_exploring=0;
+   for (int i = 0; i < subspaces_->GetCellNumber(); i++)
+   {
+     if (subspaces_->GetCell(i).GetStatus() == CellStatus::EXPLORING)
+     {
++      ++diag_exploring;
+       if (std::find(neighbor_cell_indices_.begin(), neighbor_cell_indices_.end(), i) == neighbor_cell_indices_.end() ||
+           (subspaces_->GetCell(i).GetViewPointIndices().empty() && subspaces_->GetCell(i).GetVisitCount() > 1))
+       {
+@@ -798,6 +802,7 @@
+     }
+   }
+ 
++  RCLCPP_INFO(rclcpp::get_logger("grid_diag"), "GLOBAL_DIAG exploring=%d routable=%zu", diag_exploring, exploring_cell_indices.size());
+   /****** Return home ******/
+   if (exploring_cell_indices.empty())
+   {
+--- a/src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp
++++ b/src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp
+@@ -633,6 +633,8 @@
+   EnqueueViewpointCandidates(queue, frontier_queue, covered, frontier_covered,
+                              pre_selected_viewpoint_array_indices);
+ 
++  RCLCPP_INFO(rclcpp::get_logger("local_diag"), "LOCAL_DIAG uncovered=%d frontier=%d queue=%zu best_surface=%d frontier_queue=%zu best_frontier=%d reused=%zu",
++    uncovered_point_num, uncovered_frontier_point_num, queue.size(), queue.empty()?0:queue[0].first, frontier_queue.size(), frontier_queue.empty()?0:frontier_queue[0].first, reused_viewpoint_indices.size());
+   viewpoint_sampling_timer.Stop(false, kRuntimeUnit);
+   viewpoint_sampling_runtime_ +=
+       viewpoint_sampling_timer.GetDuration(kRuntimeUnit);
+--- a/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp
++++ b/src/tare_planner/src/sensor_coverage_planner/sensor_coverage_planner_ground.cpp
+@@ -1525,6 +1525,9 @@
+     LocalPlanning(uncovered_point_num, uncovered_frontier_point_num,
+                   global_path, local_path);
+ 
++    RCLCPP_INFO(this->get_logger(), "EXPLORATION_DIAG candidates=%d uncovered=%d frontier=%d global_return=%d local_complete=%d global_nodes=%zu local_nodes=%zu x=%.3f y=%.3f",
++      viewpoint_candidate_count, uncovered_point_num, uncovered_frontier_point_num,
++      grid_world_->IsReturningHome(), local_coverage_planner_->IsLocalCoverageComplete(), global_path.nodes_.size(), local_path.nodes_.size(), robot_position_.x, robot_position_.y);
+     near_home_ = GetRobotToHomeDistance() < kRushHomeDist;
+     at_home_ = GetRobotToHomeDistance() < kAtHomeDistThreshold;
+ 

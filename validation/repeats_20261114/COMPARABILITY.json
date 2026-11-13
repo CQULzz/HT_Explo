@@ -1,0 +1,49 @@
+{
+  "same_runtime_freeze_between_repeats": true,
+  "parameters": {
+    "tare_planner_node.yaml": {
+      "repeat_parameters_equal": null,
+      "repeat_01_equal_previous": null,
+      "repeat_02_equal_previous": true,
+      "unavailable": [
+        "repeat_01"
+      ]
+    },
+    "localPlanner.yaml": {
+      "repeat_parameters_equal": true,
+      "repeat_01_equal_previous": true,
+      "repeat_02_equal_previous": true,
+      "unavailable": []
+    },
+    "pathFollower.yaml": {
+      "repeat_parameters_equal": true,
+      "repeat_01_equal_previous": true,
+      "repeat_02_equal_previous": true,
+      "unavailable": []
+    },
+    "cupy_to_ht_bridge.yaml": {
+      "repeat_parameters_equal": true,
+      "repeat_01_equal_previous": true,
+      "repeat_02_equal_previous": true,
+      "unavailable": []
+    }
+  },
+  "tare_source_hashes": {
+    "grid_world/grid_world.cpp": {
+      "before": "22bb7b08a64134a73af03fea41570d9f3b0062cf267ae079b368773bbadad7a4",
+      "diagnostic": "31d793fb87c0fe77d724435e0a0b9ccc418b7c7faf1d31c2eeb83fb22327325f"
+    },
+    "local_coverage_planner/local_coverage_planner.cpp": {
+      "before": "6daed26320e7e50ae2fa13c8a6010c9a59f175b76c7a85c50f798f989fd681aa",
+      "diagnostic": "7cf5672b2b9e011f0697c7729186008cc1dcbea03741e7e5fad21727d1ac4112"
+    },
+    "sensor_coverage_planner/sensor_coverage_planner_ground.cpp": {
+      "before": "3656ba43cad6e579e407df7847bc068f62dfeca37f141648fc32c9df2a17219d",
+      "diagnostic": "0c750e72b1e0c9734b82d3f2b9e79aeba791ba2689e4e4ba6efaded4770d6408"
+    }
+  },
+  "navigation_behavior_modified": false,
+  "completion_or_return_home_modified": false,
+  "repeated_early_return": false,
+  "diagnosis": "Not reproduced in either repeat; previous isolated early completion root cause remains unconfirmed."
+}
