@@ -1,0 +1,110 @@
+Isolated mapper preflight passed
+{
+  "case": "user_pcd_600s_02",
+  "mode": "ht_only",
+  "scene": "user_pcd",
+  "requested_duration_s": 600.0,
+  "started_wall": 1794643129.7376556,
+  "project_commit": "7957e72f8e8b921912d6064cfb02eac22c1d9ec3",
+  "cmu_commit": "158e67b31b644ed1e8b06eb1d7f70e183cc62591",
+  "native_tare_commit": "b6760adb4280b379567c76f4e684ce628e28ef71",
+  "scene_manifest": {
+    "source_release": "https://github.com/CQULzz/HT_Explo/releases/tag/ht-scout-pcd-fix-20261105-v1",
+    "source_array_sha256": "a30eb5576c23ae2c0a688299611e4defbc266761f277befe4ff8d9dd3acf647d",
+    "source_point_count": 56849,
+    "source_xyz_min": [
+      -135.4652557373047,
+      -71.4330062866211,
+      -1.3917540311813354
+    ],
+    "source_xyz_max": [
+      116.75601196289062,
+      151.93492126464844,
+      40.56957244873047
+    ],
+    "world_bounds_xy_m": [
+      -15,
+      15,
+      -15,
+      15
+    ],
+    "mission_bounds_xy_m": [
+      -13.5,
+      13.5,
+      -13.5,
+      13.5
+    ],
+    "spawn_xy": [
+      0.11023451387882233,
+      0.13629353046417236
+    ],
+    "ground_z_at_spawn": -0.7825813293457031,
+    "sensor_spawn_z": -0.032581329345703125,
+    "historical_scout_base_spawn": [
+      0.11023451387882233,
+      0.13629353046417236,
+      -0.5177913293457032
+    ],
+    "spawn_ground_support_samples": 1305,
+    "ground_triangles": 4781,
+    "obstacle_triangles": 69856,
+    "geometry_policy": "Exact archived meshes; measured ground edge <=0.8m, obstacle voxels 0.16m; holes remain holes. CMU kinematic vehicle replaces archived Scout dynamics.",
+    "pcd_export": "Recovered 56849-point XYZ NPY converted losslessly to binary PCD; original standalone PCD not found.",
+    "files": {
+      "recovered_recorded_map.pcd": "cfe2394388c2c08822e7a3d4c0fc74f70bb93479131e091e9172207cc712b441",
+      "recorded_map.world": "343647f23c6184c90f93db0264ea9f218cd53dd1dc3a8d43078db0937566dcbf",
+      "local_planner.launch.xml": "564b8abd13af4e3bd169c8bcb600ef3b97a0b373e1affe168a662121fb2c90ed",
+      "assets/obstacles.dae": "f76be1377d6b28559620f30595f87b9351752b504b9ecd7eda4c2e5d113cdb72",
+      "assets/ground.dae": "b697586ce23e4661d56151ff08bee153fad8ce47c7a0d9130764ec12b721985c"
+    }
+  },
+  "summary": {
+    "elapsed_s": 600.002675399,
+    "distance_m": 25.681764386076267,
+    "position": [
+      1.0416730642318726,
+      5.601500034332275,
+      -0.11014115810394287
+    ],
+    "sampled_free_volume_m3": 1089.625,
+    "surface_voxel_volume_m3": 652.25,
+    "finish": false,
+    "counts": {
+      "/ht_minimal/pathFollower": 611,
+      "/ht_minimal/localPlanner": 611,
+      "/ht_runtime": 1,
+      "odom": 120832,
+      "paths": 3030,
+      "/ht_minimal/local_selection": 3030,
+      "/ht_minimal/command_audit": 30093,
+      "commands": 30089,
+      "scans": 3025,
+      "local_path": 606,
+      "/ht_performance": 523,
+      "ht_maps": 2403,
+      "ray_frames": 521,
+      "waypoint": 597,
+      "/ht_minimal/path_rejection": 4523,
+      "/ht_minimal/recovery": 2090,
+      "/ht_minimal/command_projection": 3
+    },
+    "ht_source_age_s": {
+      "p50": 0.19736313819885254,
+      "p95": 0.2987738370895386,
+      "p99": 0.32591421604156495
+    },
+    "free_volume_definition": "union of sampled sensor rays at 0.5m voxel resolution, 1Hz/1024 endpoints/12m range; observation proxy, not ground truth"
+  },
+  "collection_complete": true,
+  "phase_ended_wall": 1794643743.1560516,
+  "exit_codes": {
+    "bag": 0,
+    "model": 0,
+    "mapper": 0,
+    "boundary": 0,
+    "simulation": 0,
+    "observer": 0
+  },
+  "ended_wall": 1794643747.9936385,
+  "freeze_unchanged": true
+}

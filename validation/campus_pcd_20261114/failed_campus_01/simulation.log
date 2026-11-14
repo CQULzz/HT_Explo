@@ -1,0 +1,1022 @@
+[INFO] [launch]: All log files can be found below /home/lzz/ht_campus_pcd_20261114/ros_logs/2026-11-14-15-31-54-325343-lzz-469
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [gzserver-1]: process started with pid [501]
+[INFO] [robot_state_publisher-2]: process started with pid [503]
+[INFO] [spawn_entity.py-3]: process started with pid [505]
+[INFO] [spawn_entity.py-4]: process started with pid [507]
+[INFO] [spawn_entity.py-5]: process started with pid [509]
+[INFO] [terrainAnalysis-6]: process started with pid [511]
+[INFO] [terrainAnalysisExt-7]: process started with pid [513]
+[INFO] [sensorScanGeneration-8]: process started with pid [515]
+[INFO] [localPlanner-9]: process started with pid [517]
+[INFO] [pathFollower-10]: process started with pid [519]
+[INFO] [static_transform_publisher-11]: process started with pid [521]
+[INFO] [static_transform_publisher-12]: process started with pid [525]
+[INFO] [tare_planner_node-13]: process started with pid [527]
+[static_transform_publisher-11] [WARN] [1794641514.714631138] []: Old-style arguments are deprecated; see --help for new-style arguments
+[static_transform_publisher-12] [WARN] [1794641514.718830520] []: Old-style arguments are deprecated; see --help for new-style arguments
+[static_transform_publisher-11] [INFO] [1794641514.750123948] [vehicleTransPublisher]: Spinning until stopped - publishing transform
+[static_transform_publisher-11] translation: ('-0.000000', '-0.000000', '0.000000')
+[static_transform_publisher-11] rotation: ('0.000000', '0.000000', '0.000000', '1.000000')
+[static_transform_publisher-11] from '/sensor' to '/vehicle'
+[static_transform_publisher-12] [INFO] [1794641514.750978089] [sensorTransPublisher]: Spinning until stopped - publishing transform
+[static_transform_publisher-12] translation: ('0.000000', '0.000000', '0.000000')
+[static_transform_publisher-12] rotation: ('-0.500000', '0.500000', '-0.500000', '0.500000')
+[static_transform_publisher-12] from '/sensor' to '/camera'
+[robot_state_publisher-2] [INFO] [1794641514.760375853] [robot_state_publisher]: got segment lidar
+[robot_state_publisher-2] [INFO] [1794641514.760522275] [robot_state_publisher]: got segment velodyne
+[robot_state_publisher-2] [INFO] [1794641514.760542395] [robot_state_publisher]: got segment velodyne_base_link
+[localPlanner-9] [INFO] [1794641514.799530849] [localPlanner]: Reading path files.
+[tare_planner_node-13] finished constructor
+[tare_planner_node-13] parameter kAutoStart: 0
+[spawn_entity.py-4] [INFO] [1794641514.985170454] [spawn_entity]: Spawn Entity started
+[spawn_entity.py-4] [INFO] [1794641514.985448964] [spawn_entity]: Loading entity XML from file /home/lzz/cmu_test_20261110/common_sensor/robot.sdf
+[spawn_entity.py-4] [INFO] [1794641514.985881378] [spawn_entity]: Waiting for service /spawn_entity, timeout = 30
+[spawn_entity.py-4] [INFO] [1794641514.986088306] [spawn_entity]: Waiting for service /spawn_entity
+[spawn_entity.py-3] [INFO] [1794641514.987213901] [spawn_entity]: Spawn Entity started
+[spawn_entity.py-3] [INFO] [1794641514.987494080] [spawn_entity]: Loading entity published on topic robot_description
+[spawn_entity.py-3] [INFO] [1794641514.990578353] [spawn_entity]: Waiting for entity xml on robot_description
+[spawn_entity.py-5] [INFO] [1794641514.992072131] [spawn_entity]: Spawn Entity started
+[spawn_entity.py-5] [INFO] [1794641514.992359663] [spawn_entity]: Loading entity XML from file /home/lzz/ht_execution_300s_20261113/install_cmu/vehicle_simulator/share/vehicle_simulator/urdf/camera.urdf.xacro
+[spawn_entity.py-5] [INFO] [1794641514.993802564] [spawn_entity]: Waiting for service /spawn_entity, timeout = 30
+[spawn_entity.py-5] [INFO] [1794641514.994293558] [spawn_entity]: Waiting for service /spawn_entity
+[localPlanner-9] [INFO] [1794641515.241708107] [localPlanner]: Initialization complete.
+[gzserver-1] Gazebo multi-robot simulator, version 11.10.2
+[gzserver-1] Copyright (C) 2012 Open Source Robotics Foundation.
+[gzserver-1] Released under the Apache 2 License.
+[gzserver-1] http://gazebosim.org
+[gzserver-1] 
+[spawn_entity.py-3] [INFO] [1794641515.714844365] [spawn_entity]: Waiting for service /spawn_entity, timeout = 30
+[spawn_entity.py-3] [INFO] [1794641515.715310532] [spawn_entity]: Waiting for service /spawn_entity
+[tare_planner_node-13] 
+[tare_planner_node-13] [1;32mExploration Started[0m
+[gzserver-1] [1;33m[Wrn] [gazebo_ros_init.cpp:178] [0m[1;33m
+[gzserver-1] #     # ####### ####### ###  #####  #######
+[gzserver-1] ##    # #     #    #     #  #     # #
+[gzserver-1] # #   # #     #    #     #  #       #
+[gzserver-1] #  #  # #     #    #     #  #       #####
+[gzserver-1] #   # # #     #    #     #  #       #
+[gzserver-1] #    ## #     #    #     #  #     # #
+[gzserver-1] #     # #######    #    ###  #####  #######
+[gzserver-1] 
+[gzserver-1] This version of Gazebo, now called Gazebo classic, reaches end-of-life
+[gzserver-1] in January 2025. Users are highly encouraged to migrate to the new Gazebo
+[gzserver-1] using our migration guides (https://gazebosim.org/docs/latest/gazebo_classic_migration?utm_source=gazebo_ros_pkgs&utm_medium=cli)
+[gzserver-1] 
+[gzserver-1] [0m[1;33m
+[tare_planner_node-13] [INFO] [1794641516.769993103] [tare_planner_node]: Waiting for start signal
+[gzserver-1] [1;32m[Msg] [0m[1;32mWaiting for master.[0m[1;32m
+[gzserver-1] [0m[1;32m[0m[1;32m[0m[1;32m[Msg] [0m[1;32mConnected to gazebo master @ [0m[1;32mhttp://127.0.0.1:11516[0m[1;32m
+[gzserver-1] [0m[1;32m[0m[1;32m[0m[1;32m[Msg] [0m[1;32mPublicized address: [0m[1;32m10.255.255.254[0m[1;32m
+[gzserver-1] [0m[1;32m[0m[1;32m[0m[1;32m[Msg] [0m[1;32mLoading world file [[0m[1;32m/home/lzz/ht_campus_pcd_20261114/scene_assets/campus.world[0m[1;32m][0m[1;32m
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;33m[Wrn] [ODEPhysics.cc:215] [0m[1;33mGravity vector is (0, 0, 0). Objects will float.
+[spawn_entity.py-3] [INFO] [1794641517.477584907] [spawn_entity]: Calling service /spawn_entity
+[spawn_entity.py-5] [INFO] [1794641517.508133883] [spawn_entity]: Calling service /spawn_entity
+[spawn_entity.py-4] [INFO] [1794641517.515816527] [spawn_entity]: Calling service /spawn_entity
+[tare_planner_node-13] [INFO] [1794641517.785884596] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-13] [INFO] [1794641518.799744622] [tare_planner_node]: Waiting for start signal
+[INFO] [vehicleSimulator-14]: process started with pid [819]
+[vehicleSimulator-14] [INFO] [1794641519.735937770] [vehicleSimulator]: Simulation started.
+[tare_planner_node-13] [INFO] [1794641519.811800419] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-13] [INFO] [1794641520.822180494] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-13] [INFO] [1794641521.831135904] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-13] [INFO] [1794641522.838821352] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-13] [INFO] [1794641523.845437056] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-13] [INFO] [1794641524.851389917] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-13] [INFO] [1794641525.856274112] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-13] [INFO] [1794641526.860657354] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-13] [INFO] [1794641527.864336694] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-13] [INFO] [1794641528.864352273] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-13] [INFO] [1794641529.860736107] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-13] [INFO] [1794641530.850945613] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-13] [INFO] [1794641531.840897328] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-13] [INFO] [1794641532.830430871] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-13] [INFO] [1794641533.819888754] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-13] [INFO] [1794641534.811446717] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-13] [INFO] [1794641535.812857200] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-13] [INFO] [1794641536.812875934] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-13] [INFO] [1794641537.808004958] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-13] [INFO] [1794641538.796847832] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-13] [INFO] [1794641539.785594920] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-13] [INFO] [1794641540.774190263] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-13] [INFO] [1794641541.762724397] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-13] [INFO] [1794641542.751252590] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-13] [INFO] [1794641543.743987655] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-13] [INFO] [1794641544.744001347] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-13] [INFO] [1794641545.740883244] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-13] [INFO] [1794641546.732664440] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-13] [INFO] [1794641547.729405884] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-13] [INFO] [1794641548.737681936] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-13] [INFO] [1794641549.743845178] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-13] [INFO] [1794641550.748183239] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-13] [INFO] [1794641551.758024187] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-13] [INFO] [1794641552.765723462] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-13] [INFO] [1794641553.768926505] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-13] [INFO] [1794641554.771108971] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-13] [INFO] [1794641555.772317140] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-13] [INFO] [1794641556.772756130] [tare_planner_node]: Waiting for start signal
+[gzserver-1] [0m[1;33m[Wrn] [ColladaLoader.cc:1928] [0m[1;33mTriangle input semantic: '[0m[1;33mCOLOR[0m[1;33m' is currently[0m[1;33m not supported[0m[1;33m
+[tare_planner_node-13] [INFO] [1794641557.772754488] [tare_planner_node]: Waiting for start signal
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;33m[Wrn] [ColladaLoader.cc:1928] [0m[1;33mTriangle input semantic: '[0m[1;33mCOLOR[0m[1;33m' is currently[0m[1;33m not supported[0m[1;33m
+[tare_planner_node-13] [INFO] [1794641558.772419519] [tare_planner_node]: Waiting for start signal
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;33m[Wrn] [ColladaLoader.cc:1928] [0m[1;33mTriangle input semantic: '[0m[1;33mCOLOR[0m[1;33m' is currently[0m[1;33m not supported[0m[1;33m
+[tare_planner_node-13] [INFO] [1794641559.771524475] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-13] [INFO] [1794641560.769974663] [tare_planner_node]: Waiting for start signal
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;33m[Wrn] [ColladaLoader.cc:1928] [0m[1;33mTriangle input semantic: '[0m[1;33mCOLOR[0m[1;33m' is currently[0m[1;33m not supported[0m[1;33m
+[tare_planner_node-13] [INFO] [1794641561.763607888] [tare_planner_node]: Waiting for start signal
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;33m[Wrn] [ColladaLoader.cc:1928] [0m[1;33mTriangle input semantic: '[0m[1;33mCOLOR[0m[1;33m' is currently[0m[1;33m not supported[0m[1;33m
+[tare_planner_node-13] [INFO] [1794641562.749668291] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-13] [INFO] [1794641563.735668675] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-13] [INFO] [1794641564.731371661] [tare_planner_node]: Waiting for start signal
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[INFO] [1794641565.615135101] [gazebo_ros_state]: Publishing states of gazebo models at [/model_states]
+[gzserver-1] [INFO] [1794641565.616461901] [gazebo_ros_state]: Publishing states of gazebo links at [/link_states]
+[gzserver-1] [ERROR] [1794641565.616854329] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.617222897] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.617617519] [gazebo_ros_state]: SetEntityState: entity [lidar] does not exist
+[spawn_entity.py-3] [INFO] [1794641565.618194344] [spawn_entity]: Spawn status: Entity pushed to spawn queue, but spawn service timed outwaiting for entity to appear in simulation under the name [lidar]
+[spawn_entity.py-3] [ERROR] [1794641565.618461583] [spawn_entity]: Spawn service failed. Exiting.
+[gzserver-1] [ERROR] [1794641565.621700498] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.622076021] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.622333351] [gazebo_ros_state]: SetEntityState: entity [lidar] does not exist
+[gzserver-1] [ERROR] [1794641565.626895466] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.627378811] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.627763496] [gazebo_ros_state]: SetEntityState: entity [lidar] does not exist
+[gzserver-1] [ERROR] [1794641565.632069813] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.632550103] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.633084400] [gazebo_ros_state]: SetEntityState: entity [lidar] does not exist
+[gzserver-1] [ERROR] [1794641565.636766017] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.637241628] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.637689217] [gazebo_ros_state]: SetEntityState: entity [lidar] does not exist
+[gzserver-1] [ERROR] [1794641565.641591599] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.642013299] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.646606205] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.646932603] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.651775605] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.652185154] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.656635203] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.656976510] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.661657970] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.662027547] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.666594165] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.666898272] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.671572256] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.671886253] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.676887856] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.677184737] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.681601692] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.681990027] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.686664419] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.686905326] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.692018660] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.692397056] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.696630471] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.696917189] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.702825113] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.703082239] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.706624923] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.706967687] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.711974669] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.712232042] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.716623746] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.716780690] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.721654206] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.721977600] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.726713434] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.727176531] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.731680153] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.732079632] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[tare_planner_node-13] [INFO] [1794641565.733133351] [tare_planner_node]: Waiting for start signal
+[gzserver-1] [ERROR] [1794641565.736726705] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.737115631] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.741612346] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.741929821] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.746711375] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.747116742] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.751802975] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.752236390] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.756755408] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.757131478] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.761642186] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.762011077] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[ERROR] [spawn_entity.py-3]: process has died [pid 505, exit code 1, cmd '/opt/ros/humble/lib/gazebo_ros/spawn_entity.py -entity lidar -topic robot_description --ros-args'].
+[gzserver-1] [ERROR] [1794641565.767045719] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.767464353] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.771641464] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.771899557] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.776660566] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.776992882] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.781894480] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.782273208] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.787120953] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.787436002] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.791613734] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.791865721] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.796662495] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.796942834] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.801617718] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.801886408] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.806684943] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.806951975] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.811648545] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.812144409] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.816810472] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.817232819] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.821642580] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.821960160] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.826677989] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.826934972] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.831610652] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.831921270] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.836627522] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.836880461] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.841586706] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.841880524] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.847014831] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.847449674] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.851627734] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.851955811] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.858376823] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.858638443] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.861619535] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.861852518] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.868362385] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.868664752] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.871545412] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.871824437] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.877652295] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.877879967] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.881553201] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.881797492] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.886534943] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.886772314] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.891604990] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.891941073] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.896812294] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.897073694] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.901551833] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.901770124] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.906731241] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.907111893] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.911592252] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.911851712] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.916615668] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.916889614] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.921582331] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.921822684] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.926656691] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.926861012] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.931543629] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.931811069] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.936969954] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.937296576] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.941589302] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.941908025] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.946538897] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.946754352] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.951769110] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.952103726] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.956604323] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.956944771] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.961494625] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.961725091] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.967363197] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.967770902] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.971900572] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.972158004] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.976549277] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.976841469] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.981550673] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.981841165] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.986559187] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.986766280] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.991534096] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.991789151] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641565.996649831] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641565.997005836] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.001671814] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.002022120] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.006588287] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.006795367] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.011528586] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.011723185] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.016553643] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.016847521] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.021563444] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.021763189] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.026513809] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.026738180] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.031753412] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.032117950] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.036528147] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.036851166] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.041500239] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.041699938] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.046579460] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.046840324] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.051572271] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.051794998] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.056624020] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.056970957] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.061686867] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.062239925] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.066611190] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.066879406] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.071545905] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.071751599] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.076500113] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.076777799] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.081518612] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.081722447] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.086637562] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.086942139] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.091685571] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.092125478] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.096562512] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.096944802] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.101540879] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.101743940] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.106561161] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.106787751] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.111517760] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.111722000] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.116561696] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.116838354] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.121697905] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.122027633] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.126636955] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.126869975] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.131593168] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.131798147] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.136859596] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.137326743] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.141604060] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.141882532] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.146512224] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.146714198] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.151589514] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.151782039] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.156538714] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.156872191] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.161578632] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.161772078] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.166822034] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.167263206] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.171611063] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.171893073] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.176601878] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.176857437] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.181513555] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.181773004] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.186602207] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.186990824] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.191618331] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.192075295] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.196487843] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.196795516] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.201663463] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.202045195] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.206555591] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.206785274] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.211681230] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.211899595] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.216739921] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.217140397] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.221600609] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.221839946] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.226568741] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.226887630] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.231588175] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.231885832] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.236640610] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.236936546] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.241531032] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.241653902] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.246568536] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.246982255] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.251586984] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.251801376] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.256525201] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.256841051] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.261778183] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.262086928] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.266648661] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.266867938] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.271518210] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.271788160] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.276552536] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.276810769] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.281505526] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.281724298] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.286543838] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.286798404] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.291726776] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.292181374] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.296553968] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.296812892] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.301585013] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.301958318] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.306547460] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.306818700] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.311567415] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.311844065] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.316496921] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.316842974] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.321923113] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.322264766] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.326828217] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.327085441] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.331506293] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.331757776] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.336519854] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.336820730] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.341522483] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.341849195] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.346596131] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.346837838] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.351861034] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.352113310] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.356906499] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.357216856] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.361520361] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.361760322] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.366523400] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.366751159] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.371590367] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.371812751] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.376517895] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.376901024] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.381556386] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.381855313] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.386788495] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.387097055] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.391652451] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.391888609] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.396515985] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.396787935] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.401501595] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.401735368] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.406458315] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.406673551] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.411558140] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.411829027] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.416712343] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.416986798] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.421536014] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.421771894] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.426551707] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.426781200] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.431577986] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.431912850] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.436528021] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.436758611] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.441537122] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.441752564] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.446651579] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.446980830] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.451520527] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.451759816] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.456532800] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.456773342] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.461490458] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.461760009] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.466541667] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.466845545] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.471556880] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.471767632] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.476613343] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.476940451] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.481529307] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.481743534] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.486491626] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.486714839] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.491528129] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.491742168] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.496569052] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.496923132] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.501471230] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.501664892] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.506557732] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.507594914] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.511877698] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.512184963] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.516621945] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.516917207] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.521595331] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.521859107] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.526672295] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.527004182] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.531718399] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.532051472] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.536560183] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.536853332] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.541923901] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.542402641] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.546658658] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.547085721] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.551763387] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.552102653] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.556652464] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.556965112] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.561706342] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.562085725] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.566589134] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.566874961] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.571685116] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.571949032] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.576660566] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.577025220] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.581864326] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.582103269] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.586648159] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.586906948] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.591664857] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.592041038] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.596982242] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.597331060] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.601627483] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.601964293] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.606579095] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.606836988] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.611631004] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.611914482] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.616655478] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.616929056] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.621644948] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.622048576] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.626616770] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.626979661] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.631716918] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.632074052] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.636668762] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.636919831] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.641530933] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.641785527] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.646533331] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.646765900] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.651651157] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.651844298] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.656639620] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.656912917] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.661689939] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.662150674] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.666637090] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.667035179] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.671576392] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.671823737] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.676814017] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.677161889] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.681522839] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.681780578] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.686530218] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.686764382] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.691546841] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.691919008] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.696685925] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.697112884] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.701677852] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.701936741] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.706523961] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.706784208] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.711553810] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.711801961] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.716521200] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.716802259] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.721550533] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.721797109] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.726802812] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.727003257] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.731552093] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.731704627] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[tare_planner_node-13] [INFO] [1794641566.734631674] [tare_planner_node]: Waiting for start signal
+[gzserver-1] [ERROR] [1794641566.736505235] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.736813811] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.741613770] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.741868080] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.746551150] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.746784035] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.751592004] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.751853592] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.756831678] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.757094801] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.761601910] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.761894283] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.766545146] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.766894877] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.771800809] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.772192714] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.776511516] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.776877422] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.781511147] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.781844661] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.786595181] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.786878698] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.791571786] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.791861329] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.796558902] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.796806295] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.801556815] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.801820452] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.806540407] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.806789794] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.811515176] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.811747781] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.816623799] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.816875248] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.821676083] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.821950116] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.826573576] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.826797332] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.831742900] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.832846075] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.836625465] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.836856366] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.841578579] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.841861838] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.846529013] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.846751763] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.851541278] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.851793928] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.856534376] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.856776777] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.861497088] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.861750348] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.866708786] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.866994948] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.871512633] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.871754339] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.876457659] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.876593924] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.881517013] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.881898893] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.886482407] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.886713224] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.891476861] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.891684806] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.896495142] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.896737322] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.901471030] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.901775322] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.906508960] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.906649571] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.911716691] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.911995828] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.916519458] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.916809151] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.921525400] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.921721686] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.926496146] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.926743369] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.931594608] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.931915492] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.936572123] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.936812651] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.941511154] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.941747342] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.946541444] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.946788709] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.951638791] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.951877455] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.956502080] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.956773439] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.961595346] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.961873239] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.966549585] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.966767966] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.971542095] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.971741142] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.976561957] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.976838171] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.981569315] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.981878065] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.986481138] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.986699135] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.991587158] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.991826407] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641566.996545842] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641566.996764749] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.001469965] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.001709897] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.006583047] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.006837844] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.011495642] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.011721146] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.016609816] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.016822170] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.021517026] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.021787709] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.026551856] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.026768646] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.031498332] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.031712027] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.036701861] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.037059636] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.041531298] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.041733401] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.046554989] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.046826427] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.051525725] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.051764289] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.056511780] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.056763751] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.061467950] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.061684202] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.066604528] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.066856127] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.071519258] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.071746000] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.076482444] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.076738138] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.081482876] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.081685214] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.086499064] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.086769439] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.091504816] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.091727506] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.096541266] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.096895005] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.101562451] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.101798342] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.106483571] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.106708613] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.111464141] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.111692418] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.116460235] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.116747281] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.121513533] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.121727941] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.126547221] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.126842963] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.131546855] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.131789279] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.136534321] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.136752399] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.141532222] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.141758139] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.146548114] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.146785560] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.151498209] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.151723301] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.156488966] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.156785583] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.161543480] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.161858072] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.166531138] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.166761194] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.171530483] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.171753929] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.176519947] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.176821621] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.181449170] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.181667350] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.186527038] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.186760845] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.191782189] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.191961266] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.196649589] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.196880773] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.201497688] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.201720201] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.206540695] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.206752201] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.211467305] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.211692305] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.216521222] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.216934843] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.221925709] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.222315917] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.226587866] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.226830059] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.231542471] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.231784229] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.236691706] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.236974134] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.241535170] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.241763090] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.246564486] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.246778202] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.251643601] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.252103983] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.256597993] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.256829220] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.261488644] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.261715305] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.266591623] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.266834126] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.271466665] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.271700545] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.276618763] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.276842103] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.281797810] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.282067071] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.286529611] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.286825499] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.291722741] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.291979218] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.296556952] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.296827517] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.301541734] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.301781330] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.306541449] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.306757586] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.311623912] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.311920401] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.316555434] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.316839295] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.321552084] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.321801957] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.326546445] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.326777692] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.331469914] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.331700371] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.336515912] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.336772059] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.341745629] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.342213334] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.346474138] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.346699094] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.351505972] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.351795484] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.356530839] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.356806346] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.361539495] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.361794973] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.366496024] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.366706593] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.371467086] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.371649900] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.376570409] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.376904911] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.381493125] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.381724516] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.386550490] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.386758631] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.391464821] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.391687167] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.396455236] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.396647235] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.401465399] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.401667035] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.406521153] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.406835931] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.411455568] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.411664599] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.416535966] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.416750966] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.421505456] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.421752652] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.426475810] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.426709702] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.431452407] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.431659527] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.436520748] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.436868426] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.441495023] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.441719928] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.446468804] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.446687560] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.451504103] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.451776543] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.456468533] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.456741109] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.461414341] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.461601950] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.466472488] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.466662410] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.471537112] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.471802830] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.476436664] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.476799015] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.481453073] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.481723134] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.486545464] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.486863275] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.491491905] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.491702295] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.496467682] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.496664936] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.501668873] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.501981089] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.506463581] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.506686692] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.511427285] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.511632616] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.516821665] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.517174002] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.521576418] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.521883003] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.526552051] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.526679578] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.531668158] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.532070602] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.536495235] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.536779338] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.541517516] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.541717939] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.546510756] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.546728137] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.551453634] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.551665179] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.556474001] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.556728049] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.561497191] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.561750420] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[gzserver-1] [ERROR] [1794641567.566481577] [gazebo_ros_state]: SetEntityState: entity [camera] does not exist
+[gzserver-1] [ERROR] [1794641567.566758915] [gazebo_ros_state]: SetEntityState: entity [robot] does not exist
+[WARNING] [launch]: user interrupted with ctrl-c (SIGINT)
+[tare_planner_node-13] [INFO] [1794641567.567680405] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[vehicleSimulator-14] [INFO] [1794641567.567680920] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[vehicleSimulator-14] terminate called after throwing an instance of 'rclcpp::exceptions::RCLError'
+[vehicleSimulator-14]   what():  failed to create guard condition: the given context is not valid, either rcl_init() was not called or rcl_shutdown() was called., at ./src/rcl/guard_condition.c:67
+[localPlanner-9] [INFO] [1794641567.567719811] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[localPlanner-9] terminate called after throwing an instance of 'rclcpp::exceptions::RCLError'
+[localPlanner-9]   what():  failed to create guard condition: the given context is not valid, either rcl_init() was not called or rcl_shutdown() was called., at ./src/rcl/guard_condition.c:67
+[static_transform_publisher-11] [INFO] [1794641567.567715399] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[static_transform_publisher-12] [INFO] [1794641567.567720740] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[INFO] [vehicleSimulator-14]: sending signal 'SIGINT' to process[vehicleSimulator-14]
+[INFO] [tare_planner_node-13]: sending signal 'SIGINT' to process[tare_planner_node-13]
+[INFO] [static_transform_publisher-12]: sending signal 'SIGINT' to process[static_transform_publisher-12]
+[INFO] [static_transform_publisher-11]: sending signal 'SIGINT' to process[static_transform_publisher-11]
+[INFO] [pathFollower-10]: sending signal 'SIGINT' to process[pathFollower-10]
+[ERROR] [static_transform_publisher-12]: process has died [pid 525, exit code -2, cmd '/opt/ros/humble/lib/tf2_ros/static_transform_publisher 0 0 0.0 -1.5707963 0 -1.5707963 /sensor /camera --ros-args -r __node:=sensorTransPublisher'].
+[ERROR] [static_transform_publisher-11]: process has died [pid 521, exit code -2, cmd '/opt/ros/humble/lib/tf2_ros/static_transform_publisher -0.0 -0.0 0 0 0 0 /sensor /vehicle --ros-args -r __node:=vehicleTransPublisher'].
+[INFO] [localPlanner-9]: sending signal 'SIGINT' to process[localPlanner-9]
+[INFO] [sensorScanGeneration-8]: sending signal 'SIGINT' to process[sensorScanGeneration-8]
+[INFO] [terrainAnalysisExt-7]: sending signal 'SIGINT' to process[terrainAnalysisExt-7]
+[INFO] [terrainAnalysis-6]: sending signal 'SIGINT' to process[terrainAnalysis-6]
+[INFO] [spawn_entity.py-5]: sending signal 'SIGINT' to process[spawn_entity.py-5]
+[INFO] [spawn_entity.py-4]: sending signal 'SIGINT' to process[spawn_entity.py-4]
+[INFO] [robot_state_publisher-2]: sending signal 'SIGINT' to process[robot_state_publisher-2]
+[INFO] [gzserver-1]: sending signal 'SIGINT' to process[gzserver-1]
+[ERROR] [spawn_entity.py-5]: process has died [pid 509, exit code -2, cmd '/opt/ros/humble/lib/gazebo_ros/spawn_entity.py -file /home/lzz/ht_execution_300s_20261113/install_cmu/vehicle_simulator/share/vehicle_simulator/urdf/camera.urdf.xacro -entity camera --ros-args'].
+[terrainAnalysis-6] [INFO] [1794641567.567790957] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[terrainAnalysis-6] terminate called after throwing an instance of 'rclcpp::exceptions::RCLError'
+[terrainAnalysis-6]   what():  failed to create guard condition: the given context is not valid, either rcl_init() was not called or rcl_shutdown() was called., at ./src/rcl/guard_condition.c:67
+[ERROR] [spawn_entity.py-4]: process has died [pid 507, exit code -2, cmd '/opt/ros/humble/lib/gazebo_ros/spawn_entity.py -file /home/lzz/cmu_test_20261110/common_sensor/robot.sdf -entity robot --ros-args'].
+[ERROR] [robot_state_publisher-2]: process has died [pid 503, exit code -2, cmd '/opt/ros/humble/lib/robot_state_publisher/robot_state_publisher --ros-args -r __node:=robot_state_publisher --params-file /tmp/launch_params_1wam9uxa'].
+[sensorScanGeneration-8] [INFO] [1794641567.567793134] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[ERROR] [tare_planner_node-13]: process has died [pid 527, exit code -2, cmd '/home/lzz/ht_repeat_20261114/install_native/tare_planner/lib/tare_planner/tare_planner_node --ros-args -r __node:=tare_planner_node --params-file /home/lzz/ht_repeat_20261114/install_native/tare_planner/share/tare_planner/campus.yaml --params-file /tmp/launch_params__rfhnnqo'].
+[robot_state_publisher-2] [INFO] [1794641567.567834413] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[terrainAnalysisExt-7] [INFO] [1794641567.567854443] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[terrainAnalysisExt-7] terminate called after throwing an instance of 'rclcpp::exceptions::RCLError'
+[terrainAnalysisExt-7]   what():  failed to create guard condition: the given context is not valid, either rcl_init() was not called or rcl_shutdown() was called., at ./src/rcl/guard_condition.c:67
+[pathFollower-10] [INFO] [1794641567.567886305] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[pathFollower-10] terminate called after throwing an instance of 'rclcpp::exceptions::RCLError'
+[pathFollower-10]   what():  failed to create guard condition: the given context is not valid, either rcl_init() was not called or rcl_shutdown() was called., at ./src/rcl/guard_condition.c:67
+[spawn_entity.py-5] Traceback (most recent call last):
+[spawn_entity.py-5]   File "/opt/ros/humble/lib/gazebo_ros/spawn_entity.py", line 372, in <module>
+[spawn_entity.py-5]     main()
+[spawn_entity.py-5]   File "/opt/ros/humble/lib/gazebo_ros/spawn_entity.py", line 367, in main
+[spawn_entity.py-5]     exit_code = spawn_entity_node.run()
+[spawn_entity.py-5]   File "/opt/ros/humble/lib/gazebo_ros/spawn_entity.py", line 228, in run
+[spawn_entity.py-5]     success = self._spawn_entity(entity_xml, initial_pose, spawn_service_timeout)
+[spawn_entity.py-5]   File "/opt/ros/humble/lib/gazebo_ros/spawn_entity.py", line 290, in _spawn_entity
+[spawn_entity.py-5]     rclpy.spin_once(self)
+[spawn_entity.py-5]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py", line 208, in spin_once
+[spawn_entity.py-5]     executor.spin_once(timeout_sec=timeout_sec)
+[spawn_entity.py-5]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 812, in spin_once
+[spawn_entity.py-5]     self._spin_once_impl(timeout_sec)
+[spawn_entity.py-5]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 801, in _spin_once_impl
+[spawn_entity.py-5]     handler, entity, node = self.wait_for_ready_callbacks(timeout_sec=timeout_sec)
+[spawn_entity.py-5]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 784, in wait_for_ready_callbacks
+[spawn_entity.py-5]     return next(self._cb_iter)
+[spawn_entity.py-5]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 681, in _wait_for_ready_callbacks
+[spawn_entity.py-5]     wait_set.wait(timeout_nsec)
+[spawn_entity.py-5] KeyboardInterrupt
+[spawn_entity.py-4] Traceback (most recent call last):
+[spawn_entity.py-4]   File "/opt/ros/humble/lib/gazebo_ros/spawn_entity.py", line 372, in <module>
+[spawn_entity.py-4]     main()
+[spawn_entity.py-4]   File "/opt/ros/humble/lib/gazebo_ros/spawn_entity.py", line 367, in main
+[spawn_entity.py-4]     exit_code = spawn_entity_node.run()
+[spawn_entity.py-4]   File "/opt/ros/humble/lib/gazebo_ros/spawn_entity.py", line 228, in run
+[spawn_entity.py-4]     success = self._spawn_entity(entity_xml, initial_pose, spawn_service_timeout)
+[spawn_entity.py-4]   File "/opt/ros/humble/lib/gazebo_ros/spawn_entity.py", line 290, in _spawn_entity
+[spawn_entity.py-4]     rclpy.spin_once(self)
+[spawn_entity.py-4]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py", line 208, in spin_once
+[spawn_entity.py-4]     executor.spin_once(timeout_sec=timeout_sec)
+[spawn_entity.py-4]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 812, in spin_once
+[spawn_entity.py-4]     self._spin_once_impl(timeout_sec)
+[spawn_entity.py-4]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 801, in _spin_once_impl
+[spawn_entity.py-4]     handler, entity, node = self.wait_for_ready_callbacks(timeout_sec=timeout_sec)
+[spawn_entity.py-4]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 784, in wait_for_ready_callbacks
+[spawn_entity.py-4]     return next(self._cb_iter)
+[spawn_entity.py-4]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 681, in _wait_for_ready_callbacks
+[spawn_entity.py-4]     wait_set.wait(timeout_nsec)
+[spawn_entity.py-4] KeyboardInterrupt
+[sensorScanGeneration-8] [INFO] [1794641567.591716827] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[ERROR] [localPlanner-9]: process has died [pid 517, exit code -6, cmd '/home/lzz/ht_execution_300s_20261113/install_gate/cmu_local_planner_ht/lib/cmu_local_planner_ht/localPlanner --ros-args -r __node:=localPlanner --params-file /tmp/launch_params_qk7vdqj8 --params-file /tmp/launch_params_mjnjiq7g --params-file /tmp/launch_params_ates1ecl --params-file /tmp/launch_params_vauax9jv --params-file /tmp/launch_params_chkbrc8s --params-file /tmp/launch_params_oyjfh8zz --params-file /tmp/launch_params_2cd7ipmh --params-file /tmp/launch_params_hm6xd_nt --params-file /tmp/launch_params_xkggcct5 --params-file /tmp/launch_params_f0qbosrt --params-file /tmp/launch_params_hbp2dfuf --params-file /tmp/launch_params_0tqd7dox --params-file /tmp/launch_params_i44au3tf --params-file /tmp/launch_params_rd0orpyf --params-file /tmp/launch_params_oeu6zl4u --params-file /tmp/launch_params_lj9hscp5 --params-file /tmp/launch_params_r6_0t5va --params-file /tmp/launch_params_pdz6jdq0 --params-file /tmp/launch_params__h7s0ce9 --params-file /tmp/launch_params_4gibr264 --params-file /tmp/launch_params_lodw_21p --params-file /tmp/launch_params_ublxpfyw --params-file /tmp/launch_params_u97bgiuu --params-file /tmp/launch_params_udryyykj --params-file /tmp/launch_params_eyqy6w2j --params-file /tmp/launch_params_2l8bkxtm --params-file /tmp/launch_params_j1y59lae --params-file /tmp/launch_params_l3rzect8 --params-file /tmp/launch_params_cka6grpz --params-file /tmp/launch_params_494x4juh --params-file /tmp/launch_params_8a8auz_2 --params-file /tmp/launch_params_qrld5q_u --params-file /tmp/launch_params_ku21ll3g --params-file /tmp/launch_params_81g_ae6j --params-file /tmp/launch_params_l9t6aamh --params-file /tmp/launch_params_dt4d_nlq --params-file /tmp/launch_params_okio9quu --params-file /tmp/launch_params_tj_g_iba --params-file /tmp/launch_params_bk4z0n0n --params-file /tmp/launch_params_u65whf0h --params-file /tmp/launch_params_8d89skff --params-file /tmp/launch_params_wfmbt0md --params-file /tmp/launch_params_usftvdag'].
+[ERROR] [pathFollower-10]: process has died [pid 519, exit code -6, cmd '/home/lzz/ht_execution_300s_20261113/install_gate/cmu_local_planner_ht/lib/cmu_local_planner_ht/pathFollower --ros-args -r __node:=pathFollower --params-file /tmp/launch_params_5r2rfjov --params-file /tmp/launch_params_l3vcy4_1 --params-file /tmp/launch_params_v8gqhag_ --params-file /tmp/launch_params_kf7ps4ax --params-file /tmp/launch_params_v_h755x2 --params-file /tmp/launch_params_0ki6jprh --params-file /tmp/launch_params_y7mpq7fl --params-file /tmp/launch_params_xvp0935v --params-file /tmp/launch_params_2we6ih8e --params-file /tmp/launch_params_wtoqzau5 --params-file /tmp/launch_params_b02frwbu --params-file /tmp/launch_params_q2m2txzb --params-file /tmp/launch_params_mnqb5w1x --params-file /tmp/launch_params_mlaoctam --params-file /tmp/launch_params_j_8hl0ca --params-file /tmp/launch_params_vs6ynvjx --params-file /tmp/launch_params_glfkdmnv --params-file /tmp/launch_params_et56y8fy --params-file /tmp/launch_params_fjy0lkkl --params-file /tmp/launch_params_u6wkfjhf --params-file /tmp/launch_params_z0l258ak --params-file /tmp/launch_params_36psesrp --params-file /tmp/launch_params_vs9jx_3i --params-file /tmp/launch_params_biw1ukv4 --params-file /tmp/launch_params_rabwwp3d --params-file /tmp/launch_params_vj8n42mn --params-file /tmp/launch_params_ml7ba5c0 --params-file /tmp/launch_params_xp4pjh_3 --params-file /tmp/launch_params_h9aym7c6 --params-file /tmp/launch_params_87g3rhd3 --params-file /tmp/launch_params_7vm79bae --params-file /tmp/launch_params_t7w5kjri --params-file /tmp/launch_params_lsu2yq1n'].
+[ERROR] [terrainAnalysisExt-7]: process has died [pid 513, exit code -6, cmd '/home/lzz/ht_execution_300s_20261113/install_cmu/terrain_analysis_ext/lib/terrain_analysis_ext/terrainAnalysisExt --ros-args -r __node:=terrainAnalysisExt --params-file /tmp/launch_params_fjso3cip --params-file /tmp/launch_params_ws63racn --params-file /tmp/launch_params_9g5bb7gt --params-file /tmp/launch_params_cr_efkck --params-file /tmp/launch_params_dhx2fccd --params-file /tmp/launch_params_lehjinko --params-file /tmp/launch_params_z127ezrn --params-file /tmp/launch_params_djx46mb2 --params-file /tmp/launch_params_6u2l8716 --params-file /tmp/launch_params_p1xvcayo --params-file /tmp/launch_params_eksr7u5e --params-file /tmp/launch_params_icgsecac --params-file /tmp/launch_params_r_sfd1qs --params-file /tmp/launch_params_nczdacjz --params-file /tmp/launch_params_9hztey4r --params-file /tmp/launch_params_4u3fuv17 --params-file /tmp/launch_params_0hww1tf3'].
+[ERROR] [vehicleSimulator-14]: process has died [pid 819, exit code -6, cmd '/home/lzz/ht_execution_300s_20261113/install_cmu/vehicle_simulator/lib/vehicle_simulator/vehicleSimulator --ros-args --params-file /tmp/launch_params_d8h4sa54'].
+[ERROR] [terrainAnalysis-6]: process has died [pid 511, exit code -6, cmd '/home/lzz/ht_execution_300s_20261113/install_cmu/terrain_analysis/lib/terrain_analysis/terrainAnalysis --ros-args -r __node:=terrainAnalysis --params-file /tmp/launch_params_h0zf1fac --params-file /tmp/launch_params_0c5bc3at --params-file /tmp/launch_params_2n4lz9tk --params-file /tmp/launch_params_8muzwrxm --params-file /tmp/launch_params_k0z90gqg --params-file /tmp/launch_params_69bl0ykj --params-file /tmp/launch_params_ials9_00 --params-file /tmp/launch_params_a_5lho_0 --params-file /tmp/launch_params_wjm4zb0u --params-file /tmp/launch_params_r6loof7m --params-file /tmp/launch_params_n8o9xkye --params-file /tmp/launch_params_3nom74fi --params-file /tmp/launch_params_fmm2cu4w --params-file /tmp/launch_params_h7_c_kzj --params-file /tmp/launch_params_goeju_mv --params-file /tmp/launch_params_o9ancpil --params-file /tmp/launch_params_hofq4kln --params-file /tmp/launch_params_rqnml1ew --params-file /tmp/launch_params_w5mgg16_ --params-file /tmp/launch_params_244eby2l --params-file /tmp/launch_params_4hxacmpj --params-file /tmp/launch_params_qhpoaiuk --params-file /tmp/launch_params__q_ipbnq --params-file /tmp/launch_params_zjjzdgdt --params-file /tmp/launch_params_zx50uwev --params-file /tmp/launch_params_pax9w9_v'].
+[ERROR] [sensorScanGeneration-8]: process[sensorScanGeneration-8] failed to terminate '5' seconds after receiving 'SIGINT', escalating to 'SIGTERM'
+[ERROR] [gzserver-1]: process[gzserver-1] failed to terminate '5' seconds after receiving 'SIGINT', escalating to 'SIGTERM'
+[INFO] [sensorScanGeneration-8]: sending signal 'SIGTERM' to process[sensorScanGeneration-8]
+[INFO] [gzserver-1]: sending signal 'SIGTERM' to process[gzserver-1]
+[sensorScanGeneration-8] [INFO] [1794641572.579972769] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[ERROR] [sensorScanGeneration-8]: process[sensorScanGeneration-8] failed to terminate '10.0' seconds after receiving 'SIGTERM', escalating to 'SIGKILL'
+[ERROR] [gzserver-1]: process[gzserver-1] failed to terminate '10.0' seconds after receiving 'SIGTERM', escalating to 'SIGKILL'
+[INFO] [sensorScanGeneration-8]: sending signal 'SIGKILL' to process[sensorScanGeneration-8]
+[INFO] [gzserver-1]: sending signal 'SIGKILL' to process[gzserver-1]
+[ERROR] [sensorScanGeneration-8]: process has died [pid 515, exit code -9, cmd '/home/lzz/ht_execution_300s_20261113/install_cmu/sensor_scan_generation/lib/sensor_scan_generation/sensorScanGeneration --ros-args -r __node:=sensorScanGeneration'].
+[ERROR] [gzserver-1]: process has died [pid 501, exit code -9, cmd 'gzserver /home/lzz/ht_campus_pcd_20261114/scene_assets/campus.world --verbose -slibgazebo_ros_init.so -slibgazebo_ros_factory.so -slibgazebo_ros_force_system.so'].
+[gzserver-1] [0m[1;32m[0m[1;32m[0m

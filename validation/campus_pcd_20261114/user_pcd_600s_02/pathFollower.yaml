@@ -1,0 +1,59 @@
+/pathFollower:
+  ros__parameters:
+    autonomyMode: true
+    autonomySpeed: 0.5
+    dirDiffThre: 0.1
+    ht_angular_brake_accel: 3.0
+    ht_enabled: true
+    ht_linear_brake_accel: 2.5
+    ht_map_timeout: 1.0
+    ht_min_probability: 0.5
+    ht_odometry_timeout: 0.2
+    ht_reaction_time: 0.1
+    ht_recovery_angular_accel: 3.0
+    ht_recovery_angular_speed: 0.5
+    ht_recovery_enabled: true
+    ht_recovery_linear_accel: 2.5
+    ht_recovery_progress: 0.75
+    ht_recovery_search_ms: 20.0
+    ht_recovery_speed: 0.15
+    ht_topic: /ht_traversability/global_local
+    ht_validity_radius: 0.45
+    inclRateThre: 120.0
+    inclThre: 45.0
+    joyToSpeedDelay: 2.0
+    lookAheadDis: 0.5
+    maxAccel: 2.5
+    maxSpeed: 0.5
+    maxYawRate: 90.0
+    noRotAtGoal: true
+    noRotAtStop: false
+    pubSkipNum: 1
+    qos_overrides:
+      /parameter_events:
+        publisher:
+          depth: 1000
+          durability: volatile
+          history: keep_last
+          reliability: reliable
+    require_navigation_boundary: true
+    sensorOffsetX: 0.0
+    sensorOffsetY: 0.0
+    slowDwnDisThre: 0.85
+    slowRate1: 0.25
+    slowRate2: 0.5
+    slowTime1: 2.0
+    slowTime2: 2.0
+    stopDisThre: 0.2
+    stopTime: 5.0
+    stopYawRateGain: 7.5
+    switchTimeThre: 1.0
+    traversability_mode: ht_only
+    twoWayDrive: true
+    useInclRateToSlow: false
+    useInclToStop: false
+    use_sim_time: false
+    vehicleLength: 0.6
+    vehicleWidth: 0.6
+    yawRateGain: 7.5
+

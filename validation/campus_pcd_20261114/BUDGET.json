@@ -1,0 +1,37 @@
+{
+  "maximum_formal_launch_attempts": 4,
+  "planned_runs": [
+    {
+      "scene": "campus",
+      "duration_s": 600
+    },
+    {
+      "scene": "user_pcd",
+      "duration_s": 600
+    }
+  ],
+  "extra_attempts": "infrastructure failure retries only",
+  "attempts": [
+    {
+      "name": "campus_600s_01",
+      "scene": "campus",
+      "wall_time": 1794641511.0078244
+    },
+    {
+      "name": "campus_600s_02",
+      "scene": "campus",
+      "wall_time": 1794641808.673248
+    },
+    {
+      "name": "user_pcd_600s_01",
+      "scene": "user_pcd",
+      "wall_time": 1794642593.4885292
+    },
+    {
+      "name": "user_pcd_600s_02",
+      "scene": "user_pcd",
+      "wall_time": 1794643051.679136
+    }
+  ],
+  "status": "closed_campus_and_pcd_600s_collected"
+}

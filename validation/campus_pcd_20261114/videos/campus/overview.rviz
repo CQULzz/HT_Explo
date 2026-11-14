@@ -1,0 +1,75 @@
+Panels: []
+Preferences:
+  PromptSaveOnExit: false
+Visualization Manager:
+  Class: ''
+  Displays:
+  - Class: rviz_default_plugins/Grid
+    Name: Metric grid
+    Enabled: true
+    Cell Size: 1.0
+    Plane Cell Count: 200
+    Color: 50; 60; 74
+    Alpha: 0.22
+    Line Style:
+      Value: Lines
+      Line Width: 0.01
+    Reference Frame: map
+    Offset:
+      X: 0.0
+      Y: 0.0
+      Z: -10.63963623046875
+  - Class: rviz_default_plugins/PointCloud2
+    Name: Observed surfaces
+    Enabled: true
+    Topic:
+      Value: /visual/surfaces
+      Depth: 1
+      Reliability Policy: Reliable
+      Durability Policy: Transient Local
+    Position Transformer: XYZ
+    Color Transformer: FlatColor
+    Color: 105; 186; 235
+    Alpha: 0.9
+    Style: Squares
+    Size (Pixels): 2
+    Size (m): 0.1
+    Decay Time: 0.0
+    Use Fixed Frame: true
+  - Class: rviz_default_plugins/MarkerArray
+    Name: Recorded exploration
+    Enabled: true
+    Topic:
+      Value: /visual/markers
+      Depth: 1
+      Reliability Policy: Reliable
+      Durability Policy: Transient Local
+  Enabled: true
+  Global Options:
+    Fixed Frame: map
+    Background Color: 20; 25; 34
+    Frame Rate: 30
+  Tools:
+  - Class: rviz_default_plugins/Interact
+  - Class: rviz_default_plugins/MoveCamera
+  Views:
+    Current:
+      Class: rviz_default_plugins/Orbit
+      Distance: 222.45882968446332
+      Focal Point:
+        X: -4.4289703369140625
+        Y: 49.834434509277344
+        Z: -4.49738883972168
+      Pitch: 1.5707
+      Yaw: 1.5708
+      Target Frame: map
+      Near Clip Distance: 0.01
+      Name: Current View
+      Invert Z Axis: false
+Window Geometry:
+  Width: 1120
+  Height: 960
+  X: 0
+  Y: 60
+  Hide Left Dock: true
+  Hide Right Dock: true
