@@ -1,0 +1,36 @@
+/vehicleSimulator:
+  ros__parameters:
+    InclFittingThre: 0.2
+    adjustIncl: true
+    adjustZ: true
+    cameraOffsetZ: 0.0
+    groundHeightThre: 0.1
+    maxIncl: 30.0
+    minTerrainPointNumIncl: 200
+    minTerrainPointNumZ: 5
+    qos_overrides:
+      /parameter_events:
+        publisher:
+          depth: 1000
+          durability: volatile
+          history: keep_last
+          reliability: reliable
+      /tf:
+        publisher:
+          depth: 100
+          durability: volatile
+          history: keep_last
+          reliability: reliable
+    sensorOffsetX: 0.1725
+    sensorOffsetY: 0.0
+    terrainRadiusIncl: 2.0
+    terrainRadiusZ: 1.0
+    terrainVoxelSize: 0.05
+    terrainZ: 0.0
+    use_gazebo_time: false
+    use_sim_time: false
+    vehicleHeight: 0.7849900000000001
+    vehicleX: 0.1725
+    vehicleY: 0.0
+    vehicleYaw: 0.0
+    vehicleZ: 0.7849900000000001

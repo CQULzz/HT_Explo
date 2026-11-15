@@ -5,7 +5,7 @@
 HT读取项目现有FP32八方向模型和权重，采用configuration实际车头语义、0.5分数门限、1秒源图龄、与CMU原生路径库一致的0.45米物理支撑半径（另加网格余量）和独立原生碰撞检查。不新增TSP目标重排、Hybrid A*、启动放行、小孔放宽或完成判据。
 
 - `simulation.launch.py`：native/ht 模式；stock/downward 共同传感配置。
-- `prepare_sensor.py`：为共同测试生成向下观察雷达与自车射线遮挡处理；保留原生环境/传感文件。
+- `prepare_sensor.py`：现已转到 [Helios32 资产生成器](../helios32_sim/README.md)，需要显式提供 Scout 包和新输出目录。旧 `simulation.launch.py` 及历史透明资产仅用于复现旧对照；新实验使用 `tools/helios32_sim/simulation.launch.py`。
 - `collect.py`：实际里程、状态、图龄、采样射线自由体素并集和表面体素统计；起始信号只发仿真ROS域。
 - `../../src/cmu_local_planner_ht/src/ht_gate_test.cpp`：生产门禁同位置不同方向、倒车、转向中间方向、未知/障碍/过期/格式错误反例。
 

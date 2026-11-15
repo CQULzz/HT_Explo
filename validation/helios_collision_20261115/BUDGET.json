@@ -1,0 +1,33 @@
+{
+  "maximum_formal_launch_attempts": 2,
+  "planned_runs": [
+    {
+      "scene": "campus",
+      "duration_s": 600
+    }
+  ],
+  "extra_attempt": "infrastructure failure retry only",
+  "static_probes_done": [
+    "transparent",
+    "opaque",
+    "blind"
+  ],
+  "attempts": [
+    {
+      "name": "helios32_opaque_campus_600s_01",
+      "scene": "campus",
+      "wall_time": 1794749546.7034638,
+      "state": "ABORTED_INFRA_UNUSED_CAMERA_ENTITY",
+      "reason": "Carrier still updates virtual camera entity. Restore empty pose anchor; actual physical camera remains in opaque Scout mesh.",
+      "collection_complete": false
+    },
+    {
+      "name": "helios32_opaque_campus_600s_02",
+      "scene": "campus",
+      "wall_time": 1794750177.618817,
+      "collection_complete": true
+    }
+  ],
+  "closed": true,
+  "reason": "Two development formal attempts retained. Final optical-datum correction verified by static and 90-degree registration probes; no corrected 600s navigation acceptance claimed."
+}

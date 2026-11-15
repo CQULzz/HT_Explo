@@ -1,0 +1,19 @@
+Traceback (most recent call last):
+  File "/mnt/d/HT-Helios-Collision-20261115/setup/check_rotation.py", line 37, in <module>
+    command(0);spin(3);before=stats();deadline=time.monotonic()+12
+  File "/mnt/d/HT-Helios-Collision-20261115/setup/check_rotation.py", line 25, in command
+    m=TwistStamped();m.header.stamp=n.get_clock().now().to_msg();m.header.frame_id='vehicle';m.twist.angular.z=w;pub.publish(m)
+  File "/opt/ros/humble/local/lib/python3.10/dist-packages/geometry_msgs/msg/_vector3.py", line 165, in z
+    assert \
+AssertionError: The 'z' field must be of type 'float'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/mnt/d/HT-Helios-Collision-20261115/setup/check_rotation.py", line 50, in <module>
+    command(0)
+  File "/mnt/d/HT-Helios-Collision-20261115/setup/check_rotation.py", line 25, in command
+    m=TwistStamped();m.header.stamp=n.get_clock().now().to_msg();m.header.frame_id='vehicle';m.twist.angular.z=w;pub.publish(m)
+  File "/opt/ros/humble/local/lib/python3.10/dist-packages/geometry_msgs/msg/_vector3.py", line 165, in z
+    assert \
+AssertionError: The 'z' field must be of type 'float'

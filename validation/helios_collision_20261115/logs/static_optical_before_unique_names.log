@@ -1,0 +1,76 @@
+{
+  "case": "transparent",
+  "counts": {
+    "raw": 20,
+    "filtered": 20,
+    "status": 20
+  },
+  "valid_raw_points": 46770,
+  "valid_filtered_points": 46770,
+  "ground_points_under_solid_chassis": 0,
+  "all_channel_angles_max_error_deg": 7.62939453125e-06,
+  "represented_rings": 32,
+  "front_horizontal_range_m": 4.89900016784668,
+  "wall_rate_hz": 7.424946082446942,
+  "scan_status": {
+    "time": 2,
+    "rays": 57600,
+    "hits": 46770,
+    "self_hits": 0,
+    "blind_hits": 0,
+    "forwarded": 46770,
+    "recast_self_hits": false
+  }
+}
+{
+  "case": "opaque",
+  "counts": {
+    "raw": 20,
+    "filtered": 20,
+    "status": 20
+  },
+  "valid_raw_points": 46770,
+  "valid_filtered_points": 39443,
+  "ground_points_under_solid_chassis": 0,
+  "all_channel_angles_max_error_deg": 7.62939453125e-06,
+  "represented_rings": 32,
+  "front_horizontal_range_m": 4.89900016784668,
+  "wall_rate_hz": 3.312183559538791,
+  "scan_status": {
+    "time": 2,
+    "rays": 57600,
+    "hits": 46770,
+    "self_hits": 7327,
+    "blind_hits": 0,
+    "forwarded": 39443,
+    "recast_self_hits": false
+  }
+}
+{
+  "case": "blind",
+  "counts": {
+    "raw": 20,
+    "filtered": 20,
+    "status": 20
+  },
+  "valid_raw_points": 43809,
+  "valid_filtered_points": 43809,
+  "ground_points_under_solid_chassis": 0,
+  "all_channel_angles_max_error_deg": 7.62939453125e-06,
+  "represented_rings": 32,
+  "front_horizontal_range_m": null,
+  "wall_rate_hz": 7.033440258102993,
+  "scan_status": {
+    "time": 2,
+    "rays": 57600,
+    "hits": 46770,
+    "self_hits": 0,
+    "blind_hits": 2961,
+    "forwarded": 43809,
+    "recast_self_hits": false
+  }
+}
+Traceback (most recent call last):
+  File "/mnt/d/HT-Helios-Collision-20261115/setup/static_probes.py", line 63, in <module>
+    by={r['case']:r for r in results};assert by['transparent']['ground_points_under_solid_chassis']>0
+AssertionError

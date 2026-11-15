@@ -1,0 +1,166 @@
+[
+  {
+    "run": "helios32_opaque_campus_600s_01",
+    "available_crc_checks_passed": true,
+    "metadata_counts_match": true,
+    "frozen_archive_matches_original_manifest": true,
+    "frozen_files": 316,
+    "files": [
+      {
+        "file": "bag_0.mcap",
+        "bytes": 55651684,
+        "sha256": "d069a397ef810928410e52961cfc5bc656989a7e776a6ea594da15e9b0b1cbad"
+      }
+    ],
+    "topic_counts": {
+      "/tf_static": 3,
+      "/ht_minimal/pathFollower": 257,
+      "/ht_minimal/localPlanner": 257,
+      "/ht_runtime": 1,
+      "/clock": 258,
+      "/helios_sim/scan_status": 73,
+      "/rslidar_points": 73,
+      "/tf": 33045,
+      "/state_estimation": 32941,
+      "/registered_scan": 58,
+      "/path": 58,
+      "/ht_minimal/local_selection": 58,
+      "/ht_minimal/command_audit": 7482,
+      "/cmd_vel": 7482,
+      "/state_estimation_at_scan": 56,
+      "/ht_performance": 56,
+      "/ht_traversability/global_local": 57,
+      "/ht_reasons": 56,
+      "/start_exploration": 1,
+      "/way_point": 11,
+      "/ht_minimal/recovery": 521,
+      "/filtered_frontier_cloud": 10,
+      "/uncovered_cloud": 10,
+      "/exploration_finish": 10,
+      "/local_path": 10,
+      "/global_path": 10
+    },
+    "nonzero_commands": 0,
+    "scan_status_receipt_rate_hz": 0.391614977518583,
+    "median_forwarded_points": 20018.0,
+    "command_audit_reasons": {
+      "HT_MAP_MISSING_OR_INVALID": 235,
+      "HT_MAP_STALE": 5063,
+      "HT_MISSING_SUPPORT": 2168
+    },
+    "last_gate_status": {
+      "/ht_minimal/pathFollower": {
+        "enabled": true,
+        "map_stamp": 1794749876.656558,
+        "map_age_s": 0.454381466,
+        "accepted_maps": 57,
+        "invalid_maps": 0,
+        "allowed": 0,
+        "rejected": 7429,
+        "last_reason": "HT_MISSING_SUPPORT",
+        "reasons": {
+          "HT_MAP_MISSING_OR_INVALID": 235,
+          "HT_MAP_STALE": 5054,
+          "HT_MISSING_SUPPORT": 2140
+        }
+      },
+      "/ht_minimal/localPlanner": {
+        "enabled": true,
+        "map_stamp": 1794749876.656558,
+        "map_age_s": 0.485636711,
+        "accepted_maps": 57,
+        "invalid_maps": 0,
+        "allowed": 0,
+        "rejected": 40566,
+        "last_reason": "MAP_RECEIVED",
+        "reasons": {
+          "HT_MAP_MISSING_OR_INVALID": 1428,
+          "HT_MAP_STALE": 39138
+        }
+      }
+    },
+    "acceptance_scope": "Mount-origin development model only; final optical-datum assets were corrected afterwards. Not navigation acceptance for final source."
+  },
+  {
+    "run": "helios32_opaque_campus_600s_02",
+    "available_crc_checks_passed": true,
+    "metadata_counts_match": true,
+    "frozen_archive_matches_original_manifest": true,
+    "frozen_files": 317,
+    "files": [
+      {
+        "file": "bag_0.mcap",
+        "bytes": 208393126,
+        "sha256": "84404abd1b37bd402ba52569eaacd826b7110634d07a89cae6df316e0287a4a4"
+      }
+    ],
+    "topic_counts": {
+      "/tf_static": 3,
+      "/ht_minimal/pathFollower": 725,
+      "/ht_minimal/localPlanner": 725,
+      "/ht_runtime": 1,
+      "/clock": 435,
+      "/helios_sim/scan_status": 260,
+      "/rslidar_points": 260,
+      "/tf": 127119,
+      "/state_estimation": 126868,
+      "/registered_scan": 246,
+      "/path": 246,
+      "/ht_minimal/local_selection": 246,
+      "/ht_minimal/command_audit": 30839,
+      "/cmd_vel": 30839,
+      "/ht_performance": 246,
+      "/ht_traversability/global_local": 246,
+      "/ht_reasons": 246,
+      "/state_estimation_at_scan": 243,
+      "/start_exploration": 1,
+      "/way_point": 48,
+      "/ht_minimal/recovery": 2305,
+      "/filtered_frontier_cloud": 47,
+      "/uncovered_cloud": 47,
+      "/exploration_finish": 47,
+      "/global_path": 47,
+      "/local_path": 47
+    },
+    "nonzero_commands": 0,
+    "scan_status_receipt_rate_hz": 0.39793046787052483,
+    "median_forwarded_points": 20018.0,
+    "command_audit_reasons": {
+      "HT_MAP_MISSING_OR_INVALID": 53,
+      "HT_MAP_STALE": 21199,
+      "HT_MISSING_SUPPORT": 9573
+    },
+    "last_gate_status": {
+      "/ht_minimal/pathFollower": {
+        "enabled": true,
+        "map_stamp": 1794750976.1532674,
+        "map_age_s": 1.775283098,
+        "accepted_maps": 246,
+        "invalid_maps": 0,
+        "allowed": 0,
+        "rejected": 30806,
+        "last_reason": "HT_MAP_STALE",
+        "reasons": {
+          "HT_MAP_MISSING_OR_INVALID": 53,
+          "HT_MAP_STALE": 21180,
+          "HT_MISSING_SUPPORT": 9573
+        }
+      },
+      "/ht_minimal/localPlanner": {
+        "enabled": true,
+        "map_stamp": 1794750976.1532674,
+        "map_age_s": 1.805414438,
+        "accepted_maps": 246,
+        "invalid_maps": 0,
+        "allowed": 0,
+        "rejected": 168624,
+        "last_reason": "MAP_RECEIVED",
+        "reasons": {
+          "HT_MAP_MISSING_OR_INVALID": 714,
+          "HT_MAP_STALE": 167910
+        }
+      }
+    },
+    "acceptance_scope": "Mount-origin development model only; final optical-datum assets were corrected afterwards. Not navigation acceptance for final source."
+  }
+]
