@@ -32,6 +32,16 @@ is an explicitly requested approximation, not physical near-ground acceptance.
 It does not provide wheel/contact dynamics. Navigation footprint checks, HT
 thresholds, TTL and TARE policy are unchanged.
 
+The Helios launch now applies initial_support_prior.yaml to localPlanner and
+pathFollower: a 0.65m-radius support prior anchored once at the first actual
+base_link odometry pose in map coordinates. It stays at that initial location
+without automatic expiry or expansion. Only missing support is supplied by this
+user-authorized prior; obstacle, neural score/context, boundary and map-age
+checks remain active. Measured GridMap layers are never rewritten. Command and
+gate diagnostics record the anchor, radius and prior-supplied cell count.
+The generic gate defaults to prior disabled, so other entry points do not opt in.
+When copying simulation.launch.py to a runtime, also copy initial_support_prior.yaml.
+
 To generate the previous opaque geometry in a separate folder:
 
 ```sh

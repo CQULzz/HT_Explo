@@ -23,6 +23,7 @@ def decode(m):
  raw_occupied=np.isfinite(obstacle)&(obstacle>=.5)
  rr,cc=np.nonzero(raw_occupied)
  return dict(rows=rows,cols=cols,res=res,cx=m.info.pose.position.x,cy=m.info.pose.position.y,scores=np.stack([layers['ht_dir_'+str(i)] for i in range(8)]),valid=layers['ht_valid'],missing=missing,occupied=occupied,raw_occupied=raw_occupied,
+             physical=physical,kernel=kernel,
              obstacle_x=m.info.pose.position.x+(rows*.5-rr-.5)*res,obstacle_y=m.info.pose.position.y+(cols*.5-cc-.5)*res)
 
 def check(m,d):
@@ -64,7 +65,20 @@ def check(m,d):
  elif footprint=='circle_v1':
   if m['occupied'][r,c].any():return False,'OCCUPIED',float(np.nanmin(scores))
  else:raise ValueError('Unknown obstacle footprint contract: '+footprint)
- if m['missing'][r,c].any():return False,'MISSING',float(np.nanmin(scores))
+ missing=m['missing']
+ if d.get('initial_support_prior_enabled',False) and d.get('initial_support_prior_ready',False):
+  px,py,pr=[float(d['initial_support_prior_'+k]) for k in ('x','y','radius')]
+  if not all(math.isfinite(a) for a in (px,py,pr)) or not 0<pr<=2:raise ValueError('Invalid recorded initial prior')
+  prior_key=(px,py,pr)
+  if m.get('prior_key')!=prior_key:
+   xx=m['cx']+(m['rows']*.5-np.arange(m['rows'])[:,None]-.5)*m['res']
+   yy=m['cy']+(m['cols']*.5-np.arange(m['cols'])[None,:]-.5)*m['res']
+   prior=np.hypot(xx-px,yy-py)+m['res']/math.sqrt(2)<=pr
+   unknown=(~np.isfinite(m['physical'])|(m['physical']<.5))&~prior
+   m['prior_missing']=cv2.dilate(unknown.astype('uint8'),m['kernel'],borderType=cv2.BORDER_CONSTANT,borderValue=1)
+   m['prior_key']=prior_key
+  missing=m['prior_missing']
+ if missing[r,c].any():return False,'MISSING',float(np.nanmin(scores))
  if (~np.isfinite(m['valid'][r,c])|(m['valid'][r,c]<.5)).any():return False,'CONTEXT',float(np.nanmin(scores))
  if (~np.isfinite(scores)|(scores<0)|(scores>1)).any():return False,'INVALID_SCORE',None
  return bool((scores>=.5).all()),'SCORE',float(scores.min())

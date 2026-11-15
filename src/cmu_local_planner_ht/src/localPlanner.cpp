@@ -149,6 +149,8 @@ void odometryHandler(const nav_msgs::msg::Odometry::ConstSharedPtr odom)
   vehicleYaw = yaw;
   vehicleX = odom->pose.pose.position.x - cos(yaw) * sensorOffsetX + sin(yaw) * sensorOffsetY;
   vehicleY = odom->pose.pose.position.y - sin(yaw) * sensorOffsetX - cos(yaw) * sensorOffsetY;
+  if(odom->header.frame_id=="map" || odom->header.frame_id=="/map")
+    htGate->anchorInitialSupportPrior({vehicleX,vehicleY,yaw});
   vehicleZ = odom->pose.pose.position.z;
 }
 

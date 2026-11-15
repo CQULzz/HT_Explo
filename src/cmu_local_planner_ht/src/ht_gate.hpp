@@ -34,6 +34,10 @@ class Gate {
     threshold_=node_->declare_parameter("ht_min_probability",.5);
     timeout_=node_->declare_parameter("ht_map_timeout",1.);
     radius_=node_->declare_parameter("ht_validity_radius",.6);
+    initial_prior_enabled_=node_->declare_parameter("ht_initial_support_prior_enabled",false);
+    initial_prior_radius_=node_->declare_parameter("ht_initial_support_prior_radius",.65);
+    if(!std::isfinite(initial_prior_radius_) || initial_prior_radius_<=0 || initial_prior_radius_>2.)
+      throw std::invalid_argument("Invalid initial support prior radius");
     urdf_box_=node_->declare_parameter("ht_use_urdf_envelope",false);
     const auto box_min=node_->declare_parameter<std::vector<double>>("ht_body_min_xyz",{-.3,-.3,-.3});
     const auto box_max=node_->declare_parameter<std::vector<double>>("ht_body_max_xyz",{.3,.3,.3});
@@ -139,6 +143,13 @@ class Gate {
   uint64_t allowed=0,rejected=0;
   double mapStamp() const {return stamp_;}
   double resolution() const {return res_;}
+  // Called only with measured base pose, never a hypothetical planning pose.
+  // The user-authorized initial patch is fixed in map coordinates, with no TTL.
+  void anchorInitialSupportPrior(Pose actual) {
+    if(!initial_prior_enabled_ || initial_prior_ready_ ||
+       !std::isfinite(actual.x) || !std::isfinite(actual.y) || !std::isfinite(actual.yaw))return;
+    initial_prior_x_=actual.x;initial_prior_y_=actual.y;initial_prior_ready_=true;
+  }
   void receive(const grid_map_msgs::msg::GridMap& msg) {
     try {
       if(msg.header.frame_id!="map" || msg.layers.size()!=msg.data.size() || msg.data.empty())
@@ -172,8 +183,16 @@ class Gate {
       for(int k=0;k<8;++k)scores[k]=layer("ht_dir_"+std::to_string(k));
       auto valid=layer("ht_valid"),physical=layer("ht_observation_valid"),obstacle=layer("ht_obstacle");
       cv::Mat unknown(rows,cols,CV_8U),occupied(rows,cols,CV_8U);
+      initial_prior_cells_=0;
       for(int i=0;i<rows*cols;++i) {
-        unknown.data[i]=!std::isfinite(physical[i]) || physical[i]<.5;
+        const int r=i/cols,c=i%cols;
+        const double x=msg.info.pose.position.x+(rows*.5-r-.5)*resolution;
+        const double y=msg.info.pose.position.y+(cols*.5-c-.5)*resolution;
+        const bool prior=initial_prior_enabled_ && initial_prior_ready_ &&
+          std::hypot(x-initial_prior_x_,y-initial_prior_y_)+resolution/std::sqrt(2.)<=initial_prior_radius_;
+        const bool absent=!std::isfinite(physical[i]) || physical[i]<.5;
+        unknown.data[i]=absent && !prior;
+        if(absent && prior)++initial_prior_cells_;
         occupied.data[i]=std::isfinite(obstacle[i]) && obstacle[i]>=.5;
       }
       const double inflated=radius_+std::sqrt(2.)*resolution;
@@ -304,6 +323,11 @@ class Gate {
         <<",\"body_center_x\":"<<body_center_x_<<",\"body_center_y\":"<<body_center_y_
         <<",\"body_min_z\":"<<body_min_[2]<<",\"body_max_z\":"<<body_max_[2]
         <<",\"support_radius\":"<<radius_
+        <<",\"initial_support_prior_enabled\":"<<(initial_prior_enabled_?"true":"false")
+        <<",\"initial_support_prior_ready\":"<<(initial_prior_ready_?"true":"false")
+        <<",\"initial_support_prior_x\":"<<initial_prior_x_<<",\"initial_support_prior_y\":"<<initial_prior_y_
+        <<",\"initial_support_prior_radius\":"<<initial_prior_radius_
+        <<",\"initial_support_prior_cells\":"<<initial_prior_cells_
         <<",\"angular_brake_accel\":"<<brake_angular_<<",\"horizon_s\":"<<horizon
         <<",\"allowed\":"<<(ok?"true":"false")<<",\"reason\":\""<<last_reason<<"\"}";
       std_msgs::msg::String msg;msg.data=out.str();command_audit_->publish(msg);
@@ -312,6 +336,9 @@ class Gate {
   }
  private:
   bool urdf_box_=false;
+  bool initial_prior_enabled_=false,initial_prior_ready_=false;
+  double initial_prior_radius_=.65,initial_prior_x_=0,initial_prior_y_=0;
+  size_t initial_prior_cells_=0;
   std::array<double,3> body_min_{{-.3,-.3,-.3}},body_max_{{.3,.3,.3}};
   double body_center_x_=0,body_center_y_=0;
   void count(bool ok){if(ok)++allowed;else {++rejected;++reasons_[last_reason];}}
@@ -319,6 +346,10 @@ class Gate {
     std::ostringstream s;s<<"{\"enabled\":true,\"map_stamp\":"<<std::fixed<<std::setprecision(9)<<stamp_
       <<",\"map_age_s\":"<<node_->now().seconds()-stamp_<<",\"accepted_maps\":"<<maps_
       <<",\"invalid_maps\":"<<invalid_maps_<<",\"allowed\":"<<allowed<<",\"rejected\":"<<rejected
+      <<",\"initial_support_prior_enabled\":"<<(initial_prior_enabled_?"true":"false")
+      <<",\"initial_support_prior_ready\":"<<(initial_prior_ready_?"true":"false")
+      <<",\"initial_support_prior_x\":"<<initial_prior_x_<<",\"initial_support_prior_y\":"<<initial_prior_y_
+      <<",\"initial_support_prior_radius\":"<<initial_prior_radius_<<",\"initial_support_prior_cells\":"<<initial_prior_cells_
       <<",\"last_reason\":\""<<last_reason<<"\",\"reasons\":{";
     bool first=true;for(const auto& p:reasons_){if(!first)s<<",";first=false;s<<"\""<<p.first<<"\":"<<p.second;}
     s<<"}}";std_msgs::msg::String msg;msg.data=s.str();diagnostics_->publish(msg);

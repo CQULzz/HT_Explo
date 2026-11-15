@@ -1,0 +1,10 @@
+# User-authorized stationary initial patch. Radius includes complete cell extents.
+# Only execution support is augmented; neural scores and measured maps stay intact.
+/localPlanner:
+  ros__parameters:
+    ht_initial_support_prior_enabled: true
+    ht_initial_support_prior_radius: 0.65
+/pathFollower:
+  ros__parameters:
+    ht_initial_support_prior_enabled: true
+    ht_initial_support_prior_radius: 0.65

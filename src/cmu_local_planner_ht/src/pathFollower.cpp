@@ -117,6 +117,8 @@ void odomHandler(const nav_msgs::msg::Odometry::ConstSharedPtr odomIn)
   vehicleYaw = yaw;
   vehicleX = odomIn->pose.pose.position.x - cos(yaw) * sensorOffsetX + sin(yaw) * sensorOffsetY;
   vehicleY = odomIn->pose.pose.position.y - sin(yaw) * sensorOffsetX - cos(yaw) * sensorOffsetY;
+  if(odomIn->header.frame_id=="map" || odomIn->header.frame_id=="/map")
+    htGate->anchorInitialSupportPrior({vehicleX,vehicleY,yaw});
   vehicleZ = odomIn->pose.pose.position.z;
 
   if ((fabs(roll) > inclThre * PI / 180.0 || fabs(pitch) > inclThre * PI / 180.0) && useInclToStop) {
