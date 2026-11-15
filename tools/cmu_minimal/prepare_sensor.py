@@ -1,7 +1,8 @@
-"""Prepare the corrected Helios32/opaque Scout profile.
+"""Prepare the current Helios32 Scout profile (box crop by default).
 
 Historical transparent assets stay in old experiment directories; this entry
-does not remove collision geometry or overwrite those historical inputs.
+does not overwrite those historical inputs. New crop assets omit body collisions;
+--self-filter collision_identity retains opaque geometry in a new output folder.
 """
 from pathlib import Path
 import runpy

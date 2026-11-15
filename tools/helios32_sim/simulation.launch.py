@@ -12,7 +12,7 @@ ROOT=Path(os.environ.get('HT_HELIOS_ROOT','/home/lzz/ht_helios_collision_2026111
 def start(context):
     scene=LaunchConfiguration('scene').perform(context)
     if scene not in ('campus','indoor'):raise ValueError('Unsupported scene')
-    common=Path(os.environ.get('HT_HELIOS_ASSETS',str(ROOT/'common_sensor_optical')));manifest=json.loads((common/'MANIFEST.json').read_text());height=manifest['lidar_height_above_ground_m'];offset=manifest['base_link_to_lidar_xyz'][0]
+    common=Path(os.environ.get('HT_HELIOS_ASSETS',str(ROOT/'common_sensor_crop_box')));manifest=json.loads((common/'MANIFEST.json').read_text());height=manifest['lidar_height_above_ground_m'];offset=manifest['base_link_to_lidar_xyz'][0]
     source=Path(get_package_share_directory('vehicle_simulator'))/'launch/vehicle_simulator.launch';module=SourceFileLoader('scout_helios_carrier',str(source)).load_module();original=module.Node;spawn_index=[0]
     if scene=='campus':module.TimerAction=lambda **kw:TimerAction(period=90.,actions=kw['actions'])
     def node(*args,**kwargs):

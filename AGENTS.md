@@ -225,3 +225,7 @@ RViz视频已完成并全片解码检查：完整4倍速155秒/1920×1080/20fps�
 本批两次开发启动已保留并关闭账本：首次缺camera位姿锚点中止，第二次600.003秒/0米、finish=false，零非零速度；独立MCAP/metadata/冻结归档校验通过。随后发现源URDF的rslidar别名位于支架安装面，向下射线零距离撞支架；最终仿真按厂家手册增加63.5mm光学高度（离地0.84849m、base_link以上0.6137m），不改变实车TF或车体世界位置。新资产common_sensor_optical保留，旧common_sensor及两次完整开发试跑不冒称最终验收。最终静态32线误差<0.00001度，7327条自车回波过滤且不重投射；透明/遮挡两种最终模型实体底盘下均0地面点，不继续用开发模型145→0作为最终指标。90度附近转向配准探针通过；CPU静态3.34Hz墙钟、旧完整链路约0.40Hz，配置10Hz是仿真时间。没有追加最终600秒导航/起步验收，不能称实车近地缺测已解决。源码编译及精简记录见validation/helios_collision_20261115/REPORT_zh.md；原始数据全留本地，无实车/Release/删除操作。
 
 最终SDF三份通过gz sdf -k，static/90度配准复查通过；SIGINT后仍有FastDDS publisher销毁报错及载体段错误，运行检查通过不包含干净退出。保留原日志，不声称退出清理修复完成。
+
+## 2026-11-16：用户要求外接框裁剪并推送标签
+
+用户明确要求先改车体为外接框裁剪试用，并上传对应GitHub分支、打标签。沿用fix/ht-execution-20261113。新生成资产默认crop_box：车体visual保留、车体collision移除，采用固定URDF全部visual/collision并集的三维框在rslidar坐标裁剪回波端点；旧opaque资产和collision_identity可选模式保留。这个新明确要求覆盖上轮新模型必须完整车体遮挡的默认配置；框裁剪不保持车体阴影，框内真实外部障碍也会被移除，不能称实车缺测或安全验收通过。HT/TTL/TARE和规划包络未改。独立Release编译、SDF格式和一次有界静态探针通过：579点删除，42877框外有效点不变，约6.972Hz墙钟，静态gzserver正常退出且无残留；未启动载体/导航，未新增campus完整实验。独立目录/home/lzz/ht_crop_box_20261116，静态预算1/1已关闭。代码和精简证据上传，计划注释标签ht-helios-crop-box-20261116-v1；不新增Release或上传原始包。详情validation/helios_crop_box_20261116/REPORT_zh.md。

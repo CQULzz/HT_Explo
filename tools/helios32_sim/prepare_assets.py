@@ -1,7 +1,7 @@
-"""Generate opaque Scout geometry and a nominal nonuniform Helios32 sensor.
+"""Generate a nominal Helios32 sensor with box crop or opaque self filtering.
 
-Never modifies an existing historical simulation profile. All visual meshes are
-also made opaque collisions because rack/sensor URDF visuals lack collision tags.
+Never modifies historical profiles. Box crop uses a transparent vehicle;
+collision_identity makes all visual meshes opaque for body-shadow controls.
 """
 from pathlib import Path
 import argparse,copy,hashlib,importlib.util,json,math,shutil,subprocess
@@ -17,7 +17,8 @@ def pose_string(t):
     r=t[:3,:3];pitch=math.atan2(-r[2,0],math.hypot(r[0,0],r[1,0]));roll=math.atan2(r[2,1],r[2,2]);yaw=math.atan2(r[1,0],r[0,0])
     return ' '.join(f'{x:.15g}' for x in [*t[:3,3],roll,pitch,yaw])
 
-def prepare(package_dir,out,profile):
+def prepare(package_dir,out,profile,self_filter='crop_box'):
+    if self_filter not in ('crop_box','collision_identity'):raise ValueError('Unknown self filter')
     out.mkdir(parents=True,exist_ok=False);(out/'meshes').mkdir()
     helper=Path(__file__).resolve().parents[1]/'vehicle_envelope/from_urdf.py';spec=importlib.util.spec_from_file_location('urdf_geometry',helper);geometry=importlib.util.module_from_spec(spec);spec.loader.exec_module(geometry)
     source=package_dir/'urdf/scout_sensor_rack.urdf.xacro'
@@ -31,6 +32,10 @@ def prepare(package_dir,out,profile):
     # rack top. Use the manual's nominal optical datum, not that mounting plane.
     optical=absolute('rslidar').copy();optical[:3,3]+=optical[:3,:3]@np.array([0.,0.,.0635])
     to_sensor=np.linalg.inv(optical);base_to_sensor=np.linalg.inv(absolute('base_link'))@optical
+    envelope=geometry.derive(out/'scout_expanded.urdf',package_dir)
+    if not np.allclose(base_to_sensor[:3,:3],np.eye(3),atol=1e-9):raise ValueError('Crop box requires aligned sensor/base axes')
+    crop_min=np.array(envelope['min_xyz'])-base_to_sensor[:3,3]
+    crop_max=np.array(envelope['max_xyz'])-base_to_sensor[:3,3]
     model=ET.Element('sdf',version='1.7');body=element(model,'model',name='robot');element(body,'static','false');link=element(body,'link',name='body');element(link,'gravity','false');element(link,'kinematic','true')
     inertial=element(link,'inertial');element(inertial,'mass','40');inertia=element(inertial,'inertia')
     for name,value in [('ixx',10),('iyy',10),('izz',10),('ixy',0),('ixz',0),('iyz',0)]:element(inertia,name,value)
@@ -55,7 +60,8 @@ def prepare(package_dir,out,profile):
                 transform=to_sensor@absolute(name)@geometry.transform(item.find('origin'));g=sdf_geometry(item.find('geometry'))
                 if tag=='visual':
                     v=element(link,'visual',name=f'{name}_visual_{index}');element(v,'pose',pose_string(transform));v.append(copy.deepcopy(g))
-                collision_name=f'opaque_{name}_{tag}_{index}';c=element(link,'collision',name=collision_name);element(c,'pose',pose_string(transform));c.append(g);collisions.append(collision_name)
+                if self_filter=='collision_identity':
+                    collision_name=f'opaque_{name}_{tag}_{index}';c=element(link,'collision',name=collision_name);element(c,'pose',pose_string(transform));c.append(g);collisions.append(collision_name)
     ET.ElementTree(model).write(out/'robot.sdf',encoding='unicode')
     # A ray starts immediately OUTSIDE its own optical window. Its casing is
     # still an opaque collision mesh. Starting at output_min_range would let
@@ -69,6 +75,10 @@ def prepare(package_dir,out,profile):
     v=element(scan,'vertical');element(v,'samples',32);element(v,'resolution',1);element(v,'min_angle',math.radians(min(profile['vertical_angles_deg'])));element(v,'max_angle',math.radians(max(profile['vertical_angles_deg'])))
     bounds=element(ray,'range');element(bounds,'min',0);element(bounds,'max',150);element(bounds,'resolution',.0025)
     p=element(s,'plugin',name='helios32_ray',filename='libhelios32_ray.so');element(p,'vertical_angles_deg',' '.join(map(str,profile['vertical_angles_deg'])));element(p,'channel_max_ranges_m',' '.join(map(str,profile['channel_max_ranges_m'])));element(p,'optical_window_radius_m',window);element(p,'output_min_range_m',profile['output_min_range_m']);element(p,'frame_name','rslidar')
+    element(p,'self_filter_mode',self_filter)
+    if self_filter=='crop_box':
+        element(p,'crop_min_xyz',' '.join(map(str,crop_min)))
+        element(p,'crop_max_xyz',' '.join(map(str,crop_max)))
     ET.ElementTree(lidar).write(out/'lidar.sdf',encoding='unicode')
     # CMU's carrier updates a camera pose entity even with RGB disabled. The
     # real camera mesh is already in robot.sdf; this is only an empty pose anchor.
@@ -76,7 +86,9 @@ def prepare(package_dir,out,profile):
     description=ET.Element('robot',name='helios32_frames');element(description,'link',name='sensor');element(description,'link',name='rslidar');joint=element(description,'joint',name='sensor_to_rslidar',type='fixed');element(joint,'parent',link='sensor');element(joint,'child',link='rslidar');element(joint,'origin',xyz='0 0 0',rpy='0 0 0')
     element(description,'link',name='base_link');joint=element(description,'joint',name='sensor_to_scout_base',type='fixed');element(joint,'parent',link='sensor');element(joint,'child',link='base_link');values=pose_string(np.linalg.inv(base_to_sensor)).split();element(joint,'origin',xyz=' '.join(values[:3]),rpy=' '.join(values[3:]));ET.ElementTree(description).write(out/'lidar.urdf',encoding='unicode')
     metadata={'source_repository':'CQULzz/eletranskit_scout','source_commit':'cf0b73d7d01b4b6a2718c7ff3124f4b7a3368c36','urdf_sha256':hashlib.sha256(source.read_bytes()).hexdigest(),'mesh_sha256':inventory,'opaque_collisions':collisions,'collision_count':len(collisions),'base_link_to_lidar_xyz':base_to_sensor[:3,3].tolist(),'lidar_height_above_ground_m':float(optical[2,3]),'mount_to_optical_z_m':.0635,'optical_window_radius_m':window,'optical_scope':'Nominal manual optical origin 63.5mm above mounting base; source alias treated as mounting datum at rack top. Exit window just outside housing mesh. Not recovered physical extrinsic calibration. No general vehicle collision exclusion.','profile':profile}
+    metadata.update(self_filter_mode=self_filter,crop_box_frame='rslidar',crop_min_xyz=crop_min.tolist(),crop_max_xyz=crop_max.tolist(),body_envelope_base_link=envelope,
+                    shadow_scope='Box-only endpoint removal; transparent body, no body shadow simulation.' if self_filter=='crop_box' else 'Opaque nearest hit, owned-body returns removed without recast.')
     (out/'MANIFEST.json').write_text(json.dumps(metadata,indent=2));return metadata
 
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('--package-dir',type=Path,required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--profile',type=Path,default=Path(__file__).with_name('helios_5515.json'));a=p.parse_args();metadata=prepare(a.package_dir,a.output,json.loads(a.profile.read_text()));print(json.dumps({k:metadata[k] for k in ['collision_count','base_link_to_lidar_xyz','lidar_height_above_ground_m','optical_window_radius_m']},indent=2))
+    p=argparse.ArgumentParser();p.add_argument('--package-dir',type=Path,required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--profile',type=Path,default=Path(__file__).with_name('helios_5515.json'));p.add_argument('--self-filter',choices=['crop_box','collision_identity'],default='crop_box');a=p.parse_args();metadata=prepare(a.package_dir,a.output,json.loads(a.profile.read_text()),a.self_filter);print(json.dumps({k:metadata[k] for k in ['self_filter_mode','collision_count','crop_min_xyz','crop_max_xyz','lidar_height_above_ground_m']},indent=2))
