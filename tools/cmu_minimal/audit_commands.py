@@ -20,7 +20,10 @@ def decode(m):
  physical=layers['ht_observation_valid'];obstacle=layers['ht_obstacle']
  missing=cv2.dilate((~np.isfinite(physical)|(physical<.5)).astype('uint8'),kernel,borderType=cv2.BORDER_CONSTANT,borderValue=1)
  occupied=cv2.dilate((np.isfinite(obstacle)&(obstacle>=.5)).astype('uint8'),kernel,borderType=cv2.BORDER_CONSTANT,borderValue=0)
- return dict(rows=rows,cols=cols,res=res,cx=m.info.pose.position.x,cy=m.info.pose.position.y,scores=np.stack([layers['ht_dir_'+str(i)] for i in range(8)]),valid=layers['ht_valid'],missing=missing,occupied=occupied,raw_occupied=np.isfinite(obstacle)&(obstacle>=.5))
+ raw_occupied=np.isfinite(obstacle)&(obstacle>=.5)
+ rr,cc=np.nonzero(raw_occupied)
+ return dict(rows=rows,cols=cols,res=res,cx=m.info.pose.position.x,cy=m.info.pose.position.y,scores=np.stack([layers['ht_dir_'+str(i)] for i in range(8)]),valid=layers['ht_valid'],missing=missing,occupied=occupied,raw_occupied=raw_occupied,
+             obstacle_x=m.info.pose.position.x+(rows*.5-rr-.5)*res,obstacle_y=m.info.pose.position.y+(cols*.5-cc-.5)*res)
 
 def check(m,d):
  v=d['linear_candidate'];w=d['angular_candidate']
@@ -42,18 +45,22 @@ def check(m,d):
  channel=np.floor((np.arctan2(np.sin(yaw),np.cos(yaw))+2*np.pi)/(np.pi/4)+.5).astype(int)%8
  scores=m['scores'][channel,r,c]
  footprint=d.get('obstacle_footprint','circle_v1')
- if footprint=='oriented_box_v1':
+ if footprint in ('oriented_box_v1','urdf_box_xy_v1'):
   length=float(d['body_length']);width=float(d['body_width']);support=float(d['support_radius'])
-  if not all(math.isfinite(a) and a>0 for a in (length,width,support)) or math.hypot(length/2,width/2)>support+1e-9:
+  bx=float(d.get('body_center_x',0));by=float(d.get('body_center_y',0))
+  reach=math.hypot(abs(bx)+length/2,abs(by)+width/2)
+  if not all(math.isfinite(a) and a>0 for a in (length,width,support)) or not all(math.isfinite(a) for a in (bx,by)) or reach>support+1e-8:
    return False,'BODY_CONFIG',None
   if abs(support-RADIUS)>1e-9:raise ValueError('Audit --radius differs from recorded support radius')
-  margin=m['res']/math.sqrt(2)+.01+math.hypot(length/2,width/2)*math.pi/128
-  rr,cc=np.indices((m['rows'],m['cols']))
-  gx=m['cx']+(m['rows']*.5-rr-.5)*m['res'];gy=m['cy']+(m['cols']*.5-cc-.5)*m['res']
+  margin=m['res']/math.sqrt(2)+.01+reach*math.pi/128
+  # Occupied-cell coordinates are immutable per decoded map. Testing only
+  # these cells is equivalent to intersecting the dense rectangle mask with
+  # raw_occupied, and avoids rebuilding whole-map arrays for every command.
+  gx,gy=m['obstacle_x'],m['obstacle_y']
   for px,py,angle in zip(x,y,yaw):
    dx=gx-px;dy=gy-py;cs=math.cos(angle);sn=math.sin(angle)
-   mask=(np.abs(cs*dx+sn*dy)<=length/2+margin)&(np.abs(-sn*dx+cs*dy)<=width/2+margin)
-   if np.any(mask&m['raw_occupied']):return False,'OCCUPIED',float(np.nanmin(scores))
+   mask=(np.abs(cs*dx+sn*dy-bx)<=length/2+margin)&(np.abs(-sn*dx+cs*dy-by)<=width/2+margin)
+   if np.any(mask):return False,'OCCUPIED',float(np.nanmin(scores))
  elif footprint=='circle_v1':
   if m['occupied'][r,c].any():return False,'OCCUPIED',float(np.nanmin(scores))
  else:raise ValueError('Unknown obstacle footprint contract: '+footprint)

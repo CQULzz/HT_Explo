@@ -1,0 +1,32 @@
+{
+  "maximum_formal_launch_attempts": 3,
+  "planned_runs": [
+    {
+      "envelope": "baseline",
+      "scene": "campus",
+      "duration_s": 600
+    },
+    {
+      "envelope": "urdf",
+      "scene": "campus",
+      "duration_s": 600
+    }
+  ],
+  "extra_attempt": "infrastructure failure retry only; no new navigation candidates",
+  "attempts": [
+    {
+      "name": "baseline_campus_600s_01",
+      "scene": "campus",
+      "wall_time": 1794738640.2923474,
+      "collection_complete": true
+    },
+    {
+      "name": "urdf_campus_600s_01",
+      "scene": "campus",
+      "wall_time": 1794739417.6864097,
+      "collection_complete": true
+    }
+  ],
+  "closed": true,
+  "reason": "Both planned 600s runs finished; no extra candidate or retry required."
+}

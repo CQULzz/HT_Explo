@@ -1,0 +1,38 @@
+{
+  "results": [
+    {
+      "recording": "baseline",
+      "scope": "First map each 10s, hypothetical XY offsets -2..2m at 0.5m intervals and 8 body headings. Same fresh map and HT thresholds, old/new body and corresponding support circles. Not a motion-planning or collision-truth test.",
+      "counts": {
+        "maps": 60,
+        "poses": 38880,
+        "old_True_urdf_True": 30780,
+        "old_False_urdf_False": 7638,
+        "old_True_urdf_False": 462,
+        "new_rejection_OCCUPIED": 457,
+        "new_rejection_MISSING_SUPPORT": 5
+      }
+    },
+    {
+      "recording": "urdf",
+      "scope": "First map each 10s, hypothetical XY offsets -2..2m at 0.5m intervals and 8 body headings. Same fresh map and HT thresholds, old/new body and corresponding support circles. Not a motion-planning or collision-truth test.",
+      "counts": {
+        "maps": 60,
+        "poses": 38880,
+        "old_True_urdf_True": 28624,
+        "old_False_urdf_False": 9691,
+        "old_True_urdf_False": 565,
+        "new_rejection_OCCUPIED": 555,
+        "new_rejection_MISSING_SUPPORT": 10
+      }
+    }
+  ],
+  "example": {
+    "recording": "baseline",
+    "map_elapsed_s": 30.00217080116272,
+    "x": 11.058870315551758,
+    "y": -1.353311538696289,
+    "yaw": 0.0,
+    "scope": "Hypothetical nearby pose on recorded map, not an executed vehicle pose or command."
+  }
+}

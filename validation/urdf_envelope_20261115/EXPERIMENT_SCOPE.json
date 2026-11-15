@@ -1,0 +1,21 @@
+{
+  "scene": "AEDE campus",
+  "same_world_spawn_sensor_tare_weights_controller": true,
+  "urdf_repository": "CQULzz/eletranskit_scout",
+  "urdf_commit": "cf0b73d7d01b4b6a2718c7ff3124f4b7a3368c36",
+  "occupancy": "2D conservative XY projection of full URDF box; no vertical clearance relaxation",
+  "body_frame_alignment": "URDF base_link XY attached to CMU vehicle reference; existing simulated sensor and its height unchanged; not full Scout hardware/physics",
+  "support_radius_change": [
+    0.45,
+    0.5818223017504605
+  ],
+  "support_rationale": "larger body requires a larger known-ground and boundary support circle; no probability/TTL/unknown threshold relaxation",
+  "omitted_bag_topics": [
+    "/sensor_scan",
+    "/terrain_map",
+    "/terrain_map_ext",
+    "/elevation_mapping/elevation_map_raw",
+    "/free_paths"
+  ],
+  "sampling_randomness": "same configuration and origin; native TARE and ROS scheduling are not deterministic; single pair cannot prove causal efficiency improvement"
+}

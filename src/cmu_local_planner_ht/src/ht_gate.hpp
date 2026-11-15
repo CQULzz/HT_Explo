@@ -34,6 +34,17 @@ class Gate {
     threshold_=node_->declare_parameter("ht_min_probability",.5);
     timeout_=node_->declare_parameter("ht_map_timeout",1.);
     radius_=node_->declare_parameter("ht_validity_radius",.6);
+    urdf_box_=node_->declare_parameter("ht_use_urdf_envelope",false);
+    const auto box_min=node_->declare_parameter<std::vector<double>>("ht_body_min_xyz",{-.3,-.3,-.3});
+    const auto box_max=node_->declare_parameter<std::vector<double>>("ht_body_max_xyz",{.3,.3,.3});
+    if(urdf_box_) {
+      if(box_min.size()!=3 || box_max.size()!=3)throw std::invalid_argument("URDF envelope requires XYZ bounds");
+      for(int i=0;i<3;++i) {
+        if(!std::isfinite(box_min[i]) || !std::isfinite(box_max[i]) || box_min[i]>=box_max[i] || box_max[i]-box_min[i]>6)
+          throw std::invalid_argument("Invalid URDF envelope bounds");
+        body_min_[i]=box_min[i];body_max_[i]=box_max[i];
+      }
+    }
     reaction_=node_->declare_parameter("ht_reaction_time",.1);
     brake_linear_=node_->declare_parameter("ht_linear_brake_accel",2.5);
     brake_angular_=node_->declare_parameter("ht_angular_brake_accel",3.);
@@ -65,16 +76,21 @@ class Gate {
   // CMU supplies its configured full body envelope in the vehicle frame.
   // Keep support, HT scores, boundary and TTL independent of this refinement.
   void setBodyEnvelope(double length,double width) {
+    if(urdf_box_) {
+      length=body_max_[0]-body_min_[0];width=body_max_[1]-body_min_[1];
+      body_center_x_=(body_min_[0]+body_max_[0])/2;
+      body_center_y_=(body_min_[1]+body_max_[1])/2;
+    }
     if(!std::isfinite(length)||!std::isfinite(width)||length<=0||width<=0||length>6||width>6)
       throw std::invalid_argument("Invalid HT body envelope");
-    if(std::hypot(length/2,width/2)>radius_+1e-9)
+    if(std::hypot(std::abs(body_center_x_)+length/2,std::abs(body_center_y_)+width/2)>radius_+1e-9)
       throw std::invalid_argument("Body envelope exceeds HT support/boundary radius");
     body_half_length_=length/2;body_half_width_=width/2;
   }
   bool bodyOccupied(Pose p) const {
     if(body_half_length_<=0 || body_half_width_<=0)return true;
     // Cell extent plus the maximum translation/rotation between sweep samples.
-    const double reach=std::hypot(body_half_length_,body_half_width_);
+    const double reach=std::hypot(std::abs(body_center_x_)+body_half_length_,std::abs(body_center_y_)+body_half_width_);
     const double margin=res_/std::sqrt(2.)+.01+reach*pi/128;
     const int n=std::ceil((reach+margin)/res_)+1;
     const int rr=std::floor(rows_*.5-(p.x-cx_)/res_),cc=std::floor(cols_*.5-(p.y-cy_)/res_);
@@ -85,7 +101,7 @@ class Gate {
     const double cosine=std::cos(p.yaw),sine=std::sin(p.yaw);
     for(int r=rr-n;r<=rr+n;++r)for(int c=cc-n;c<=cc+n;++c) {
       const double dx=cx_+(rows_*.5-r-.5)*res_-p.x,dy=cy_+(cols_*.5-c-.5)*res_-p.y;
-      const double x=cosine*dx+sine*dy,y=-sine*dx+cosine*dy;
+      const double x=cosine*dx+sine*dy-body_center_x_,y=-sine*dx+cosine*dy-body_center_y_;
       if(std::abs(x)>body_half_length_+margin||std::abs(y)>body_half_width_+margin)continue;
       if(r<0||c<0||r>=rows_||c>=cols_||raw_occupied_.at<unsigned char>(r,c))return true;
     }
@@ -283,8 +299,10 @@ class Gate {
         <<",\"x\":"<<start.x<<",\"y\":"<<start.y<<",\"yaw\":"<<start.yaw
         <<",\"linear_candidate\":"<<linear<<",\"angular_candidate\":"<<angular
         <<",\"reaction_time\":"<<reaction_<<",\"linear_brake_accel\":"<<brake_linear_
-        <<",\"obstacle_footprint\":\""<<(body_half_length_>0?"oriented_box_v1":"circle_v1")<<"\""
+        <<",\"obstacle_footprint\":\""<<(urdf_box_?"urdf_box_xy_v1":body_half_length_>0?"oriented_box_v1":"circle_v1")<<"\""
         <<",\"body_length\":"<<2*body_half_length_<<",\"body_width\":"<<2*body_half_width_
+        <<",\"body_center_x\":"<<body_center_x_<<",\"body_center_y\":"<<body_center_y_
+        <<",\"body_min_z\":"<<body_min_[2]<<",\"body_max_z\":"<<body_max_[2]
         <<",\"support_radius\":"<<radius_
         <<",\"angular_brake_accel\":"<<brake_angular_<<",\"horizon_s\":"<<horizon
         <<",\"allowed\":"<<(ok?"true":"false")<<",\"reason\":\""<<last_reason<<"\"}";
@@ -293,6 +311,9 @@ class Gate {
     return ok;
   }
  private:
+  bool urdf_box_=false;
+  std::array<double,3> body_min_{{-.3,-.3,-.3}},body_max_{{.3,.3,.3}};
+  double body_center_x_=0,body_center_y_=0;
   void count(bool ok){if(ok)++allowed;else {++rejected;++reasons_[last_reason];}}
   void report() {
     std::ostringstream s;s<<"{\"enabled\":true,\"map_stamp\":"<<std::fixed<<std::setprecision(9)<<stamp_

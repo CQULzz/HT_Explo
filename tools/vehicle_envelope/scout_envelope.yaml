@@ -1,0 +1,18 @@
+# Derived from eletranskit_scout cf0b73d; base_link-aligned full visual/collision union.
+# Use with the ht_only execution adapter. Both consumers must use the same box.
+/localPlanner:
+  ros__parameters:
+    ht_use_urdf_envelope: true
+    ht_body_min_xyz: [-0.4649301, -0.3497950000007719, -0.2351843]
+    ht_body_max_xyz: [0.4649308, 0.34979500000080593, 0.6502000536441803]
+    ht_validity_radius: 0.5818223017504605
+    vehicleLength: 0.9298609
+    vehicleWidth: 0.6995900000015778
+/pathFollower:
+  ros__parameters:
+    ht_use_urdf_envelope: true
+    ht_body_min_xyz: [-0.4649301, -0.3497950000007719, -0.2351843]
+    ht_body_max_xyz: [0.4649308, 0.34979500000080593, 0.6502000536441803]
+    ht_validity_radius: 0.5818223017504605
+    vehicleLength: 0.9298609
+    vehicleWidth: 0.6995900000015778
