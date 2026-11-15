@@ -444,8 +444,8 @@ class CupyToHt(Node):
         result.info.length_x = output_side * resolution
         result.info.length_y = output_side * resolution
         # Keep measured obstacle geometry distinct from learned vehicle scores.
-        result.layers = [f"ht_dir_{k}" for k in range(8)] + ["ht_valid", "ht_observation_valid", "ht_obstacle", "ht_elevation"]
-        if self.small_holes:result.layers += ['ht_measured_valid','ht_interpolated']
+        result.layers = [f"ht_dir_{k}" for k in range(8)] + ["ht_valid", "ht_observation_valid", "ht_obstacle", "ht_elevation", "ht_measured_valid"]
+        if self.small_holes:result.layers += ['ht_interpolated']
         if self.qualify_evidence:result.layers += ['ht_uncertain_evidence']
         result.basic_layers = ["ht_valid"]
         result.outer_start_index = 0
@@ -465,7 +465,7 @@ class CupyToHt(Node):
                                  inference_elevation[25:-25, 25:-25], np.nan).astype(np.float32)
             elif result.layers[k]=='ht_uncertain_evidence':
                 layer=physical_exclusion[25:-25,25:-25].astype(np.float32)
-            elif k == 12:
+            elif result.layers[k]=='ht_measured_valid':
                 layer=observed[25:-25,25:-25].astype(np.float32)
             else:
                 layer=inferred[25:-25,25:-25].astype(np.float32)

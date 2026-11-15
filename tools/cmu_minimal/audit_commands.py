@@ -23,10 +23,13 @@ def decode(m):
  raw_occupied=np.isfinite(obstacle)&(obstacle>=.5)
  rr,cc=np.nonzero(raw_occupied)
  return dict(rows=rows,cols=cols,res=res,cx=m.info.pose.position.x,cy=m.info.pose.position.y,scores=np.stack([layers['ht_dir_'+str(i)] for i in range(8)]),valid=layers['ht_valid'],missing=missing,occupied=occupied,raw_occupied=raw_occupied,
-             physical=physical,kernel=kernel,
+             physical=physical,kernel=kernel,obstacle_layer=obstacle,measured=layers.get('ht_measured_valid',np.zeros_like(physical)),stamp=m.header.stamp.sec+m.header.stamp.nanosec*1e-9,
              obstacle_x=m.info.pose.position.x+(rows*.5-rr-.5)*res,obstacle_y=m.info.pose.position.y+(cols*.5-cc-.5)*res)
 
 def check(m,d):
+ if d.get('initial_support_prior_policy')=='explicit_labels_v1' and d.get('initial_support_prior_enabled') and d.get('initial_support_prior_ready'):
+  if 'effective' not in m:raise ValueError('Explicit-label history was not reconstructed')
+  m=m['effective']
  v=d['linear_candidate'];w=d['angular_candidate']
  if 'reaction_time' in d:
   reaction=d['reaction_time'];av=d['linear_brake_accel'];aw=d['angular_brake_accel'];horizon=reaction+max(abs(v)/av,abs(w)/aw)
@@ -83,6 +86,29 @@ def check(m,d):
  if (~np.isfinite(scores)|(scores<0)|(scores>1)).any():return False,'INVALID_SCORE',None
  return bool((scores>=.5).all()),'SCORE',float(scores.min())
 
+class InitialLabels:
+ """Reconstruct explicit startup labels from recorded raw maps, never future maps."""
+ def __init__(self,px,py,radius):self.px,self.py,self.radius=px,py,radius;self.labels={};self.last=-float('inf')
+ def apply(self,m):
+  if m['stamp']<=self.last:return
+  self.last=m['stamp'];e=dict(m)
+  for k in ['physical','valid','scores','raw_occupied']:e[k]=m[k].copy()
+  xx=m['cx']+(m['rows']*.5-np.arange(m['rows'])[:,None]-.5)*m['res'];yy=m['cy']+(m['cols']*.5-np.arange(m['cols'])[None,:]-.5)*m['res']
+  xx,yy=np.broadcast_arrays(xx,yy);prior=np.hypot(xx-self.px,yy-self.py)+m['res']/math.sqrt(2)<=self.radius
+  actual=0
+  for r,c in zip(*np.nonzero(prior)):
+   key=(round(float(xx[r,c]/m['res'])),round(float(yy[r,c]/m['res'])))
+   blocked=bool(m['raw_occupied'][r,c]);s=m['scores'][:,r,c]
+   clear=m['measured'][r,c]>=.5 and m['physical'][r,c]>=.5 and m['valid'][r,c]>=.5 and np.isfinite(m['obstacle_layer'][r,c]) and np.isfinite(s).all() and ((s>=0)&(s<=1)).all()
+   fresh=0<=m.get('received',m['stamp'])-m['stamp']<=1.
+   if fresh and (blocked or clear):self.labels[key]=(blocked,np.zeros(8,np.float32) if blocked else s.copy())
+   if key in self.labels:
+    b,s=self.labels[key];actual+=1;e['physical'][r,c]=1;e['valid'][r,c]=1;e['raw_occupied'][r,c]=b;e['scores'][:,r,c]=s
+   else:e['physical'][r,c]=1;e['valid'][r,c]=1;e['raw_occupied'][r,c]=False;e['scores'][:,r,c]=1
+  rr,cc=np.nonzero(e['raw_occupied']);e['obstacle_x']=xx[rr,cc];e['obstacle_y']=yy[rr,cc]
+  e['occupied']=cv2.dilate(e['raw_occupied'].astype('uint8'),m['kernel'],borderType=cv2.BORDER_CONSTANT,borderValue=0)
+  e['actual_count']=actual;m['effective']=e
+
 def main():
  p=argparse.ArgumentParser();p.add_argument('run',type=Path);p.add_argument('--radius',type=float,default=.45);a=p.parse_args();run=a.run
  global RADIUS;RADIUS=a.radius
@@ -91,12 +117,19 @@ def main():
  end=float(list(csv.DictReader((run/'observations/metrics.csv').open()))[-1]['time'])
  reader=rosbag2_py.SequentialReader();reader.open(rosbag2_py.StorageOptions(uri=str(run/'bag'),storage_id='mcap'),rosbag2_py.ConverterOptions('',''))
  reader.set_filter(rosbag2_py.StorageFilter(topics=['/ht_traversability/global_local','/ht_minimal/command_audit','/ht_minimal/path_rejection']))
- cache=OrderedDict();pending=[];counts=Counter();examples=[];violations=[];minimum=1.;max_age=0.
+ cache=OrderedDict();pending=[];counts=Counter();examples=[];violations=[];minimum=1.;max_age=0.;label_history=None
  def audit(d):
-  nonlocal minimum,max_age
+  nonlocal minimum,max_age,label_history
   if not start<=d['time']<=end:return True
   m=cache.get(key(d['map_stamp']))
   if m is None:return False
+  if d.get('initial_support_prior_policy')=='explicit_labels_v1' and d.get('initial_support_prior_enabled') and d.get('initial_support_prior_ready'):
+   anchor=tuple(float(d['initial_support_prior_'+k]) for k in ('x','y','radius'))
+   if label_history is None:label_history=InitialLabels(*anchor)
+   if anchor!=(label_history.px,label_history.py,label_history.radius):raise ValueError('Initial prior anchor changed')
+   for raw in cache.values():
+    if raw['stamp']<=m['stamp']:label_history.apply(raw)
+   if 'effective' not in m or m['effective']['actual_count']!=d['initial_support_actual_cells']:return False
   counts['command_audits']+=1
   if d['allowed']:
    counts['allowed']+=1;max_age=max(max_age,d['time']-d['map_stamp'])
@@ -113,7 +146,7 @@ def main():
   topic,data,received=reader.read_next()
   if topic=='/ht_traversability/global_local':
    msg=deserialize_message(data,GridMap);k=key(msg.header.stamp.sec+msg.header.stamp.nanosec*1e-9)
-   cache[k]=decode(msg);counts['maps']+=1
+   cache[k]=decode(msg);cache[k]['received']=received/1e9;counts['maps']+=1
    if len(cache)>100:cache.popitem(last=False)
    if pending:
     pending=[d for d in pending if not audit(d)]

@@ -182,17 +182,57 @@ class Gate {
       std::array<std::vector<float>,8> scores;
       for(int k=0;k<8;++k)scores[k]=layer("ht_dir_"+std::to_string(k));
       auto valid=layer("ht_valid"),physical=layer("ht_observation_valid"),obstacle=layer("ht_obstacle");
+      // Physical support includes a small nearest-observation halo; only the
+      // explicit direct-observation marker may retire a free startup prior.
+      std::vector<float> measured(rows*cols,0.f);
+      if(std::find(msg.layers.begin(),msg.layers.end(),"ht_measured_valid")!=msg.layers.end())
+        measured=layer("ht_measured_valid");
+      const double incoming_stamp=msg.header.stamp.sec+msg.header.stamp.nanosec*1e-9;
+      const bool fresh=incoming_stamp<=node_->now().seconds() && node_->now().seconds()-incoming_stamp<=timeout_;
+      if(initial_prior_enabled_ && initial_prior_ready_) {
+        if(prior_grid_resolution_==0.) {
+          prior_grid_resolution_=resolution;prior_grid_x_=msg.info.pose.position.x;prior_grid_y_=msg.info.pose.position.y;
+        }
+        if(std::abs(resolution-prior_grid_resolution_)>1e-9 ||
+           std::abs((msg.info.pose.position.x-prior_grid_x_)/resolution-std::round((msg.info.pose.position.x-prior_grid_x_)/resolution))>1e-5 ||
+           std::abs((msg.info.pose.position.y-prior_grid_y_)/resolution-std::round((msg.info.pose.position.y-prior_grid_y_)/resolution))>1e-5)
+          throw std::runtime_error("initial prior grid changed; restart required");
+      }
       cv::Mat unknown(rows,cols,CV_8U),occupied(rows,cols,CV_8U);
-      initial_prior_cells_=0;
+      initial_prior_cells_=0;initial_actual_cells_=0;
       for(int i=0;i<rows*cols;++i) {
         const int r=i/cols,c=i%cols;
         const double x=msg.info.pose.position.x+(rows*.5-r-.5)*resolution;
         const double y=msg.info.pose.position.y+(cols*.5-c-.5)*resolution;
         const bool prior=initial_prior_enabled_ && initial_prior_ready_ &&
           std::hypot(x-initial_prior_x_,y-initial_prior_y_)+resolution/std::sqrt(2.)<=initial_prior_radius_;
+        if(prior) {
+          const auto key=std::make_pair(std::llround((x-prior_grid_x_)/resolution),std::llround((y-prior_grid_y_)/resolution));
+          bool clear=std::isfinite(measured[i]) && measured[i]>=.5 && std::isfinite(physical[i]) && physical[i]>=.5 &&
+                     std::isfinite(valid[i]) && valid[i]>=.5 && std::isfinite(obstacle[i]) && obstacle[i]<.5;
+          for(const auto& s:scores)clear=clear && std::isfinite(s[i]) && s[i]>=0 && s[i]<=1;
+          const bool blocked=std::isfinite(obstacle[i]) && obstacle[i]>=.5;
+          auto found=initial_labels_.find(key);
+          if(fresh && (blocked || clear) && (found==initial_labels_.end() || incoming_stamp>found->second.stamp)) {
+            InitialLabel label;label.stamp=incoming_stamp;label.blocked=blocked;
+            for(size_t k=0;k<8;++k)label.scores[k]=blocked?0.f:scores[k][i];
+            initial_labels_[key]=label;found=initial_labels_.find(key);
+          }
+          if(found!=initial_labels_.end()) {
+            // Retained real labels survive rolling windows and later unknowns.
+            // A later explicit observation may replace either real label.
+            ++initial_actual_cells_;physical[i]=1.f;valid[i]=1.f;
+            obstacle[i]=found->second.blocked?1.f:0.f;
+            for(size_t k=0;k<8;++k)scores[k][i]=found->second.scores[k];
+          } else {
+            // No explicit label yet: retain the authorized traversable prior,
+            // not an interpolated/invalid neural prediction in an unseen cell.
+            ++initial_prior_cells_;physical[i]=1.f;valid[i]=1.f;obstacle[i]=0.f;
+            for(auto& s:scores)s[i]=1.f;
+          }
+        }
         const bool absent=!std::isfinite(physical[i]) || physical[i]<.5;
         unknown.data[i]=absent && !prior;
-        if(absent && prior)++initial_prior_cells_;
         occupied.data[i]=std::isfinite(obstacle[i]) && obstacle[i]>=.5;
       }
       const double inflated=radius_+std::sqrt(2.)*resolution;
@@ -328,6 +368,7 @@ class Gate {
         <<",\"initial_support_prior_x\":"<<initial_prior_x_<<",\"initial_support_prior_y\":"<<initial_prior_y_
         <<",\"initial_support_prior_radius\":"<<initial_prior_radius_
         <<",\"initial_support_prior_cells\":"<<initial_prior_cells_
+        <<",\"initial_support_prior_policy\":\"explicit_labels_v1\",\"initial_support_actual_cells\":"<<initial_actual_cells_
         <<",\"angular_brake_accel\":"<<brake_angular_<<",\"horizon_s\":"<<horizon
         <<",\"allowed\":"<<(ok?"true":"false")<<",\"reason\":\""<<last_reason<<"\"}";
       std_msgs::msg::String msg;msg.data=out.str();command_audit_->publish(msg);
@@ -339,6 +380,10 @@ class Gate {
   bool initial_prior_enabled_=false,initial_prior_ready_=false;
   double initial_prior_radius_=.65,initial_prior_x_=0,initial_prior_y_=0;
   size_t initial_prior_cells_=0;
+  struct InitialLabel {double stamp=0;bool blocked=false;std::array<float,8> scores;};
+  std::map<std::pair<long long,long long>,InitialLabel> initial_labels_;
+  double prior_grid_resolution_=0,prior_grid_x_=0,prior_grid_y_=0;
+  size_t initial_actual_cells_=0;
   std::array<double,3> body_min_{{-.3,-.3,-.3}},body_max_{{.3,.3,.3}};
   double body_center_x_=0,body_center_y_=0;
   void count(bool ok){if(ok)++allowed;else {++rejected;++reasons_[last_reason];}}
@@ -350,6 +395,7 @@ class Gate {
       <<",\"initial_support_prior_ready\":"<<(initial_prior_ready_?"true":"false")
       <<",\"initial_support_prior_x\":"<<initial_prior_x_<<",\"initial_support_prior_y\":"<<initial_prior_y_
       <<",\"initial_support_prior_radius\":"<<initial_prior_radius_<<",\"initial_support_prior_cells\":"<<initial_prior_cells_
+      <<",\"initial_support_prior_policy\":\"explicit_labels_v1\",\"initial_support_actual_cells\":"<<initial_actual_cells_
       <<",\"last_reason\":\""<<last_reason<<"\",\"reasons\":{";
     bool first=true;for(const auto& p:reasons_){if(!first)s<<",";first=false;s<<"\""<<p.first<<"\":"<<p.second;}
     s<<"}}";std_msgs::msg::String msg;msg.data=s.str();diagnostics_->publish(msg);

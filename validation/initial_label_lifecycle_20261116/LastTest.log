@@ -1,0 +1,114 @@
+Start testing: Nov 16 01:59 CST
+----------------------------------------------------------
+1/3 Testing: ht_gate
+1/3 Test: ht_gate
+Command: "/home/lzz/ht_initial_labels_20261116/build/cmu_local_planner_ht/ht_gate_test"
+Directory: /home/lzz/ht_initial_labels_20261116/build/cmu_local_planner_ht
+"ht_gate" start time: Nov 16 01:59 CST
+Output:
+----------------------------------------------------------
+PASS all-high forward accepted
+PASS all-high reverse accepted
+PASS same XY different body yaw selects different channel
+PASS reverse keeps actual low body yaw
+PASS reverse does not demand opposite travel channel
+PASS recorded turn avoids false constant-1s overshoot rejection
+PASS braking turn still rejects genuinely crossed low direction
+PASS recorded reverse startup native command rejected
+PASS reverse startup projects steering through the same hard gate
+PASS turn checks intermediate direction
+PASS unknown footprint rejected
+PASS command projection cannot bypass unknown support
+PASS measured obstacle footprint rejected
+PASS stale map rejected
+[WARN] [1794765594.075906097] [ht_gate_test]: HT map rejected: layout ht_dir_0
+PASS malformed map rejected
+PASS CMU geometry accepts obstacle outside native .45m envelope plus grid margin
+PASS CMU geometry still blocks obstacle inside native body envelope
+PASS HT-only mode disables CMU geometry
+PASS required task boundary missing rejects
+PASS HT-only command accepted inside task region
+PASS task boundary checks whole footprint
+PASS outside task region rejected without geometry voting
+PASS wrong-frame task boundary rejected
+PASS HT-only cannot silently run with HT disabled
+<end of output>
+Test time =   0.16 sec
+----------------------------------------------------------
+Test Passed.
+"ht_gate" end time: Nov 16 01:59 CST
+"ht_gate" time elapsed: 00:00:00
+----------------------------------------------------------
+
+2/3 Testing: ht_execution
+2/3 Test: ht_execution
+Command: "/home/lzz/ht_initial_labels_20261116/build/cmu_local_planner_ht/ht_execution_test"
+Directory: /home/lzz/ht_initial_labels_20261116/build/cmu_local_planner_ht
+"ht_execution" start time: Nov 16 01:59 CST
+Output:
+----------------------------------------------------------
+PASS baseline circle rejects wall beside body
+PASS body envelope permits forward and reverse along wall
+PASS clear turn endpoints cannot hide intermediate corner collision
+PASS braking sweep rejects corner hitting wall
+PASS real body obstacle is rejected
+PASS unknown support still rejected
+PASS low HT score still rejected
+PASS arrival cannot erase new obstacle inside body
+PASS oversized body rejected
+route time=6.14 endpoint=0.813,-0.000144155
+route time=8.52 endpoint=0.812823,-0.0379332
+PASS braking controller shortens both recorded-shape routes
+PASS 4mm overshoot completes without deadlock
+PASS lateral miss is not accepted
+PASS active recovery follows new speed limit after braking
+PASS zero limit stops recovery
+PASS stuck pose releases recovery ownership
+PASS graph search and execution finish reverse recovery
+<end of output>
+Test time =   0.13 sec
+----------------------------------------------------------
+Test Passed.
+"ht_execution" end time: Nov 16 01:59 CST
+"ht_execution" time elapsed: 00:00:00
+----------------------------------------------------------
+
+3/3 Testing: ht_urdf_box
+3/3 Test: ht_urdf_box
+Command: "/home/lzz/ht_initial_labels_20261116/build/cmu_local_planner_ht/ht_urdf_box_test"
+Directory: /home/lzz/ht_initial_labels_20261116/build/cmu_local_planner_ht
+"ht_urdf_box" start time: Nov 16 01:59 CST
+Output:
+----------------------------------------------------------
+PASS URDF nose rejects obstacle missed by old square
+PASS rotation sweep catches corner despite clear endpoints
+PASS braking command checks rotating URDF corner
+PASS translation sweep rejects obstacle crossed before endpoint
+PASS asymmetric URDF center retained
+PASS offset does not invent a rear overhang
+PASS URDF mode preserves missing-ground rejection
+PASS URDF mode preserves probability threshold
+PASS prior waits for actual initial odometry, not candidate pose
+PASS initial prior supplies absent support inside fixed patch
+PASS prior stays fixed and outside unknown still rejects
+PASS unobserved low neural score does not replace traversable prior
+PASS invalid unknown context does not replace traversable prior
+PASS initial prior cannot override stale map
+PASS explicit observed positive replaces prior
+PASS observed positive persists through missing observation and invalid neural output
+PASS explicit observed negative direction replaces positive prior
+PASS negative label persists instead of reviving free prior
+PASS retained actual labels keep directional differences
+PASS measured obstacle overrides prior
+PASS obstacle label survives later unknown
+PASS new explicit positive can replace previous real negative
+PASS real label survives rolling-map departure and return
+<end of output>
+Test time =   0.29 sec
+----------------------------------------------------------
+Test Passed.
+"ht_urdf_box" end time: Nov 16 01:59 CST
+"ht_urdf_box" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Nov 16 01:59 CST

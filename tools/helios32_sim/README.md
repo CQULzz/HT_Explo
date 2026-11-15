@@ -35,10 +35,19 @@ thresholds, TTL and TARE policy are unchanged.
 The Helios launch now applies initial_support_prior.yaml to localPlanner and
 pathFollower: a 0.65m-radius support prior anchored once at the first actual
 base_link odometry pose in map coordinates. It stays at that initial location
-without automatic expiry or expansion. Only missing support is supplied by this
-user-authorized prior; obstacle, neural score/context, boundary and map-age
-checks remain active. Measured GridMap layers are never rewritten. Command and
-gate diagnostics record the anchor, radius and prior-supplied cell count.
+without automatic expiry or expansion. Untagged cells inside this patch keep a
+traversable prior. A measured obstacle or direct, qualified observation with
+valid context and eight finite HT scores replaces it with real directional
+labels. The direct marker ht_measured_valid is published even with hole repair
+disabled; interpolated support alone cannot replace the prior. Real labels
+survive later missing data and rolling-map departure/return; later explicit
+observations can update them. Actual blocked labels never revert to free prior.
+The gate stores this effective state separately; measured GridMap layers are
+never rewritten. Boundary and map-age checks remain active, and ordinary HT
+score/context and support checks remain unchanged outside the initial patch.
+Diagnostics record the explicit_labels_v1 policy and per-map prior/actual cell
+counts. The command auditor independently reconstructs this history from raw
+maps; missing source frames can leave an audit incomplete.
 The generic gate defaults to prior disabled, so other entry points do not opt in.
 When copying simulation.launch.py to a runtime, also copy initial_support_prior.yaml.
 

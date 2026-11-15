@@ -1,5 +1,6 @@
 # User-authorized stationary initial patch. Radius includes complete cell extents.
-# Only execution support is augmented; neural scores and measured maps stay intact.
+# Untagged cells use the free prior; explicit observed labels replace it durably.
+# Measured maps stay intact; the gate stores a separate per-cell effective state.
 /localPlanner:
   ros__parameters:
     ht_initial_support_prior_enabled: true
