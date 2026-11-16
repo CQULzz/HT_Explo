@@ -1,0 +1,10 @@
+from pathlib import Path
+import subprocess,json,hashlib,shutil,time
+r=Path('/home/lzz/ht_labels_repeat_20261117/video');out=Path('/mnt/d/HT-Labels-Repeat-20261117/video');video=r/'rviz_exploration_full_4x.mp4'
+probe=json.loads(subprocess.check_output(['ffprobe','-v','error','-count_frames','-select_streams','v:0','-show_entries','stream=width,height,r_frame_rate,nb_read_frames:format=duration,size','-of','json',str(video)]));stream=probe['streams'][0];duration=float(probe['format']['duration']);assert abs(duration-80)<.1 and stream['width']==1920 and stream['height']==1080 and int(stream['nb_read_frames'])==1600
+subprocess.run(['ffmpeg','-hide_banner','-v','error','-i',str(video),'-f','null','-'],check=True)
+for t in [10,40,79]:subprocess.run(['ffmpeg','-hide_banner','-v','error','-y','-ss',str(t),'-i',str(video),'-vframes','1',str(out/f'preview_{t}s.png')],check=True)
+shutil.copy2(video,out/video.name);assert hashlib.sha256(video.read_bytes()).digest()==hashlib.sha256((out/video.name).read_bytes()).digest()
+for n in ['PROVENANCE.json','BODY.json','overview.rviz','detail.rviz']:shutil.copy2(r/n,out/n)
+validation={'video':'D:/HT-Labels-Repeat-20261117/video/'+video.name,'bytes':video.stat().st_size,'sha256':hashlib.sha256(video.read_bytes()).hexdigest(),'duration_s':duration,'width':stream['width'],'height':stream['height'],'fps':stream['r_frame_rate'],'decoded_frames':int(stream['nb_read_frames']),'full_decode_passed':True,'source_experiment_duration_s':300.000120176,'playback_rate':4,'padding_total_s':5,'initial_hold_s_approx':1.5,'end_hold_s_approx':3.5,'layout':'Actual RViz dual-window capture, overview and vehicle-follow view','legend':'Red vehicle; yellow actual trajectory; white planned route; blue measured surfaces; green observation projection, not traversability','visual_preview_checked':False,'preview_timestamps_s':[10,40,79],'video_uploaded':False,'no_new_exploration_run':True}
+(out/'VIDEO_VALIDATION.json').write_text(json.dumps(validation,indent=2));(r/'VIDEO_VALIDATION.json').write_text(json.dumps(validation,indent=2));print(json.dumps(validation,indent=2))

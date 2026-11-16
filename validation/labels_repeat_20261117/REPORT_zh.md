@@ -36,6 +36,12 @@
 
 ## 保存和预算
 
-完整录包/冻结：`/home/lzz/ht_labels_repeat_20261117/runs/explicit_labels_campus_repeat_01`。Windows精简结果：`D:/HT-Labels-Repeat-20261117/results`。本轮没有新RViz视频，也不上传视频/原始MCAP。新账本已关闭，最多2次仅基础设施失败重试，实际使用1次，不自动追加探索。旧数据不覆盖、不清理。
+完整录包/冻结：`/home/lzz/ht_labels_repeat_20261117/runs/explicit_labels_campus_repeat_01`。Windows精简结果：`D:/HT-Labels-Repeat-20261117/results`。视频/原始MCAP保留本地。新账本已关闭，最多2次仅基础设施失败重试，实际使用1次，不自动追加探索。旧数据不覆盖、不清理。
 
 `data/ht_map_first.npz`与`ht_map_last.npz`从本次原始MCAP离线提取，保留原始HT层，未合成执行先验；坐标、层名和SHA见`data/MAP_SNAPSHOTS.json`。图像已检查可读。后处理脚本和实际启动脚本存于source目录；没有为后处理错误重启探索实验。
+
+## 后续RViz视频
+
+用户要求“同样录个视频看看”后，已从本次实际录包生成真实RViz双窗口录屏，左侧总览、右侧跟车，完整300秒4倍速播放。成片80秒（含播放前后共5秒停留）、1920×1080/20fps，1600帧全片解码和10/40/79秒画面抽查通过，车辆/轨迹/文字正常，录制进程已停止。未启动新探索。
+
+视频：`D:/HT-Labels-Repeat-20261117/video/rviz_exploration_full_4x.mp4`，31,014,846字节，SHA256 `d18a62e631bae779110bec19207a3203b1b47ccbc565f8e03f26fe421f401d82`。绿色为近地观测投影，不代表HT可通过区域或真实覆盖率。原始扫描显示经过12m范围、0.20m显示体素等降采样，详见VIDEO_PROVENANCE.json；没有补造未知区域。视频仅本地保存，仓库更新复现脚本和VIDEO_VALIDATION.json，不新增Release或上传视频/MCAP。

@@ -1,0 +1,46 @@
+from pathlib import Path
+import time,json,math,argparse,os
+import numpy as np
+import rclpy
+from rclpy.node import Node
+from rclpy.qos import QoSProfile,DurabilityPolicy
+from visualization_msgs.msg import Marker,MarkerArray
+from sensor_msgs.msg import PointCloud2,PointField
+from geometry_msgs.msg import Point,TransformStamped
+from tf2_ros import TransformBroadcaster
+ROOT=Path(os.environ['HT_VIDEO_ROOT'])
+BODY=json.loads((ROOT/'BODY.json').read_text())
+TEXT=Path(os.environ['HT_VIDEO_TEXT_ROOT']);TEXT.mkdir(parents=True,exist_ok=True)
+class Player(Node):
+ def __init__(self):
+  super().__init__('recorded_exploration_viewer');q=QoSProfile(depth=1,durability=DurabilityPolicy.TRANSIENT_LOCAL)
+  self.pub=self.create_publisher(MarkerArray,'/visual/markers',q);self.cloud=self.create_publisher(PointCloud2,'/visual/surfaces',q);self.tf=TransformBroadcaster(self)
+  self.status=json.loads((ROOT/'status.json').read_text());self.status_times=np.array([v['elapsed_s'] for v in self.status]);self.traj=np.load(ROOT/'trajectory.npy');self.snap=json.loads((ROOT/'snapshots.json').read_text());self.times=np.array([v['elapsed_s'] for v in self.snap]);self.paths=json.loads((ROOT/'paths.json').read_text());self.path_times=np.array([v['elapsed_s'] for v in self.paths]);self.frame=-1;self.free_marker=None;self.control=None;self.base=0.;self.wall=time.monotonic();self.create_timer(.1,self.tick)
+ def marker(self,idx,kind,color):
+  m=Marker();m.header.frame_id='map';m.ns='recorded';m.id=idx;m.type=kind;m.action=Marker.ADD;m.pose.orientation.w=1.;m.color.r,m.color.g,m.color.b,m.color.a=color;return m
+ def point(self,x,y,z):return Point(x=float(x),y=float(y),z=float(z))
+ def tick(self):
+  try:control=json.loads((ROOT/'control.json').read_text())
+  except Exception:return
+  if control!=self.control:self.control=control;self.base=float(control.get('time',0));self.wall=time.monotonic()
+  rate=float(control.get('rate',4));elapsed=min(float(control.get('end_time',300)),max(0.,self.base+((time.monotonic()-self.wall)*rate if control.get('mode')=='play' else 0)))
+  i=min(len(self.traj)-1,max(0,int(np.searchsorted(self.traj[:,0],elapsed))));row=self.traj[i];_,x,y,z,yaw,distance,volume=row
+  tf=TransformStamped();tf.header.stamp=self.get_clock().now().to_msg();tf.header.frame_id='map';tf.child_frame_id='replay_camera';tf.transform.translation.x=float(x);tf.transform.translation.y=float(y);tf.transform.translation.z=float(z-.84849);tf.transform.rotation.w=1.;self.tf.sendTransform(tf)
+  idx=max(0,min(len(self.snap)-1,int(np.searchsorted(self.times,elapsed,side='right')-1)))
+  markers=[]
+  if idx!=self.frame:
+   self.frame=idx;data=np.load(ROOT/self.snap[idx]['file']);pts=np.asarray(data['surface'],dtype=np.float32).reshape(-1,3)
+   cloud=PointCloud2();cloud.header.frame_id='map';cloud.height=1;cloud.width=len(pts);cloud.fields=[PointField(name=n,offset=j*4,datatype=PointField.FLOAT32,count=1) for j,n in enumerate(['x','y','z'])];cloud.point_step=12;cloud.row_step=12*len(pts);cloud.is_dense=True;cloud.data=pts.tobytes();self.cloud.publish(cloud)
+   m=self.marker(0,Marker.CUBE_LIST,(.12,.52,.32,.72));m.scale.x=.48;m.scale.y=.48;m.scale.z=.025;m.points=[self.point(px,py,pz) for px,py,pz in data['free'].reshape(-1,3)];self.free_marker=m
+  if self.free_marker is not None:markers.append(self.free_marker)
+  m=self.marker(1,Marker.LINE_STRIP,(1.,.74,.12,1.));m.scale.x=.14;m.points=[self.point(v[1],v[2],v[3]-.84849+.08) for v in self.traj[:i+1]];m.action=Marker.ADD if i>=1 else Marker.DELETE;markers.append(m)
+  m=self.marker(2,Marker.CUBE,(1.,.12,.12,1.));bx,by,bz=BODY['center'];m.pose.position=self.point(x+math.cos(yaw)*bx-math.sin(yaw)*by,y+math.sin(yaw)*bx+math.cos(yaw)*by,z-.84849+bz);m.pose.orientation.z=math.sin(float(yaw)/2);m.pose.orientation.w=math.cos(float(yaw)/2);m.scale.x,m.scale.y,m.scale.z=BODY['size'];markers.append(m)
+  m=self.marker(3,Marker.ARROW,(1.,.3,.18,1.));m.scale.x=.14;m.scale.y=.32;m.scale.z=.35;m.points=[self.point(x,y,z-.84849+.65),self.point(x+1.5*math.cos(yaw),y+1.5*math.sin(yaw),z-.84849+.65)];markers.append(m)
+  pi=max(0,min(len(self.paths)-1,int(np.searchsorted(self.path_times,elapsed,side='right')-1)))
+  m=self.marker(4,Marker.LINE_STRIP,(.95,.95,.95,.95));m.scale.x=.07;m.points=[self.point(p[0],p[1],p[2]+.05) for p in self.paths[pi]['points']];m.action=Marker.ADD if elapsed>=self.paths[0]['elapsed_s'] and len(m.points)>=2 else Marker.DELETE;markers.append(m)
+  self.pub.publish(MarkerArray(markers=markers))
+  si=max(0,min(len(self.status)-1,int(np.searchsorted(self.status_times,elapsed,side='right')-1)));status=TEXT/'status.tmp';status.write_text('状态：'+self.status[si]['value'],encoding='utf-8');status.replace(TEXT/'status.txt')
+  hud=TEXT/'hud.tmp';hud.write_text(f'录包回放 {rate:g}倍速   实验时间 {elapsed:06.1f} / 300 秒   累计里程 {distance:6.1f} 米   观测体积代理 {volume:7.1f} m³',encoding='utf-8');hud.replace(TEXT/'hud.txt')
+rclpy.init();node=Player()
+try:rclpy.spin(node)
+finally:node.destroy_node();rclpy.shutdown()
