@@ -1,0 +1,52 @@
+{
+  "duration_s": 300.000120176,
+  "distance_m": 141.87801117176522,
+  "last30_distance_m": 14.535993674602835,
+  "sampled_free_volume_m3": 10846.375,
+  "finish": false,
+  "finish_signal_elapsed_s": null,
+  "last_nonzero_sample_elapsed_s": 300.000039733,
+  "final_base_xy": [
+    79.8116426789709,
+    -44.13321035129675
+  ],
+  "final_base_distance_to_initial_m": 91.20108860659249,
+  "wall_rates": {
+    "scans": 3.566665237908128,
+    "ht_maps": 3.549998577917903
+  },
+  "sampled_ht_age_s": {
+    "p50": 0.3798689842224121,
+    "p95": 0.5820778369903562,
+    "max": 1.320646047592163
+  },
+  "fraction_sampled_age_over_1s": 0.0016750418760469012,
+  "command_audit_reasons": {
+    "HT_MAP_STALE": 12,
+    "HT_ALLOWED": 14984,
+    "HT_DIRECTION_LOW": 20
+  },
+  "last_planner_diagnostic": "[tare_planner_node-10] [INFO] [1794847970.641243945] [tare_planner_node]: EXPLORATION_DIAG candidates=282 uncovered=109 frontier=0 global_return=0 local_complete=1 global_nodes=144 local_nodes=31 x=79.473 y=-43.387",
+  "parameter_comparison_with_previous": {
+    "tare_planner_node.yaml": {
+      "semantic_equal": true,
+      "byte_equal": true
+    },
+    "localPlanner.yaml": {
+      "semantic_equal": true,
+      "byte_equal": true
+    },
+    "pathFollower.yaml": {
+      "semantic_equal": true,
+      "byte_equal": true
+    },
+    "cupy_to_ht_bridge.yaml": {
+      "semantic_equal": true,
+      "byte_equal": true
+    },
+    "vehicleSimulator.yaml": {
+      "semantic_equal": true,
+      "byte_equal": true
+    }
+  }
+}
