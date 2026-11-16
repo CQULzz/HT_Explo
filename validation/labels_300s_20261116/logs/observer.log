@@ -1,0 +1,36 @@
+{
+  "elapsed_s": 300.00210439,
+  "distance_m": 37.686604171329904,
+  "position": [
+    0.1904752552509308,
+    -0.027374351397156715,
+    0.8268791437149048
+  ],
+  "sampled_free_volume_m3": 3645.625,
+  "surface_voxel_volume_m3": 11039.25,
+  "finish": true,
+  "counts": {
+    "/ht_minimal/pathFollower": 398,
+    "/ht_minimal/localPlanner": 398,
+    "/ht_runtime": 1,
+    "odom": 59735,
+    "paths": 1081,
+    "/ht_minimal/local_selection": 1081,
+    "commands": 15291,
+    "/ht_minimal/command_audit": 15291,
+    "scans": 1058,
+    "local_path": 216,
+    "/ht_performance": 257,
+    "ht_maps": 1066,
+    "ray_frames": 264,
+    "waypoint": 212,
+    "/ht_minimal/path_rejection": 25,
+    "finish_transition": 1
+  },
+  "ht_source_age_s": {
+    "p50": 0.2279115915298462,
+    "p95": 0.3623170852661133,
+    "p99": 0.40596240758895874
+  },
+  "free_volume_definition": "union of sampled sensor rays at 0.5m voxel resolution, 1Hz/1024 endpoints/12m range; observation proxy, not ground truth"
+}

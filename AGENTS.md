@@ -238,3 +238,7 @@ RViz视频已完成并全片解码检查：完整4倍速155秒/1920×1080/20fps�
 ## 2026-11-16：实际标签策略300秒探索与RViz视频
 
 用户要求5min探索实验并录制RViz视频。独立/home/lzz/ht_labels_300s_20261116，候选11dd46d，使用新HT桥ht_measured_valid与explicit_labels_v1门禁；预算最多2次、仅基础设施失败重试，实际1次成功后关闭。300.002104秒墙钟/37.686604米，52.101秒finish信号，最后非零速度采样79.679秒，最终车体中心距初始约0.267米，其后停车，末30秒0米。TARE末段uncovered/frontier/exploring/routable均0、local_complete=1，但没有独立场景真值覆盖核验，不称全campus完整探索验收。扫描/HT约3.533/3.537Hz，3969运动候选原图独立审计0越限/0未匹配、25方向差异拒绝全部匹配，冻结与MCAP/metadata/可用CRC核对通过。SIGINT退出仍有RCLError/段错误，当前无仿真和视频进程残留。实际RViz双视图全程4倍速80秒，1920×1080/20fps，1600帧全片解码及画面抽查通过；视频D:/HT-Labels-300s-20261116/video/rviz_exploration_full_4x.mp4，绿色为观测投影而非可通行判定。完整约4.1GiB录包及冻结在WSL保留；只推送精简证据与复现脚本，不新增Release或上传视频/MCAP。报告validation/labels_300s_20261116/REPORT_zh.md。
+
+## 2026-11-16：用户要求上传实验、代码并写交接
+
+沿用独立fix/ht-execution-20261113，整理最新300秒精简实验资料及完整冻结归档中逐条哈希核对的源码/配置/权重子集，补图表、原样日志及首末原始HT地图。交接入口validation/labels_300s_20261116/HANDOFF_zh.md，区分实际测试代码11dd46d与资料发布提交；代码标签ht-explicit-labels-code-20261116-v1、资料标签ht-explicit-labels-campus-300s-20261116-v1。延续仅精简上传范围，视频和原始MCAP留本地，不新增Release，不清理未完整远端备份数据。只做离线整理与发布，不改变导航、不增加正式实验；旧300秒账本保持关闭。最终远端分支/标签和材料SHA以D:/HT-Handoff-20261116/PUBLICATION.json为准。

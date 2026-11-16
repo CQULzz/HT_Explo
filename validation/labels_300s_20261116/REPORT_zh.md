@@ -34,3 +34,9 @@ TARE在52.101秒发出finish信号；最后一个非零速度采样约79.679秒�
 ## 视频文件
 
 `D:/HT-Labels-300s-20261116/video/rviz_exploration_full_4x.mp4`，约12.53MB。全程保留300秒采集内容及末尾停留，不删减返航/停车段；图例明确绿色近地观测投影不代表可通行性。视频/MCAP仅本地保存，本轮仓库只上传精简结果和复现脚本。
+
+## 补充上传材料与交接
+
+新增[交接文档](HANDOFF_zh.md)、原样关键日志、指标图、首末原始HT地图快照，以及从本次完整冻结归档逐文件校验提取的`runtime_source_config.tar.gz`。源码配置包约1.55MB，包含实际运行源码/配置/权重，排除二进制、场景大资产、视频和MCAP，具体见`SOURCE_BUNDLE_MANIFEST.json`。`PUBLICATION_SCOPE.json`列出精简材料大小和SHA256；不代表原始录包已完成远端备份。
+
+`START_SUPPORT_DIAGNOSIS.json`与`start_support.png`是此前crop_box 60秒的起点缺测诊断，用于解释先验半径；本次300秒原图另存`data/ht_map_first.npz`和`data/ht_map_last.npz`，没有写入执行先验或持久标签。
