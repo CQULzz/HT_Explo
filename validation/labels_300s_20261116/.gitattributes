@@ -1,2 +1,4 @@
 *.log -whitespace
+# ros2 param dump output is preserved verbatim, including blank EOF lines.
+*.yaml -whitespace
 data/*.csv -text -whitespace
