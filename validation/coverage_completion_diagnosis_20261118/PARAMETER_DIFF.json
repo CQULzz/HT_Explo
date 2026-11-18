@@ -1,0 +1,222 @@
+{
+  "tare_planner_node.yaml": {},
+  "localPlanner.yaml": {
+    "vehicleWidth": {
+      "ht": 0.699590000002,
+      "native": 0.6
+    },
+    "require_navigation_boundary": {
+      "ht": false,
+      "native": null
+    },
+    "maxSpeed": {
+      "ht": 0.5,
+      "native": 2.0
+    },
+    "traversability_mode": {
+      "ht": "ht_only",
+      "native": null
+    },
+    "ht_linear_brake_accel": {
+      "ht": 2.5,
+      "native": null
+    },
+    "vehicleLength": {
+      "ht": 0.9298609,
+      "native": 0.6
+    },
+    "sensorOffsetX": {
+      "ht": 0.1725,
+      "native": 0.0
+    },
+    "ht_use_urdf_envelope": {
+      "ht": true,
+      "native": null
+    },
+    "ht_initial_support_prior_radius": {
+      "ht": 0.65,
+      "native": null
+    },
+    "ht_topic": {
+      "ht": "/ht_traversability/global_local",
+      "native": null
+    },
+    "ht_reaction_time": {
+      "ht": 0.1,
+      "native": null
+    },
+    "autonomySpeed": {
+      "ht": 0.5,
+      "native": 2.0
+    },
+    "ht_enabled": {
+      "ht": true,
+      "native": null
+    },
+    "ht_map_timeout": {
+      "ht": 1.0,
+      "native": null
+    },
+    "pathFolder": {
+      "ht": "/home/lzz/ht_execution_300s_20261113/install_cmu/local_planner/share/local_planner/paths",
+      "native": "/home/lzz/tare_native_campus_repeat_20261118/project/install/local_planner/share/local_planner/paths"
+    },
+    "ht_initial_support_prior_enabled": {
+      "ht": true,
+      "native": null
+    },
+    "ht_body_min_xyz": {
+      "ht": [
+        -0.4649301,
+        -0.3497950000007719,
+        -0.23518429999999999
+      ],
+      "native": null
+    },
+    "ht_angular_brake_accel": {
+      "ht": 3.0,
+      "native": null
+    },
+    "ht_min_probability": {
+      "ht": 0.5,
+      "native": null
+    },
+    "ht_body_max_xyz": {
+      "ht": [
+        0.4649308,
+        0.34979500000080593,
+        0.6502000536441803
+      ],
+      "native": null
+    },
+    "ht_validity_radius": {
+      "ht": 0.58182230175,
+      "native": null
+    }
+  },
+  "pathFollower.yaml": {
+    "ht_odometry_timeout": {
+      "ht": 0.2,
+      "native": null
+    },
+    "vehicleWidth": {
+      "ht": 0.6,
+      "native": null
+    },
+    "require_navigation_boundary": {
+      "ht": false,
+      "native": null
+    },
+    "maxSpeed": {
+      "ht": 0.5,
+      "native": 2.0
+    },
+    "ht_recovery_progress": {
+      "ht": 0.75,
+      "native": null
+    },
+    "vehicleLength": {
+      "ht": 0.6,
+      "native": null
+    },
+    "ht_recovery_angular_speed": {
+      "ht": 0.5,
+      "native": null
+    },
+    "traversability_mode": {
+      "ht": "ht_only",
+      "native": null
+    },
+    "ht_linear_brake_accel": {
+      "ht": 2.5,
+      "native": null
+    },
+    "sensorOffsetX": {
+      "ht": 0.1725,
+      "native": 0.0
+    },
+    "ht_use_urdf_envelope": {
+      "ht": true,
+      "native": null
+    },
+    "ht_recovery_speed": {
+      "ht": 0.15,
+      "native": null
+    },
+    "ht_initial_support_prior_radius": {
+      "ht": 0.65,
+      "native": null
+    },
+    "ht_topic": {
+      "ht": "/ht_traversability/global_local",
+      "native": null
+    },
+    "ht_reaction_time": {
+      "ht": 0.1,
+      "native": null
+    },
+    "autonomySpeed": {
+      "ht": 0.5,
+      "native": 2.0
+    },
+    "ht_validity_radius": {
+      "ht": 0.58182230175,
+      "native": null
+    },
+    "ht_recovery_linear_accel": {
+      "ht": 2.5,
+      "native": null
+    },
+    "ht_enabled": {
+      "ht": true,
+      "native": null
+    },
+    "ht_map_timeout": {
+      "ht": 1.0,
+      "native": null
+    },
+    "ht_initial_support_prior_enabled": {
+      "ht": true,
+      "native": null
+    },
+    "ht_body_min_xyz": {
+      "ht": [
+        -0.4649301,
+        -0.3497950000007719,
+        -0.23518429999999999
+      ],
+      "native": null
+    },
+    "ht_recovery_angular_accel": {
+      "ht": 3.0,
+      "native": null
+    },
+    "ht_recovery_search_ms": {
+      "ht": 20.0,
+      "native": null
+    },
+    "ht_angular_brake_accel": {
+      "ht": 3.0,
+      "native": null
+    },
+    "ht_min_probability": {
+      "ht": 0.5,
+      "native": null
+    },
+    "ht_body_max_xyz": {
+      "ht": [
+        0.4649308,
+        0.34979500000080593,
+        0.6502000536441803
+      ],
+      "native": null
+    },
+    "ht_recovery_enabled": {
+      "ht": true,
+      "native": null
+    }
+  },
+  "vehicleSimulator.yaml": {
+    "native_dump_error": "Node not found"
+  }
+}

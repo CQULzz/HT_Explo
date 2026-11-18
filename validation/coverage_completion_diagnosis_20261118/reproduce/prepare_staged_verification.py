@@ -1,0 +1,3 @@
+from pathlib import Path
+old=Path('/mnt/d/TARE-Native-Campus-20261118/verify_staged.py');p=Path('/mnt/d/HT-TARE-Coverage-Diagnosis-20261118/verify_staged.py');s=old.read_text(encoding='utf-8-sig').replace('validation/tare_native_campus_20261118','validation/coverage_completion_diagnosis_20261118').replace('/mnt/d/TARE-Native-Campus-20261118/STAGED_VERIFICATION.json','/mnt/d/HT-TARE-Coverage-Diagnosis-20261118/STAGED_VERIFICATION.json');p.write_text(s)
+p=Path('/mnt/c/Users/李哲舟/Desktop/python code/work/ht_execution_fixes/validation/tare_native_campus_20261118/CORRECTION_zh.md');p.write_bytes(p.read_bytes().replace(b'\r\n',b'\n'))

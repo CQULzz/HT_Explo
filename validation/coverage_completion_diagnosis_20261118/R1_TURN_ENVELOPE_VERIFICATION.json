@@ -1,0 +1,31 @@
+{
+  "region": "R1",
+  "target_xyz": [
+    73.25,
+    6.75,
+    -1.0209790468215942
+  ],
+  "route_anchor_xyz": [
+    58.25,
+    6.75,
+    -0.5840240120887756
+  ],
+  "path_length_m": 15.0,
+  "samples": 151,
+  "sample_step_m": 0.1,
+  "footprint_xy_m": [
+    0.85,
+    0.85
+  ],
+  "obstacle_vertical_band_above_mesh_floor_m": [
+    0.15,
+    1.0
+  ],
+  "support_test": "Nine footprint grid points on actual collision mesh at every sample; floor follows nearest predicted terrain layer",
+  "maximum_abs_mesh_floor_vs_preview_m": 0.07476356789014837,
+  "maximum_support_height_span_m": 0.14391055839939215,
+  "maximum_mesh_collision_triangles": 0,
+  "issues": [],
+  "passed": true,
+  "scope": "Static geometric path verification only. Axis-aligned footprint along grid route, no full contact dynamics/turning sweep/hardware certification. Not a new Gazebo exploration."
+}

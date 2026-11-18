@@ -1,0 +1,2 @@
+from pathlib import Path
+p=Path('/mnt/d/HT-TARE-Coverage-Diagnosis-20261118/prepare_delivery.py');s=p.read_text(encoding='utf-8-sig').replace("(out/'.gitattributes').write_text('* -text\\n')","(out/'.gitattributes').write_text('* -text\\n*.csv whitespace=cr-at-eol\\nHT_FINISH_LOG_CONTEXT.txt -whitespace\\n')").replace("if p.is_file():entries.append", "if p.is_file() and p.name!='DATA_MANIFEST.json':entries.append");p.write_text(s)

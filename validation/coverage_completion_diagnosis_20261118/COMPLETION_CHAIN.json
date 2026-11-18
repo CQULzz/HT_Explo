@@ -1,0 +1,48 @@
+{
+  "actual_trigger_record": {
+    "elapsed_s": 633.8045878410339,
+    "kind": "EXPLORATION_DIAG",
+    "candidates": 342.0,
+    "uncovered": 84.0,
+    "frontier": 0.0,
+    "global_return": 1.0,
+    "local_complete": 1.0,
+    "global_nodes": 15.0,
+    "local_nodes": 13.0,
+    "x": -6.767,
+    "y": -2.191
+  },
+  "same_cycle_global": {
+    "elapsed_s": 633.8035173416138,
+    "kind": "GLOBAL_DIAG",
+    "exploring": 2.0,
+    "routable": 0.0
+  },
+  "same_cycle_local": {
+    "elapsed_s": 633.8036961555481,
+    "kind": "LOCAL_DIAG",
+    "uncovered": 84.0,
+    "frontier": 0.0,
+    "queue": 0.0,
+    "best_surface": 0.0,
+    "frontier_queue": 0.0,
+    "best_frontier": 0.0,
+    "reused": 0.0
+  },
+  "interpretation": "routable is after local-vs-global eligibility and keypose graph filtering, not a physical reachability oracle. Exploring>0 is compatible with no eligible remote tour tasks. Local complete means no selected gain task, not uncovered==0.",
+  "source_rules": {
+    "global_cell_size_m": 9.6,
+    "viewpoint_horizon_xy_m": [
+      48,
+      48
+    ],
+    "local_min_surface_gain": 40,
+    "local_min_frontier_gain": 20,
+    "cell_reopen_viewpoint_count": 10,
+    "cell_close_qualifying_viewpoint_count_below": 1,
+    "unseen_cells_are_global_targets": false,
+    "finish_checks_all_reference_geometry": false
+  },
+  "native_original_per_cell_status_or_viewpoint_stream_recorded": false,
+  "exact_original_R1_cell_state_not_recoverable_from_recorded_topics_alone": true
+}
