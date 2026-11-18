@@ -1,0 +1,68 @@
+{
+  "elapsed_s": 784.3234764220001,
+  "distance_m": 374.5341023759945,
+  "position": [
+    15.957026481628418,
+    -6.978783130645752,
+    0.7861906290054321
+  ],
+  "sampled_free_volume_m3": 12932.0,
+  "surface_voxel_volume_m3": 48943.375,
+  "finish": true,
+  "counts": {
+    "/ht_minimal/pathFollower": 946,
+    "/ht_minimal/localPlanner": 946,
+    "/ht_runtime": 1,
+    "odom": 151034,
+    "paths": 2550,
+    "/ht_minimal/local_selection": 2549,
+    "/ht_minimal/command_audit": 39642,
+    "commands": 39627,
+    "scans": 2482,
+    "local_path": 510,
+    "/ht_performance": 667,
+    "ht_maps": 2527,
+    "ray_frames": 672,
+    "waypoint": 430,
+    "/ht_minimal/path_rejection": 245,
+    "/ht_minimal/command_projection": 16,
+    "/ht_minimal/recovery": 1,
+    "finish_transition": 1,
+    "nonfinite_events": 1,
+    "nonfinite_waypoint": 1
+  },
+  "ht_source_age_s": {
+    "p50": 0.306840181350708,
+    "p95": 0.43756842613220215,
+    "p99": 0.4977802801132201
+  },
+  "free_volume_definition": "union of sampled sensor rays at 0.5m voxel resolution, 1Hz/1024 endpoints/12m range; observation proxy, not ground truth"
+}
+Traceback (most recent call last):
+  File "/home/lzz/ht_campus_1200s_20261118/startup_collect.py", line 119, in <module>
+    if __name__=='__main__':main()
+  File "/home/lzz/ht_campus_1200s_20261118/startup_collect.py", line 114, in main
+    rclpy.spin_once(n,timeout_sec=.05)
+  File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py", line 208, in spin_once
+    executor.spin_once(timeout_sec=timeout_sec)
+  File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 812, in spin_once
+    self._spin_once_impl(timeout_sec)
+  File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 809, in _spin_once_impl
+    raise handler.exception()
+  File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/task.py", line 309, in _execute_coroutine_step
+    result = coro.send(None)
+  File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 488, in handler
+    await call_coroutine(entity, arg)
+  File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 407, in _execute_subscription
+    await await_or_execute(sub.callback, msg)
+  File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 110, in await_or_execute
+    return callback(*args)
+  File "/home/lzz/ht_campus_1200s_20261118/startup_collect.py", line 53, in <lambda>
+    self.create_subscription(String,topic,lambda m,t=topic:self.event(t,json.loads(m.data)),100)
+  File "/usr/lib/python3.10/json/__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+  File "/usr/lib/python3.10/json/decoder.py", line 337, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+  File "/usr/lib/python3.10/json/decoder.py", line 355, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 163 (char 162)

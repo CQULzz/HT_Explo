@@ -1,0 +1,35 @@
+{
+  "goal": "Assess whether current frozen configuration can fully explore campus in one 1200s wall-clock run; no navigation changes",
+  "tested_code_commit": "11dd46d5561a0b426ebc800e192d9f42d0d8b00d",
+  "repository_documentation_commit": "369d2dd75bea72f7eb96f6370b2067ccbe4e1519",
+  "scene": "official CMU campus",
+  "duration_basis": "1200s wall-clock after >=5 scans and >=5 HT maps; sim advancement reported separately",
+  "original_runtime_freeze_verified_unchanged": 305,
+  "domain": 221,
+  "gazebo_port": 11549,
+  "display": ":105",
+  "other_workload": "Independent AEDE ariadne benchmark observed running at preflight; left untouched; CPU/GPU overlap is a confounder",
+  "complete_exploration_acceptance": [
+    "Full 1200s evidence even after early finish/parking",
+    "Inspect phase-wise actual motion and observed-area growth",
+    "Report finish/return and frontier/global task status independently",
+    "Assess observations against independent scene reference; software zero counters alone cannot establish full campus coverage; unsupported complete-coverage claims prohibited"
+  ],
+  "video_end_policy": "Label end of actual acquisition explicitly; no unlabeled artificial pause presented as vehicle stopping",
+  "raw_upload": false,
+  "random_seed": "No same explicit seed established in previous runs; retain current policy, do not attribute trajectory differences to code changes",
+  "infrastructure_retry": {
+    "failed_attempt": "explicit_labels_campus_1200s_01",
+    "failure": "Spawn service queued lidar but timed out before entity appeared; observer never became ready",
+    "change": "Only startup timers: spawn delays60/62/64 ->120/122/124 wall seconds, carrier90 ->150 seconds",
+    "navigation_changed": false
+  },
+  "observer_retry": {
+    "failed_attempt": "explicit_labels_campus_1200s_02",
+    "failure": "Observer JSONDecodeError from malformed diagnostic String; original raw bag retained",
+    "fix": "Read-only callback logs raw invalid JSON and parse error then continues; no invalid value converted to valid navigation data",
+    "extra_attempts_allowed": 1,
+    "tests_passed": 3,
+    "navigation_changed": false
+  }
+}
