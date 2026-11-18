@@ -1,0 +1,18 @@
+{
+  "purpose": "Run unchanged repaired campus navigation until exploration finishes and returns, rather than fixed20min",
+  "navigation_code_commit": "5ba8bb5",
+  "repository_commit": "87133ad5819a9d021d69a7b84bd1ff40197bd77a",
+  "resumption": "Fresh start; previous simulation terminated and no full planner checkpoint exists",
+  "old_frozen_files_verified": 317,
+  "runtime_limit_s": null,
+  "success_rule": "finish=true, base within0.5m initial, fresh inputs, zero commands and <=0.05m movement continuously20s",
+  "failure_rule": "Persistent XY pocket<=0.15m for300s with fresh inputs, unchanged finish phase, and <=50m3 observation proxy increase; classify blocked, never completed. Child/input/disk failure separately retained.",
+  "domain": 207,
+  "gazebo_port": 11579,
+  "display": ":108",
+  "navigation_changes": false,
+  "observer_changes": "Read-only outcome termination plus existing start signal;7 stop-rule regression tests pass",
+  "parameters": "Unchanged safety/HT/history/model/TARE/vehicle parameters; original context inputs every60s",
+  "random_seed": "No common explicit seed established",
+  "raw_upload": false
+}

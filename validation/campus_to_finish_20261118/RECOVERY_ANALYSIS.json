@@ -1,0 +1,114 @@
+{
+  "first_finish_elapsed_s": 633.8051109313965,
+  "recovery_messages": 166,
+  "diagnostic_states": {
+    "IDLE": 4,
+    "EXECUTING": 62,
+    "COMPLETED": 1,
+    "COMMAND_REJECTED:HT_OCCUPIED": 1,
+    "RETURN_GOAL_REACHED": 98
+  },
+  "plans_observed": 2,
+  "completed_plans": [
+    {
+      "begin_elapsed_s": 44.019811391830444,
+      "start_xy": [
+        17.620573044,
+        -4.298998356
+      ],
+      "finish_phase": false,
+      "search_outcome": "PARTIAL_PROGRESS",
+      "search_progress_m": 0.747983653,
+      "initial_goal_xy": [
+        25.353280659,
+        -4.819467699
+      ],
+      "plan": 1,
+      "end_elapsed_s": 54.44030427932739,
+      "end_xy": [
+        18.356840134,
+        -5.114690781
+      ],
+      "reported_progress_m": 1.098837276,
+      "finish_phase_at_end": false,
+      "net_displacement_m": 1.098837276406041,
+      "duration_s": 10.420492887496948
+    }
+  ],
+  "completed_after_finish": 0,
+  "partial_progress_plans_observed": 1,
+  "plans": {
+    "1": {
+      "begin_elapsed_s": 44.019811391830444,
+      "start_xy": [
+        17.620573044,
+        -4.298998356
+      ],
+      "finish_phase": false,
+      "search_outcome": "PARTIAL_PROGRESS",
+      "search_progress_m": 0.747983653,
+      "initial_goal_xy": [
+        25.353280659,
+        -4.819467699
+      ]
+    },
+    "2": {
+      "begin_elapsed_s": 54.97259449958801,
+      "start_xy": [
+        18.357549667,
+        -5.115398407
+      ],
+      "finish_phase": false,
+      "search_outcome": "FULL_PROGRESS",
+      "search_progress_m": 0.768470947,
+      "initial_goal_xy": [
+        25.625155539,
+        -2.075136217
+      ]
+    }
+  },
+  "last_recovery": {
+    "time": 1795003441.2916944,
+    "map_stamp": 1795003441.1521451,
+    "state": "RETURN_GOAL_REACHED",
+    "active": false,
+    "plans": 2,
+    "completed": 1,
+    "invalidated": 1,
+    "search_failures": 0,
+    "goal_cancellations": 0,
+    "compatible_goal_updates": 7,
+    "goal_age_s": 1.094156265,
+    "exploration_finished": true,
+    "goal_distance_m": 0.198374627,
+    "search_outcome": "FULL_PROGRESS",
+    "search_expanded": 60,
+    "search_progress_m": 0.768470947,
+    "search_ms": 32.21365,
+    "x": -0.025784919,
+    "y": -0.005965215,
+    "yaw": 0.133229658,
+    "goal_x": 0.172499999,
+    "goal_y": 0.0,
+    "segment": 3,
+    "segments": 5,
+    "progress_m": 19.080180766,
+    "linear": 0.0,
+    "angular": 0.0,
+    "first_search_rejections": {
+      "HT_DIRECTION_LOW": {
+        "x": 18.357549667,
+        "y": -5.115398407,
+        "yaw": 2.77143837,
+        "count": 7
+      },
+      "HT_OCCUPIED": {
+        "x": 18.357549667,
+        "y": -5.115398407,
+        "yaw": 2.256889184,
+        "count": 97
+      }
+    }
+  },
+  "scope": "Plan/completion events from online recovery diagnostics; a completed prefix is not full return or ground-truth coverage."
+}

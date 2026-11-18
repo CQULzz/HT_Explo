@@ -1,0 +1,40 @@
+{
+  "phases": [
+    {
+      "begin_s": 0,
+      "end_s": 300,
+      "distance_m": 141.35894652453354,
+      "sampled_observation_volume_added_m3": 10832.5,
+      "reverse_command_samples": 210,
+      "zero_linear_and_angular_samples": 4
+    },
+    {
+      "begin_s": 300,
+      "end_s": 600,
+      "distance_m": 149.61770187290549,
+      "sampled_observation_volume_added_m3": 2680.25,
+      "reverse_command_samples": 362,
+      "zero_linear_and_angular_samples": 0
+    },
+    {
+      "begin_s": 600,
+      "end_s": 688.2031036579999,
+      "distance_m": 29.74448986735422,
+      "sampled_observation_volume_added_m3": 1238.875,
+      "reverse_command_samples": 12,
+      "zero_linear_and_angular_samples": 43
+    }
+  ],
+  "low_translation_intervals_at_least_10s": [
+    {
+      "begin_s": 668.058259356,
+      "end_s": 688.203055538,
+      "duration_s": 20.144796181999936,
+      "heading_total_change_rad": 0.0,
+      "classification": "stationary",
+      "finish_at_end": "True"
+    }
+  ],
+  "clock_elapsed_error_max_abs_s": 0.0005085097017740736,
+  "definition": "Motion uses recorded base XY after lidar offset correction; observation volume is a ray-sampling proxy, not complete ground coverage."
+}

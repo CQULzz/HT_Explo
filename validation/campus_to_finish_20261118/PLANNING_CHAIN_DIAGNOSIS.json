@@ -1,0 +1,255 @@
+{
+  "window_end_elapsed_s": 688.203055538,
+  "last30s_local_selection_messages": 96,
+  "last30s_local_no_path_messages": 0,
+  "last30s_sum_candidate_rejections_not_unique_poses": {
+    "HT_CONTEXT_INVALID": 383,
+    "HT_DIRECTION_LOW": 219
+  },
+  "latest_records": {
+    "/ht_minimal/command_audit": {
+      "time": 1795003441.4678645,
+      "kind": "/ht_minimal/command_audit",
+      "data": {
+        "time": 1795003441.4674594,
+        "map_stamp": 1795003441.1521451,
+        "x": -0.025784919,
+        "y": -0.005965215,
+        "yaw": 0.133229658,
+        "linear_candidate": 0.0,
+        "angular_candidate": 0.0,
+        "reaction_time": 0.1,
+        "linear_brake_accel": 2.5,
+        "obstacle_footprint": "urdf_box_xy_v1",
+        "body_length": 0.9298609,
+        "body_width": 0.69959,
+        "body_center_x": 3.5e-07,
+        "body_center_y": 0.0,
+        "body_min_z": -0.2351843,
+        "body_max_z": 0.650200054,
+        "support_radius": 0.581822302,
+        "initial_support_prior_enabled": true,
+        "initial_support_prior_ready": true,
+        "initial_support_prior_x": -1e-09,
+        "initial_support_prior_y": 0.0,
+        "initial_support_prior_radius": 0.65,
+        "initial_support_prior_cells": 0,
+        "initial_support_prior_policy": "explicit_labels_v1",
+        "initial_support_actual_cells": 725,
+        "angular_brake_accel": 3.0,
+        "horizon_s": 0.1,
+        "allowed": true,
+        "reason": "HT_ALLOWED"
+      }
+    },
+    "/ht_minimal/recovery": {
+      "time": 1795003441.292077,
+      "kind": "/ht_minimal/recovery",
+      "data": {
+        "time": 1795003441.2916944,
+        "map_stamp": 1795003441.1521451,
+        "state": "RETURN_GOAL_REACHED",
+        "active": false,
+        "plans": 2,
+        "completed": 1,
+        "invalidated": 1,
+        "search_failures": 0,
+        "goal_cancellations": 0,
+        "compatible_goal_updates": 7,
+        "goal_age_s": 1.094156265,
+        "exploration_finished": true,
+        "goal_distance_m": 0.198374627,
+        "search_outcome": "FULL_PROGRESS",
+        "search_expanded": 60,
+        "search_progress_m": 0.768470947,
+        "search_ms": 32.21365,
+        "x": -0.025784919,
+        "y": -0.005965215,
+        "yaw": 0.133229658,
+        "goal_x": 0.172499999,
+        "goal_y": 0.0,
+        "segment": 3,
+        "segments": 5,
+        "progress_m": 19.080180766,
+        "linear": 0.0,
+        "angular": 0.0,
+        "first_search_rejections": {
+          "HT_DIRECTION_LOW": {
+            "x": 18.357549667,
+            "y": -5.115398407,
+            "yaw": 2.77143837,
+            "count": 7
+          },
+          "HT_OCCUPIED": {
+            "x": 18.357549667,
+            "y": -5.115398407,
+            "yaw": 2.256889184,
+            "count": 97
+          }
+        }
+      }
+    },
+    "/ht_minimal/local_selection": {
+      "time": 1795003441.1861255,
+      "kind": "/ht_minimal/local_selection",
+      "data": {
+        "time": 1795003441.1852913,
+        "map_stamp": 1795003440.842171,
+        "mode": "ht_only",
+        "geometry_used": false,
+        "x": -0.025784919,
+        "y": -0.005965215,
+        "yaw": 0.133229658,
+        "goal_x": 0.172499999,
+        "goal_y": 0.0,
+        "ht_checked_groups": 32,
+        "ht_allowed_groups": 32,
+        "selected_group": 128,
+        "path_found": true,
+        "path_poses": 16,
+        "rejections": {}
+      }
+    },
+    "/ht_minimal/pathFollower": {
+      "time": 1795003441.1286762,
+      "kind": "/ht_minimal/pathFollower",
+      "data": {
+        "enabled": true,
+        "map_stamp": 1795003440.842171,
+        "map_age_s": 0.285296917,
+        "accepted_maps": 2377,
+        "invalid_maps": 0,
+        "allowed": 34334,
+        "rejected": 543,
+        "initial_support_prior_enabled": true,
+        "initial_support_prior_ready": true,
+        "initial_support_prior_x": -1e-09,
+        "initial_support_prior_y": 0.0,
+        "initial_support_prior_radius": 0.65,
+        "initial_support_prior_cells": 0,
+        "initial_support_prior_policy": "explicit_labels_v1",
+        "initial_support_actual_cells": 725,
+        "last_reason": "HT_ALLOWED",
+        "reasons": {
+          "HT_DIRECTION_LOW": 202,
+          "HT_MAP_MISSING_OR_INVALID": 273,
+          "HT_MAP_STALE": 39,
+          "HT_OCCUPIED": 29
+        }
+      }
+    },
+    "waypoint": {
+      "time": 1795003440.1913457,
+      "kind": "waypoint",
+      "data": {
+        "x": 0.17249999940395355,
+        "y": 0.0,
+        "z": 0.8473894596099854
+      }
+    },
+    "/ht_minimal/localPlanner": {
+      "time": 1795003441.1331031,
+      "kind": "/ht_minimal/localPlanner",
+      "data": {
+        "enabled": true,
+        "map_stamp": 1795003440.842171,
+        "map_age_s": 0.290569544,
+        "accepted_maps": 2377,
+        "invalid_maps": 0,
+        "allowed": 40513,
+        "rejected": 22435,
+        "initial_support_prior_enabled": true,
+        "initial_support_prior_ready": true,
+        "initial_support_prior_x": -1e-09,
+        "initial_support_prior_y": 0.0,
+        "initial_support_prior_radius": 0.65,
+        "initial_support_prior_cells": 0,
+        "initial_support_prior_policy": "explicit_labels_v1",
+        "initial_support_actual_cells": 725,
+        "last_reason": "MAP_RECEIVED",
+        "reasons": {
+          "HT_CONTEXT_INVALID": 4157,
+          "HT_DIRECTION_LOW": 2053,
+          "HT_MAP_MISSING_OR_INVALID": 13566,
+          "HT_MAP_STALE": 1428,
+          "HT_OCCUPIED": 1231
+        }
+      }
+    },
+    "local_path": {
+      "time": 1795003440.8865113,
+      "kind": "local_path",
+      "data": {
+        "stamp": 1795003440.8571682,
+        "frame": "vehicle",
+        "points": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            0.012499999720603228,
+            -1.9999999949504854e-05
+          ],
+          [
+            0.024999999441206455,
+            -7.874999937484972e-05
+          ],
+          [
+            0.03749999916180968,
+            -0.00017624999600229785
+          ],
+          [
+            0.049998750910162926,
+            -0.0003137499879812822
+          ],
+          [
+            0.06249750033020973,
+            -0.0004912499935016967
+          ],
+          [
+            0.07499624975025654,
+            -0.0007062499935273081
+          ],
+          [
+            0.08749499917030334,
+            -0.0009624999802326784
+          ],
+          [
+            0.09999250061810017,
+            -0.0012562499614432454
+          ],
+          [
+            0.112488754093647,
+            -0.0015900000289548188
+          ],
+          [
+            0.1249849982559681,
+            -0.0019637499644886702
+          ],
+          [
+            0.13748000375926495,
+            -0.0023762500495649874
+          ],
+          [
+            0.14997375197708607,
+            -0.002827499993145466
+          ],
+          [
+            0.16246624290943146,
+            -0.003317499940749258
+          ],
+          [
+            0.1749574951827526,
+            -0.0038487499114125967
+          ],
+          [
+            0.18744749948382378,
+            -0.004417499876581132
+          ]
+        ]
+      }
+    }
+  },
+  "interpretation": "Distinguish localPlanner candidate rejection from pathFollower gate approval of a zero velocity command; HT_ALLOWED on zero output does not establish route feasibility."
+}

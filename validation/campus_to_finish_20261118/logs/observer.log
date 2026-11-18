@@ -1,0 +1,56 @@
+{
+  "mission_outcome": "RETURNED_AND_STOPPED",
+  "mission_complete": true,
+  "terminal_status": {
+    "outcome": "RETURNED_AND_STOPPED",
+    "elapsed_s": 688.203099579,
+    "base_xy": [
+      -0.025784919027494385,
+      -0.005965215121552243
+    ],
+    "distance_to_initial_m": 0.02646593678604292,
+    "first_finish_elapsed_s": 634.284335999,
+    "home_hold_elapsed_s": 20.144764732999988,
+    "criteria": {
+      "home_radius_m": 0.5,
+      "stationary_hold_s": 20.0,
+      "persistent_block_failure_s": 300.0
+    }
+  },
+  "elapsed_s": 688.2031036579999,
+  "distance_m": 320.72113826479324,
+  "position": [
+    0.1451863944530487,
+    0.016948971897363663,
+    0.7298423647880554
+  ],
+  "sampled_free_volume_m3": 14751.625,
+  "surface_voxel_volume_m3": 36604.875,
+  "finish": true,
+  "counts": {
+    "/ht_minimal/pathFollower": 847,
+    "/ht_minimal/localPlanner": 847,
+    "/ht_runtime": 1,
+    "odom": 133853,
+    "paths": 2421,
+    "/ht_minimal/local_selection": 2421,
+    "/ht_minimal/recovery": 196,
+    "/ht_minimal/command_audit": 34893,
+    "commands": 34719,
+    "scans": 2381,
+    "local_path": 484,
+    "/ht_performance": 594,
+    "ht_maps": 2378,
+    "ray_frames": 581,
+    "waypoint": 414,
+    "/ht_minimal/path_rejection": 154,
+    "/ht_minimal/command_projection": 31,
+    "finish_transition": 1
+  },
+  "ht_source_age_s": {
+    "p50": 0.2675672769546509,
+    "p95": 0.38922609090805055,
+    "p99": 0.4211962771415711
+  },
+  "free_volume_definition": "union of sampled sensor rays at 0.5m voxel resolution, 1Hz/1024 endpoints/12m range; observation proxy, not ground truth"
+}
