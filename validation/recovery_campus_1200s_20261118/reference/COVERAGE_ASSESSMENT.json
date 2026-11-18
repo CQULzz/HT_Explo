@@ -1,0 +1,59 @@
+{
+  "source": "Independent official campus preview pointcloud, SHA in CAMPUS_REFERENCE.json",
+  "sampled_scans_used": 1058,
+  "registered_scans_read": 4488,
+  "unpaired_scan_evictions": 0,
+  "observation_sampling": "At most 1 frame per wall-stamped second, endpoints within15m of exact paired scanner pose; finite raw registered scan returns only",
+  "voxel_size_m": 0.5,
+  "nearest_observed_voxel_center_tolerance_m": 0.75,
+  "all_reference_surface_voxels": 377124,
+  "matched_reference_surface_voxels": 56418,
+  "reference_surface_matched_fraction": 0.14960066185127438,
+  "connected_ground_proxy_cells": 12523,
+  "matched_ground_proxy_cells": 9828,
+  "ground_proxy_observed_fraction": 0.7847959754052544,
+  "unobserved_ground_proxy_cells_over20m_from_recorded_route": 2594,
+  "unobserved_ground_proxy_examples_xyz": [
+    [
+      -74.25,
+      37.25,
+      0.22052299976348877
+    ],
+    [
+      -67.25,
+      32.25,
+      -0.11535699665546417
+    ],
+    [
+      -61.25,
+      36.75,
+      -0.1391800045967102
+    ],
+    [
+      -56.25,
+      29.25,
+      -0.2049729973077774
+    ],
+    [
+      -51.75,
+      -5.75,
+      0.21597599983215332
+    ],
+    [
+      -47.75,
+      2.25,
+      0.018275000154972076
+    ],
+    [
+      54.75,
+      51.75,
+      -4.576107978820801
+    ],
+    [
+      57.25,
+      44.25,
+      -4.031472206115723
+    ]
+  ],
+  "limitations": "Surface match and pointcloud-derived ground connectivity are diagnostic proxies; neither is a certified ground-truth coverage percentage. Cannot infer all unmatched structures are reachable or require observation."
+}
