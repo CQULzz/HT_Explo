@@ -1,0 +1,39 @@
+/pathFollower:
+  ros__parameters:
+    autonomyMode: true
+    autonomySpeed: 2.0
+    dirDiffThre: 0.1
+    inclRateThre: 120.0
+    inclThre: 45.0
+    joyToSpeedDelay: 2.0
+    lookAheadDis: 0.5
+    maxAccel: 2.5
+    maxSpeed: 2.0
+    maxYawRate: 90.0
+    noRotAtGoal: true
+    noRotAtStop: false
+    pubSkipNum: 1
+    qos_overrides:
+      /parameter_events:
+        publisher:
+          depth: 1000
+          durability: volatile
+          history: keep_last
+          reliability: reliable
+    sensorOffsetX: 0.0
+    sensorOffsetY: 0.0
+    slowDwnDisThre: 0.85
+    slowRate1: 0.25
+    slowRate2: 0.5
+    slowTime1: 2.0
+    slowTime2: 2.0
+    stopDisThre: 0.2
+    stopTime: 5.0
+    stopYawRateGain: 7.5
+    switchTimeThre: 1.0
+    twoWayDrive: true
+    useInclRateToSlow: false
+    useInclToStop: false
+    use_sim_time: false
+    yawRateGain: 7.5
+

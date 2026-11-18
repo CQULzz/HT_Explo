@@ -1,0 +1,62 @@
+{
+  "case": "native_campus_02",
+  "mode": "upstream_tare_native_aede",
+  "started_wall": 1795006703.5506856,
+  "requested_duration_s": null,
+  "navigation_source_commit": "b6760adb4280b379567c76f4e684ce628e28ef71",
+  "cmu_source_commit": "158e67b31b644ed1e8b06eb1d7f70e183cc62591",
+  "ht_enabled": false,
+  "reference_config": "native VLP16/0.6m body/2.0mps/campus.yaml; one ROS2 frontier declaration compatibility line; no HT/mapper/model",
+  "summary": {
+    "mission_outcome": "RETURNED_AND_STOPPED",
+    "mission_complete": true,
+    "terminal_status": {
+      "outcome": "RETURNED_AND_STOPPED",
+      "elapsed_s": 1287.970485502,
+      "base_xy": [
+        -0.01669747196137905,
+        0.03716718778014183
+      ],
+      "distance_to_initial_m": 0.04074561838266004,
+      "first_finish_elapsed_s": 1202.4703868049999,
+      "home_hold_elapsed_s": 20.104409555000075,
+      "criteria": {
+        "home_radius_m": 0.5,
+        "stationary_hold_s": 20.0,
+        "persistent_block_failure_s": 300.0
+      }
+    },
+    "elapsed_s": 1287.970488453,
+    "distance_m": 2460.0201236233606,
+    "position": [
+      -0.01669747196137905,
+      0.03716718778014183,
+      0.7089473009109497
+    ],
+    "sampled_free_volume_m3": 72949.625,
+    "surface_voxel_volume_m3": 37053.625,
+    "finish": true,
+    "counts": {
+      "odom": 257866,
+      "scans": 6807,
+      "paths": 6807,
+      "commands": 64422,
+      "ray_frames": 1145,
+      "local_path": 1361,
+      "waypoint": 1287,
+      "finish_transition": 1
+    },
+    "ht_source_age_s": null,
+    "free_volume_definition": "union of sampled sensor rays at 0.5m voxel resolution, 1Hz/1024 endpoints/12m range; observation proxy, not ground truth"
+  },
+  "collection_complete": true,
+  "mission_complete": true,
+  "mission_outcome": "RETURNED_AND_STOPPED",
+  "ended_wall": 1795008150.6012332,
+  "exit_codes": {
+    "bag": 0,
+    "simulation": 0,
+    "observer": 0
+  },
+  "freeze_unchanged": true
+}

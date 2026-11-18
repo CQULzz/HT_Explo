@@ -1,0 +1,11 @@
+--- upstream/src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp
++++ existing/src/tare_planner/src/local_coverage_planner/local_coverage_planner.cpp
+@@ -633,6 +633,8 @@
+   EnqueueViewpointCandidates(queue, frontier_queue, covered, frontier_covered,
+                              pre_selected_viewpoint_array_indices);
+ 
++  RCLCPP_INFO(rclcpp::get_logger("local_diag"), "LOCAL_DIAG uncovered=%d frontier=%d queue=%zu best_surface=%d frontier_queue=%zu best_frontier=%d reused=%zu",
++    uncovered_point_num, uncovered_frontier_point_num, queue.size(), queue.empty()?0:queue[0].first, frontier_queue.size(), frontier_queue.empty()?0:frontier_queue[0].first, reused_viewpoint_indices.size());
+   viewpoint_sampling_timer.Stop(false, kRuntimeUnit);
+   viewpoint_sampling_runtime_ +=
+       viewpoint_sampling_timer.GetDuration(kRuntimeUnit);

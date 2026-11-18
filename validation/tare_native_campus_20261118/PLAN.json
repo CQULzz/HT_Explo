@@ -1,0 +1,55 @@
+{
+  "purpose": "Native upstream TARE/AEDE campus reference mission through completion/return; no HT adaptation",
+  "navigation_source": {
+    "tare_commit": "b6760adb4280b379567c76f4e684ce628e28ef71",
+    "cmu_commit": "158e67b31b644ed1e8b06eb1d7f70e183cc62591",
+    "source_verification": "GitHub pinned tree blob IDs;2401 TARE package files restored to upstream before one documented ROS2 parameter binding line;66 CMU files identical",
+    "shared_sources_modified": false
+  },
+  "configuration": {
+    "sensor": "native VLP16 xacro,16 beams,6.3Hz simulated,350 horizontal samples",
+    "local_planner": "native local_planner package,geometry collision/traversability",
+    "vehicle_xy_m": [
+      0.6,
+      0.6
+    ],
+    "vehicleHeight_m": 0.75,
+    "sensor_offset_xy_m": [
+      0.0,
+      0.0
+    ],
+    "maxSpeed_mps": 2.0,
+    "autonomySpeed_mps": 2.0,
+    "tare_yaml": "unmodified upstream campus.yaml, except kAutoStart false until passive input readiness"
+  },
+  "ht": {
+    "mapper": false,
+    "neural_inference": false,
+    "command_gate": false,
+    "recovery_adapter": false
+  },
+  "isolation": {
+    "domain": 205,
+    "gazebo_port": 11589,
+    "display": ":109"
+  },
+  "infrastructure_only_changes": {
+    "spawn_delays_s": [
+      120,
+      122,
+      124
+    ],
+    "carrier_delay_s": 150,
+    "headless": true,
+    "removed_unavailable_world_plugins": [
+      {
+        "name": "ros_interface_plugin",
+        "filename": "librotors_gazebo_ros_interface_plugin.so"
+      }
+    ],
+    "frontier_parameter_declaration_patch": "setup/frontier_ros2_parameter.patch"
+  },
+  "termination": "No20min cap. finish+home<=0.5m+zero/fresh/stationary20s. Persistent300s stagnation is failure, not completion. Input/process/disk failures retained.",
+  "comparison_limit": "Reference configuration differs from HT Scout/Helios0.5mps; cannot attribute differences only to HT. One mission cannot establish broad stability.",
+  "raw_upload": false
+}

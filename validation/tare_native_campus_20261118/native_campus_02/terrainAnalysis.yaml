@@ -1,0 +1,37 @@
+/terrainAnalysis:
+  ros__parameters:
+    absDyObsRelZThre: 0.2
+    clearDyObs: true
+    clearingDis: 8.0
+    considerDrop: true
+    decayTime: 2.0
+    disRatioZ: 0.2
+    limitGroundLift: false
+    maxDyObsVFOV: 16.0
+    maxGroundLift: 0.15
+    maxRelZ: 1.0
+    minBlockPointNum: 10
+    minDyObsAngle: 0.0
+    minDyObsDis: 0.3
+    minDyObsPointNum: 1
+    minDyObsRelZ: -0.5
+    minDyObsVFOV: -16.0
+    minRelZ: -2.5
+    noDataBlockSkipNum: 0
+    noDataObstacle: false
+    noDecayDis: 4.0
+    qos_overrides:
+      /parameter_events:
+        publisher:
+          depth: 1000
+          durability: volatile
+          history: keep_last
+          reliability: reliable
+    quantileZ: 0.25
+    scanVoxelSize: 0.05
+    useSorting: false
+    use_sim_time: false
+    vehicleHeight: 1.5
+    voxelPointUpdateThre: 100
+    voxelTimeUpdateThre: 2.0
+

@@ -1,0 +1,10 @@
+--- upstream/sensor_coverage_planner_ground.cpp
++++ runtime/sensor_coverage_planner_ground.cpp
+@@ -54,6 +54,7 @@
+ 
+   // Bool
+   this->declare_parameter<bool>("kAutoStart", false);
++  this->declare_parameter<bool>("kUseFrontier", true); // Bind the upstream ROS2 YAML parameter.
+   this->declare_parameter<bool>("kRushHome", false);
+   this->declare_parameter<bool>("kUseTerrainHeight", true);
+   this->declare_parameter<bool>("kCheckTerrainCollision", true);

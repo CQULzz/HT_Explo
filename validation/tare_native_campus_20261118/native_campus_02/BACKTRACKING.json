@@ -1,0 +1,139 @@
+{
+  "previous": {
+    "proximity_sensitivity": {
+      "1.0": {
+        "route_revisit_distance_m": 13.26058573967711,
+        "route_revisit_fraction": 0.04180014582255844
+      },
+      "3.0": {
+        "route_revisit_distance_m": 54.286183267581166,
+        "route_revisit_fraction": 0.1711214286670174
+      },
+      "5.0": {
+        "route_revisit_distance_m": 85.36083371651856,
+        "route_revisit_fraction": 0.26907524048575854
+      }
+    },
+    "overall": {
+      "base_xy_distance_m": 317.2377865849626,
+      "route_revisit_distance_m": 13.26058573967711,
+      "route_revisit_fraction": 0.04180014582255844,
+      "reverse_command_distance_m": 141.4718898261531
+    },
+    "before_finish": {
+      "base_xy_distance_m": 306.39789776534315,
+      "route_revisit_distance_m": 12.207695762886946,
+      "route_revisit_fraction": 0.03984262245897095,
+      "reverse_command_distance_m": 139.59258049756954
+    },
+    "after_finish": {
+      "base_xy_distance_m": 10.83988881961942,
+      "route_revisit_distance_m": 1.0528899767901645,
+      "route_revisit_fraction": 0.09713106788369538,
+      "reverse_command_distance_m": 1.87930932858354
+    },
+    "phases": [
+      {
+        "begin_s": 0,
+        "end_s": 300,
+        "base_xy_distance_m": 140.7557434061444,
+        "route_revisit_distance_m": 0.0,
+        "route_revisit_fraction": 0.0,
+        "reverse_command_distance_m": 48.56262818245342
+      },
+      {
+        "begin_s": 300,
+        "end_s": 600,
+        "base_xy_distance_m": 149.01927386898475,
+        "route_revisit_distance_m": 12.207695762886946,
+        "route_revisit_fraction": 0.08192024726693908,
+        "reverse_command_distance_m": 91.0299523151161
+      },
+      {
+        "begin_s": 600,
+        "end_s": 688.203055538,
+        "base_xy_distance_m": 27.46276930983339,
+        "route_revisit_distance_m": 1.0528899767901645,
+        "route_revisit_fraction": 0.03833881299119983,
+        "reverse_command_distance_m": 1.87930932858354
+      }
+    ]
+  },
+  "repeat": {
+    "proximity_sensitivity": {
+      "1.0": {
+        "route_revisit_distance_m": 415.168091468303,
+        "route_revisit_fraction": 0.16892590014847417
+      },
+      "3.0": {
+        "route_revisit_distance_m": 745.5058811812271,
+        "route_revisit_fraction": 0.3033355757161676
+      },
+      "5.0": {
+        "route_revisit_distance_m": 903.9959416082947,
+        "route_revisit_fraction": 0.36782289223305487
+      }
+    },
+    "overall": {
+      "base_xy_distance_m": 2457.6935277740063,
+      "route_revisit_distance_m": 415.168091468303,
+      "route_revisit_fraction": 0.16892590014847417,
+      "reverse_command_distance_m": 1546.1418516692415
+    },
+    "before_finish": {
+      "base_xy_distance_m": 2328.758334935344,
+      "route_revisit_distance_m": 400.148025391734,
+      "route_revisit_fraction": 0.17182891817877005,
+      "reverse_command_distance_m": 1417.2066588305795
+    },
+    "after_finish": {
+      "base_xy_distance_m": 128.9351928386621,
+      "route_revisit_distance_m": 15.02006607656892,
+      "route_revisit_fraction": 0.11649314470226667,
+      "reverse_command_distance_m": 128.9351928386621
+    },
+    "phases": [
+      {
+        "begin_s": 0,
+        "end_s": 300,
+        "base_xy_distance_m": 578.6071979463941,
+        "route_revisit_distance_m": 32.65530606285396,
+        "route_revisit_fraction": 0.056437780550872715,
+        "reverse_command_distance_m": 107.9888208661516
+      },
+      {
+        "begin_s": 300,
+        "end_s": 600,
+        "base_xy_distance_m": 580.5186105962409,
+        "route_revisit_distance_m": 155.36083761818952,
+        "route_revisit_fraction": 0.26762421528333263,
+        "reverse_command_distance_m": 493.0233653269429
+      },
+      {
+        "begin_s": 600,
+        "end_s": 900,
+        "base_xy_distance_m": 584.5967591335489,
+        "route_revisit_distance_m": 12.100878793018348,
+        "route_revisit_fraction": 0.02069953109379785,
+        "reverse_command_distance_m": 383.244073470118
+      },
+      {
+        "begin_s": 900,
+        "end_s": 1200,
+        "base_xy_distance_m": 583.7436135750035,
+        "route_revisit_distance_m": 200.03100291767223,
+        "route_revisit_fraction": 0.3426692785427293,
+        "reverse_command_distance_m": 431.838966866821
+      },
+      {
+        "begin_s": 1200,
+        "end_s": 1287.970466324,
+        "base_xy_distance_m": 130.22734652281878,
+        "route_revisit_distance_m": 15.02006607656892,
+        "route_revisit_fraction": 0.11533726577111102,
+        "reverse_command_distance_m": 130.04662513920815
+      }
+    ]
+  },
+  "definition": "Distance-weighted base-XY segments; midpoint within1m of any recorded route sample at least30s earlier. This is spatial revisit, not proof of useless travel; necessary transfer/return and new observations from old positions are possible. Reverse velocity is reported separately and is not equivalent to route revisit."
+}

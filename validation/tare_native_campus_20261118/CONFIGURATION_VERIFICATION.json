@@ -1,0 +1,34 @@
+{
+  "full_effective_yaml_byte_equal": {
+    "terrainAnalysis.yaml": true,
+    "tare_planner_node.yaml": true,
+    "localPlanner.yaml": false,
+    "vehicleSimulator.yaml": false,
+    "pathFollower.yaml": true,
+    "robot_state_publisher.yaml": false,
+    "terrainAnalysisExt.yaml": true
+  },
+  "effective_yaml_equal_after_resolving_isolated_root": {
+    "terrainAnalysis.yaml": true,
+    "tare_planner_node.yaml": true,
+    "localPlanner.yaml": true,
+    "vehicleSimulator.yaml": null,
+    "pathFollower.yaml": true,
+    "robot_state_publisher.yaml": true,
+    "terrainAnalysisExt.yaml": true
+  },
+  "missing_effective_parameter_dump": [
+    "native_campus_02/vehicleSimulator.yaml"
+  ],
+  "evidence_gap": "Second vehicleSimulator parameter service lookup returned Node not found. Node-list snapshot also missed TARE and vehicleSimulator; four actual executables independently verified. Frozen launch/source/config and same binary retained; no replacement dump fabricated.",
+  "actual_binary_sha_equal": {
+    "localPlanner": "b135a004b70782f1e70960fb08991e4c8d2858f34dd27b030191baa714b77b02",
+    "pathFollower": "b5b3872a5e83f1949c9df884f012f342c54e5bb33068da73c78e12f3bffdaebf",
+    "tare_planner_node": "e81fc2b8e23d570b324be02626f17403f3b961159c8142bf7d0643db97676cf6",
+    "vehicleSimulator": "5a1eb760e9541c598c07ecb1128aeac5fb33d5dde9fe01b96ee04641656e4a90"
+  },
+  "both_no_ht_nodes": true,
+  "freeze_current_bytes_match_both": true,
+  "native_vlp16_speed_mps": 2.0,
+  "comparison": "No common explicit seed; dynamics/ROS scheduling can choose different routes."
+}

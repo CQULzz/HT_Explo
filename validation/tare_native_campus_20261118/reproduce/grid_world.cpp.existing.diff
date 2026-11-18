@@ -1,0 +1,39 @@
+--- upstream/src/tare_planner/src/grid_world/grid_world.cpp
++++ existing/src/tare_planner/src/grid_world/grid_world.cpp
+@@ -236,6 +236,7 @@
+ {
+   std::vector<int> keypose_graph_connected_node_indices = keypose_graph->GetConnectedGraphNodeIndices();
+ 
++  int diag_exploring=0;
+   for (int i = 0; i < subspaces_->GetCellNumber(); i++)
+   {
+     if (subspaces_->GetCell(i).GetStatus() == CellStatus::EXPLORING)
+@@ -455,6 +456,7 @@
+ void GridWorld::GetExploringCellIndices(std::vector<int>& exploring_cell_indices)
+ {
+   exploring_cell_indices.clear();
++  int diag_exploring=0;
+   for (int i = 0; i < subspaces_->GetCellNumber(); i++)
+   {
+     if (subspaces_->GetCell(i).GetStatus() == CellStatus::EXPLORING)
+@@ -740,10 +742,12 @@
+   exploration_path_ns::ExplorationPath global_path;
+   std::vector<geometry_msgs::msg::Point> exploring_cell_positions;
+   std::vector<int> exploring_cell_indices;
++  int diag_exploring=0;
+   for (int i = 0; i < subspaces_->GetCellNumber(); i++)
+   {
+     if (subspaces_->GetCell(i).GetStatus() == CellStatus::EXPLORING)
+     {
++      ++diag_exploring;
+       if (std::find(neighbor_cell_indices_.begin(), neighbor_cell_indices_.end(), i) == neighbor_cell_indices_.end() ||
+           (subspaces_->GetCell(i).GetViewPointIndices().empty() && subspaces_->GetCell(i).GetVisitCount() > 1))
+       {
+@@ -798,6 +802,7 @@
+     }
+   }
+ 
++  RCLCPP_INFO(rclcpp::get_logger("grid_diag"), "GLOBAL_DIAG exploring=%d routable=%zu", diag_exploring, exploring_cell_indices.size());
+   /****** Return home ******/
+   if (exploring_cell_indices.empty())
+   {

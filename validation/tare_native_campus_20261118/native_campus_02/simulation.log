@@ -1,0 +1,305 @@
+[INFO] [launch]: All log files can be found below /home/lzz/tare_native_campus_repeat_20261118/ros_logs/2026-11-18-20-58-23-757318-lzz-440
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [gzserver-1]: process started with pid [470]
+[INFO] [robot_state_publisher-2]: process started with pid [472]
+[INFO] [terrainAnalysis-3]: process started with pid [474]
+[INFO] [terrainAnalysisExt-4]: process started with pid [476]
+[INFO] [sensorScanGeneration-5]: process started with pid [478]
+[INFO] [localPlanner-6]: process started with pid [480]
+[INFO] [pathFollower-7]: process started with pid [482]
+[INFO] [static_transform_publisher-8]: process started with pid [484]
+[INFO] [static_transform_publisher-9]: process started with pid [486]
+[INFO] [tare_planner_node-10]: process started with pid [488]
+[static_transform_publisher-8] [WARN] [1795006704.172649770] []: Old-style arguments are deprecated; see --help for new-style arguments
+[static_transform_publisher-9] [WARN] [1795006704.173123301] []: Old-style arguments are deprecated; see --help for new-style arguments
+[static_transform_publisher-9] [INFO] [1795006704.199266866] [sensorTransPublisher]: Spinning until stopped - publishing transform
+[static_transform_publisher-9] translation: ('0.000000', '0.000000', '0.000000')
+[static_transform_publisher-9] rotation: ('-0.500000', '0.500000', '-0.500000', '0.500000')
+[static_transform_publisher-9] from '/sensor' to '/camera'
+[static_transform_publisher-8] [INFO] [1795006704.201648763] [vehicleTransPublisher]: Spinning until stopped - publishing transform
+[static_transform_publisher-8] translation: ('-0.000000', '-0.000000', '0.000000')
+[static_transform_publisher-8] rotation: ('0.000000', '0.000000', '0.000000', '1.000000')
+[static_transform_publisher-8] from '/sensor' to '/vehicle'
+[robot_state_publisher-2] [INFO] [1795006704.204715466] [robot_state_publisher]: got segment lidar
+[robot_state_publisher-2] [INFO] [1795006704.204911777] [robot_state_publisher]: got segment velodyne
+[robot_state_publisher-2] [INFO] [1795006704.204928449] [robot_state_publisher]: got segment velodyne_base_link
+[localPlanner-6] [INFO] [1795006704.239316689] [localPlanner]: Reading path files.
+[tare_planner_node-10] finished constructor
+[tare_planner_node-10] parameter kAutoStart: 0
+[localPlanner-6] [INFO] [1795006704.609002306] [localPlanner]: Initialization complete.
+[gzserver-1] Gazebo multi-robot simulator, version 11.10.2
+[gzserver-1] Copyright (C) 2012 Open Source Robotics Foundation.
+[gzserver-1] Released under the Apache 2 License.
+[gzserver-1] http://gazebosim.org
+[gzserver-1] 
+[gzserver-1] [1;33m[Wrn] [gazebo_ros_init.cpp:178] [0m[1;33m
+[gzserver-1] #     # ####### ####### ###  #####  #######
+[gzserver-1] ##    # #     #    #     #  #     # #
+[gzserver-1] # #   # #     #    #     #  #       #
+[gzserver-1] #  #  # #     #    #     #  #       #####
+[gzserver-1] #   # # #     #    #     #  #       #
+[gzserver-1] #    ## #     #    #     #  #     # #
+[gzserver-1] #     # #######    #    ###  #####  #######
+[gzserver-1] 
+[gzserver-1] This version of Gazebo, now called Gazebo classic, reaches end-of-life
+[gzserver-1] in January 2025. Users are highly encouraged to migrate to the new Gazebo
+[gzserver-1] using our migration guides (https://gazebosim.org/docs/latest/gazebo_classic_migration?utm_source=gazebo_ros_pkgs&utm_medium=cli)
+[gzserver-1] 
+[gzserver-1] [0m[1;33m
+[tare_planner_node-10] 
+[tare_planner_node-10] [1;32mExploration Started[0m
+[gzserver-1] [1;32m[Msg] [0m[1;32mWaiting for master.[0m[1;32m
+[gzserver-1] [0m[1;32m[0m[1;32m[0m[1;32m[Msg] [0m[1;32mConnected to gazebo master @ [0m[1;32mhttp://127.0.0.1:11599[0m[1;32m
+[gzserver-1] [0m[1;32m[0m[1;32m[0m[1;32m[Msg] [0m[1;32mPublicized address: [0m[1;32m10.255.255.254[0m[1;32m
+[gzserver-1] [0m[1;32m[0m[1;32m[0m[1;32m[Msg] [0m[1;32mLoading world file [[0m[1;32m/home/lzz/tare_native_campus_repeat_20261118/campus.world[0m[1;32m][0m[1;32m
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;33m[Wrn] [ODEPhysics.cc:215] [0m[1;33mGravity vector is (0, 0, 0). Objects will float.
+[tare_planner_node-10] [INFO] [1795006706.077743164] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006707.079642035] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006708.081292364] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006709.082658945] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006710.083859009] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006711.085051262] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006712.086043267] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006713.086841366] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006714.087584162] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006715.088235504] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006716.088816635] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006717.089328581] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006718.089727570] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006719.090108658] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006720.090159414] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006721.000920305] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006721.954474731] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006722.972005073] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006723.988176855] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006725.002215353] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006726.014596449] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006727.025354702] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006728.025403532] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006729.023666206] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006730.023139689] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006731.029374478] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006732.034980187] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006733.039664127] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006734.043927265] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006735.047587364] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006736.047594668] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006737.015938823] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006737.984304543] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006738.986519360] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006739.988451880] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006740.990072930] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006741.991547571] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006742.992880862] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006743.992930534] [tare_planner_node]: Waiting for start signal
+[gzserver-1] [0m[1;33m[Wrn] [ColladaLoader.cc:1928] [0m[1;33mTriangle input semantic: '[0m[1;33mCOLOR[0m[1;33m' is currently[0m[1;33m not supported[0m[1;33m
+[tare_planner_node-10] [INFO] [1795006744.984506646] [tare_planner_node]: Waiting for start signal
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;33m[Wrn] [ColladaLoader.cc:1928] [0m[1;33mTriangle input semantic: '[0m[1;33mCOLOR[0m[1;33m' is currently[0m[1;33m not supported[0m[1;33m
+[tare_planner_node-10] [INFO] [1795006745.974283766] [tare_planner_node]: Waiting for start signal
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;33m[Wrn] [ColladaLoader.cc:1928] [0m[1;33mTriangle input semantic: '[0m[1;33mCOLOR[0m[1;33m' is currently[0m[1;33m not supported[0m[1;33m
+[tare_planner_node-10] [INFO] [1795006746.964091780] [tare_planner_node]: Waiting for start signal
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;33m[Wrn] [ColladaLoader.cc:1928] [0m[1;33mTriangle input semantic: '[0m[1;33mCOLOR[0m[1;33m' is currently[0m[1;33m not supported[0m[1;33m
+[tare_planner_node-10] [INFO] [1795006747.963409582] [tare_planner_node]: Waiting for start signal
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;33m[Wrn] [ColladaLoader.cc:1928] [0m[1;33mTriangle input semantic: '[0m[1;33mCOLOR[0m[1;33m' is currently[0m[1;33m not supported[0m[1;33m
+[tare_planner_node-10] [INFO] [1795006748.963947237] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006749.964410440] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006750.964890412] [tare_planner_node]: Waiting for start signal
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[INFO] [1795006751.896371176] [gazebo_ros_state]: Publishing states of gazebo models at [/model_states]
+[gzserver-1] [INFO] [1795006751.897328375] [gazebo_ros_state]: Publishing states of gazebo links at [/link_states]
+[tare_planner_node-10] [INFO] [1795006751.962442786] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006752.962228190] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006753.958660172] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006754.955113299] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006755.966717294] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006756.981752432] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006757.997037303] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006759.010368175] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006760.014630952] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006761.015939771] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006762.016038787] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006763.016810992] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006764.022664251] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006765.028583967] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006766.033792821] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006767.038338506] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006768.038337678] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006769.019195380] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006769.996355120] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006770.996086635] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006771.998444236] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006773.000521640] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006774.002285685] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006775.003859878] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006776.003867125] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006776.992786738] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006777.978868096] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006778.969820981] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006779.970648780] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006780.971339354] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006781.971954812] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006782.972556960] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006783.972509464] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006784.963617346] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006785.951902165] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006786.940170786] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006787.930612435] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006788.926471095] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006789.922174481] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006790.917895088] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006791.913572776] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006792.911404099] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006793.910259713] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006794.908991285] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006795.907685250] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006796.906337552] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006797.905011327] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006798.901947389] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006799.897565383] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006800.894548482] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006801.892301396] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006802.912887024] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006803.935785825] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006804.955495188] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006805.972296197] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006806.986839924] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006807.997775308] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006809.006170420] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006810.013085936] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006811.018558899] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006812.022953319] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006813.026090426] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006814.028194622] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006815.029622825] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006816.030472265] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006817.030586013] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006818.030668537] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006819.030301349] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006820.029456726] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006821.028214919] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006822.026597709] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006823.024623527] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006824.022417825] [tare_planner_node]: Waiting for start signal
+[INFO] [spawn_entity.py-11]: process started with pid [730]
+[spawn_entity.py-11] [INFO] [1795006824.331080115] [spawn_entity]: Spawn Entity started
+[spawn_entity.py-11] [INFO] [1795006824.331344102] [spawn_entity]: Loading entity published on topic robot_description
+[spawn_entity.py-11] [INFO] [1795006824.332811923] [spawn_entity]: Waiting for entity xml on robot_description
+[spawn_entity.py-11] [INFO] [1795006824.343846750] [spawn_entity]: Waiting for service /spawn_entity, timeout = 180
+[spawn_entity.py-11] [INFO] [1795006824.344069160] [spawn_entity]: Waiting for service /spawn_entity
+[tare_planner_node-10] [INFO] [1795006825.020188181] [tare_planner_node]: Waiting for start signal
+[spawn_entity.py-11] [INFO] [1795006825.353292422] [spawn_entity]: Calling service /spawn_entity
+[tare_planner_node-10] [INFO] [1795006826.017783578] [tare_planner_node]: Waiting for start signal
+[INFO] [spawn_entity.py-12]: process started with pid [743]
+[spawn_entity.py-11] [INFO] [1795006826.440123297] [spawn_entity]: Spawn status: SpawnEntity: Successfully spawned entity [lidar]
+[gzserver-1] [INFO] [1795006826.455490055] [velodyne.gazebo_ros_laser_controller]: Velodyne laser plugin missing <min_intensity>, defaults to no clipping
+[gzserver-1] [INFO] [1795006826.458677787] [velodyne.gazebo_ros_laser_controller]: Velodyne laser plugin ready
+[INFO] [spawn_entity.py-11]: process has finished cleanly [pid 730]
+[spawn_entity.py-12] [INFO] [1795006826.644167808] [spawn_entity]: Spawn Entity started
+[spawn_entity.py-12] [INFO] [1795006826.644561514] [spawn_entity]: Loading entity XML from file /home/lzz/tare_native_campus_repeat_20261118/project/install/vehicle_simulator/share/vehicle_simulator/urdf/robot.sdf
+[spawn_entity.py-12] [INFO] [1795006826.645770965] [spawn_entity]: Waiting for service /spawn_entity, timeout = 180
+[spawn_entity.py-12] [INFO] [1795006826.646200905] [spawn_entity]: Waiting for service /spawn_entity
+[spawn_entity.py-12] [INFO] [1795006826.650392109] [spawn_entity]: Calling service /spawn_entity
+[tare_planner_node-10] [INFO] [1795006827.014021813] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006828.012465904] [tare_planner_node]: Waiting for start signal
+[INFO] [spawn_entity.py-13]: process started with pid [757]
+[spawn_entity.py-13] [INFO] [1795006828.322158422] [spawn_entity]: Spawn Entity started
+[spawn_entity.py-13] [INFO] [1795006828.322451593] [spawn_entity]: Loading entity XML from file /home/lzz/tare_native_campus_repeat_20261118/project/install/vehicle_simulator/share/vehicle_simulator/urdf/camera.urdf.xacro
+[spawn_entity.py-13] [INFO] [1795006828.324104471] [spawn_entity]: Waiting for service /spawn_entity, timeout = 180
+[spawn_entity.py-13] [INFO] [1795006828.324288135] [spawn_entity]: Waiting for service /spawn_entity
+[spawn_entity.py-13] [INFO] [1795006828.327277671] [spawn_entity]: Calling service /spawn_entity
+[spawn_entity.py-12] [INFO] [1795006828.464708368] [spawn_entity]: Spawn status: SpawnEntity: Successfully spawned entity [robot]
+[INFO] [spawn_entity.py-12]: process has finished cleanly [pid 743]
+[tare_planner_node-10] [INFO] [1795006829.009571338] [tare_planner_node]: Waiting for start signal
+[spawn_entity.py-13] [INFO] [1795006829.521880551] [spawn_entity]: Spawn status: SpawnEntity: Successfully spawned entity [camera]
+[INFO] [spawn_entity.py-13]: process has finished cleanly [pid 757]
+[gzserver-1] [0m[1;32m[0m[1;32m[0m[1;36m[Dbg] [GazeboRosVelodyneLaser.cpp:65] [0m[1;36mLoading GazeboRosVelodyneLaser
+[gzserver-1] [0m[1;36m[Dbg] [GazeboRosVelodyneLaser.cpp:125] [0m[1;36mGazeboRosVelodyneLaser LOADED
+[gzserver-1] [1;33m[Wrn] [Event.cc:61] [0m[1;33mWarning: Deleting a connection right after creation. [0m[1;33mMake sure to save the ConnectionPtr from a Connect call
+[gzserver-1] [0m[INFO] [1795006829.719639446] [camera_controller]: Publishing camera info to [/camera/camera_info]
+[tare_planner_node-10] [INFO] [1795006830.004358732] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006831.003491122] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006832.000233218] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006832.996846655] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006833.993386696] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006834.989911708] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006835.997151517] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006837.006422093] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006838.013911412] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006839.020019480] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006840.024877907] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006841.028719448] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006842.031355265] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006843.033249608] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006844.034370768] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006845.034913977] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006846.034912035] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006847.034926738] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006848.034263942] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006849.033189821] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006850.031718360] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006851.029771890] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006852.027690256] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006853.025277286] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006854.022706429] [tare_planner_node]: Waiting for start signal
+[INFO] [vehicleSimulator-14]: process started with pid [771]
+[vehicleSimulator-14] [INFO] [1795006854.200453144] [vehicleSimulator]: Simulation started.
+[tare_planner_node-10] [INFO] [1795006855.019839414] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006856.016865790] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] [INFO] [1795006857.010081648] [tare_planner_node]: Waiting for start signal
+[tare_planner_node-10] 
+[tare_planner_node-10] [1;32mExploration completed, returning home[0m
+[tare_planner_node-10] 
+[tare_planner_node-10] [1;32mReturn home completed[0m
+[WARNING] [launch]: user interrupted with ctrl-c (SIGINT)
+[tare_planner_node-10] [INFO] [1795008146.327234339] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[static_transform_publisher-9] [INFO] [1795008146.327242147] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[static_transform_publisher-8] [INFO] [1795008146.327275486] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[INFO] [vehicleSimulator-14]: sending signal 'SIGINT' to process[vehicleSimulator-14]
+[INFO] [tare_planner_node-10]: sending signal 'SIGINT' to process[tare_planner_node-10]
+[INFO] [static_transform_publisher-9]: sending signal 'SIGINT' to process[static_transform_publisher-9]
+[INFO] [static_transform_publisher-8]: sending signal 'SIGINT' to process[static_transform_publisher-8]
+[INFO] [pathFollower-7]: sending signal 'SIGINT' to process[pathFollower-7]
+[INFO] [localPlanner-6]: sending signal 'SIGINT' to process[localPlanner-6]
+[ERROR] [static_transform_publisher-9]: process has died [pid 486, exit code -2, cmd '/opt/ros/humble/lib/tf2_ros/static_transform_publisher 0 0 0.0 -1.5707963 0 -1.5707963 /sensor /camera --ros-args -r __node:=sensorTransPublisher'].
+[INFO] [sensorScanGeneration-5]: sending signal 'SIGINT' to process[sensorScanGeneration-5]
+[ERROR] [static_transform_publisher-8]: process has died [pid 484, exit code -2, cmd '/opt/ros/humble/lib/tf2_ros/static_transform_publisher -0.0 -0.0 0 0 0 0 /sensor /vehicle --ros-args -r __node:=vehicleTransPublisher'].
+[INFO] [terrainAnalysisExt-4]: sending signal 'SIGINT' to process[terrainAnalysisExt-4]
+[INFO] [terrainAnalysis-3]: sending signal 'SIGINT' to process[terrainAnalysis-3]
+[INFO] [robot_state_publisher-2]: sending signal 'SIGINT' to process[robot_state_publisher-2]
+[INFO] [gzserver-1]: sending signal 'SIGINT' to process[gzserver-1]
+[localPlanner-6] [INFO] [1795008146.327331687] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[localPlanner-6] terminate called after throwing an instance of 'rclcpp::exceptions::RCLError'
+[localPlanner-6]   what():  failed to create guard condition: the given context is not valid, either rcl_init() was not called or rcl_shutdown() was called., at ./src/rcl/guard_condition.c:67
+[pathFollower-7] [INFO] [1795008146.327303698] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[pathFollower-7] terminate called after throwing an instance of 'rclcpp::exceptions::RCLError'
+[pathFollower-7]   what():  failed to create guard condition: the given context is not valid, either rcl_init() was not called or rcl_shutdown() was called., at ./src/rcl/guard_condition.c:67
+[terrainAnalysisExt-4] [INFO] [1795008146.327356865] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[terrainAnalysisExt-4] terminate called after throwing an instance of 'rclcpp::exceptions::RCLError'
+[terrainAnalysisExt-4]   what():  failed to create guard condition: the given context is not valid, either rcl_init() was not called or rcl_shutdown() was called., at ./src/rcl/guard_condition.c:67
+[robot_state_publisher-2] [INFO] [1795008146.327385025] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[sensorScanGeneration-5] [INFO] [1795008146.327370146] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[terrainAnalysis-3] [INFO] [1795008146.327588988] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[terrainAnalysis-3] terminate called after throwing an instance of 'rclcpp::exceptions::RCLError'
+[terrainAnalysis-3]   what():  failed to create guard condition: the given context is not valid, either rcl_init() was not called or rcl_shutdown() was called., at ./src/rcl/guard_condition.c:67
+[vehicleSimulator-14] terminate called after throwing an instance of 'rclcpp::exceptions::RCLError'
+[vehicleSimulator-14]   what():  failed to create guard condition: the given context is not valid, either rcl_init() was not called or rcl_shutdown() was called., at ./src/rcl/guard_condition.c:67
+[gzserver-1] [1;33m[Wrn] [Publisher.cc:135] [0m[1;33mQueue limit reached for topic [0m[1;33m/gazebo/default/pose/local/info[0m[1;33m, deleting message. [0m[1;33mThis warning is printed only once.[0m[1;33m
+[robot_state_publisher-2] [INFO] [1795008146.345126811] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[ERROR] [terrainAnalysis-3]: process has died [pid 474, exit code -6, cmd '/home/lzz/tare_native_campus_repeat_20261118/project/install/terrain_analysis/lib/terrain_analysis/terrainAnalysis --ros-args -r __node:=terrainAnalysis --params-file /tmp/launch_params_ezf9u563 --params-file /tmp/launch_params_otqvmgdo --params-file /tmp/launch_params_u3rsy9g_ --params-file /tmp/launch_params_m73oird1 --params-file /tmp/launch_params_quf_2css --params-file /tmp/launch_params_jsv8po1c --params-file /tmp/launch_params_jzsu30ce --params-file /tmp/launch_params_82zj5rbv --params-file /tmp/launch_params_086l08m5 --params-file /tmp/launch_params_nlg7_euu --params-file /tmp/launch_params_s5y70vbi --params-file /tmp/launch_params_nuephyka --params-file /tmp/launch_params_kx0gqgjj --params-file /tmp/launch_params_ybd7fdbb --params-file /tmp/launch_params_71q44m99 --params-file /tmp/launch_params_r3h4cn61 --params-file /tmp/launch_params_9sfist_d --params-file /tmp/launch_params_ea04lut_ --params-file /tmp/launch_params_kmt7ybro --params-file /tmp/launch_params_86e7b69f --params-file /tmp/launch_params_mc_l6brk --params-file /tmp/launch_params_kkbircw3 --params-file /tmp/launch_params_kt5hnww7 --params-file /tmp/launch_params_st_v1pb9 --params-file /tmp/launch_params_28rgm979 --params-file /tmp/launch_params_f998l9ik'].
+[ERROR] [pathFollower-7]: process has died [pid 482, exit code -6, cmd '/home/lzz/tare_native_campus_repeat_20261118/project/install/local_planner/lib/local_planner/pathFollower --ros-args -r __node:=pathFollower --params-file /tmp/launch_params_gplovuv0 --params-file /tmp/launch_params_y4vl2e09 --params-file /tmp/launch_params_ud_a7gue --params-file /tmp/launch_params_rrsp9ghi --params-file /tmp/launch_params_q912kqr9 --params-file /tmp/launch_params_ry5dbrx4 --params-file /tmp/launch_params_zvrl7i6l --params-file /tmp/launch_params_6yu6dhc_ --params-file /tmp/launch_params_azfg6mnn --params-file /tmp/launch_params_ps4ifaeo --params-file /tmp/launch_params_grllpb89 --params-file /tmp/launch_params_6e5ypgvs --params-file /tmp/launch_params__wfrq1xp --params-file /tmp/launch_params_fxcsdupl --params-file /tmp/launch_params_lmjuo6f2 --params-file /tmp/launch_params_1xmb0r0r --params-file /tmp/launch_params_w55apvfm --params-file /tmp/launch_params_xwku8qn3 --params-file /tmp/launch_params_nv2cj232 --params-file /tmp/launch_params_2jznwed2 --params-file /tmp/launch_params_5ms1qio5 --params-file /tmp/launch_params_5u1blfwa --params-file /tmp/launch_params_2dhpvtew --params-file /tmp/launch_params__9n1w0qt --params-file /tmp/launch_params__sj420t9 --params-file /tmp/launch_params_56qkllbj --params-file /tmp/launch_params_j03g2wn2 --params-file /tmp/launch_params_3hotzbzf'].
+[sensorScanGeneration-5] [INFO] [1795008147.329408020] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[ERROR] [terrainAnalysisExt-4]: process has died [pid 476, exit code -6, cmd '/home/lzz/tare_native_campus_repeat_20261118/project/install/terrain_analysis_ext/lib/terrain_analysis_ext/terrainAnalysisExt --ros-args -r __node:=terrainAnalysisExt --params-file /tmp/launch_params_a4ty2xty --params-file /tmp/launch_params_y6znzal0 --params-file /tmp/launch_params_im3ynxvi --params-file /tmp/launch_params_hi_ediya --params-file /tmp/launch_params_h60s0doe --params-file /tmp/launch_params_qkmhmbh8 --params-file /tmp/launch_params_0pff2b86 --params-file /tmp/launch_params_lnxxqtsp --params-file /tmp/launch_params_2i4ikkdk --params-file /tmp/launch_params_mwsfi0w9 --params-file /tmp/launch_params_vkyzk9li --params-file /tmp/launch_params_oh97yrg4 --params-file /tmp/launch_params_71lkyhuw --params-file /tmp/launch_params_f48hi01e --params-file /tmp/launch_params_vycdrznl --params-file /tmp/launch_params_1rozygd5 --params-file /tmp/launch_params_pvhiz5ev'].
+[tare_planner_node-10] [INFO] [1795008148.335331483] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[sensorScanGeneration-5] Failed to delete datawriter, at ./src/publisher.cpp:48 during '__function__'
+[sensorScanGeneration-5] [ERROR] [1795008148.438893850] [sensorScanGeneration.rclcpp]: Error in destruction of rcl publisher handle: cannot publish data, at ./src/rmw_publish.cpp:62, at ./src/rcl/publisher.c:187
+[sensorScanGeneration-5] Failed to delete datawriter, at ./src/publisher.cpp:48 during '__function__'
+[sensorScanGeneration-5] [ERROR] [1795008148.438909303] [sensorScanGeneration.rclcpp]: Error in destruction of rcl publisher handle: cannot publish data, at ./src/rmw_publish.cpp:62, at ./src/rcl/publisher.c:187
+[sensorScanGeneration-5] Failed to delete datawriter, at ./src/publisher.cpp:48 during '__function__'
+[sensorScanGeneration-5] [ERROR] [1795008148.438916501] [sensorScanGeneration.rclcpp]: Error in destruction of rcl publisher handle: cannot publish data, at ./src/rmw_publish.cpp:62, at ./src/rcl/publisher.c:187
+[ERROR] [vehicleSimulator-14]: process has died [pid 771, exit code -6, cmd '/home/lzz/tare_native_campus_repeat_20261118/project/install/vehicle_simulator/lib/vehicle_simulator/vehicleSimulator --ros-args --params-file /tmp/launch_params_dpw2pxsm'].
+[INFO] [tare_planner_node-10]: process has finished cleanly [pid 488]
+[ERROR] [localPlanner-6]: process has died [pid 480, exit code -6, cmd '/home/lzz/tare_native_campus_repeat_20261118/project/install/local_planner/lib/local_planner/localPlanner --ros-args -r __node:=localPlanner --params-file /tmp/launch_params_4b_dqwix --params-file /tmp/launch_params_ghw0zkv_ --params-file /tmp/launch_params_cmwio3zt --params-file /tmp/launch_params_1hvn_ytt --params-file /tmp/launch_params_ooipnq9a --params-file /tmp/launch_params_vjebn8i0 --params-file /tmp/launch_params_jlk1mane --params-file /tmp/launch_params_z8vtbfmf --params-file /tmp/launch_params_tp4j931_ --params-file /tmp/launch_params_072mcc_k --params-file /tmp/launch_params_9jd7uok2 --params-file /tmp/launch_params_spuiyur6 --params-file /tmp/launch_params_fh_ip6t9 --params-file /tmp/launch_params_5kybqb_w --params-file /tmp/launch_params_a50waxj9 --params-file /tmp/launch_params_soreos92 --params-file /tmp/launch_params_c4zrg0yz --params-file /tmp/launch_params_hftffin3 --params-file /tmp/launch_params_69pb5bq7 --params-file /tmp/launch_params_bp7fjcdw --params-file /tmp/launch_params_og1f2n41 --params-file /tmp/launch_params_rpuar3th --params-file /tmp/launch_params_7u31zut0 --params-file /tmp/launch_params__uie047j --params-file /tmp/launch_params_f9hsj1hi --params-file /tmp/launch_params_wmm9ztei --params-file /tmp/launch_params_7i7uy5od --params-file /tmp/launch_params_e7n3geb5 --params-file /tmp/launch_params_8wu5w5ca --params-file /tmp/launch_params_c2oc8zt7 --params-file /tmp/launch_params_oh0sbvaa --params-file /tmp/launch_params_7eei0ohj --params-file /tmp/launch_params_iozx1d1w --params-file /tmp/launch_params_fh896t4t --params-file /tmp/launch_params_3ol8ejbx --params-file /tmp/launch_params_oyyl6v2s --params-file /tmp/launch_params_g5to25p6 --params-file /tmp/launch_params_vs0flnvv --params-file /tmp/launch_params_1bx6eh7i'].
+[ERROR] [sensorScanGeneration-5]: process has died [pid 478, exit code -11, cmd '/home/lzz/tare_native_campus_repeat_20261118/project/install/sensor_scan_generation/lib/sensor_scan_generation/sensorScanGeneration --ros-args -r __node:=sensorScanGeneration'].
+[INFO] [robot_state_publisher-2]: process has finished cleanly [pid 472]
+[INFO] [gzserver-1]: process has finished cleanly [pid 470]
+[gzserver-1] [0m[1;36m[0m[1;32m[0m
+[gzserver-1] [0m[1;33m[0m[1;33m[0m[1;33m[0m[1;31m[0m

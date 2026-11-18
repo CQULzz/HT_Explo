@@ -1,0 +1,5 @@
+from pathlib import Path
+import json
+root=Path('/home/lzz/tare_native_campus_20261118');work=Path('/mnt/d/TARE-Native-Campus-20261118');p=root/'BUDGET.json';b=json.loads(p.read_text());b['planned_reference_runs']=2;b['planned_successful_runs']=None;b['second_attempt']='Same-configuration recurrence test after first persistent blockage; not an infrastructure retry or navigation tuning';b['status']='active';(root/'setup/ORIGINAL_BUDGET_BEFORE_REPEAT.json').write_bytes(p.read_bytes());p.write_text(json.dumps(b,indent=2))
+p=work/'postprocess_native.py';s=p.read_text().replace("ledger.update(status='closed',used_attempts=len(ledger['attempts']),result=str(run/'RESULT.json'))", "ledger.update(status='closed' if len(ledger['attempts'])>=ledger.get('planned_reference_runs',1) else 'active',used_attempts=len(ledger['attempts']),result=str(run/'RESULT.json'))");p.write_text(s)
+(work/'postprocess.sh').write_text('set -e\nsource /home/lzz/tare_native_campus_20261118/env.sh\n/usr/bin/python3 /mnt/d/TARE-Native-Campus-20261118/postprocess_native.py > /home/lzz/tare_native_campus_20261118/setup/postprocess.log 2>&1\n')

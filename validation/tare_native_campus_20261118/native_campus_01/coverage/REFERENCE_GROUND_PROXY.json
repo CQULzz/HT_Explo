@@ -1,0 +1,38 @@
+{
+  "method": "Conservative point-cloud-derived ground connectivity proxy; not certified ground truth or actual HT traversability",
+  "resolution_m": 0.5,
+  "min_surface_per_xy": true,
+  "obstacle_vertical_band_m": [
+    0.2,
+    1.0
+  ],
+  "eroded_neighbor_cells": [
+    3,
+    3
+  ],
+  "maximum_neighbor_height_difference_m": 0.2,
+  "connected_ground_cells": 12523,
+  "proxy_area_m2": 3130.75,
+  "seed_world_xy": [
+    0.75,
+    0.25
+  ],
+  "connected_bounds_xyz": [
+    [
+      -74.25,
+      -66.75,
+      -4.6133527755737305
+    ],
+    [
+      96.25,
+      75.75,
+      0.4315829873085022
+    ]
+  ],
+  "limitations": [
+    "Preview point cloud may omit geometry or undersample obstacles",
+    "No vehicle contact dynamics or exact mesh path verification",
+    "Conservative erosion can exclude reachable narrow paths; roofs and height discontinuities can affect inferred terrain",
+    "Report observed fraction on this proxy separately; do not call it full campus ground truth"
+  ]
+}
