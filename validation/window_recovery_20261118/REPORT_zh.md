@@ -35,7 +35,7 @@ Humble独立Release构建成功，4组CTest全部通过（ht_gate/ht_execution/h
 
 旧版另做过诊断：临时将搜索上限放宽至2000ms仍无原0.75m结果；临时改进展目标为0.25m且关闭完成禁用则能执行约0.264m。它们仅用于区分失效链，不是保留配置。修复版保持20ms、原0.75m优先目标及finish=true；以受检短前缀解决两条件共同造成的零输出。日志原样保留，VALIDATION.json列明口径。
 
-独立源码、两个导航可执行文件的SHA及下一轮环境顺序见RUNTIME.json。已编译安装在/home/lzz/ht_window_recovery_20261118/candidate/install；原实验安装和旧录包没有被覆盖。下一次使用时必须最后source该候选安装，不能继续误用ht_initial_labels_20261116的旧二进制。精简证据Windows副本D:/HT-Window-Recovery-20261118/results。
+独立源码、两个导航可执行文件的SHA及下一轮环境顺序见RUNTIME.json。源码保留实际编译字节哈希，并另列Git规范化CRLF→LF后的哈希，区分换行转换与代码变化。已编译安装在/home/lzz/ht_window_recovery_20261118/candidate/install；原实验安装和旧录包没有被覆盖。下一次使用时必须最后source该候选安装，不能继续误用ht_initial_labels_20261116的旧二进制。精简证据Windows副本D:/HT-Window-Recovery-20261118/results。
 
 ## 尚未验收的部分
 

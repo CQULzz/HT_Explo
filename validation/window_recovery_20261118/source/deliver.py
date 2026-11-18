@@ -59,13 +59,15 @@ fig.tight_layout();fig.savefig(dest/'context_recovery.png',dpi=160);plt.close(fi
 
 sources=['CMakeLists.txt','src/ht_gate.hpp','src/ht_recovery.hpp','src/ht_recovery_return_test.cpp']
 frozen={}
+git_lf_sources={}
 for name in sources:
  original=repo/'src/cmu_local_planner_ht'/name;candidate=root/'candidate/src/cmu_local_planner_ht'/name
  assert original.read_bytes()==candidate.read_bytes(),name
  frozen['source/'+name]=hashlib.sha256(original.read_bytes()).hexdigest()
+ git_lf_sources[name]=hashlib.sha256(original.read_bytes().replace(b'\r\n',b'\n')).hexdigest()
 for name in ['localPlanner','pathFollower']:
  p=root/'candidate/install/cmu_local_planner_ht/lib/cmu_local_planner_ht'/name;frozen['binary/'+name]=hashlib.sha256(p.read_bytes()).hexdigest()
-(dest/'RUNTIME.json').write_text(json.dumps({'navigation_install':str(root/'candidate/install'),'navigation_source':str(root/'candidate/src/cmu_local_planner_ht'),'base_commit':'65a0ee46806c43d26c3f9a13347594ef6c651f98','frozen':frozen,'next_run_environment_order':['source /home/lzz/ht_campus_repeat_1200s_20261118/env.sh','source /home/lzz/ht_window_recovery_20261118/candidate/install/setup.bash'],'limitations':'Compiled offline candidate. Historical runtime installations and previous20min evidence are unchanged; next test must explicitly source candidate/install last. No new Gazebo run or formal budget consumed.'},indent=2))
+(dest/'RUNTIME.json').write_text(json.dumps({'navigation_install':str(root/'candidate/install'),'navigation_source':str(root/'candidate/src/cmu_local_planner_ht'),'base_commit':'65a0ee46806c43d26c3f9a13347594ef6c651f98','frozen':frozen,'git_lf_source_sha256':git_lf_sources,'source_hash_scope':'frozen hashes are actual compiled source bytes; git_lf_source_sha256 normalizes CRLF to LF as Git does for these source paths.','next_run_environment_order':['source /home/lzz/ht_campus_repeat_1200s_20261118/env.sh','source /home/lzz/ht_window_recovery_20261118/candidate/install/setup.bash'],'limitations':'Compiled offline candidate. Historical runtime installations and previous20min evidence are unchanged; next test must explicitly source candidate/install last. No new Gazebo run or formal budget consumed.'},indent=2))
 
 report=f'''# HT窗口边界与返航恢复修复（2026-11-18）
 
@@ -104,7 +106,7 @@ Humble独立Release构建成功，4组CTest全部通过（ht_gate/ht_execution/h
 
 旧版另做过诊断：临时将搜索上限放宽至2000ms仍无原0.75m结果；临时改进展目标为0.25m且关闭完成禁用则能执行约0.264m。它们仅用于区分失效链，不是保留配置。修复版保持20ms、原0.75m优先目标及finish=true；以受检短前缀解决两条件共同造成的零输出。日志原样保留，VALIDATION.json列明口径。
 
-独立源码、两个导航可执行文件的SHA及下一轮环境顺序见RUNTIME.json。已编译安装在/home/lzz/ht_window_recovery_20261118/candidate/install；原实验安装和旧录包没有被覆盖。下一次使用时必须最后source该候选安装，不能继续误用ht_initial_labels_20261116的旧二进制。精简证据Windows副本D:/HT-Window-Recovery-20261118/results。
+独立源码、两个导航可执行文件的SHA及下一轮环境顺序见RUNTIME.json。源码保留实际编译字节哈希，并另列Git规范化CRLF→LF后的哈希，区分换行转换与代码变化。已编译安装在/home/lzz/ht_window_recovery_20261118/candidate/install；原实验安装和旧录包没有被覆盖。下一次使用时必须最后source该候选安装，不能继续误用ht_initial_labels_20261116的旧二进制。精简证据Windows副本D:/HT-Window-Recovery-20261118/results。
 
 ## 尚未验收的部分
 

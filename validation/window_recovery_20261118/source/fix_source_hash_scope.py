@@ -1,0 +1,8 @@
+from pathlib import Path
+p=Path('/mnt/d/HT-Window-Recovery-20261118/deliver.py');s=p.read_text();s=s.replace("frozen={}\n", "frozen={}\ngit_lf_sources={}\n");s=s.replace("frozen['source/'+name]=hashlib.sha256(original.read_bytes()).hexdigest()", "frozen['source/'+name]=hashlib.sha256(original.read_bytes()).hexdigest()\n git_lf_sources[name]=hashlib.sha256(original.read_bytes().replace(b'\\r\\n',b'\\n')).hexdigest()")
+s=s.replace("'frozen':frozen,", "'frozen':frozen,'git_lf_source_sha256':git_lf_sources,'source_hash_scope':'frozen hashes are actual compiled source bytes; git_lf_source_sha256 normalizes CRLF to LF as Git does for these source paths.',")
+s=s.replace('独立源码、两个导航可执行文件的SHA及下一轮环境顺序见RUNTIME.json。','独立源码、两个导航可执行文件的SHA及下一轮环境顺序见RUNTIME.json。源码保留实际编译字节哈希，并另列Git规范化CRLF→LF后的哈希，区分换行转换与代码变化。')
+p.write_text(s)
+p=Path('/mnt/d/HT-Window-Recovery-20261118/verify_staged.py');s=p.read_text();s=s.replace("frozen=json.loads(blob(prefix+'RUNTIME.json'))['frozen']\nfor k,h in frozen.items():\n if k.startswith('source/'):\n  assert hashlib.sha256(blob('src/cmu_local_planner_ht/'+k[7:])).hexdigest()==h,k", "runtime=json.loads(blob(prefix+'RUNTIME.json'))\nfor name,h in runtime['git_lf_source_sha256'].items():\n assert hashlib.sha256(blob('src/cmu_local_planner_ht/'+name)).hexdigest()==h,name\n actual=pathlib.Path(runtime['navigation_source'])/name\n assert hashlib.sha256(actual.read_bytes()).hexdigest()==runtime['frozen']['source/'+name],name")
+s=s.replace("'staged_sources_match_compiled_candidate':True", "'staged_sources_match_compiled_candidate_after_git_eol_normalization':True")
+p.write_text(s)
