@@ -75,6 +75,7 @@ class Gate {
     }
   }
   bool enabled=false;
+  Pose last_checked_pose;
   std::string mode;
   bool usesGeometry() const {return mode!="ht_only";}
   // CMU supplies its configured full body envelope in the vehicle frame.
@@ -255,6 +256,7 @@ class Gate {
     }
   }
   bool pose(Pose p) {
+    last_checked_pose=p;
     if(!std::isfinite(p.x)||!std::isfinite(p.y)||!std::isfinite(p.yaw)){last_reason="INVALID_POSE";return false;}
     if(!withinBoundary(p))return false;
     if(external_obstacles_){last_reason="EXTERNAL_NO_GO_UNSUPPORTED";return false;}

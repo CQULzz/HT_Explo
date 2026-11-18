@@ -60,3 +60,8 @@ add_executable(ht_urdf_box_test src/ht_urdf_box_test.cpp)
 ament_target_dependencies(ht_urdf_box_test rclcpp std_msgs grid_map_msgs geometry_msgs sensor_msgs)
 target_link_libraries(ht_urdf_box_test ${OpenCV_LIBS})
 add_test(NAME ht_urdf_box COMMAND ht_urdf_box_test)
+
+add_executable(ht_recovery_return_test src/ht_recovery_return_test.cpp)
+ament_target_dependencies(ht_recovery_return_test rclcpp std_msgs grid_map_msgs geometry_msgs sensor_msgs nav_msgs)
+target_link_libraries(ht_recovery_return_test ${OpenCV_LIBS})
+add_test(NAME ht_recovery_return COMMAND ht_recovery_return_test)

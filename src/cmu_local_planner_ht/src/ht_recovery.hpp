@@ -49,10 +49,13 @@ class Recovery {
       reset("ODOMETRY_STALE");v=w=0;report(now,pose,v,w);return true;
     }
     // A TARE waypoint is a retained target, not a fixed-frequency heartbeat.
-    if(!permitted || finished_ || !have_goal_ || (!active_ && distance(pose,goal_)<.25)) {
+    // TARE finishes exploration before executing its return-home waypoint.
+    // This signal describes a phase, not arrival at the retained goal.
+    if(!permitted || !have_goal_ || (!active_ && distance(pose,goal_)<.25)) {
       const bool was_active=active_;
-      reset(finished_?"EXPLORATION_FINISHED":!permitted?"PAUSED":"IDLE");last_tick_=now;
-      if(was_active){v=w=0;report(now,pose,v,w);return true;}
+      reset(!permitted?"PAUSED":have_goal_&&finished_?"RETURN_GOAL_REACHED":"IDLE");last_tick_=now;
+      report(now,pose,0,0);
+      if(was_active){v=w=0;return true;}
       return false;
     }
     if(active_ && distance(goal_,planned_goal_)>.05) {
@@ -85,6 +88,8 @@ class Recovery {
 
   bool plan(Pose start,Pose goal) {
     const auto began=std::chrono::steady_clock::now();
+    last_search_outcome="START_INVALID";last_search_ms=0;last_search_expanded=0;last_search_progress=0;
+    search_rejections.clear();first_search_rejections.clear();
     if(!gate_.pose(start))return false;
     const double step=gate_.resolution();
     if(step<.01 || step>.2)return false;
@@ -96,37 +101,64 @@ class Recovery {
     auto heuristic=[&](Pose p){return std::max(0.,distance(p,goal)-(distance(start,goal)-requested))/execution_speed_;};
     std::vector<double> cost(total,std::numeric_limits<double>::infinity());std::vector<int> parent(total,-2);
     using Item=std::pair<double,int>;std::priority_queue<Item,std::vector<Item>,std::greater<Item>> queue;
-    for(int k=0;k<8;++k){Pose p{start.x,start.y,k*pi/4};if(gate_.segment(start,p)){
+    auto checked_segment=[&](Pose a,Pose b) {
+      if(gate_.segment(a,b))return true;
+      ++search_rejections[gate_.last_reason];
+      first_search_rejections.emplace(gate_.last_reason,gate_.last_checked_pose);
+      return false;
+    };
+    for(int k=0;k<8;++k){Pose p{start.x,start.y,k*pi/4};if(checked_segment(start,p)){
       const int i=id(0,0,k);cost[i]=std::abs(wrap(p.yaw-start.yaw))/angular_;parent[i]=-1;queue.push({cost[i]+heuristic(p),i});}}
     const int dx[8]={1,1,0,-1,-1,-1,0,1},dy[8]={0,1,1,1,0,-1,-1,-1};
-    int expanded=0;
+    auto accept=[&](int u,const char* outcome) {
+      std::vector<Pose> candidate;int i=u;
+      while(i>=0){candidate.push_back(decode(i));i=parent[i];}
+      candidate.push_back(start);std::reverse(candidate.begin(),candidate.end());compress(candidate);
+      // A shorter prefix changes only the progress objective. It still needs
+      // every pose, turn, footprint and braking sweep to pass the same Gate.
+      if(!gate_.path(candidate) || !simulate(candidate))return false;
+      last_search_progress=distance(start,goal)-distance(candidate.back(),goal);
+      route_=std::move(candidate);++plans;last_search_outcome=outcome;
+      last_search_ms=std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-began).count();return true;
+    };
+    int expanded=0,best=-1,first_prefix=-1;double best_progress=0;
+    const double minimum_prefix=std::min(.25,requested);
+    last_search_outcome="NO_PATH";
     while(!queue.empty()) {
       const double elapsed=std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-began).count();
-      if(elapsed>search_ms_ || expanded>30000)break;
+      if(elapsed>search_ms_ || expanded>30000){last_search_outcome=elapsed>search_ms_?"TIME_BUDGET":"NODE_BUDGET";break;}
       const auto item=queue.top();queue.pop();const int u=item.second;const Pose p=decode(u);
       if(item.first>cost[u]+heuristic(p)+1e-7)continue;
       ++expanded;
-      if(distance(start,goal)-distance(p,goal)>=requested) {
-        std::vector<Pose> candidate;int i=u;
-        while(i>=0){candidate.push_back(decode(i));i=parent[i];}
-        candidate.push_back(start);std::reverse(candidate.begin(),candidate.end());compress(candidate);
-        if(gate_.path(candidate) && simulate(candidate)) {
-          route_=std::move(candidate);++plans;last_search_ms=std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-began).count();return true;
-        }
-      }
+      last_search_expanded=expanded;
+      const double advance=distance(start,goal)-distance(p,goal);
+      if(first_prefix<0 && advance>=minimum_prefix)first_prefix=u;
+      if(advance>best_progress+1e-9){best=u;best_progress=advance;}
+      if(advance>=requested && accept(u,"FULL_PROGRESS"))return true;
       const int k=u%8,cell=u/8,x=cell/side-half,y=cell%side-half;
       auto edge=[&](int xx,int yy,int kk,double seconds) {
         if(std::abs(xx)>half || std::abs(yy)>half)return;
         const int v=id(xx,yy,kk);const double next=cost[u]+seconds;
         if(next>=cost[v]-1e-9)return;
-        const Pose q=decode(v);if(!gate_.segment(p,q))return;
+        const Pose q=decode(v);if(!checked_segment(p,q))return;
         cost[v]=next;parent[v]=u;queue.push({next+heuristic(q),v});
       };
       edge(x,y,(k+1)%8,(pi/4)/angular_);edge(x,y,(k+7)%8,(pi/4)/angular_);
       for(int gear:{-1,1})edge(x+gear*dx[k],y+gear*dy[k],k,step*std::hypot(dx[k],dy[k])/execution_speed_);
     }
+    // A valid HT pocket can offer <0.75m of safe progress. Discarding it
+    // prevents changing viewpoint even though a checked prefix is executable.
+    // Never accept a turn-only route, retreat, or arbitrarily tiny progress.
+    if(best>=0 && best_progress>=minimum_prefix && accept(best,"PARTIAL_PROGRESS"))return true;
+    if(first_prefix>=0 && first_prefix!=best && accept(first_prefix,"PARTIAL_PROGRESS"))return true;
     last_search_ms=std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-began).count();return false;
   }
+
+  std::string last_search_outcome="NOT_RUN";
+  int last_search_expanded=0;
+  double last_search_progress=0;
+  std::map<std::string,uint64_t> search_rejections;
+  std::map<std::string,Pose> first_search_rejections;
 
  private:
   static double distance(Pose a,Pose b){return std::hypot(a.x-b.x,a.y-b.y);}
@@ -215,9 +247,16 @@ class Recovery {
       <<"{\"time\":"<<now<<",\"map_stamp\":"<<gate_.mapStamp()<<",\"state\":\""<<state<<"\",\"active\":"<<(active_?"true":"false")
       <<",\"plans\":"<<plans<<",\"completed\":"<<completed<<",\"invalidated\":"<<invalidated<<",\"search_failures\":"<<search_failures
       <<",\"goal_cancellations\":"<<goal_cancellations<<",\"compatible_goal_updates\":"<<compatible_goal_updates<<",\"goal_age_s\":"<<(now-goal_at_)
+      <<",\"exploration_finished\":"<<(finished_?"true":"false")<<",\"goal_distance_m\":"<<distance(pose,goal_)
+      <<",\"search_outcome\":\""<<last_search_outcome<<"\",\"search_expanded\":"<<last_search_expanded<<",\"search_progress_m\":"<<last_search_progress
       <<",\"search_ms\":"<<last_search_ms<<",\"x\":"<<pose.x<<",\"y\":"<<pose.y<<",\"yaw\":"<<pose.yaw
       <<",\"goal_x\":"<<goal_.x<<",\"goal_y\":"<<goal_.y<<",\"segment\":"<<index_<<",\"segments\":"<<route_.size()
-      <<",\"progress_m\":"<<distance(origin_,pose)<<",\"linear\":"<<v<<",\"angular\":"<<w<<"}";
+      <<",\"progress_m\":"<<distance(origin_,pose)<<",\"linear\":"<<v<<",\"angular\":"<<w<<",\"first_search_rejections\":{";
+    bool first=true;
+    for(const auto& item:first_search_rejections){if(!first)out<<",";first=false;
+      out<<"\""<<item.first<<"\":{\"x\":"<<item.second.x<<",\"y\":"<<item.second.y<<",\"yaw\":"<<item.second.yaw
+        <<",\"count\":"<<search_rejections[item.first]<<"}";}
+    out<<"}}";
     std_msgs::msg::String msg;msg.data=out.str();diagnostics_->publish(msg);
   }
   rclcpp::Node::SharedPtr node_;Gate& gate_;

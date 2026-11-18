@@ -1,0 +1,41 @@
+{
+  "scope": "Frozen recorded map counterfactual, unicycle execution at200Hz, fixed gate query source_age=.4s. Not live ROS/Gazebo exploration or new sensor evidence.",
+  "baseline": {
+    "net_displacement_m": 0.0,
+    "net_goal_progress_m": 0.0,
+    "finish_flag": true,
+    "recovery_completed": false
+  },
+  "candidate": {
+    "net_displacement_m": 0.2849997718370761,
+    "net_goal_progress_m": 0.26402854186606817,
+    "finish_flag": true,
+    "recovery_completed": true,
+    "fixture_elapsed_to_completion_s": 2.9,
+    "all_nonzero_commands_checked_by_gate": true,
+    "invalidated": 0
+  },
+  "gate": {
+    "min_probability": 0.5,
+    "source_age_s": 0.4,
+    "timeout_s": 1.0,
+    "support_radius_m": 0.58182230175,
+    "body_min_xyz": [
+      -0.4649301,
+      -0.3497950000007719,
+      -0.2351843
+    ],
+    "body_max_xyz": [
+      0.4649308,
+      0.34979500000080593,
+      0.6502000536441803
+    ]
+  },
+  "tests": {
+    "ctest_groups_passed": 4,
+    "ctest_groups_failed": 0,
+    "raw_map_sha256": "f07415bade91240fff5c0d684d45f6f14b424fd3afbf1a2c56d432d21dafba85",
+    "interior_window_queries_matched_recorded_masks": 4,
+    "outer_context_guard_checked": true
+  }
+}

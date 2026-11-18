@@ -1,0 +1,139 @@
+[
+  {
+    "query_xy": [
+      -4.216374269005848,
+      -1.9239766081871343
+    ],
+    "cell_rc": [
+      123,
+      124
+    ],
+    "window_size_cells": 51,
+    "near_known_fraction": 1.0,
+    "required_fraction": 0.9,
+    "uncertain_cells": [],
+    "intrinsic_context_valid": true,
+    "reconstructed_context_valid": true,
+    "recorded_context_valid": true,
+    "definition": "Near-known support and uncertainty reconstructed from recorded measured/physical/occupied masks; qualify_evidence=false only. Occupied query cells are separately forced valid/zero-score by the publisher.",
+    "limitations": "Does not restore original height/variance/rejection timestamps, or unrecorded outer25 input cells. Does not apply persistent startup labels or establish safe route feasibility."
+  },
+  {
+    "query_xy": [
+      -3.7660818713450293,
+      -1.7192982456140349
+    ],
+    "cell_rc": [
+      112,
+      119
+    ],
+    "window_size_cells": 51,
+    "near_known_fraction": 1.0,
+    "required_fraction": 0.9,
+    "uncertain_cells": [
+      {
+        "cell_rc": [
+          88,
+          126
+        ],
+        "xy": [
+          -2.783625730994152,
+          -2.005847953216374
+        ]
+      }
+    ],
+    "intrinsic_context_valid": false,
+    "reconstructed_context_valid": false,
+    "recorded_context_valid": false,
+    "definition": "Near-known support and uncertainty reconstructed from recorded measured/physical/occupied masks; qualify_evidence=false only. Occupied query cells are separately forced valid/zero-score by the publisher.",
+    "limitations": "Does not restore original height/variance/rejection timestamps, or unrecorded outer25 input cells. Does not apply persistent startup labels or establish safe route feasibility."
+  },
+  {
+    "query_xy": [
+      -3.52046783625731,
+      -1.5964912280701753
+    ],
+    "cell_rc": [
+      106,
+      116
+    ],
+    "window_size_cells": 51,
+    "near_known_fraction": 1.0,
+    "required_fraction": 0.9,
+    "uncertain_cells": [
+      {
+        "cell_rc": [
+          88,
+          126
+        ],
+        "xy": [
+          -2.783625730994152,
+          -2.005847953216374
+        ]
+      }
+    ],
+    "intrinsic_context_valid": false,
+    "reconstructed_context_valid": false,
+    "recorded_context_valid": false,
+    "definition": "Near-known support and uncertainty reconstructed from recorded measured/physical/occupied masks; qualify_evidence=false only. Occupied query cells are separately forced valid/zero-score by the publisher.",
+    "limitations": "Does not restore original height/variance/rejection timestamps, or unrecorded outer25 input cells. Does not apply persistent startup labels or establish safe route feasibility."
+  },
+  {
+    "query_xy": [
+      -3.2748538011695905,
+      -1.5146198830409356
+    ],
+    "cell_rc": [
+      100,
+      114
+    ],
+    "window_size_cells": 51,
+    "near_known_fraction": 1.0,
+    "required_fraction": 0.9,
+    "uncertain_cells": [
+      {
+        "cell_rc": [
+          88,
+          126
+        ],
+        "xy": [
+          -2.783625730994152,
+          -2.005847953216374
+        ]
+      }
+    ],
+    "intrinsic_context_valid": false,
+    "reconstructed_context_valid": false,
+    "recorded_context_valid": false,
+    "definition": "Near-known support and uncertainty reconstructed from recorded measured/physical/occupied masks; qualify_evidence=false only. Occupied query cells are separately forced valid/zero-score by the publisher.",
+    "limitations": "Does not restore original height/variance/rejection timestamps, or unrecorded outer25 input cells. Does not apply persistent startup labels or establish safe route feasibility."
+  },
+  {
+    "diagnostic_final_history_cell": {
+      "xy": [
+        -2.783625730994152,
+        -2.005847953216374
+      ],
+      "height_modes": [
+        -0.2502650022506714,
+        null,
+        null,
+        null
+      ],
+      "last_seen_modes": [
+        1794988005.662311,
+        null,
+        null,
+        null
+      ],
+      "age_at_last_recorded_map_s": [
+        1194.568995475769,
+        null,
+        null,
+        null
+      ],
+      "rejected_time": null,
+      "scope": "Shutdown history may contain a few frames after the recorded map. This confirms retained old modes; it is not a reconstruction of original source variance or every historical frame."
+    }
+  }
+]

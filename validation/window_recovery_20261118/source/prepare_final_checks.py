@@ -1,0 +1,4 @@
+from pathlib import Path
+import shutil
+repo=Path('/mnt/c/Users/李哲舟/Desktop/python code/work/ht_execution_fixes');r=Path('/home/lzz/ht_window_recovery_20261118');shutil.copy2(repo/'src/cmu_local_planner_ht/src/ht_recovery_return_test.cpp',r/'candidate/src/cmu_local_planner_ht/src/ht_recovery_return_test.cpp')
+(r/'finish_checks.sh').write_text('set -e\nsource /home/lzz/ht_window_recovery_20261118/env.sh\ncmake --build /home/lzz/ht_window_recovery_20261118/candidate/build/cmu_local_planner_ht --target ht_recovery_return_test -j2 > /home/lzz/ht_window_recovery_20261118/setup/build_final_test.log 2>&1\nctest --test-dir /home/lzz/ht_window_recovery_20261118/candidate/build/cmu_local_planner_ht --output-on-failure > /home/lzz/ht_window_recovery_20261118/analysis/ctest.log 2>&1\ncat /home/lzz/ht_window_recovery_20261118/analysis/ctest.log\n')
