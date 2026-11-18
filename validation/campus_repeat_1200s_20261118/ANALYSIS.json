@@ -1,0 +1,55 @@
+{
+  "duration_s": 1200.0024227870001,
+  "distance_m": 351.0391068343911,
+  "last30_distance_m": 0.0,
+  "sampled_free_volume_m3": 15589.5,
+  "finish": true,
+  "finish_signal_elapsed_s": 686.9635066986084,
+  "last_nonzero_sample_elapsed_s": 765.5301325109999,
+  "final_base_xy": [
+    -4.210022241944818,
+    -1.9126163710852417
+  ],
+  "final_base_distance_to_initial_m": 4.624109499202344,
+  "wall_rates": {
+    "scans": 3.335826598335569,
+    "ht_maps": 3.393326482243926
+  },
+  "sampled_ht_age_s": {
+    "p50": 0.4005460739135742,
+    "p95": 0.595780611038208,
+    "max": 2.3488314151763916
+  },
+  "fraction_sampled_age_over_1s": 0.00041999160016799666,
+  "command_audit_reasons": {
+    "HT_MAP_STALE": 14,
+    "HT_ALLOWED": 59994,
+    "HT_DIRECTION_LOW": 24
+  },
+  "diagnostic_at_finish": "[tare_planner_node-10] [INFO] [1794988686.777618044] [tare_planner_node]: EXPLORATION_DIAG candidates=84 uncovered=51 frontier=8 global_return=1 local_complete=1 global_nodes=35 local_nodes=35 x=-35.222 y=-1.468",
+  "last_planner_diagnostic": "[tare_planner_node-10] [INFO] [1794989204.404680815] [tare_planner_node]: EXPLORATION_DIAG candidates=29 uncovered=0 frontier=0 global_return=1 local_complete=1 global_nodes=91 local_nodes=14 x=-4.113 y=-1.770",
+  "parameter_comparison_with_previous": {
+    "tare_planner_node.yaml": {
+      "semantic_equal": true,
+      "byte_equal": true
+    },
+    "localPlanner.yaml": {
+      "semantic_equal": true,
+      "byte_equal": true
+    },
+    "pathFollower.yaml": {
+      "semantic_equal": true,
+      "byte_equal": true
+    },
+    "cupy_to_ht_bridge.yaml": {
+      "semantic_equal": true,
+      "byte_equal": true
+    },
+    "vehicleSimulator.yaml": {
+      "semantic_equal": true,
+      "byte_equal": true
+    }
+  },
+  "sim_time_advanced_s": 407.40000000000055,
+  "sim_real_time_factor": 0.33957508269974324
+}
